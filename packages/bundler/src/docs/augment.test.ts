@@ -75,5 +75,6 @@ describe("augmentProviderDocs", () => {
     expect(result.metadata.sourceCount).toBe(1);
     expect(result.metadata.promptHash).toMatch(/^[a-f0-9]{64}$/);
     expect(result.metadata.manifestPath).toBe(manifestPath);
+    expect(result.staleReason).toBe("openapi-hash-missing");
   });
 });

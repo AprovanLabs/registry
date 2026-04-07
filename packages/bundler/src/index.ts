@@ -2,17 +2,21 @@ import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import {
+  DEFAULT_DOCS_CACHE_ROOT,
   DEFAULT_OUTPUT_ROOT,
   getProviderClientImportPath,
   getProviderPackageRootName,
   loadRegistryProviders,
   resolveProvider,
+  resolveProviderDocsOutputDir,
   resolveProviderOutputDir,
   resolveProviderPackageRootDir,
   splitProviderName,
 } from "./provider.js";
 import { buildClientToolMap } from "./client-api.js";
 import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
+import { augmentProviderDocs, type AugmentProviderDocsOptions, type AugmentProviderDocsResult } from "./docs/augment.js";
+import { loadProviderDocs, type LoadProviderDocsOptions, type LoadProviderDocsResult } from "./docs/load.js";
 import {
   renderCopyAssetsScript,
   renderNamespaceEntry,
@@ -40,6 +44,25 @@ export type GenerateRegistryTypesResult = {
   toolCount: number;
 };
 
+export type LoadRegistryProviderDocsOptions = LoadProviderDocsOptions;
+export type LoadRegistryProviderDocsResult = LoadProviderDocsResult;
+
+export type AugmentRegistryProviderDocsOptions = {
+  provider: string;
+  docsCacheRoot?: string;
+  outputRoot?: string;
+  overwriteDocs?: boolean;
+};
+
+export type AugmentRegistryProviderDocsResult = {
+  provider: string;
+  readmePath: string;
+  docsPaths: string[];
+  packageJsonPath: string;
+  staleReason: string;
+  metadata: AugmentProviderDocsResult["metadata"];
+};
+
 async function writeTextFile(filePath: string, contents: string): Promise<string> {
   await mkdir(path.dirname(filePath), { recursive: true });
   await writeFile(filePath, contents, "utf8");
@@ -56,6 +79,65 @@ async function readOptionalTextFile(filePath: string): Promise<string | undefine
 
     throw error;
   }
+}
+
+export async function loadRegistryProviderDocs(
+  options: LoadRegistryProviderDocsOptions,
+): Promise<LoadRegistryProviderDocsResult> {
+  return loadProviderDocs(options);
+}
+
+export async function augmentRegistryProviderDocs(
+  options: AugmentRegistryProviderDocsOptions,
+): Promise<AugmentRegistryProviderDocsResult> {
+  const docsCacheRoot = options.docsCacheRoot ?? DEFAULT_DOCS_CACHE_ROOT;
+  const outputRoot = options.outputRoot ?? DEFAULT_OUTPUT_ROOT;
+  const providers = await loadRegistryProviders();
+  const provider = resolveProvider(providers, options.provider);
+  const rawOpenApiDocument = await loadOpenApiDocument(provider);
+  const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
+  const augmented = await augmentProviderDocs({
+    provider: provider.name,
+    openApiDocument,
+    docsCacheRoot,
+    outputRoot,
+    overwriteDocs: options.overwriteDocs,
+  });
+  const providerDir = resolveProviderOutputDir(provider.name, outputRoot);
+  const readmePath = path.join(providerDir, "README.md");
+  const docsDir = resolveProviderDocsOutputDir(provider.name, outputRoot);
+  const packageJsonPath = path.join(providerDir, "package.json");
+  const previousPackageJson = await readOptionalTextFile(packageJsonPath);
+
+  await rm(docsDir, { recursive: true, force: true });
+
+  const docsPaths = await Promise.all(
+    augmented.docs.map((doc) => writeTextFile(path.join(docsDir, doc.relativePath), doc.content)),
+  );
+
+  await Promise.all([
+    writeTextFile(
+      readmePath,
+      renderProviderReadme(provider, {
+        generatedReadme: augmented.readme,
+      }),
+    ),
+    writeTextFile(
+      packageJsonPath,
+      renderProviderPackageJson(provider, openApiDocument, previousPackageJson, undefined, {
+        docsMetadata: augmented.metadata,
+      }),
+    ),
+  ]);
+
+  return {
+    provider: provider.name,
+    readmePath,
+    docsPaths,
+    packageJsonPath,
+    staleReason: augmented.staleReason,
+    metadata: augmented.metadata,
+  };
 }
 
 export async function generateRegistryTypes(
