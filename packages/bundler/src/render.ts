@@ -4,6 +4,7 @@ import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
 
 import type { ClientToolDefinition, ToolRuntimeMetadata } from "./client-api.js";
+import type { ProviderPackageDocsMetadata } from "./docs/types.js";
 import type { RegistryProvider } from "./provider.js";
 import {
   getProviderAuthOptions,
@@ -441,7 +442,16 @@ await copyAssets(rootDir);
 `;
 }
 
-export function renderProviderReadme(provider: RegistryProvider): string {
+export function renderProviderReadme(
+  provider: RegistryProvider,
+  options: {
+    generatedReadme?: string;
+  } = {},
+): string {
+  if (options.generatedReadme) {
+    return options.generatedReadme.endsWith("\n") ? options.generatedReadme : `${options.generatedReadme}\n`;
+  }
+
   return `# ${provider.name}\n\nGenerated UTDK provider types and OpenAPI-backed client for ${provider.url}.\n`;
 }
 
@@ -512,6 +522,7 @@ export function renderProviderPackageJson(
   generatedAt: Date = new Date(),
   options: {
     includePackageName?: boolean;
+    docsMetadata?: ProviderPackageDocsMetadata;
   } = {},
 ): string {
   const includePackageName = options.includePackageName ?? true;
@@ -552,6 +563,19 @@ export function renderProviderPackageJson(
         termsOfService: getNonEmptyString(openApiDocument.info?.termsOfService) ?? null,
         ...(icon ? { icon } : {}),
       },
+      ...(options.docsMetadata
+        ? {
+            docs: {
+              manifestPath: options.docsMetadata.manifestPath,
+              indexPath: options.docsMetadata.indexPath,
+              docsPath: options.docsMetadata.docsPath,
+              generatedAt: options.docsMetadata.generatedAt,
+              sourceCount: options.docsMetadata.sourceCount,
+              openApiHash: options.docsMetadata.openApiHash,
+              promptHash: options.docsMetadata.promptHash,
+            },
+          }
+        : {}),
     },
   };
 

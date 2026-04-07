@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import type { ClientToolDefinition } from "./client-api.js";
 import type { RegistryProvider } from "./provider.js";
 import {
+  renderProviderReadme,
   renderNamespaceEntry,
   renderNamespacePackageJson,
   renderProviderMetadata,
@@ -348,5 +349,52 @@ describe("nested provider rendering", () => {
     expect(rendered).not.toContain('"name": "@utdk/google/books"');
     expect(rendered).toContain('"provider": "google/books"');
     expect(rendered).toContain('"auth": [');
+  });
+
+  it("renders docs metadata additively under utdk.docs", () => {
+    const rendered = renderProviderPackageJson(
+      {
+        name: "openai",
+        url: "https://example.com/openapi.json",
+      },
+      {
+        openapi: "3.0.0",
+        info: {
+          title: "OpenAI API",
+          version: "1.0.0",
+        },
+      } as never,
+      undefined,
+      new Date("2026-04-07T00:00:00.000Z"),
+      {
+        docsMetadata: {
+          manifestPath: ".registry/openai/manifest.json",
+          indexPath: ".registry/openai/index.md",
+          docsPath: "packages/utdk/openai/docs",
+          generatedAt: "2026-04-07T00:00:00.000Z",
+          sourceCount: 3,
+          openApiHash: "abc",
+          promptHash: "def",
+        },
+      },
+    );
+
+    expect(rendered).toContain('"docs": {');
+    expect(rendered).toContain('"manifestPath": ".registry/openai/manifest.json"');
+    expect(rendered).toContain('"sourceCount": 3');
+  });
+
+  it("uses generated readme content when provided", () => {
+    const rendered = renderProviderReadme(
+      {
+        name: "openai",
+        url: "https://example.com/openapi.json",
+      } as RegistryProvider,
+      {
+        generatedReadme: "# OpenAI\n\nGenerated docs.\n",
+      },
+    );
+
+    expect(rendered).toBe("# OpenAI\n\nGenerated docs.\n");
   });
 });
