@@ -1,0 +1,24 @@
+{
+  "name": "@utdk/datadog",
+  "version": "1.0.0-20260407.1",
+  "type": "module",
+  "description": "Generated UTDK provider client for Datadog API V2 Collection. Collection of all Datadog Public endpoints.",
+  "homepage": "https://www.datadoghq.com/support/",
+  "keywords": [
+    "datadog",
+    "generated",
+    "openapi",
+    "utdk"
+  ],
+  "utdk": {
+    "provider": "datadog",
+    "generation": 1,
+    "generatedAt": "2026-04-07T01:20:22.841Z",
+    "openapi": {
+      "title": "Datadog API V2 Collection",
+      "url": "https://raw.githubusercontent.com/DataDog/datadog-api-client-python/refs/heads/master/.generator/schemas/v2/openapi.yaml",
+      "version": "1.0",
+      "termsOfService": null
+    }
+  }
+}

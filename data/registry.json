@@ -430,22 +430,6 @@
     }
   },
   {
-    "name": "bitbucket_api",
-    "provider_type": "http",
-    "http_method": "GET",
-    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/bitbucket.org/2.0/openapi.yaml",
-    "content_type": "application/x-yaml",
-    "metadata": {
-      "description": "Automates tasks, retrieves Bitbucket data, integrates with applications, and enables custom UI add-ons using the Connect framework.",
-      "category": "AI & Machine Learning",
-      "last_updated": "2025-08-04",
-      "maintainer": "Bitbucket Support",
-      "documentation_url": "https://bitbucket.org/api",
-      "version": "2.0",
-      "openapi_version": "3.0.0"
-    }
-  },
-  {
     "name": "box_platform_api",
     "provider_type": "http",
     "http_method": "GET",
@@ -1150,22 +1134,6 @@
     }
   },
   {
-    "name": "google_home",
-    "provider_type": "http",
-    "http_method": "GET",
-    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/google.home/2.0/openapi.yaml",
-    "content_type": "application/x-yaml",
-    "metadata": {
-      "description": "Retrieves device information, manages local authorization tokens, and enables communication with Google Home devices via HTTPS requests.",
-      "category": "AI & Machine Learning",
-      "last_updated": "2025-08-04",
-      "maintainer": "google.home",
-      "documentation_url": "https://google.home",
-      "version": "2.0",
-      "openapi_version": "3.0.0"
-    }
-  },
-  {
     "name": "graphhopper_directions_api",
     "provider_type": "http",
     "http_method": "GET",
@@ -1370,22 +1338,6 @@
       "maintainer": "ix-api.net",
       "documentation_url": "https://ix-api.net",
       "version": "2.1.0",
-      "openapi_version": "3.0.0"
-    }
-  },
-  {
-    "name": "firebase_cloud_messaging_api",
-    "provider_type": "http",
-    "http_method": "GET",
-    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/javatpoint.com/v1/openapi.yaml",
-    "content_type": "application/x-yaml",
-    "metadata": {
-      "description": "FCM send API that provides a cross-platform messaging solution to reliably deliver messages at no cost.",
-      "category": "Development Tools",
-      "last_updated": "2025-08-04",
-      "maintainer": "Google",
-      "documentation_url": "https://firebase.google.com/docs/cloud-messaging",
-      "version": "v1",
       "openapi_version": "3.0.0"
     }
   },
@@ -3278,7 +3230,7 @@
     }
   },
   {
-    "name": "elevenlabs_api_documentation",
+    "name": "elevenlabs",
     "provider_type": "http",
     "http_method": "GET",
     "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/elevenlabs.io/1.0/openapi.yaml",
@@ -3742,7 +3694,7 @@
     }
   },
   {
-    "name": "bitbucket",
+    "name": "atlassian/bitbucket",
     "provider_type": "http",
     "http_method": "GET",
     "url": "https://bitbucket.org/api/swagger.json",
@@ -3758,7 +3710,7 @@
     }
   },
   {
-    "name": "jira",
+    "name": "atlassian/jira",
     "provider_type": "http",
     "http_method": "GET",
     "url": "https://developer.atlassian.com/cloud/jira/platform/swagger-v3.v3.json",
@@ -3774,7 +3726,7 @@
     }
   },
   {
-    "name": "canva_connect",
+    "name": "canva/connect",
     "provider_type": "http",
     "http_method": "GET",
     "url": "https://raw.githubusercontent.com/canva-sdks/canva-connect-api-starter-kit/main/openapi/spec.yml",
@@ -3835,6 +3787,89 @@
       "documentation_url": "https://www.figma.com/developers/api",
       "version": "1.0.0",
       "openapi_version": "3.1.0"
+    }
+  },
+  {
+    "name": "datadog",
+    "call_template_type": "http",
+    "url": "https://raw.githubusercontent.com/DataDog/datadog-api-client-python/refs/heads/master/.generator/schemas/v2/openapi.yaml",
+    "http_method": "GET"
+  },
+  {
+    "name": "openai",
+    "call_template_type": "http",
+    "url": "https://raw.githubusercontent.com/openai/openai-openapi/refs/heads/manual_spec/openapi.yaml",
+    "http_method": "GET"
+  },
+  {
+    "name": "google/books",
+    "call_template_type": "http",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/refs/heads/main/APIs/googleapis.com/books/v1/openapi.yaml",
+    "http_method": "GET",
+    "options": {
+      "operations": {
+        "stripPrefix": "books."
+      }
+    }
+  },
+  {
+    "name": "google/youtube",
+    "call_template_type": "http",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/refs/heads/main/APIs/googleapis.com/youtube/v3/openapi.yaml",
+    "http_method": "GET",
+    "options": {
+      "operations": {
+        "stripPrefix": "youtube."
+      }
+    }
+  },
+  {
+    "name": "google/home",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/google.home/2.0/openapi.yaml",
+    "content_type": "application/x-yaml",
+    "metadata": {
+      "description": "Retrieves device information, manages local authorization tokens, and enables communication with Google Home devices via HTTPS requests.",
+      "category": "AI & Machine Learning",
+      "last_updated": "2025-08-04",
+      "maintainer": "google.home",
+      "documentation_url": "https://google.home",
+      "version": "2.0",
+      "openapi_version": "3.0.0"
+    }
+  },
+  {
+    "name": "google/fcm",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/javatpoint.com/v1/openapi.yaml",
+    "content_type": "application/x-yaml",
+    "metadata": {
+      "description": "FCM send API that provides a cross-platform messaging solution to reliably deliver messages at no cost.",
+      "category": "Development Tools",
+      "last_updated": "2025-08-04",
+      "maintainer": "Google",
+      "documentation_url": "https://firebase.google.com/docs/cloud-messaging",
+      "version": "v1",
+      "openapi_version": "3.0.0"
+    },
+    "options": {
+      "operations": {
+        "stripPrefix": "fcm."
+      }
+    }
+  },
+  {
+    "name": "google/drive",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/refs/heads/main/APIs/googleapis.com/drive/v3/openapi.yaml",
+    "content_type": "application/x-yaml",
+    "options": {
+      "operations": {
+        "stripPrefix": "drive."
+      }
     }
   }
 ]

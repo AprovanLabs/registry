@@ -7,7 +7,7 @@ Generate a provider client package from a provider OpenAPI schema listed in `dat
 From the repo root:
 
 ```sh
-pnpm --filter @aprovan/stitchery-bundler generate github
+pnpm --filter @aprovan/utdk-bundler generate github
 ```
 
 From `packages/bundler/`:

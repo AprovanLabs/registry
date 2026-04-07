@@ -1,0 +1,19 @@
+{
+  "name": "datadog",
+  "call_template_type": "http",
+  "url": "https://raw.githubusercontent.com/DataDog/datadog-api-client-python/refs/heads/master/.generator/schemas/v2/openapi.yaml",
+  "http_method": "GET",
+  "auth": {
+    "auth_type": "api_key",
+    "var_name": "DD-API-KEY",
+    "location": "header",
+    "api_key": "${DD_API_KEY}"
+  },
+  "headers_tools": {
+    "DD-APPLICATION-KEY": "${DD_APPLICATION_KEY}"
+  },
+  "variables": {
+    "site": "datadoghq.com",
+    "subdomain": "api"
+  }
+}

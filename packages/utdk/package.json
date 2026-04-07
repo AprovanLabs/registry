@@ -25,10 +25,1235 @@
       "import": "./dist/client.js",
       "default": "./dist/client.js"
     },
+    "./1_000_000_recipe_and_grocery_list_api_v2": {
+      "types": "./dist/1_000_000_recipe_and_grocery_list_api_v2/index.d.ts",
+      "import": "./dist/1_000_000_recipe_and_grocery_list_api_v2/index.js",
+      "default": "./dist/1_000_000_recipe_and_grocery_list_api_v2/index.js"
+    },
+    "./account_and_transaction_api_specification_uk": {
+      "types": "./dist/account_and_transaction_api_specification_uk/index.d.ts",
+      "import": "./dist/account_and_transaction_api_specification_uk/index.js",
+      "default": "./dist/account_and_transaction_api_specification_uk/index.js"
+    },
+    "./agco_api": {
+      "types": "./dist/agco_api/index.d.ts",
+      "import": "./dist/agco_api/index.js",
+      "default": "./dist/agco_api/index.js"
+    },
+    "./alerter_system_api": {
+      "types": "./dist/alerter_system_api/index.d.ts",
+      "import": "./dist/alerter_system_api/index.js",
+      "default": "./dist/alerter_system_api/index.js"
+    },
+    "./anchore_engine_api_server": {
+      "types": "./dist/anchore_engine_api_server/index.d.ts",
+      "import": "./dist/anchore_engine_api_server/index.js",
+      "default": "./dist/anchore_engine_api_server/index.js"
+    },
+    "./apacta": {
+      "types": "./dist/apacta/index.d.ts",
+      "import": "./dist/apacta/index.js",
+      "default": "./dist/apacta/index.js"
+    },
+    "./api": {
+      "types": "./dist/api/index.d.ts",
+      "import": "./dist/api/index.js",
+      "default": "./dist/api/index.js"
+    },
+    "./api_1": {
+      "types": "./dist/api_1/index.d.ts",
+      "import": "./dist/api_1/index.js",
+      "default": "./dist/api_1/index.js"
+    },
+    "./api_docs_logoraisr_com": {
+      "types": "./dist/api_docs_logoraisr_com/index.d.ts",
+      "import": "./dist/api_docs_logoraisr_com/index.js",
+      "default": "./dist/api_docs_logoraisr_com/index.js"
+    },
+    "./api_ecota_co_v2": {
+      "types": "./dist/api_ecota_co_v2/index.d.ts",
+      "import": "./dist/api_ecota_co_v2/index.js",
+      "default": "./dist/api_ecota_co_v2/index.js"
+    },
+    "./api_isendpro": {
+      "types": "./dist/api_isendpro/index.d.ts",
+      "import": "./dist/api_isendpro/index.js",
+      "default": "./dist/api_isendpro/index.js"
+    },
+    "./api_reference_billing": {
+      "types": "./dist/api_reference_billing/index.d.ts",
+      "import": "./dist/api_reference_billing/index.js",
+      "default": "./dist/api_reference_billing/index.js"
+    },
+    "./api_reference_ideal_postcodes": {
+      "types": "./dist/api_reference_ideal_postcodes/index.d.ts",
+      "import": "./dist/api_reference_ideal_postcodes/index.js",
+      "default": "./dist/api_reference_ideal_postcodes/index.js"
+    },
+    "./api_v1_0_0": {
+      "types": "./dist/api_v1_0_0/index.d.ts",
+      "import": "./dist/api_v1_0_0/index.js",
+      "default": "./dist/api_v1_0_0/index.js"
+    },
+    "./api_video": {
+      "types": "./dist/api_video/index.d.ts",
+      "import": "./dist/api_video/index.js",
+      "default": "./dist/api_video/index.js"
+    },
+    "./api2pdf_pdf_generation_powered_by_aws_lambda": {
+      "types": "./dist/api2pdf_pdf_generation_powered_by_aws_lambda/index.d.ts",
+      "import": "./dist/api2pdf_pdf_generation_powered_by_aws_lambda/index.js",
+      "default": "./dist/api2pdf_pdf_generation_powered_by_aws_lambda/index.js"
+    },
+    "./apis_guru": {
+      "types": "./dist/apis_guru/index.d.ts",
+      "import": "./dist/apis_guru/index.js",
+      "default": "./dist/apis_guru/index.js"
+    },
+    "./app_center_client": {
+      "types": "./dist/app_center_client/index.d.ts",
+      "import": "./dist/app_center_client/index.js",
+      "default": "./dist/app_center_client/index.js"
+    },
+    "./appveyor_rest_api": {
+      "types": "./dist/appveyor_rest_api/index.d.ts",
+      "import": "./dist/appveyor_rest_api/index.js",
+      "default": "./dist/appveyor_rest_api/index.js"
+    },
+    "./art19_content_api_documentation": {
+      "types": "./dist/art19_content_api_documentation/index.d.ts",
+      "import": "./dist/art19_content_api_documentation/index.js",
+      "default": "./dist/art19_content_api_documentation/index.js"
+    },
+    "./asana": {
+      "types": "./dist/asana/index.d.ts",
+      "import": "./dist/asana/index.js",
+      "default": "./dist/asana/index.js"
+    },
+    "./atlassian": {
+      "types": "./dist/atlassian/index.d.ts",
+      "import": "./dist/atlassian/index.js",
+      "default": "./dist/atlassian/index.js"
+    },
+    "./atlassian/bitbucket": {
+      "types": "./dist/atlassian/bitbucket/index.d.ts",
+      "import": "./dist/atlassian/bitbucket/index.js",
+      "default": "./dist/atlassian/bitbucket/index.js"
+    },
+    "./atlassian/jira": {
+      "types": "./dist/atlassian/jira/index.d.ts",
+      "import": "./dist/atlassian/jira/index.js",
+      "default": "./dist/atlassian/jira/index.js"
+    },
+    "./authentiq_connect_api": {
+      "types": "./dist/authentiq_connect_api/index.d.ts",
+      "import": "./dist/authentiq_connect_api/index.js",
+      "default": "./dist/authentiq_connect_api/index.js"
+    },
+    "./automata_market_intelligence_api": {
+      "types": "./dist/automata_market_intelligence_api/index.d.ts",
+      "import": "./dist/automata_market_intelligence_api/index.js",
+      "default": "./dist/automata_market_intelligence_api/index.js"
+    },
+    "./avaza_api_documentation": {
+      "types": "./dist/avaza_api_documentation/index.d.ts",
+      "import": "./dist/avaza_api_documentation/index.js",
+      "default": "./dist/avaza_api_documentation/index.js"
+    },
+    "./bbc_iplayer_business_layer": {
+      "types": "./dist/bbc_iplayer_business_layer/index.d.ts",
+      "import": "./dist/bbc_iplayer_business_layer/index.js",
+      "default": "./dist/bbc_iplayer_business_layer/index.js"
+    },
+    "./bbc_nitro_api": {
+      "types": "./dist/bbc_nitro_api/index.d.ts",
+      "import": "./dist/bbc_nitro_api/index.js",
+      "default": "./dist/bbc_nitro_api/index.js"
+    },
+    "./beezup_merchant_api": {
+      "types": "./dist/beezup_merchant_api/index.d.ts",
+      "import": "./dist/beezup_merchant_api/index.js",
+      "default": "./dist/beezup_merchant_api/index.js"
+    },
+    "./betfair_exchange_streaming_api": {
+      "types": "./dist/betfair_exchange_streaming_api/index.d.ts",
+      "import": "./dist/betfair_exchange_streaming_api/index.js",
+      "default": "./dist/betfair_exchange_streaming_api/index.js"
+    },
+    "./big_red_cloud_api": {
+      "types": "./dist/big_red_cloud_api/index.d.ts",
+      "import": "./dist/big_red_cloud_api/index.js",
+      "default": "./dist/big_red_cloud_api/index.js"
+    },
+    "./billbee_api": {
+      "types": "./dist/billbee_api/index.d.ts",
+      "import": "./dist/billbee_api/index.js",
+      "default": "./dist/billbee_api/index.js"
+    },
+    "./billingo_api_v3": {
+      "types": "./dist/billingo_api_v3/index.d.ts",
+      "import": "./dist/billingo_api_v3/index.js",
+      "default": "./dist/billingo_api_v3/index.js"
+    },
+    "./biolink_api": {
+      "types": "./dist/biolink_api/index.d.ts",
+      "import": "./dist/biolink_api/index.js",
+      "default": "./dist/biolink_api/index.js"
+    },
+    "./botify_api": {
+      "types": "./dist/botify_api/index.d.ts",
+      "import": "./dist/botify_api/index.js",
+      "default": "./dist/botify_api/index.js"
+    },
+    "./box_platform_api": {
+      "types": "./dist/box_platform_api/index.d.ts",
+      "import": "./dist/box_platform_api/index.js",
+      "default": "./dist/box_platform_api/index.js"
+    },
+    "./brain_web_api": {
+      "types": "./dist/brain_web_api/index.d.ts",
+      "import": "./dist/brain_web_api/index.js",
+      "default": "./dist/brain_web_api/index.js"
+    },
+    "./braze_endpoints": {
+      "types": "./dist/braze_endpoints/index.d.ts",
+      "import": "./dist/braze_endpoints/index.js",
+      "default": "./dist/braze_endpoints/index.js"
+    },
+    "./budgea_api_documentation": {
+      "types": "./dist/budgea_api_documentation/index.d.ts",
+      "import": "./dist/budgea_api_documentation/index.js",
+      "default": "./dist/budgea_api_documentation/index.js"
+    },
+    "./bungie_net_api": {
+      "types": "./dist/bungie_net_api/index.d.ts",
+      "import": "./dist/bungie_net_api/index.js",
+      "default": "./dist/bungie_net_api/index.js"
+    },
+    "./bunq_api": {
+      "types": "./dist/bunq_api/index.d.ts",
+      "import": "./dist/bunq_api/index.js",
+      "default": "./dist/bunq_api/index.js"
+    },
+    "./business_registries": {
+      "types": "./dist/business_registries/index.d.ts",
+      "import": "./dist/business_registries/index.js",
+      "default": "./dist/business_registries/index.js"
+    },
+    "./callfire_api_documentation": {
+      "types": "./dist/callfire_api_documentation/index.d.ts",
+      "import": "./dist/callfire_api_documentation/index.js",
+      "default": "./dist/callfire_api_documentation/index.js"
+    },
+    "./canva": {
+      "types": "./dist/canva/index.d.ts",
+      "import": "./dist/canva/index.js",
+      "default": "./dist/canva/index.js"
+    },
+    "./canva/connect": {
+      "types": "./dist/canva/connect/index.d.ts",
+      "import": "./dist/canva/connect/index.js",
+      "default": "./dist/canva/connect/index.js"
+    },
+    "./chain49_api": {
+      "types": "./dist/chain49_api/index.d.ts",
+      "import": "./dist/chain49_api/index.js",
+      "default": "./dist/chain49_api/index.js"
+    },
+    "./chaingateway_io_v2": {
+      "types": "./dist/chaingateway_io_v2/index.d.ts",
+      "import": "./dist/chaingateway_io_v2/index.js",
+      "default": "./dist/chaingateway_io_v2/index.js"
+    },
+    "./channel_4_api": {
+      "types": "./dist/channel_4_api/index.d.ts",
+      "import": "./dist/channel_4_api/index.js",
+      "default": "./dist/channel_4_api/index.js"
+    },
+    "./checks_api": {
+      "types": "./dist/checks_api/index.d.ts",
+      "import": "./dist/checks_api/index.js",
+      "default": "./dist/checks_api/index.js"
+    },
+    "./circleci_rest_api": {
+      "types": "./dist/circleci_rest_api/index.d.ts",
+      "import": "./dist/circleci_rest_api/index.js",
+      "default": "./dist/circleci_rest_api/index.js"
+    },
+    "./cis_automotive_api": {
+      "types": "./dist/cis_automotive_api/index.d.ts",
+      "import": "./dist/cis_automotive_api/index.js",
+      "default": "./dist/cis_automotive_api/index.js"
+    },
+    "./clearblade_api": {
+      "types": "./dist/clearblade_api/index.d.ts",
+      "import": "./dist/clearblade_api/index.js",
+      "default": "./dist/clearblade_api/index.js"
+    },
+    "./clever_cloud_api": {
+      "types": "./dist/clever_cloud_api/index.d.ts",
+      "import": "./dist/clever_cloud_api/index.js",
+      "default": "./dist/clever_cloud_api/index.js"
+    },
+    "./clickmeter_api": {
+      "types": "./dist/clickmeter_api/index.d.ts",
+      "import": "./dist/clickmeter_api/index.js",
+      "default": "./dist/clickmeter_api/index.js"
+    },
+    "./clicksend_rest_api_v3": {
+      "types": "./dist/clicksend_rest_api_v3/index.d.ts",
+      "import": "./dist/clicksend_rest_api_v3/index.js",
+      "default": "./dist/clicksend_rest_api_v3/index.js"
+    },
+    "./climate_fieldview_platform_apis": {
+      "types": "./dist/climate_fieldview_platform_apis/index.d.ts",
+      "import": "./dist/climate_fieldview_platform_apis/index.js",
+      "default": "./dist/climate_fieldview_platform_apis/index.js"
+    },
+    "./cloud_rf_api": {
+      "types": "./dist/cloud_rf_api/index.d.ts",
+      "import": "./dist/cloud_rf_api/index.js",
+      "default": "./dist/cloud_rf_api/index.js"
+    },
+    "./college_football_data_api": {
+      "types": "./dist/college_football_data_api/index.d.ts",
+      "import": "./dist/college_football_data_api/index.js",
+      "default": "./dist/college_football_data_api/index.js"
+    },
+    "./configcat_public_management_api": {
+      "types": "./dist/configcat_public_management_api/index.d.ts",
+      "import": "./dist/configcat_public_management_api/index.js",
+      "default": "./dist/configcat_public_management_api/index.js"
+    },
+    "./conjur": {
+      "types": "./dist/conjur/index.d.ts",
+      "import": "./dist/conjur/index.js",
+      "default": "./dist/conjur/index.js"
+    },
+    "./contentdepot": {
+      "types": "./dist/contentdepot/index.d.ts",
+      "import": "./dist/contentdepot/index.js",
+      "default": "./dist/contentdepot/index.js"
+    },
+    "./contract_fit_api": {
+      "types": "./dist/contract_fit_api/index.d.ts",
+      "import": "./dist/contract_fit_api/index.js",
+      "default": "./dist/contract_fit_api/index.js"
+    },
+    "./core_api_v2": {
+      "types": "./dist/core_api_v2/index.d.ts",
+      "import": "./dist/core_api_v2/index.js",
+      "default": "./dist/core_api_v2/index.js"
+    },
+    "./corrently_io": {
+      "types": "./dist/corrently_io/index.d.ts",
+      "import": "./dist/corrently_io/index.js",
+      "default": "./dist/corrently_io/index.js"
+    },
+    "./crossbar_data_api": {
+      "types": "./dist/crossbar_data_api/index.d.ts",
+      "import": "./dist/crossbar_data_api/index.js",
+      "default": "./dist/crossbar_data_api/index.js"
+    },
+    "./d_d_5e_api": {
+      "types": "./dist/d_d_5e_api/index.d.ts",
+      "import": "./dist/d_d_5e_api/index.js",
+      "default": "./dist/d_d_5e_api/index.js"
+    },
+    "./daniweb_connect_api": {
+      "types": "./dist/daniweb_connect_api/index.d.ts",
+      "import": "./dist/daniweb_connect_api/index.js",
+      "default": "./dist/daniweb_connect_api/index.js"
+    },
+    "./data_api": {
+      "types": "./dist/data_api/index.d.ts",
+      "import": "./dist/data_api/index.js",
+      "default": "./dist/data_api/index.js"
+    },
+    "./data2crm_api": {
+      "types": "./dist/data2crm_api/index.d.ts",
+      "import": "./dist/data2crm_api/index.js",
+      "default": "./dist/data2crm_api/index.js"
+    },
+    "./datadog": {
+      "types": "./dist/datadog/index.d.ts",
+      "import": "./dist/datadog/index.js",
+      "default": "./dist/datadog/index.js"
+    },
+    "./dataflow_kit_web_scraper": {
+      "types": "./dist/dataflow_kit_web_scraper/index.d.ts",
+      "import": "./dist/dataflow_kit_web_scraper/index.js",
+      "default": "./dist/dataflow_kit_web_scraper/index.js"
+    },
+    "./developer_documentation": {
+      "types": "./dist/developer_documentation/index.d.ts",
+      "import": "./dist/developer_documentation/index.js",
+      "default": "./dist/developer_documentation/index.js"
+    },
+    "./digitalocean_api": {
+      "types": "./dist/digitalocean_api/index.d.ts",
+      "import": "./dist/digitalocean_api/index.js",
+      "default": "./dist/digitalocean_api/index.js"
+    },
+    "./discourse_api_documentation": {
+      "types": "./dist/discourse_api_documentation/index.d.ts",
+      "import": "./dist/discourse_api_documentation/index.js",
+      "default": "./dist/discourse_api_documentation/index.js"
+    },
+    "./docusign_rest_api": {
+      "types": "./dist/docusign_rest_api/index.d.ts",
+      "import": "./dist/docusign_rest_api/index.js",
+      "default": "./dist/docusign_rest_api/index.js"
+    },
+    "./dracoon_api": {
+      "types": "./dist/dracoon_api/index.d.ts",
+      "import": "./dist/dracoon_api/index.js",
+      "default": "./dist/dracoon_api/index.js"
+    },
+    "./drchrono": {
+      "types": "./dist/drchrono/index.d.ts",
+      "import": "./dist/drchrono/index.js",
+      "default": "./dist/drchrono/index.js"
+    },
+    "./elevenlabs": {
+      "types": "./dist/elevenlabs/index.d.ts",
+      "import": "./dist/elevenlabs/index.js",
+      "default": "./dist/elevenlabs/index.js"
+    },
+    "./elmah_io_api": {
+      "types": "./dist/elmah_io_api/index.d.ts",
+      "import": "./dist/elmah_io_api/index.js",
+      "default": "./dist/elmah_io_api/index.js"
+    },
+    "./email_activity_beta": {
+      "types": "./dist/email_activity_beta/index.d.ts",
+      "import": "./dist/email_activity_beta/index.js",
+      "default": "./dist/email_activity_beta/index.js"
+    },
+    "./eqivo_api": {
+      "types": "./dist/eqivo_api/index.d.ts",
+      "import": "./dist/eqivo_api/index.js",
+      "default": "./dist/eqivo_api/index.js"
+    },
+    "./etherpad_api": {
+      "types": "./dist/etherpad_api/index.d.ts",
+      "import": "./dist/etherpad_api/index.js",
+      "default": "./dist/etherpad_api/index.js"
+    },
+    "./exavault": {
+      "types": "./dist/exavault/index.d.ts",
+      "import": "./dist/exavault/index.js",
+      "default": "./dist/exavault/index.js"
+    },
+    "./figma": {
+      "types": "./dist/figma/index.d.ts",
+      "import": "./dist/figma/index.js",
+      "default": "./dist/figma/index.js"
+    },
+    "./fire_financial_services_business_api": {
+      "types": "./dist/fire_financial_services_business_api/index.d.ts",
+      "import": "./dist/fire_financial_services_business_api/index.js",
+      "default": "./dist/fire_financial_services_business_api/index.js"
+    },
+    "./fitbit_plus_api": {
+      "types": "./dist/fitbit_plus_api/index.d.ts",
+      "import": "./dist/fitbit_plus_api/index.js",
+      "default": "./dist/fitbit_plus_api/index.js"
+    },
+    "./flat_api": {
+      "types": "./dist/flat_api/index.d.ts",
+      "import": "./dist/flat_api/index.js",
+      "default": "./dist/flat_api/index.js"
+    },
+    "./flickr_api_schema": {
+      "types": "./dist/flickr_api_schema/index.d.ts",
+      "import": "./dist/flickr_api_schema/index.js",
+      "default": "./dist/flickr_api_schema/index.js"
+    },
+    "./forem_api_v1": {
+      "types": "./dist/forem_api_v1/index.d.ts",
+      "import": "./dist/forem_api_v1/index.js",
+      "default": "./dist/forem_api_v1/index.js"
+    },
+    "./frankie_financial_api": {
+      "types": "./dist/frankie_financial_api/index.d.ts",
+      "import": "./dist/frankie_financial_api/index.js",
+      "default": "./dist/frankie_financial_api/index.js"
+    },
+    "./gerermesaffaires_rest_api": {
+      "types": "./dist/gerermesaffaires_rest_api/index.d.ts",
+      "import": "./dist/gerermesaffaires_rest_api/index.js",
+      "default": "./dist/gerermesaffaires_rest_api/index.js"
+    },
+    "./gitea_api": {
+      "types": "./dist/gitea_api/index.d.ts",
+      "import": "./dist/gitea_api/index.js",
+      "default": "./dist/gitea_api/index.js"
+    },
     "./github": {
       "types": "./dist/github/index.d.ts",
       "import": "./dist/github/index.js",
       "default": "./dist/github/index.js"
+    },
+    "./google": {
+      "types": "./dist/google/index.d.ts",
+      "import": "./dist/google/index.js",
+      "default": "./dist/google/index.js"
+    },
+    "./google/books": {
+      "types": "./dist/google/books/index.d.ts",
+      "import": "./dist/google/books/index.js",
+      "default": "./dist/google/books/index.js"
+    },
+    "./google/drive": {
+      "types": "./dist/google/drive/index.d.ts",
+      "import": "./dist/google/drive/index.js",
+      "default": "./dist/google/drive/index.js"
+    },
+    "./google/fcm": {
+      "types": "./dist/google/fcm/index.d.ts",
+      "import": "./dist/google/fcm/index.js",
+      "default": "./dist/google/fcm/index.js"
+    },
+    "./google/home": {
+      "types": "./dist/google/home/index.d.ts",
+      "import": "./dist/google/home/index.js",
+      "default": "./dist/google/home/index.js"
+    },
+    "./google/youtube": {
+      "types": "./dist/google/youtube/index.d.ts",
+      "import": "./dist/google/youtube/index.js",
+      "default": "./dist/google/youtube/index.js"
+    },
+    "./graphhopper_directions_api": {
+      "types": "./dist/graphhopper_directions_api/index.d.ts",
+      "import": "./dist/graphhopper_directions_api/index.js",
+      "default": "./dist/graphhopper_directions_api/index.js"
+    },
+    "./greenwire_public_api": {
+      "types": "./dist/greenwire_public_api/index.d.ts",
+      "import": "./dist/greenwire_public_api/index.js",
+      "default": "./dist/greenwire_public_api/index.js"
+    },
+    "./greip_api": {
+      "types": "./dist/greip_api/index.d.ts",
+      "import": "./dist/greip_api/index.js",
+      "default": "./dist/greip_api/index.js"
+    },
+    "./gsmtasks_project_api": {
+      "types": "./dist/gsmtasks_project_api/index.d.ts",
+      "import": "./dist/gsmtasks_project_api/index.js",
+      "default": "./dist/gsmtasks_project_api/index.js"
+    },
+    "./handwrytten_api": {
+      "types": "./dist/handwrytten_api/index.d.ts",
+      "import": "./dist/handwrytten_api/index.js",
+      "default": "./dist/handwrytten_api/index.js"
+    },
+    "./hardware_sentry_truesight_presentation_server_rest_api": {
+      "types": "./dist/hardware_sentry_truesight_presentation_server_rest_api/index.d.ts",
+      "import": "./dist/hardware_sentry_truesight_presentation_server_rest_api/index.js",
+      "default": "./dist/hardware_sentry_truesight_presentation_server_rest_api/index.js"
+    },
+    "./hhs_media_services_api": {
+      "types": "./dist/hhs_media_services_api/index.d.ts",
+      "import": "./dist/hhs_media_services_api/index.js",
+      "default": "./dist/hhs_media_services_api/index.js"
+    },
+    "./httpbin_org": {
+      "types": "./dist/httpbin_org/index.d.ts",
+      "import": "./dist/httpbin_org/index.js",
+      "default": "./dist/httpbin_org/index.js"
+    },
+    "./id4i_api": {
+      "types": "./dist/id4i_api/index.d.ts",
+      "import": "./dist/id4i_api/index.js",
+      "default": "./dist/id4i_api/index.js"
+    },
+    "./influx_oss_api_service": {
+      "types": "./dist/influx_oss_api_service/index.d.ts",
+      "import": "./dist/influx_oss_api_service/index.js",
+      "default": "./dist/influx_oss_api_service/index.js"
+    },
+    "./instagram_api": {
+      "types": "./dist/instagram_api/index.d.ts",
+      "import": "./dist/instagram_api/index.js",
+      "default": "./dist/instagram_api/index.js"
+    },
+    "./iqualify_management_api": {
+      "types": "./dist/iqualify_management_api/index.d.ts",
+      "import": "./dist/iqualify_management_api/index.js",
+      "default": "./dist/iqualify_management_api/index.js"
+    },
+    "./ix_api": {
+      "types": "./dist/ix_api/index.d.ts",
+      "import": "./dist/ix_api/index.js",
+      "default": "./dist/ix_api/index.js"
+    },
+    "./jumpseller_api": {
+      "types": "./dist/jumpseller_api/index.d.ts",
+      "import": "./dist/jumpseller_api/index.js",
+      "default": "./dist/jumpseller_api/index.js"
+    },
+    "./just_eat_uk": {
+      "types": "./dist/just_eat_uk/index.d.ts",
+      "import": "./dist/just_eat_uk/index.js",
+      "default": "./dist/just_eat_uk/index.js"
+    },
+    "./keycloak_admin_rest_api": {
+      "types": "./dist/keycloak_admin_rest_api/index.d.ts",
+      "import": "./dist/keycloak_admin_rest_api/index.js",
+      "default": "./dist/keycloak_admin_rest_api/index.js"
+    },
+    "./kumpeapps_api": {
+      "types": "./dist/kumpeapps_api/index.d.ts",
+      "import": "./dist/kumpeapps_api/index.js",
+      "default": "./dist/kumpeapps_api/index.js"
+    },
+    "./labs64_netlicensing_restful_api_test_center": {
+      "types": "./dist/labs64_netlicensing_restful_api_test_center/index.d.ts",
+      "import": "./dist/labs64_netlicensing_restful_api_test_center/index.js",
+      "default": "./dist/labs64_netlicensing_restful_api_test_center/index.js"
+    },
+    "./launchdarkly_rest_api": {
+      "types": "./dist/launchdarkly_rest_api/index.d.ts",
+      "import": "./dist/launchdarkly_rest_api/index.js",
+      "default": "./dist/launchdarkly_rest_api/index.js"
+    },
+    "./lgtm_api_specification": {
+      "types": "./dist/lgtm_api_specification/index.d.ts",
+      "import": "./dist/lgtm_api_specification/index.js",
+      "default": "./dist/lgtm_api_specification/index.js"
+    },
+    "./linode_api": {
+      "types": "./dist/linode_api/index.d.ts",
+      "import": "./dist/linode_api/index.js",
+      "default": "./dist/linode_api/index.js"
+    },
+    "./linqr": {
+      "types": "./dist/linqr/index.d.ts",
+      "import": "./dist/linqr/index.js",
+      "default": "./dist/linqr/index.js"
+    },
+    "./listen_api_podcast_search_directory_and_insights_api": {
+      "types": "./dist/listen_api_podcast_search_directory_and_insights_api/index.d.ts",
+      "import": "./dist/listen_api_podcast_search_directory_and_insights_api/index.js",
+      "default": "./dist/listen_api_podcast_search_directory_and_insights_api/index.js"
+    },
+    "./magento_b2b": {
+      "types": "./dist/magento_b2b/index.d.ts",
+      "import": "./dist/magento_b2b/index.js",
+      "default": "./dist/magento_b2b/index.js"
+    },
+    "./mandrill": {
+      "types": "./dist/mandrill/index.d.ts",
+      "import": "./dist/mandrill/index.js",
+      "default": "./dist/mandrill/index.js"
+    },
+    "./medium_api": {
+      "types": "./dist/medium_api/index.d.ts",
+      "import": "./dist/medium_api/index.js",
+      "default": "./dist/medium_api/index.js"
+    },
+    "./meraki_dashboard_api": {
+      "types": "./dist/meraki_dashboard_api/index.d.ts",
+      "import": "./dist/meraki_dashboard_api/index.js",
+      "default": "./dist/meraki_dashboard_api/index.js"
+    },
+    "./meshery_api": {
+      "types": "./dist/meshery_api/index.d.ts",
+      "import": "./dist/meshery_api/index.js",
+      "default": "./dist/meshery_api/index.js"
+    },
+    "./microcks_api_v1_7": {
+      "types": "./dist/microcks_api_v1_7/index.d.ts",
+      "import": "./dist/microcks_api_v1_7/index.js",
+      "default": "./dist/microcks_api_v1_7/index.js"
+    },
+    "./mineskin_api": {
+      "types": "./dist/mineskin_api/index.d.ts",
+      "import": "./dist/mineskin_api/index.js",
+      "default": "./dist/mineskin_api/index.js"
+    },
+    "./mist_api": {
+      "types": "./dist/mist_api/index.d.ts",
+      "import": "./dist/mist_api/index.js",
+      "default": "./dist/mist_api/index.js"
+    },
+    "./motaword_api": {
+      "types": "./dist/motaword_api/index.d.ts",
+      "import": "./dist/motaword_api/index.js",
+      "default": "./dist/motaword_api/index.js"
+    },
+    "./musixmatch_api": {
+      "types": "./dist/musixmatch_api/index.d.ts",
+      "import": "./dist/musixmatch_api/index.js",
+      "default": "./dist/musixmatch_api/index.js"
+    },
+    "./mux_api": {
+      "types": "./dist/mux_api/index.d.ts",
+      "import": "./dist/mux_api/index.js",
+      "default": "./dist/mux_api/index.js"
+    },
+    "./namsor_api_v2": {
+      "types": "./dist/namsor_api_v2/index.d.ts",
+      "import": "./dist/namsor_api_v2/index.js",
+      "default": "./dist/namsor_api_v2/index.js"
+    },
+    "./neblio_rest_api_suite": {
+      "types": "./dist/neblio_rest_api_suite/index.d.ts",
+      "import": "./dist/neblio_rest_api_suite/index.js",
+      "default": "./dist/neblio_rest_api_suite/index.js"
+    },
+    "./netatmo": {
+      "types": "./dist/netatmo/index.d.ts",
+      "import": "./dist/netatmo/index.js",
+      "default": "./dist/netatmo/index.js"
+    },
+    "./netbox_api": {
+      "types": "./dist/netbox_api/index.d.ts",
+      "import": "./dist/netbox_api/index.js",
+      "default": "./dist/netbox_api/index.js"
+    },
+    "./netbox_api_1": {
+      "types": "./dist/netbox_api_1/index.d.ts",
+      "import": "./dist/netbox_api_1/index.js",
+      "default": "./dist/netbox_api_1/index.js"
+    },
+    "./netlify_s_api_documentation": {
+      "types": "./dist/netlify_s_api_documentation/index.d.ts",
+      "import": "./dist/netlify_s_api_documentation/index.js",
+      "default": "./dist/netlify_s_api_documentation/index.js"
+    },
+    "./neutrino_api": {
+      "types": "./dist/neutrino_api/index.d.ts",
+      "import": "./dist/neutrino_api/index.js",
+      "default": "./dist/neutrino_api/index.js"
+    },
+    "./newsapi": {
+      "types": "./dist/newsapi/index.d.ts",
+      "import": "./dist/newsapi/index.js",
+      "default": "./dist/newsapi/index.js"
+    },
+    "./nfusion_solutions_market_data_api": {
+      "types": "./dist/nfusion_solutions_market_data_api/index.d.ts",
+      "import": "./dist/nfusion_solutions_market_data_api/index.js",
+      "default": "./dist/nfusion_solutions_market_data_api/index.js"
+    },
+    "./nookipedia": {
+      "types": "./dist/nookipedia/index.d.ts",
+      "import": "./dist/nookipedia/index.js",
+      "default": "./dist/nookipedia/index.js"
+    },
+    "./noosh_api_application": {
+      "types": "./dist/noosh_api_application/index.d.ts",
+      "import": "./dist/noosh_api_application/index.js",
+      "default": "./dist/noosh_api_application/index.js"
+    },
+    "./obono_rksv_api": {
+      "types": "./dist/obono_rksv_api/index.d.ts",
+      "import": "./dist/obono_rksv_api/index.js",
+      "default": "./dist/obono_rksv_api/index.js"
+    },
+    "./open_policy_agent_opa_rest_api": {
+      "types": "./dist/open_policy_agent_opa_rest_api/index.d.ts",
+      "import": "./dist/open_policy_agent_opa_rest_api/index.js",
+      "default": "./dist/open_policy_agent_opa_rest_api/index.js"
+    },
+    "./open_states_api_v3": {
+      "types": "./dist/open_states_api_v3/index.d.ts",
+      "import": "./dist/open_states_api_v3/index.js",
+      "default": "./dist/open_states_api_v3/index.js"
+    },
+    "./open_targets_platform_rest_api": {
+      "types": "./dist/open_targets_platform_rest_api/index.d.ts",
+      "import": "./dist/open_targets_platform_rest_api/index.js",
+      "default": "./dist/open_targets_platform_rest_api/index.js"
+    },
+    "./openai": {
+      "types": "./dist/openai/index.d.ts",
+      "import": "./dist/openai/index.js",
+      "default": "./dist/openai/index.js"
+    },
+    "./openfec": {
+      "types": "./dist/openfec/index.d.ts",
+      "import": "./dist/openfec/index.js",
+      "default": "./dist/openfec/index.js"
+    },
+    "./openfintech_io": {
+      "types": "./dist/openfintech_io/index.d.ts",
+      "import": "./dist/openfintech_io/index.js",
+      "default": "./dist/openfintech_io/index.js"
+    },
+    "./openlibrary": {
+      "types": "./dist/openlibrary/index.d.ts",
+      "import": "./dist/openlibrary/index.js",
+      "default": "./dist/openlibrary/index.js"
+    },
+    "./orbit_api": {
+      "types": "./dist/orbit_api/index.d.ts",
+      "import": "./dist/orbit_api/index.js",
+      "default": "./dist/orbit_api/index.js"
+    },
+    "./pandascore_rest_api_for_all_videogames": {
+      "types": "./dist/pandascore_rest_api_for_all_videogames/index.d.ts",
+      "import": "./dist/pandascore_rest_api_for_all_videogames/index.js",
+      "default": "./dist/pandascore_rest_api_for_all_videogames/index.js"
+    },
+    "./paylocity_api": {
+      "types": "./dist/paylocity_api/index.d.ts",
+      "import": "./dist/paylocity_api/index.js",
+      "default": "./dist/paylocity_api/index.js"
+    },
+    "./payrun_io": {
+      "types": "./dist/payrun_io/index.d.ts",
+      "import": "./dist/payrun_io/index.js",
+      "default": "./dist/payrun_io/index.js"
+    },
+    "./pdf_blocks_api": {
+      "types": "./dist/pdf_blocks_api/index.d.ts",
+      "import": "./dist/pdf_blocks_api/index.js",
+      "default": "./dist/pdf_blocks_api/index.js"
+    },
+    "./pi_web_api_2018_sp1_swagger_spec": {
+      "types": "./dist/pi_web_api_2018_sp1_swagger_spec/index.d.ts",
+      "import": "./dist/pi_web_api_2018_sp1_swagger_spec/index.js",
+      "default": "./dist/pi_web_api_2018_sp1_swagger_spec/index.js"
+    },
+    "./pims": {
+      "types": "./dist/pims/index.d.ts",
+      "import": "./dist/pims/index.js",
+      "default": "./dist/pims/index.js"
+    },
+    "./pinecone_api": {
+      "types": "./dist/pinecone_api/index.d.ts",
+      "import": "./dist/pinecone_api/index.js",
+      "default": "./dist/pinecone_api/index.js"
+    },
+    "./portfolio_optimizer": {
+      "types": "./dist/portfolio_optimizer/index.d.ts",
+      "import": "./dist/portfolio_optimizer/index.js",
+      "default": "./dist/portfolio_optimizer/index.js"
+    },
+    "./postman_api": {
+      "types": "./dist/postman_api/index.d.ts",
+      "import": "./dist/postman_api/index.js",
+      "default": "./dist/postman_api/index.js"
+    },
+    "./powertools_developer": {
+      "types": "./dist/powertools_developer/index.d.ts",
+      "import": "./dist/powertools_developer/index.js",
+      "default": "./dist/powertools_developer/index.js"
+    },
+    "./probely_developers": {
+      "types": "./dist/probely_developers/index.d.ts",
+      "import": "./dist/probely_developers/index.js",
+      "default": "./dist/probely_developers/index.js"
+    },
+    "./ptv_timetable_api_version_3": {
+      "types": "./dist/ptv_timetable_api_version_3/index.d.ts",
+      "import": "./dist/ptv_timetable_api_version_3/index.js",
+      "default": "./dist/ptv_timetable_api_version_3/index.js"
+    },
+    "./public_api": {
+      "types": "./dist/public_api/index.d.ts",
+      "import": "./dist/public_api/index.js",
+      "default": "./dist/public_api/index.js"
+    },
+    "./radio_music_services": {
+      "types": "./dist/radio_music_services/index.d.ts",
+      "import": "./dist/radio_music_services/index.js",
+      "default": "./dist/radio_music_services/index.js"
+    },
+    "./rat_genome_database_rest_api": {
+      "types": "./dist/rat_genome_database_rest_api/index.d.ts",
+      "import": "./dist/rat_genome_database_rest_api/index.js",
+      "default": "./dist/rat_genome_database_rest_api/index.js"
+    },
+    "./rawg_video_games_database_api": {
+      "types": "./dist/rawg_video_games_database_api/index.d.ts",
+      "import": "./dist/rawg_video_games_database_api/index.js",
+      "default": "./dist/rawg_video_games_database_api/index.js"
+    },
+    "./rebilly_rest_api": {
+      "types": "./dist/rebilly_rest_api/index.d.ts",
+      "import": "./dist/rebilly_rest_api/index.js",
+      "default": "./dist/rebilly_rest_api/index.js"
+    },
+    "./rest_api_version_2": {
+      "types": "./dist/rest_api_version_2/index.d.ts",
+      "import": "./dist/rest_api_version_2/index.js",
+      "default": "./dist/rest_api_version_2/index.js"
+    },
+    "./reverb": {
+      "types": "./dist/reverb/index.d.ts",
+      "import": "./dist/reverb/index.js",
+      "default": "./dist/reverb/index.js"
+    },
+    "./rocket_services": {
+      "types": "./dist/rocket_services/index.d.ts",
+      "import": "./dist/rocket_services/index.js",
+      "default": "./dist/rocket_services/index.js"
+    },
+    "./rubrik_rest_api": {
+      "types": "./dist/rubrik_rest_api/index.d.ts",
+      "import": "./dist/rubrik_rest_api/index.js",
+      "default": "./dist/rubrik_rest_api/index.js"
+    },
+    "./rudder_api": {
+      "types": "./dist/rudder_api/index.d.ts",
+      "import": "./dist/rudder_api/index.js",
+      "default": "./dist/rudder_api/index.js"
+    },
+    "./rumble_api_deprecated": {
+      "types": "./dist/rumble_api_deprecated/index.d.ts",
+      "import": "./dist/rumble_api_deprecated/index.js",
+      "default": "./dist/rumble_api_deprecated/index.js"
+    },
+    "./sakari": {
+      "types": "./dist/sakari/index.d.ts",
+      "import": "./dist/sakari/index.js",
+      "default": "./dist/sakari/index.js"
+    },
+    "./salesloft_platform": {
+      "types": "./dist/salesloft_platform/index.d.ts",
+      "import": "./dist/salesloft_platform/index.js",
+      "default": "./dist/salesloft_platform/index.js"
+    },
+    "./schooldigger_api_v2_0": {
+      "types": "./dist/schooldigger_api_v2_0/index.d.ts",
+      "import": "./dist/schooldigger_api_v2_0/index.js",
+      "default": "./dist/schooldigger_api_v2_0/index.js"
+    },
+    "./semantria": {
+      "types": "./dist/semantria/index.d.ts",
+      "import": "./dist/semantria/index.js",
+      "default": "./dist/semantria/index.js"
+    },
+    "./setlist_fm_api": {
+      "types": "./dist/setlist_fm_api/index.d.ts",
+      "import": "./dist/setlist_fm_api/index.js",
+      "default": "./dist/setlist_fm_api/index.js"
+    },
+    "./seven_io_api": {
+      "types": "./dist/seven_io_api/index.d.ts",
+      "import": "./dist/seven_io_api/index.js",
+      "default": "./dist/seven_io_api/index.js"
+    },
+    "./severa_public_rest_api_documentation": {
+      "types": "./dist/severa_public_rest_api_documentation/index.d.ts",
+      "import": "./dist/severa_public_rest_api_documentation/index.js",
+      "default": "./dist/severa_public_rest_api_documentation/index.js"
+    },
+    "./shipengine_api": {
+      "types": "./dist/shipengine_api/index.d.ts",
+      "import": "./dist/shipengine_api/index.js",
+      "default": "./dist/shipengine_api/index.js"
+    },
+    "./shutterstock_api_explorer": {
+      "types": "./dist/shutterstock_api_explorer/index.d.ts",
+      "import": "./dist/shutterstock_api_explorer/index.js",
+      "default": "./dist/shutterstock_api_explorer/index.js"
+    },
+    "./signl4_api": {
+      "types": "./dist/signl4_api/index.d.ts",
+      "import": "./dist/signl4_api/index.js",
+      "default": "./dist/signl4_api/index.js"
+    },
+    "./sinao_api": {
+      "types": "./dist/sinao_api/index.d.ts",
+      "import": "./dist/sinao_api/index.js",
+      "default": "./dist/sinao_api/index.js"
+    },
+    "./slack_web_api": {
+      "types": "./dist/slack_web_api/index.d.ts",
+      "import": "./dist/slack_web_api/index.js",
+      "default": "./dist/slack_web_api/index.js"
+    },
+    "./slicebox_api": {
+      "types": "./dist/slicebox_api/index.d.ts",
+      "import": "./dist/slicebox_api/index.js",
+      "default": "./dist/slicebox_api/index.js"
+    },
+    "./smart_me": {
+      "types": "./dist/smart_me/index.d.ts",
+      "import": "./dist/smart_me/index.js",
+      "default": "./dist/smart_me/index.js"
+    },
+    "./snyk_api": {
+      "types": "./dist/snyk_api/index.d.ts",
+      "import": "./dist/snyk_api/index.js",
+      "default": "./dist/snyk_api/index.js"
+    },
+    "./spacetraders_api": {
+      "types": "./dist/spacetraders_api/index.d.ts",
+      "import": "./dist/spacetraders_api/index.js",
+      "default": "./dist/spacetraders_api/index.js"
+    },
+    "./spoonacular_api": {
+      "types": "./dist/spoonacular_api/index.d.ts",
+      "import": "./dist/spoonacular_api/index.js",
+      "default": "./dist/spoonacular_api/index.js"
+    },
+    "./spotify": {
+      "types": "./dist/spotify/index.d.ts",
+      "import": "./dist/spotify/index.js",
+      "default": "./dist/spotify/index.js"
+    },
+    "./spotify_web_api": {
+      "types": "./dist/spotify_web_api/index.d.ts",
+      "import": "./dist/spotify_web_api/index.js",
+      "default": "./dist/spotify_web_api/index.js"
+    },
+    "./square_connect_api": {
+      "types": "./dist/square_connect_api/index.d.ts",
+      "import": "./dist/square_connect_api/index.js",
+      "default": "./dist/square_connect_api/index.js"
+    },
+    "./stackexchange": {
+      "types": "./dist/stackexchange/index.d.ts",
+      "import": "./dist/stackexchange/index.js",
+      "default": "./dist/stackexchange/index.js"
+    },
+    "./statsocial_platform_api": {
+      "types": "./dist/statsocial_platform_api/index.d.ts",
+      "import": "./dist/statsocial_platform_api/index.js",
+      "default": "./dist/statsocial_platform_api/index.js"
+    },
+    "./storecove_api": {
+      "types": "./dist/storecove_api/index.d.ts",
+      "import": "./dist/storecove_api/index.js",
+      "default": "./dist/storecove_api/index.js"
+    },
+    "./stripe": {
+      "types": "./dist/stripe/index.d.ts",
+      "import": "./dist/stripe/index.js",
+      "default": "./dist/stripe/index.js"
+    },
+    "./stripe_api": {
+      "types": "./dist/stripe_api/index.d.ts",
+      "import": "./dist/stripe_api/index.js",
+      "default": "./dist/stripe_api/index.js"
+    },
+    "./svix_api": {
+      "types": "./dist/svix_api/index.d.ts",
+      "import": "./dist/svix_api/index.js",
+      "default": "./dist/svix_api/index.js"
+    },
+    "./swagger_api2cart": {
+      "types": "./dist/swagger_api2cart/index.d.ts",
+      "import": "./dist/swagger_api2cart/index.js",
+      "default": "./dist/swagger_api2cart/index.js"
+    },
+    "./swaggerhub_registry_api": {
+      "types": "./dist/swaggerhub_registry_api/index.d.ts",
+      "import": "./dist/swaggerhub_registry_api/index.js",
+      "default": "./dist/swaggerhub_registry_api/index.js"
+    },
+    "./swiss_nextgen_banking_api_framework": {
+      "types": "./dist/swiss_nextgen_banking_api_framework/index.d.ts",
+      "import": "./dist/swiss_nextgen_banking_api_framework/index.js",
+      "default": "./dist/swiss_nextgen_banking_api_framework/index.js"
+    },
+    "./taggun_receipt_ocr_scanning_api": {
+      "types": "./dist/taggun_receipt_ocr_scanning_api/index.d.ts",
+      "import": "./dist/taggun_receipt_ocr_scanning_api/index.js",
+      "default": "./dist/taggun_receipt_ocr_scanning_api/index.js"
+    },
+    "./tcgdex_api": {
+      "types": "./dist/tcgdex_api/index.d.ts",
+      "import": "./dist/tcgdex_api/index.js",
+      "default": "./dist/tcgdex_api/index.js"
+    },
+    "./telegram_bot_api": {
+      "types": "./dist/telegram_bot_api/index.d.ts",
+      "import": "./dist/telegram_bot_api/index.js",
+      "default": "./dist/telegram_bot_api/index.js"
+    },
+    "./telnyx_api": {
+      "types": "./dist/telnyx_api/index.d.ts",
+      "import": "./dist/telnyx_api/index.js",
+      "default": "./dist/telnyx_api/index.js"
+    },
+    "./the_blue_alliance_api_v3": {
+      "types": "./dist/the_blue_alliance_api_v3/index.d.ts",
+      "import": "./dist/the_blue_alliance_api_v3/index.js",
+      "default": "./dist/the_blue_alliance_api_v3/index.js"
+    },
+    "./the_plaid_api": {
+      "types": "./dist/the_plaid_api/index.d.ts",
+      "import": "./dist/the_plaid_api/index.js",
+      "default": "./dist/the_plaid_api/index.js"
+    },
+    "./the_racing_api": {
+      "types": "./dist/the_racing_api/index.d.ts",
+      "import": "./dist/the_racing_api/index.js",
+      "default": "./dist/the_racing_api/index.js"
+    },
+    "./the_surevoip_restful_api": {
+      "types": "./dist/the_surevoip_restful_api/index.d.ts",
+      "import": "./dist/the_surevoip_restful_api/index.js",
+      "default": "./dist/the_surevoip_restful_api/index.js"
+    },
+    "./the_water_linked_underwater_gps_api": {
+      "types": "./dist/the_water_linked_underwater_gps_api/index.d.ts",
+      "import": "./dist/the_water_linked_underwater_gps_api/index.js",
+      "default": "./dist/the_water_linked_underwater_gps_api/index.js"
+    },
+    "./they_said_so_quotes_api": {
+      "types": "./dist/they_said_so_quotes_api/index.d.ts",
+      "import": "./dist/they_said_so_quotes_api/index.js",
+      "default": "./dist/they_said_so_quotes_api/index.js"
+    },
+    "./threatjammer_com_user_api": {
+      "types": "./dist/threatjammer_com_user_api/index.d.ts",
+      "import": "./dist/threatjammer_com_user_api/index.js",
+      "default": "./dist/threatjammer_com_user_api/index.js"
+    },
+    "./traccar": {
+      "types": "./dist/traccar/index.d.ts",
+      "import": "./dist/traccar/index.js",
+      "default": "./dist/traccar/index.js"
+    },
+    "./tradematic_cloud_api": {
+      "types": "./dist/tradematic_cloud_api/index.d.ts",
+      "import": "./dist/tradematic_cloud_api/index.js",
+      "default": "./dist/tradematic_cloud_api/index.js"
+    },
+    "./trakt_api": {
+      "types": "./dist/trakt_api/index.d.ts",
+      "import": "./dist/trakt_api/index.js",
+      "default": "./dist/trakt_api/index.js"
+    },
+    "./transport_for_london_unified_api": {
+      "types": "./dist/transport_for_london_unified_api/index.d.ts",
+      "import": "./dist/transport_for_london_unified_api/index.js",
+      "default": "./dist/transport_for_london_unified_api/index.js"
+    },
+    "./trash_nothing": {
+      "types": "./dist/trash_nothing/index.d.ts",
+      "import": "./dist/trash_nothing/index.js",
+      "default": "./dist/trash_nothing/index.js"
+    },
+    "./travel_partner_api": {
+      "types": "./dist/travel_partner_api/index.d.ts",
+      "import": "./dist/travel_partner_api/index.js",
+      "default": "./dist/travel_partner_api/index.js"
+    },
+    "./trello": {
+      "types": "./dist/trello/index.d.ts",
+      "import": "./dist/trello/index.js",
+      "default": "./dist/trello/index.js"
+    },
+    "./turbine_labs_api": {
+      "types": "./dist/turbine_labs_api/index.d.ts",
+      "import": "./dist/turbine_labs_api/index.js",
+      "default": "./dist/turbine_labs_api/index.js"
+    },
+    "./tvmaze_user_api": {
+      "types": "./dist/tvmaze_user_api/index.d.ts",
+      "import": "./dist/tvmaze_user_api/index.js",
+      "default": "./dist/tvmaze_user_api/index.js"
+    },
+    "./uebermaps_api_endpoints": {
+      "types": "./dist/uebermaps_api_endpoints/index.d.ts",
+      "import": "./dist/uebermaps_api_endpoints/index.js",
+      "default": "./dist/uebermaps_api_endpoints/index.js"
+    },
+    "./unicourt_enterprise_apis": {
+      "types": "./dist/unicourt_enterprise_apis/index.d.ts",
+      "import": "./dist/unicourt_enterprise_apis/index.js",
+      "default": "./dist/unicourt_enterprise_apis/index.js"
+    },
+    "./up_api": {
+      "types": "./dist/up_api/index.d.ts",
+      "import": "./dist/up_api/index.js",
+      "default": "./dist/up_api/index.js"
+    },
+    "./vectara_rest_api": {
+      "types": "./dist/vectara_rest_api/index.d.ts",
+      "import": "./dist/vectara_rest_api/index.js",
+      "default": "./dist/vectara_rest_api/index.js"
+    },
+    "./velo_payments_apis": {
+      "types": "./dist/velo_payments_apis/index.d.ts",
+      "import": "./dist/velo_payments_apis/index.js",
+      "default": "./dist/velo_payments_apis/index.js"
+    },
+    "./vercel_api": {
+      "types": "./dist/vercel_api/index.d.ts",
+      "import": "./dist/vercel_api/index.js",
+      "default": "./dist/vercel_api/index.js"
+    },
+    "./vestorly_api": {
+      "types": "./dist/vestorly_api/index.d.ts",
+      "import": "./dist/vestorly_api/index.js",
+      "default": "./dist/vestorly_api/index.js"
+    },
+    "./viator_api_documentation_amp_specification_merchant_partners": {
+      "types": "./dist/viator_api_documentation_amp_specification_merchant_partners/index.d.ts",
+      "import": "./dist/viator_api_documentation_amp_specification_merchant_partners/index.js",
+      "default": "./dist/viator_api_documentation_amp_specification_merchant_partners/index.js"
+    },
+    "./victorops": {
+      "types": "./dist/victorops/index.d.ts",
+      "import": "./dist/victorops/index.js",
+      "default": "./dist/victorops/index.js"
+    },
+    "./visagecloud": {
+      "types": "./dist/visagecloud/index.d.ts",
+      "import": "./dist/visagecloud/index.js",
+      "default": "./dist/visagecloud/index.js"
+    },
+    "./visma_e_conomic_openapi": {
+      "types": "./dist/visma_e_conomic_openapi/index.d.ts",
+      "import": "./dist/visma_e_conomic_openapi/index.js",
+      "default": "./dist/visma_e_conomic_openapi/index.js"
+    },
+    "./wealth_reader_api": {
+      "types": "./dist/wealth_reader_api/index.d.ts",
+      "import": "./dist/wealth_reader_api/index.js",
+      "default": "./dist/wealth_reader_api/index.js"
+    },
+    "./weatherbit_interactive_swagger_ui_documentation": {
+      "types": "./dist/weatherbit_interactive_swagger_ui_documentation/index.d.ts",
+      "import": "./dist/weatherbit_interactive_swagger_ui_documentation/index.js",
+      "default": "./dist/weatherbit_interactive_swagger_ui_documentation/index.js"
+    },
+    "./whatsapp_business_api": {
+      "types": "./dist/whatsapp_business_api/index.d.ts",
+      "import": "./dist/whatsapp_business_api/index.js",
+      "default": "./dist/whatsapp_business_api/index.js"
+    },
+    "./wikimedia": {
+      "types": "./dist/wikimedia/index.d.ts",
+      "import": "./dist/wikimedia/index.js",
+      "default": "./dist/wikimedia/index.js"
+    },
+    "./wowza_streaming_cloud_rest_api_reference_documentation": {
+      "types": "./dist/wowza_streaming_cloud_rest_api_reference_documentation/index.d.ts",
+      "import": "./dist/wowza_streaming_cloud_rest_api_reference_documentation/index.js",
+      "default": "./dist/wowza_streaming_cloud_rest_api_reference_documentation/index.js"
+    },
+    "./xtrf_home_portal_api": {
+      "types": "./dist/xtrf_home_portal_api/index.d.ts",
+      "import": "./dist/xtrf_home_portal_api/index.js",
+      "default": "./dist/xtrf_home_portal_api/index.js"
+    },
+    "./ynab_api_endpoints": {
+      "types": "./dist/ynab_api_endpoints/index.d.ts",
+      "import": "./dist/ynab_api_endpoints/index.js",
+      "default": "./dist/ynab_api_endpoints/index.js"
+    },
+    "./yodlee_core_apis": {
+      "types": "./dist/yodlee_core_apis/index.d.ts",
+      "import": "./dist/yodlee_core_apis/index.js",
+      "default": "./dist/yodlee_core_apis/index.js"
+    },
+    "./zoom_api": {
+      "types": "./dist/zoom_api/index.d.ts",
+      "import": "./dist/zoom_api/index.js",
+      "default": "./dist/zoom_api/index.js"
     }
   }
 }

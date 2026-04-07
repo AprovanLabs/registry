@@ -1,6 +1,8 @@
 import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
+import { parse as parseYaml } from "yaml";
 
+import { getDocumentPathItem } from "./openapi-path.js";
 import type { RegistryProvider } from "./provider.js";
 import { schemaToTypeScriptType } from "./schema.js";
 
@@ -8,6 +10,8 @@ type PublicToolTypes = {
   inputType: string;
   outputType: string;
 };
+
+const OPERATION_METHODS = ["delete", "get", "head", "options", "patch", "post", "put", "trace"] as const;
 
 function isReferenceObject(value: unknown): value is OpenAPIV3.ReferenceObject {
   return Boolean(value && typeof value === "object" && "$ref" in value);
@@ -111,8 +115,7 @@ function getOperation(
     return undefined;
   }
 
-  const pathname = rawUrl.replace(/^https?:\/\/[^/]+/u, "");
-  const pathItem = document.paths?.[pathname];
+  const { pathItem } = getDocumentPathItem(document, rawUrl);
 
   if (!pathItem || !(method in pathItem)) {
     return undefined;
@@ -163,7 +166,7 @@ export async function loadOpenApiDocument(provider: RegistryProvider): Promise<O
   const response = await fetch(provider.url, {
     headers: {
       Accept: provider.content_type ?? "application/json",
-      "User-Agent": "Stitchery/1.0.0",
+      "User-Agent": "UTDK/1.0.0",
     },
   });
 
@@ -171,7 +174,65 @@ export async function loadOpenApiDocument(provider: RegistryProvider): Promise<O
     throw new Error(`Failed to fetch ${provider.name} OpenAPI schema: ${response.status} ${response.statusText}`);
   }
 
-  return JSON.parse(await response.text()) as OpenAPIV3.Document;
+  const rawDocument = await response.text();
+
+  try {
+    return JSON.parse(rawDocument) as OpenAPIV3.Document;
+  } catch (jsonError: unknown) {
+    const parsedDocument = parseYaml(rawDocument);
+
+    if (parsedDocument && typeof parsedDocument === "object") {
+      return parsedDocument as OpenAPIV3.Document;
+    }
+
+    const errorMessage = jsonError instanceof Error ? jsonError.message : String(jsonError);
+    throw new Error(`Failed to parse ${provider.name} OpenAPI schema as JSON or YAML: ${errorMessage}`);
+  }
+}
+
+export function applyProviderOpenApiOptions(
+  document: OpenAPIV3.Document,
+  provider: Pick<RegistryProvider, "options">,
+): OpenAPIV3.Document {
+  const stripPrefix = provider.options?.operations?.stripPrefix?.trim();
+
+  if (!stripPrefix || !document.paths) {
+    return document;
+  }
+
+  const paths = Object.fromEntries(
+    Object.entries(document.paths).map(([path, pathItem]) => {
+      if (!pathItem) {
+        return [path, pathItem];
+      }
+
+      const nextPathItem: OpenAPIV3.PathItemObject = { ...pathItem };
+
+      for (const method of OPERATION_METHODS) {
+        const operation = nextPathItem[method];
+
+        if (!operation || typeof operation !== "object" || !("operationId" in operation)) {
+          continue;
+        }
+
+        if (typeof operation.operationId !== "string" || !operation.operationId.startsWith(stripPrefix)) {
+          continue;
+        }
+
+        nextPathItem[method] = {
+          ...operation,
+          operationId: operation.operationId.slice(stripPrefix.length),
+        };
+      }
+
+      return [path, nextPathItem];
+    }),
+  ) as OpenAPIV3.PathsObject;
+
+  return {
+    ...document,
+    paths,
+  };
 }
 
 export function buildPublicTypeMap(document: OpenAPIV3.Document, tools: Tool[]): Map<string, PublicToolTypes> {

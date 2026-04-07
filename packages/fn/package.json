@@ -1,0 +1,10 @@
+{
+  "name": "@utdk/fn",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Local deterministic utility client.",
+  "keywords": [
+    "functions",
+    "utility"
+  ]
+}

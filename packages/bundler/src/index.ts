@@ -1,17 +1,26 @@
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 
 import {
   DEFAULT_OUTPUT_ROOT,
+  getProviderClientImportPath,
+  getProviderPackageRootName,
   loadRegistryProviders,
   resolveProvider,
   resolveProviderOutputDir,
+  resolveProviderPackageRootDir,
+  splitProviderName,
 } from "./provider.js";
-import { buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
+import { buildClientToolMap } from "./client-api.js";
+import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
 import {
   renderCopyAssetsScript,
+  renderNamespaceEntry,
+  renderNamespacePackageJson,
   renderRootClient,
   renderProviderEntry,
+  renderProviderMetadata,
+  renderProviderPackageJson,
   renderProviderReadme,
   renderProviderTypes,
   renderRootPackageEntry,
@@ -37,18 +46,62 @@ async function writeTextFile(filePath: string, contents: string): Promise<string
   return filePath;
 }
 
+async function readOptionalTextFile(filePath: string): Promise<string | undefined> {
+  try {
+    return await readFile(filePath, "utf8");
+  } catch (error: unknown) {
+    if (typeof error === "object" && error && "code" in error && error.code === "ENOENT") {
+      return undefined;
+    }
+
+    throw error;
+  }
+}
+
 export async function generateRegistryTypes(
   options: GenerateRegistryTypesOptions,
 ): Promise<GenerateRegistryTypesResult> {
   const providers = await loadRegistryProviders();
   const provider = resolveProvider(providers, options.provider);
-  const [{ tools }, openApiDocument] = await Promise.all([loadProviderTools(provider), loadOpenApiDocument(provider)]);
+  const [{ tools }, rawOpenApiDocument] = await Promise.all([loadProviderTools(provider), loadOpenApiDocument(provider)]);
+  const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
   const publicTypeMap = buildPublicTypeMap(openApiDocument, tools);
+  const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
   const outputRoot = options.outputRoot ?? DEFAULT_OUTPUT_ROOT;
   const providerDir = resolveProviderOutputDir(provider.name, outputRoot);
+  const providerPackageRootDir = resolveProviderPackageRootDir(provider.name, outputRoot);
+  const providerPackageJsonPath = path.join(providerPackageRootDir, "package.json");
   const legacyRuntimePath = path.join(providerDir, "runtime.ts");
+  const legacyLeafPackageJsonPath = path.join(providerDir, "package.json");
+  const providerSegments = splitProviderName(provider.name);
+  const providerClientImportPath = getProviderClientImportPath(provider.name);
+  const namespaceProviders = providers.filter(
+    (entry) => getProviderPackageRootName(entry.name) === getProviderPackageRootName(provider.name),
+  );
+  const previousProviderPackageJson = await readOptionalTextFile(providerPackageJsonPath);
 
   await rm(legacyRuntimePath, { force: true });
+
+  if (legacyLeafPackageJsonPath !== providerPackageJsonPath) {
+    await rm(legacyLeafPackageJsonPath, { force: true });
+  }
+
+  const namespaceOutputPaths =
+    providerSegments.length > 1
+      ? await Promise.all([
+          writeTextFile(
+            providerPackageJsonPath,
+            renderNamespacePackageJson(provider.name, namespaceProviders, previousProviderPackageJson),
+          ),
+          ...providerSegments.slice(0, -1).map((_, index) => {
+            const namespaceSegments = providerSegments.slice(0, index + 1);
+            return writeTextFile(
+              path.join(outputRoot, ...namespaceSegments, "index.ts"),
+              renderNamespaceEntry(namespaceSegments, namespaceProviders),
+            );
+          }),
+        ])
+      : [];
 
   const outputPaths = await Promise.all([
     writeTextFile(path.join(outputRoot, "package.json"), renderRootPackageJson(providers)),
@@ -56,10 +109,18 @@ export async function generateRegistryTypes(
     writeTextFile(path.join(outputRoot, "index.ts"), renderRootPackageEntry()),
     writeTextFile(path.join(outputRoot, "client.ts"), renderRootClient()),
     writeTextFile(path.join(outputRoot, "copy-assets.mjs"), renderCopyAssetsScript()),
+    ...(providerSegments.length === 1
+      ? [writeTextFile(providerPackageJsonPath, renderProviderPackageJson(provider, openApiDocument, previousProviderPackageJson))]
+      : []),
     writeTextFile(path.join(providerDir, "README.md"), renderProviderReadme(provider)),
-    writeTextFile(path.join(providerDir, "index.ts"), renderProviderEntry(provider.name)),
-    writeTextFile(path.join(providerDir, "types.ts"), renderProviderTypes(provider.name, tools, publicTypeMap)),
+    writeTextFile(path.join(providerDir, "index.ts"), renderProviderEntry(provider.name, providerClientImportPath)),
+    writeTextFile(path.join(providerDir, "types.ts"), renderProviderTypes(provider, tools, publicTypeMap, clientToolMap)),
+    writeTextFile(
+      path.join(providerDir, "metadata.ts"),
+      renderProviderMetadata(provider, clientToolMap, providerClientImportPath),
+    ),
     writeTextFile(path.join(providerDir, "openapi.json"), JSON.stringify(openApiDocument, null, 2).concat("\n")),
+    ...namespaceOutputPaths,
   ]);
 
   return {

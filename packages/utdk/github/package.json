@@ -1,0 +1,25 @@
+{
+  "name": "@utdk/github",
+  "version": "1.1.4-20260407.1",
+  "type": "module",
+  "description": "Generated UTDK provider client for GitHub v3 REST API. GitHub's v3 REST API.",
+  "homepage": "https://docs.github.com/rest/",
+  "keywords": [
+    "github",
+    "generated",
+    "openapi",
+    "utdk"
+  ],
+  "license": "MIT",
+  "utdk": {
+    "provider": "github",
+    "generation": 1,
+    "generatedAt": "2026-04-07T01:17:39.953Z",
+    "openapi": {
+      "title": "GitHub v3 REST API",
+      "url": "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json",
+      "version": "1.1.4",
+      "termsOfService": "https://docs.github.com/articles/github-terms-of-service"
+    }
+  }
+}
