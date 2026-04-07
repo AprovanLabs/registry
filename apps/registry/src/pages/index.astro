@@ -1,0 +1,94 @@
+---
+import { RegistryBrowser } from "@/components/RegistryBrowser";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getRegistryCatalog } from "@/lib/registry";
+
+const catalog = await getRegistryCatalog();
+const updatedAtLabel = catalog.updatedAt
+  ? new Date(catalog.updatedAt).toLocaleString("en-US", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    })
+  : null;
+---
+
+<BaseLayout title="UTDK Registry">
+  <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
+    <section class="flex flex-col gap-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <Badge>UTDK Registry</Badge>
+        <Badge variant="outline">{catalog.providerCount} APIs</Badge>
+        <Badge variant="secondary">{catalog.namespaceCount} namespaces</Badge>
+        {updatedAtLabel ? <Badge variant="outline">Updated {updatedAtLabel}</Badge> : null}
+      </div>
+      <div class="flex max-w-3xl flex-col gap-3">
+        <h1 class="text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+          Browse every generated UTDK package in one place.
+        </h1>
+        <p class="text-base leading-7 text-muted-foreground sm:text-lg">
+          Open a package, copy its import name, inspect its generated metadata, and read any included docs without leaving the registry.
+        </p>
+      </div>
+    </section>
+
+    <section class="grid gap-4 md:grid-cols-3">
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>Total packages</CardTitle>
+          <CardDescription>Top-level and nested provider entries discovered from <code>packages/utdk/**</code>.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p class="text-3xl font-semibold">{catalog.entries.length}</p>
+        </CardContent>
+      </Card>
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>Documented entries</CardTitle>
+          <CardDescription>Packages with a top-level README or optional generated docs.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p class="text-3xl font-semibold">{catalog.documentedCount}</p>
+        </CardContent>
+      </Card>
+      <Card size="sm">
+        <CardHeader>
+          <CardTitle>Quickstart</CardTitle>
+          <CardDescription>Every package detail page includes copy-ready package and import snippets.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <code class="rounded-md bg-muted px-2 py-1 text-sm">@utdk/github</code>
+        </CardContent>
+      </Card>
+    </section>
+
+    <section class="flex flex-col gap-4">
+      <div class="flex flex-col gap-1">
+        <h2 class="text-2xl font-semibold tracking-tight">Packages</h2>
+        <p class="text-sm text-muted-foreground">
+          Nested providers like <code>google/books</code> appear as their own entries and link back to their parent namespace.
+        </p>
+      </div>
+      <RegistryBrowser
+        client:load
+        entries={catalog.entries.map((entry) => ({
+          kind: entry.kind,
+          providerPath: entry.providerPath,
+          packageName: entry.packageName,
+          title: entry.title,
+          summary: entry.summary,
+          parentProviderPath: entry.parentProviderPath,
+          docsCount: entry.docs.length + (entry.readmeHtml ? 1 : 0),
+          operationCount: entry.operationCount,
+        }))}
+      />
+    </section>
+  </main>
+</BaseLayout>

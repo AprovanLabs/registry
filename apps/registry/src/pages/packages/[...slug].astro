@@ -1,0 +1,386 @@
+---
+import { CopyButton } from "@/components/CopyButton";
+import MarkdownContent from "@/components/MarkdownContent.astro";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import {
+  getDocPage,
+  getRegistryCatalog,
+  getRegistryEntry,
+  getRegistryRoutes,
+} from "@/lib/registry";
+import { withBasePath } from "@/lib/site";
+
+export async function getStaticPaths() {
+  const routes = await getRegistryRoutes();
+
+  return routes.map((route) => ({
+    params: { slug: route.slug.join("/") },
+    props: route,
+  }));
+}
+
+interface Props {
+  providerPath: string;
+  docSlug: string | null;
+}
+
+const { providerPath, docSlug } = Astro.props;
+const [catalog, entry] = await Promise.all([
+  getRegistryCatalog(),
+  getRegistryEntry(providerPath),
+]);
+
+if (!entry) {
+  throw new Error(`Unknown registry entry: ${providerPath}`);
+}
+
+const activeDoc = getDocPage(entry, docSlug);
+const overviewHref = withBasePath(`/packages/${entry.providerPath}`);
+const pageTitle = activeDoc
+  ? `${activeDoc.title} · ${entry.title} · UTDK Registry`
+  : `${entry.title} · UTDK Registry`;
+const generatedAtLabel = entry.generatedAt
+  ? new Date(entry.generatedAt).toLocaleString("en-US", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    })
+  : null;
+const childEntries = entry.childProviderPaths
+  .map((childPath) =>
+    catalog.entries.find((candidate) => candidate.providerPath === childPath),
+  )
+  .filter(
+    (
+      childEntry,
+    ): childEntry is NonNullable<
+      (typeof catalog.entries)[number] | undefined
+    > => Boolean(childEntry),
+  );
+const parentEntry = entry.parentProviderPath
+  ? catalog.entries.find(
+      (candidate) => candidate.providerPath === entry.parentProviderPath,
+    ) ?? null
+  : null;
+---
+
+<BaseLayout
+  description={entry.summary ?? entry.description ?? undefined}
+  title={pageTitle}
+>
+  <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+    <header class="flex flex-col gap-3">
+      <a
+        class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+        href={withBasePath("/")}
+      >
+        UTDK Registry
+      </a>
+      <div class="flex flex-wrap items-center gap-2">
+        <Badge>{entry.kind}</Badge>
+        <Badge variant="outline">{entry.operationCount} operations</Badge>
+        {entry.docs.length > 0 ? (
+          <Badge variant="secondary">{entry.docs.length} docs pages</Badge>
+        ) : null}
+      </div>
+    </header>
+
+    <div class="grid gap-6 xl:grid-cols-[240px_minmax(0,1fr)_260px]">
+      <aside class="hidden xl:block">
+        <Card size="sm">
+          <CardHeader>
+            <CardTitle>All packages</CardTitle>
+            <CardDescription>Browse the current generated catalog.</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-1">
+            {catalog.entries.map((candidate) => {
+              const isActive = candidate.providerPath === entry.providerPath;
+
+              return (
+                <a
+                  class:list={[
+                    "rounded-lg px-2.5 py-2 text-sm transition-colors",
+                    isActive
+                      ? "bg-accent text-accent-foreground"
+                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                  ]}
+                  href={withBasePath(`/packages/${candidate.providerPath}`)}
+                >
+                  <span class="block font-medium">{candidate.title}</span>
+                  <span class="block font-mono text-xs opacity-80">
+                    {candidate.packageName}
+                  </span>
+                </a>
+              );
+            })}
+          </CardContent>
+        </Card>
+      </aside>
+
+      <section class="flex flex-col gap-6">
+        <Card>
+          <CardHeader>
+            <div class="flex flex-wrap items-center gap-2">
+              <Badge variant="outline">{entry.packageName}</Badge>
+              {parentEntry ? (
+                <a
+                  class="inline-flex h-5 items-center rounded-4xl border border-border px-2 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  href={withBasePath(`/packages/${parentEntry.providerPath}`)}
+                >
+                  Parent: {parentEntry.title}
+                </a>
+              ) : null}
+            </div>
+            <CardTitle className="text-3xl">{entry.title}</CardTitle>
+            <CardDescription className="text-base leading-7">
+              {entry.description ??
+                "Generated UTDK package with filesystem-discovered metadata and docs."}
+            </CardDescription>
+            <CardAction className="hidden md:block">
+              <CopyButton client:load idleLabel="Copy package" text={entry.packageName} />
+            </CardAction>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <div class="grid gap-4 lg:grid-cols-2">
+              <div class="rounded-xl border bg-muted/50 p-4">
+                <div class="mb-3 flex items-center justify-between gap-3">
+                  <p class="text-sm font-medium">Import sample</p>
+                  <CopyButton
+                    client:load
+                    idleLabel="Copy"
+                    size="xs"
+                    text={entry.importSample}
+                  />
+                </div>
+                <pre class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><code>{entry.importSample}</code></pre>
+              </div>
+
+              {entry.createClientSample ? (
+                <div class="rounded-xl border bg-muted/50 p-4">
+                  <div class="mb-3 flex items-center justify-between gap-3">
+                    <p class="text-sm font-medium">Factory sample</p>
+                    <CopyButton
+                      client:load
+                      idleLabel="Copy"
+                      size="xs"
+                      text={entry.createClientSample}
+                    />
+                  </div>
+                  <pre class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><code>{entry.createClientSample}</code></pre>
+                </div>
+              ) : (
+                <div class="rounded-xl border bg-muted/50 p-4">
+                  <div class="mb-3 flex items-center justify-between gap-3">
+                    <p class="text-sm font-medium">Package name</p>
+                    <CopyButton
+                      client:load
+                      idleLabel="Copy"
+                      size="xs"
+                      text={entry.packageName}
+                    />
+                  </div>
+                  <pre class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><code>{entry.packageName}</code></pre>
+                </div>
+              )}
+            </div>
+
+            <Separator />
+
+            <dl class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              <div class="flex flex-col gap-1">
+                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Provider path
+                </dt>
+                <dd class="font-mono text-sm">{entry.providerPath}</dd>
+              </div>
+              <div class="flex flex-col gap-1">
+                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  OpenAPI title
+                </dt>
+                <dd class="text-sm">{entry.openApiTitle ?? "Unavailable"}</dd>
+              </div>
+              <div class="flex flex-col gap-1">
+                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Version
+                </dt>
+                <dd class="text-sm">{entry.openApiVersion ?? entry.version ?? "Unavailable"}</dd>
+              </div>
+              <div class="flex flex-col gap-1">
+                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Generated
+                </dt>
+                <dd class="text-sm">{generatedAtLabel ?? "Unavailable"}</dd>
+              </div>
+              <div class="flex flex-col gap-1">
+                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  Homepage
+                </dt>
+                <dd class="text-sm">
+                  {entry.homepage ? (
+                    <a
+                      class="font-medium text-primary underline-offset-4 hover:underline"
+                      href={entry.homepage}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Open site
+                    </a>
+                  ) : (
+                    "Unavailable"
+                  )}
+                </dd>
+              </div>
+              <div class="flex flex-col gap-1">
+                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
+                  OpenAPI source
+                </dt>
+                <dd class="text-sm">
+                  {entry.openApiUrl ? (
+                    <a
+                      class="font-medium text-primary underline-offset-4 hover:underline"
+                      href={entry.openApiUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      View spec
+                    </a>
+                  ) : (
+                    "Unavailable"
+                  )}
+                </dd>
+              </div>
+            </dl>
+          </CardContent>
+        </Card>
+
+        {activeDoc ? (
+          <Card>
+            <CardHeader>
+              <CardTitle>{activeDoc.title}</CardTitle>
+              <CardDescription>
+                Optional generated docs page for <code>{entry.packageName}</code>.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <MarkdownContent html={activeDoc.html} />
+            </CardContent>
+          </Card>
+        ) : (
+          <>
+            {entry.readmeHtml ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>README</CardTitle>
+                  <CardDescription>
+                    Embedded directly from the package source.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MarkdownContent html={entry.readmeHtml} />
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardHeader>
+                  <CardTitle>No README found</CardTitle>
+                  <CardDescription>
+                    This package does not currently include a top-level README.
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            )}
+
+            {childEntries.length ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Child packages</CardTitle>
+                  <CardDescription>
+                    Separate nested APIs available through this parent namespace.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="grid gap-3 sm:grid-cols-2">
+                  {childEntries.map((childEntry) => (
+                    <a
+                      class="rounded-xl border bg-muted/40 p-4 transition-colors hover:bg-muted"
+                      href={withBasePath(`/packages/${childEntry.providerPath}`)}
+                    >
+                      <p class="font-medium">{childEntry.title}</p>
+                      <p class="mt-1 font-mono text-xs text-muted-foreground">
+                        {childEntry.packageName}
+                      </p>
+                    </a>
+                  ))}
+                </CardContent>
+              </Card>
+            ) : null}
+          </>
+        )}
+      </section>
+
+      <aside class="flex flex-col gap-6">
+        <Card size="sm">
+          <CardHeader>
+            <CardTitle>Docs</CardTitle>
+            <CardDescription>
+              README overview plus any generated package docs.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-1">
+            <a
+              class:list={[
+                "rounded-lg px-2.5 py-2 text-sm transition-colors",
+                !activeDoc
+                  ? "bg-accent text-accent-foreground"
+                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
+              ]}
+              href={overviewHref}
+            >
+              Overview
+            </a>
+            {entry.docs.map((doc) => (
+              <a
+                class:list={[
+                  "rounded-lg px-2.5 py-2 text-sm transition-colors",
+                  activeDoc?.slug === doc.slug
+                    ? "bg-accent text-accent-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                ]}
+                href={withBasePath(`/packages/${entry.providerPath}/docs/${doc.slug}`)}
+              >
+                {doc.title}
+              </a>
+            ))}
+          </CardContent>
+        </Card>
+
+        {parentEntry ? (
+          <Card size="sm">
+            <CardHeader>
+              <CardTitle>Parent package</CardTitle>
+              <CardDescription>
+                This nested package belongs to a broader namespace entry.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <a
+                class="rounded-lg border bg-muted/40 px-3 py-2 text-sm font-medium transition-colors hover:bg-muted"
+                href={withBasePath(`/packages/${parentEntry.providerPath}`)}
+              >
+                {parentEntry.title}
+              </a>
+            </CardContent>
+          </Card>
+        ) : null}
+      </aside>
+    </div>
+  </main>
+</BaseLayout>
