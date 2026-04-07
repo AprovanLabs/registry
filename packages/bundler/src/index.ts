@@ -71,20 +71,20 @@ export async function generateRegistryTypes(
   const providerDir = resolveProviderOutputDir(provider.name, outputRoot);
   const providerPackageRootDir = resolveProviderPackageRootDir(provider.name, outputRoot);
   const providerPackageJsonPath = path.join(providerPackageRootDir, "package.json");
+  const providerLeafPackageJsonPath = path.join(providerDir, "package.json");
   const legacyRuntimePath = path.join(providerDir, "runtime.ts");
-  const legacyLeafPackageJsonPath = path.join(providerDir, "package.json");
   const providerSegments = splitProviderName(provider.name);
   const providerClientImportPath = getProviderClientImportPath(provider.name);
   const namespaceProviders = providers.filter(
     (entry) => getProviderPackageRootName(entry.name) === getProviderPackageRootName(provider.name),
   );
   const previousProviderPackageJson = await readOptionalTextFile(providerPackageJsonPath);
+  const previousLeafPackageJson =
+    providerLeafPackageJsonPath === providerPackageJsonPath
+      ? previousProviderPackageJson
+      : await readOptionalTextFile(providerLeafPackageJsonPath);
 
   await rm(legacyRuntimePath, { force: true });
-
-  if (legacyLeafPackageJsonPath !== providerPackageJsonPath) {
-    await rm(legacyLeafPackageJsonPath, { force: true });
-  }
 
   const namespaceOutputPaths =
     providerSegments.length > 1
@@ -111,7 +111,14 @@ export async function generateRegistryTypes(
     writeTextFile(path.join(outputRoot, "copy-assets.mjs"), renderCopyAssetsScript()),
     ...(providerSegments.length === 1
       ? [writeTextFile(providerPackageJsonPath, renderProviderPackageJson(provider, openApiDocument, previousProviderPackageJson))]
-      : []),
+      : [
+          writeTextFile(
+            providerLeafPackageJsonPath,
+            renderProviderPackageJson(provider, openApiDocument, previousLeafPackageJson, undefined, {
+              includePackageName: false,
+            }),
+          ),
+        ]),
     writeTextFile(path.join(providerDir, "README.md"), renderProviderReadme(provider)),
     writeTextFile(path.join(providerDir, "index.ts"), renderProviderEntry(provider.name, providerClientImportPath)),
     writeTextFile(path.join(providerDir, "types.ts"), renderProviderTypes(provider, tools, publicTypeMap, clientToolMap)),

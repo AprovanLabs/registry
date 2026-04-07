@@ -15,6 +15,14 @@
     "provider": "github",
     "generation": 1,
     "generatedAt": "2026-04-07T01:17:39.953Z",
+    "auth": [
+      {
+        "auth_type": "api_key",
+        "api_key": "Bearer ${GITHUB_TOKEN}",
+        "var_name": "Authorization",
+        "location": "header"
+      }
+    ],
     "openapi": {
       "title": "GitHub v3 REST API",
       "url": "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json",

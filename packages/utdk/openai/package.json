@@ -15,6 +15,14 @@
     "provider": "openai",
     "generation": 1,
     "generatedAt": "2026-04-07T01:17:59.813Z",
+    "auth": [
+      {
+        "auth_type": "api_key",
+        "api_key": "Bearer ${OPENAI_API_KEY}",
+        "var_name": "Authorization",
+        "location": "header"
+      }
+    ],
     "openapi": {
       "title": "OpenAI API",
       "url": "https://raw.githubusercontent.com/openai/openai-openapi/refs/heads/manual_spec/openapi.yaml",

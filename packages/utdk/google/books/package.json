@@ -1,0 +1,41 @@
+{
+  "private": true,
+  "version": "1.0.0-20260407.1",
+  "type": "module",
+  "description": "Generated UTDK provider client for Books API. The Google Books API allows clients to access the Google Books repository.",
+  "homepage": "https://code.google.com/apis/books/docs/v1/getting_started.html",
+  "keywords": [
+    "google/books",
+    "generated",
+    "openapi",
+    "utdk"
+  ],
+  "license": "Creative Commons Attribution 3.0",
+  "utdk": {
+    "provider": "google/books",
+    "generation": 1,
+    "generatedAt": "2026-04-07T02:25:39.564Z",
+    "auth": [
+      {
+        "auth_type": "oauth2",
+        "flow": "implicit",
+        "client_id": "${CLIENT_ID}",
+        "authorization_url": "https://accounts.google.com/o/oauth2/auth"
+      },
+      {
+        "auth_type": "oauth2",
+        "flow": "authorization_code",
+        "client_id": "${CLIENT_ID}",
+        "client_secret": "${CLIENT_SECRET}",
+        "authorization_url": "https://accounts.google.com/o/oauth2/auth",
+        "token_url": "https://accounts.google.com/o/oauth2/token"
+      }
+    ],
+    "openapi": {
+      "title": "Books API",
+      "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/refs/heads/main/APIs/googleapis.com/books/v1/openapi.yaml",
+      "version": "v1",
+      "termsOfService": "https://developers.google.com/terms/"
+    }
+  }
+}

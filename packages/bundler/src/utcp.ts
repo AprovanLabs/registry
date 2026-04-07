@@ -1,7 +1,7 @@
 import { HttpCallTemplateSerializer } from "@utcp/http";
 import { UtcpClient, UtcpClientConfigSerializer, type Tool } from "@utcp/sdk";
 
-import type { RegistryProvider } from "./provider.js";
+import { getPrimaryProviderAuthOption, type RegistryProvider } from "./provider.js";
 
 export type LoadedProviderTools = {
   tools: Tool[];
@@ -9,6 +9,7 @@ export type LoadedProviderTools = {
 
 export async function loadProviderTools(provider: RegistryProvider): Promise<LoadedProviderTools> {
   const serializer = new HttpCallTemplateSerializer();
+  const auth = getPrimaryProviderAuthOption(provider.options);
   const config = new UtcpClientConfigSerializer().validateDict({
     manual_call_templates: [
       serializer.validateDict({
@@ -17,6 +18,7 @@ export async function loadProviderTools(provider: RegistryProvider): Promise<Loa
         http_method: provider.http_method ?? "GET",
         url: provider.url,
         content_type: provider.content_type ?? "application/json",
+        ...(auth ? { auth } : {}),
       }),
     ],
   });

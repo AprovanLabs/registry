@@ -11,7 +11,10 @@ export type RegistryProvider = {
   content_type?: string;
 };
 
+export type RegistryProviderAuthOption = Record<string, unknown>;
+
 export type RegistryProviderOptions = {
+  auth?: RegistryProviderAuthOption | RegistryProviderAuthOption[];
   operations?: RegistryProviderOperationsOptions;
 };
 
@@ -54,6 +57,24 @@ export function getProviderPackageName(providerName: string): string {
 
 export function getProviderClientImportPath(providerName: string): string {
   return `${"../".repeat(splitProviderName(providerName).length)}client.js`;
+}
+
+export function getPrimaryProviderAuthOption(
+  providerOptions?: RegistryProviderOptions,
+): RegistryProviderAuthOption | undefined {
+  return getProviderAuthOptions(providerOptions)[0];
+}
+
+export function getProviderAuthOptions(
+  providerOptions?: RegistryProviderOptions,
+): RegistryProviderAuthOption[] {
+  const auth = providerOptions?.auth;
+
+  if (!auth) {
+    return [];
+  }
+
+  return Array.isArray(auth) ? auth : [auth];
 }
 
 function getProviderToolPrefixes(providerName: string): string[] {

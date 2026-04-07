@@ -3747,6 +3747,16 @@
     "http_method": "GET",
     "url": "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json",
     "content_type": "application/json",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${GITHUB_TOKEN}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
     "metadata": {
       "description": "GitHub's REST API allows you to create integrations, retrieve data, and automate your workflows. Access repositories, issues, pull requests, users, and more",
       "category": "Development Tools",
@@ -3793,13 +3803,52 @@
     "name": "datadog",
     "call_template_type": "http",
     "url": "https://raw.githubusercontent.com/DataDog/datadog-api-client-python/refs/heads/master/.generator/schemas/v2/openapi.yaml",
-    "http_method": "GET"
+    "http_method": "GET",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "${DD_API_KEY}",
+          "var_name": "DD-API-KEY",
+          "location": "header"
+        },
+        {
+          "auth_type": "api_key",
+          "api_key": "${DD_APP_KEY}",
+          "var_name": "DD-APPLICATION-KEY",
+          "location": "header"
+        },
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${DD_BEARER_TOKEN}",
+          "var_name": "Authorization",
+          "location": "header"
+        },
+        {
+          "auth_type": "oauth2",
+          "client_id": "${CLIENT_ID}",
+          "client_secret": "${CLIENT_SECRET}",
+          "authorization_url": "/oauth2/v1/authorize",
+          "token_url": "/oauth2/v1/token"
+        }
+      ]
+    }
   },
   {
     "name": "openai",
     "call_template_type": "http",
     "url": "https://raw.githubusercontent.com/openai/openai-openapi/refs/heads/manual_spec/openapi.yaml",
-    "http_method": "GET"
+    "http_method": "GET",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${OPENAI_API_KEY}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    }
   },
   {
     "name": "google/books",
@@ -3807,6 +3856,22 @@
     "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/refs/heads/main/APIs/googleapis.com/books/v1/openapi.yaml",
     "http_method": "GET",
     "options": {
+      "auth": [
+        {
+          "auth_type": "oauth2",
+          "flow": "implicit",
+          "client_id": "${CLIENT_ID}",
+          "authorization_url": "https://accounts.google.com/o/oauth2/auth"
+        },
+        {
+          "auth_type": "oauth2",
+          "flow": "authorization_code",
+          "client_id": "${CLIENT_ID}",
+          "client_secret": "${CLIENT_SECRET}",
+          "authorization_url": "https://accounts.google.com/o/oauth2/auth",
+          "token_url": "https://accounts.google.com/o/oauth2/token"
+        }
+      ],
       "operations": {
         "stripPrefix": "books."
       }

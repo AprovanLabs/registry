@@ -6,7 +6,6 @@ on:
     paths:
       - "apps/registry/**"
       - "packages/utdk/**"
-      - "pnpm-lock.yaml"
       - "pnpm-workspace.yaml"
       - "package.json"
       - "turbo.json"
@@ -37,13 +36,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: pnpm
 
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install
 
       - name: Build registry app
         run: pnpm --filter @aprovan/registry-ui build

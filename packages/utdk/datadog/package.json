@@ -14,6 +14,33 @@
     "provider": "datadog",
     "generation": 1,
     "generatedAt": "2026-04-07T01:20:22.841Z",
+    "auth": [
+      {
+        "auth_type": "api_key",
+        "api_key": "${DD_API_KEY}",
+        "var_name": "DD-API-KEY",
+        "location": "header"
+      },
+      {
+        "auth_type": "api_key",
+        "api_key": "${DD_APP_KEY}",
+        "var_name": "DD-APPLICATION-KEY",
+        "location": "header"
+      },
+      {
+        "auth_type": "api_key",
+        "api_key": "Bearer ${DD_BEARER_TOKEN}",
+        "var_name": "Authorization",
+        "location": "header"
+      },
+      {
+        "auth_type": "oauth2",
+        "client_id": "${CLIENT_ID}",
+        "client_secret": "${CLIENT_SECRET}",
+        "authorization_url": "/oauth2/v1/authorize",
+        "token_url": "/oauth2/v1/token"
+      }
+    ],
     "openapi": {
       "title": "Datadog API V2 Collection",
       "url": "https://raw.githubusercontent.com/DataDog/datadog-api-client-python/refs/heads/master/.generator/schemas/v2/openapi.yaml",

@@ -7,6 +7,7 @@ import {
   renderNamespaceEntry,
   renderNamespacePackageJson,
   renderProviderMetadata,
+  renderProviderPackageJson,
   renderProviderTypes,
   renderRootPackageJson,
 } from "./render.js";
@@ -226,5 +227,74 @@ describe("nested provider rendering", () => {
     expect(rendered).toContain('"volumes/list"');
     expect(rendered).not.toContain('"books.volumes/list"');
     expect(rendered).toContain('"../../client.js"');
+  });
+
+  it("includes provider auth metadata in package json utdk metadata", () => {
+    const rendered = renderProviderPackageJson(
+      {
+        name: "openai",
+        url: "https://example.com/openapi.json",
+        options: {
+          auth: {
+            auth_type: "api_key",
+            api_key: "Bearer ${OPENAI_API_KEY}",
+            var_name: "Authorization",
+            location: "header",
+          },
+        },
+      },
+      {
+        openapi: "3.0.0",
+        info: {
+          title: "OpenAI API",
+          version: "1.0.0",
+        },
+      } as never,
+      undefined,
+      new Date("2026-04-07T00:00:00.000Z"),
+    );
+
+    expect(rendered).toContain('"provider": "openai"');
+    expect(rendered).toContain('"auth": [');
+    expect(rendered).toContain('"auth_type": "api_key"');
+    expect(rendered).toContain('"var_name": "Authorization"');
+  });
+
+  it("renders a leaf package json for nested providers", () => {
+    const rendered = renderProviderPackageJson(
+      {
+        name: "google/books",
+        url: "https://example.com/google-books.json",
+        options: {
+          auth: [
+            {
+              auth_type: "oauth2",
+              flow: "authorization_code",
+              client_id: "${CLIENT_ID}",
+              client_secret: "${CLIENT_SECRET}",
+              authorization_url: "https://accounts.google.com/o/oauth2/auth",
+              token_url: "https://accounts.google.com/o/oauth2/token",
+            },
+          ],
+        },
+      },
+      {
+        openapi: "3.0.0",
+        info: {
+          title: "Google Books",
+          version: "1.0.0",
+        },
+      } as never,
+      undefined,
+      new Date("2026-04-07T00:00:00.000Z"),
+      {
+        includePackageName: false,
+      },
+    );
+
+    expect(rendered).toContain('"private": true');
+    expect(rendered).not.toContain('"name": "@utdk/google/books"');
+    expect(rendered).toContain('"provider": "google/books"');
+    expect(rendered).toContain('"auth": [');
   });
 });

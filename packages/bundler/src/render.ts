@@ -6,6 +6,7 @@ import type { OpenAPIV3 } from "openapi-types";
 import type { ClientToolDefinition, ToolRuntimeMetadata } from "./client-api.js";
 import type { RegistryProvider } from "./provider.js";
 import {
+  getProviderAuthOptions,
   getProviderPackageName,
   getProviderPackageRootName,
   normalizeProviderName,
@@ -478,7 +479,11 @@ export function renderProviderPackageJson(
   openApiDocument: OpenAPIV3.Document,
   previousPackageJson?: string,
   generatedAt: Date = new Date(),
+  options: {
+    includePackageName?: boolean;
+  } = {},
 ): string {
+  const includePackageName = options.includePackageName ?? true;
   const sourceVersion = getNonEmptyString(openApiDocument.info?.version);
   const baseVersion = normalizePackageBaseVersion(sourceVersion);
   const dateStamp = formatVersionDate(generatedAt);
@@ -493,9 +498,10 @@ export function renderProviderPackageJson(
     getNonEmptyString(openApiDocument.externalDocs?.url) ??
     getNonEmptyString(openApiDocument.info?.contact?.url) ??
     provider.url;
+  const auth = getProviderAuthOptions(provider.options);
 
   const packageJson = {
-    name: `@utdk/${provider.name}`,
+    ...(includePackageName ? { name: `@utdk/${provider.name}` } : { private: true }),
     version: `${baseVersion}-${dateStamp}.${generation}`,
     type: "module",
     description: packageDescription,
@@ -506,6 +512,7 @@ export function renderProviderPackageJson(
       provider: provider.name,
       generation,
       generatedAt: generatedAt.toISOString(),
+      auth,
       openapi: {
         title,
         url: provider.url,

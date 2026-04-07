@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  getPrimaryProviderAuthOption,
   getProviderClientImportPath,
   getProviderPackageName,
   normalizeProviderName,
@@ -35,5 +36,23 @@ describe("provider naming helpers", () => {
         },
       }),
     ).toBe("volumes.list");
+  });
+
+  it("preserves the first configured auth method for UTCP discovery", () => {
+    const apiKeyAuth = {
+      auth_type: "api_key",
+      api_key: "${OPENAI_API_KEY}",
+      var_name: "Authorization",
+      location: "header",
+    };
+    const oauthAuth = {
+      auth_type: "oauth2",
+      client_id: "${CLIENT_ID}",
+      client_secret: "${CLIENT_SECRET}",
+      token_url: "https://accounts.example.com/token",
+    };
+
+    expect(getPrimaryProviderAuthOption({ auth: apiKeyAuth })).toEqual(apiKeyAuth);
+    expect(getPrimaryProviderAuthOption({ auth: [apiKeyAuth, oauthAuth] })).toEqual(apiKeyAuth);
   });
 });
