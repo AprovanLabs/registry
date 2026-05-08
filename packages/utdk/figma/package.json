@@ -1,6 +1,6 @@
 {
   "name": "@utdk/figma",
-  "version": "0.37.0-20260407.1",
+  "version": "0.37.0-20260408.5",
   "type": "module",
   "description": "Generated UTDK provider client for Figma API. This is the OpenAPI specification for the [Figma REST API](https://www.figma.com/developers/api).\n\nNote: we are releasing the OpenAPI specification as a beta given the large surface area and complexity of the REST API. If you notice any inaccuracies with the specification, please [file an issue](https://github.com/figma/rest-api-spec/issues).",
   "homepage": "https://www.figma.com/developers/api",
@@ -12,13 +12,23 @@
   ],
   "utdk": {
     "provider": "figma",
-    "generation": 1,
-    "generatedAt": "2026-04-07T01:40:08.874Z",
+    "generation": 5,
+    "generatedAt": "2026-04-08T15:35:29.048Z",
+    "auth": [],
     "openapi": {
       "title": "Figma API",
       "url": "https://raw.githubusercontent.com/figma/rest-api-spec/main/openapi/openapi.yaml",
       "version": "0.37.0",
       "termsOfService": "https://www.figma.com/developer-terms/"
+    },
+    "docs": {
+      "manifestPath": "/Users/jsampson/Documents/JacobSampson/registry/.registry/figma/manifest.json",
+      "indexPath": "/Users/jsampson/Documents/JacobSampson/registry/.registry/figma/index.md",
+      "docsPath": "/Users/jsampson/Documents/JacobSampson/registry/packages/utdk/figma/docs",
+      "generatedAt": "2026-04-08T15:35:29.042Z",
+      "sourceCount": 2,
+      "openApiHash": "c79ab62edb7cedfd62a719a8c4765844557bbbe1c5a6519da610f3fd11817e72",
+      "promptHash": "8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8"
     }
   }
 }

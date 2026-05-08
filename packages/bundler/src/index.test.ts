@@ -93,7 +93,7 @@ describe("docs CLI integration flow", () => {
       utdk?: { docs?: { manifestPath?: string; promptHash?: string } };
     };
 
-    expect(readme).toContain("Generated UTDK provider docs");
+    expect(readme).toContain("## Capability guides");
     expect(packageJson.utdk?.docs?.manifestPath).toContain("manifest.json");
     expect(packageJson.utdk?.docs?.promptHash).toMatch(/^[a-f0-9]{64}$/);
   });

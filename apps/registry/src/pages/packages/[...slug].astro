@@ -1,5 +1,6 @@
 ---
 import { CopyButton } from "@/components/CopyButton";
+import MarkdownInline from "@/components/MarkdownInline.astro";
 import MarkdownContent from "@/components/MarkdownContent.astro";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -142,8 +143,12 @@ const parentEntry = entry.parentProviderPath
             </div>
             <CardTitle className="text-3xl">{entry.title}</CardTitle>
             <CardDescription className="text-base leading-7">
-              {entry.description ??
-                "Generated UTDK package with filesystem-discovered metadata and docs."}
+              {entry.descriptionHtml ? (
+                <MarkdownInline html={entry.descriptionHtml} />
+              ) : (
+                entry.description ??
+                "Generated UTDK package with filesystem-discovered metadata and docs."
+              )}
             </CardDescription>
             <CardAction className="hidden md:block">
               <CopyButton client:load idleLabel="Copy package" text={entry.packageName} />

@@ -94,11 +94,15 @@ export async function augmentRegistryProviderDocs(
   const outputRoot = options.outputRoot ?? DEFAULT_OUTPUT_ROOT;
   const providers = await loadRegistryProviders();
   const provider = resolveProvider(providers, options.provider);
-  const rawOpenApiDocument = await loadOpenApiDocument(provider);
+  const [rawOpenApiDocument, { tools }] = await Promise.all([loadOpenApiDocument(provider), loadProviderTools(provider)]);
   const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
+  const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
   const augmented = await augmentProviderDocs({
     provider: provider.name,
+    providerOptions: provider.options,
     openApiDocument,
+    tools,
+    clientToolMap,
     docsCacheRoot,
     outputRoot,
     overwriteDocs: options.overwriteDocs,

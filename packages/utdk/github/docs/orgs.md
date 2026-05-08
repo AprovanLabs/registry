@@ -1,0 +1,116 @@
+# Orgs
+
+Generated from OpenAPI operation grouping.
+
+- `GET /organizations`: List organizations
+- `DELETE /orgs/{org}`: Delete an organization
+- `GET /orgs/{org}`: Get an organization
+- `PATCH /orgs/{org}`: Update an organization
+- `POST /orgs/{org}/{security_product}/{enablement}`: Enable or disable a security feature for an organization
+- `GET /orgs/{org}/artifacts/{subject_digest}/metadata/deployment-records`: List artifact deployment records
+- `GET /orgs/{org}/artifacts/{subject_digest}/metadata/storage-records`: List artifact storage records
+- `POST /orgs/{org}/artifacts/metadata/deployment-record`: Create an artifact deployment record
+- `POST /orgs/{org}/artifacts/metadata/deployment-record/cluster/{cluster}`: Set cluster deployment records
+- `POST /orgs/{org}/artifacts/metadata/storage-record`: Create artifact metadata storage record
+- `DELETE /orgs/{org}/attestations/{attestation_id}`: Delete attestations by ID
+- `GET /orgs/{org}/attestations/{subject_digest}`: List attestations
+- `POST /orgs/{org}/attestations/bulk-list`: List attestations by bulk subject digests
+- `POST /orgs/{org}/attestations/delete-request`: Delete attestations in bulk
+- `DELETE /orgs/{org}/attestations/digest/{subject_digest}`: Delete attestations by subject digest
+- `GET /orgs/{org}/attestations/repositories`: List attestation repositories
+- `GET /orgs/{org}/blocks`: List users blocked by an organization
+- `DELETE /orgs/{org}/blocks/{username}`: Unblock a user from an organization
+- `GET /orgs/{org}/blocks/{username}`: Check if a user is blocked by an organization
+- `PUT /orgs/{org}/blocks/{username}`: Block a user from an organization
+- `GET /orgs/{org}/failed_invitations`: List failed organization invitations
+- `GET /orgs/{org}/hooks`: List organization webhooks
+- `POST /orgs/{org}/hooks`: Create an organization webhook
+- `DELETE /orgs/{org}/hooks/{hook_id}`: Delete an organization webhook
+- `GET /orgs/{org}/hooks/{hook_id}`: Get an organization webhook
+- `PATCH /orgs/{org}/hooks/{hook_id}`: Update an organization webhook
+- `GET /orgs/{org}/hooks/{hook_id}/config`: Get a webhook configuration for an organization
+- `PATCH /orgs/{org}/hooks/{hook_id}/config`: Update a webhook configuration for an organization
+- `GET /orgs/{org}/hooks/{hook_id}/deliveries`: List deliveries for an organization webhook
+- `GET /orgs/{org}/hooks/{hook_id}/deliveries/{delivery_id}`: Get a webhook delivery for an organization webhook
+- `POST /orgs/{org}/hooks/{hook_id}/deliveries/{delivery_id}/attempts`: Redeliver a delivery for an organization webhook
+- `POST /orgs/{org}/hooks/{hook_id}/pings`: Ping an organization webhook
+- `GET /orgs/{org}/insights/api/route-stats/{actor_type}/{actor_id}`: Get route stats by actor
+- `GET /orgs/{org}/insights/api/subject-stats`: Get subject stats
+- `GET /orgs/{org}/insights/api/summary-stats`: Get summary stats
+- `GET /orgs/{org}/insights/api/summary-stats/{actor_type}/{actor_id}`: Get summary stats by actor
+- `GET /orgs/{org}/insights/api/summary-stats/users/{user_id}`: Get summary stats by user
+- `GET /orgs/{org}/insights/api/time-stats`: Get time stats
+- `GET /orgs/{org}/insights/api/time-stats/{actor_type}/{actor_id}`: Get time stats by actor
+- `GET /orgs/{org}/insights/api/time-stats/users/{user_id}`: Get time stats by user
+- `GET /orgs/{org}/insights/api/user-stats/{user_id}`: Get user stats
+- `GET /orgs/{org}/installations`: List app installations for an organization
+- `GET /orgs/{org}/invitations`: List pending organization invitations
+- `POST /orgs/{org}/invitations`: Create an organization invitation
+- `DELETE /orgs/{org}/invitations/{invitation_id}`: Cancel an organization invitation
+- `GET /orgs/{org}/invitations/{invitation_id}/teams`: List organization invitation teams
+- `GET /orgs/{org}/issue-fields`: List issue fields for an organization
+- `POST /orgs/{org}/issue-fields`: Create issue field for an organization
+- `DELETE /orgs/{org}/issue-fields/{issue_field_id}`: Delete issue field for an organization
+- `PATCH /orgs/{org}/issue-fields/{issue_field_id}`: Update issue field for an organization
+- `GET /orgs/{org}/issue-types`: List issue types for an organization
+- `POST /orgs/{org}/issue-types`: Create issue type for an organization
+- `DELETE /orgs/{org}/issue-types/{issue_type_id}`: Delete issue type for an organization
+- `PUT /orgs/{org}/issue-types/{issue_type_id}`: Update issue type for an organization
+- `GET /orgs/{org}/members`: List organization members
+- `DELETE /orgs/{org}/members/{username}`: Remove an organization member
+- `GET /orgs/{org}/members/{username}`: Check organization membership for a user
+- `DELETE /orgs/{org}/memberships/{username}`: Remove organization membership for a user
+- `GET /orgs/{org}/memberships/{username}`: Get organization membership for a user
+- `PUT /orgs/{org}/memberships/{username}`: Set organization membership for a user
+- `GET /orgs/{org}/organization-roles`: Get all organization roles for an organization
+- `GET /orgs/{org}/organization-roles/{role_id}`: Get an organization role
+- `GET /orgs/{org}/organization-roles/{role_id}/teams`: List teams that are assigned to an organization role
+- `GET /orgs/{org}/organization-roles/{role_id}/users`: List users that are assigned to an organization role
+- `DELETE /orgs/{org}/organization-roles/teams/{team_slug}`: Remove all organization roles for a team
+- `DELETE /orgs/{org}/organization-roles/teams/{team_slug}/{role_id}`: Remove an organization role from a team
+- `PUT /orgs/{org}/organization-roles/teams/{team_slug}/{role_id}`: Assign an organization role to a team
+- `DELETE /orgs/{org}/organization-roles/users/{username}`: Remove all organization roles for a user
+- `DELETE /orgs/{org}/organization-roles/users/{username}/{role_id}`: Remove an organization role from a user
+- `PUT /orgs/{org}/organization-roles/users/{username}/{role_id}`: Assign an organization role to a user
+- `GET /orgs/{org}/outside_collaborators`: List outside collaborators for an organization
+- `DELETE /orgs/{org}/outside_collaborators/{username}`: Remove outside collaborator from an organization
+- `PUT /orgs/{org}/outside_collaborators/{username}`: Convert an organization member to outside collaborator
+- `GET /orgs/{org}/personal-access-token-requests`: List requests to access organization resources with fine-grained personal access tokens
+- `POST /orgs/{org}/personal-access-token-requests`: Review requests to access organization resources with fine-grained personal access tokens
+- `POST /orgs/{org}/personal-access-token-requests/{pat_request_id}`: Review a request to access organization resources with a fine-grained personal access token
+- `GET /orgs/{org}/personal-access-token-requests/{pat_request_id}/repositories`: List repositories requested to be accessed by a fine-grained personal access token
+- `GET /orgs/{org}/personal-access-tokens`: List fine-grained personal access tokens with access to organization resources
+- `POST /orgs/{org}/personal-access-tokens`: Update the access to organization resources via fine-grained personal access tokens
+- `POST /orgs/{org}/personal-access-tokens/{pat_id}`: Update the access a fine-grained personal access token has to organization resources
+- `GET /orgs/{org}/personal-access-tokens/{pat_id}/repositories`: List repositories a fine-grained personal access token has access to
+- `GET /orgs/{org}/properties/schema`: Get all custom properties for an organization
+- `PATCH /orgs/{org}/properties/schema`: Create or update custom properties for an organization
+- `DELETE /orgs/{org}/properties/schema/{custom_property_name}`: Remove a custom property for an organization
+- `GET /orgs/{org}/properties/schema/{custom_property_name}`: Get a custom property for an organization
+- `PUT /orgs/{org}/properties/schema/{custom_property_name}`: Create or update a custom property for an organization
+- `GET /orgs/{org}/properties/values`: List custom property values for organization repositories
+- `PATCH /orgs/{org}/properties/values`: Create or update custom property values for organization repositories
+- `GET /orgs/{org}/public_members`: List public organization members
+- `DELETE /orgs/{org}/public_members/{username}`: Remove public organization membership for the authenticated user
+- `GET /orgs/{org}/public_members/{username}`: Check public organization membership for a user
+- `PUT /orgs/{org}/public_members/{username}`: Set public organization membership for the authenticated user
+- `GET /orgs/{org}/rulesets/{ruleset_id}/history`: Get organization ruleset history
+- `GET /orgs/{org}/rulesets/{ruleset_id}/history/{version_id}`: Get organization ruleset version
+- `GET /orgs/{org}/security-managers`: List security manager teams
+- `DELETE /orgs/{org}/security-managers/teams/{team_slug}`: Remove a security manager team
+- `PUT /orgs/{org}/security-managers/teams/{team_slug}`: Add a security manager team
+- `GET /orgs/{org}/settings/immutable-releases`: Get immutable releases settings for an organization
+- `PUT /orgs/{org}/settings/immutable-releases`: Set immutable releases settings for an organization
+- `GET /orgs/{org}/settings/immutable-releases/repositories`: List selected repositories for immutable releases enforcement
+- `PUT /orgs/{org}/settings/immutable-releases/repositories`: Set selected repositories for immutable releases enforcement
+- `DELETE /orgs/{org}/settings/immutable-releases/repositories/{repository_id}`: Disable a selected repository for immutable releases in an organization
+- `PUT /orgs/{org}/settings/immutable-releases/repositories/{repository_id}`: Enable a selected repository for immutable releases in an organization
+- `GET /user/memberships/orgs`: List organization memberships for the authenticated user
+- `GET /user/memberships/orgs/{org}`: Get an organization membership for the authenticated user
+- `PATCH /user/memberships/orgs/{org}`: Update an organization membership for the authenticated user
+- `GET /user/orgs`: List organizations for the authenticated user
+- `GET /users/{username}/orgs`: List organizations for a user
+
+<!-- prompt-hash:
+8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8
+-->

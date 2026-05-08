@@ -1,6 +1,6 @@
 {
   "name": "@utdk/github",
-  "version": "1.1.4-20260407.1",
+  "version": "1.1.4-20260407.6",
   "type": "module",
   "description": "Generated UTDK provider client for GitHub v3 REST API. GitHub's v3 REST API.",
   "homepage": "https://docs.github.com/rest/",
@@ -13,8 +13,8 @@
   "license": "MIT",
   "utdk": {
     "provider": "github",
-    "generation": 1,
-    "generatedAt": "2026-04-07T01:17:39.953Z",
+    "generation": 6,
+    "generatedAt": "2026-04-07T04:02:54.394Z",
     "auth": [
       {
         "auth_type": "api_key",
@@ -28,6 +28,15 @@
       "url": "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.json",
       "version": "1.1.4",
       "termsOfService": "https://docs.github.com/articles/github-terms-of-service"
+    },
+    "docs": {
+      "manifestPath": "/Users/jsampson/Documents/JacobSampson/registry/.registry/github/manifest.json",
+      "indexPath": "/Users/jsampson/Documents/JacobSampson/registry/.registry/github/index.md",
+      "docsPath": "/Users/jsampson/Documents/JacobSampson/registry/packages/utdk/github/docs",
+      "generatedAt": "2026-04-07T04:02:54.389Z",
+      "sourceCount": 4,
+      "openApiHash": "3736868a9b938a6d39d506948190b54333425248a5dd0836fcddf67c54132c95",
+      "promptHash": "8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8"
     }
   }
 }

@@ -1,0 +1,192 @@
+# Actions
+
+Generated from OpenAPI operation grouping.
+
+- `GET /enterprises/{enterprise}/actions/cache/retention-limit`: Get GitHub Actions cache retention limit for an enterprise
+- `PUT /enterprises/{enterprise}/actions/cache/retention-limit`: Set GitHub Actions cache retention limit for an enterprise
+- `GET /enterprises/{enterprise}/actions/cache/storage-limit`: Get GitHub Actions cache storage limit for an enterprise
+- `PUT /enterprises/{enterprise}/actions/cache/storage-limit`: Set GitHub Actions cache storage limit for an enterprise
+- `GET /organizations/{org}/actions/cache/retention-limit`: Get GitHub Actions cache retention limit for an organization
+- `PUT /organizations/{org}/actions/cache/retention-limit`: Set GitHub Actions cache retention limit for an organization
+- `GET /organizations/{org}/actions/cache/storage-limit`: Get GitHub Actions cache storage limit for an organization
+- `PUT /organizations/{org}/actions/cache/storage-limit`: Set GitHub Actions cache storage limit for an organization
+- `GET /orgs/{org}/actions/cache/usage`: Get GitHub Actions cache usage for an organization
+- `GET /orgs/{org}/actions/cache/usage-by-repository`: List repositories with GitHub Actions cache usage for an organization
+- `GET /orgs/{org}/actions/hosted-runners`: List GitHub-hosted runners for an organization
+- `POST /orgs/{org}/actions/hosted-runners`: Create a GitHub-hosted runner for an organization
+- `DELETE /orgs/{org}/actions/hosted-runners/{hosted_runner_id}`: Delete a GitHub-hosted runner for an organization
+- `GET /orgs/{org}/actions/hosted-runners/{hosted_runner_id}`: Get a GitHub-hosted runner for an organization
+- `PATCH /orgs/{org}/actions/hosted-runners/{hosted_runner_id}`: Update a GitHub-hosted runner for an organization
+- `GET /orgs/{org}/actions/hosted-runners/images/custom`: List custom images for an organization
+- `DELETE /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}`: Delete a custom image from the organization
+- `GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}`: Get a custom image definition for GitHub Actions Hosted Runners
+- `GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions`: List image versions of a custom image for an organization
+- `DELETE /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions/{version}`: Delete an image version of custom image from the organization
+- `GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions/{version}`: Get an image version of a custom image for GitHub Actions Hosted Runners
+- `GET /orgs/{org}/actions/hosted-runners/images/github-owned`: Get GitHub-owned images for GitHub-hosted runners in an organization
+- `GET /orgs/{org}/actions/hosted-runners/images/partner`: Get partner images for GitHub-hosted runners in an organization
+- `GET /orgs/{org}/actions/hosted-runners/limits`: Get limits on GitHub-hosted runners for an organization
+- `GET /orgs/{org}/actions/hosted-runners/machine-sizes`: Get GitHub-hosted runners machine specs for an organization
+- `GET /orgs/{org}/actions/hosted-runners/platforms`: Get platforms for GitHub-hosted runners in an organization
+- `GET /orgs/{org}/actions/permissions`: Get GitHub Actions permissions for an organization
+- `PUT /orgs/{org}/actions/permissions`: Set GitHub Actions permissions for an organization
+- `GET /orgs/{org}/actions/permissions/artifact-and-log-retention`: Get artifact and log retention settings for an organization
+- `PUT /orgs/{org}/actions/permissions/artifact-and-log-retention`: Set artifact and log retention settings for an organization
+- `GET /orgs/{org}/actions/permissions/fork-pr-contributor-approval`: Get fork PR contributor approval permissions for an organization
+- `PUT /orgs/{org}/actions/permissions/fork-pr-contributor-approval`: Set fork PR contributor approval permissions for an organization
+- `GET /orgs/{org}/actions/permissions/fork-pr-workflows-private-repos`: Get private repo fork PR workflow settings for an organization
+- `PUT /orgs/{org}/actions/permissions/fork-pr-workflows-private-repos`: Set private repo fork PR workflow settings for an organization
+- `GET /orgs/{org}/actions/permissions/repositories`: List selected repositories enabled for GitHub Actions in an organization
+- `PUT /orgs/{org}/actions/permissions/repositories`: Set selected repositories enabled for GitHub Actions in an organization
+- `DELETE /orgs/{org}/actions/permissions/repositories/{repository_id}`: Disable a selected repository for GitHub Actions in an organization
+- `PUT /orgs/{org}/actions/permissions/repositories/{repository_id}`: Enable a selected repository for GitHub Actions in an organization
+- `GET /orgs/{org}/actions/permissions/selected-actions`: Get allowed actions and reusable workflows for an organization
+- `PUT /orgs/{org}/actions/permissions/selected-actions`: Set allowed actions and reusable workflows for an organization
+- `GET /orgs/{org}/actions/permissions/self-hosted-runners`: Get self-hosted runners settings for an organization
+- `PUT /orgs/{org}/actions/permissions/self-hosted-runners`: Set self-hosted runners settings for an organization
+- `GET /orgs/{org}/actions/permissions/self-hosted-runners/repositories`: List repositories allowed to use self-hosted runners in an organization
+- `PUT /orgs/{org}/actions/permissions/self-hosted-runners/repositories`: Set repositories allowed to use self-hosted runners in an organization
+- `DELETE /orgs/{org}/actions/permissions/self-hosted-runners/repositories/{repository_id}`: Remove a repository from the list of repositories allowed to use self-hosted runners in an organization
+- `PUT /orgs/{org}/actions/permissions/self-hosted-runners/repositories/{repository_id}`: Add a repository to the list of repositories allowed to use self-hosted runners in an organization
+- `GET /orgs/{org}/actions/permissions/workflow`: Get default workflow permissions for an organization
+- `PUT /orgs/{org}/actions/permissions/workflow`: Set default workflow permissions for an organization
+- `GET /orgs/{org}/actions/runner-groups`: List self-hosted runner groups for an organization
+- `POST /orgs/{org}/actions/runner-groups`: Create a self-hosted runner group for an organization
+- `DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}`: Delete a self-hosted runner group from an organization
+- `GET /orgs/{org}/actions/runner-groups/{runner_group_id}`: Get a self-hosted runner group for an organization
+- `PATCH /orgs/{org}/actions/runner-groups/{runner_group_id}`: Update a self-hosted runner group for an organization
+- `GET /orgs/{org}/actions/runner-groups/{runner_group_id}/hosted-runners`: List GitHub-hosted runners in a group for an organization
+- `GET /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories`: List repository access to a self-hosted runner group in an organization
+- `PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories`: Set repository access for a self-hosted runner group in an organization
+- `DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}`: Remove repository access to a self-hosted runner group in an organization
+- `PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}`: Add repository access to a self-hosted runner group in an organization
+- `GET /orgs/{org}/actions/runner-groups/{runner_group_id}/runners`: List self-hosted runners in a group for an organization
+- `PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/runners`: Set self-hosted runners in a group for an organization
+- `DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}/runners/{runner_id}`: Remove a self-hosted runner from a group for an organization
+- `PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/runners/{runner_id}`: Add a self-hosted runner to a group for an organization
+- `GET /orgs/{org}/actions/runners`: List self-hosted runners for an organization
+- `DELETE /orgs/{org}/actions/runners/{runner_id}`: Delete a self-hosted runner from an organization
+- `GET /orgs/{org}/actions/runners/{runner_id}`: Get a self-hosted runner for an organization
+- `DELETE /orgs/{org}/actions/runners/{runner_id}/labels`: Remove all custom labels from a self-hosted runner for an organization
+- `GET /orgs/{org}/actions/runners/{runner_id}/labels`: List labels for a self-hosted runner for an organization
+- `POST /orgs/{org}/actions/runners/{runner_id}/labels`: Add custom labels to a self-hosted runner for an organization
+- `PUT /orgs/{org}/actions/runners/{runner_id}/labels`: Set custom labels for a self-hosted runner for an organization
+- `DELETE /orgs/{org}/actions/runners/{runner_id}/labels/{name}`: Remove a custom label from a self-hosted runner for an organization
+- `GET /orgs/{org}/actions/runners/downloads`: List runner applications for an organization
+- `POST /orgs/{org}/actions/runners/generate-jitconfig`: Create configuration for a just-in-time runner for an organization
+- `POST /orgs/{org}/actions/runners/registration-token`: Create a registration token for an organization
+- `POST /orgs/{org}/actions/runners/remove-token`: Create a remove token for an organization
+- `GET /orgs/{org}/actions/secrets`: List organization secrets
+- `DELETE /orgs/{org}/actions/secrets/{secret_name}`: Delete an organization secret
+- `GET /orgs/{org}/actions/secrets/{secret_name}`: Get an organization secret
+- `PUT /orgs/{org}/actions/secrets/{secret_name}`: Create or update an organization secret
+- `GET /orgs/{org}/actions/secrets/{secret_name}/repositories`: List selected repositories for an organization secret
+- `PUT /orgs/{org}/actions/secrets/{secret_name}/repositories`: Set selected repositories for an organization secret
+- `DELETE /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}`: Remove selected repository from an organization secret
+- `PUT /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}`: Add selected repository to an organization secret
+- `GET /orgs/{org}/actions/secrets/public-key`: Get an organization public key
+- `GET /orgs/{org}/actions/variables`: List organization variables
+- `POST /orgs/{org}/actions/variables`: Create an organization variable
+- `DELETE /orgs/{org}/actions/variables/{name}`: Delete an organization variable
+- `GET /orgs/{org}/actions/variables/{name}`: Get an organization variable
+- `PATCH /orgs/{org}/actions/variables/{name}`: Update an organization variable
+- `GET /orgs/{org}/actions/variables/{name}/repositories`: List selected repositories for an organization variable
+- `PUT /orgs/{org}/actions/variables/{name}/repositories`: Set selected repositories for an organization variable
+- `DELETE /orgs/{org}/actions/variables/{name}/repositories/{repository_id}`: Remove selected repository from an organization variable
+- `PUT /orgs/{org}/actions/variables/{name}/repositories/{repository_id}`: Add selected repository to an organization variable
+- `GET /repos/{owner}/{repo}/actions/artifacts`: List artifacts for a repository
+- `DELETE /repos/{owner}/{repo}/actions/artifacts/{artifact_id}`: Delete an artifact
+- `GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}`: Get an artifact
+- `GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}`: Download an artifact
+- `GET /repos/{owner}/{repo}/actions/cache/retention-limit`: Get GitHub Actions cache retention limit for a repository
+- `PUT /repos/{owner}/{repo}/actions/cache/retention-limit`: Set GitHub Actions cache retention limit for a repository
+- `GET /repos/{owner}/{repo}/actions/cache/storage-limit`: Get GitHub Actions cache storage limit for a repository
+- `PUT /repos/{owner}/{repo}/actions/cache/storage-limit`: Set GitHub Actions cache storage limit for a repository
+- `GET /repos/{owner}/{repo}/actions/cache/usage`: Get GitHub Actions cache usage for a repository
+- `DELETE /repos/{owner}/{repo}/actions/caches`: Delete GitHub Actions caches for a repository (using a cache key)
+- `GET /repos/{owner}/{repo}/actions/caches`: List GitHub Actions caches for a repository
+- `DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}`: Delete a GitHub Actions cache for a repository (using a cache ID)
+- `GET /repos/{owner}/{repo}/actions/jobs/{job_id}`: Get a job for a workflow run
+- `GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs`: Download job logs for a workflow run
+- `POST /repos/{owner}/{repo}/actions/jobs/{job_id}/rerun`: Re-run a job from a workflow run
+- `GET /repos/{owner}/{repo}/actions/oidc/customization/sub`: Get the customization template for an OIDC subject claim for a repository
+- `PUT /repos/{owner}/{repo}/actions/oidc/customization/sub`: Set the customization template for an OIDC subject claim for a repository
+- `GET /repos/{owner}/{repo}/actions/organization-secrets`: List repository organization secrets
+- `GET /repos/{owner}/{repo}/actions/organization-variables`: List repository organization variables
+- `GET /repos/{owner}/{repo}/actions/permissions`: Get GitHub Actions permissions for a repository
+- `PUT /repos/{owner}/{repo}/actions/permissions`: Set GitHub Actions permissions for a repository
+- `GET /repos/{owner}/{repo}/actions/permissions/access`: Get the level of access for workflows outside of the repository
+- `PUT /repos/{owner}/{repo}/actions/permissions/access`: Set the level of access for workflows outside of the repository
+- `GET /repos/{owner}/{repo}/actions/permissions/artifact-and-log-retention`: Get artifact and log retention settings for a repository
+- `PUT /repos/{owner}/{repo}/actions/permissions/artifact-and-log-retention`: Set artifact and log retention settings for a repository
+- `GET /repos/{owner}/{repo}/actions/permissions/fork-pr-contributor-approval`: Get fork PR contributor approval permissions for a repository
+- `PUT /repos/{owner}/{repo}/actions/permissions/fork-pr-contributor-approval`: Set fork PR contributor approval permissions for a repository
+- `GET /repos/{owner}/{repo}/actions/permissions/fork-pr-workflows-private-repos`: Get private repo fork PR workflow settings for a repository
+- `PUT /repos/{owner}/{repo}/actions/permissions/fork-pr-workflows-private-repos`: Set private repo fork PR workflow settings for a repository
+- `GET /repos/{owner}/{repo}/actions/permissions/selected-actions`: Get allowed actions and reusable workflows for a repository
+- `PUT /repos/{owner}/{repo}/actions/permissions/selected-actions`: Set allowed actions and reusable workflows for a repository
+- `GET /repos/{owner}/{repo}/actions/permissions/workflow`: Get default workflow permissions for a repository
+- `PUT /repos/{owner}/{repo}/actions/permissions/workflow`: Set default workflow permissions for a repository
+- `GET /repos/{owner}/{repo}/actions/runners`: List self-hosted runners for a repository
+- `DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}`: Delete a self-hosted runner from a repository
+- `GET /repos/{owner}/{repo}/actions/runners/{runner_id}`: Get a self-hosted runner for a repository
+- `DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}/labels`: Remove all custom labels from a self-hosted runner for a repository
+- `GET /repos/{owner}/{repo}/actions/runners/{runner_id}/labels`: List labels for a self-hosted runner for a repository
+- `POST /repos/{owner}/{repo}/actions/runners/{runner_id}/labels`: Add custom labels to a self-hosted runner for a repository
+- `PUT /repos/{owner}/{repo}/actions/runners/{runner_id}/labels`: Set custom labels for a self-hosted runner for a repository
+- `DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}/labels/{name}`: Remove a custom label from a self-hosted runner for a repository
+- `GET /repos/{owner}/{repo}/actions/runners/downloads`: List runner applications for a repository
+- `POST /repos/{owner}/{repo}/actions/runners/generate-jitconfig`: Create configuration for a just-in-time runner for a repository
+- `POST /repos/{owner}/{repo}/actions/runners/registration-token`: Create a registration token for a repository
+- `POST /repos/{owner}/{repo}/actions/runners/remove-token`: Create a remove token for a repository
+- `GET /repos/{owner}/{repo}/actions/runs`: List workflow runs for a repository
+- `DELETE /repos/{owner}/{repo}/actions/runs/{run_id}`: Delete a workflow run
+- `GET /repos/{owner}/{repo}/actions/runs/{run_id}`: Get a workflow run
+- `GET /repos/{owner}/{repo}/actions/runs/{run_id}/approvals`: Get the review history for a workflow run
+- `POST /repos/{owner}/{repo}/actions/runs/{run_id}/approve`: Approve a workflow run for a fork pull request
+- `GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts`: List workflow run artifacts
+- `GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}`: Get a workflow run attempt
+- `GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/jobs`: List jobs for a workflow run attempt
+- `GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/logs`: Download workflow run attempt logs
+- `POST /repos/{owner}/{repo}/actions/runs/{run_id}/cancel`: Cancel a workflow run
+- `POST /repos/{owner}/{repo}/actions/runs/{run_id}/deployment_protection_rule`: Review custom deployment protection rules for a workflow run
+- `POST /repos/{owner}/{repo}/actions/runs/{run_id}/force-cancel`: Force cancel a workflow run
+- `GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs`: List jobs for a workflow run
+- `DELETE /repos/{owner}/{repo}/actions/runs/{run_id}/logs`: Delete workflow run logs
+- `GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs`: Download workflow run logs
+- `GET /repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments`: Get pending deployments for a workflow run
+- `POST /repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments`: Review pending deployments for a workflow run
+- `POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun`: Re-run a workflow
+- `POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun-failed-jobs`: Re-run failed jobs from a workflow run
+- `GET /repos/{owner}/{repo}/actions/runs/{run_id}/timing`: Get workflow run usage
+- `GET /repos/{owner}/{repo}/actions/secrets`: List repository secrets
+- `DELETE /repos/{owner}/{repo}/actions/secrets/{secret_name}`: Delete a repository secret
+- `GET /repos/{owner}/{repo}/actions/secrets/{secret_name}`: Get a repository secret
+- `PUT /repos/{owner}/{repo}/actions/secrets/{secret_name}`: Create or update a repository secret
+- `GET /repos/{owner}/{repo}/actions/secrets/public-key`: Get a repository public key
+- `GET /repos/{owner}/{repo}/actions/variables`: List repository variables
+- `POST /repos/{owner}/{repo}/actions/variables`: Create a repository variable
+- `DELETE /repos/{owner}/{repo}/actions/variables/{name}`: Delete a repository variable
+- `GET /repos/{owner}/{repo}/actions/variables/{name}`: Get a repository variable
+- `PATCH /repos/{owner}/{repo}/actions/variables/{name}`: Update a repository variable
+- `GET /repos/{owner}/{repo}/actions/workflows`: List repository workflows
+- `GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}`: Get a workflow
+- `PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/disable`: Disable a workflow
+- `POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches`: Create a workflow dispatch event
+- `PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/enable`: Enable a workflow
+- `GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs`: List workflow runs for a workflow
+- `GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/timing`: Get workflow usage
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/secrets`: List environment secrets
+- `DELETE /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}`: Delete an environment secret
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}`: Get an environment secret
+- `PUT /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}`: Create or update an environment secret
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/secrets/public-key`: Get an environment public key
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/variables`: List environment variables
+- `POST /repos/{owner}/{repo}/environments/{environment_name}/variables`: Create an environment variable
+- `DELETE /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}`: Delete an environment variable
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}`: Get an environment variable
+- `PATCH /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}`: Update an environment variable
+
+<!-- prompt-hash:
+8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8
+-->

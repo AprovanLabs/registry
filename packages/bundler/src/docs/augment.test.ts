@@ -69,9 +69,10 @@ describe("augmentProviderDocs", () => {
       } as never,
     });
 
-    expect(result.readme).toContain("## Groups");
+    expect(result.readme).toContain("## Capability guides");
     expect(result.docs).toHaveLength(1);
     expect(result.docs[0]?.relativePath).toBe("responses.md");
+    expect(result.docs[0]?.content).toContain("## Operations");
     expect(result.metadata.sourceCount).toBe(1);
     expect(result.metadata.promptHash).toMatch(/^[a-f0-9]{64}$/);
     expect(result.metadata.manifestPath).toBe(manifestPath);

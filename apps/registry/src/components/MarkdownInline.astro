@@ -1,0 +1,12 @@
+---
+interface Props {
+  html: string;
+}
+
+const { html } = Astro.props;
+---
+
+<div
+  class="prose-description max-w-none text-sm leading-6 text-muted-foreground [&_a]:font-medium [&_a]:text-primary [&_a]:underline-offset-4 hover:[&_a]:underline [&_p]:m-0"
+  set:html={html}
+/>

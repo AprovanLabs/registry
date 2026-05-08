@@ -1,0 +1,209 @@
+# Repos
+
+Generated from OpenAPI operation grouping.
+
+- `GET /orgs/{org}/repos`: List organization repositories
+- `POST /orgs/{org}/repos`: Create an organization repository
+- `GET /orgs/{org}/rulesets`: Get all organization repository rulesets
+- `POST /orgs/{org}/rulesets`: Create an organization repository ruleset
+- `DELETE /orgs/{org}/rulesets/{ruleset_id}`: Delete an organization repository ruleset
+- `GET /orgs/{org}/rulesets/{ruleset_id}`: Get an organization repository ruleset
+- `PUT /orgs/{org}/rulesets/{ruleset_id}`: Update an organization repository ruleset
+- `GET /orgs/{org}/rulesets/rule-suites`: List organization rule suites
+- `GET /orgs/{org}/rulesets/rule-suites/{rule_suite_id}`: Get an organization rule suite
+- `DELETE /repos/{owner}/{repo}`: Delete a repository
+- `GET /repos/{owner}/{repo}`: Get a repository
+- `PATCH /repos/{owner}/{repo}`: Update a repository
+- `GET /repos/{owner}/{repo}/activity`: List repository activities
+- `POST /repos/{owner}/{repo}/attestations`: Create an attestation
+- `GET /repos/{owner}/{repo}/attestations/{subject_digest}`: List attestations
+- `GET /repos/{owner}/{repo}/autolinks`: Get all autolinks of a repository
+- `POST /repos/{owner}/{repo}/autolinks`: Create an autolink reference for a repository
+- `DELETE /repos/{owner}/{repo}/autolinks/{autolink_id}`: Delete an autolink reference from a repository
+- `GET /repos/{owner}/{repo}/autolinks/{autolink_id}`: Get an autolink reference of a repository
+- `DELETE /repos/{owner}/{repo}/automated-security-fixes`: Disable Dependabot security updates
+- `GET /repos/{owner}/{repo}/automated-security-fixes`: Check if Dependabot security updates are enabled for a repository
+- `PUT /repos/{owner}/{repo}/automated-security-fixes`: Enable Dependabot security updates
+- `GET /repos/{owner}/{repo}/branches`: List branches
+- `GET /repos/{owner}/{repo}/branches/{branch}`: Get a branch
+- `DELETE /repos/{owner}/{repo}/branches/{branch}/protection`: Delete branch protection
+- `GET /repos/{owner}/{repo}/branches/{branch}/protection`: Get branch protection
+- `PUT /repos/{owner}/{repo}/branches/{branch}/protection`: Update branch protection
+- `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins`: Delete admin branch protection
+- `GET /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins`: Get admin branch protection
+- `POST /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins`: Set admin branch protection
+- `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews`: Delete pull request review protection
+- `GET /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews`: Get pull request review protection
+- `PATCH /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews`: Update pull request review protection
+- `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures`: Delete commit signature protection
+- `GET /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures`: Get commit signature protection
+- `POST /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures`: Create commit signature protection
+- `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks`: Remove status check protection
+- `GET /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks`: Get status checks protection
+- `PATCH /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks`: Update status check protection
+- `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts`: Remove status check contexts
+- `GET /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts`: Get all status check contexts
+- `POST /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts`: Add status check contexts
+- `PUT /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts`: Set status check contexts
+- `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions`: Delete access restrictions
+- `GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions`: Get access restrictions
+- `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps`: Remove app access restrictions
+- `GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps`: Get apps with access to the protected branch
+- `POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps`: Add app access restrictions
+- `PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps`: Set app access restrictions
+- `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams`: Remove team access restrictions
+- `GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams`: Get teams with access to the protected branch
+- `POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams`: Add team access restrictions
+- `PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams`: Set team access restrictions
+- `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users`: Remove user access restrictions
+- `GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users`: Get users with access to the protected branch
+- `POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users`: Add user access restrictions
+- `PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users`: Set user access restrictions
+- `POST /repos/{owner}/{repo}/branches/{branch}/rename`: Rename a branch
+- `GET /repos/{owner}/{repo}/codeowners/errors`: List CODEOWNERS errors
+- `GET /repos/{owner}/{repo}/collaborators`: List repository collaborators
+- `DELETE /repos/{owner}/{repo}/collaborators/{username}`: Remove a repository collaborator
+- `GET /repos/{owner}/{repo}/collaborators/{username}`: Check if a user is a repository collaborator
+- `PUT /repos/{owner}/{repo}/collaborators/{username}`: Add a repository collaborator
+- `GET /repos/{owner}/{repo}/collaborators/{username}/permission`: Get repository permissions for a user
+- `GET /repos/{owner}/{repo}/comments`: List commit comments for a repository
+- `DELETE /repos/{owner}/{repo}/comments/{comment_id}`: Delete a commit comment
+- `GET /repos/{owner}/{repo}/comments/{comment_id}`: Get a commit comment
+- `PATCH /repos/{owner}/{repo}/comments/{comment_id}`: Update a commit comment
+- `GET /repos/{owner}/{repo}/commits`: List commits
+- `GET /repos/{owner}/{repo}/commits/{commit_sha}/branches-where-head`: List branches for HEAD commit
+- `GET /repos/{owner}/{repo}/commits/{commit_sha}/comments`: List commit comments
+- `POST /repos/{owner}/{repo}/commits/{commit_sha}/comments`: Create a commit comment
+- `GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls`: List pull requests associated with a commit
+- `GET /repos/{owner}/{repo}/commits/{ref}`: Get a commit
+- `GET /repos/{owner}/{repo}/commits/{ref}/status`: Get the combined status for a specific reference
+- `GET /repos/{owner}/{repo}/commits/{ref}/statuses`: List commit statuses for a reference
+- `GET /repos/{owner}/{repo}/community/profile`: Get community profile metrics
+- `GET /repos/{owner}/{repo}/compare/{basehead}`: Compare two commits
+- `DELETE /repos/{owner}/{repo}/contents/{path}`: Delete a file
+- `GET /repos/{owner}/{repo}/contents/{path}`: Get repository content
+- `PUT /repos/{owner}/{repo}/contents/{path}`: Create or update file contents
+- `GET /repos/{owner}/{repo}/contributors`: List repository contributors
+- `GET /repos/{owner}/{repo}/deployments`: List deployments
+- `POST /repos/{owner}/{repo}/deployments`: Create a deployment
+- `DELETE /repos/{owner}/{repo}/deployments/{deployment_id}`: Delete a deployment
+- `GET /repos/{owner}/{repo}/deployments/{deployment_id}`: Get a deployment
+- `GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses`: List deployment statuses
+- `POST /repos/{owner}/{repo}/deployments/{deployment_id}/statuses`: Create a deployment status
+- `GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses/{status_id}`: Get a deployment status
+- `POST /repos/{owner}/{repo}/dispatches`: Create a repository dispatch event
+- `GET /repos/{owner}/{repo}/environments`: List environments
+- `DELETE /repos/{owner}/{repo}/environments/{environment_name}`: Delete an environment
+- `GET /repos/{owner}/{repo}/environments/{environment_name}`: Get an environment
+- `PUT /repos/{owner}/{repo}/environments/{environment_name}`: Create or update an environment
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules`: Get all deployment protection rules for an environment
+- `POST /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules`: Create a custom deployment protection rule on an environment
+- `DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}`: Disable a custom protection rule for an environment
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}`: Get a custom deployment protection rule
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/apps`: List custom deployment rule integrations available for an environment
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies`: List deployment branch policies
+- `POST /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies`: Create a deployment branch policy
+- `DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}`: Delete a deployment branch policy
+- `GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}`: Get a deployment branch policy
+- `PUT /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}`: Update a deployment branch policy
+- `GET /repos/{owner}/{repo}/forks`: List forks
+- `POST /repos/{owner}/{repo}/forks`: Create a fork
+- `GET /repos/{owner}/{repo}/hooks`: List repository webhooks
+- `POST /repos/{owner}/{repo}/hooks`: Create a repository webhook
+- `DELETE /repos/{owner}/{repo}/hooks/{hook_id}`: Delete a repository webhook
+- `GET /repos/{owner}/{repo}/hooks/{hook_id}`: Get a repository webhook
+- `PATCH /repos/{owner}/{repo}/hooks/{hook_id}`: Update a repository webhook
+- `GET /repos/{owner}/{repo}/hooks/{hook_id}/config`: Get a webhook configuration for a repository
+- `PATCH /repos/{owner}/{repo}/hooks/{hook_id}/config`: Update a webhook configuration for a repository
+- `GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries`: List deliveries for a repository webhook
+- `GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}`: Get a delivery for a repository webhook
+- `POST /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}/attempts`: Redeliver a delivery for a repository webhook
+- `POST /repos/{owner}/{repo}/hooks/{hook_id}/pings`: Ping a repository webhook
+- `POST /repos/{owner}/{repo}/hooks/{hook_id}/tests`: Test the push repository webhook
+- `DELETE /repos/{owner}/{repo}/immutable-releases`: Disable immutable releases
+- `GET /repos/{owner}/{repo}/immutable-releases`: Check if immutable releases are enabled for a repository
+- `PUT /repos/{owner}/{repo}/immutable-releases`: Enable immutable releases
+- `GET /repos/{owner}/{repo}/invitations`: List repository invitations
+- `DELETE /repos/{owner}/{repo}/invitations/{invitation_id}`: Delete a repository invitation
+- `PATCH /repos/{owner}/{repo}/invitations/{invitation_id}`: Update a repository invitation
+- `GET /repos/{owner}/{repo}/keys`: List deploy keys
+- `POST /repos/{owner}/{repo}/keys`: Create a deploy key
+- `DELETE /repos/{owner}/{repo}/keys/{key_id}`: Delete a deploy key
+- `GET /repos/{owner}/{repo}/keys/{key_id}`: Get a deploy key
+- `GET /repos/{owner}/{repo}/languages`: List repository languages
+- `POST /repos/{owner}/{repo}/merge-upstream`: Sync a fork branch with the upstream repository
+- `POST /repos/{owner}/{repo}/merges`: Merge a branch
+- `DELETE /repos/{owner}/{repo}/pages`: Delete a GitHub Pages site
+- `GET /repos/{owner}/{repo}/pages`: Get a GitHub Pages site
+- `POST /repos/{owner}/{repo}/pages`: Create a GitHub Pages site
+- `PUT /repos/{owner}/{repo}/pages`: Update information about a GitHub Pages site
+- `GET /repos/{owner}/{repo}/pages/builds`: List GitHub Pages builds
+- `POST /repos/{owner}/{repo}/pages/builds`: Request a GitHub Pages build
+- `GET /repos/{owner}/{repo}/pages/builds/{build_id}`: Get GitHub Pages build
+- `GET /repos/{owner}/{repo}/pages/builds/latest`: Get latest Pages build
+- `POST /repos/{owner}/{repo}/pages/deployments`: Create a GitHub Pages deployment
+- `GET /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}`: Get the status of a GitHub Pages deployment
+- `POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel`: Cancel a GitHub Pages deployment
+- `GET /repos/{owner}/{repo}/pages/health`: Get a DNS health check for GitHub Pages
+- `DELETE /repos/{owner}/{repo}/private-vulnerability-reporting`: Disable private vulnerability reporting for a repository
+- `GET /repos/{owner}/{repo}/private-vulnerability-reporting`: Check if private vulnerability reporting is enabled for a repository
+- `PUT /repos/{owner}/{repo}/private-vulnerability-reporting`: Enable private vulnerability reporting for a repository
+- `GET /repos/{owner}/{repo}/properties/values`: Get all custom property values for a repository
+- `PATCH /repos/{owner}/{repo}/properties/values`: Create or update custom property values for a repository
+- `GET /repos/{owner}/{repo}/readme`: Get a repository README
+- `GET /repos/{owner}/{repo}/readme/{dir}`: Get a repository README for a directory
+- `GET /repos/{owner}/{repo}/releases`: List releases
+- `POST /repos/{owner}/{repo}/releases`: Create a release
+- `DELETE /repos/{owner}/{repo}/releases/{release_id}`: Delete a release
+- `GET /repos/{owner}/{repo}/releases/{release_id}`: Get a release
+- `PATCH /repos/{owner}/{repo}/releases/{release_id}`: Update a release
+- `GET /repos/{owner}/{repo}/releases/{release_id}/assets`: List release assets
+- `POST /repos/{owner}/{repo}/releases/{release_id}/assets`: Upload a release asset
+- `DELETE /repos/{owner}/{repo}/releases/assets/{asset_id}`: Delete a release asset
+- `GET /repos/{owner}/{repo}/releases/assets/{asset_id}`: Get a release asset
+- `PATCH /repos/{owner}/{repo}/releases/assets/{asset_id}`: Update a release asset
+- `POST /repos/{owner}/{repo}/releases/generate-notes`: Generate release notes content for a release
+- `GET /repos/{owner}/{repo}/releases/latest`: Get the latest release
+- `GET /repos/{owner}/{repo}/releases/tags/{tag}`: Get a release by tag name
+- `GET /repos/{owner}/{repo}/rules/branches/{branch}`: Get rules for a branch
+- `GET /repos/{owner}/{repo}/rulesets`: Get all repository rulesets
+- `POST /repos/{owner}/{repo}/rulesets`: Create a repository ruleset
+- `DELETE /repos/{owner}/{repo}/rulesets/{ruleset_id}`: Delete a repository ruleset
+- `GET /repos/{owner}/{repo}/rulesets/{ruleset_id}`: Get a repository ruleset
+- `PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}`: Update a repository ruleset
+- `GET /repos/{owner}/{repo}/rulesets/{ruleset_id}/history`: Get repository ruleset history
+- `GET /repos/{owner}/{repo}/rulesets/{ruleset_id}/history/{version_id}`: Get repository ruleset version
+- `GET /repos/{owner}/{repo}/rulesets/rule-suites`: List repository rule suites
+- `GET /repos/{owner}/{repo}/rulesets/rule-suites/{rule_suite_id}`: Get a repository rule suite
+- `GET /repos/{owner}/{repo}/stats/code_frequency`: Get the weekly commit activity
+- `GET /repos/{owner}/{repo}/stats/commit_activity`: Get the last year of commit activity
+- `GET /repos/{owner}/{repo}/stats/contributors`: Get all contributor commit activity
+- `GET /repos/{owner}/{repo}/stats/participation`: Get the weekly commit count
+- `GET /repos/{owner}/{repo}/stats/punch_card`: Get the hourly commit count for each day
+- `POST /repos/{owner}/{repo}/statuses/{sha}`: Create a commit status
+- `GET /repos/{owner}/{repo}/tags`: List repository tags
+- `GET /repos/{owner}/{repo}/tarball/{ref}`: Download a repository archive (tar)
+- `GET /repos/{owner}/{repo}/teams`: List repository teams
+- `GET /repos/{owner}/{repo}/topics`: Get all repository topics
+- `PUT /repos/{owner}/{repo}/topics`: Replace all repository topics
+- `GET /repos/{owner}/{repo}/traffic/clones`: Get repository clones
+- `GET /repos/{owner}/{repo}/traffic/popular/paths`: Get top referral paths
+- `GET /repos/{owner}/{repo}/traffic/popular/referrers`: Get top referral sources
+- `GET /repos/{owner}/{repo}/traffic/views`: Get page views
+- `POST /repos/{owner}/{repo}/transfer`: Transfer a repository
+- `DELETE /repos/{owner}/{repo}/vulnerability-alerts`: Disable vulnerability alerts
+- `GET /repos/{owner}/{repo}/vulnerability-alerts`: Check if vulnerability alerts are enabled for a repository
+- `PUT /repos/{owner}/{repo}/vulnerability-alerts`: Enable vulnerability alerts
+- `GET /repos/{owner}/{repo}/zipball/{ref}`: Download a repository archive (zip)
+- `POST /repos/{template_owner}/{template_repo}/generate`: Create a repository using a template
+- `GET /repositories`: List public repositories
+- `GET /user/repos`: List repositories for the authenticated user
+- `POST /user/repos`: Create a repository for the authenticated user
+- `GET /user/repository_invitations`: List repository invitations for the authenticated user
+- `DELETE /user/repository_invitations/{invitation_id}`: Decline a repository invitation
+- `PATCH /user/repository_invitations/{invitation_id}`: Accept a repository invitation
+- `GET /users/{username}/repos`: List repositories for a user
+
+<!-- prompt-hash:
+8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8
+-->

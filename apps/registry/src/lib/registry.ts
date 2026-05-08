@@ -49,6 +49,7 @@ export type RegistryEntry = {
   packageName: string;
   title: string;
   description: string | null;
+  descriptionHtml: string | null;
   summary: string | null;
   version: string | null;
   homepage: string | null;
@@ -217,9 +218,12 @@ async function buildRegistryEntry(
     manifest?.utdk?.openapi?.title ??
     openApiDocument?.info?.title ??
     toDisplayTitle(providerPath);
-  const description = collapseWhitespace(
-    manifest?.description ?? openApiDocument?.info?.description ?? null,
-  );
+  const descriptionMarkdown =
+    manifest?.description ?? openApiDocument?.info?.description ?? null;
+  const description = collapseWhitespace(stripMarkdown(descriptionMarkdown));
+  const descriptionHtml = descriptionMarkdown
+    ? renderMarkdown(descriptionMarkdown)
+    : null;
   const summary = extractSummary(readmeMarkdown) ?? description;
   const readmeHtml = readmeMarkdown ? renderMarkdown(readmeMarkdown) : null;
   const childProviderPaths =
@@ -235,6 +239,7 @@ async function buildRegistryEntry(
     packageName,
     title,
     description,
+    descriptionHtml,
     summary,
     version: manifest?.version ?? openApiDocument?.info?.version ?? null,
     homepage: manifest?.homepage ?? null,
@@ -498,7 +503,11 @@ function extractSummary(markdown: string | null): string | null {
   return collapseWhitespace(stripMarkdown(lines[0] ?? ""));
 }
 
-function stripMarkdown(value: string): string {
+function stripMarkdown(value: string | null): string {
+  if (!value) {
+    return "";
+  }
+
   return value
     .replace(/`([^`]+)`/g, "$1")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
