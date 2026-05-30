@@ -1,0 +1,24 @@
+{
+  "provider": "hubspot",
+  "generatedAt": "2026-05-30T12:25:26.321Z",
+  "generation": 1,
+  "source": {
+    "type": "openapi",
+    "url": "https://api.apis.guru/v2/specs/hubapi.com/webhooks/v3/openapi.json",
+    "hash": "sha256:d897ea53d368e1cb7e7bcc104ad1a47f34534f0140b1694261d3f6d0e479862b",
+    "fetchedAt": "2026-05-30T12:25:26.321Z"
+  },
+  "ingestSource": "composio",
+  "pipeline": {
+    "research": {
+      "noveltyScore": 2,
+      "competingPackages": 15
+    },
+    "scorecard": {
+      "infrastructure": "fail",
+      "domain": 70
+    },
+    "agentReadiness": "pass"
+  },
+  "bundlerVersion": "0.1.1"
+}

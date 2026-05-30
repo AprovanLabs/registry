@@ -40,6 +40,11 @@
       "import": "./dist/agco_api/index.js",
       "default": "./dist/agco_api/index.js"
     },
+    "./airtable": {
+      "types": "./dist/airtable/index.d.ts",
+      "import": "./dist/airtable/index.js",
+      "default": "./dist/airtable/index.js"
+    },
     "./alerter_system_api": {
       "types": "./dist/alerter_system_api/index.d.ts",
       "import": "./dist/alerter_system_api/index.js",
@@ -565,6 +570,11 @@
       "import": "./dist/httpbin_org/index.js",
       "default": "./dist/httpbin_org/index.js"
     },
+    "./hubspot": {
+      "types": "./dist/hubspot/index.d.ts",
+      "import": "./dist/hubspot/index.js",
+      "default": "./dist/hubspot/index.js"
+    },
     "./id4i_api": {
       "types": "./dist/id4i_api/index.d.ts",
       "import": "./dist/id4i_api/index.js",
@@ -580,6 +590,11 @@
       "import": "./dist/instagram_api/index.js",
       "default": "./dist/instagram_api/index.js"
     },
+    "./intercom": {
+      "types": "./dist/intercom/index.d.ts",
+      "import": "./dist/intercom/index.js",
+      "default": "./dist/intercom/index.js"
+    },
     "./iqualify_management_api": {
       "types": "./dist/iqualify_management_api/index.d.ts",
       "import": "./dist/iqualify_management_api/index.js",
@@ -589,6 +604,11 @@
       "types": "./dist/ix_api/index.d.ts",
       "import": "./dist/ix_api/index.js",
       "default": "./dist/ix_api/index.js"
+    },
+    "./jira": {
+      "types": "./dist/jira/index.d.ts",
+      "import": "./dist/jira/index.js",
+      "default": "./dist/jira/index.js"
     },
     "./jumpseller_api": {
       "types": "./dist/jumpseller_api/index.d.ts",
@@ -624,6 +644,11 @@
       "types": "./dist/lgtm_api_specification/index.d.ts",
       "import": "./dist/lgtm_api_specification/index.js",
       "default": "./dist/lgtm_api_specification/index.js"
+    },
+    "./linear": {
+      "types": "./dist/linear/index.d.ts",
+      "import": "./dist/linear/index.js",
+      "default": "./dist/linear/index.js"
     },
     "./linode_api": {
       "types": "./dist/linode_api/index.d.ts",
@@ -749,6 +774,11 @@
       "types": "./dist/noosh_api_application/index.d.ts",
       "import": "./dist/noosh_api_application/index.js",
       "default": "./dist/noosh_api_application/index.js"
+    },
+    "./notion": {
+      "types": "./dist/notion/index.d.ts",
+      "import": "./dist/notion/index.js",
+      "default": "./dist/notion/index.js"
     },
     "./obono_rksv_api": {
       "types": "./dist/obono_rksv_api/index.d.ts",
@@ -915,6 +945,11 @@
       "import": "./dist/sakari/index.js",
       "default": "./dist/sakari/index.js"
     },
+    "./salesforce": {
+      "types": "./dist/salesforce/index.d.ts",
+      "import": "./dist/salesforce/index.js",
+      "default": "./dist/salesforce/index.js"
+    },
     "./salesloft_platform": {
       "types": "./dist/salesloft_platform/index.d.ts",
       "import": "./dist/salesloft_platform/index.js",
@@ -929,6 +964,11 @@
       "types": "./dist/semantria/index.d.ts",
       "import": "./dist/semantria/index.js",
       "default": "./dist/semantria/index.js"
+    },
+    "./sendgrid": {
+      "types": "./dist/sendgrid/index.d.ts",
+      "import": "./dist/sendgrid/index.js",
+      "default": "./dist/sendgrid/index.js"
     },
     "./setlist_fm_api": {
       "types": "./dist/setlist_fm_api/index.d.ts",
@@ -964,6 +1004,11 @@
       "types": "./dist/sinao_api/index.d.ts",
       "import": "./dist/sinao_api/index.js",
       "default": "./dist/sinao_api/index.js"
+    },
+    "./slack": {
+      "types": "./dist/slack/index.d.ts",
+      "import": "./dist/slack/index.js",
+      "default": "./dist/slack/index.js"
     },
     "./slack_web_api": {
       "types": "./dist/slack_web_api/index.d.ts",
@@ -1155,6 +1200,11 @@
       "import": "./dist/tvmaze_user_api/index.js",
       "default": "./dist/tvmaze_user_api/index.js"
     },
+    "./twilio": {
+      "types": "./dist/twilio/index.d.ts",
+      "import": "./dist/twilio/index.js",
+      "default": "./dist/twilio/index.js"
+    },
     "./uebermaps_api_endpoints": {
       "types": "./dist/uebermaps_api_endpoints/index.d.ts",
       "import": "./dist/uebermaps_api_endpoints/index.js",
@@ -1249,6 +1299,11 @@
       "types": "./dist/yodlee_core_apis/index.d.ts",
       "import": "./dist/yodlee_core_apis/index.js",
       "default": "./dist/yodlee_core_apis/index.js"
+    },
+    "./zendesk": {
+      "types": "./dist/zendesk/index.d.ts",
+      "import": "./dist/zendesk/index.js",
+      "default": "./dist/zendesk/index.js"
     },
     "./zoom_api": {
       "types": "./dist/zoom_api/index.d.ts",

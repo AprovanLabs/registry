@@ -1,0 +1,33 @@
+{
+  "name": "@utdk/intercom",
+  "version": "2.15.0-20260530.1",
+  "type": "module",
+  "description": "Generated UTDK provider client for Intercom API. The intercom API reference.",
+  "homepage": "https://developers.intercom.com",
+  "keywords": [
+    "intercom",
+    "generated",
+    "openapi",
+    "utdk"
+  ],
+  "license": "MIT",
+  "utdk": {
+    "provider": "intercom",
+    "generation": 1,
+    "generatedAt": "2026-05-30T12:26:03.369Z",
+    "auth": [
+      {
+        "auth_type": "api_key",
+        "api_key": "Bearer ${INTERCOM_ACCESS_TOKEN}",
+        "var_name": "Authorization",
+        "location": "header"
+      }
+    ],
+    "openapi": {
+      "title": "Intercom API",
+      "url": "https://raw.githubusercontent.com/intercom/Intercom-OpenAPI/main/descriptions/2.15/api.intercom.io.yaml",
+      "version": "2.15",
+      "termsOfService": null
+    }
+  }
+}

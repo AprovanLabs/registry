@@ -1,9 +1,13 @@
+import { readFile } from "node:fs/promises";
+import { fileURLToPath } from "node:url";
+
 import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
 import { parse as parseYaml } from "yaml";
 
 import { getDocumentPathItem } from "./openapi-path.js";
 import type { RegistryProvider } from "./provider.js";
+import { resolveRepoPath } from "./provider.js";
 import { schemaToTypeScriptType } from "./schema.js";
 
 type PublicToolTypes = {
@@ -163,18 +167,31 @@ function getResponseSchema(
 }
 
 export async function loadOpenApiDocument(provider: RegistryProvider): Promise<OpenAPIV3.Document> {
-  const response = await fetch(provider.url, {
-    headers: {
-      Accept: provider.content_type ?? "application/json",
-      "User-Agent": "UTDK/1.0.0",
-    },
-  });
+  let rawDocument: string;
 
-  if (!response.ok) {
-    throw new Error(`Failed to fetch ${provider.name} OpenAPI schema: ${response.status} ${response.statusText}`);
+  if (provider.url.startsWith("file://")) {
+    // Load from local file system (used for community-curated specs stored in the repo)
+    const filePath = fileURLToPath(provider.url);
+    rawDocument = await readFile(filePath, "utf8");
+  } else if (provider.url.startsWith("repo://")) {
+    // Load from a path relative to the repository root (e.g. "repo://data/openapi/linear.json")
+    const relPath = provider.url.slice("repo://".length);
+    const absPath = resolveRepoPath(...relPath.split("/"));
+    rawDocument = await readFile(absPath, "utf8");
+  } else {
+    const response = await fetch(provider.url, {
+      headers: {
+        Accept: provider.content_type ?? "application/json",
+        "User-Agent": "UTDK/1.0.0",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch ${provider.name} OpenAPI schema: ${response.status} ${response.statusText}`);
+    }
+
+    rawDocument = await response.text();
   }
-
-  const rawDocument = await response.text();
 
   try {
     return JSON.parse(rawDocument) as OpenAPIV3.Document;
