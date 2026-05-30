@@ -28,6 +28,12 @@ type OTelApi = {
   trace: {
     getTracer(name: string, version?: string): Tracer;
   };
+  context: {
+    active(): object;
+  };
+  propagation: {
+    inject(ctx: object, carrier: Record<string, string>): void;
+  };
   SpanStatusCode: { OK: number; ERROR: number };
 };
 
@@ -49,6 +55,8 @@ export interface TelemetryOptions {
 export interface SpanContext {
   provider: string;
   operation: string;
+  /** Optional override for the OTel span name. Defaults to `"${provider} ${operation}"`. */
+  spanName?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -150,7 +158,7 @@ export async function withSpan<T>(
     return fn(span);
   }
 
-  const spanName = `${context.provider} ${context.operation}`;
+  const spanName = context.spanName ?? `${context.provider} ${context.operation}`;
 
   return _tracer.startActiveSpan(spanName, async (span: Span) => {
     span.setAttribute("provider", context.provider);
@@ -181,7 +189,9 @@ export function withSpanSync<T>(
     return fn(noopSpan());
   }
 
-  return _tracer.startActiveSpan(`${context.provider} ${context.operation}`, (span: Span) => {
+  const spanName = context.spanName ?? `${context.provider} ${context.operation}`;
+
+  return _tracer.startActiveSpan(spanName, (span: Span) => {
     span.setAttribute("provider", context.provider);
     span.setAttribute("operation", context.operation);
 
@@ -197,6 +207,22 @@ export function withSpanSync<T>(
       span.end();
     }
   });
+}
+
+/**
+ * Inject W3C trace context headers (`traceparent`, `tracestate`) into an outgoing
+ * request headers map using the active OTel context. Must be called from inside a
+ * `withSpan` callback so that an active span exists in the current context.
+ *
+ * No-op when telemetry is disabled or `@opentelemetry/api` is not installed.
+ */
+export function injectTraceContext(headers: Record<string, string>): void {
+  if (!_options.enabled || !_otel) return;
+  try {
+    _otel.propagation.inject(_otel.context.active(), headers);
+  } catch {
+    // Silently ignore if propagation is not configured on the OTel SDK side
+  }
 }
 
 /**
