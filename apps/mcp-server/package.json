@@ -1,0 +1,60 @@
+{
+  "name": "@utdk/mcp-server",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Unified MCP server with dynamic tool loading from @utdk/* providers",
+  "keywords": [
+    "mcp",
+    "utdk",
+    "modelcontextprotocol",
+    "tools"
+  ],
+  "license": "MIT",
+  "bin": {
+    "utdk-mcp-server": "./dist/server.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist",
+    "start": "node dist/server.js",
+    "dev": "tsx src/server.ts",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.29.0",
+    "@utcp/http": "^1.1.1",
+    "@utcp/sdk": "^1.1.0",
+    "@utdk/common": "workspace:*"
+  },
+  "optionalDependencies": {
+    "@utdk/airtable": "workspace:*",
+    "@utdk/datadog": "workspace:*",
+    "@utdk/figma": "workspace:*",
+    "@utdk/github": "workspace:*",
+    "@utdk/google": "workspace:*",
+    "@utdk/hubspot": "workspace:*",
+    "@utdk/intercom": "workspace:*",
+    "@utdk/jira": "workspace:*",
+    "@utdk/linear": "workspace:*",
+    "@utdk/notion": "workspace:*",
+    "@utdk/openai": "workspace:*",
+    "@utdk/salesforce": "workspace:*",
+    "@utdk/sendgrid": "workspace:*",
+    "@utdk/slack": "workspace:*",
+    "@utdk/spotify": "workspace:*",
+    "@utdk/stripe": "workspace:*",
+    "@utdk/twilio": "workspace:*",
+    "@utdk/zendesk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "2.1.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
