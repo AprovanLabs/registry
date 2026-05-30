@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { runReviewPhase } from "./review.js";
+import type { InfraRunner } from "../verification/scorecard.js";
 
 const tempDirs: string[] = [];
 
@@ -13,6 +14,14 @@ async function createTempDir(): Promise<string> {
   tempDirs.push(dir);
   return dir;
 }
+
+/** Mock infrastructure runner that always passes — avoids subprocess calls in tests. */
+const passingInfraRunner: InfraRunner = {
+  runTsc: async () => ({ success: true, output: "TypeScript compilation passed" }),
+  runImports: async () => ({ success: true, output: "Named exports resolve" }),
+  runCircularDeps: async () => ({ success: true, output: "No circular dependencies found" }),
+  runEslint: async () => ({ success: true, output: "ESLint passed" }),
+};
 
 async function writeProviderFiles(
   outputRoot: string,
@@ -28,6 +37,8 @@ async function writeProviderFiles(
   const providerDir = path.join(outputRoot, providerName);
   await mkdir(providerDir, { recursive: true });
 
+  // Default openApiJson has 6 operations with summaries and a pagination param
+  // so the domain score reaches the minimum threshold of 60.
   const defaults = {
     indexTs: `import type { OpenaiClient } from "./types.js";\nexport * from "./types.js";\n`,
     typesTs: `export type OpenaiClient = { responses: { create: () => Promise<void> } };\n`,
@@ -40,7 +51,18 @@ async function writeProviderFiles(
       openapi: "3.0.0",
       info: { title: "Test API", version: "1.0.0" },
       paths: {
-        "/items": { get: { operationId: "list_items", responses: { "200": { description: "ok" } } } },
+        "/items": {
+          get: { operationId: "list_items", summary: "List items", parameters: [{ name: "limit", in: "query", schema: { type: "integer" } }], responses: { "200": { description: "ok" } } },
+          post: { operationId: "create_item", summary: "Create item", responses: { "201": { description: "created" } } },
+        },
+        "/items/{id}": {
+          get: { operationId: "get_item", summary: "Get item", responses: { "200": { description: "ok" } } },
+          put: { operationId: "update_item", summary: "Update item", responses: { "200": { description: "ok" } } },
+          delete: { operationId: "delete_item", summary: "Delete item", responses: { "204": { description: "no content" } } },
+        },
+        "/items/{id}/tags": {
+          get: { operationId: "list_item_tags", summary: "List item tags", responses: { "200": { description: "ok" } } },
+        },
       },
     }),
     readme:
@@ -73,7 +95,7 @@ describe("runReviewPhase", () => {
     const outputRoot = await createTempDir();
     await writeProviderFiles(outputRoot, "openai");
 
-    const result = await runReviewPhase({ provider: "openai", outputRoot });
+    const result = await runReviewPhase({ provider: "openai", outputRoot, infraRunner: passingInfraRunner });
 
     expect(result.provider).toBe("openai");
     expect(result.scorecard.passed).toBe(true);
@@ -85,7 +107,7 @@ describe("runReviewPhase", () => {
     const outputRoot = await createTempDir();
     // Don't write any files
 
-    const result = await runReviewPhase({ provider: "openai", outputRoot });
+    const result = await runReviewPhase({ provider: "openai", outputRoot, infraRunner: passingInfraRunner });
 
     expect(result.agentReadiness.passed).toBe(false);
     expect(result.passed).toBe(false);
@@ -109,7 +131,7 @@ describe("runReviewPhase", () => {
       }),
     });
 
-    const result = await runReviewPhase({ provider: "openai", outputRoot });
+    const result = await runReviewPhase({ provider: "openai", outputRoot, infraRunner: passingInfraRunner });
 
     const warnCodes = result.agentReadiness.blockers
       .filter((b) => b.severity === "warning")
@@ -120,15 +142,14 @@ describe("runReviewPhase", () => {
     expect(result.agentReadiness.passed).toBe(true);
   });
 
-  it("includes scorecard scores in the result", async () => {
+  it("includes scorecard domain score in the result", async () => {
     const outputRoot = await createTempDir();
     await writeProviderFiles(outputRoot, "openai");
 
-    const result = await runReviewPhase({ provider: "openai", outputRoot });
+    const result = await runReviewPhase({ provider: "openai", outputRoot, infraRunner: passingInfraRunner });
 
-    expect(result.scorecard.infrastructure.score).toBeGreaterThan(0);
-    expect(result.scorecard.domain.score).toBeGreaterThanOrEqual(0);
-    expect(result.scorecard.total).toBeGreaterThan(0);
+    expect(result.scorecard.domain.total).toBeGreaterThan(0);
+    expect(result.scorecard.infrastructure.allPassed).toBe(true);
   });
 
   it("reports no exported types as error", async () => {
@@ -137,7 +158,7 @@ describe("runReviewPhase", () => {
       typesTs: "// no exports here\n",
     });
 
-    const result = await runReviewPhase({ provider: "openai", outputRoot });
+    const result = await runReviewPhase({ provider: "openai", outputRoot, infraRunner: passingInfraRunner });
 
     const errorCodes = result.agentReadiness.blockers
       .filter((b) => b.severity === "error")
@@ -157,9 +178,25 @@ describe("runReviewPhase", () => {
       }),
     });
 
-    const result = await runReviewPhase({ provider: "openai", outputRoot });
+    const result = await runReviewPhase({ provider: "openai", outputRoot, infraRunner: passingInfraRunner });
 
     // warnings should contain the auth warning
     expect(result.warnings.some((w) => w.includes("MISSING_AUTH_CONFIG"))).toBe(true);
+  });
+
+  it("fails when an infrastructure check fails", async () => {
+    const outputRoot = await createTempDir();
+    await writeProviderFiles(outputRoot, "openai");
+
+    const failingTscRunner: InfraRunner = {
+      ...passingInfraRunner,
+      runTsc: async () => ({ success: false, output: "error TS2345: Type mismatch" }),
+    };
+
+    const result = await runReviewPhase({ provider: "openai", outputRoot, infraRunner: failingTscRunner });
+
+    expect(result.scorecard.infrastructure.allPassed).toBe(false);
+    expect(result.scorecard.passed).toBe(false);
+    expect(result.passed).toBe(false);
   });
 });

@@ -292,7 +292,7 @@ export async function runFullPipeline(options: FullPipelineOptions): Promise<Ful
   if (!reviewPassed && !("error" in review)) {
     process.stderr.write(
       `Warning: review phase did not pass for ${options.provider}. ` +
-        `Scorecard: ${review.scorecard.total}/100. ` +
+        `Scorecard domain: ${review.scorecard.domain.total}/100. ` +
         `Blockers: ${review.agentReadiness.blockers.filter((b) => b.severity === "error").length} errors.\n`,
     );
   }

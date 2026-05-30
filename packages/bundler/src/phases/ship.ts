@@ -11,9 +11,8 @@ export type ProvenanceManifest = {
   specSourceUrl: string;
   generation: number;
   scorecardScores: {
-    infrastructure: number;
-    domain: number;
-    total: number;
+    infrastructurePassed: boolean;
+    domainTotal: number;
   };
   researchHash: string | null;
 };
@@ -76,9 +75,8 @@ export async function runShipPhase(options: RunShipPhaseOptions): Promise<RunShi
     specSourceUrl: provider.url,
     generation,
     scorecardScores: {
-      infrastructure: scorecard.infrastructure.score,
-      domain: scorecard.domain.score,
-      total: scorecard.total,
+      infrastructurePassed: scorecard.infrastructure.allPassed,
+      domainTotal: scorecard.domain.total,
     },
     researchHash,
   };
