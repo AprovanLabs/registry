@@ -14,7 +14,28 @@
     "provider": "spotify",
     "generation": 6,
     "generatedAt": "2026-04-07T03:14:54.079Z",
-    "auth": [],
+    "auth": [
+      {
+        "auth_type": "oauth2",
+        "flow": "authorization_code",
+        "pkce": true,
+        "client_id": "${SPOTIFY_CLIENT_ID}",
+        "client_secret": "${SPOTIFY_CLIENT_SECRET}",
+        "authorization_url": "https://accounts.spotify.com/authorize",
+        "token_url": "https://accounts.spotify.com/api/token",
+        "scopes": [
+          "user-read-private",
+          "user-read-email",
+          "user-library-read",
+          "user-library-modify",
+          "playlist-read-private",
+          "playlist-modify-public",
+          "playlist-modify-private",
+          "user-read-playback-state",
+          "user-modify-playback-state"
+        ]
+      }
+    ],
     "openapi": {
       "title": "Spotify Web API",
       "url": "https://developer.spotify.com/reference/web-api/open-api-schema.yaml",
