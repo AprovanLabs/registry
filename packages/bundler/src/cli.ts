@@ -4,6 +4,8 @@ import { runEnrichPhase } from "./phases/enrich.js";
 import { runResearchPhase } from "./phases/research.js";
 import { runReviewPhase } from "./phases/review.js";
 import { runShipPhase } from "./phases/ship.js";
+import { DEFAULT_OUTPUT_ROOT } from "./provider.js";
+import { runSmokeTest } from "./verification/smoke.js";
 
 type CliCommand = "generate" | "load-docs" | "augment-docs";
 type PipelinePhase = "research" | "enrich" | "review" | "ship";
@@ -16,6 +18,7 @@ type ParsedCommand = {
   outputRoot?: string;
   rawSnapshots?: boolean;
   overwriteDocs?: boolean;
+  smoke?: boolean;
   seededReferences?: Array<{ source: "registry-seed"; url: string }>;
 };
 
@@ -88,6 +91,11 @@ function parseCommand(argv: string[]): ParsedCommand {
       continue;
     }
 
+    if (token === "--smoke") {
+      parsed.smoke = true;
+      continue;
+    }
+
     if (token === "--seed-url") {
       const url = getOptionValue(rest, index, token);
       parsed.seededReferences = [...(parsed.seededReferences ?? []), { source: "registry-seed", url }];
@@ -107,6 +115,17 @@ function writeJson(payload: unknown): void {
 
 async function main(): Promise<void> {
   const parsed = parseCommand(process.argv.slice(2));
+
+  // --smoke: run the smoke test harness on demand
+  if (parsed.smoke) {
+    const outputRoot = parsed.outputRoot ?? DEFAULT_OUTPUT_ROOT;
+    const result = await runSmokeTest({ provider: parsed.provider, outputRoot });
+    writeJson({ ok: result.status !== "failed", command: "smoke", provider: parsed.provider, result });
+    if (result.status === "failed") {
+      process.exitCode = 1;
+    }
+    return;
+  }
 
   if (parsed.command === "generate") {
     if (parsed.phase === "research") {

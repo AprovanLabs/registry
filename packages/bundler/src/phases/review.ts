@@ -1,5 +1,5 @@
 import { DEFAULT_OUTPUT_ROOT, loadRegistryProviders, resolveProvider } from "../provider.js";
-import { runScorecard, type ScorecardResult } from "../verification/scorecard.js";
+import { MIN_DOMAIN_SCORE, runScorecard, type InfraRunner, type ScorecardResult } from "../verification/scorecard.js";
 import { runAgentReadiness, type AgentReadinessResult } from "./agentReadiness.js";
 
 export type RunReviewPhaseResult = {
@@ -13,6 +13,8 @@ export type RunReviewPhaseResult = {
 export type RunReviewPhaseOptions = {
   provider: string;
   outputRoot?: string;
+  /** Inject alternative infrastructure runner for testing */
+  infraRunner?: InfraRunner;
 };
 
 export async function runReviewPhase(options: RunReviewPhaseOptions): Promise<RunReviewPhaseResult> {
@@ -21,7 +23,7 @@ export async function runReviewPhase(options: RunReviewPhaseOptions): Promise<Ru
   const provider = resolveProvider(providers, options.provider);
 
   const [scorecard, agentReadiness] = await Promise.all([
-    runScorecard({ provider: provider.name, outputRoot }),
+    runScorecard({ provider: provider.name, outputRoot, runner: options.infraRunner }),
     runAgentReadiness({ provider: provider.name, outputRoot }),
   ]);
 
@@ -30,7 +32,7 @@ export async function runReviewPhase(options: RunReviewPhaseOptions): Promise<Ru
       .filter((b) => b.severity === "warning")
       .map((b) => `[${b.code}] ${b.message}`),
     ...(!scorecard.passed
-      ? [`Scorecard total ${scorecard.total}/100 is below the passing threshold of 50.`]
+      ? [scorecard.report]
       : []),
   ];
 

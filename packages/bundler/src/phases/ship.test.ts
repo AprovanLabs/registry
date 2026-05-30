@@ -17,22 +17,23 @@ async function createTempDir(): Promise<string> {
 
 const mockScorecardResult: ScorecardResult = {
   infrastructure: {
-    hasIndexTs: true,
-    hasTypesTs: true,
-    hasPackageJson: true,
-    hasOpenApiJson: true,
-    hasReadme: true,
-    typesExportFound: true,
-    score: 100,
+    tsc: { passed: true, skipped: false, message: "TypeScript compilation passed" },
+    imports: { passed: true, skipped: false, message: "Named exports resolve" },
+    circularDeps: { passed: true, skipped: false, message: "No circular dependencies found" },
+    eslint: { passed: true, skipped: false, message: "ESLint passed" },
+    allPassed: true,
   },
   domain: {
-    hasAuthConfig: true,
-    hasReadmeContent: true,
-    operationCount: 5,
-    score: 100,
+    authConfigPoints: 20,
+    nonTrivialTypesPoints: 20,
+    paginationHintPoints: 15,
+    readmePoints: 15,
+    operationsCountPoints: 15,
+    operationsDescribedPoints: 15,
+    total: 100,
   },
-  total: 100,
   passed: true,
+  report: "Infrastructure checks PASSED\nDomain score: 100/100 (minimum to ship: 60)\nDomain score PASSED",
 };
 
 afterEach(async () => {
@@ -65,9 +66,8 @@ describe("runShipPhase", () => {
       scorecardResult: mockScorecardResult,
     });
 
-    expect(result.provenance.scorecardScores.infrastructure).toBe(100);
-    expect(result.provenance.scorecardScores.domain).toBe(100);
-    expect(result.provenance.scorecardScores.total).toBe(100);
+    expect(result.provenance.scorecardScores.infrastructurePassed).toBe(true);
+    expect(result.provenance.scorecardScores.domainTotal).toBe(100);
   });
 
   it("sets researchHash to null when research.json is absent", async () => {
