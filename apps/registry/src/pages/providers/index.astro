@@ -1,0 +1,64 @@
+---
+import { Badge } from "@/components/ui/badge";
+import { ProvidersGrid } from "@/components/ProvidersGrid";
+import type { ProviderSearchEntry, OperationSearchEntry } from "@/components/ProvidersGrid";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getRegistryCatalog } from "@/lib/registry";
+import { withBasePath } from "@/lib/site";
+
+const catalog = await getRegistryCatalog();
+const providerEntries = catalog.entries.filter((e) => e.kind === "provider");
+
+const providers: ProviderSearchEntry[] = providerEntries.map((e) => ({
+  providerPath: e.providerPath,
+  title: e.title,
+  summary: e.summary,
+  openApiIcon: e.openApiIcon,
+  operationCount: e.operationCount,
+  scorecardDomain: e.scorecardDomain,
+}));
+
+const operations: OperationSearchEntry[] = providerEntries.flatMap((e) =>
+  e.operations.map((op) => ({
+    providerPath: e.providerPath,
+    providerTitle: e.title,
+    operationId: op.operationId,
+    method: op.method,
+    path: op.path,
+    summary: op.summary,
+  })),
+);
+
+const totalOperations = providerEntries.reduce((sum, e) => sum + e.operationCount, 0);
+---
+
+<BaseLayout
+  title="API Catalog · UTDK Registry"
+  description="Browse every provider and endpoint in the UTDK registry. Search by name, path, or summary."
+>
+  <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
+    <section class="flex flex-col gap-3">
+      <div class="flex flex-wrap items-center gap-2">
+        <Badge>API Catalog</Badge>
+        <Badge variant="outline">{providers.length} providers</Badge>
+        <Badge variant="secondary">{totalOperations.toLocaleString()} endpoints</Badge>
+      </div>
+      <h1 class="max-w-3xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+        Browse every API endpoint.
+      </h1>
+      <p class="max-w-2xl text-muted-foreground">
+        Search across all providers and endpoints. Click a provider to see its full operation list, or search for a specific endpoint path or operation.
+      </p>
+      <div class="flex gap-3 text-sm">
+        <a
+          class="font-medium text-primary underline-offset-4 hover:underline"
+          href={withBasePath("/")}
+        >
+          ← Package browser
+        </a>
+      </div>
+    </section>
+
+    <ProvidersGrid client:load providers={providers} operations={operations} />
+  </main>
+</BaseLayout>

@@ -12,6 +12,73 @@ type OpenApiDocument = {
     termsOfService?: string;
   };
   paths?: Record<string, Record<string, unknown>>;
+  components?: {
+    schemas?: Record<string, unknown>;
+    parameters?: Record<string, unknown>;
+  };
+};
+
+type OpenApiOperationRaw = {
+  operationId?: string;
+  summary?: string;
+  description?: string;
+  parameters?: OpenApiParameterRaw[];
+  requestBody?: {
+    description?: string;
+    required?: boolean;
+    content?: Record<string, { schema?: unknown }>;
+  };
+  responses?: Record<string, { description?: string; content?: Record<string, { schema?: unknown }> }>;
+  tags?: string[];
+};
+
+type OpenApiParameterRaw = {
+  name?: string;
+  in?: string;
+  required?: boolean;
+  description?: string;
+  schema?: unknown;
+  $ref?: string;
+};
+
+type ProvenanceJson = {
+  pipeline?: {
+    scorecard?: {
+      infrastructure?: string;
+      domain?: number;
+    };
+  };
+};
+
+export type RegistryOperation = {
+  operationId: string;
+  method: string;
+  path: string;
+  summary: string | null;
+  description: string | null;
+  parameters: RegistryParameter[];
+  requestBody: RegistryRequestBody | null;
+  responses: Record<string, RegistryResponse>;
+  tags: string[];
+};
+
+export type RegistryParameter = {
+  name: string;
+  in: string;
+  required: boolean;
+  description: string | null;
+  schema: unknown;
+};
+
+export type RegistryRequestBody = {
+  description: string | null;
+  required: boolean;
+  schema: unknown;
+};
+
+export type RegistryResponse = {
+  description: string | null;
+  schema: unknown;
 };
 
 type UtdkManifest = {
@@ -61,6 +128,9 @@ export type RegistryEntry = {
   termsOfService: string | null;
   openApiIcon: string | null;
   operationCount: number;
+  scorecardDomain: number | null;
+  scorecardInfrastructure: string | null;
+  operations: RegistryOperation[];
   parentProviderPath: string | null;
   parentPackageName: string | null;
   childProviderPaths: string[];
@@ -128,6 +198,42 @@ export function getDocPage(
   }
 
   return entry.docs.find((doc) => doc.slug === docSlug) ?? null;
+}
+
+export function buildOperationSnippet(
+  packageName: string,
+  providerPath: string,
+  operation: RegistryOperation,
+): string {
+  const importIdentifier = toImportIdentifier(providerPath);
+  const methodName = operationToMethodName(operation.operationId);
+  const requiredParams = operation.parameters.filter((p) => p.required);
+  const paramsInner =
+    requiredParams.length > 0
+      ? ` /* ${requiredParams.map((p) => p.name).join(", ")} */ `
+      : "";
+  return `import ${importIdentifier} from "${packageName}";\nawait ${importIdentifier}.${methodName}({${paramsInner}});`;
+}
+
+function operationToMethodName(operationId: string): string {
+  const words = operationId
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/[^a-zA-Z0-9]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (words.length === 0) {
+    return "call";
+  }
+
+  const [first = "call", ...rest] = words;
+
+  return (
+    first.toLowerCase() +
+    rest.map((w) => w[0]!.toUpperCase() + w.slice(1).toLowerCase()).join("")
+  );
 }
 
 async function buildRegistryCatalog(): Promise<RegistryCatalog> {
@@ -201,6 +307,9 @@ async function buildRegistryEntry(
   const openApiDocument = await readJson<OpenApiDocument>(
     path.join(absolutePath, "openapi.json"),
   );
+  const provenance = await readJson<ProvenanceJson>(
+    path.join(absolutePath, "provenance.json"),
+  );
   const readmeMarkdown = await readText(path.join(absolutePath, "README.md"));
   const docs = await loadDocs(path.join(absolutePath, "docs"));
 
@@ -233,6 +342,11 @@ async function buildRegistryEntry(
       ? path.posix.dirname(providerPath)
       : null;
 
+  const scorecardDomain = provenance?.pipeline?.scorecard?.domain ?? null;
+  const scorecardInfrastructure =
+    provenance?.pipeline?.scorecard?.infrastructure ?? null;
+  const operations = extractOperations(openApiDocument);
+
   return {
     kind,
     providerPath,
@@ -256,6 +370,9 @@ async function buildRegistryEntry(
       null,
     openApiIcon: manifest?.utdk?.openapi?.icon ?? null,
     operationCount: countOperations(openApiDocument),
+    scorecardDomain,
+    scorecardInfrastructure,
+    operations,
     parentProviderPath,
     parentPackageName: null,
     childProviderPaths,
@@ -268,6 +385,87 @@ async function buildRegistryEntry(
         ? `import { create${toPascalCase(providerPath)}Client } from "${packageName}"`
         : null,
   };
+}
+
+const HTTP_METHODS = ["get", "post", "put", "patch", "delete", "head", "options", "trace"] as const;
+
+function extractOperations(openApiDocument: OpenApiDocument | null): RegistryOperation[] {
+  if (!openApiDocument?.paths) {
+    return [];
+  }
+
+  const operations: RegistryOperation[] = [];
+  let autoIndex = 0;
+
+  for (const [apiPath, pathItem] of Object.entries(openApiDocument.paths)) {
+    for (const method of HTTP_METHODS) {
+      const raw = (pathItem as Record<string, unknown>)[method] as OpenApiOperationRaw | undefined;
+
+      if (!raw || typeof raw !== "object") {
+        continue;
+      }
+
+      autoIndex += 1;
+      const operationId =
+        raw.operationId?.trim() ||
+        `op_${method}_${autoIndex}`;
+
+      const parameters: RegistryParameter[] = (raw.parameters ?? [])
+        .filter((p): p is OpenApiParameterRaw => Boolean(p && typeof p === "object" && !("$ref" in p)))
+        .map((p) => ({
+          name: p.name ?? "",
+          in: p.in ?? "query",
+          required: p.required ?? false,
+          description: collapseWhitespace(p.description ?? null),
+          schema: p.schema ?? null,
+        }));
+
+      let requestBody: RegistryRequestBody | null = null;
+
+      if (raw.requestBody) {
+        const contentEntry = raw.requestBody.content
+          ? Object.values(raw.requestBody.content)[0]
+          : undefined;
+
+        requestBody = {
+          description: collapseWhitespace(raw.requestBody.description ?? null),
+          required: raw.requestBody.required ?? false,
+          schema: contentEntry?.schema ?? null,
+        };
+      }
+
+      const responses: Record<string, RegistryResponse> = {};
+
+      for (const [statusCode, responseObj] of Object.entries(raw.responses ?? {})) {
+        if (!responseObj || typeof responseObj !== "object") {
+          continue;
+        }
+
+        const contentEntry = responseObj.content
+          ? Object.values(responseObj.content)[0]
+          : undefined;
+
+        responses[statusCode] = {
+          description: collapseWhitespace((responseObj as { description?: string }).description ?? null),
+          schema: (contentEntry as { schema?: unknown } | undefined)?.schema ?? null,
+        };
+      }
+
+      operations.push({
+        operationId,
+        method: method.toUpperCase(),
+        path: apiPath,
+        summary: collapseWhitespace(raw.summary ?? null),
+        description: collapseWhitespace(raw.description ?? null),
+        parameters,
+        requestBody,
+        responses,
+        tags: raw.tags ?? [],
+      });
+    }
+  }
+
+  return operations;
 }
 
 async function discoverEntryDirectories(rootDirectory: string): Promise<string[]> {
@@ -515,7 +713,7 @@ function stripMarkdown(value: string | null): string {
     .trim();
 }
 
-function collapseWhitespace(value: string | null): string | null {
+function collapseWhitespace(value: string | null | undefined): string | null {
   if (!value) {
     return null;
   }
