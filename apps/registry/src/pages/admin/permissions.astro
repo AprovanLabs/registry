@@ -1,0 +1,29 @@
+---
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { AdminPanel } from "@/components/AdminPanel";
+---
+
+<BaseLayout
+  title="Admin — Permission Management"
+  description="Manage per-user and per-workspace tool permissions for the UTDK gateway."
+>
+  <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+    <div class="flex flex-col gap-1">
+      <div class="flex items-center gap-2">
+        <a href="/" class="text-sm text-muted-foreground hover:text-foreground transition-colors">
+          Registry
+        </a>
+        <span class="text-muted-foreground">/</span>
+        <span class="text-sm font-medium">Admin</span>
+        <span class="text-muted-foreground">/</span>
+        <span class="text-sm font-medium">Permissions</span>
+      </div>
+      <h1 class="text-2xl font-semibold tracking-tight">Permission Management</h1>
+      <p class="text-sm text-muted-foreground">
+        Control which callers can invoke which tools through the UTDK gateway.
+      </p>
+    </div>
+
+    <AdminPanel client:load />
+  </main>
+</BaseLayout>

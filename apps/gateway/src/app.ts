@@ -10,6 +10,8 @@ import { credentialsRouter } from "./routes/credentials.js";
 import { permissionsRouter } from "./routes/permissions.js";
 import { toolsRouter } from "./routes/tools.js";
 import { authRouter } from "./routes/auth.js";
+import { auditRouter } from "./routes/audit.js";
+import { apiKeysRouter } from "./routes/apikeys.js";
 
 export function createApp(): Hono {
   const app = new Hono();
@@ -26,6 +28,8 @@ export function createApp(): Hono {
   app.route("/credentials", credentialsRouter);
   app.route("/permissions", permissionsRouter);
   app.route("/tools", toolsRouter);
+  app.route("/audit", auditRouter);
+  app.route("/api-keys", apiKeysRouter);
 
   // ---------------------------------------------------------------------------
   // 404 fallback

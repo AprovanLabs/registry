@@ -9,6 +9,7 @@
 
 import { Hono } from "hono";
 import { signToken } from "../middleware/auth.js";
+import { getApiKeyStore } from "../apikeys.js";
 
 export const authRouter = new Hono();
 
@@ -49,8 +50,47 @@ authRouter.post("/token", async (c) => {
 });
 
 // ---------------------------------------------------------------------------
+// POST /auth/token/apikey  — exchange an API key secret for a JWT
+// ---------------------------------------------------------------------------
+
+authRouter.post("/token/apikey", async (c) => {
+  let body: unknown;
+  try {
+    body = await c.req.json();
+  } catch {
+    return c.json({ error: "Invalid JSON body" }, 400);
+  }
+
+  if (!isApiKeyRequest(body)) {
+    return c.json({ error: "Invalid request. Required: workspaceId, secret" }, 400);
+  }
+
+  const store = getApiKeyStore();
+  const key = store.verify(body.workspaceId, body.secret);
+  if (!key) {
+    return c.json({ error: "Invalid or expired API key" }, 401);
+  }
+
+  const expiresIn = 3600;
+  const token = await signToken(key.callerId, key.workspaceId, "caller", expiresIn);
+  return c.json({ token, expiresIn, callerId: key.callerId });
+});
+
+// ---------------------------------------------------------------------------
 // Type guard
 // ---------------------------------------------------------------------------
+
+interface ApiKeyRequest {
+  workspaceId: string;
+  secret: string;
+}
+
+function isApiKeyRequest(value: unknown): value is ApiKeyRequest {
+  if (!value || typeof value !== "object") return false;
+  const v = value as Record<string, unknown>;
+  return typeof v["workspaceId"] === "string" && typeof v["secret"] === "string";
+}
+
 
 interface TokenRequest {
   callerId: string;

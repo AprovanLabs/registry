@@ -19,6 +19,7 @@ import { getCredentialStore } from "../credentials.js";
 import { getPermissionStore } from "../permissions.js";
 import { getExecutor, type IsolateResult } from "../isolate.js";
 import { withSpan } from "@utdk/common/telemetry";
+import { getAuditStore } from "../audit.js";
 
 export const toolsRouter = new Hono();
 
@@ -48,6 +49,7 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByCallerAndProvider, asyn
   const permStore = getPermissionStore();
   if (!permStore.check(workspaceId, callerId, provider, operation)) {
     logMetadata({ requestId, workspaceId, callerId, provider, operation, status: 403 });
+    getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status: 403 });
     return c.json({ error: "Forbidden: caller does not have permission for this operation" }, 403);
   }
 
@@ -96,15 +98,9 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByCallerAndProvider, asyn
   const durationMs = Date.now() - startTime;
 
   // 5. Log request/response metadata (no bodies)
-  logMetadata({
-    requestId,
-    workspaceId,
-    callerId,
-    provider,
-    operation,
-    status: isolateResult.success ? 200 : 500,
-    durationMs,
-  });
+  const status = isolateResult.success ? 200 : 500;
+  logMetadata({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
+  getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
 
   if (!isolateResult.success) {
     return c.json({ error: isolateResult.error ?? "Execution failed" }, 500);
