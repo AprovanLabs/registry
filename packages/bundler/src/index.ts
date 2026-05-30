@@ -280,12 +280,14 @@ export async function runFullPipeline(options: FullPipelineOptions): Promise<Ful
 
   const reviewPassed = !("error" in review) && review.passed;
   const scorecardResult = !("error" in review) ? review.scorecard : undefined;
+  const agentReadinessResult = !("error" in review) ? review.agentReadiness : undefined;
 
   const ship = await safeRun(() =>
     runShipPhase({
       provider: options.provider,
       outputRoot: options.outputRoot,
       scorecardResult,
+      agentReadinessResult,
     }),
   );
 
