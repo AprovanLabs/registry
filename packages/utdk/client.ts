@@ -1,6 +1,9 @@
 import { OpenApiConverter } from "@utcp/http";
 import type { Tool } from "@utcp/sdk";
 
+import { configureTelemetry, injectTraceContext, withSpan } from "./common/telemetry.js";
+import type { TelemetryExporter } from "./common/telemetry.js";
+
 type OpenApiDocument = object;
 
 type RuntimeMethod = {
@@ -350,41 +353,90 @@ async function parseResponse(response: Response): Promise<unknown> {
   return text ? text : undefined;
 }
 
+// ---------------------------------------------------------------------------
+// Telemetry auto-initialization from UTDK_OTEL_EXPORTER env var
+// ---------------------------------------------------------------------------
+
+let _telemetryInitialized = false;
+
+async function ensureTelemetryInit(): Promise<void> {
+  if (_telemetryInitialized) return;
+  _telemetryInitialized = true;
+
+  try {
+    const exporter: string | undefined =
+      typeof process !== "undefined" && process.env
+        ? process.env["UTDK_OTEL_EXPORTER"]
+        : undefined;
+
+    if (exporter === "otlp" || exporter === "console") {
+      await configureTelemetry({ enabled: true, exporter: exporter as TelemetryExporter });
+    }
+    // "noop" or absent env var: telemetry stays disabled (default)
+  } catch {
+    // Silently ignore any errors reading env or configuring telemetry
+  }
+}
+
+// ---------------------------------------------------------------------------
+// HTTP execution with telemetry
+// ---------------------------------------------------------------------------
+
 async function executeRequest(
   metadata: ToolRuntimeMetadata,
   options: CreateClientOptions,
   input: Record<string, unknown>,
   overrides?: ToolTransportOverrides,
 ): Promise<unknown> {
-  const request = assembleRequest(metadata, input, overrides);
-  const baseUrl = options.baseUrl ?? getFallbackBaseUrl(options.openApiDocument);
-  const requestHeaders = {
-    ...(options.headers ?? {}),
-    ...Object.fromEntries(Object.entries(request.headers).map(([key, value]) => [key, String(value)])),
-  };
-  const body = toBodyInit(request.body, metadata.contentType);
+  await ensureTelemetryInit();
 
-  if (body !== undefined && metadata.contentType && !Object.keys(requestHeaders).some((key) => key.toLowerCase() === "content-type")) {
-    requestHeaders["Content-Type"] = metadata.contentType;
-  }
+  const provider = options.name;
+  const operation = metadata.accessPath.join(".");
 
-  const response = await fetch(
-    buildUrl(baseUrl, metadata.pathTemplate, request.pathParams, request.queryParams),
-    {
-      body,
-      headers: requestHeaders,
-      method: metadata.httpMethod,
+  return withSpan(
+    { provider, operation, spanName: "utdk.request" },
+    async (span) => {
+      const request = assembleRequest(metadata, input, overrides);
+      const baseUrl = options.baseUrl ?? getFallbackBaseUrl(options.openApiDocument);
+      const requestHeaders: Record<string, string> = {
+        ...(options.headers ?? {}),
+        ...Object.fromEntries(Object.entries(request.headers).map(([key, value]) => [key, String(value)])),
+      };
+      const body = toBodyInit(request.body, metadata.contentType);
+
+      if (body !== undefined && metadata.contentType && !Object.keys(requestHeaders).some((key) => key.toLowerCase() === "content-type")) {
+        requestHeaders["Content-Type"] = metadata.contentType;
+      }
+
+      const url = buildUrl(baseUrl, metadata.pathTemplate, request.pathParams, request.queryParams);
+
+      // Set UTDK-specific span attributes
+      span.setAttribute("utdk.provider", provider);
+      span.setAttribute("utdk.operation", operation);
+      span.setAttribute("http.method", metadata.httpMethod);
+      span.setAttribute("http.url", url);
+
+      // Propagate W3C trace context (traceparent / tracestate) into outgoing headers
+      injectTraceContext(requestHeaders);
+
+      const response = await fetch(url, {
+        body,
+        headers: requestHeaders,
+        method: metadata.httpMethod,
+      });
+
+      span.setAttribute("http.status_code", response.status);
+
+      if (!response.ok) {
+        const errorBody = await response.text();
+        const message = `Request failed: ${response.status} ${response.statusText}${errorBody ? `\n${errorBody}` : ""}`;
+        span.setAttribute("error.message", message);
+        throw new Error(message);
+      }
+
+      return parseResponse(response);
     },
   );
-
-  if (!response.ok) {
-    const errorBody = await response.text();
-    throw new Error(
-      `Request failed: ${response.status} ${response.statusText}${errorBody ? `\n${errorBody}` : ""}`,
-    );
-  }
-
-  return parseResponse(response);
 }
 
 function toRuntimeMethods(tools: Tool[], toolMetadata: ToolRuntimeMetadataMap): RuntimeMethod[] {
