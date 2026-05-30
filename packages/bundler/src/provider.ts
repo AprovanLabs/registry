@@ -132,7 +132,8 @@ export function resolveProvider(providers: RegistryProvider[], providerName: str
     throw new Error(`Provider "${providerName}" is missing a URL in ${REGISTRY_PATH}.`);
   }
 
-  if ((provider.provider_type ?? "http") !== "http") {
+  const providerType = provider.provider_type ?? "http";
+  if (providerType !== "http" && providerType !== "local") {
     throw new Error(`Provider "${providerName}" uses unsupported type "${provider.provider_type}".`);
   }
 

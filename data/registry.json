@@ -3773,10 +3773,21 @@
     "http_method": "GET",
     "url": "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.yaml",
     "content_type": "application/x-yaml",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${STRIPE_SECRET_KEY}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
     "metadata": {
       "description": "Stripe provides APIs for accepting payments, managing subscriptions, sending payouts, and running online businesses. Accept payments and manage transactions globally",
       "category": "Payments",
-      "last_updated": "2025-08-04",
+      "last_updated": "2026-05-30",
       "maintainer": "Stripe",
       "documentation_url": "https://stripe.com/docs/api",
       "version": "1.0.0",
@@ -3935,6 +3946,306 @@
       "operations": {
         "stripPrefix": "drive."
       }
+    }
+  },
+  {
+    "name": "slack",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://api.apis.guru/v2/specs/slack.com/1.7.0/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "oauth2",
+          "token_url": "https://slack.com/api/oauth.v2.access",
+          "client_id": "${SLACK_CLIENT_ID}",
+          "client_secret": "${SLACK_CLIENT_SECRET}",
+          "scope": "channels:read chat:write users:read"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Slack is a messaging platform for teams. Build bots, send messages, manage channels, and automate workflows using the Slack Web API",
+      "category": "Communication",
+      "last_updated": "2026-05-30",
+      "maintainer": "Slack Technologies",
+      "documentation_url": "https://api.slack.com/web",
+      "version": "1.7.0",
+      "openapi_version": "3.0.0"
+    }
+  },
+  {
+    "name": "linear",
+    "provider_type": "local",
+    "http_method": "GET",
+    "url": "repo://data/openapi/linear.json",
+    "content_type": "application/json",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${LINEAR_API_KEY}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Linear is a modern project management tool for high-performance software teams. Manage issues, track projects, and ship faster using the Linear API",
+      "category": "Project Management",
+      "last_updated": "2026-05-30",
+      "maintainer": "Linear",
+      "documentation_url": "https://developers.linear.app",
+      "version": "1.0.0",
+      "openapi_version": "3.0.3"
+    }
+  },
+  {
+    "name": "notion",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://api.apis.guru/v2/specs/notion.com/1.0.0/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${NOTION_API_KEY}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Notion is an all-in-one workspace for notes, wikis, and databases. Use the Notion API to read and write pages, databases, blocks, and users",
+      "category": "Productivity",
+      "last_updated": "2026-05-30",
+      "maintainer": "Notion Labs",
+      "documentation_url": "https://developers.notion.com",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0"
+    }
+  },
+  {
+    "name": "jira",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://api.apis.guru/v2/specs/atlassian.com/jira/1001.0.0-SNAPSHOT/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "oauth2",
+          "token_url": "https://auth.atlassian.com/oauth/token",
+          "client_id": "${JIRA_CLIENT_ID}",
+          "client_secret": "${JIRA_CLIENT_SECRET}",
+          "scope": "read:jira-work write:jira-work"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Jira is a project management and issue tracking tool by Atlassian. Create, update, and query issues, manage projects, and automate workflows using the Jira Cloud REST API",
+      "category": "Project Management",
+      "last_updated": "2026-05-30",
+      "maintainer": "Atlassian",
+      "documentation_url": "https://developer.atlassian.com/cloud/jira/platform/rest/v3",
+      "version": "1001.0.0",
+      "openapi_version": "3.0.1"
+    }
+  },
+  {
+    "name": "salesforce",
+    "provider_type": "local",
+    "http_method": "GET",
+    "url": "repo://data/openapi/salesforce.json",
+    "content_type": "application/json",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "oauth2",
+          "token_url": "https://login.salesforce.com/services/oauth2/token",
+          "client_id": "${SALESFORCE_CLIENT_ID}",
+          "client_secret": "${SALESFORCE_CLIENT_SECRET}",
+          "scope": "api refresh_token"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Salesforce CRM REST API provides programmatic access to accounts, contacts, leads, opportunities, and custom objects. Build integrations with the world's #1 CRM platform",
+      "category": "CRM",
+      "last_updated": "2026-05-30",
+      "maintainer": "Salesforce",
+      "documentation_url": "https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest",
+      "version": "58.0",
+      "openapi_version": "3.0.3"
+    }
+  },
+  {
+    "name": "hubspot",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://api.apis.guru/v2/specs/hubapi.com/webhooks/v3/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "oauth2",
+          "token_url": "https://api.hubapi.com/oauth/v1/token",
+          "client_id": "${HUBSPOT_CLIENT_ID}",
+          "client_secret": "${HUBSPOT_CLIENT_SECRET}",
+          "scope": "crm.objects.contacts.read crm.objects.contacts.write"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "HubSpot is a CRM platform with marketing, sales, and service tools. The HubSpot API lets you access contacts, companies, deals, tickets, and automate workflows",
+      "category": "CRM",
+      "last_updated": "2026-05-30",
+      "maintainer": "HubSpot",
+      "documentation_url": "https://developers.hubspot.com/docs/api/overview",
+      "version": "v3",
+      "openapi_version": "3.0.0"
+    }
+  },
+  {
+    "name": "twilio",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://api.apis.guru/v2/specs/twilio.com/api/1.42.0/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "basic",
+          "username": "${TWILIO_ACCOUNT_SID}",
+          "password": "${TWILIO_AUTH_TOKEN}"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Twilio is a cloud communications platform for building SMS, voice, video, and messaging applications. Send and receive messages, make calls, and manage phone numbers",
+      "category": "Communications",
+      "last_updated": "2026-05-30",
+      "maintainer": "Twilio",
+      "documentation_url": "https://www.twilio.com/docs/api",
+      "version": "1.42.0",
+      "openapi_version": "3.0.0"
+    }
+  },
+  {
+    "name": "sendgrid",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://api.apis.guru/v2/specs/sendgrid.com/1.0.0/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${SENDGRID_API_KEY}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "SendGrid is a cloud-based email delivery service. Send transactional and marketing emails, manage contacts, track opens/clicks, and configure email authentication",
+      "category": "Email",
+      "last_updated": "2026-05-30",
+      "maintainer": "Twilio SendGrid",
+      "documentation_url": "https://docs.sendgrid.com/api-reference",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0"
+    }
+  },
+  {
+    "name": "airtable",
+    "provider_type": "local",
+    "http_method": "GET",
+    "url": "repo://data/openapi/airtable.json",
+    "content_type": "application/json",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${AIRTABLE_API_KEY}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Airtable is a low-code platform for building collaborative apps. Create, read, update, and delete records in Airtable bases using the REST API",
+      "category": "Database",
+      "last_updated": "2026-05-30",
+      "maintainer": "Airtable",
+      "documentation_url": "https://airtable.com/developers/web/api/introduction",
+      "version": "0.1.0",
+      "openapi_version": "3.0.3"
+    }
+  },
+  {
+    "name": "intercom",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/intercom/Intercom-OpenAPI/main/descriptions/2.15/api.intercom.io.yaml",
+    "content_type": "application/x-yaml",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${INTERCOM_ACCESS_TOKEN}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Intercom is a customer messaging platform. Manage contacts, conversations, companies, articles, and custom attributes using the Intercom API",
+      "category": "Customer Support",
+      "last_updated": "2026-05-30",
+      "maintainer": "Intercom",
+      "documentation_url": "https://developers.intercom.com/intercom-api-reference",
+      "version": "2.15",
+      "openapi_version": "3.0.1"
+    }
+  },
+  {
+    "name": "zendesk",
+    "provider_type": "local",
+    "http_method": "GET",
+    "url": "repo://data/openapi/zendesk.json",
+    "content_type": "application/json",
+    "ingestSource": "composio",
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${ZENDESK_API_TOKEN}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Zendesk is a customer service and support ticketing platform. Manage tickets, users, organizations, and automate support workflows using the Zendesk Support API",
+      "category": "Customer Support",
+      "last_updated": "2026-05-30",
+      "maintainer": "Zendesk",
+      "documentation_url": "https://developer.zendesk.com/api-reference",
+      "version": "2.0.0",
+      "openapi_version": "3.0.3"
     }
   }
 ]

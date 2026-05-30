@@ -1,0 +1,33 @@
+{
+  "name": "@utdk/twilio",
+  "version": "1.42.0-20260530.1",
+  "type": "module",
+  "description": "Generated UTDK provider client for Twilio - Api. This is the public Twilio REST API.",
+  "homepage": "https://support.twilio.com",
+  "keywords": [
+    "twilio",
+    "generated",
+    "openapi",
+    "utdk"
+  ],
+  "license": "Apache 2.0",
+  "utdk": {
+    "provider": "twilio",
+    "generation": 1,
+    "generatedAt": "2026-05-30T12:25:52.605Z",
+    "auth": [
+      {
+        "auth_type": "basic",
+        "username": "${TWILIO_ACCOUNT_SID}",
+        "password": "${TWILIO_AUTH_TOKEN}"
+      }
+    ],
+    "openapi": {
+      "title": "Twilio - Api",
+      "url": "https://api.apis.guru/v2/specs/twilio.com/api/1.42.0/openapi.json",
+      "version": "1.42.0",
+      "termsOfService": "https://www.twilio.com/legal/tos",
+      "icon": "https://api.apis.guru/v2/cache/logo/https_static1.twilio.com_marketing_bundles_marketing_img_logos_wordmark-red.svg"
+    }
+  }
+}

@@ -1,4 +1,77 @@
 {
   "schemaVersion": "1.0.0",
-  "providers": {}
+  "providers": {
+    "linear": {
+      "packageName": "@utdk/linear",
+      "provenancePath": "./linear/provenance.json",
+      "generatedAt": "2026-05-30T12:22:15.091Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "airtable": {
+      "packageName": "@utdk/airtable",
+      "provenancePath": "./airtable/provenance.json",
+      "generatedAt": "2026-05-30T12:22:27.673Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "zendesk": {
+      "packageName": "@utdk/zendesk",
+      "provenancePath": "./zendesk/provenance.json",
+      "generatedAt": "2026-05-30T12:26:11.920Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "salesforce": {
+      "packageName": "@utdk/salesforce",
+      "provenancePath": "./salesforce/provenance.json",
+      "generatedAt": "2026-05-30T12:25:01.103Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "slack": {
+      "packageName": "@utdk/slack",
+      "provenancePath": "./slack/provenance.json",
+      "generatedAt": "2026-05-30T12:25:11.626Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "notion": {
+      "packageName": "@utdk/notion",
+      "provenancePath": "./notion/provenance.json",
+      "generatedAt": "2026-05-30T12:25:16.211Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "jira": {
+      "packageName": "@utdk/jira",
+      "provenancePath": "./jira/provenance.json",
+      "generatedAt": "2026-05-30T12:25:21.312Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "hubspot": {
+      "packageName": "@utdk/hubspot",
+      "provenancePath": "./hubspot/provenance.json",
+      "generatedAt": "2026-05-30T12:25:26.321Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "twilio": {
+      "packageName": "@utdk/twilio",
+      "provenancePath": "./twilio/provenance.json",
+      "generatedAt": "2026-05-30T12:25:56.913Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "sendgrid": {
+      "packageName": "@utdk/sendgrid",
+      "provenancePath": "./sendgrid/provenance.json",
+      "generatedAt": "2026-05-30T12:26:02.337Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "intercom": {
+      "packageName": "@utdk/intercom",
+      "provenancePath": "./intercom/provenance.json",
+      "generatedAt": "2026-05-30T12:26:07.709Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "stripe": {
+      "packageName": "@utdk/stripe",
+      "provenancePath": "./stripe/provenance.json",
+      "generatedAt": "2026-05-30T12:27:05.782Z",
+      "bundlerVersion": "0.1.1"
+    }
+  }
 }
