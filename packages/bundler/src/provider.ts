@@ -9,6 +9,8 @@ export type RegistryProvider = {
   http_method?: string;
   url: string;
   content_type?: string;
+  /** Ingest source for provenance tracking. Defaults to "manual". */
+  ingestSource?: string;
 };
 
 export type RegistryProviderAuthOption = Record<string, unknown>;
