@@ -1,11 +1,17 @@
 import { DocsPipelineError } from "./docs/types.js";
-import { augmentRegistryProviderDocs, generateRegistryTypes, loadRegistryProviderDocs } from "./index.js";
+import { augmentRegistryProviderDocs, generateRegistryTypes, loadRegistryProviderDocs, runFullPipeline } from "./index.js";
+import { runEnrichPhase } from "./phases/enrich.js";
+import { runResearchPhase } from "./phases/research.js";
+import { runReviewPhase } from "./phases/review.js";
+import { runShipPhase } from "./phases/ship.js";
 
 type CliCommand = "generate" | "load-docs" | "augment-docs";
+type PipelinePhase = "research" | "enrich" | "review" | "ship";
 
 type ParsedCommand = {
   command: CliCommand;
   provider: string;
+  phase?: PipelinePhase;
   docsCacheRoot?: string;
   outputRoot?: string;
   rawSnapshots?: boolean;
@@ -21,6 +27,10 @@ function getOptionValue(argv: string[], index: number, flag: string): string {
   }
 
   return value;
+}
+
+function isValidPhase(value: string): value is PipelinePhase {
+  return value === "research" || value === "enrich" || value === "review" || value === "ship";
 }
 
 function parseCommand(argv: string[]): ParsedCommand {
@@ -43,6 +53,16 @@ function parseCommand(argv: string[]): ParsedCommand {
     const token = rest[index];
 
     if (!token) {
+      continue;
+    }
+
+    if (token === "--phase") {
+      const value = getOptionValue(rest, index, token);
+      if (!isValidPhase(value)) {
+        throw new Error(`Unknown phase: ${value}. Valid phases are: research, enrich, review, ship.`);
+      }
+      parsed.phase = value;
+      index += 1;
       continue;
     }
 
@@ -89,11 +109,48 @@ async function main(): Promise<void> {
   const parsed = parseCommand(process.argv.slice(2));
 
   if (parsed.command === "generate") {
-    const result = await generateRegistryTypes({
+    if (parsed.phase === "research") {
+      const result = await runResearchPhase({
+        provider: parsed.provider,
+        outputRoot: parsed.outputRoot,
+      });
+      writeJson({ ok: true, command: "generate", phase: "research", provider: parsed.provider, result });
+      return;
+    }
+
+    if (parsed.phase === "enrich") {
+      const result = await runEnrichPhase({
+        provider: parsed.provider,
+        outputRoot: parsed.outputRoot,
+      });
+      writeJson({ ok: true, command: "generate", phase: "enrich", provider: parsed.provider, result });
+      return;
+    }
+
+    if (parsed.phase === "review") {
+      const result = await runReviewPhase({
+        provider: parsed.provider,
+        outputRoot: parsed.outputRoot,
+      });
+      writeJson({ ok: true, command: "generate", phase: "review", provider: parsed.provider, result });
+      return;
+    }
+
+    if (parsed.phase === "ship") {
+      const result = await runShipPhase({
+        provider: parsed.provider,
+        outputRoot: parsed.outputRoot,
+      });
+      writeJson({ ok: true, command: "generate", phase: "ship", provider: parsed.provider, result });
+      return;
+    }
+
+    // Full pipeline (no --phase)
+    const result = await runFullPipeline({
       provider: parsed.provider,
       outputRoot: parsed.outputRoot,
     });
-    writeJson({ ok: true, command: parsed.command, provider: parsed.provider, result });
+    writeJson({ ok: true, command: "generate", provider: parsed.provider, result });
     return;
   }
 

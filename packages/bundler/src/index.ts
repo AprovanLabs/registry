@@ -32,6 +32,25 @@ import {
   renderRootTsconfig,
 } from "./render.js";
 import { loadProviderTools } from "./utcp.js";
+import { runEnrichPhase, type RunEnrichPhaseOptions, type RunEnrichPhaseResult } from "./phases/enrich.js";
+import { runResearchPhase, type RunResearchPhaseOptions, type RunResearchPhaseResult } from "./phases/research.js";
+import { runReviewPhase, type RunReviewPhaseOptions, type RunReviewPhaseResult } from "./phases/review.js";
+import { runShipPhase, type RunShipPhaseOptions, type RunShipPhaseResult } from "./phases/ship.js";
+
+export {
+  runResearchPhase,
+  type RunResearchPhaseOptions,
+  type RunResearchPhaseResult,
+  runEnrichPhase,
+  type RunEnrichPhaseOptions,
+  type RunEnrichPhaseResult,
+  runReviewPhase,
+  type RunReviewPhaseOptions,
+  type RunReviewPhaseResult,
+  runShipPhase,
+  type RunShipPhaseOptions,
+  type RunShipPhaseResult,
+};
 
 export type GenerateRegistryTypesOptions = {
   provider: string;
@@ -221,4 +240,62 @@ export async function generateRegistryTypes(
     outputPaths,
     toolCount: tools.length,
   };
+}
+
+export type FullPipelineOptions = {
+  provider: string;
+  outputRoot?: string;
+};
+
+export type FullPipelineResult = {
+  scaffold: GenerateRegistryTypesResult;
+  research: RunResearchPhaseResult | { error: string };
+  enrich: RunEnrichPhaseResult | { error: string };
+  review: RunReviewPhaseResult | { error: string };
+  ship: RunShipPhaseResult | { error: string };
+};
+
+async function safeRun<T>(fn: () => Promise<T>): Promise<T | { error: string }> {
+  try {
+    return await fn();
+  } catch (error: unknown) {
+    return { error: error instanceof Error ? error.message : String(error) };
+  }
+}
+
+export async function runFullPipeline(options: FullPipelineOptions): Promise<FullPipelineResult> {
+  const scaffold = await generateRegistryTypes({
+    provider: options.provider,
+    outputRoot: options.outputRoot,
+  });
+
+  const [research, enrich] = await Promise.all([
+    safeRun(() => runResearchPhase({ provider: options.provider, outputRoot: options.outputRoot })),
+    safeRun(() => runEnrichPhase({ provider: options.provider, outputRoot: options.outputRoot })),
+  ]);
+
+  const review = await safeRun(() =>
+    runReviewPhase({ provider: options.provider, outputRoot: options.outputRoot }),
+  );
+
+  const reviewPassed = !("error" in review) && review.passed;
+  const scorecardResult = !("error" in review) ? review.scorecard : undefined;
+
+  const ship = await safeRun(() =>
+    runShipPhase({
+      provider: options.provider,
+      outputRoot: options.outputRoot,
+      scorecardResult,
+    }),
+  );
+
+  if (!reviewPassed && !("error" in review)) {
+    process.stderr.write(
+      `Warning: review phase did not pass for ${options.provider}. ` +
+        `Scorecard: ${review.scorecard.total}/100. ` +
+        `Blockers: ${review.agentReadiness.blockers.filter((b) => b.severity === "error").length} errors.\n`,
+    );
+  }
+
+  return { scaffold, research, enrich, review, ship };
 }
