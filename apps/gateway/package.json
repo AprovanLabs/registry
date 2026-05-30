@@ -1,0 +1,33 @@
+{
+  "name": "@aprovan/gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "API gateway — credential proxy, permission enforcement, and tool call routing",
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "start": "node dist/index.js",
+    "test": "vitest run",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.7",
+    "hono": "^4.6.20",
+    "jose": "^5.10.0",
+    "@utdk/common": "workspace:*",
+    "tslib": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.3",
+    "vitest": "2.1.5",
+    "@vitest/coverage-v8": "^2.1.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}

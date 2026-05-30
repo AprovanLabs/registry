@@ -1,0 +1,52 @@
+version: "3.9"
+
+services:
+  gateway:
+    build:
+      context: ../..
+      dockerfile: apps/gateway/Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      # Required in production — override with real keys
+      GATEWAY_PORT: "4000"
+      GATEWAY_WORKSPACE_KEY: "${GATEWAY_WORKSPACE_KEY:-dev-insecure-key}"
+      GATEWAY_JWT_SECRET: "${GATEWAY_JWT_SECRET:-dev-insecure-jwt-secret}"
+      GATEWAY_ADMIN_SECRET: "${GATEWAY_ADMIN_SECRET:-dev-insecure-admin-secret}"
+
+      # File-backed persistence (mounted volume)
+      GATEWAY_STORE_PATH: "/data/credentials.json"
+      GATEWAY_PERMISSIONS_PATH: "/data/permissions.json"
+
+      # Telemetry — point at the OTEL collector when available
+      GATEWAY_TELEMETRY_EXPORTER: "${GATEWAY_TELEMETRY_EXPORTER:-console}"
+      OTEL_EXPORTER_OTLP_ENDPOINT: "${OTEL_EXPORTER_OTLP_ENDPOINT:-}"
+      OTEL_SERVICE_NAME: "gateway"
+
+      # Rate limiting
+      GATEWAY_RATE_LIMIT_RPS: "${GATEWAY_RATE_LIMIT_RPS:-10}"
+      GATEWAY_RATE_LIMIT_BURST: "${GATEWAY_RATE_LIMIT_BURST:-20}"
+    volumes:
+      - gateway-data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://localhost:4000/health').then(r => process.exit(r.ok ? 0 : 1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+
+  # OpenTelemetry Collector (optional — comment out if not needed)
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:latest
+    command: ["--config=/etc/otel/config.yaml"]
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel/config.yaml:ro
+    ports:
+      - "4317:4317"   # OTLP gRPC
+      - "4318:4318"   # OTLP HTTP
+    profiles:
+      - telemetry
+
+volumes:
+  gateway-data:
