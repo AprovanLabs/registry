@@ -51,6 +51,104 @@ export class ApiKey implements AuthProvider {
 }
 
 // ---------------------------------------------------------------------------
+// TokenStore — pluggable persistence adapter
+// ---------------------------------------------------------------------------
+
+export interface StoredToken {
+  accessToken: string;
+  refreshToken?: string;
+  expiresAt?: number;
+}
+
+/**
+ * Pluggable persistence adapter for OAuth2 tokens.
+ * The default in-process cache satisfies most use cases; implement this
+ * interface for persistent storage (disk, Redis, OS keychain, etc.).
+ */
+export interface TokenStore {
+  get(key: string): Promise<StoredToken | undefined>;
+  set(key: string, token: StoredToken): Promise<void>;
+  delete(key: string): Promise<void>;
+}
+
+// ---------------------------------------------------------------------------
+// PKCE utilities
+// ---------------------------------------------------------------------------
+
+export interface PKCEPair {
+  codeVerifier: string;
+  codeChallenge: string;
+  codeChallengeMethod: "S256";
+}
+
+function base64urlEncode(bytes: Uint8Array): string {
+  // btoa requires a binary string
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) {
+    binary += String.fromCharCode(bytes[i] as number);
+  }
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+
+/**
+ * Generate a cryptographically random PKCE code verifier + S256 challenge pair.
+ * Use the returned `codeVerifier` when constructing `OAuth2AuthCode` and the
+ * `codeChallenge`/`codeChallengeMethod` values when building the authorization URL.
+ */
+export async function generatePKCE(): Promise<PKCEPair> {
+  const bytes = new Uint8Array(64);
+  crypto.getRandomValues(bytes);
+  const codeVerifier = base64urlEncode(bytes);
+
+  const encoder = new TextEncoder();
+  const data = encoder.encode(codeVerifier);
+  const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+  const codeChallenge = base64urlEncode(new Uint8Array(hashBuffer));
+
+  return { codeVerifier, codeChallenge, codeChallengeMethod: "S256" };
+}
+
+// ---------------------------------------------------------------------------
+// buildAuthorizationUrl
+// ---------------------------------------------------------------------------
+
+export interface AuthorizationUrlOptions {
+  /** Authorization endpoint (e.g. https://accounts.spotify.com/authorize) */
+  authUrl: string;
+  clientId: string;
+  redirectUri: string;
+  scopes?: string[];
+  /** Opaque value to prevent CSRF; callers should verify on callback */
+  state?: string;
+  /** PKCE challenge (from generatePKCE()) */
+  codeChallenge?: string;
+  codeChallengeMethod?: "S256" | "plain";
+}
+
+/**
+ * Build an OAuth2 authorization URL, optionally with PKCE parameters.
+ */
+export function buildAuthorizationUrl(options: AuthorizationUrlOptions): string {
+  const url = new URL(options.authUrl);
+  url.searchParams.set("response_type", "code");
+  url.searchParams.set("client_id", options.clientId);
+  url.searchParams.set("redirect_uri", options.redirectUri);
+
+  if (options.scopes && options.scopes.length > 0) {
+    url.searchParams.set("scope", options.scopes.join(" "));
+  }
+  if (options.state) {
+    url.searchParams.set("state", options.state);
+  }
+  if (options.codeChallenge) {
+    url.searchParams.set("code_challenge", options.codeChallenge);
+    url.searchParams.set("code_challenge_method", options.codeChallengeMethod ?? "S256");
+  }
+
+  return url.toString();
+}
+
+// ---------------------------------------------------------------------------
 // OAuth2ClientCredentials
 // ---------------------------------------------------------------------------
 
@@ -60,6 +158,10 @@ export interface OAuth2ClientCredentialsOptions {
   tokenUrl: string;
   /** Additional scopes to request */
   scopes?: string[];
+  /** Optional persistent token store */
+  tokenStore?: TokenStore;
+  /** Key used when reading/writing to the token store (default: tokenUrl) */
+  storeKey?: string;
 }
 
 interface TokenResponse {
@@ -79,8 +181,31 @@ export class OAuth2ClientCredentials implements AuthProvider {
 
   private isExpired(): boolean {
     if (this.expiresAt === undefined) return true;
-    // Refresh 30 seconds before actual expiry
-    return Date.now() >= this.expiresAt - 30_000;
+    // Refresh 60 seconds before actual expiry
+    return Date.now() >= this.expiresAt - 60_000;
+  }
+
+  private storeKey(): string {
+    return this.options.storeKey ?? this.options.tokenUrl;
+  }
+
+  private async loadFromStore(): Promise<void> {
+    const store = this.options.tokenStore;
+    if (!store) return;
+    const stored = await store.get(this.storeKey());
+    if (stored) {
+      this.accessToken = stored.accessToken;
+      this.expiresAt = stored.expiresAt;
+    }
+  }
+
+  private async saveToStore(): Promise<void> {
+    const store = this.options.tokenStore;
+    if (!store || !this.accessToken) return;
+    await store.set(this.storeKey(), {
+      accessToken: this.accessToken,
+      expiresAt: this.expiresAt,
+    });
   }
 
   private async fetchToken(): Promise<void> {
@@ -108,9 +233,14 @@ export class OAuth2ClientCredentials implements AuthProvider {
     const data = (await response.json()) as TokenResponse;
     this.accessToken = data.access_token;
     this.expiresAt = data.expires_in !== undefined ? Date.now() + data.expires_in * 1_000 : undefined;
+    await this.saveToStore();
   }
 
   async applyToRequest(headers: Record<string, string>): Promise<void> {
+    if (!this.accessToken) {
+      await this.loadFromStore();
+    }
+
     if (!this.accessToken || this.isExpired()) {
       await this.fetchToken();
     }
@@ -132,6 +262,15 @@ export interface OAuth2AuthCodeOptions {
   redirectUri: string;
   /** Additional scopes to request */
   scopes?: string[];
+  /**
+   * PKCE code verifier (from generatePKCE()).
+   * When provided, it is sent with the token request as required by RFC 7636.
+   */
+  codeVerifier?: string;
+  /** Optional persistent token store */
+  tokenStore?: TokenStore;
+  /** Key used when reading/writing to the token store (default: tokenUrl) */
+  storeKey?: string;
 }
 
 export class OAuth2AuthCode implements AuthProvider {
@@ -146,7 +285,33 @@ export class OAuth2AuthCode implements AuthProvider {
 
   private isExpired(): boolean {
     if (this.expiresAt === undefined) return false;
-    return Date.now() >= this.expiresAt - 30_000;
+    // Refresh 60 seconds before actual expiry
+    return Date.now() >= this.expiresAt - 60_000;
+  }
+
+  private storeKey(): string {
+    return this.options.storeKey ?? this.options.tokenUrl;
+  }
+
+  private async loadFromStore(): Promise<void> {
+    const store = this.options.tokenStore;
+    if (!store) return;
+    const stored = await store.get(this.storeKey());
+    if (stored) {
+      this.accessToken = stored.accessToken;
+      this.refreshToken = stored.refreshToken;
+      this.expiresAt = stored.expiresAt;
+    }
+  }
+
+  private async saveToStore(): Promise<void> {
+    const store = this.options.tokenStore;
+    if (!store || !this.accessToken) return;
+    await store.set(this.storeKey(), {
+      accessToken: this.accessToken,
+      refreshToken: this.refreshToken,
+      expiresAt: this.expiresAt,
+    });
   }
 
   private async exchangeCode(): Promise<void> {
@@ -157,6 +322,10 @@ export class OAuth2AuthCode implements AuthProvider {
       code: this.options.code,
       redirect_uri: this.options.redirectUri,
     });
+
+    if (this.options.codeVerifier) {
+      params.set("code_verifier", this.options.codeVerifier);
+    }
 
     const response = await fetch(this.options.tokenUrl, {
       method: "POST",
@@ -173,6 +342,7 @@ export class OAuth2AuthCode implements AuthProvider {
     this.accessToken = data.access_token;
     this.refreshToken = data.refresh_token;
     this.expiresAt = data.expires_in !== undefined ? Date.now() + data.expires_in * 1_000 : undefined;
+    await this.saveToStore();
   }
 
   private async refreshAccessToken(): Promise<void> {
@@ -206,9 +376,14 @@ export class OAuth2AuthCode implements AuthProvider {
       this.refreshToken = data.refresh_token;
     }
     this.expiresAt = data.expires_in !== undefined ? Date.now() + data.expires_in * 1_000 : undefined;
+    await this.saveToStore();
   }
 
   async applyToRequest(headers: Record<string, string>): Promise<void> {
+    if (!this.accessToken) {
+      await this.loadFromStore();
+    }
+
     if (!this.accessToken) {
       await this.exchangeCode();
     } else if (this.isExpired()) {

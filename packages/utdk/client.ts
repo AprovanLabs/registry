@@ -1,5 +1,6 @@
 import { OpenApiConverter } from "@utcp/http";
 import type { Tool } from "@utcp/sdk";
+import type { AuthProvider } from "./common/auth.js";
 
 import { configureTelemetry, injectTraceContext, withSpan } from "./common/telemetry.js";
 import type { TelemetryExporter } from "./common/telemetry.js";
@@ -18,6 +19,8 @@ export type CreateClientOptions = {
   baseUrl?: string;
   headers?: Record<string, string>;
   toolMetadata?: ToolRuntimeMetadataMap;
+  /** Optional auth provider applied to every request */
+  auth?: AuthProvider;
 };
 
 export type ToolRuntimeMetadata = {
@@ -402,6 +405,11 @@ async function executeRequest(
         ...(options.headers ?? {}),
         ...Object.fromEntries(Object.entries(request.headers).map(([key, value]) => [key, String(value)])),
       };
+
+      if (options.auth) {
+        await options.auth.applyToRequest(requestHeaders);
+      }
+
       const body = toBodyInit(request.body, metadata.contentType);
 
       if (body !== undefined && metadata.contentType && !Object.keys(requestHeaders).some((key) => key.toLowerCase() === "content-type")) {
