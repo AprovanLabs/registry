@@ -1,14 +1,14 @@
 {
   "provider": "hubspot",
-  "generatedAt": "2026-05-30T12:25:26.321Z",
-  "generation": 1,
+  "generatedAt": "2026-05-30T22:05:43.102Z",
+  "generation": 2,
   "source": {
     "type": "openapi",
-    "url": "https://api.apis.guru/v2/specs/hubapi.com/webhooks/v3/openapi.json",
-    "hash": "sha256:d897ea53d368e1cb7e7bcc104ad1a47f34534f0140b1694261d3f6d0e479862b",
-    "fetchedAt": "2026-05-30T12:25:26.321Z"
+    "url": "https://raw.githubusercontent.com/HubSpot/HubSpot-public-api-spec-collection/main/PublicApiSpecs/CRM/Contacts/Rollouts/424/v3/contacts.json",
+    "hash": "sha256:42f4fa952ef515822dd0e7ac7b8242c82599e41b38a6dee250b9cc58a07b0998",
+    "fetchedAt": "2026-05-30T22:05:43.102Z"
   },
-  "ingestSource": "composio",
+  "ingestSource": "printing-press",
   "pipeline": {
     "research": {
       "noveltyScore": 2,
@@ -16,7 +16,7 @@
     },
     "scorecard": {
       "infrastructure": "fail",
-      "domain": 70
+      "domain": 100
     },
     "agentReadiness": "pass"
   },

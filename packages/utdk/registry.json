@@ -40,19 +40,19 @@
     "jira": {
       "packageName": "@utdk/jira",
       "provenancePath": "./jira/provenance.json",
-      "generatedAt": "2026-05-30T12:25:21.312Z",
+      "generatedAt": "2026-05-30T22:05:43.192Z",
       "bundlerVersion": "0.1.1"
     },
     "hubspot": {
       "packageName": "@utdk/hubspot",
       "provenancePath": "./hubspot/provenance.json",
-      "generatedAt": "2026-05-30T12:25:26.321Z",
+      "generatedAt": "2026-05-30T22:05:43.102Z",
       "bundlerVersion": "0.1.1"
     },
     "twilio": {
       "packageName": "@utdk/twilio",
       "provenancePath": "./twilio/provenance.json",
-      "generatedAt": "2026-05-30T12:25:56.913Z",
+      "generatedAt": "2026-05-30T22:05:54.660Z",
       "bundlerVersion": "0.1.1"
     },
     "sendgrid": {
@@ -70,7 +70,115 @@
     "stripe": {
       "packageName": "@utdk/stripe",
       "provenancePath": "./stripe/provenance.json",
-      "generatedAt": "2026-05-30T12:27:05.782Z",
+      "generatedAt": "2026-05-30T22:06:02.094Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "sentry": {
+      "packageName": "@utdk/sentry",
+      "provenancePath": "./sentry/provenance.json",
+      "generatedAt": "2026-05-30T18:14:57.960Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "elevenlabs": {
+      "packageName": "@utdk/elevenlabs",
+      "provenancePath": "./elevenlabs/provenance.json",
+      "generatedAt": "2026-05-30T18:16:06.458Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "front": {
+      "packageName": "@utdk/front",
+      "provenancePath": "./front/provenance.json",
+      "generatedAt": "2026-05-30T18:16:06.314Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "discord": {
+      "packageName": "@utdk/discord",
+      "provenancePath": "./discord/provenance.json",
+      "generatedAt": "2026-05-30T18:16:06.505Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "itglue": {
+      "packageName": "@utdk/itglue",
+      "provenancePath": "./itglue/provenance.json",
+      "generatedAt": "2026-05-30T18:16:06.571Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "openrouteservice": {
+      "packageName": "@utdk/openrouteservice",
+      "provenancePath": "./openrouteservice/provenance.json",
+      "generatedAt": "2026-05-30T18:16:15.163Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "mercury": {
+      "packageName": "@utdk/mercury",
+      "provenancePath": "./mercury/provenance.json",
+      "generatedAt": "2026-05-30T18:16:15.269Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "launchdarkly": {
+      "packageName": "@utdk/launchdarkly",
+      "provenancePath": "./launchdarkly/provenance.json",
+      "generatedAt": "2026-05-30T18:16:15.225Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "pipedrive": {
+      "packageName": "@utdk/pipedrive",
+      "provenancePath": "./pipedrive/provenance.json",
+      "generatedAt": "2026-05-30T18:16:15.258Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "producthunt": {
+      "packageName": "@utdk/producthunt",
+      "provenancePath": "./producthunt/provenance.json",
+      "generatedAt": "2026-05-30T22:08:03.970Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "postman-explore": {
+      "packageName": "@utdk/postman-explore",
+      "provenancePath": "./postman-explore/provenance.json",
+      "generatedAt": "2026-05-30T18:16:23.230Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "plaid": {
+      "packageName": "@utdk/plaid",
+      "provenancePath": "./plaid/provenance.json",
+      "generatedAt": "2026-05-30T18:16:23.286Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "telegram": {
+      "packageName": "@utdk/telegram",
+      "provenancePath": "./telegram/provenance.json",
+      "generatedAt": "2026-05-30T18:16:23.191Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "google-cloud-run": {
+      "packageName": "@utdk/google-cloud-run",
+      "provenancePath": "./google-cloud-run/provenance.json",
+      "generatedAt": "2026-05-30T22:05:43.138Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "asana": {
+      "packageName": "@utdk/asana",
+      "provenancePath": "./asana/provenance.json",
+      "generatedAt": "2026-05-30T22:05:43.162Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "petstore": {
+      "packageName": "@utdk/petstore",
+      "provenancePath": "./petstore/provenance.json",
+      "generatedAt": "2026-05-30T22:05:54.492Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "stytch": {
+      "packageName": "@utdk/stytch",
+      "provenancePath": "./stytch/provenance.json",
+      "generatedAt": "2026-05-30T22:05:54.535Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "digitalocean": {
+      "packageName": "@utdk/digitalocean",
+      "provenancePath": "./digitalocean/provenance.json",
+      "generatedAt": "2026-05-30T22:05:54.649Z",
       "bundlerVersion": "0.1.1"
     }
   }

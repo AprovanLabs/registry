@@ -1,0 +1,32 @@
+{
+  "name": "@utdk/front",
+  "version": "1.0.0-20260530.2",
+  "type": "module",
+  "description": "Generated UTDK provider client for Core API. Generated UTDK provider types and OpenAPI-backed client for https://raw.githubusercontent.com/frontapp/front-api-specs/main/core-api/core-api.json.",
+  "homepage": "https://community.front.com",
+  "keywords": [
+    "front",
+    "generated",
+    "openapi",
+    "utdk"
+  ],
+  "utdk": {
+    "provider": "front",
+    "generation": 2,
+    "generatedAt": "2026-05-30T18:15:58.637Z",
+    "auth": [
+      {
+        "auth_type": "api_key",
+        "api_key": "Bearer ${FRONT_API_TOKEN}",
+        "var_name": "Authorization",
+        "location": "header"
+      }
+    ],
+    "openapi": {
+      "title": "Core API",
+      "url": "https://raw.githubusercontent.com/frontapp/front-api-specs/main/core-api/core-api.json",
+      "version": "1.0.0",
+      "termsOfService": null
+    }
+  }
+}

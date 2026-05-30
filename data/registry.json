@@ -209,16 +209,32 @@
     "name": "asana",
     "provider_type": "http",
     "http_method": "GET",
-    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/asana.com/1.0/openapi.yaml",
+    "url": "https://raw.githubusercontent.com/Asana/openapi/master/defs/asana_oas.yaml",
     "content_type": "application/x-yaml",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:150a53c58cbb46d2d6288546d1c3b90e065bdc80f71f67cfc4bbef460767a3e4",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "oauth2",
+          "token_url": "https://app.asana.com/-/oauth_token",
+          "client_id": "${ASANA_CLIENT_ID}",
+          "client_secret": "${ASANA_CLIENT_SECRET}",
+          "scope": "default"
+        }
+      ]
+    },
     "metadata": {
-      "description": "Retrieves tasks, projects, and teams; manages task assignments, due dates, and project statuses within the Asana platform.",
-      "category": "AI & Machine Learning",
-      "last_updated": "2025-08-04",
-      "maintainer": "Asana Support",
-      "documentation_url": "https://asana.com/support",
-      "version": "1.0",
-      "openapi_version": "3.0.0"
+      "description": "Work management and project tracking API for tasks, projects, portfolios, teams, and goals",
+      "category": "Project Management",
+      "maintainer": "Asana",
+      "documentation_url": "https://developers.asana.com/reference",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
     }
   },
   {
@@ -3233,16 +3249,31 @@
     "name": "elevenlabs",
     "provider_type": "http",
     "http_method": "GET",
-    "url": "https://raw.githubusercontent.com/APIs-guru/openapi-directory/main/APIs/elevenlabs.io/1.0/openapi.yaml",
-    "content_type": "application/x-yaml",
+    "url": "https://api.elevenlabs.io/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:4f6635dd82b6477859611045573aa99ce0efd10e3e638e522b4de06d7e8305f9",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "${ELEVENLABS_API_KEY}",
+          "var_name": "xi-api-key",
+          "location": "header"
+        }
+      ]
+    },
     "metadata": {
-      "description": "Retrieves text-to-speech audio, manages voice settings, and generates speech from text using customizable parameters and voice profiles.",
-      "category": "Development Tools",
-      "last_updated": "2025-08-04",
-      "maintainer": "elevenlabs.io",
-      "documentation_url": "https://elevenlabs.io",
-      "version": "1.0",
-      "openapi_version": "3.0.2"
+      "description": "AI audio platform for text-to-speech, voice cloning, dubbing, transcription, and conversational agents",
+      "category": "AI",
+      "maintainer": "ElevenLabs",
+      "documentation_url": "https://elevenlabs.io/docs",
+      "version": "1.0.0",
+      "openapi_version": "3.1.0",
+      "last_updated": "2026-05-30"
     }
   },
   {
@@ -3771,9 +3802,13 @@
     "name": "stripe",
     "provider_type": "http",
     "http_method": "GET",
-    "url": "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.yaml",
-    "content_type": "application/x-yaml",
-    "ingestSource": "composio",
+    "url": "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json",
+    "content_type": "application/json",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:48d20ee6325eab90c68413ece62a89b6de43ed47fc3e3db78a7691d6ea610175",
+    "tags": [
+      "printing-press"
+    ],
     "options": {
       "auth": [
         {
@@ -3785,13 +3820,13 @@
       ]
     },
     "metadata": {
-      "description": "Stripe provides APIs for accepting payments, managing subscriptions, sending payouts, and running online businesses. Accept payments and manage transactions globally",
+      "description": "Payment processing and financial infrastructure API for charges, subscriptions, invoices, payouts, and billing",
       "category": "Payments",
-      "last_updated": "2026-05-30",
       "maintainer": "Stripe",
       "documentation_url": "https://stripe.com/docs/api",
       "version": "1.0.0",
-      "openapi_version": "3.0.0"
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
     }
   },
   {
@@ -4034,28 +4069,30 @@
     "name": "jira",
     "provider_type": "http",
     "http_method": "GET",
-    "url": "https://api.apis.guru/v2/specs/atlassian.com/jira/1001.0.0-SNAPSHOT/openapi.json",
+    "url": "https://developer.atlassian.com/cloud/jira/platform/swagger-v3.v3.json",
     "content_type": "application/json",
-    "ingestSource": "composio",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:7cfd982dc04f3ba2fbd503bac6e7d046d34d44924952f515637e109e83a39f39",
+    "tags": [
+      "printing-press"
+    ],
     "options": {
       "auth": [
         {
-          "auth_type": "oauth2",
-          "token_url": "https://auth.atlassian.com/oauth/token",
-          "client_id": "${JIRA_CLIENT_ID}",
-          "client_secret": "${JIRA_CLIENT_SECRET}",
-          "scope": "read:jira-work write:jira-work"
+          "auth_type": "basic",
+          "username": "${JIRA_EMAIL}",
+          "password": "${JIRA_API_TOKEN}"
         }
       ]
     },
     "metadata": {
-      "description": "Jira is a project management and issue tracking tool by Atlassian. Create, update, and query issues, manage projects, and automate workflows using the Jira Cloud REST API",
+      "description": "Jira Cloud REST API v3 for issue tracking, project management, boards, sprints, and JQL searches",
       "category": "Project Management",
-      "last_updated": "2026-05-30",
       "maintainer": "Atlassian",
       "documentation_url": "https://developer.atlassian.com/cloud/jira/platform/rest/v3",
-      "version": "1001.0.0",
-      "openapi_version": "3.0.1"
+      "version": "v3",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
     }
   },
   {
@@ -4090,9 +4127,13 @@
     "name": "hubspot",
     "provider_type": "http",
     "http_method": "GET",
-    "url": "https://api.apis.guru/v2/specs/hubapi.com/webhooks/v3/openapi.json",
+    "url": "https://raw.githubusercontent.com/HubSpot/HubSpot-public-api-spec-collection/main/PublicApiSpecs/CRM/Contacts/Rollouts/424/v3/contacts.json",
     "content_type": "application/json",
-    "ingestSource": "composio",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:c163aec3fbfc6496ca877b60c235bf1dc9723c5b55bab658a9e93e7a083581c3",
+    "tags": [
+      "printing-press"
+    ],
     "options": {
       "auth": [
         {
@@ -4105,22 +4146,26 @@
       ]
     },
     "metadata": {
-      "description": "HubSpot is a CRM platform with marketing, sales, and service tools. The HubSpot API lets you access contacts, companies, deals, tickets, and automate workflows",
+      "description": "HubSpot CRM Contacts API for managing contacts, properties, associations, and batch operations",
       "category": "CRM",
-      "last_updated": "2026-05-30",
       "maintainer": "HubSpot",
-      "documentation_url": "https://developers.hubspot.com/docs/api/overview",
+      "documentation_url": "https://developers.hubspot.com/docs/api/crm/contacts",
       "version": "v3",
-      "openapi_version": "3.0.0"
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
     }
   },
   {
     "name": "twilio",
     "provider_type": "http",
     "http_method": "GET",
-    "url": "https://api.apis.guru/v2/specs/twilio.com/api/1.42.0/openapi.json",
+    "url": "https://raw.githubusercontent.com/twilio/twilio-oai/main/spec/json/twilio_api_v2010.json",
     "content_type": "application/json",
-    "ingestSource": "composio",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:a1ab4e901d202d94b24fff7a05d4dfe615b820ff4e127c0800e3e62febc241fc",
+    "tags": [
+      "printing-press"
+    ],
     "options": {
       "auth": [
         {
@@ -4131,13 +4176,13 @@
       ]
     },
     "metadata": {
-      "description": "Twilio is a cloud communications platform for building SMS, voice, video, and messaging applications. Send and receive messages, make calls, and manage phone numbers",
+      "description": "Twilio communication platform APIs for SMS, MMS, voice calls, video, and messaging channels",
       "category": "Communications",
-      "last_updated": "2026-05-30",
       "maintainer": "Twilio",
-      "documentation_url": "https://www.twilio.com/docs/api",
-      "version": "1.42.0",
-      "openapi_version": "3.0.0"
+      "documentation_url": "https://www.twilio.com/docs/usage/api",
+      "version": "2010-04-01",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
     }
   },
   {
@@ -4246,6 +4291,511 @@
       "documentation_url": "https://developer.zendesk.com/api-reference",
       "version": "2.0.0",
       "openapi_version": "3.0.3"
+    }
+  },
+  {
+    "name": "digitalocean",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/digitalocean/openapi/main/specification/DigitalOcean-public.v2.yaml",
+    "content_type": "application/x-yaml",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:10c60ed779769937321a3e3c7717e651776a17d37e46f0d0750bfc6694689f35",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${DIGITALOCEAN_TOKEN}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Cloud infrastructure and developer platform API for Droplets, Kubernetes, databases, and block storage",
+      "category": "Cloud",
+      "maintainer": "DigitalOcean",
+      "documentation_url": "https://docs.digitalocean.com/reference/api",
+      "version": "2.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "discord",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/discord/discord-api-spec/main/specs/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:653a499721fa3eca66ccee0174e69e0e755639611bd34517fa429c82f001e6f3",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bot ${DISCORD_TOKEN}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Chat and community platform API for bots, guilds, channels, messages, and voice interactions",
+      "category": "Communication",
+      "maintainer": "Discord",
+      "documentation_url": "https://discord.com/developers/docs",
+      "version": "10.0",
+      "openapi_version": "3.1.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "front",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/frontapp/front-api-specs/main/core-api/core-api.json",
+    "content_type": "application/json",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:b9cad908589a369cc51cd4811fb60ac591c67898e5791a3a186f7bc1460d630a",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${FRONT_API_TOKEN}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Customer communication platform API for shared inboxes, conversations, contacts, and workflow automations",
+      "category": "Customer Support",
+      "maintainer": "Front",
+      "documentation_url": "https://dev.frontapp.com/reference",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "google-cloud-run",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://api.apis.guru/v2/specs/googleapis.com/run/v2/openapi.yaml",
+    "content_type": "application/x-yaml",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:6bf7e979d40ccc1bc51e1bbbbe3d4e43e2dcb899a03a886209322a17da45385f",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "oauth2",
+          "token_url": "https://oauth2.googleapis.com/token",
+          "client_id": "${GOOGLE_CLIENT_ID}",
+          "client_secret": "${GOOGLE_CLIENT_SECRET}",
+          "scope": "https://www.googleapis.com/auth/cloud-platform"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Cloud Run Admin API for deploying and managing serverless container services, revisions, and jobs on GCP",
+      "category": "Cloud",
+      "maintainer": "Google",
+      "documentation_url": "https://cloud.google.com/run/docs/reference/rest",
+      "version": "v2",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "itglue",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/mvanhorn/cli-printing-press/main/catalog/specs/itglue-openapi.yaml",
+    "content_type": "application/x-yaml",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:e691fed8ef4c727822422704f758164e30a26f2ac736249040e1120d187b5e50",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "${ITGLUE_API_KEY}",
+          "var_name": "x-api-key",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "IT Glue JSON:API for organizations, contacts, passwords, configurations, and documents for MSP automation",
+      "category": "IT Management",
+      "maintainer": "IT Glue (Kaseya)",
+      "documentation_url": "https://api.itglue.com/developer/",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "kayak",
+    "provider_type": "local",
+    "url": "https://www.kayak.com",
+    "ingestSource": "printing-press",
+    "tags": [
+      "no-spec",
+      "printing-press"
+    ],
+    "metadata": {
+      "description": "Flight, hotel, and car rental aggregator. No public OpenAPI spec — reached via embedded JSON extraction from server-rendered pages",
+      "category": "Travel",
+      "maintainer": "Kayak",
+      "documentation_url": "https://www.kayak.com",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "launchdarkly",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://app.launchdarkly.com/api/v2/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:e463dd5daca7d0f2bd5ba1f71cfd236bba0bdba4f2c9595ca6f2256b06cf9be6",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "${LAUNCHDARKLY_API_KEY}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Feature flag management API for flags, environments, segments, experiments, and audit logs",
+      "category": "Developer Tools",
+      "maintainer": "LaunchDarkly",
+      "documentation_url": "https://apidocs.launchdarkly.com",
+      "version": "v2",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "mercury",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://dash.readme.com/api/v1/api-registry/ilz81omom1n4vx",
+    "content_type": "application/json",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:6132889dc397a24cc30dbd02784b16ca834468440bacf1c3ffcf51b833e39bef",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${MERCURY_API_TOKEN}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Business banking API for accounts, transactions, payments, recipients, cards, invoices, and treasury",
+      "category": "Payments",
+      "maintainer": "Mercury",
+      "documentation_url": "https://docs.mercury.com/reference",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "openrouteservice",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/mvanhorn/cli-printing-press/main/catalog/specs/openrouteservice-spec.yaml",
+    "content_type": "application/x-yaml",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:695ff57224329c1f319988c455d329d5f2396a5f3017439da2d313a410dcd1dc",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "${ORS_API_KEY}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Open-source routing, geocoding, matrix distances, isochrones, and VRP optimization on OpenStreetMap data",
+      "category": "Maps",
+      "maintainer": "HeiGIT / openrouteservice.org",
+      "documentation_url": "https://openrouteservice.org/dev/#/api-docs",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "petstore",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://petstore3.swagger.io/api/v3/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:715e581e0d464caa7f0f889903f2c6f13901d28e9abf812e5e8af857b54e01c5",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "${PETSTORE_API_KEY}",
+          "var_name": "api_key",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Canonical Swagger / OpenAPI example spec — pet store CRUD for tooling tests and reference implementations",
+      "category": "Example",
+      "maintainer": "SmartBear / Swagger UI",
+      "documentation_url": "https://petstore3.swagger.io",
+      "version": "1.0.17",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "pipedrive",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://developers.pipedrive.com/docs/api/v1/openapi.yaml",
+    "content_type": "application/x-yaml",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:bcd92d1eb395ac14c3314c7d7ee91bc2b8c9cbc52b8f0f1c312a9a248d802ecd",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "${PIPEDRIVE_API_TOKEN}",
+          "var_name": "api_token",
+          "location": "query"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "CRM for sales teams — deals, contacts, pipelines, activities, organizations, and automations",
+      "category": "CRM",
+      "maintainer": "Pipedrive",
+      "documentation_url": "https://developers.pipedrive.com",
+      "version": "v1",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "plaid",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/plaid/plaid-openapi/master/2020-09-14.yml",
+    "content_type": "application/x-yaml",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:3bbb5588add3b1f1fa9da1f717a93ecb99df84d390f72c2e14b7a66a9847d556",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "${PLAID_CLIENT_ID}",
+          "var_name": "PLAID-CLIENT-ID",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Banking API for account linking, transactions, identity verification, balances, income, and liabilities",
+      "category": "Payments",
+      "maintainer": "Plaid",
+      "documentation_url": "https://plaid.com/docs/api",
+      "version": "2020-09-14",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "postman-explore",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/mvanhorn/cli-printing-press/main/catalog/specs/postman-explore-spec.yaml",
+    "content_type": "application/x-yaml",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:201bc0c4cb1965a79a95a34849260361680b3a35b17dc68067f4143a5314706e",
+    "tags": [
+      "printing-press"
+    ],
+    "metadata": {
+      "description": "Postman public API network — discover community collections, workspaces, and public APIs without authentication",
+      "category": "Developer Tools",
+      "maintainer": "Postman",
+      "documentation_url": "https://www.postman.com/explore",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "producthunt",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/mvanhorn/cli-printing-press/main/catalog/specs/producthunt-spec.yaml",
+    "content_type": "application/x-yaml",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:87d3c0e6ffee525f38b1d1fc46e4ce5c6f642d998a9ff5034bfd7dd4a3eb2f1b",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${PRODUCTHUNT_API_KEY}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Discover and monitor Product Hunt launches for research, competitive scouting, and export. Optional: use PRODUCTHUNT_API_KEY for rate-limit headroom.",
+      "category": "Marketing",
+      "maintainer": "Product Hunt",
+      "documentation_url": "https://www.producthunt.com",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "sentry",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/getsentry/sentry-api-schema/main/openapi-derefed.json",
+    "content_type": "application/json",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:13595b257cfc67f8aba207f42d266f7d402d37a80f2b357a550e32d27a783e64",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "Bearer ${SENTRY_AUTH_TOKEN}",
+          "var_name": "Authorization",
+          "location": "header"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Error tracking and performance monitoring — projects, issues, events, releases, and team management",
+      "category": "Monitoring",
+      "maintainer": "Sentry",
+      "documentation_url": "https://docs.sentry.io/api/",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "stytch",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://raw.githubusercontent.com/stytchauth/stytch-openapi/main/openapi.yml",
+    "content_type": "application/x-yaml",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:a65d031613932372423dc500601f8269ca353506d7c5694dcbdf8dc8988ab06a",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "basic",
+          "username": "${STYTCH_PROJECT_ID}",
+          "password": "${STYTCH_SECRET}"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Authentication and user management API for passwordless login, session management, and MFA",
+      "category": "Auth",
+      "maintainer": "Stytch",
+      "documentation_url": "https://stytch.com/docs/api",
+      "version": "1.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
+    }
+  },
+  {
+    "name": "telegram",
+    "provider_type": "http",
+    "http_method": "GET",
+    "url": "https://api.apis.guru/v2/specs/telegram.org/5.0.0/openapi.json",
+    "content_type": "application/json",
+    "ingestSource": "printing-press",
+    "sourceHash": "sha256:4021914f2840266566701ce2f4618ab8b3cc69d3a34164ea61073a909d56b3a4",
+    "tags": [
+      "printing-press"
+    ],
+    "options": {
+      "auth": [
+        {
+          "auth_type": "api_key",
+          "api_key": "${TELEGRAM_BOT_TOKEN}",
+          "var_name": "token",
+          "location": "query"
+        }
+      ]
+    },
+    "metadata": {
+      "description": "Telegram Bot API for building bots — send messages, manage chats, handle webhooks, inline queries, and stickers",
+      "category": "Communication",
+      "maintainer": "Telegram",
+      "documentation_url": "https://core.telegram.org/bots/api",
+      "version": "5.0.0",
+      "openapi_version": "3.0.0",
+      "last_updated": "2026-05-30"
     }
   }
 ]

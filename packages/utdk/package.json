@@ -395,10 +395,20 @@
       "import": "./dist/developer_documentation/index.js",
       "default": "./dist/developer_documentation/index.js"
     },
+    "./digitalocean": {
+      "types": "./dist/digitalocean/index.d.ts",
+      "import": "./dist/digitalocean/index.js",
+      "default": "./dist/digitalocean/index.js"
+    },
     "./digitalocean_api": {
       "types": "./dist/digitalocean_api/index.d.ts",
       "import": "./dist/digitalocean_api/index.js",
       "default": "./dist/digitalocean_api/index.js"
+    },
+    "./discord": {
+      "types": "./dist/discord/index.d.ts",
+      "import": "./dist/discord/index.js",
+      "default": "./dist/discord/index.js"
     },
     "./discourse_api_documentation": {
       "types": "./dist/discourse_api_documentation/index.d.ts",
@@ -485,6 +495,11 @@
       "import": "./dist/frankie_financial_api/index.js",
       "default": "./dist/frankie_financial_api/index.js"
     },
+    "./front": {
+      "types": "./dist/front/index.d.ts",
+      "import": "./dist/front/index.js",
+      "default": "./dist/front/index.js"
+    },
     "./gerermesaffaires_rest_api": {
       "types": "./dist/gerermesaffaires_rest_api/index.d.ts",
       "import": "./dist/gerermesaffaires_rest_api/index.js",
@@ -504,6 +519,11 @@
       "types": "./dist/google/index.d.ts",
       "import": "./dist/google/index.js",
       "default": "./dist/google/index.js"
+    },
+    "./google-cloud-run": {
+      "types": "./dist/google-cloud-run/index.d.ts",
+      "import": "./dist/google-cloud-run/index.js",
+      "default": "./dist/google-cloud-run/index.js"
     },
     "./google/books": {
       "types": "./dist/google/books/index.d.ts",
@@ -600,6 +620,11 @@
       "import": "./dist/iqualify_management_api/index.js",
       "default": "./dist/iqualify_management_api/index.js"
     },
+    "./itglue": {
+      "types": "./dist/itglue/index.d.ts",
+      "import": "./dist/itglue/index.js",
+      "default": "./dist/itglue/index.js"
+    },
     "./ix_api": {
       "types": "./dist/ix_api/index.d.ts",
       "import": "./dist/ix_api/index.js",
@@ -620,6 +645,11 @@
       "import": "./dist/just_eat_uk/index.js",
       "default": "./dist/just_eat_uk/index.js"
     },
+    "./kayak": {
+      "types": "./dist/kayak/index.d.ts",
+      "import": "./dist/kayak/index.js",
+      "default": "./dist/kayak/index.js"
+    },
     "./keycloak_admin_rest_api": {
       "types": "./dist/keycloak_admin_rest_api/index.d.ts",
       "import": "./dist/keycloak_admin_rest_api/index.js",
@@ -634,6 +664,11 @@
       "types": "./dist/labs64_netlicensing_restful_api_test_center/index.d.ts",
       "import": "./dist/labs64_netlicensing_restful_api_test_center/index.js",
       "default": "./dist/labs64_netlicensing_restful_api_test_center/index.js"
+    },
+    "./launchdarkly": {
+      "types": "./dist/launchdarkly/index.d.ts",
+      "import": "./dist/launchdarkly/index.js",
+      "default": "./dist/launchdarkly/index.js"
     },
     "./launchdarkly_rest_api": {
       "types": "./dist/launchdarkly_rest_api/index.d.ts",
@@ -684,6 +719,11 @@
       "types": "./dist/meraki_dashboard_api/index.d.ts",
       "import": "./dist/meraki_dashboard_api/index.js",
       "default": "./dist/meraki_dashboard_api/index.js"
+    },
+    "./mercury": {
+      "types": "./dist/mercury/index.d.ts",
+      "import": "./dist/mercury/index.js",
+      "default": "./dist/mercury/index.js"
     },
     "./meshery_api": {
       "types": "./dist/meshery_api/index.d.ts",
@@ -820,6 +860,11 @@
       "import": "./dist/openlibrary/index.js",
       "default": "./dist/openlibrary/index.js"
     },
+    "./openrouteservice": {
+      "types": "./dist/openrouteservice/index.d.ts",
+      "import": "./dist/openrouteservice/index.js",
+      "default": "./dist/openrouteservice/index.js"
+    },
     "./orbit_api": {
       "types": "./dist/orbit_api/index.d.ts",
       "import": "./dist/orbit_api/index.js",
@@ -845,6 +890,11 @@
       "import": "./dist/pdf_blocks_api/index.js",
       "default": "./dist/pdf_blocks_api/index.js"
     },
+    "./petstore": {
+      "types": "./dist/petstore/index.d.ts",
+      "import": "./dist/petstore/index.js",
+      "default": "./dist/petstore/index.js"
+    },
     "./pi_web_api_2018_sp1_swagger_spec": {
       "types": "./dist/pi_web_api_2018_sp1_swagger_spec/index.d.ts",
       "import": "./dist/pi_web_api_2018_sp1_swagger_spec/index.js",
@@ -860,6 +910,16 @@
       "import": "./dist/pinecone_api/index.js",
       "default": "./dist/pinecone_api/index.js"
     },
+    "./pipedrive": {
+      "types": "./dist/pipedrive/index.d.ts",
+      "import": "./dist/pipedrive/index.js",
+      "default": "./dist/pipedrive/index.js"
+    },
+    "./plaid": {
+      "types": "./dist/plaid/index.d.ts",
+      "import": "./dist/plaid/index.js",
+      "default": "./dist/plaid/index.js"
+    },
     "./portfolio_optimizer": {
       "types": "./dist/portfolio_optimizer/index.d.ts",
       "import": "./dist/portfolio_optimizer/index.js",
@@ -870,6 +930,11 @@
       "import": "./dist/postman_api/index.js",
       "default": "./dist/postman_api/index.js"
     },
+    "./postman-explore": {
+      "types": "./dist/postman-explore/index.d.ts",
+      "import": "./dist/postman-explore/index.js",
+      "default": "./dist/postman-explore/index.js"
+    },
     "./powertools_developer": {
       "types": "./dist/powertools_developer/index.d.ts",
       "import": "./dist/powertools_developer/index.js",
@@ -879,6 +944,11 @@
       "types": "./dist/probely_developers/index.d.ts",
       "import": "./dist/probely_developers/index.js",
       "default": "./dist/probely_developers/index.js"
+    },
+    "./producthunt": {
+      "types": "./dist/producthunt/index.d.ts",
+      "import": "./dist/producthunt/index.js",
+      "default": "./dist/producthunt/index.js"
     },
     "./ptv_timetable_api_version_3": {
       "types": "./dist/ptv_timetable_api_version_3/index.d.ts",
@@ -969,6 +1039,11 @@
       "types": "./dist/sendgrid/index.d.ts",
       "import": "./dist/sendgrid/index.js",
       "default": "./dist/sendgrid/index.js"
+    },
+    "./sentry": {
+      "types": "./dist/sentry/index.d.ts",
+      "import": "./dist/sentry/index.js",
+      "default": "./dist/sentry/index.js"
     },
     "./setlist_fm_api": {
       "types": "./dist/setlist_fm_api/index.d.ts",
@@ -1080,6 +1155,11 @@
       "import": "./dist/stripe_api/index.js",
       "default": "./dist/stripe_api/index.js"
     },
+    "./stytch": {
+      "types": "./dist/stytch/index.d.ts",
+      "import": "./dist/stytch/index.js",
+      "default": "./dist/stytch/index.js"
+    },
     "./svix_api": {
       "types": "./dist/svix_api/index.d.ts",
       "import": "./dist/svix_api/index.js",
@@ -1109,6 +1189,11 @@
       "types": "./dist/tcgdex_api/index.d.ts",
       "import": "./dist/tcgdex_api/index.js",
       "default": "./dist/tcgdex_api/index.js"
+    },
+    "./telegram": {
+      "types": "./dist/telegram/index.d.ts",
+      "import": "./dist/telegram/index.js",
+      "default": "./dist/telegram/index.js"
     },
     "./telegram_bot_api": {
       "types": "./dist/telegram_bot_api/index.d.ts",

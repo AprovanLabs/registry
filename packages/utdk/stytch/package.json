@@ -1,0 +1,31 @@
+{
+  "name": "@utdk/stytch",
+  "version": "2.0.0-20260530.1",
+  "type": "module",
+  "description": "Generated UTDK provider client for Stytch API. The Stytch API provides endpoints for authentication and user management.",
+  "homepage": "https://stytch.com/docs",
+  "keywords": [
+    "stytch",
+    "generated",
+    "openapi",
+    "utdk"
+  ],
+  "utdk": {
+    "provider": "stytch",
+    "generation": 1,
+    "generatedAt": "2026-05-30T22:05:43.784Z",
+    "auth": [
+      {
+        "auth_type": "basic",
+        "username": "${STYTCH_PROJECT_ID}",
+        "password": "${STYTCH_SECRET}"
+      }
+    ],
+    "openapi": {
+      "title": "Stytch API",
+      "url": "https://raw.githubusercontent.com/stytchauth/stytch-openapi/main/openapi.yml",
+      "version": "2.0.0",
+      "termsOfService": null
+    }
+  }
+}
