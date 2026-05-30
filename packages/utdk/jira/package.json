@@ -1,6 +1,6 @@
 {
   "name": "@utdk/jira",
-  "version": "1001.0.0-SNAPSHOT-20260530.1",
+  "version": "1001.0.0-SNAPSHOT-500abd49de29b046db51cf0460caa503167075c0-20260530.2",
   "type": "module",
   "description": "Generated UTDK provider client for The Jira Cloud platform REST API. Jira Cloud platform REST API documentation",
   "homepage": "http://www.atlassian.com",
@@ -13,23 +13,20 @@
   "license": "Apache 2.0",
   "utdk": {
     "provider": "jira",
-    "generation": 1,
-    "generatedAt": "2026-05-30T12:25:17.055Z",
+    "generation": 2,
+    "generatedAt": "2026-05-30T22:05:31.219Z",
     "auth": [
       {
-        "auth_type": "oauth2",
-        "token_url": "https://auth.atlassian.com/oauth/token",
-        "client_id": "${JIRA_CLIENT_ID}",
-        "client_secret": "${JIRA_CLIENT_SECRET}",
-        "scope": "read:jira-work write:jira-work"
+        "auth_type": "basic",
+        "username": "${JIRA_EMAIL}",
+        "password": "${JIRA_API_TOKEN}"
       }
     ],
     "openapi": {
       "title": "The Jira Cloud platform REST API",
-      "url": "https://api.apis.guru/v2/specs/atlassian.com/jira/1001.0.0-SNAPSHOT/openapi.json",
-      "version": "1001.0.0-SNAPSHOT",
-      "termsOfService": "http://atlassian.com/terms/",
-      "icon": "https://api.apis.guru/v2/cache/logo/https_twitter.com_Atlassian_profile_image.png"
+      "url": "https://developer.atlassian.com/cloud/jira/platform/swagger-v3.v3.json",
+      "version": "1001.0.0-SNAPSHOT-500abd49de29b046db51cf0460caa503167075c0",
+      "termsOfService": "https://developer.atlassian.com/platform/marketplace/atlassian-developer-terms/"
     }
   }
 }

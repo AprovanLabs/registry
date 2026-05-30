@@ -1,0 +1,32 @@
+{
+  "name": "@utdk/plaid",
+  "version": "0.0.1-20260530.2",
+  "type": "module",
+  "description": "Generated UTDK provider client for The Plaid API. The Plaid REST API. Please see https://plaid.com/docs/api for more details.",
+  "homepage": "https://plaid.com",
+  "keywords": [
+    "plaid",
+    "generated",
+    "openapi",
+    "utdk"
+  ],
+  "utdk": {
+    "provider": "plaid",
+    "generation": 2,
+    "generatedAt": "2026-05-30T18:16:15.703Z",
+    "auth": [
+      {
+        "auth_type": "api_key",
+        "api_key": "${PLAID_CLIENT_ID}",
+        "var_name": "PLAID-CLIENT-ID",
+        "location": "header"
+      }
+    ],
+    "openapi": {
+      "title": "The Plaid API",
+      "url": "https://raw.githubusercontent.com/plaid/plaid-openapi/master/2020-09-14.yml",
+      "version": "2020-09-14_1.688.6",
+      "termsOfService": "https://plaid.com/legal/"
+    }
+  }
+}

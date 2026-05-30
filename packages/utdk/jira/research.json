@@ -1,6 +1,6 @@
 {
   "provider": "jira",
-  "generatedAt": "2026-05-30T12:25:18.112Z",
+  "generatedAt": "2026-05-30T22:05:32.097Z",
   "noveltyScore": 4,
   "npmPackages": [
     {
@@ -74,12 +74,6 @@
       "version": "3.3.0",
       "description": "Node.js/TypeScript MCP server for Atlassian Jira. Equips AI systems (LLMs) with tools to list/get projects, search/get issues (using JQL/ID), and view dev info (commits, PRs). Connects AI capabilities directly into Jira project management and issue tracki",
       "category": "mcp-server"
-    },
-    {
-      "name": "jira",
-      "version": "0.9.2",
-      "description": "Wrapper for the JIRA API",
-      "category": "other"
     }
   ],
   "gapAnalysis": {

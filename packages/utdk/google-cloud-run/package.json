@@ -1,0 +1,35 @@
+{
+  "name": "@utdk/google-cloud-run",
+  "version": "2.0.0-20260530.1",
+  "type": "module",
+  "description": "Generated UTDK provider client for Cloud Run Admin API. Deploy and manage user provided container images that scale automatically based on incoming requests. The Cloud Run Admin API v1 follows the Knative Serving API specification, while v2 is aligned with Google Cloud AIP-based API standards, as described in https://google.aip.dev/.",
+  "homepage": "https://cloud.google.com/run/",
+  "keywords": [
+    "google-cloud-run",
+    "generated",
+    "openapi",
+    "utdk"
+  ],
+  "license": "Creative Commons Attribution 3.0",
+  "utdk": {
+    "provider": "google-cloud-run",
+    "generation": 1,
+    "generatedAt": "2026-05-30T22:05:31.200Z",
+    "auth": [
+      {
+        "auth_type": "oauth2",
+        "token_url": "https://oauth2.googleapis.com/token",
+        "client_id": "${GOOGLE_CLIENT_ID}",
+        "client_secret": "${GOOGLE_CLIENT_SECRET}",
+        "scope": "https://www.googleapis.com/auth/cloud-platform"
+      }
+    ],
+    "openapi": {
+      "title": "Cloud Run Admin API",
+      "url": "https://api.apis.guru/v2/specs/googleapis.com/run/v2/openapi.yaml",
+      "version": "v2",
+      "termsOfService": "https://developers.google.com/terms/",
+      "icon": "https://api.apis.guru/v2/cache/logo/https_www.google.com_images_branding_googlelogo_2x_googlelogo_color_272x92dp.png"
+    }
+  }
+}

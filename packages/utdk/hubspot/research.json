@@ -1,6 +1,6 @@
 {
   "provider": "hubspot",
-  "generatedAt": "2026-05-30T12:25:23.096Z",
+  "generatedAt": "2026-05-30T22:05:32.097Z",
   "noveltyScore": 2,
   "npmPackages": [
     {
@@ -16,15 +16,15 @@
       "category": "official-sdk"
     },
     {
-      "name": "@hubspot/calling-extensions-sdk",
-      "version": "0.9.7",
-      "description": "A JavaScript SDK for integrating calling apps into HubSpot.",
-      "category": "official-sdk"
-    },
-    {
       "name": "@hubspot/local-dev-lib",
       "version": "5.8.0",
       "description": "Provides library functionality for HubSpot local development tooling, including the HubSpot CLI",
+      "category": "official-sdk"
+    },
+    {
+      "name": "@hubspot/calling-extensions-sdk",
+      "version": "0.9.7",
+      "description": "A JavaScript SDK for integrating calling apps into HubSpot.",
       "category": "official-sdk"
     },
     {
