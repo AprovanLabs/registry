@@ -1,0 +1,460 @@
+---
+import { CopyButton } from "@/components/CopyButton";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getRegistryCatalog, buildOperationSnippet } from "@/lib/registry";
+import type { RegistryOperation } from "@/lib/registry";
+import { withBasePath } from "@/lib/site";
+
+export async function getStaticPaths() {
+  const catalog = await getRegistryCatalog();
+  const providerPaths = new Set(catalog.entries.map((e) => e.providerPath));
+  const routes: Array<{
+    params: { slug: string };
+    props:
+      | { type: "provider"; providerPath: string; operationId: null }
+      | { type: "operation"; providerPath: string; operationId: string };
+  }> = [];
+
+  const usedSlugs = new Set<string>();
+
+  for (const entry of catalog.entries) {
+    if (!usedSlugs.has(entry.providerPath)) {
+      usedSlugs.add(entry.providerPath);
+      routes.push({
+        params: { slug: entry.providerPath },
+        props: { type: "provider", providerPath: entry.providerPath, operationId: null },
+      });
+    }
+
+    for (const op of entry.operations) {
+      const opSlug = `${entry.providerPath}/${op.operationId}`;
+      // Skip if this slug already corresponds to a provider path or was already used
+      if (providerPaths.has(opSlug) || usedSlugs.has(opSlug)) {
+        continue;
+      }
+      usedSlugs.add(opSlug);
+      routes.push({
+        params: { slug: opSlug },
+        props: {
+          type: "operation",
+          providerPath: entry.providerPath,
+          operationId: op.operationId,
+        },
+      });
+    }
+  }
+
+  return routes;
+}
+
+const props = Astro.props as
+  | { type: "provider"; providerPath: string; operationId: null }
+  | { type: "operation"; providerPath: string; operationId: string };
+
+const { type, providerPath } = props;
+
+const catalog = await getRegistryCatalog();
+const entry = catalog.entries.find((e) => e.providerPath === providerPath);
+
+if (!entry) {
+  throw new Error(`Unknown provider: ${providerPath}`);
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+const METHOD_COLORS: Record<string, string> = {
+  GET: "bg-blue-100 text-blue-800",
+  POST: "bg-green-100 text-green-800",
+  PUT: "bg-amber-100 text-amber-800",
+  PATCH: "bg-orange-100 text-orange-800",
+  DELETE: "bg-red-100 text-red-800",
+  HEAD: "bg-purple-100 text-purple-800",
+  OPTIONS: "bg-slate-100 text-slate-800",
+  TRACE: "bg-slate-100 text-slate-800",
+};
+
+function methodClass(method: string): string {
+  return METHOD_COLORS[method] ?? "bg-muted text-muted-foreground";
+}
+
+function schemaTypeSummary(schema: unknown): string {
+  if (!schema || typeof schema !== "object") return "any";
+  const s = schema as Record<string, unknown>;
+  if (s["$ref"] && typeof s["$ref"] === "string") {
+    const ref = s["$ref"] as string;
+    return ref.split("/").at(-1) ?? "object";
+  }
+  if (s["type"] === "array" && s["items"]) {
+    return `${schemaTypeSummary(s["items"])}[]`;
+  }
+  if (s["type"]) return String(s["type"]);
+  if (s["properties"]) return "object";
+  if (s["oneOf"] || s["anyOf"] || s["allOf"]) return "union";
+  return "any";
+}
+
+// ── Resolve operation (if operation detail page) ──────────────────────────────
+let operation: RegistryOperation | undefined;
+if (type === "operation") {
+  operation = entry.operations.find((op) => op.operationId === props.operationId);
+  if (!operation) {
+    throw new Error(`Unknown operation ${props.operationId} in ${providerPath}`);
+  }
+}
+
+const isProvider = type === "provider";
+const pageTitle = isProvider
+  ? `${entry.title} · API Catalog · UTDK Registry`
+  : `${operation!.operationId} · ${entry.title} · UTDK Registry`;
+
+const operationSnippet =
+  !isProvider && operation
+    ? buildOperationSnippet(entry.packageName, entry.providerPath, operation)
+    : null;
+---
+
+<BaseLayout title={pageTitle}>
+  <main
+    class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8"
+  >
+    <!-- Breadcrumb -->
+    <header class="flex flex-col gap-2">
+      <nav class="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
+        <a class="transition-colors hover:text-foreground" href={withBasePath("/")}
+          >UTDK Registry</a
+        >
+        <span>/</span>
+        <a class="transition-colors hover:text-foreground" href={withBasePath("/providers")}
+          >Providers</a
+        >
+        <span>/</span>
+        {
+          isProvider ? (
+            <span class="font-medium text-foreground">{entry.title}</span>
+          ) : (
+            <>
+              <a
+                class="transition-colors hover:text-foreground"
+                href={withBasePath(`/providers/${entry.providerPath}`)}
+              >
+                {entry.title}
+              </a>
+              <span>/</span>
+              <span class="font-medium text-foreground">{operation!.operationId}</span>
+            </>
+          )
+        }
+      </nav>
+    </header>
+
+    <!-- ── Provider detail ───────────────────────────────────────────────── -->
+    {
+      isProvider && (
+        <div class="flex flex-col gap-6">
+          <Card>
+            <CardHeader>
+              <div class="flex flex-wrap items-center gap-2">
+                {entry.openApiIcon ? (
+                  <img
+                    alt={`${entry.title} logo`}
+                    class="h-8 w-8 rounded object-contain"
+                    src={entry.openApiIcon}
+                  />
+                ) : null}
+                <CardTitle className="text-2xl">{entry.title}</CardTitle>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <Badge variant="outline">{entry.packageName}</Badge>
+                <Badge variant="outline">{entry.operationCount} operations</Badge>
+                {entry.scorecardDomain !== null ? (
+                  <Badge
+                    variant={
+                      entry.scorecardDomain >= 90
+                        ? "default"
+                        : entry.scorecardDomain >= 60
+                          ? "secondary"
+                          : "outline"
+                    }
+                  >
+                    Score: {entry.scorecardDomain}
+                  </Badge>
+                ) : null}
+                {entry.scorecardInfrastructure ? (
+                  <Badge
+                    variant={entry.scorecardInfrastructure === "pass" ? "default" : "outline"}
+                  >
+                    Infra: {entry.scorecardInfrastructure}
+                  </Badge>
+                ) : null}
+              </div>
+              {entry.description ? (
+                <CardDescription className="text-sm leading-6">
+                  {entry.description}
+                </CardDescription>
+              ) : null}
+            </CardHeader>
+            <CardContent className="flex flex-col gap-4">
+              <div class="grid gap-3 sm:grid-cols-2">
+                <div class="rounded-xl border bg-muted/50 p-4">
+                  <div class="mb-3 flex items-center justify-between gap-3">
+                    <p class="text-sm font-medium">Import</p>
+                    <CopyButton client:load idleLabel="Copy" size="xs" text={entry.importSample} />
+                  </div>
+                  <pre class="overflow-x-auto rounded-lg bg-background p-3 text-xs">
+                    <code>{entry.importSample}</code>
+                  </pre>
+                </div>
+                {entry.createClientSample ? (
+                  <div class="rounded-xl border bg-muted/50 p-4">
+                    <div class="mb-3 flex items-center justify-between gap-3">
+                      <p class="text-sm font-medium">Factory</p>
+                      <CopyButton
+                        client:load
+                        idleLabel="Copy"
+                        size="xs"
+                        text={entry.createClientSample}
+                      />
+                    </div>
+                    <pre class="overflow-x-auto rounded-lg bg-background p-3 text-xs">
+                      <code>{entry.createClientSample}</code>
+                    </pre>
+                  </div>
+                ) : null}
+              </div>
+            </CardContent>
+          </Card>
+
+          <!-- Endpoint list -->
+          <Card>
+            <CardHeader>
+              <CardTitle>Endpoints</CardTitle>
+              <CardDescription>
+                All {entry.operationCount} operations exposed by this provider.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-0 p-0 pb-1">
+              {entry.operations.length === 0 ? (
+                <p class="px-4 py-3 text-sm text-muted-foreground">
+                  No operations found in the OpenAPI document.
+                </p>
+              ) : (
+                entry.operations.map((op) => (
+                  <a
+                    class="group flex items-start gap-3 px-4 py-2.5 transition-colors hover:bg-muted/50"
+                    href={withBasePath(`/providers/${entry.providerPath}/${op.operationId}`)}
+                  >
+                    <span
+                      class:list={[
+                        "mt-0.5 inline-flex h-5 w-14 shrink-0 items-center justify-center rounded px-1.5 font-mono text-[0.65rem] font-semibold uppercase",
+                        methodClass(op.method),
+                      ]}
+                    >
+                      {op.method}
+                    </span>
+                    <div class="min-w-0 flex-1">
+                      <p class="truncate font-mono text-xs text-foreground">{op.path}</p>
+                      {op.summary ? (
+                        <p class="mt-0.5 truncate text-xs text-muted-foreground">{op.summary}</p>
+                      ) : null}
+                    </div>
+                    {op.tags.length > 0 ? (
+                      <span class="shrink-0 rounded px-1.5 py-0.5 text-[0.65rem] text-muted-foreground ring-1 ring-foreground/10">
+                        {op.tags[0]}
+                      </span>
+                    ) : null}
+                  </a>
+                ))
+              )}
+            </CardContent>
+          </Card>
+        </div>
+      )
+    }
+
+    <!-- ── Operation detail ───────────────────────────────────────────────── -->
+    {
+      !isProvider && operation && (
+        <div class="flex flex-col gap-6">
+          <!-- Operation header -->
+          <Card>
+            <CardHeader>
+              <div class="flex flex-wrap items-center gap-2">
+                <span
+                  class:list={[
+                    "inline-flex h-6 items-center rounded px-2 font-mono text-xs font-semibold uppercase",
+                    methodClass(operation.method),
+                  ]}
+                >
+                  {operation.method}
+                </span>
+                <code class="font-mono text-sm text-foreground">{operation.path}</code>
+              </div>
+              <CardTitle className="text-xl">{operation.operationId}</CardTitle>
+              {operation.summary ? (
+                <CardDescription className="text-sm leading-6">{operation.summary}</CardDescription>
+              ) : null}
+              {operation.description && operation.description !== operation.summary ? (
+                <p class="text-sm leading-6 text-muted-foreground">{operation.description}</p>
+              ) : null}
+              {operation.tags.length > 0 ? (
+                <div class="flex flex-wrap gap-1.5">
+                  {operation.tags.map((tag) => (
+                    <Badge variant="secondary">{tag}</Badge>
+                  ))}
+                </div>
+              ) : null}
+            </CardHeader>
+            {operationSnippet ? (
+              <CardContent>
+                <div class="rounded-xl border bg-muted/50 p-4">
+                  <div class="mb-3 flex items-center justify-between gap-3">
+                    <p class="text-sm font-medium">TypeScript snippet</p>
+                    <CopyButton client:load idleLabel="Copy" size="xs" text={operationSnippet} />
+                  </div>
+                  <pre class="overflow-x-auto rounded-lg bg-background p-3 text-xs leading-5">
+                    <code>{operationSnippet}</code>
+                  </pre>
+                </div>
+              </CardContent>
+            ) : null}
+          </Card>
+
+          <!-- Parameters -->
+          {(operation.parameters.length > 0 || operation.requestBody) && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Parameters</CardTitle>
+              </CardHeader>
+              <CardContent className="p-0 pb-1">
+                <div class="overflow-x-auto">
+                  <table class="w-full text-xs">
+                    <thead>
+                      <tr class="border-b">
+                        <th class="px-4 py-2.5 text-left font-medium text-muted-foreground">
+                          Name
+                        </th>
+                        <th class="px-4 py-2.5 text-left font-medium text-muted-foreground">
+                          In
+                        </th>
+                        <th class="px-4 py-2.5 text-left font-medium text-muted-foreground">
+                          Type
+                        </th>
+                        <th class="px-4 py-2.5 text-left font-medium text-muted-foreground">
+                          Required
+                        </th>
+                        <th class="px-4 py-2.5 text-left font-medium text-muted-foreground">
+                          Description
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {operation.parameters.map((param) => (
+                        <tr class="border-b last:border-b-0 hover:bg-muted/30">
+                          <td class="px-4 py-2.5">
+                            <code class="font-mono font-medium">{param.name}</code>
+                          </td>
+                          <td class="px-4 py-2.5 text-muted-foreground">{param.in}</td>
+                          <td class="px-4 py-2.5">
+                            <code class="font-mono text-muted-foreground">
+                              {schemaTypeSummary(param.schema)}
+                            </code>
+                          </td>
+                          <td class="px-4 py-2.5">
+                            {param.required ? (
+                              <Badge variant="default">yes</Badge>
+                            ) : (
+                              <span class="text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td class="px-4 py-2.5 text-muted-foreground">
+                            {param.description ?? "—"}
+                          </td>
+                        </tr>
+                      ))}
+                      {operation.requestBody ? (
+                        <tr class="border-b last:border-b-0 hover:bg-muted/30">
+                          <td class="px-4 py-2.5">
+                            <code class="font-mono font-medium">body</code>
+                          </td>
+                          <td class="px-4 py-2.5 text-muted-foreground">body</td>
+                          <td class="px-4 py-2.5">
+                            <code class="font-mono text-muted-foreground">
+                              {schemaTypeSummary(operation.requestBody.schema)}
+                            </code>
+                          </td>
+                          <td class="px-4 py-2.5">
+                            {operation.requestBody.required ? (
+                              <Badge variant="default">yes</Badge>
+                            ) : (
+                              <span class="text-muted-foreground">—</span>
+                            )}
+                          </td>
+                          <td class="px-4 py-2.5 text-muted-foreground">
+                            {operation.requestBody.description ?? "—"}
+                          </td>
+                        </tr>
+                      ) : null}
+                    </tbody>
+                  </table>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          <!-- Responses -->
+          {Object.keys(operation.responses).length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Responses</CardTitle>
+              </CardHeader>
+              <CardContent className="flex flex-col gap-4">
+                {Object.entries(operation.responses).map(([code, response]) => (
+                  <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                      <Badge
+                        variant={
+                          code.startsWith("2")
+                            ? "default"
+                            : code.startsWith("4") || code.startsWith("5")
+                              ? "destructive"
+                              : "outline"
+                        }
+                      >
+                        {code}
+                      </Badge>
+                      {response.description ? (
+                        <span class="text-sm text-muted-foreground">{response.description}</span>
+                      ) : null}
+                    </div>
+                    {response.schema ? (
+                      <pre class="overflow-x-auto rounded-lg border bg-muted/50 p-3 text-xs leading-5">
+                        <code>{JSON.stringify(response.schema, null, 2)}</code>
+                      </pre>
+                    ) : null}
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+          )}
+
+          <div>
+            <a
+              class="text-sm font-medium text-primary underline-offset-4 hover:underline"
+              href={withBasePath(`/providers/${entry.providerPath}`)}
+            >
+              ← Back to {entry.title}
+            </a>
+          </div>
+        </div>
+      )
+    }
+  </main>
+</BaseLayout>
