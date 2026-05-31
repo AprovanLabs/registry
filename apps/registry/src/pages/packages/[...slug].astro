@@ -20,6 +20,7 @@ import {
   getRegistryRoutes,
 } from "@/lib/registry";
 import { withBasePath } from "@/lib/site";
+import { loadProviderOperations } from "@/lib/openapi";
 
 export async function getStaticPaths() {
   const routes = await getRegistryRoutes();
@@ -36,9 +37,10 @@ interface Props {
 }
 
 const { providerPath, docSlug } = Astro.props;
-const [catalog, entry] = await Promise.all([
+const [catalog, entry, operations] = await Promise.all([
   getRegistryCatalog(),
   getRegistryEntry(providerPath),
+  loadProviderOperations(providerPath),
 ]);
 
 if (!entry) {
@@ -301,6 +303,73 @@ const parentEntry = entry.parentProviderPath
                     This package does not currently include a top-level README.
                   </CardDescription>
                 </CardHeader>
+              </Card>
+            )}
+
+            {operations.length > 0 && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Operations</CardTitle>
+                  <CardDescription>
+                    {operations.length} operation{operations.length === 1 ? "" : "s"} —{" "}
+                    <a
+                      class="font-medium text-primary underline-offset-4 hover:underline"
+                      href={withBasePath(`/providers/${entry.providerPath}/${operations[0]!.operationId}`)}
+                    >
+                      open try-it console
+                    </a>
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="overflow-x-auto">
+                  <table class="w-full text-sm">
+                    <thead>
+                      <tr class="border-b text-left text-xs font-medium text-muted-foreground uppercase">
+                        <th class="pb-2 pr-4">Method</th>
+                        <th class="pb-2 pr-4">Operation ID</th>
+                        <th class="pb-2 pr-4 hidden sm:table-cell">Path</th>
+                        <th class="pb-2 hidden md:table-cell">Summary</th>
+                        <th class="pb-2"></th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                      {operations.map((op) => (
+                        <tr class="transition-colors hover:bg-muted/30">
+                          <td class="py-2 pr-4">
+                            <span
+                              class:list={[
+                                "font-mono text-xs font-semibold",
+                                op.method === "GET" && "text-emerald-500",
+                                op.method === "POST" && "text-blue-500",
+                                op.method === "PUT" && "text-amber-500",
+                                op.method === "PATCH" && "text-orange-500",
+                                op.method === "DELETE" && "text-red-500",
+                              ]}
+                            >
+                              {op.method}
+                            </span>
+                          </td>
+                          <td class="py-2 pr-4 font-mono text-xs">
+                            {op.operationId}
+                          </td>
+                          <td class="py-2 pr-4 font-mono text-xs text-muted-foreground hidden sm:table-cell">
+                            {op.httpPath}
+                          </td>
+                          <td class="py-2 text-xs text-muted-foreground hidden md:table-cell max-w-xs truncate">
+                            {op.summary}
+                          </td>
+                          <td class="py-2 pl-2">
+                            <a
+                              class="inline-flex h-6 items-center rounded-md border px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                              href={withBasePath(`/providers/${entry.providerPath}/${op.operationId}`)}
+                            >
+                              Try
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </CardContent>
               </Card>
             )}
 
