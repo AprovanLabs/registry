@@ -1,0 +1,32 @@
+{
+  "name": "@utdk/cli",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Agent-native CLI wrapper for all @utdk provider operations",
+  "keywords": [
+    "utdk",
+    "cli",
+    "agent",
+    "openapi"
+  ],
+  "license": "MIT",
+  "bin": {
+    "utdk": "./dist/bin.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "check-types": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "utdk": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
