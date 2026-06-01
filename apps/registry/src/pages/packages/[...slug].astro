@@ -50,8 +50,8 @@ if (!entry) {
 const activeDoc = getDocPage(entry, docSlug);
 const overviewHref = withBasePath(`/packages/${entry.providerPath}`);
 const pageTitle = activeDoc
-  ? `${activeDoc.title} · ${entry.title} · UTDK Registry`
-  : `${entry.title} · UTDK Registry`;
+  ? `${activeDoc.title} · ${entry.title} · Aprovan Registry`
+  : `${entry.title} · Aprovan Registry`;
 const generatedAtLabel = entry.generatedAt
   ? new Date(entry.generatedAt).toLocaleString("en-US", {
       dateStyle: "medium",
@@ -86,7 +86,7 @@ const parentEntry = entry.parentProviderPath
         class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
         href={withBasePath("/")}
       >
-        UTDK Registry
+        Aprovan Registry
       </a>
       <div class="flex flex-wrap items-center gap-2">
         <Badge>{entry.kind}</Badge>

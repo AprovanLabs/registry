@@ -51,6 +51,9 @@ type ProvenanceJson = {
 };
 
 export type RegistryOperation = {
+  /** Canonical UTDK method path (e.g. "orgs.listForUser") — use this for SDK references and gateway calls */
+  sdkPath: string;
+  /** Raw OpenAPI operationId (e.g. "orgs/list-for-user") — internal reference only */
   operationId: string;
   method: string;
   path: string;
@@ -206,34 +209,44 @@ export function buildOperationSnippet(
   operation: RegistryOperation,
 ): string {
   const importIdentifier = toImportIdentifier(providerPath);
-  const methodName = operationToMethodName(operation.operationId);
   const requiredParams = operation.parameters.filter((p) => p.required);
   const paramsInner =
     requiredParams.length > 0
       ? ` /* ${requiredParams.map((p) => p.name).join(", ")} */ `
       : "";
-  return `import ${importIdentifier} from "${packageName}";\nawait ${importIdentifier}.${methodName}({${paramsInner}});`;
+  return `import ${importIdentifier} from "${packageName}";\nawait ${importIdentifier}.${operation.sdkPath}({${paramsInner}});`;
 }
 
-function operationToMethodName(operationId: string): string {
-  const words = operationId
-    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
-    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+/**
+ * Converts a segment (e.g. "list-for-user") to camelCase (e.g. "listForUser").
+ * Matches the @utdk client's toCamelCase behavior.
+ */
+function segmentToCamelCase(segment: string): string {
+  const words = segment
     .replace(/[^a-zA-Z0-9]+/g, " ")
     .trim()
     .split(/\s+/)
     .filter(Boolean);
 
-  if (words.length === 0) {
-    return "call";
-  }
+  if (words.length === 0) return "_";
 
-  const [first = "call", ...rest] = words;
-
+  const [first = "_", ...rest] = words;
   return (
     first.toLowerCase() +
-    rest.map((w) => w[0]!.toUpperCase() + w.slice(1).toLowerCase()).join("")
+    rest.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join("")
   );
+}
+
+/**
+ * Converts an OpenAPI operationId (e.g. "orgs/list-for-user") to the canonical
+ * UTDK SDK path (e.g. "orgs.listForUser").
+ */
+function operationIdToSdkPath(operationId: string): string {
+  return operationId
+    .split("/")
+    .filter(Boolean)
+    .map(segmentToCamelCase)
+    .join(".");
 }
 
 async function buildRegistryCatalog(): Promise<RegistryCatalog> {
@@ -452,6 +465,7 @@ function extractOperations(openApiDocument: OpenApiDocument | null): RegistryOpe
       }
 
       operations.push({
+        sdkPath: operationIdToSdkPath(operationId),
         operationId,
         method: method.toUpperCase(),
         path: apiPath,

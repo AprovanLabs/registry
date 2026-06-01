@@ -48,6 +48,9 @@ export type RequestBodyField = {
 };
 
 export type OperationInfo = {
+  /** Canonical UTDK method path (e.g. "orgs.listForUser") — use this for gateway calls and SDK references */
+  sdkPath: string;
+  /** Raw OpenAPI operationId (e.g. "orgs/list-for-user") — internal reference only */
   operationId: string;
   summary: string | null;
   description: string | null;
@@ -57,6 +60,42 @@ export type OperationInfo = {
   requestBodyFields: RequestBodyField[];
   tags: string[];
 };
+
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Converts a segment (e.g. "list-for-user") to camelCase (e.g. "listForUser").
+ * Matches the @utdk client's toCamelCase behavior.
+ */
+function segmentToCamelCase(segment: string): string {
+  const words = segment
+    .replace(/[^a-zA-Z0-9]+/g, " ")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  if (words.length === 0) return "_";
+
+  const [first = "_", ...rest] = words;
+  return (
+    first.toLowerCase() +
+    rest.map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join("")
+  );
+}
+
+/**
+ * Converts an OpenAPI operationId (e.g. "orgs/list-for-user") to the canonical
+ * UTDK SDK path (e.g. "orgs.listForUser").
+ */
+export function operationIdToSdkPath(operationId: string): string {
+  return operationId
+    .split("/")
+    .filter(Boolean)
+    .map(segmentToCamelCase)
+    .join(".");
+}
 
 // ---------------------------------------------------------------------------
 // Loader
@@ -162,6 +201,7 @@ export async function loadProviderOperations(providerPath: string): Promise<Oper
       }
 
       operations.push({
+        sdkPath: operationIdToSdkPath(operationId),
         operationId,
         summary: typeof op.summary === "string" ? op.summary : null,
         description: typeof op.description === "string" ? op.description : null,

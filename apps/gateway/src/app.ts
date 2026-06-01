@@ -6,6 +6,7 @@
  */
 
 import { Hono } from "hono";
+import { cors } from "hono/cors";
 import { credentialsRouter } from "./routes/credentials.js";
 import { permissionsRouter } from "./routes/permissions.js";
 import { toolsRouter } from "./routes/tools.js";
@@ -15,6 +16,18 @@ import { apiKeysRouter } from "./routes/apikeys.js";
 
 export function createApp(): Hono {
   const app = new Hono();
+
+  // ---------------------------------------------------------------------------
+  // CORS middleware — allow requests from the registry frontend
+  // ---------------------------------------------------------------------------
+  app.use(
+    "/*",
+    cors({
+      origin: "*", // In production, restrict to your registry domain
+      allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowHeaders: ["Content-Type", "Authorization"],
+    }),
+  );
 
   // ---------------------------------------------------------------------------
   // Health check — unauthenticated

@@ -121,7 +121,17 @@ function hasOwn(value: Record<string, unknown>, key: string): boolean {
   return Object.prototype.hasOwnProperty.call(value, key);
 }
 
+function extractPathParameters(pathTemplate: string): string[] {
+  const matches = pathTemplate.match(/\{([^}]+)\}/g) ?? [];
+  return matches.map((match) => match.slice(1, -1));
+}
+
 function createFallbackMetadata(rawToolName: string, tool: Tool, usedPaths: Set<string>): ToolRuntimeMetadata {
+  const pathTemplate =
+    tool.tool_call_template && typeof tool.tool_call_template.url === "string"
+      ? tool.tool_call_template.url.replace(/^https?:\/\/[^/]+/u, "")
+      : "/";
+
   return {
     accessPath: createUniqueAccessPath(rawToolName, usedPaths),
     bodyKind: "none",
@@ -135,12 +145,9 @@ function createFallbackMetadata(rawToolName: string, tool: Tool, usedPaths: Set<
       tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
         ? tool.tool_call_template.http_method
         : "GET",
-    pathTemplate:
-      tool.tool_call_template && typeof tool.tool_call_template.url === "string"
-        ? tool.tool_call_template.url.replace(/^https?:\/\/[^/]+/u, "")
-        : "/",
+    pathTemplate,
     pathConflictKeys: [],
-    pathParameterKeys: [],
+    pathParameterKeys: extractPathParameters(pathTemplate),
     queryConflictKeys: [],
     queryParameterKeys: [],
   };

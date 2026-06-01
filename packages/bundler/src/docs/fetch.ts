@@ -24,7 +24,9 @@ function sanitizeSlugSegment(value: string): string {
     .slice(0, 64);
 }
 
-function getReferenceCategory(reference: DocsValidatedReference): DocsReferenceCategory {
+function getReferenceCategory(
+  reference: DocsValidatedReference,
+): DocsReferenceCategory {
   return reference.category ?? "other";
 }
 
@@ -48,7 +50,11 @@ function normalizeHtmlToMarkdown(html: string): string {
     .trim();
 }
 
-function toMarkdown(body: string, contentType: string | null, reference: DocsValidatedReference): string {
+function toMarkdown(
+  body: string,
+  contentType: string | null,
+  reference: DocsValidatedReference,
+): string {
   const normalizedContentType = contentType?.toLowerCase() ?? "";
   const title = buildMarkdownTitle(reference);
 
@@ -63,7 +69,9 @@ function toMarkdown(body: string, contentType: string | null, reference: DocsVal
   return `# ${title}\n\n\`\`\`\n${body.trim()}\n\`\`\`\n`;
 }
 
-export async function fetchDocsSources(options: FetchDocsSourcesOptions): Promise<FetchDocsSourcesResult> {
+export async function fetchDocsSources(
+  options: FetchDocsSourcesOptions,
+): Promise<FetchDocsSourcesResult> {
   await mkdir(options.sourcesDir, { recursive: true });
 
   if (options.rawSnapshotsDir) {
@@ -79,12 +87,15 @@ export async function fetchDocsSources(options: FetchDocsSourcesOptions): Promis
         method: "GET",
         redirect: "follow",
         headers: {
-          Accept: "text/markdown,text/html,text/plain,application/json;q=0.9,*/*;q=0.8",
+          Accept:
+            "text/markdown,text/html,text/plain,application/json;q=0.9,*/*;q=0.8",
         },
       });
 
       if (!response.ok) {
-        warnings.push(`Failed to fetch ${reference.canonicalUrl}: HTTP ${response.status} ${response.statusText}`.trim());
+        warnings.push(
+          `Failed to fetch ${reference.canonicalUrl}: HTTP ${response.status} ${response.statusText}`.trim(),
+        );
         continue;
       }
 
@@ -92,14 +103,23 @@ export async function fetchDocsSources(options: FetchDocsSourcesOptions): Promis
       const contentType = response.headers.get("content-type");
       const markdownBody = toMarkdown(body, contentType, reference);
       const hash = hashContent(markdownBody);
-      const stem = `${String(index + 1).padStart(3, "0")}-${sanitizeSlugSegment(buildMarkdownTitle(reference)) || "source"}`;
+      const stem = `${String(index + 1).padStart(3, "0")}-${
+        sanitizeSlugSegment(buildMarkdownTitle(reference)) || "source"
+      }`;
       const fileName = `${stem}.md`;
       const filePath = path.join(options.sourcesDir, fileName);
 
       await writeFile(filePath, markdownBody, "utf8");
 
       if (options.rawSnapshotsDir) {
-        const rawSnapshotPath = path.join(options.rawSnapshotsDir, `${stem}.json`);
+        const rawSnapshotPath = path.join(
+          options.rawSnapshotsDir,
+          `${stem}.json`,
+        );
+        const headersObj: Record<string, string> = {};
+        response.headers.forEach((value, key) => {
+          headersObj[key] = value;
+        });
         await writeFile(
           rawSnapshotPath,
           JSON.stringify(
@@ -107,7 +127,7 @@ export async function fetchDocsSources(options: FetchDocsSourcesOptions): Promis
               url: reference.canonicalUrl,
               status: response.status,
               contentType,
-              headers: Object.fromEntries(response.headers.entries()),
+              headers: headersObj,
             },
             null,
             2,
@@ -128,7 +148,9 @@ export async function fetchDocsSources(options: FetchDocsSourcesOptions): Promis
       });
     } catch (error: unknown) {
       warnings.push(
-        `Failed to fetch ${reference.canonicalUrl}: ${error instanceof Error ? error.message : String(error)}`,
+        `Failed to fetch ${reference.canonicalUrl}: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
       );
     }
   }

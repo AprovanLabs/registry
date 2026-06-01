@@ -112,8 +112,8 @@ if (type === "operation") {
 
 const isProvider = type === "provider";
 const pageTitle = isProvider
-  ? `${entry.title} · API Catalog · UTDK Registry`
-  : `${operation!.operationId} · ${entry.title} · UTDK Registry`;
+  ? `${entry.title} · API Catalog · Aprovan Registry`
+  : `${operation!.sdkPath} · ${entry.title} · Aprovan Registry`;
 
 const operationSnippet =
   !isProvider && operation
@@ -129,7 +129,7 @@ const operationSnippet =
     <header class="flex flex-col gap-2">
       <nav class="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
         <a class="transition-colors hover:text-foreground" href={withBasePath("/")}
-          >UTDK Registry</a
+          >Aprovan Registry</a
         >
         <span>/</span>
         <a class="transition-colors hover:text-foreground" href={withBasePath("/providers")}
@@ -148,7 +148,7 @@ const operationSnippet =
                 {entry.title}
               </a>
               <span>/</span>
-              <span class="font-medium text-foreground">{operation!.operationId}</span>
+              <span class="font-medium text-foreground">{operation!.sdkPath}</span>
             </>
           )
         }
@@ -297,7 +297,7 @@ const operationSnippet =
                 </span>
                 <code class="font-mono text-sm text-foreground">{operation.path}</code>
               </div>
-              <CardTitle className="text-xl">{operation.operationId}</CardTitle>
+              <CardTitle className="text-xl">{operation.sdkPath}</CardTitle>
               {operation.summary ? (
                 <CardDescription className="text-sm leading-6">{operation.summary}</CardDescription>
               ) : null}

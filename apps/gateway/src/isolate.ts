@@ -53,7 +53,9 @@ async function tryLoadIsolate(): Promise<IsolateExecutor | undefined> {
     // and the fallback executor will be used instead.
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore — @utdk/isolate is not yet published (APR-15)
-    const mod = (await import("@utdk/isolate")) as { Isolate: new () => IsolateExecutor };
+    const mod = (await import("@utdk/isolate")) as {
+      Isolate: new () => IsolateExecutor;
+    };
     return new mod.Isolate();
   } catch {
     return undefined;
@@ -68,7 +70,9 @@ async function tryLoadIsolate(): Promise<IsolateExecutor | undefined> {
  * Build an Authorization header value from a credential payload.
  * Used by the direct executor when the real isolate is not available.
  */
-function buildAuthHeaders(payload: CredentialPayload | undefined): Record<string, string> {
+function buildAuthHeaders(
+  payload: CredentialPayload | undefined,
+): Record<string, string> {
   if (!payload) return {};
 
   switch (payload.type) {
@@ -85,41 +89,79 @@ function buildAuthHeaders(payload: CredentialPayload | undefined): Record<string
   }
 }
 
+/**
+ * Convert a provider name (e.g. "github", "google-cloud") to a PascalCase
+ * client factory name (e.g. "createGithubClient", "createGoogleCloudClient").
+ */
+function toClientFactoryName(provider: string): string {
+  const pascalCase = provider
+    .split(/[-_]/)
+    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase())
+    .join("");
+  return `create${pascalCase}Client`;
+}
+
 class DirectExecutor implements IsolateExecutor {
   async execute(options: IsolateExecuteOptions): Promise<IsolateResult> {
     const start = Date.now();
 
     try {
       // Dynamically import the provider package
-      const mod = (await import(`utdk/${options.provider}`)) as Record<string, unknown>;
+      const mod = (await import(`utdk/${options.provider}`)) as Record<
+        string,
+        unknown
+      >;
 
-      // The generated client factory is the default export
-      const factory = mod.default as ((...args: unknown[]) => unknown) | undefined;
+      // Get the named client factory export (e.g. createGithubClient)
+      // This allows us to inject credentials at construction time
+      const factoryName = toClientFactoryName(options.provider);
+      const factory = mod[factoryName] as
+        | ((opts?: { headers?: Record<string, string> }) => Promise<unknown>)
+        | undefined;
+
       if (typeof factory !== "function") {
-        throw new Error(`Provider "${options.provider}" does not export a default client factory`);
+        throw new Error(
+          `Provider "${options.provider}" does not export "${factoryName}"`,
+        );
       }
 
       // Build auth headers for injection
       const authHeaders = buildAuthHeaders(options.credentials);
 
-      // Construct the client with credential injection
-      const client = factory({ headers: authHeaders }) as Record<string, unknown>;
+      // Create the client with credential injection and await it
+      const client = (await factory({ headers: authHeaders })) as Record<
+        string,
+        unknown
+      >;
 
-      // Resolve the operation path (e.g. "repos.list" → client.repos.list)
+      // Debug: log available top-level keys on the client
+      const clientKeys = Object.keys(client);
+
+      // Resolve the operation path (e.g. "orgs.listForUser" → client.orgs.listForUser)
       const parts = options.operation.split(".");
       let current: unknown = client;
-      for (const part of parts) {
+      for (let i = 0; i < parts.length; i++) {
+        const part = parts[i]!;
         if (current == null || typeof current !== "object") {
-          throw new Error(`Operation path "${options.operation}" not found on provider "${options.provider}"`);
+          const resolvedPath = parts.slice(0, i).join(".");
+          throw new Error(
+            `Operation path "${options.operation}" not found on provider "${options.provider}": ` +
+              `"${part}" is not accessible after "${resolvedPath || "(root)"}". ` +
+              `Available keys at root: [${clientKeys.slice(0, 10).join(", ")}${clientKeys.length > 10 ? "..." : ""}]`,
+          );
         }
         current = (current as Record<string, unknown>)[part];
       }
 
       if (typeof current !== "function") {
-        throw new Error(`Operation "${options.operation}" is not a function on provider "${options.provider}"`);
+        throw new Error(
+          `Operation "${options.operation}" is not a function on provider "${options.provider}"`,
+        );
       }
 
-      const result = await (current as (...args: unknown[]) => Promise<unknown>)(options.args);
+      const result = await (
+        current as (...args: unknown[]) => Promise<unknown>
+      )(options.args);
 
       return {
         success: true,

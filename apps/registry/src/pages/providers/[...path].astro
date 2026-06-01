@@ -66,7 +66,7 @@ if (!operation) {
   throw new Error(`Unknown operation "${operationId}" for provider "${providerPath}"`);
 }
 
-const pageTitle = `${operation.summary ?? operationId} · ${entry.title} · UTDK Registry`;
+const pageTitle = `${operation.summary ?? operation.sdkPath} · ${entry.title} · Aprovan Registry`;
 const providerHref = withBasePath(`/packages/${entry.providerPath}`);
 const defaultGatewayUrl = import.meta.env.PUBLIC_GATEWAY_URL ?? "";
 
@@ -85,7 +85,7 @@ const totalOps = allOperations.length;
 ---
 
 <BaseLayout
-  description={operation.summary ?? `Try ${operationId} from ${entry.title}`}
+  description={operation.summary ?? `Try ${operation.sdkPath} from ${entry.title}`}
   title={pageTitle}
 >
   <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
@@ -95,7 +95,7 @@ const totalOps = allOperations.length;
           class="transition-colors hover:text-foreground"
           href={withBasePath("/")}
         >
-          UTDK Registry
+          Aprovan Registry
         </a>
         <span>/</span>
         <a
@@ -105,7 +105,7 @@ const totalOps = allOperations.length;
           {entry.title}
         </a>
         <span>/</span>
-        <span class="font-mono text-foreground">{operationId}</span>
+        <span class="font-mono text-foreground">{operation.sdkPath}</span>
       </nav>
 
       <div class="flex flex-wrap items-center gap-2">

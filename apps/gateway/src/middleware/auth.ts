@@ -27,6 +27,8 @@ export interface GatewayJWTPayload extends JWTPayload {
 declare module "hono" {
   interface ContextVariableMap {
     jwtPayload: GatewayJWTPayload;
+    passthroughMode: boolean;
+    passthroughCredentials: unknown;
   }
 }
 

@@ -49,11 +49,10 @@ await github.users.getByUsername({ username: 'octocat' });`,
 });
 ---
 
-<BaseLayout title="UTDK Registry">
+<BaseLayout title="Aprovan Registry">
   <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
     <section class="flex flex-col gap-3">
       <div class="flex flex-wrap items-center gap-2">
-        <Badge>UTDK Registry</Badge>
         <Badge variant="outline">{catalog.providerCount} providers</Badge>
         <Badge variant="secondary">{catalog.namespaceCount} namespaces</Badge>
         {updatedAtLabel ? <Badge variant="outline">Updated {updatedAtLabel}</Badge> : null}

@@ -100,9 +100,9 @@ function deriveOpenApiReferences(
       docs_url?: string;
     };
   };
-  const documentRecord = openApiDocument as Record<string, unknown>;
+  const documentRecord = openApiDocument as unknown as Record<string, unknown>;
   const externalDocs = openApiDocument.externalDocs;
-  const info = openApiDocument.info as Record<string, unknown> | undefined;
+  const info = openApiDocument.info as unknown as Record<string, unknown> | undefined;
   const infoContact = (info?.contact as Record<string, unknown> | undefined) ?? {};
 
   const candidates: DocsDiscoveredReference[] = [

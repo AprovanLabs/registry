@@ -14,18 +14,14 @@ import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import type { OperationInfo, OpenApiSchemaType } from "@/lib/openapi";
-
-/**
- * Converts an OpenAPI operationId like "users/get-by-username" into a
- * UTDK method accessor like "users.getByUsername".
- * (Duplicated here to avoid importing the Node.js-only openapi.ts at runtime.)
- */
-function operationIdToSdkPath(operationId: string): string {
-  return operationId
-    .split("/")
-    .map((segment) => segment.replace(/-([a-z])/g, (_, c: string) => c.toUpperCase()))
-    .join(".");
-}
+import { ProviderCredentialConfig } from "@/components/ProviderCredentialConfig";
+import {
+  type ProviderCredentialConfig as CredentialConfig,
+  buildAuthHeaders,
+  getGatewayUrl,
+  getProviderCredential,
+  saveGatewayUrl,
+} from "@/lib/local-credentials";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -86,7 +82,6 @@ function buildTypeScriptSnippet(
   operation: OperationInfo,
   args: Record<string, unknown>,
 ): string {
-  const sdkPath = operationIdToSdkPath(operation.operationId);
   const providerVar = provider.replace(/[^a-zA-Z0-9]/g, "_");
   const importPath = `@utdk/${provider}`;
   const argsStr = Object.keys(args).length
@@ -94,7 +89,7 @@ function buildTypeScriptSnippet(
     : "";
   return `import ${providerVar} from '${importPath}';
 
-await ${providerVar}.${sdkPath}(${argsStr});`;
+await ${providerVar}.${operation.sdkPath}(${argsStr})`;
 }
 
 function buildCurlSnippet(
@@ -102,15 +97,29 @@ function buildCurlSnippet(
   operation: OperationInfo,
   args: Record<string, unknown>,
   gatewayUrl: string,
-  jwtToken: string,
+  credConfig: CredentialConfig | null,
+  mode: "gateway" | "direct",
 ): string {
-  const url = `${gatewayUrl.replace(/\/$/, "")}/tools/${provider}/${operation.operationId}`;
-  const token = jwtToken || "<your-jwt-token>";
-  const body = JSON.stringify(args, null, 2);
-  return `curl -X POST '${url}' \\
+  const authHeaders = buildAuthHeaders(credConfig);
+  const headerLines = Object.entries(authHeaders)
+    .map(([k, v]) => `  -H '${k}: ${v}'`)
+    .join(" \\\n");
+
+  if (mode === "gateway" && gatewayUrl) {
+    const url = `${gatewayUrl.replace(/\/$/, "")}/tools/${provider}/${operation.sdkPath}`;
+    const body = JSON.stringify(args, null, 2);
+    return `curl -X POST '${url}' \\
   -H 'Content-Type: application/json' \\
-  -H 'Authorization: Bearer ${token}' \\
-  -d '${body}'`;
+${headerLines ? headerLines + " \\\n" : ""}  -d '${body}'`;
+  } else {
+    // Direct mode: construct actual API URL (simplified example)
+    // In practice, the URL pattern depends on the provider's base URL
+    const body = JSON.stringify(args, null, 2);
+    return `# Direct API call (example)
+curl -X ${operation.method.toUpperCase()} '${operation.httpPath}' \\
+  -H 'Content-Type: application/json' \\
+${headerLines ? headerLines + " \\\n" : ""}  -d '${body}'`;
+  }
 }
 
 function methodColor(method: string): string {
@@ -302,9 +311,11 @@ function CopyableCode({
 // Main component
 // ---------------------------------------------------------------------------
 
+type ExecutionMode = "gateway" | "direct";
+
 export function TryItConsole({
   provider,
-  providerTitle: _providerTitle,
+  providerTitle,
   operation,
   defaultGatewayUrl = "",
 }: TryItConsoleProps) {
@@ -350,8 +361,20 @@ export function TryItConsole({
     return initial;
   });
 
-  const [gatewayUrl, setGatewayUrl] = useState(defaultGatewayUrl);
-  const [jwtToken, setJwtToken] = useState("");
+  // Load persisted gateway URL
+  const [gatewayUrl, setGatewayUrl] = useState(() => {
+    if (typeof window !== "undefined") {
+      return getGatewayUrl() || defaultGatewayUrl;
+    }
+    return defaultGatewayUrl;
+  });
+  const [mode, setMode] = useState<ExecutionMode>("gateway");
+  const [credConfig, setCredConfig] = useState<CredentialConfig | null>(() => {
+    if (typeof window !== "undefined") {
+      return getProviderCredential(provider);
+    }
+    return null;
+  });
   const [activeSnippet, setActiveSnippet] = useState<"typescript" | "curl">("typescript");
   const [isLoading, setIsLoading] = useState(false);
   const [responseData, setResponseData] = useState<{
@@ -361,8 +384,17 @@ export function TryItConsole({
   } | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
+  // Persist gateway URL when it changes
+  useEffect(() => {
+    saveGatewayUrl(gatewayUrl);
+  }, [gatewayUrl]);
+
   const handleFieldChange = useCallback((name: string, value: string) => {
     setValues((prev) => ({ ...prev, [name]: value }));
+  }, []);
+
+  const handleCredConfigChange = useCallback((config: CredentialConfig | null) => {
+    setCredConfig(config);
   }, []);
 
   const currentArgs = useMemo(() => buildArgs(allFields, values), [allFields, values]);
@@ -373,8 +405,8 @@ export function TryItConsole({
   );
 
   const curlSnippet = useMemo(
-    () => buildCurlSnippet(provider, operation, currentArgs, gatewayUrl, jwtToken),
-    [provider, operation, currentArgs, gatewayUrl, jwtToken],
+    () => buildCurlSnippet(provider, operation, currentArgs, gatewayUrl, credConfig, mode),
+    [provider, operation, currentArgs, gatewayUrl, credConfig, mode],
   );
 
   async function handleSubmit(e: React.FormEvent) {
@@ -384,24 +416,35 @@ export function TryItConsole({
     setFetchError(null);
 
     try {
-      const url = `${gatewayUrl.replace(/\/$/, "")}/tools/${provider}/${operation.operationId}`;
-      const resp = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          ...(jwtToken ? { Authorization: `Bearer ${jwtToken}` } : {}),
-        },
-        body: JSON.stringify(currentArgs),
-      });
+      const authHeaders = buildAuthHeaders(credConfig);
 
-      let body: unknown;
-      try {
-        body = await resp.json();
-      } catch {
-        body = await resp.text();
+      if (mode === "gateway") {
+        // Gateway mode: proxy through the gateway
+        if (!gatewayUrl) {
+          throw new Error("Gateway URL is required in gateway mode");
+        }
+        const url = `${gatewayUrl.replace(/\/$/, "")}/tools/${provider}/${operation.sdkPath}`;
+        const resp = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            ...authHeaders,
+          },
+          body: JSON.stringify(currentArgs),
+        });
+
+        let body: unknown;
+        try {
+          body = await resp.json();
+        } catch {
+          body = await resp.text();
+        }
+
+        setResponseData({ status: resp.status, body, ok: resp.ok });
+      } else {
+        // Direct mode: for now, show an error since we'd need the actual provider base URL
+        throw new Error("Direct mode requires provider base URL configuration (coming soon)");
       }
-
-      setResponseData({ status: resp.status, body, ok: resp.ok });
     } catch (err) {
       setFetchError(err instanceof Error ? err.message : "Network error — is the gateway running?");
     } finally {
@@ -410,41 +453,74 @@ export function TryItConsole({
   }
 
   const hasFields = allFields.length > 0;
+  const hasCredential = credConfig && credConfig.credential.type !== "none";
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Gateway + auth configuration */}
+      {/* Credential configuration */}
+      <ProviderCredentialConfig
+        provider={provider}
+        providerTitle={providerTitle}
+        onConfigChange={handleCredConfigChange}
+      />
+
+      {/* Gateway configuration */}
       <Card>
         <CardHeader>
-          <CardTitle>Connection</CardTitle>
+          <CardTitle>Gateway</CardTitle>
           <CardDescription>
-            Gateway URL and authentication token. Credentials are never sent to
-            the browser — the gateway injects them server-side.
+            The gateway proxies requests and injects credentials server-side.
+            Configure credentials above, then enter your gateway URL.
           </CardDescription>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-2">
+        <CardContent className="flex flex-col gap-4">
+          {/* Mode selector */}
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm font-medium">Execution Mode</label>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setMode("gateway")}
+                className={cn(
+                  "flex-1 rounded-lg border px-3 py-2 text-sm transition-colors",
+                  mode === "gateway"
+                    ? "border-primary bg-primary/5 text-foreground font-medium"
+                    : "border-input bg-background text-muted-foreground hover:bg-muted",
+                )}
+              >
+                Gateway Proxy
+              </button>
+              <button
+                type="button"
+                onClick={() => setMode("direct")}
+                disabled
+                className={cn(
+                  "flex-1 rounded-lg border px-3 py-2 text-sm transition-colors",
+                  mode === "direct"
+                    ? "border-primary bg-primary/5 text-foreground font-medium"
+                    : "border-input bg-background text-muted-foreground hover:bg-muted",
+                  "opacity-50 cursor-not-allowed",
+                )}
+                title="Coming soon"
+              >
+                Direct (coming soon)
+              </button>
+            </div>
+          </div>
+
           <div className="grid gap-1.5">
             <label className="text-sm font-medium" htmlFor="gateway-url">
               Gateway URL
             </label>
             <Input
               id="gateway-url"
-              placeholder="https://gateway.example.com"
+              placeholder="http://localhost:4000"
               value={gatewayUrl}
               onChange={(e) => setGatewayUrl(e.target.value)}
             />
-          </div>
-          <div className="grid gap-1.5">
-            <label className="text-sm font-medium" htmlFor="jwt-token">
-              JWT token
-            </label>
-            <Input
-              id="jwt-token"
-              placeholder="eyJ..."
-              type="password"
-              value={jwtToken}
-              onChange={(e) => setJwtToken(e.target.value)}
-            />
+            <p className="text-xs text-muted-foreground">
+              Saved automatically to browser storage.
+            </p>
           </div>
         </CardContent>
       </Card>
@@ -504,7 +580,7 @@ export function TryItConsole({
 
             <div className="flex items-center gap-3 pt-2">
               <Button
-                disabled={isLoading || !gatewayUrl}
+                disabled={isLoading || !gatewayUrl || !hasCredential}
                 size="default"
                 type="submit"
               >
@@ -513,11 +589,16 @@ export function TryItConsole({
                 ) : (
                   <PlayIcon className="h-4 w-4" data-icon="inline-start" />
                 )}
-                {isLoading ? "Sending…" : "Send"}
+                Send
               </Button>
               {!gatewayUrl && (
                 <p className="text-xs text-muted-foreground">
                   Enter a gateway URL above to enable sending.
+                </p>
+              )}
+              {gatewayUrl && !hasCredential && (
+                <p className="text-xs text-muted-foreground">
+                  Configure credentials above to enable sending.
                 </p>
               )}
             </div>
@@ -596,9 +677,9 @@ export function TryItConsole({
           </div>
 
           {activeSnippet === "typescript" ? (
-            <CopyableCode code={tsSnippet} label="TypeScript (UTDK SDK)" />
+            <CopyableCode code={tsSnippet} label="TypeScript" />
           ) : (
-            <CopyableCode code={curlSnippet} label="curl (via gateway)" />
+            <CopyableCode code={curlSnippet} label="curl" />
           )}
         </CardContent>
       </Card>
