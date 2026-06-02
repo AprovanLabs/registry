@@ -550,7 +550,7 @@ export function TryItConsole({
             )}
 
             <ParameterGroup
-              title="Path parameters"
+              title="Parameters"
               fields={pathFields}
               values={values}
               onChange={handleFieldChange}
@@ -561,7 +561,7 @@ export function TryItConsole({
             )}
 
             <ParameterGroup
-              title="Query parameters"
+              title=""
               fields={queryFields}
               values={values}
               onChange={handleFieldChange}
@@ -572,7 +572,7 @@ export function TryItConsole({
             )}
 
             <ParameterGroup
-              title="Request body"
+              title="Input"
               fields={bodyFields}
               values={values}
               onChange={handleFieldChange}
@@ -611,7 +611,7 @@ export function TryItConsole({
         <Card>
           <CardHeader>
             <div className="flex flex-wrap items-center gap-2">
-              <CardTitle>Response</CardTitle>
+              <CardTitle>Output</CardTitle>
               {responseData && (
                 <Badge variant={responseData.ok ? "outline" : "destructive"}>
                   {responseData.status}

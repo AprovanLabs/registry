@@ -33,21 +33,21 @@ const totalOperations = providerEntries.reduce((sum, e) => sum + e.operationCoun
 ---
 
 <BaseLayout
-  title="API Catalog · Aprovan Registry"
-  description="Browse every provider and endpoint in the UTDK registry. Search by name, path, or summary."
+  title="Tool Catalog · Aprovan Registry"
+  description="Browse every provider and tool in the UTDK registry. Search by name, path, or summary."
 >
   <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
     <section class="flex flex-col gap-3">
       <div class="flex flex-wrap items-center gap-2">
-        <Badge>API Catalog</Badge>
+        <Badge>Tool Catalog</Badge>
         <Badge variant="outline">{providers.length} providers</Badge>
-        <Badge variant="secondary">{totalOperations.toLocaleString()} endpoints</Badge>
+        <Badge variant="secondary">{totalOperations.toLocaleString()} tools</Badge>
       </div>
       <h1 class="max-w-3xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-        Browse every API endpoint.
+        Browse every tool.
       </h1>
       <p class="max-w-2xl text-muted-foreground">
-        Search across all providers and endpoints. Click a provider to see its full operation list, or search for a specific endpoint path or operation.
+        Search across all providers and tools. Click a provider to see its full operation list, or search for a specific tool name or operation.
       </p>
       <div class="flex gap-3 text-sm">
         <a
