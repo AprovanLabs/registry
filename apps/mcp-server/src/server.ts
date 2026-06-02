@@ -137,7 +137,7 @@ function createServer(tools: ProviderTool[]): Server {
   // Build a lookup map for fast dispatch
   const toolMap = new Map<string, ProviderTool>(tools.map((t) => [t.mcpName, t]));
 
-  // tools/list — return the full tool catalog (including the list_tools meta-tool)
+  // tools/list — return exactly the 4 meta-tools (no direct provider tool exposure)
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
     tools: [
       {
@@ -192,15 +192,29 @@ function createServer(tools: ProviderTool[]): Server {
           required: ["tool_name"],
         },
       },
-      ...tools.map((tool) => ({
-        name: tool.mcpName,
-        description: tool.description,
-        inputSchema: normalizeInputSchema(tool.inputSchema),
-      })),
+      {
+        name: "call_tool",
+        description:
+          "Execute any registered tool by name with the provided arguments. Use tool_info first to get the correct argument schema.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            tool_name: {
+              type: "string",
+              description: "The MCP tool name to execute (e.g. 'github__repos_list')",
+            },
+            arguments: {
+              type: "object",
+              description: "Arguments to pass to the tool",
+            },
+          },
+          required: ["tool_name", "arguments"],
+        },
+      },
     ],
   }));
 
-  // tools/call — dispatch to the provider
+  // tools/call — dispatch to the 4 meta-tools only
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const toolName = request.params.name;
     const args = (request.params.arguments ?? {}) as Record<string, unknown>;
@@ -234,52 +248,62 @@ function createServer(tools: ProviderTool[]): Server {
     // tool_info meta-tool: return full schema and metadata for a specific tool
     if (toolName === "tool_info") {
       const requestedName = typeof args["tool_name"] === "string" ? args["tool_name"] : "";
-      const found = toolMap.get(requestedName);
-      if (!found) {
+      const tool = toolMap.get(requestedName);
+      if (!tool) {
         return {
           isError: true,
-          content: [
-            { type: "text" as const, text: `Unknown tool: ${requestedName}` },
-          ],
+          content: [{ type: "text" as const, text: `Unknown tool: ${requestedName}` }],
         };
       }
       const info = {
-        name: found.mcpName,
-        description: found.description,
-        provider: found.providerName,
-        inputSchema: normalizeInputSchema(found.inputSchema),
-        httpMethod: found.httpMethod,
-        urlTemplate: found.urlTemplate,
+        name: tool.mcpName,
+        description: tool.description,
+        provider: tool.providerName,
+        inputSchema: normalizeInputSchema(tool.inputSchema),
       };
       return {
         content: [{ type: "text" as const, text: JSON.stringify(info, null, 2) }],
       };
     }
 
-    const tool = toolMap.get(toolName);
+    // call_tool meta-tool: execute a registered tool by name
+    if (toolName === "call_tool") {
+      const requestedName = typeof args["tool_name"] === "string" ? args["tool_name"] : "";
+      const toolArgs =
+        typeof args["arguments"] === "object" && args["arguments"] !== null
+          ? (args["arguments"] as Record<string, unknown>)
+          : {};
 
-    if (!tool) {
-      return {
-        isError: true,
-        content: [{ type: "text" as const, text: `Unknown tool: ${toolName}` }],
-      };
+      const tool = toolMap.get(requestedName);
+      if (!tool) {
+        return {
+          isError: true,
+          content: [{ type: "text" as const, text: `Unknown tool: ${requestedName}` }],
+        };
+      }
+
+      try {
+        const result = await executeTool(tool, toolArgs);
+        const text = typeof result === "string" ? result : JSON.stringify(result, null, 2);
+        return { content: [{ type: "text" as const, text }] };
+      } catch (err) {
+        const message = err instanceof Error ? err.message : String(err);
+        return {
+          isError: true,
+          content: [{ type: "text" as const, text: `Error calling ${requestedName}: ${message}` }],
+        };
+      }
     }
 
-    try {
-      const result = await executeTool(tool, args);
-      const text =
-        typeof result === "string" ? result : JSON.stringify(result, null, 2);
-
-      return { content: [{ type: "text" as const, text }] };
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err);
-      return {
-        isError: true,
-        content: [
-          { type: "text" as const, text: `Error calling ${toolName}: ${message}` },
-        ],
-      };
-    }
+    return {
+      isError: true,
+      content: [
+        {
+          type: "text" as const,
+          text: `Unknown tool: ${toolName}. Use list_tools or search_tools to discover tools, then call_tool to execute them.`,
+        },
+      ],
+    };
   });
 
   return server;
