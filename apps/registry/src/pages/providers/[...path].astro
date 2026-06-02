@@ -110,10 +110,13 @@ const totalOps = allOperations.length;
 
       <div class="flex flex-wrap items-center gap-2">
         <Badge>{entry.kind}</Badge>
-        <Badge variant="outline">
+        {operation.tags.map((tag) => (
+          <Badge variant="secondary">{tag}</Badge>
+        ))}
+        <span class="flex items-center gap-1.5 rounded border border-border px-2 py-0.5 text-xs">
           <span
             class:list={[
-              "font-mono text-xs font-semibold",
+              "font-mono text-[0.6rem] font-medium uppercase",
               operation.method === "GET" && "text-emerald-500",
               operation.method === "POST" && "text-blue-500",
               operation.method === "PUT" && "text-amber-500",
@@ -123,10 +126,8 @@ const totalOps = allOperations.length;
           >
             {operation.method}
           </span>
-        </Badge>
-        {operation.tags.map((tag) => (
-          <Badge variant="secondary">{tag}</Badge>
-        ))}
+          <code class="font-mono text-xs text-muted-foreground">{operation.httpPath}</code>
+        </span>
       </div>
     </header>
 

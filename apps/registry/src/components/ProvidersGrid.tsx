@@ -20,6 +20,7 @@ export type OperationSearchEntry = {
   providerPath: string;
   providerTitle: string;
   operationId: string;
+  sdkPath: string;
   method: string;
   path: string;
   summary: string | null;
@@ -46,7 +47,7 @@ function MethodBadge({ method }: { method: string }) {
   return (
     <span
       className={cn(
-        "inline-flex h-5 items-center rounded px-1.5 font-mono text-[0.65rem] font-semibold uppercase",
+        "inline-flex h-4 items-center rounded px-1 font-mono text-[0.6rem] font-medium uppercase",
         colorClass,
       )}
     >
@@ -73,7 +74,7 @@ export function ProvidersGrid({ providers, operations }: ProvidersGridProps) {
     );
 
     const filteredOperations = operations.filter((op) =>
-      [op.path, op.summary, op.operationId, op.providerTitle, op.providerPath, op.method]
+      [op.sdkPath, op.path, op.summary, op.operationId, op.providerTitle, op.providerPath, op.method]
         .filter(Boolean)
         .some((v) => v!.toLowerCase().includes(normalizedQuery)),
     );
@@ -112,15 +113,15 @@ export function ProvidersGrid({ providers, operations }: ProvidersGridProps) {
             {filteredOperations.slice(0, 30).map((op) => (
               <a
                 key={`${op.providerPath}/${op.operationId}`}
-                className="group flex items-start gap-3 rounded-lg border bg-card px-3 py-2.5 transition-colors hover:bg-muted/50"
+                className="group flex items-center gap-3 rounded-lg border bg-card px-3 py-2.5 transition-colors hover:bg-muted/50"
                 href={withBasePath(`/providers/${op.providerPath}/${op.operationId}`)}
               >
-                <MethodBadge method={op.method} />
                 <div className="min-w-0 flex-1">
-                  <p className="truncate font-mono text-xs text-foreground">{op.path}</p>
-                  {op.summary ? (
-                    <p className="mt-0.5 truncate text-xs text-muted-foreground">{op.summary}</p>
-                  ) : null}
+                  <p className="truncate font-mono text-xs font-medium text-foreground">{op.sdkPath}</p>
+                  <p className="mt-0.5 flex items-center gap-1 truncate font-mono text-[0.65rem] text-muted-foreground">
+                    <MethodBadge method={op.method} />
+                    {op.path}
+                  </p>
                 </div>
                 <span className="shrink-0 rounded px-1.5 py-0.5 text-[0.65rem] text-muted-foreground ring-1 ring-foreground/10">
                   {op.providerTitle}
