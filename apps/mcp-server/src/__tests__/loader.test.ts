@@ -110,6 +110,27 @@ describe("loadProviders", () => {
       expect(schema["type"]).toBe("object");
     }
   });
+
+  it("populates tags from OpenAPI operation tags", async () => {
+    const tools = await loadProviders(["github"]);
+    expect(tools.length).toBeGreaterThan(0);
+
+    // Every tool should have a tags array (may be empty for untagged operations)
+    for (const tool of tools) {
+      expect(Array.isArray(tool.tags)).toBe(true);
+    }
+
+    // At least some tools should have non-empty tags
+    const taggedTools = tools.filter((t) => t.tags.length > 0);
+    expect(taggedTools.length).toBeGreaterThan(0);
+
+    // Tags should be strings
+    for (const tool of taggedTools) {
+      for (const tag of tool.tags) {
+        expect(typeof tag).toBe("string");
+      }
+    }
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -130,6 +151,7 @@ describe("executeTool", () => {
       required: ["username"],
     },
     providerName: "github",
+    tags: ["repos"],
     method: "GET",
     routeTemplate: "https://api.github.com/users/{username}/repos",
     contentType: "application/json",

@@ -23,6 +23,8 @@ export interface ProviderTool {
   inputSchema: Record<string, unknown>;
   /** Provider name (e.g. "github") */
   providerName: string;
+  /** OpenAPI operation tags (e.g. ["repos", "issues"]) */
+  tags: string[];
   /** Transport method (e.g. "GET", "POST") */
   method: string;
   /** Route template with {param} placeholders */
@@ -148,6 +150,7 @@ function buildProviderTools(
       description: tool.description ?? `${method} ${routeTemplate}`,
       inputSchema: tool.inputs as Record<string, unknown>,
       providerName,
+      tags: (tool.tags as string[] | undefined) ?? [],
       method,
       routeTemplate,
       contentType,
