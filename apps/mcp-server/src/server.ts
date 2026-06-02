@@ -177,6 +177,21 @@ function createServer(tools: ProviderTool[]): Server {
           required: ["query"],
         },
       },
+      {
+        name: "tool_info",
+        description:
+          "Get the full schema and metadata for a specific tool by name. Use this after list_tools or search_tools to retrieve the complete input schema before calling the tool.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            tool_name: {
+              type: "string",
+              description: "The MCP tool name (e.g. 'github__repos_list')",
+            },
+          },
+          required: ["tool_name"],
+        },
+      },
       ...tools.map((tool) => ({
         name: tool.mcpName,
         description: tool.description,
@@ -213,6 +228,31 @@ function createServer(tools: ProviderTool[]): Server {
       const results = searchTools(tools, query, providerFilter, limit);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(results, null, 2) }],
+      };
+    }
+
+    // tool_info meta-tool: return full schema and metadata for a specific tool
+    if (toolName === "tool_info") {
+      const requestedName = typeof args["tool_name"] === "string" ? args["tool_name"] : "";
+      const found = toolMap.get(requestedName);
+      if (!found) {
+        return {
+          isError: true,
+          content: [
+            { type: "text" as const, text: `Unknown tool: ${requestedName}` },
+          ],
+        };
+      }
+      const info = {
+        name: found.mcpName,
+        description: found.description,
+        provider: found.providerName,
+        inputSchema: normalizeInputSchema(found.inputSchema),
+        httpMethod: found.httpMethod,
+        urlTemplate: found.urlTemplate,
+      };
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(info, null, 2) }],
       };
     }
 
