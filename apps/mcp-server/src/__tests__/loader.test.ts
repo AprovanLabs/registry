@@ -64,8 +64,8 @@ describe("loadProviders", () => {
       expect(tool.mcpName).toMatch(/^[a-zA-Z0-9_-]+$/);
       expect(tool.providerName).toBe("github");
       expect(tool.description).toBeTruthy();
-      expect(tool.httpMethod).toMatch(/^(GET|POST|PUT|PATCH|DELETE)$/);
-      expect(tool.urlTemplate).toMatch(/^https?:\/\//);
+      expect(tool.method).toMatch(/^(GET|POST|PUT|PATCH|DELETE)$/);
+      expect(tool.routeTemplate).toMatch(/^https?:\/\//);
       expect(tool.inputSchema).toBeDefined();
     }
   });
@@ -130,8 +130,8 @@ describe("executeTool", () => {
       required: ["username"],
     },
     providerName: "github",
-    httpMethod: "GET",
-    urlTemplate: "https://api.github.com/users/{username}/repos",
+    method: "GET",
+    routeTemplate: "https://api.github.com/users/{username}/repos",
     contentType: "application/json",
     pathParamKeys: ["username"],
     queryParamKeys: ["per_page"],
@@ -189,7 +189,7 @@ describe("executeTool", () => {
     const toolWithAuth: ProviderTool = {
       ...mockTool,
       auth: {
-        applyToRequest: async (headers) => {
+        authenticate: async (headers) => {
           headers["Authorization"] = "Bearer test-token";
         },
       },
@@ -205,8 +205,8 @@ describe("executeTool", () => {
   it("sends JSON body for POST requests", async () => {
     const postTool: ProviderTool = {
       ...mockTool,
-      httpMethod: "POST",
-      urlTemplate: "https://api.github.com/user/repos",
+      method: "POST",
+      routeTemplate: "https://api.github.com/user/repos",
       pathParamKeys: [],
       queryParamKeys: [],
       mcpName: "github__repos_create_for_authenticated_user",

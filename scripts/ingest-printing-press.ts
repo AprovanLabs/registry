@@ -66,8 +66,8 @@ type AuthConfig =
 
 type ProviderEntry = {
   name: string;
-  provider_type: "http" | "local";
-  http_method?: "GET";
+  transport_type: "http" | "local";
+  fetch_method?: "GET";
   url: string;
   content_type?: string;
   ingestSource: "printing-press";
@@ -649,7 +649,7 @@ function hashString(content: string): string {
  * Build a data/registry.json entry for a printing-press provider.
  *
  * Providers with no specUrl (kayak) are added as placeholders with
- * provider_type "local" and a documentation homepage URL, tagged "no-spec".
+ * transport_type "local" and a documentation homepage URL, tagged "no-spec".
  */
 function buildRegistryEntry(providerName: string): ProviderEntry {
   const entry = PRINTING_PRESS_CATALOG[providerName];
@@ -661,7 +661,7 @@ function buildRegistryEntry(providerName: string): ProviderEntry {
   if (!hasSpec) {
     return {
       name: providerName,
-      provider_type: "local",
+      transport_type: "local",
       url: entry.metadata.documentation_url ?? "",
       ingestSource: "printing-press",
       tags: ["no-spec", "printing-press"],
@@ -675,8 +675,8 @@ function buildRegistryEntry(providerName: string): ProviderEntry {
 
   return {
     name: providerName,
-    provider_type: "http",
-    http_method: "GET",
+    transport_type: "http",
+    fetch_method: "GET",
     url: entry.specUrl as string,
     content_type: entry.contentType,
     ingestSource: "printing-press",

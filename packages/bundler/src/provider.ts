@@ -5,8 +5,8 @@ import { fileURLToPath } from "node:url";
 export type RegistryProvider = {
   name: string;
   options?: RegistryProviderOptions;
-  provider_type?: string;
-  http_method?: string;
+  transport_type?: string;
+  fetch_method?: string;
   url: string;
   content_type?: string;
   /** Ingest source for provenance tracking. Defaults to "manual". */
@@ -132,9 +132,9 @@ export function resolveProvider(providers: RegistryProvider[], providerName: str
     throw new Error(`Provider "${providerName}" is missing a URL in ${REGISTRY_PATH}.`);
   }
 
-  const providerType = provider.provider_type ?? "http";
+  const providerType = provider.transport_type ?? "http";
   if (providerType !== "http" && providerType !== "local") {
-    throw new Error(`Provider "${providerName}" uses unsupported type "${provider.provider_type}".`);
+    throw new Error(`Provider "${providerName}" uses unsupported type "${provider.transport_type}".`);
   }
 
   return provider;

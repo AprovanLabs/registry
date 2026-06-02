@@ -117,14 +117,14 @@ const totalOps = allOperations.length;
           <span
             class:list={[
               "font-mono text-[0.6rem] font-medium uppercase",
-              operation.method === "GET" && "text-emerald-500",
-              operation.method === "POST" && "text-blue-500",
-              operation.method === "PUT" && "text-amber-500",
-              operation.method === "PATCH" && "text-orange-500",
-              operation.method === "DELETE" && "text-red-500",
+              operation.httpMethod === "GET" && "text-emerald-500",
+              operation.httpMethod === "POST" && "text-blue-500",
+              operation.httpMethod === "PUT" && "text-amber-500",
+              operation.httpMethod === "PATCH" && "text-orange-500",
+              operation.httpMethod === "DELETE" && "text-red-500",
             ]}
           >
-            {operation.method}
+            {operation.httpMethod}
           </span>
           <code class="font-mono text-xs text-muted-foreground">{operation.httpPath}</code>
         </span>
@@ -197,7 +197,7 @@ const totalOps = allOperations.length;
                     <dt class="flex flex-wrap items-center gap-1.5 font-mono text-sm font-medium">
                       {param.name}
                       <Badge variant="secondary" className="font-mono text-[0.65rem]">
-                        {param.in}
+                        {param.location}
                       </Badge>
                       {param.required && (
                         <Badge variant="destructive" className="text-[0.65rem]">

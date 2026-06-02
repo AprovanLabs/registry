@@ -12,8 +12,8 @@ export const toolMetadata = {
     ],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "POST",
-    "pathTemplate": "/v1/{parent}/messages:send",
+    "method": "POST",
+    "routeTemplate": "/v1/{parent}/messages:send",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "parent"

@@ -31,7 +31,7 @@ describe("resolveAuthProvider", () => {
     expect(auth).toBeDefined();
 
     const headers: Record<string, string> = {};
-    await auth!.applyToRequest(headers);
+    await auth!.authenticate(headers);
     expect(headers["Authorization"]).toBe("Bearer ghs_test123");
   });
 
@@ -48,7 +48,7 @@ describe("resolveAuthProvider", () => {
     expect(auth).toBeDefined();
 
     const headers: Record<string, string> = {};
-    await auth!.applyToRequest(headers);
+    await auth!.authenticate(headers);
     expect(headers["DD-API-Key"]).toBe("dd_secret");
   });
 
@@ -63,7 +63,7 @@ describe("resolveAuthProvider", () => {
     expect(auth).toBeDefined();
 
     const headers: Record<string, string> = {};
-    await auth!.applyToRequest(headers);
+    await auth!.authenticate(headers);
     expect(headers["Authorization"]).toBe("Bearer eyJaccess");
   });
 
@@ -72,7 +72,7 @@ describe("resolveAuthProvider", () => {
     expect(auth).toBeDefined();
 
     const headers: Record<string, string> = {};
-    await auth!.applyToRequest(headers);
+    await auth!.authenticate(headers);
     expect(headers["Authorization"]).toBe("Bearer fallback-token");
   });
 
@@ -160,7 +160,7 @@ describe("loadProviderClient", () => {
     const createMockClient = vi.fn().mockResolvedValue(mockClient);
     const mod = { createMockClient };
 
-    const auth = { applyToRequest: vi.fn() };
+    const auth = { authenticate: vi.fn() };
     const result = await loadProviderClient(mod, auth);
 
     expect(createMockClient).toHaveBeenCalledWith({ auth });

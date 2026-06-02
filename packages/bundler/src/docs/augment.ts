@@ -155,7 +155,7 @@ function buildOperationLookup(
     };
 
     byOperationId.set(strippedToolName, operation);
-    byMethodAndPath.set(getOperationKey(mapped.runtimeMetadata.httpMethod, mapped.runtimeMetadata.pathTemplate), operation);
+    byMethodAndPath.set(getOperationKey(mapped.runtimeMetadata.method, mapped.runtimeMetadata.routeTemplate), operation);
   }
 
   return { byMethodAndPath, byOperationId };

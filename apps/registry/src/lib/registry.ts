@@ -55,19 +55,19 @@ export type RegistryOperation = {
   sdkPath: string;
   /** Raw OpenAPI operationId (e.g. "orgs/list-for-user") — internal reference only */
   operationId: string;
-  method: string;
-  path: string;
+  httpMethod: string;
+  httpPath: string;
   summary: string | null;
   description: string | null;
   parameters: RegistryParameter[];
-  requestBody: RegistryRequestBody | null;
-  responses: Record<string, RegistryResponse>;
+  input: RegistryRequestBody | null;
+  outputs: Record<string, RegistryResponse>;
   tags: string[];
 };
 
 export type RegistryParameter = {
   name: string;
-  in: string;
+  location: string;
   required: boolean;
   description: string | null;
   schema: unknown;
@@ -427,27 +427,27 @@ function extractOperations(openApiDocument: OpenApiDocument | null): RegistryOpe
         .filter((p): p is OpenApiParameterRaw => Boolean(p && typeof p === "object" && !("$ref" in p)))
         .map((p) => ({
           name: p.name ?? "",
-          in: p.in ?? "query",
+          location: p.in ?? "query",
           required: p.required ?? false,
           description: collapseWhitespace(p.description ?? null),
           schema: p.schema ?? null,
         }));
 
-      let requestBody: RegistryRequestBody | null = null;
+      let input: RegistryRequestBody | null = null;
 
       if (raw.requestBody) {
         const contentEntry = raw.requestBody.content
           ? Object.values(raw.requestBody.content)[0]
           : undefined;
 
-        requestBody = {
+        input = {
           description: collapseWhitespace(raw.requestBody.description ?? null),
           required: raw.requestBody.required ?? false,
           schema: contentEntry?.schema ?? null,
         };
       }
 
-      const responses: Record<string, RegistryResponse> = {};
+      const outputs: Record<string, RegistryResponse> = {};
 
       for (const [statusCode, responseObj] of Object.entries(raw.responses ?? {})) {
         if (!responseObj || typeof responseObj !== "object") {
@@ -458,7 +458,7 @@ function extractOperations(openApiDocument: OpenApiDocument | null): RegistryOpe
           ? Object.values(responseObj.content)[0]
           : undefined;
 
-        responses[statusCode] = {
+        outputs[statusCode] = {
           description: collapseWhitespace((responseObj as { description?: string }).description ?? null),
           schema: (contentEntry as { schema?: unknown } | undefined)?.schema ?? null,
         };
@@ -467,13 +467,13 @@ function extractOperations(openApiDocument: OpenApiDocument | null): RegistryOpe
       operations.push({
         sdkPath: operationIdToSdkPath(operationId),
         operationId,
-        method: method.toUpperCase(),
-        path: apiPath,
+        httpMethod: method.toUpperCase(),
+        httpPath: apiPath,
         summary: collapseWhitespace(raw.summary ?? null),
         description: collapseWhitespace(raw.description ?? null),
         parameters,
-        requestBody,
-        responses,
+        input,
+        outputs,
         tags: raw.tags ?? [],
       });
     }

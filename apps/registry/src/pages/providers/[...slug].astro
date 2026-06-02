@@ -257,12 +257,12 @@ const operationSnippet =
                         <span
                           class:list={[
                             "inline-flex h-4 items-center rounded px-1 font-mono text-[0.6rem] font-medium uppercase shrink-0",
-                            methodClass(op.method),
+                            methodClass(op.httpMethod),
                           ]}
                         >
-                          {op.method}
+                          {op.httpMethod}
                         </span>
-                        {op.path}
+                        {op.httpPath}
                       </p>
                     </div>
                     {op.tags.length > 0 ? (
@@ -291,12 +291,12 @@ const operationSnippet =
                 <span
                   class:list={[
                     "inline-flex h-5 items-center rounded px-1.5 font-mono text-[0.65rem] font-medium uppercase",
-                    methodClass(operation.method),
+                    methodClass(operation.httpMethod),
                   ]}
                 >
-                  {operation.method}
+                  {operation.httpMethod}
                 </span>
-                <code class="font-mono text-xs text-muted-foreground">{operation.path}</code>
+                <code class="font-mono text-xs text-muted-foreground">{operation.httpPath}</code>
               </div>
               {operation.summary ? (
                 <CardDescription className="text-sm leading-6">{operation.summary}</CardDescription>
@@ -328,7 +328,7 @@ const operationSnippet =
           </Card>
 
           <!-- Parameters -->
-          {(operation.parameters.length > 0 || operation.requestBody) && (
+          {(operation.parameters.length > 0 || operation.input) && (
             <Card>
               <CardHeader>
                 <CardTitle>Parameters</CardTitle>
@@ -361,7 +361,7 @@ const operationSnippet =
                           <td class="px-4 py-2.5">
                             <code class="font-mono font-medium">{param.name}</code>
                           </td>
-                          <td class="px-4 py-2.5 text-muted-foreground">{param.in}</td>
+                          <td class="px-4 py-2.5 text-muted-foreground">{param.location}</td>
                           <td class="px-4 py-2.5">
                             <code class="font-mono text-muted-foreground">
                               {schemaTypeSummary(param.schema)}
@@ -379,7 +379,7 @@ const operationSnippet =
                           </td>
                         </tr>
                       ))}
-                      {operation.requestBody ? (
+                      {operation.input ? (
                         <tr class="border-b last:border-b-0 hover:bg-muted/30">
                           <td class="px-4 py-2.5">
                             <code class="font-mono font-medium">body</code>
@@ -387,18 +387,18 @@ const operationSnippet =
                           <td class="px-4 py-2.5 text-muted-foreground">body</td>
                           <td class="px-4 py-2.5">
                             <code class="font-mono text-muted-foreground">
-                              {schemaTypeSummary(operation.requestBody.schema)}
+                              {schemaTypeSummary(operation.input.schema)}
                             </code>
                           </td>
                           <td class="px-4 py-2.5">
-                            {operation.requestBody.required ? (
+                            {operation.input.required ? (
                               <Badge variant="default">yes</Badge>
                             ) : (
                               <span class="text-muted-foreground">—</span>
                             )}
                           </td>
                           <td class="px-4 py-2.5 text-muted-foreground">
-                            {operation.requestBody.description ?? "—"}
+                            {operation.input.description ?? "—"}
                           </td>
                         </tr>
                       ) : null}
@@ -410,13 +410,13 @@ const operationSnippet =
           )}
 
           <!-- Responses -->
-          {Object.keys(operation.responses).length > 0 && (
+          {Object.keys(operation.outputs).length > 0 && (
             <Card>
               <CardHeader>
                 <CardTitle>Responses</CardTitle>
               </CardHeader>
               <CardContent className="flex flex-col gap-4">
-                {Object.entries(operation.responses).map(([code, response]) => (
+                {Object.entries(operation.outputs).map(([code, response]) => (
                   <div class="flex flex-col gap-2">
                     <div class="flex items-center gap-2">
                       <Badge

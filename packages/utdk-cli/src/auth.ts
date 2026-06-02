@@ -12,12 +12,12 @@ import type { AuthConfig } from "./providers.js";
 
 /** Minimal interface matching AuthProvider in @utdk/common/auth */
 export type AuthProvider = {
-  applyToRequest(headers: Record<string, string>): Promise<void>;
+  authenticate(headers: Record<string, string>): Promise<void>;
 };
 
 function bearerAuth(token: string): AuthProvider {
   return {
-    async applyToRequest(headers: Record<string, string>): Promise<void> {
+    async authenticate(headers: Record<string, string>): Promise<void> {
       headers["Authorization"] = `Bearer ${token}`;
     },
   };
@@ -25,7 +25,7 @@ function bearerAuth(token: string): AuthProvider {
 
 function apiKeyAuth(headerName: string, value: string): AuthProvider {
   return {
-    async applyToRequest(headers: Record<string, string>): Promise<void> {
+    async authenticate(headers: Record<string, string>): Promise<void> {
       headers[headerName] = value;
     },
   };

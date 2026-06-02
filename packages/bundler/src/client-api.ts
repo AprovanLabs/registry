@@ -12,8 +12,8 @@ export type ToolRuntimeMetadata = {
   bodyPropertyKeys: string[];
   contentType?: string;
   headerParameterKeys: string[];
-  httpMethod: string;
-  pathTemplate: string;
+  method: string;
+  routeTemplate: string;
   pathConflictKeys: string[];
   pathParameterKeys: string[];
   queryConflictKeys: string[];
@@ -449,8 +449,8 @@ function buildInputSchema(request: RequestDefinition): {
       bodyPropertyKeys,
       contentType: undefined,
       headerParameterKeys: headerParameters.map((parameter) => parameter.name),
-      httpMethod: "GET",
-      pathTemplate: "/",
+      method: "GET",
+      routeTemplate: "/",
       pathConflictKeys,
       pathParameterKeys: pathParameters.map((parameter) => parameter.name),
       queryConflictKeys,
@@ -544,11 +544,11 @@ export function buildClientToolMap(
               tool.tool_call_template && typeof tool.tool_call_template.content_type === "string"
                 ? tool.tool_call_template.content_type
                 : undefined,
-            httpMethod:
+            method:
               tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
                 ? tool.tool_call_template.http_method
                 : "GET",
-            pathTemplate:
+            routeTemplate:
               tool.tool_call_template && typeof tool.tool_call_template.url === "string"
                 ? tool.tool_call_template.url.replace(/^https?:\/\/[^/]+/u, "")
                 : "/",

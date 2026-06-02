@@ -23,10 +23,10 @@ export interface ProviderTool {
   inputSchema: Record<string, unknown>;
   /** Provider name (e.g. "github") */
   providerName: string;
-  /** HTTP method */
-  httpMethod: string;
-  /** URL template with {param} placeholders */
-  urlTemplate: string;
+  /** Transport method (e.g. "GET", "POST") */
+  method: string;
+  /** Route template with {param} placeholders */
+  routeTemplate: string;
   /** Content-Type for requests */
   contentType: string;
   /** Parameter keys that appear in the URL path */
@@ -48,7 +48,7 @@ interface UtdkPackageJson {
   };
 }
 
-interface HttpCallTemplate {
+interface TransportCallTemplate {
   call_template_type: string;
   http_method?: string;
   url?: string;
@@ -56,10 +56,10 @@ interface HttpCallTemplate {
 }
 
 /**
- * Extract path parameter keys from a URL template like "/repos/{owner}/{repo}".
+ * Extract path parameter keys from a route template like "/repos/{owner}/{repo}".
  */
-function extractPathParams(urlTemplate: string): string[] {
-  const matches = urlTemplate.match(/\{([^}]+)\}/g) ?? [];
+function extractPathParams(routeTemplate: string): string[] {
+  const matches = routeTemplate.match(/\{([^}]+)\}/g) ?? [];
   return matches.map((m) => m.slice(1, -1));
 }
 
@@ -126,30 +126,30 @@ function buildProviderTools(
   const tools: ProviderTool[] = [];
 
   for (const tool of manual.tools) {
-    const template = tool.tool_call_template as HttpCallTemplate | undefined;
+    const template = tool.tool_call_template as TransportCallTemplate | undefined;
     if (!template) continue;
 
-    const urlTemplate = template.url ?? "/";
-    const httpMethod = (template.http_method ?? "GET").toUpperCase();
+    const routeTemplate = template.url ?? "/";
+    const method = (template.http_method ?? "GET").toUpperCase();
     const contentType = template.content_type ?? "application/json";
-    const pathParamKeys = extractPathParams(urlTemplate);
+    const pathParamKeys = extractPathParams(routeTemplate);
 
     // Determine which input properties go in query params vs body
     // For GET/HEAD/DELETE, non-path params → query string
     // For POST/PUT/PATCH, non-path params → body
     const inputProperties = (tool.inputs?.properties ?? {}) as Record<string, unknown>;
     const allInputKeys = Object.keys(inputProperties);
-    const isBodyMethod = ["POST", "PUT", "PATCH"].includes(httpMethod);
+    const isBodyMethod = ["POST", "PUT", "PATCH"].includes(method);
     const queryParamKeys = isBodyMethod ? [] : allInputKeys.filter((k) => !pathParamKeys.includes(k));
 
     tools.push({
       mcpName: toMcpToolName(tool.name),
       utcpName: tool.name,
-      description: tool.description ?? `${httpMethod} ${urlTemplate}`,
+      description: tool.description ?? `${method} ${routeTemplate}`,
       inputSchema: tool.inputs as Record<string, unknown>,
       providerName,
-      httpMethod,
-      urlTemplate,
+      method,
+      routeTemplate,
       contentType,
       pathParamKeys,
       queryParamKeys,
@@ -227,7 +227,7 @@ export async function executeTool(
       span.setAttribute("mcp.tool_name", tool.mcpName);
 
       // Build URL by substituting path parameters
-      let url = tool.urlTemplate;
+      let url = tool.routeTemplate;
       const remainingArgs: Record<string, unknown> = { ...args };
 
       for (const pathKey of tool.pathParamKeys) {
@@ -241,7 +241,7 @@ export async function executeTool(
       }
 
       // Build query string for GET-style methods
-      const isBodyMethod = ["POST", "PUT", "PATCH"].includes(tool.httpMethod);
+      const isBodyMethod = ["POST", "PUT", "PATCH"].includes(tool.method);
       let body: string | undefined;
       const requestHeaders: Record<string, string> = {
         "Content-Type": tool.contentType,
@@ -269,14 +269,14 @@ export async function executeTool(
 
       // Apply auth
       if (tool.auth) {
-        await tool.auth.applyToRequest(requestHeaders);
+        await tool.auth.authenticate(requestHeaders);
       }
 
-      span.setAttribute("http.method", tool.httpMethod);
+      span.setAttribute("http.method", tool.method);
       span.setAttribute("http.url", url);
 
       const response = await fetch(url, {
-        method: tool.httpMethod,
+        method: tool.method,
         headers: requestHeaders,
         body,
       });

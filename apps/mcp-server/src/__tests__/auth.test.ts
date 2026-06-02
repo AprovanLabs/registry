@@ -15,7 +15,7 @@ describe("buildAuthProvider", () => {
     expect(provider).not.toBeUndefined();
 
     const headers: Record<string, string> = {};
-    await provider!.applyToRequest(headers);
+    await provider!.authenticate(headers);
     expect(headers["Authorization"]).toBe("Bearer ghp_test123");
   });
 
@@ -35,7 +35,7 @@ describe("buildAuthProvider", () => {
     expect(provider).not.toBeUndefined();
 
     const headers: Record<string, string> = {};
-    await provider!.applyToRequest(headers);
+    await provider!.authenticate(headers);
     expect(headers["Authorization"]).toBe("Bearer sk_test_abc");
   });
 
@@ -70,7 +70,7 @@ describe("buildAuthProvider", () => {
 
     const provider = buildAuthProvider("github", authConfigs);
     const headers: Record<string, string> = {};
-    await provider!.applyToRequest(headers);
+    await provider!.authenticate(headers);
 
     // GITHUB_TOKEN takes priority
     expect(headers["Authorization"]).toBe("Bearer ghp_from_env");

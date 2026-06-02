@@ -15,7 +15,7 @@ export async function loadProviderTools(provider: RegistryProvider): Promise<Loa
       serializer.validateDict({
         name: provider.name,
         call_template_type: "http",
-        http_method: provider.http_method ?? "GET",
+        http_method: provider.fetch_method ?? "GET",
         url: provider.url,
         content_type: provider.content_type ?? "application/json",
         ...(auth ? { auth } : {}),

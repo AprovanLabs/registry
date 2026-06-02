@@ -116,7 +116,7 @@ ${headerLines ? headerLines + " \\\n" : ""}  -d '${body}'`;
     // In practice, the URL pattern depends on the provider's base URL
     const body = JSON.stringify(args, null, 2);
     return `# Direct API call (example)
-curl -X ${operation.method.toUpperCase()} '${operation.httpPath}' \\
+curl -X ${operation.httpMethod.toUpperCase()} '${operation.httpPath}' \\
   -H 'Content-Type: application/json' \\
 ${headerLines ? headerLines + " \\\n" : ""}  -d '${body}'`;
   }
@@ -324,7 +324,7 @@ export function TryItConsole({
     return [
       ...operation.parameters.map((p): SerializedField => ({
         name: p.name,
-        in: p.in,
+        in: p.location,
         required: p.required,
         description: p.description,
         schema: p.schema,
@@ -532,9 +532,9 @@ export function TryItConsole({
             <CardTitle className="font-mono">{operation.sdkPath}</CardTitle>
             <div className="flex flex-wrap items-center gap-1.5">
               <span
-                className={cn("font-mono text-xs font-medium", methodColor(operation.method))}
+                className={cn("font-mono text-xs font-medium", methodColor(operation.httpMethod))}
               >
-                {operation.method}
+                {operation.httpMethod}
               </span>
               <code className="text-xs text-muted-foreground">{operation.httpPath}</code>
             </div>
