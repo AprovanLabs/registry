@@ -335,16 +335,7 @@ const parentEntry = entry.parentProviderPath
                       {operations.map((op) => (
                         <tr class="transition-colors hover:bg-muted/30">
                           <td class="py-2 pr-4">
-                            <span
-                              class:list={[
-                                "font-mono text-xs font-semibold",
-                                op.method === "GET" && "text-emerald-500",
-                                op.method === "POST" && "text-blue-500",
-                                op.method === "PUT" && "text-amber-500",
-                                op.method === "PATCH" && "text-orange-500",
-                                op.method === "DELETE" && "text-red-500",
-                              ]}
-                            >
+                            <span class="font-mono text-xs text-muted-foreground">
                               {op.method}
                             </span>
                           </td>

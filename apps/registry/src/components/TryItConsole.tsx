@@ -529,15 +529,15 @@ export function TryItConsole({
       <form onSubmit={(e) => void handleSubmit(e)}>
         <Card>
           <CardHeader>
-            <div className="flex flex-wrap items-center gap-2">
+            <CardTitle className="font-mono">{operation.sdkPath}</CardTitle>
+            <div className="flex flex-wrap items-center gap-1.5">
               <span
-                className={cn("font-mono text-sm font-semibold", methodColor(operation.method))}
+                className={cn("font-mono text-xs font-medium", methodColor(operation.method))}
               >
                 {operation.method}
               </span>
-              <code className="text-sm text-muted-foreground">{operation.httpPath}</code>
+              <code className="text-xs text-muted-foreground">{operation.httpPath}</code>
             </div>
-            <CardTitle>Parameters</CardTitle>
             {operation.description && (
               <CardDescription>{operation.description}</CardDescription>
             )}
