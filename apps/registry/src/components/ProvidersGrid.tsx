@@ -88,7 +88,7 @@ export function ProvidersGrid({ providers, operations }: ProvidersGridProps) {
       <div className="sticky top-0 z-10 rounded-xl border bg-background/90 p-3 backdrop-blur">
         <label className="flex flex-col gap-2">
           <span className="text-sm font-medium text-foreground">
-            Search providers and endpoints
+            Search providers and tools
           </span>
           <div className="relative">
             <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 -translate-y-1/2 text-muted-foreground" />
@@ -106,7 +106,7 @@ export function ProvidersGrid({ providers, operations }: ProvidersGridProps) {
       {hasQuery && filteredOperations.length > 0 ? (
         <div className="flex flex-col gap-2">
           <h3 className="text-sm font-medium text-muted-foreground">
-            Endpoints ({filteredOperations.length})
+            Tools ({filteredOperations.length})
           </h3>
           <div className="flex flex-col gap-1.5">
             {filteredOperations.slice(0, 30).map((op) => (
@@ -186,7 +186,7 @@ export function ProvidersGrid({ providers, operations }: ProvidersGridProps) {
                   </CardHeader>
                   <CardContent className="pt-2">
                     <p className="line-clamp-2 text-xs leading-5 text-muted-foreground">
-                      {provider.summary ?? "Browse endpoints and copy TypeScript import snippets."}
+                      {provider.summary ?? "Browse tools and copy TypeScript import snippets."}
                     </p>
                   </CardContent>
                 </Card>
@@ -201,7 +201,7 @@ export function ProvidersGrid({ providers, operations }: ProvidersGridProps) {
           <CardHeader>
             <CardTitle>No matches</CardTitle>
             <div className="text-sm text-muted-foreground">
-              Try a provider name, endpoint path, or operation summary.
+              Try a provider name, tool name, or operation summary.
             </div>
           </CardHeader>
         </Card>

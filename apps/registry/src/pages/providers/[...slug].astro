@@ -112,7 +112,7 @@ if (type === "operation") {
 
 const isProvider = type === "provider";
 const pageTitle = isProvider
-  ? `${entry.title} · API Catalog · Aprovan Registry`
+  ? `${entry.title} · Tool Catalog · Aprovan Registry`
   : `${operation!.sdkPath} · ${entry.title} · Aprovan Registry`;
 
 const operationSnippet =
@@ -232,10 +232,10 @@ const operationSnippet =
             </CardContent>
           </Card>
 
-          <!-- Endpoint list -->
+          <!-- Tool list -->
           <Card>
             <CardHeader>
-              <CardTitle>Endpoints</CardTitle>
+              <CardTitle>Tools</CardTitle>
               <CardDescription>
                 All {entry.operationCount} operations exposed by this provider.
               </CardDescription>
