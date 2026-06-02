@@ -357,8 +357,11 @@ export function ProviderCredentialConfig({
             </div>
           )}
 
-          {/* Custom headers */}
+          {/* HTTP Transport Configuration */}
           <div className="flex flex-col gap-2">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+              HTTP Transport Configuration
+            </p>
             <div className="flex items-center justify-between">
               <label className="text-sm font-medium">Custom Headers</label>
               <Button

@@ -338,6 +338,9 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
                   value={apiKeyValue}
                 />
               </label>
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mt-1">
+                HTTP Transport Configuration
+              </p>
               <label className="flex flex-col gap-1.5">
                 <span className="text-sm font-medium">
                   Header name <span className="text-muted-foreground font-normal">(default: X-Api-Key)</span>

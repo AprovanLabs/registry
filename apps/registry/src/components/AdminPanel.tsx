@@ -137,8 +137,7 @@ export function AdminPanel() {
         <CardHeader>
           <CardTitle>Connect to Gateway</CardTitle>
           <CardDescription>
-            Enter an admin JWT to manage permissions. Tokens are issued via{" "}
-            <code className="font-mono text-xs">POST {GATEWAY_URL}/auth/token</code>.
+            Enter an admin JWT to manage permissions.
           </CardDescription>
         </CardHeader>
         <CardContent>
