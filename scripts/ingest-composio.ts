@@ -76,8 +76,8 @@ type AuthConfig =
 
 type ProviderEntry = {
   name: string;
-  provider_type: "http" | "local";
-  http_method?: "GET";
+  transport_type: "http" | "local";
+  fetch_method?: "GET";
   url: string;
   content_type?: string;
   ingestSource: "composio";
@@ -587,8 +587,8 @@ function buildBatchRegistryEntry(
 
   const entry: ProviderEntry = {
     name: providerName,
-    provider_type: "http",
-    http_method: "GET",
+    transport_type: "http",
+    fetch_method: "GET",
     url: app.openapi_spec_url ?? "",
     content_type: "application/json",
     ingestSource: "composio",
@@ -789,8 +789,8 @@ function buildRegistryEntry(
 
   return {
     name: providerName,
-    provider_type: entry.specType,
-    http_method: "GET",
+    transport_type: entry.specType,
+    fetch_method: "GET",
     url: specUrl,
     content_type: entry.contentType,
     ingestSource: "composio",

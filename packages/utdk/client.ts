@@ -30,8 +30,8 @@ export type ToolRuntimeMetadata = {
   bodyPropertyKeys: string[];
   contentType?: string;
   headerParameterKeys: string[];
-  httpMethod: string;
-  pathTemplate: string;
+  method: string;
+  routeTemplate: string;
   pathConflictKeys: string[];
   pathParameterKeys: string[];
   queryConflictKeys: string[];
@@ -141,11 +141,11 @@ function createFallbackMetadata(rawToolName: string, tool: Tool, usedPaths: Set<
         ? tool.tool_call_template.content_type
         : undefined,
     headerParameterKeys: [],
-    httpMethod:
+    method:
       tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
         ? tool.tool_call_template.http_method
         : "GET",
-    pathTemplate,
+    routeTemplate: pathTemplate,
     pathConflictKeys: [],
     pathParameterKeys: extractPathParameters(pathTemplate),
     queryConflictKeys: [],
@@ -414,7 +414,7 @@ async function executeRequest(
       };
 
       if (options.auth) {
-        await options.auth.applyToRequest(requestHeaders);
+        await options.auth.authenticate(requestHeaders);
       }
 
       const body = toBodyInit(request.body, metadata.contentType);
@@ -423,12 +423,12 @@ async function executeRequest(
         requestHeaders["Content-Type"] = metadata.contentType;
       }
 
-      const url = buildUrl(baseUrl, metadata.pathTemplate, request.pathParams, request.queryParams);
+      const url = buildUrl(baseUrl, metadata.routeTemplate, request.pathParams, request.queryParams);
 
       // Set UTDK-specific span attributes
       span.setAttribute("utdk.provider", provider);
       span.setAttribute("utdk.operation", operation);
-      span.setAttribute("http.method", metadata.httpMethod);
+      span.setAttribute("http.method", metadata.method);
       span.setAttribute("http.url", url);
 
       // Propagate W3C trace context (traceparent / tracestate) into outgoing headers
@@ -437,7 +437,7 @@ async function executeRequest(
       const response = await fetch(url, {
         body,
         headers: requestHeaders,
-        method: metadata.httpMethod,
+        method: metadata.method,
       });
 
       span.setAttribute("http.status_code", response.status);

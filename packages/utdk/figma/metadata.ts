@@ -9,8 +9,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -33,8 +33,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/nodes",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/nodes",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -56,8 +56,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/images/{file_key}",
+    "method": "GET",
+    "routeTemplate": "/v1/images/{file_key}",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -84,8 +84,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/images",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/images",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -101,8 +101,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/meta",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/meta",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -118,8 +118,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/teams/{team_id}/projects",
+    "method": "GET",
+    "routeTemplate": "/v1/teams/{team_id}/projects",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "team_id"
@@ -135,8 +135,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/projects/{project_id}/files",
+    "method": "GET",
+    "routeTemplate": "/v1/projects/{project_id}/files",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "project_id"
@@ -154,8 +154,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/versions",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/versions",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -175,8 +175,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/comments",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/comments",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -198,8 +198,8 @@ export const toolMetadata = {
     ],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "POST",
-    "pathTemplate": "/v1/files/{file_key}/comments",
+    "method": "POST",
+    "routeTemplate": "/v1/files/{file_key}/comments",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -215,8 +215,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "DELETE",
-    "pathTemplate": "/v1/files/{file_key}/comments/{comment_id}",
+    "method": "DELETE",
+    "routeTemplate": "/v1/files/{file_key}/comments/{comment_id}",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key",
@@ -233,8 +233,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/comments/{comment_id}/reactions",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/comments/{comment_id}/reactions",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key",
@@ -255,8 +255,8 @@ export const toolMetadata = {
     ],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "POST",
-    "pathTemplate": "/v1/files/{file_key}/comments/{comment_id}/reactions",
+    "method": "POST",
+    "routeTemplate": "/v1/files/{file_key}/comments/{comment_id}/reactions",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key",
@@ -273,8 +273,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "DELETE",
-    "pathTemplate": "/v1/files/{file_key}/comments/{comment_id}/reactions",
+    "method": "DELETE",
+    "routeTemplate": "/v1/files/{file_key}/comments/{comment_id}/reactions",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key",
@@ -293,8 +293,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/me",
+    "method": "GET",
+    "routeTemplate": "/v1/me",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
@@ -308,8 +308,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/teams/{team_id}/components",
+    "method": "GET",
+    "routeTemplate": "/v1/teams/{team_id}/components",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "team_id"
@@ -329,8 +329,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/components",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/components",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -346,8 +346,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/components/{key}",
+    "method": "GET",
+    "routeTemplate": "/v1/components/{key}",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "key"
@@ -363,8 +363,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/teams/{team_id}/component_sets",
+    "method": "GET",
+    "routeTemplate": "/v1/teams/{team_id}/component_sets",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "team_id"
@@ -384,8 +384,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/component_sets",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/component_sets",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -401,8 +401,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/component_sets/{key}",
+    "method": "GET",
+    "routeTemplate": "/v1/component_sets/{key}",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "key"
@@ -418,8 +418,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/teams/{team_id}/styles",
+    "method": "GET",
+    "routeTemplate": "/v1/teams/{team_id}/styles",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "team_id"
@@ -439,8 +439,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/styles",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/styles",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -456,8 +456,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/styles/{key}",
+    "method": "GET",
+    "routeTemplate": "/v1/styles/{key}",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "key"
@@ -473,8 +473,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v2/webhooks",
+    "method": "GET",
+    "routeTemplate": "/v2/webhooks",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
@@ -502,8 +502,8 @@ export const toolMetadata = {
     ],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "POST",
-    "pathTemplate": "/v2/webhooks",
+    "method": "POST",
+    "routeTemplate": "/v2/webhooks",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
@@ -517,8 +517,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v2/webhooks/{webhook_id}",
+    "method": "GET",
+    "routeTemplate": "/v2/webhooks/{webhook_id}",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "webhook_id"
@@ -540,8 +540,8 @@ export const toolMetadata = {
     ],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "PUT",
-    "pathTemplate": "/v2/webhooks/{webhook_id}",
+    "method": "PUT",
+    "routeTemplate": "/v2/webhooks/{webhook_id}",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "webhook_id"
@@ -557,8 +557,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "DELETE",
-    "pathTemplate": "/v2/webhooks/{webhook_id}",
+    "method": "DELETE",
+    "routeTemplate": "/v2/webhooks/{webhook_id}",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "webhook_id"
@@ -574,8 +574,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v2/teams/{team_id}/webhooks",
+    "method": "GET",
+    "routeTemplate": "/v2/teams/{team_id}/webhooks",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "team_id"
@@ -591,8 +591,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v2/webhooks/{webhook_id}/requests",
+    "method": "GET",
+    "routeTemplate": "/v2/webhooks/{webhook_id}/requests",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "webhook_id"
@@ -608,8 +608,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/activity_logs",
+    "method": "GET",
+    "routeTemplate": "/v1/activity_logs",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
@@ -629,8 +629,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/payments",
+    "method": "GET",
+    "routeTemplate": "/v1/payments",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
@@ -650,8 +650,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/variables/local",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/variables/local",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -667,8 +667,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/variables/published",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/variables/published",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -689,8 +689,8 @@ export const toolMetadata = {
     ],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "POST",
-    "pathTemplate": "/v1/files/{file_key}/variables",
+    "method": "POST",
+    "routeTemplate": "/v1/files/{file_key}/variables",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -706,8 +706,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/files/{file_key}/dev_resources",
+    "method": "GET",
+    "routeTemplate": "/v1/files/{file_key}/dev_resources",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -727,8 +727,8 @@ export const toolMetadata = {
     ],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "POST",
-    "pathTemplate": "/v1/dev_resources",
+    "method": "POST",
+    "routeTemplate": "/v1/dev_resources",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
@@ -744,8 +744,8 @@ export const toolMetadata = {
     ],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "PUT",
-    "pathTemplate": "/v1/dev_resources",
+    "method": "PUT",
+    "routeTemplate": "/v1/dev_resources",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
@@ -759,8 +759,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "DELETE",
-    "pathTemplate": "/v1/files/{file_key}/dev_resources/{dev_resource_id}",
+    "method": "DELETE",
+    "routeTemplate": "/v1/files/{file_key}/dev_resources/{dev_resource_id}",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key",
@@ -777,8 +777,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/analytics/libraries/{file_key}/component/actions",
+    "method": "GET",
+    "routeTemplate": "/v1/analytics/libraries/{file_key}/component/actions",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -799,8 +799,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/analytics/libraries/{file_key}/component/usages",
+    "method": "GET",
+    "routeTemplate": "/v1/analytics/libraries/{file_key}/component/usages",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -819,8 +819,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/analytics/libraries/{file_key}/style/actions",
+    "method": "GET",
+    "routeTemplate": "/v1/analytics/libraries/{file_key}/style/actions",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -841,8 +841,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/analytics/libraries/{file_key}/style/usages",
+    "method": "GET",
+    "routeTemplate": "/v1/analytics/libraries/{file_key}/style/usages",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -861,8 +861,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/analytics/libraries/{file_key}/variable/actions",
+    "method": "GET",
+    "routeTemplate": "/v1/analytics/libraries/{file_key}/variable/actions",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -883,8 +883,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/analytics/libraries/{file_key}/variable/usages",
+    "method": "GET",
+    "routeTemplate": "/v1/analytics/libraries/{file_key}/variable/usages",
     "pathConflictKeys": [],
     "pathParameterKeys": [
       "file_key"
@@ -903,8 +903,8 @@ export const toolMetadata = {
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "httpMethod": "GET",
-    "pathTemplate": "/v1/oembed",
+    "method": "GET",
+    "routeTemplate": "/v1/oembed",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],

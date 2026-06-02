@@ -34,7 +34,7 @@ export type OpenApiSchemaType = {
 
 export type OperationParameter = {
   name: string;
-  in: "query" | "path" | "header" | "cookie";
+  location: "query" | "path" | "header" | "cookie";
   required: boolean;
   description: string | null;
   schema: OpenApiSchemaType;
@@ -54,7 +54,7 @@ export type OperationInfo = {
   operationId: string;
   summary: string | null;
   description: string | null;
-  method: string;
+  httpMethod: string;
   httpPath: string;
   parameters: OperationParameter[];
   requestBodyFields: RequestBodyField[];
@@ -159,7 +159,7 @@ export async function loadProviderOperations(providerPath: string): Promise<Oper
 
         parameters.push({
           name: p.name,
-          in: p.in as OperationParameter["in"],
+          location: p.in as OperationParameter["location"],
           required: typeof p.required === "boolean" ? p.required : p.in === "path",
           description: typeof p.description === "string" ? p.description : null,
           schema: resolveSchemaDeep(p.schema, doc),
@@ -205,7 +205,7 @@ export async function loadProviderOperations(providerPath: string): Promise<Oper
         operationId,
         summary: typeof op.summary === "string" ? op.summary : null,
         description: typeof op.description === "string" ? op.description : null,
-        method: method.toUpperCase(),
+        httpMethod: method.toUpperCase(),
         httpPath,
         parameters,
         requestBodyFields,

@@ -13,7 +13,7 @@ describe("BearerToken", () => {
   it("sets Authorization header with Bearer prefix", async () => {
     const auth = new BearerToken("my-secret-token");
     const headers: Record<string, string> = {};
-    await auth.applyToRequest(headers);
+    await auth.authenticate(headers);
     expect(headers["Authorization"]).toBe("Bearer my-secret-token");
   });
 });
@@ -22,14 +22,14 @@ describe("ApiKey", () => {
   it("uses X-Api-Key header by default", async () => {
     const auth = new ApiKey({ value: "key123" });
     const headers: Record<string, string> = {};
-    await auth.applyToRequest(headers);
+    await auth.authenticate(headers);
     expect(headers["X-Api-Key"]).toBe("key123");
   });
 
   it("uses custom header name when specified", async () => {
     const auth = new ApiKey({ headerName: "X-Custom-Key", value: "secret" });
     const headers: Record<string, string> = {};
-    await auth.applyToRequest(headers);
+    await auth.authenticate(headers);
     expect(headers["X-Custom-Key"]).toBe("secret");
     expect(headers["X-Api-Key"]).toBeUndefined();
   });
@@ -58,7 +58,7 @@ describe("OAuth2ClientCredentials", () => {
     });
 
     const headers: Record<string, string> = {};
-    await auth.applyToRequest(headers);
+    await auth.authenticate(headers);
 
     expect(headers["Authorization"]).toBe("Bearer access-abc");
     expect(mockFetch).toHaveBeenCalledOnce();
@@ -82,10 +82,10 @@ describe("OAuth2ClientCredentials", () => {
     });
 
     const headers1: Record<string, string> = {};
-    await auth.applyToRequest(headers1);
+    await auth.authenticate(headers1);
 
     const headers2: Record<string, string> = {};
-    await auth.applyToRequest(headers2);
+    await auth.authenticate(headers2);
 
     expect(mockFetch).toHaveBeenCalledOnce();
     expect(headers2["Authorization"]).toBe("Bearer token-xyz");
@@ -110,7 +110,7 @@ describe("OAuth2ClientCredentials", () => {
     });
 
     const headers: Record<string, string> = {};
-    await auth.applyToRequest(headers);
+    await auth.authenticate(headers);
 
     expect(capturedBody).toContain("scope=read+write");
   });
@@ -130,7 +130,7 @@ describe("OAuth2ClientCredentials", () => {
       tokenUrl: "https://auth.example.com/token",
     });
 
-    await expect(auth.applyToRequest({})).rejects.toThrow("OAuth2 token request failed");
+    await expect(auth.authenticate({})).rejects.toThrow("OAuth2 token request failed");
   });
 
   it("refreshes the token 60 seconds before expiry", async () => {
@@ -154,15 +154,15 @@ describe("OAuth2ClientCredentials", () => {
     });
 
     // First request fetches token
-    await auth.applyToRequest({});
+    await auth.authenticate({});
     expect(mockFetch).toHaveBeenCalledTimes(1);
 
     // Second request: simulated time is exactly at the 60s-before-expiry threshold → should refresh
-    await auth.applyToRequest({});
+    await auth.authenticate({});
     expect(mockFetch).toHaveBeenCalledTimes(2);
 
     const headers: Record<string, string> = {};
-    await auth.applyToRequest(headers);
+    await auth.authenticate(headers);
     expect(headers["Authorization"]).toBe("Bearer refreshed-token");
   });
 
@@ -187,7 +187,7 @@ describe("OAuth2ClientCredentials", () => {
     });
 
     const headers: Record<string, string> = {};
-    await auth.applyToRequest(headers);
+    await auth.authenticate(headers);
 
     expect(mockFetch).not.toHaveBeenCalled();
     expect(headers["Authorization"]).toBe("Bearer stored-token");
@@ -213,7 +213,7 @@ describe("OAuth2ClientCredentials", () => {
       tokenStore: store,
     });
 
-    await auth.applyToRequest({});
+    await auth.authenticate({});
 
     expect(store.set).toHaveBeenCalledWith(
       "https://auth.example.com/token",
@@ -247,7 +247,7 @@ describe("OAuth2AuthCode", () => {
     });
 
     const headers: Record<string, string> = {};
-    await auth.applyToRequest(headers);
+    await auth.authenticate(headers);
 
     expect(headers["Authorization"]).toBe("Bearer auth-code-token");
     expect(mockFetch).toHaveBeenCalledOnce();
@@ -276,8 +276,8 @@ describe("OAuth2AuthCode", () => {
       redirectUri: "https://app.com/cb",
     });
 
-    await auth.applyToRequest({});
-    await auth.applyToRequest({});
+    await auth.authenticate({});
+    await auth.authenticate({});
 
     expect(mockFetch).toHaveBeenCalledOnce();
   });
@@ -307,7 +307,7 @@ describe("OAuth2AuthCode", () => {
     });
 
     const headers: Record<string, string> = {};
-    await auth.applyToRequest(headers);
+    await auth.authenticate(headers);
 
     expect(headers["Authorization"]).toBe("Bearer pkce-token");
     expect(capturedBody).toContain("code_verifier=my-code-verifier");
@@ -333,7 +333,7 @@ describe("OAuth2AuthCode", () => {
       redirectUri: "https://app.com/cb",
     });
 
-    await auth.applyToRequest({});
+    await auth.authenticate({});
 
     expect(capturedBody).not.toContain("code_verifier");
   });
@@ -362,10 +362,10 @@ describe("OAuth2AuthCode", () => {
       redirectUri: "https://app.com/cb",
     });
 
-    await auth.applyToRequest({});
+    await auth.authenticate({});
     expect(mockFetch).toHaveBeenCalledTimes(1);
 
-    await auth.applyToRequest({});
+    await auth.authenticate({});
     expect(mockFetch).toHaveBeenCalledTimes(2);
   });
 
@@ -393,7 +393,7 @@ describe("OAuth2AuthCode", () => {
     });
 
     const headers: Record<string, string> = {};
-    await auth.applyToRequest(headers);
+    await auth.authenticate(headers);
 
     expect(mockFetch).not.toHaveBeenCalled();
     expect(headers["Authorization"]).toBe("Bearer stored-auth-token");

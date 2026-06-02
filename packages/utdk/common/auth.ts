@@ -7,7 +7,7 @@
  */
 
 export interface AuthProvider {
-  applyToRequest(headers: Record<string, string>): Promise<void>;
+  authenticate(headers: Record<string, string>): Promise<void>;
 }
 
 // ---------------------------------------------------------------------------
@@ -21,7 +21,7 @@ export class BearerToken implements AuthProvider {
     this.token = token;
   }
 
-  async applyToRequest(headers: Record<string, string>): Promise<void> {
+  async authenticate(headers: Record<string, string>): Promise<void> {
     headers["Authorization"] = `Bearer ${this.token}`;
   }
 }
@@ -45,7 +45,7 @@ export class ApiKey implements AuthProvider {
     this.value = options.value;
   }
 
-  async applyToRequest(headers: Record<string, string>): Promise<void> {
+  async authenticate(headers: Record<string, string>): Promise<void> {
     headers[this.headerName] = this.value;
   }
 }
@@ -236,7 +236,7 @@ export class OAuth2ClientCredentials implements AuthProvider {
     await this.saveToStore();
   }
 
-  async applyToRequest(headers: Record<string, string>): Promise<void> {
+  async authenticate(headers: Record<string, string>): Promise<void> {
     if (!this.accessToken) {
       await this.loadFromStore();
     }
@@ -379,7 +379,7 @@ export class OAuth2AuthCode implements AuthProvider {
     await this.saveToStore();
   }
 
-  async applyToRequest(headers: Record<string, string>): Promise<void> {
+  async authenticate(headers: Record<string, string>): Promise<void> {
     if (!this.accessToken) {
       await this.loadFromStore();
     }

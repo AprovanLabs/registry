@@ -24,8 +24,8 @@ const operations: OperationSearchEntry[] = providerEntries.flatMap((e) =>
     providerTitle: e.title,
     operationId: op.operationId,
     sdkPath: op.sdkPath,
-    method: op.method,
-    path: op.path,
+    method: op.httpMethod,
+    path: op.httpPath,
     summary: op.summary,
   })),
 );

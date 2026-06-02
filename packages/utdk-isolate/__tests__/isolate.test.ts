@@ -157,7 +157,7 @@ describe("credential injection — github provider simulation", () => {
     const auth = resolveAuthProvider(credentials, authConfigs);
 
     const headers: Record<string, string> = {};
-    await auth!.applyToRequest(headers);
+    await auth!.authenticate(headers);
 
     expect(headers["Authorization"]).toBe("Bearer ghs_injected_by_gateway");
     // process.env must NOT have been touched
@@ -198,7 +198,7 @@ describe("credential injection — spotify provider simulation", () => {
     const auth = resolveAuthProvider(credentials, authConfigs);
 
     const headers: Record<string, string> = {};
-    await auth!.applyToRequest(headers);
+    await auth!.authenticate(headers);
 
     expect(headers["Authorization"]).toBe("Bearer eyJspotify_access_token");
     expect(process.env["SPOTIFY_ACCESS_TOKEN"]).toBeUndefined();
