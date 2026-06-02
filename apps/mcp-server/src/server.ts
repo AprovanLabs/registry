@@ -32,6 +32,7 @@ import {
   parseProviderNames,
 } from "./loader.js";
 import type { ProviderTool } from "./loader.js";
+import { searchTools, groupTools } from "./search.js";
 
 // ---------------------------------------------------------------------------
 // Schema normalization
@@ -64,60 +65,7 @@ function normalizeInputSchema(schema: Record<string, unknown>): {
   };
 }
 
-// ---------------------------------------------------------------------------
-// search_tools helper
-// ---------------------------------------------------------------------------
-
-/**
- * Search tools by keyword across mcpName and description.
- * All query words must appear somewhere in name or description (case-insensitive).
- * Results are sorted by relevance: name matches rank above description-only matches.
- */
-function searchTools(
-  tools: ProviderTool[],
-  query: string,
-  provider: string | undefined,
-  limit: number,
-): Array<{ name: string; description: string }> {
-  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
-  const source = provider ? tools.filter((t) => t.providerName === provider) : tools;
-
-  const scored: Array<{ tool: ProviderTool; nameMatches: number; descMatches: number }> = [];
-
-  for (const tool of source) {
-    const nameLower = tool.mcpName.toLowerCase();
-    const descLower = tool.description.toLowerCase();
-
-    let allMatch = true;
-    let nameMatches = 0;
-    let descMatches = 0;
-
-    for (const word of words) {
-      const inName = nameLower.includes(word);
-      const inDesc = descLower.includes(word);
-      if (!inName && !inDesc) {
-        allMatch = false;
-        break;
-      }
-      if (inName) nameMatches++;
-      if (inDesc) descMatches++;
-    }
-
-    if (allMatch) {
-      scored.push({ tool, nameMatches, descMatches });
-    }
-  }
-
-  scored.sort((a, b) => {
-    if (b.nameMatches !== a.nameMatches) return b.nameMatches - a.nameMatches;
-    return b.descMatches - a.descMatches;
-  });
-
-  return scored.slice(0, limit).map(({ tool }) => ({
-    name: tool.mcpName,
-    description: tool.description,
-  }));
-}
+// search_tools and groupTools are imported from ./search.js above.
 
 // ---------------------------------------------------------------------------
 // MCP Server factory
@@ -143,7 +91,7 @@ function createServer(tools: ProviderTool[]): Server {
       {
         name: "list_tools",
         description:
-          "List available tool names without full schemas. Pass an optional provider to filter results.",
+          "List available tool names without full schemas. Pass an optional provider to filter results, or group_by to organize by category.",
         inputSchema: {
           type: "object" as const,
           properties: {
@@ -151,19 +99,25 @@ function createServer(tools: ProviderTool[]): Server {
               type: "string",
               description: "Filter results to tools from this provider name (e.g. 'github')",
             },
+            group_by: {
+              type: "string",
+              enum: ["provider", "tag"],
+              description:
+                "Group results by 'provider' or by OpenAPI 'tag'. When omitted, returns a flat list of names.",
+            },
           },
         },
       },
       {
         name: "search_tools",
         description:
-          "Find tools by keyword. Searches tool names and descriptions so the LLM can locate relevant tools without browsing the full catalog.",
+          "Find tools by keyword. Searches tool names, OpenAPI tags, and descriptions using TF-IDF relevance ranking so the LLM can locate relevant tools without browsing the full catalog.",
         inputSchema: {
           type: "object" as const,
           properties: {
             query: {
               type: "string",
-              description: "Natural language or keyword search (all words must match)",
+              description: "Natural language or keyword search (all words must appear in name, tags, or description)",
             },
             provider: {
               type: "string",
@@ -223,12 +177,25 @@ function createServer(tools: ProviderTool[]): Server {
     if (toolName === "list_tools") {
       const providerFilter =
         typeof args["provider"] === "string" ? args["provider"] : undefined;
+      const groupBy =
+        args["group_by"] === "provider" || args["group_by"] === "tag"
+          ? (args["group_by"] as "provider" | "tag")
+          : undefined;
+
       const filtered = providerFilter
         ? tools.filter((t) => t.providerName === providerFilter)
         : tools;
-      const names = filtered.map((t) => t.mcpName);
+
+      let result: unknown;
+
+      if (groupBy === "provider" || groupBy === "tag") {
+        result = groupTools(filtered, groupBy);
+      } else {
+        result = filtered.map((t) => t.mcpName);
+      }
+
       return {
-        content: [{ type: "text" as const, text: JSON.stringify(names, null, 2) }],
+        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
       };
     }
 
