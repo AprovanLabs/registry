@@ -82,18 +82,49 @@ function createServer(tools: ProviderTool[]): Server {
   // Build a lookup map for fast dispatch
   const toolMap = new Map<string, ProviderTool>(tools.map((t) => [t.mcpName, t]));
 
-  // tools/list — return the full tool catalog
+  // tools/list — return the full tool catalog (including the list_tools meta-tool)
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: tools.map((tool) => ({
-      name: tool.mcpName,
-      description: tool.description,
-      inputSchema: normalizeInputSchema(tool.inputSchema),
-    })),
+    tools: [
+      {
+        name: "list_tools",
+        description:
+          "List available tool names without full schemas. Pass an optional provider to filter results.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            provider: {
+              type: "string",
+              description: "Filter results to tools from this provider name (e.g. 'github')",
+            },
+          },
+        },
+      },
+      ...tools.map((tool) => ({
+        name: tool.mcpName,
+        description: tool.description,
+        inputSchema: normalizeInputSchema(tool.inputSchema),
+      })),
+    ],
   }));
 
   // tools/call — dispatch to the provider
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const toolName = request.params.name;
+    const args = (request.params.arguments ?? {}) as Record<string, unknown>;
+
+    // list_tools meta-tool: enumerate provider tool names without schemas
+    if (toolName === "list_tools") {
+      const providerFilter =
+        typeof args["provider"] === "string" ? args["provider"] : undefined;
+      const filtered = providerFilter
+        ? tools.filter((t) => t.providerName === providerFilter)
+        : tools;
+      const names = filtered.map((t) => t.mcpName);
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(names, null, 2) }],
+      };
+    }
+
     const tool = toolMap.get(toolName);
 
     if (!tool) {
@@ -102,8 +133,6 @@ function createServer(tools: ProviderTool[]): Server {
         content: [{ type: "text" as const, text: `Unknown tool: ${toolName}` }],
       };
     }
-
-    const args = (request.params.arguments ?? {}) as Record<string, unknown>;
 
     try {
       const result = await executeTool(tool, args);
