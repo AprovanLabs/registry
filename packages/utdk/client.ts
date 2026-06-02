@@ -127,7 +127,7 @@ function extractPathParameters(pathTemplate: string): string[] {
 }
 
 function createFallbackMetadata(rawToolName: string, tool: Tool, usedPaths: Set<string>): ToolRuntimeMetadata {
-  const pathTemplate =
+  const routeTemplate =
     tool.tool_call_template && typeof tool.tool_call_template.url === "string"
       ? tool.tool_call_template.url.replace(/^https?:\/\/[^/]+/u, "")
       : "/";
@@ -145,9 +145,9 @@ function createFallbackMetadata(rawToolName: string, tool: Tool, usedPaths: Set<
       tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
         ? tool.tool_call_template.http_method
         : "GET",
-    routeTemplate: pathTemplate,
+    routeTemplate,
     pathConflictKeys: [],
-    pathParameterKeys: extractPathParameters(pathTemplate),
+    pathParameterKeys: extractPathParameters(routeTemplate),
     queryConflictKeys: [],
     queryParameterKeys: [],
   };
@@ -287,10 +287,10 @@ function methodAcceptsInput(metadata: ToolRuntimeMetadata): boolean {
   return metadata.bodyKind !== "none" || metadata.pathParameterKeys.length > 0 || metadata.queryParameterKeys.length > 0;
 }
 
-function buildUrl(baseUrl: string, pathTemplate: string, pathParams: Record<string, unknown>, queryParams: Record<string, unknown>): string {
-  let pathname = pathTemplate;
+function buildUrl(baseUrl: string, routeTemplate: string, pathParams: Record<string, unknown>, queryParams: Record<string, unknown>): string {
+  let pathname = routeTemplate;
 
-  for (const match of pathTemplate.match(/\{([^}]+)\}/g) ?? []) {
+  for (const match of routeTemplate.match(/\{([^}]+)\}/g) ?? []) {
     const key = match.slice(1, -1);
 
     if (!(key in pathParams)) {
