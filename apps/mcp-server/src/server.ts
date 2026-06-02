@@ -65,6 +65,61 @@ function normalizeInputSchema(schema: Record<string, unknown>): {
 }
 
 // ---------------------------------------------------------------------------
+// search_tools helper
+// ---------------------------------------------------------------------------
+
+/**
+ * Search tools by keyword across mcpName and description.
+ * All query words must appear somewhere in name or description (case-insensitive).
+ * Results are sorted by relevance: name matches rank above description-only matches.
+ */
+function searchTools(
+  tools: ProviderTool[],
+  query: string,
+  provider: string | undefined,
+  limit: number,
+): Array<{ name: string; description: string }> {
+  const words = query.toLowerCase().split(/\s+/).filter(Boolean);
+  const source = provider ? tools.filter((t) => t.providerName === provider) : tools;
+
+  const scored: Array<{ tool: ProviderTool; nameMatches: number; descMatches: number }> = [];
+
+  for (const tool of source) {
+    const nameLower = tool.mcpName.toLowerCase();
+    const descLower = tool.description.toLowerCase();
+
+    let allMatch = true;
+    let nameMatches = 0;
+    let descMatches = 0;
+
+    for (const word of words) {
+      const inName = nameLower.includes(word);
+      const inDesc = descLower.includes(word);
+      if (!inName && !inDesc) {
+        allMatch = false;
+        break;
+      }
+      if (inName) nameMatches++;
+      if (inDesc) descMatches++;
+    }
+
+    if (allMatch) {
+      scored.push({ tool, nameMatches, descMatches });
+    }
+  }
+
+  scored.sort((a, b) => {
+    if (b.nameMatches !== a.nameMatches) return b.nameMatches - a.nameMatches;
+    return b.descMatches - a.descMatches;
+  });
+
+  return scored.slice(0, limit).map(({ tool }) => ({
+    name: tool.mcpName,
+    description: tool.description,
+  }));
+}
+
+// ---------------------------------------------------------------------------
 // MCP Server factory
 // ---------------------------------------------------------------------------
 
@@ -99,6 +154,29 @@ function createServer(tools: ProviderTool[]): Server {
           },
         },
       },
+      {
+        name: "search_tools",
+        description:
+          "Find tools by keyword. Searches tool names and descriptions so the LLM can locate relevant tools without browsing the full catalog.",
+        inputSchema: {
+          type: "object" as const,
+          properties: {
+            query: {
+              type: "string",
+              description: "Natural language or keyword search (all words must match)",
+            },
+            provider: {
+              type: "string",
+              description: "Restrict search to tools from this provider name (e.g. 'github')",
+            },
+            limit: {
+              type: "number",
+              description: "Maximum number of results to return (default 10)",
+            },
+          },
+          required: ["query"],
+        },
+      },
       ...tools.map((tool) => ({
         name: tool.mcpName,
         description: tool.description,
@@ -122,6 +200,19 @@ function createServer(tools: ProviderTool[]): Server {
       const names = filtered.map((t) => t.mcpName);
       return {
         content: [{ type: "text" as const, text: JSON.stringify(names, null, 2) }],
+      };
+    }
+
+    // search_tools meta-tool: keyword search across tool names and descriptions
+    if (toolName === "search_tools") {
+      const query = typeof args["query"] === "string" ? args["query"] : "";
+      const providerFilter =
+        typeof args["provider"] === "string" ? args["provider"] : undefined;
+      const limit =
+        typeof args["limit"] === "number" && args["limit"] > 0 ? Math.floor(args["limit"]) : 10;
+      const results = searchTools(tools, query, providerFilter, limit);
+      return {
+        content: [{ type: "text" as const, text: JSON.stringify(results, null, 2) }],
       };
     }
 
