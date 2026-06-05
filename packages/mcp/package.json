@@ -1,5 +1,5 @@
 {
-  "name": "@utdk/mcp-server",
+  "name": "@utdk/mcp",
   "version": "0.1.0",
   "type": "module",
   "description": "Unified MCP server with dynamic tool loading from @utdk/* providers",
@@ -11,7 +11,7 @@
   ],
   "license": "MIT",
   "bin": {
-    "utdk-mcp-server": "./dist/server.js"
+    "utdk-mcp": "./dist/server.js"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",

@@ -1,0 +1,224 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Synthetic API",
+    "version": "2",
+    "description": "The Synthetic API is still under development. If there is more data you would like to see and access, please let us know!\n"
+  },
+  "servers": [
+    {
+      "url": "https://api.synthetic.new/v2"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/quotas": {
+      "get": {
+        "operationId": "getQuotas",
+        "summary": "Get API usage quotas",
+        "description": "Retrieve information about your API usage quotas and limits. Requests to this endpoint do not count against your subscription limits.\n",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Current quota and usage information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/QuotasResponse"
+                },
+                "example": {
+                  "subscription": {
+                    "limit": 1000,
+                    "requests": 0,
+                    "renewsAt": "2026-06-03T21:33:22.532Z"
+                  },
+                  "search": {
+                    "hourly": {
+                      "limit": 250,
+                      "requests": 0,
+                      "renewsAt": "2026-06-03T17:33:22.532Z"
+                    }
+                  },
+                  "freeToolCalls": {
+                    "limit": 0,
+                    "requests": 0,
+                    "renewsAt": "2026-06-04T16:33:22.537Z"
+                  },
+                  "weeklyTokenLimit": {
+                    "nextRegenAt": "2026-06-03T19:50:54.000Z",
+                    "percentRemaining": 100,
+                    "maxCredits": "$48.00",
+                    "remainingCredits": "$48.00",
+                    "nextRegenCredits": "$0.96"
+                  },
+                  "rollingFiveHourLimit": {
+                    "nextTickAt": "2026-06-03T16:44:18.000Z",
+                    "tickPercent": 0.05,
+                    "remaining": 1000,
+                    "max": 1000,
+                    "limited": false
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API key"
+      }
+    },
+    "schemas": {
+      "QuotaWindow": {
+        "type": "object",
+        "description": "A rolling or periodic request quota window",
+        "required": ["limit", "requests", "renewsAt"],
+        "properties": {
+          "limit": {
+            "type": "integer",
+            "description": "Maximum number of requests allowed in this window"
+          },
+          "requests": {
+            "type": "integer",
+            "description": "Number of requests made in the current window"
+          },
+          "renewsAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "ISO 8601 timestamp when this window resets"
+          }
+        }
+      },
+      "QuotasResponse": {
+        "type": "object",
+        "properties": {
+          "subscription": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuotaWindow"
+              },
+              {
+                "description": "Overall subscription request quota for the billing period"
+              }
+            ]
+          },
+          "search": {
+            "type": "object",
+            "description": "Search-specific quota windows",
+            "properties": {
+              "hourly": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/QuotaWindow"
+                  },
+                  {
+                    "description": "Per-hour search request quota"
+                  }
+                ]
+              }
+            }
+          },
+          "freeToolCalls": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/QuotaWindow"
+              },
+              {
+                "description": "Free tool call quota (complimentary usage outside the subscription)"
+              }
+            ]
+          },
+          "weeklyTokenLimit": {
+            "type": "object",
+            "description": "Rolling weekly token credit budget",
+            "required": [
+              "nextRegenAt",
+              "percentRemaining",
+              "maxCredits",
+              "remainingCredits",
+              "nextRegenCredits"
+            ],
+            "properties": {
+              "nextRegenAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the next partial credit regeneration occurs"
+              },
+              "percentRemaining": {
+                "type": "number",
+                "format": "float",
+                "minimum": 0,
+                "maximum": 100,
+                "description": "Percentage of weekly token budget still available"
+              },
+              "maxCredits": {
+                "type": "string",
+                "description": "Total weekly credit budget (formatted as a USD string, e.g. \"$48.00\")"
+              },
+              "remainingCredits": {
+                "type": "string",
+                "description": "Credits remaining in the current weekly window"
+              },
+              "nextRegenCredits": {
+                "type": "string",
+                "description": "Credits that will be added at the next regeneration tick"
+              }
+            }
+          },
+          "rollingFiveHourLimit": {
+            "type": "object",
+            "description": "Short-term rolling five-hour request rate limit",
+            "required": [
+              "nextTickAt",
+              "tickPercent",
+              "remaining",
+              "max",
+              "limited"
+            ],
+            "properties": {
+              "nextTickAt": {
+                "type": "string",
+                "format": "date-time",
+                "description": "When the next capacity tick will restore some requests"
+              },
+              "tickPercent": {
+                "type": "number",
+                "format": "float",
+                "description": "Fraction of max capacity restored per tick"
+              },
+              "remaining": {
+                "type": "integer",
+                "description": "Requests remaining in the current five-hour window"
+              },
+              "max": {
+                "type": "integer",
+                "description": "Maximum requests allowed per five-hour window"
+              },
+              "limited": {
+                "type": "boolean",
+                "description": "Whether you are currently being rate-limited by this window"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
