@@ -12,16 +12,18 @@
 
 import vm from "node:vm";
 
-/**
- * A minimal safe console that prefixes output with "[sandbox]".
- */
-const sandboxConsole = {
-  log: (...args: unknown[]) => console.log("[sandbox]", ...args),
-  error: (...args: unknown[]) => console.error("[sandbox]", ...args),
-  warn: (...args: unknown[]) => console.warn("[sandbox]", ...args),
-  info: (...args: unknown[]) => console.info("[sandbox]", ...args),
-  debug: (...args: unknown[]) => console.debug("[sandbox]", ...args),
-};
+type ConsoleMethod = "log" | "error" | "warn" | "info" | "debug";
+
+const PREFIXED_METHODS: ConsoleMethod[] = ["log", "error", "warn", "info", "debug"];
+
+function createPrefixedConsole(prefix: string): Record<ConsoleMethod, (...args: unknown[]) => void> {
+  const console_: Pick<Console, ConsoleMethod> = console;
+  return Object.fromEntries(
+    PREFIXED_METHODS.map((method) => [method, (...args: unknown[]) => console_[method](prefix, ...args)]),
+  ) as Record<ConsoleMethod, (...args: unknown[]) => void>;
+}
+
+const sandboxConsole = createPrefixedConsole("[sandbox]");
 
 export interface SandboxOptions {
   /**
