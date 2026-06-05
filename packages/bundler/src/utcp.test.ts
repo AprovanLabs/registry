@@ -52,7 +52,7 @@ describe("loadProviderTools", () => {
     await loadProviderTools({
       name: "datadog",
       url: "https://example.com/openapi.yaml",
-      http_method: "GET",
+      fetch_method: "GET",
       options: {
         auth: [
           primaryAuth,
