@@ -46,16 +46,6 @@ function normalizeInputSchema(schema: Record<string, unknown>): {
   properties?: Record<string, object>;
   required?: string[];
 } {
-  if (schema["type"] === "object") {
-    return {
-      type: "object",
-      ...(schema["properties"]
-        ? { properties: schema["properties"] as Record<string, object> }
-        : {}),
-      ...(schema["required"] ? { required: schema["required"] as string[] } : {}),
-    };
-  }
-
   return {
     type: "object",
     ...(schema["properties"]
@@ -65,7 +55,174 @@ function normalizeInputSchema(schema: Record<string, unknown>): {
   };
 }
 
-// search_tools and groupTools are imported from ./search.js above.
+// ---------------------------------------------------------------------------
+// Meta-tool definitions (served by tools/list)
+// ---------------------------------------------------------------------------
+
+const META_TOOLS = [
+  {
+    name: "list_tools",
+    description:
+      "List available tool names without full schemas. Pass an optional provider to filter results, or group_by to organize by category.",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        provider: {
+          type: "string",
+          description: "Filter results to tools from this provider name (e.g. 'github')",
+        },
+        group_by: {
+          type: "string",
+          enum: ["provider", "tag"],
+          description:
+            "Group results by 'provider' or by OpenAPI 'tag'. When omitted, returns a flat list of names.",
+        },
+      },
+    },
+  },
+  {
+    name: "search_tools",
+    description:
+      "Find tools by keyword. Searches tool names, OpenAPI tags, and descriptions using TF-IDF relevance ranking so the LLM can locate relevant tools without browsing the full catalog.",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        query: {
+          type: "string",
+          description: "Natural language or keyword search (all words must appear in name, tags, or description)",
+        },
+        provider: {
+          type: "string",
+          description: "Restrict search to tools from this provider name (e.g. 'github')",
+        },
+        limit: {
+          type: "number",
+          description: "Maximum number of results to return (default 10)",
+        },
+      },
+      required: ["query"],
+    },
+  },
+  {
+    name: "tool_info",
+    description:
+      "Get the full schema and metadata for a specific tool by name. Use this after list_tools or search_tools to retrieve the complete input schema before calling the tool.",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        tool_name: {
+          type: "string",
+          description: "The MCP tool name (e.g. 'github__repos_list')",
+        },
+      },
+      required: ["tool_name"],
+    },
+  },
+  {
+    name: "call_tool",
+    description:
+      "Execute any registered tool by name with the provided arguments. Use tool_info first to get the correct argument schema.",
+    inputSchema: {
+      type: "object" as const,
+      properties: {
+        tool_name: {
+          type: "string",
+          description: "The MCP tool name to execute (e.g. 'github__repos_list')",
+        },
+        arguments: {
+          type: "object",
+          description: "Arguments to pass to the tool",
+        },
+      },
+      required: ["tool_name", "arguments"],
+    },
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Meta-tool call handlers
+// ---------------------------------------------------------------------------
+
+function handleListTools(tools: ProviderTool[], args: Record<string, unknown>) {
+  const providerFilter =
+    typeof args["provider"] === "string" ? args["provider"] : undefined;
+  const groupBy =
+    args["group_by"] === "provider" || args["group_by"] === "tag"
+      ? (args["group_by"] as "provider" | "tag")
+      : undefined;
+  const filtered = providerFilter
+    ? tools.filter((t) => t.providerName === providerFilter)
+    : tools;
+  const result =
+    groupBy === "provider" || groupBy === "tag"
+      ? groupTools(filtered, groupBy)
+      : filtered.map((t) => t.mcpName);
+  return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
+}
+
+function handleSearchTools(tools: ProviderTool[], args: Record<string, unknown>) {
+  const query = typeof args["query"] === "string" ? args["query"] : "";
+  const providerFilter =
+    typeof args["provider"] === "string" ? args["provider"] : undefined;
+  const limit =
+    typeof args["limit"] === "number" && args["limit"] > 0 ? Math.floor(args["limit"]) : 10;
+  const results = searchTools(tools, query, providerFilter, limit);
+  return { content: [{ type: "text" as const, text: JSON.stringify(results, null, 2) }] };
+}
+
+function handleToolInfo(toolMap: Map<string, ProviderTool>, args: Record<string, unknown>) {
+  const requestedName = typeof args["tool_name"] === "string" ? args["tool_name"] : "";
+  const tool = toolMap.get(requestedName);
+  if (!tool) {
+    return {
+      isError: true,
+      content: [{ type: "text" as const, text: `Unknown tool: ${requestedName}` }],
+    };
+  }
+  return {
+    content: [
+      {
+        type: "text" as const,
+        text: JSON.stringify(
+          {
+            name: tool.mcpName,
+            description: tool.description,
+            provider: tool.providerName,
+            inputSchema: normalizeInputSchema(tool.inputSchema),
+          },
+          null,
+          2,
+        ),
+      },
+    ],
+  };
+}
+
+async function handleCallTool(toolMap: Map<string, ProviderTool>, args: Record<string, unknown>) {
+  const requestedName = typeof args["tool_name"] === "string" ? args["tool_name"] : "";
+  const toolArgs =
+    typeof args["arguments"] === "object" && args["arguments"] !== null
+      ? (args["arguments"] as Record<string, unknown>)
+      : {};
+  const tool = toolMap.get(requestedName);
+  if (!tool) {
+    return {
+      isError: true,
+      content: [{ type: "text" as const, text: `Unknown tool: ${requestedName}` }],
+    };
+  }
+  try {
+    const result = await executeTool(tool, toolArgs);
+    const text = typeof result === "string" ? result : JSON.stringify(result, null, 2);
+    return { content: [{ type: "text" as const, text }] };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return {
+      isError: true,
+      content: [{ type: "text" as const, text: `Error calling ${requestedName}: ${message}` }],
+    };
+  }
+}
 
 // ---------------------------------------------------------------------------
 // MCP Server factory
@@ -86,181 +243,17 @@ function createServer(tools: ProviderTool[]): Server {
   const toolMap = new Map<string, ProviderTool>(tools.map((t) => [t.mcpName, t]));
 
   // tools/list — return exactly the 4 meta-tools (no direct provider tool exposure)
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: [
-      {
-        name: "list_tools",
-        description:
-          "List available tool names without full schemas. Pass an optional provider to filter results, or group_by to organize by category.",
-        inputSchema: {
-          type: "object" as const,
-          properties: {
-            provider: {
-              type: "string",
-              description: "Filter results to tools from this provider name (e.g. 'github')",
-            },
-            group_by: {
-              type: "string",
-              enum: ["provider", "tag"],
-              description:
-                "Group results by 'provider' or by OpenAPI 'tag'. When omitted, returns a flat list of names.",
-            },
-          },
-        },
-      },
-      {
-        name: "search_tools",
-        description:
-          "Find tools by keyword. Searches tool names, OpenAPI tags, and descriptions using TF-IDF relevance ranking so the LLM can locate relevant tools without browsing the full catalog.",
-        inputSchema: {
-          type: "object" as const,
-          properties: {
-            query: {
-              type: "string",
-              description: "Natural language or keyword search (all words must appear in name, tags, or description)",
-            },
-            provider: {
-              type: "string",
-              description: "Restrict search to tools from this provider name (e.g. 'github')",
-            },
-            limit: {
-              type: "number",
-              description: "Maximum number of results to return (default 10)",
-            },
-          },
-          required: ["query"],
-        },
-      },
-      {
-        name: "tool_info",
-        description:
-          "Get the full schema and metadata for a specific tool by name. Use this after list_tools or search_tools to retrieve the complete input schema before calling the tool.",
-        inputSchema: {
-          type: "object" as const,
-          properties: {
-            tool_name: {
-              type: "string",
-              description: "The MCP tool name (e.g. 'github__repos_list')",
-            },
-          },
-          required: ["tool_name"],
-        },
-      },
-      {
-        name: "call_tool",
-        description:
-          "Execute any registered tool by name with the provided arguments. Use tool_info first to get the correct argument schema.",
-        inputSchema: {
-          type: "object" as const,
-          properties: {
-            tool_name: {
-              type: "string",
-              description: "The MCP tool name to execute (e.g. 'github__repos_list')",
-            },
-            arguments: {
-              type: "object",
-              description: "Arguments to pass to the tool",
-            },
-          },
-          required: ["tool_name", "arguments"],
-        },
-      },
-    ],
-  }));
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: META_TOOLS }));
 
   // tools/call — dispatch to the 4 meta-tools only
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const toolName = request.params.name;
     const args = (request.params.arguments ?? {}) as Record<string, unknown>;
 
-    // list_tools meta-tool: enumerate provider tool names without schemas
-    if (toolName === "list_tools") {
-      const providerFilter =
-        typeof args["provider"] === "string" ? args["provider"] : undefined;
-      const groupBy =
-        args["group_by"] === "provider" || args["group_by"] === "tag"
-          ? (args["group_by"] as "provider" | "tag")
-          : undefined;
-
-      const filtered = providerFilter
-        ? tools.filter((t) => t.providerName === providerFilter)
-        : tools;
-
-      let result: unknown;
-
-      if (groupBy === "provider" || groupBy === "tag") {
-        result = groupTools(filtered, groupBy);
-      } else {
-        result = filtered.map((t) => t.mcpName);
-      }
-
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }],
-      };
-    }
-
-    // search_tools meta-tool: keyword search across tool names and descriptions
-    if (toolName === "search_tools") {
-      const query = typeof args["query"] === "string" ? args["query"] : "";
-      const providerFilter =
-        typeof args["provider"] === "string" ? args["provider"] : undefined;
-      const limit =
-        typeof args["limit"] === "number" && args["limit"] > 0 ? Math.floor(args["limit"]) : 10;
-      const results = searchTools(tools, query, providerFilter, limit);
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(results, null, 2) }],
-      };
-    }
-
-    // tool_info meta-tool: return full schema and metadata for a specific tool
-    if (toolName === "tool_info") {
-      const requestedName = typeof args["tool_name"] === "string" ? args["tool_name"] : "";
-      const tool = toolMap.get(requestedName);
-      if (!tool) {
-        return {
-          isError: true,
-          content: [{ type: "text" as const, text: `Unknown tool: ${requestedName}` }],
-        };
-      }
-      const info = {
-        name: tool.mcpName,
-        description: tool.description,
-        provider: tool.providerName,
-        inputSchema: normalizeInputSchema(tool.inputSchema),
-      };
-      return {
-        content: [{ type: "text" as const, text: JSON.stringify(info, null, 2) }],
-      };
-    }
-
-    // call_tool meta-tool: execute a registered tool by name
-    if (toolName === "call_tool") {
-      const requestedName = typeof args["tool_name"] === "string" ? args["tool_name"] : "";
-      const toolArgs =
-        typeof args["arguments"] === "object" && args["arguments"] !== null
-          ? (args["arguments"] as Record<string, unknown>)
-          : {};
-
-      const tool = toolMap.get(requestedName);
-      if (!tool) {
-        return {
-          isError: true,
-          content: [{ type: "text" as const, text: `Unknown tool: ${requestedName}` }],
-        };
-      }
-
-      try {
-        const result = await executeTool(tool, toolArgs);
-        const text = typeof result === "string" ? result : JSON.stringify(result, null, 2);
-        return { content: [{ type: "text" as const, text }] };
-      } catch (err) {
-        const message = err instanceof Error ? err.message : String(err);
-        return {
-          isError: true,
-          content: [{ type: "text" as const, text: `Error calling ${requestedName}: ${message}` }],
-        };
-      }
-    }
+    if (toolName === "list_tools") return handleListTools(tools, args);
+    if (toolName === "search_tools") return handleSearchTools(tools, args);
+    if (toolName === "tool_info") return handleToolInfo(toolMap, args);
+    if (toolName === "call_tool") return handleCallTool(toolMap, args);
 
     return {
       isError: true,

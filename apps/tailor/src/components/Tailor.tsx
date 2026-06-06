@@ -16,8 +16,11 @@ const nodeTypes = {
   parallel: ParallelNode,
 };
 
-export function Tailor() {
-  const [source, setSource] = useState(SOURCE);
+// ---------------------------------------------------------------------------
+// useTailor — state, parse effect, and graph-navigation callbacks
+// ---------------------------------------------------------------------------
+
+function useTailor(source: string) {
   const [analysis, setAnalysis] = useState<FlowAnalysis | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [focusStack, setFocusStack] = useState<FocusView[]>([]);
@@ -86,11 +89,7 @@ export function Tailor() {
       const method = step.method ?? "call";
       setFocusStack((prev) => [
         ...prev,
-        {
-          title: `${object}${method}( ) · ${label}`,
-          steps: block.steps,
-          fromStepId: step.id,
-        },
+        { title: `${object}${method}( ) · ${label}`, steps: block.steps, fromStepId: step.id },
       ]);
     },
     [current],
@@ -109,11 +108,7 @@ export function Tailor() {
       const method = call.method ?? "call";
       setFocusStack((prev) => [
         ...prev,
-        {
-          title: `${object}${method}( ) · ${label}`,
-          steps: block.steps,
-          fromStepId: call.id,
-        },
+        { title: `${object}${method}( ) · ${label}`, steps: block.steps, fromStepId: call.id },
       ]);
     },
     [current],
@@ -124,7 +119,36 @@ export function Tailor() {
     return buildGraph(analysis, current, inputValues, handleOpen, handleOpenCallBranch);
   }, [analysis, current, inputValues, handleOpen, handleOpenCallBranch]);
 
-  const atRoot = focusStack.length === 0;
+  return {
+    analysis,
+    error,
+    focusStack,
+    setFocusStack,
+    inputValues,
+    handleParamChange,
+    handleOpen,
+    handleOpenCallBranch,
+    graph,
+    atRoot: focusStack.length === 0,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Tailor component
+// ---------------------------------------------------------------------------
+
+export function Tailor() {
+  const [source, setSource] = useState(SOURCE);
+  const {
+    analysis,
+    error,
+    focusStack,
+    setFocusStack,
+    inputValues,
+    handleParamChange,
+    graph,
+    atRoot,
+  } = useTailor(source);
 
   return (
     <main className="min-h-screen flex flex-col p-5 gap-4 bg-bg text-text font-sans">

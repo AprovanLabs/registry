@@ -1065,6 +1065,155 @@ async function runTier1Mode(
 }
 
 // ---------------------------------------------------------------------------
+// Batch mode helpers
+// ---------------------------------------------------------------------------
+
+type AppWork =
+  | { kind: "skip-low-score"; result: BatchResult }
+  | { kind: "skip-hash"; result: BatchResult }
+  | { kind: "process"; app: ComposioApp; entry: ProviderEntry; isUpdate: boolean; domainScore: number };
+
+/**
+ * Classify each Tier 3 app into skip/process work items without doing any I/O.
+ */
+function classifyBatchApps(
+  tier3Apps: ComposioApp[],
+  existingByName: Map<string, ProviderEntry>,
+): AppWork[] {
+  const workItems: AppWork[] = [];
+
+  for (const app of tier3Apps) {
+    if (!app.key) continue;
+
+    const providerName = normalizeProviderName(app.key);
+    const domainScore = computeDomainScore(app);
+
+    if (domainScore < 40) {
+      log(`[batch] ${providerName}: score ${domainScore} < 40, skipping`);
+      workItems.push({
+        kind: "skip-low-score",
+        result: {
+          provider: providerName,
+          composioKey: app.key,
+          specUrl: app.openapi_spec_url ?? null,
+          action: "skipped-low-score",
+          domainScore,
+        },
+      });
+      continue;
+    }
+
+    const newHash = computeSourceHash(app);
+    const existing = existingByName.get(providerName);
+    if (existing?.sourceHash === newHash) {
+      workItems.push({
+        kind: "skip-hash",
+        result: {
+          provider: providerName,
+          composioKey: app.key,
+          specUrl: app.openapi_spec_url ?? null,
+          action: "skipped-hash",
+          domainScore,
+        },
+      });
+      continue;
+    }
+
+    const entry = buildBatchRegistryEntry(app, domainScore, newHash);
+    workItems.push({ kind: "process", app, entry, isUpdate: existing !== undefined, domainScore });
+  }
+
+  return workItems;
+}
+
+/**
+ * Build the final results array after registry upsert is complete.
+ */
+function collectBatchResults(
+  workItems: AppWork[],
+  upsertActions: Map<string, "added" | "updated" | "dry-run">,
+): BatchResult[] {
+  const results: BatchResult[] = [];
+
+  for (const item of workItems) {
+    if (item.kind === "skip-low-score" || item.kind === "skip-hash") {
+      results.push(item.result);
+    } else {
+      const action = upsertActions.get(item.entry.name) ?? "dry-run";
+      const tags = item.entry.tags;
+      results.push({
+        provider: item.entry.name,
+        composioKey: item.app.key,
+        specUrl: item.app.openapi_spec_url ?? null,
+        action,
+        domainScore: item.domainScore,
+        ...(tags ? { tags } : {}),
+      });
+      const betaLabel = tags?.includes("beta") ? " [beta]" : "";
+      log(`[batch] ${item.entry.name}: ${action} (score: ${item.domainScore}${betaLabel})`);
+    }
+  }
+
+  return results;
+}
+
+/**
+ * Log the batch summary to stderr and emit the JSON report to stdout.
+ * Sets process.exitCode = 1 if any entries failed.
+ */
+function logBatchReport(
+  allApps: ComposioApp[],
+  tier3Apps: ComposioApp[],
+  results: BatchResult[],
+  dryRun: boolean,
+): void {
+  const succeeded = results.filter(
+    (r) => r.action === "added" || r.action === "updated" || r.action === "dry-run",
+  );
+  const failed = results.filter((r) => r.action === "error");
+  const skippedLowScore = results.filter((r) => r.action === "skipped-low-score");
+  const skippedHash = results.filter((r) => r.action === "skipped-hash");
+  const beta = results.filter((r) => r.tags?.includes("beta"));
+
+  log("\n[batch] ── Batch report ──────────────────────────────────────");
+  log(`  Composio apps fetched:    ${allApps.length}`);
+  log(`  Tier 1 excluded:          ${allApps.length - tier3Apps.length}`);
+  log(`  Tier 3 evaluated:         ${tier3Apps.length}`);
+  log(`  Succeeded:                ${succeeded.length}`);
+  log(`    of which beta-tagged:   ${beta.length}`);
+  log(`  Failed:                   ${failed.length}`);
+  log(`  Skipped (score < 40):     ${skippedLowScore.length}`);
+  log(`  Skipped (hash unchanged): ${skippedHash.length}`);
+  log("─────────────────────────────────────────────────────────────");
+
+  for (const r of failed) {
+    log(`  [FAIL]  ${r.provider}: ${r.error}`);
+  }
+  for (const r of skippedLowScore) {
+    log(`  [WARN]  ${r.provider}: domain score ${r.domainScore} < 40, skipped`);
+  }
+
+  const report: BatchReport = {
+    ok: failed.length === 0,
+    dryRun,
+    fetchedFromApi: allApps.length,
+    tier3Processed: tier3Apps.length,
+    succeeded: succeeded.length,
+    failed: failed.length,
+    skippedLowScore: skippedLowScore.length,
+    skippedHashUnchanged: skippedHash.length,
+    beta: beta.length,
+    results,
+  };
+
+  writeJson(report);
+
+  if (failed.length > 0) {
+    process.exitCode = 1;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Batch mode (Tier 3: all remaining Composio apps)
 // ---------------------------------------------------------------------------
 
@@ -1121,60 +1270,8 @@ async function runBatchMode(
   const existingProviders = JSON.parse(raw) as ProviderEntry[];
   const existingByName = new Map(existingProviders.map((p) => [p.name, p]));
 
-  // Step 4: Pre-classify apps (serial, no I/O — determines which need processing)
-  type AppWork =
-    | { kind: "skip-low-score"; result: BatchResult }
-    | { kind: "skip-hash"; result: BatchResult }
-    | { kind: "process"; app: ComposioApp; entry: ProviderEntry; isUpdate: boolean; domainScore: number };
-
-  const workItems: AppWork[] = [];
-
-  for (const app of tier3Apps) {
-    if (!app.key) continue;
-
-    const providerName = normalizeProviderName(app.key);
-    const domainScore = computeDomainScore(app);
-
-    if (domainScore < 40) {
-      log(`[batch] ${providerName}: score ${domainScore} < 40, skipping`);
-      workItems.push({
-        kind: "skip-low-score",
-        result: {
-          provider: providerName,
-          composioKey: app.key,
-          specUrl: app.openapi_spec_url ?? null,
-          action: "skipped-low-score",
-          domainScore,
-        },
-      });
-      continue;
-    }
-
-    const newHash = computeSourceHash(app);
-    const existing = existingByName.get(providerName);
-    if (existing?.sourceHash === newHash) {
-      workItems.push({
-        kind: "skip-hash",
-        result: {
-          provider: providerName,
-          composioKey: app.key,
-          specUrl: app.openapi_spec_url ?? null,
-          action: "skipped-hash",
-          domainScore,
-        },
-      });
-      continue;
-    }
-
-    const entry = buildBatchRegistryEntry(app, domainScore, newHash);
-    workItems.push({
-      kind: "process",
-      app,
-      entry,
-      isUpdate: existing !== undefined,
-      domainScore,
-    });
-  }
+  // Step 4: Pre-classify apps (serial, no I/O)
+  const workItems = classifyBatchApps(tier3Apps, existingByName);
 
   // Step 5: Run pipeline tasks concurrently (if --pipeline)
   // For basic batch mode, pipeline runs are optional; registry update is the primary goal.
@@ -1182,7 +1279,6 @@ async function runBatchMode(
 
   if (args.pipeline && !args.dryRun && processItems.length > 0) {
     log(`[batch] Running pipeline for ${processItems.length} providers (concurrency=${args.concurrency})...`);
-
     const pipelineTasks = processItems.map((item) => async () => {
       try {
         await runPipeline(item.entry.name, repoRoot);
@@ -1191,7 +1287,6 @@ async function runBatchMode(
         log(`[batch] Pipeline error for ${item.entry.name}: ${message}`);
       }
     });
-
     await runConcurrent(pipelineTasks, args.concurrency);
   }
 
@@ -1199,73 +1294,9 @@ async function runBatchMode(
   const entriesToUpsert = processItems.map((w) => w.entry);
   const upsertActions = await batchUpsertRegistryEntries(repoRoot, entriesToUpsert, args.dryRun);
 
-  // Step 7: Collect results
-  const results: BatchResult[] = [];
-
-  for (const item of workItems) {
-    if (item.kind === "skip-low-score" || item.kind === "skip-hash") {
-      results.push(item.result);
-    } else {
-      const action = upsertActions.get(item.entry.name) ?? "dry-run";
-      const tags = item.entry.tags;
-      results.push({
-        provider: item.entry.name,
-        composioKey: item.app.key,
-        specUrl: item.app.openapi_spec_url ?? null,
-        action,
-        domainScore: item.domainScore,
-        ...(tags ? { tags } : {}),
-      });
-      const betaLabel = tags?.includes("beta") ? " [beta]" : "";
-      log(`[batch] ${item.entry.name}: ${action} (score: ${item.domainScore}${betaLabel})`);
-    }
-  }
-
-  // Step 8: Report
-  const succeeded = results.filter(
-    (r) => r.action === "added" || r.action === "updated" || r.action === "dry-run",
-  );
-  const failed = results.filter((r) => r.action === "error");
-  const skippedLowScore = results.filter((r) => r.action === "skipped-low-score");
-  const skippedHash = results.filter((r) => r.action === "skipped-hash");
-  const beta = results.filter((r) => r.tags?.includes("beta"));
-
-  log("\n[batch] ── Batch report ──────────────────────────────────────");
-  log(`  Composio apps fetched:    ${allApps.length}`);
-  log(`  Tier 1 excluded:          ${allApps.length - tier3Apps.length}`);
-  log(`  Tier 3 evaluated:         ${tier3Apps.length}`);
-  log(`  Succeeded:                ${succeeded.length}`);
-  log(`    of which beta-tagged:   ${beta.length}`);
-  log(`  Failed:                   ${failed.length}`);
-  log(`  Skipped (score < 40):     ${skippedLowScore.length}`);
-  log(`  Skipped (hash unchanged): ${skippedHash.length}`);
-  log("─────────────────────────────────────────────────────────────");
-
-  for (const r of failed) {
-    log(`  [FAIL]  ${r.provider}: ${r.error}`);
-  }
-  for (const r of skippedLowScore) {
-    log(`  [WARN]  ${r.provider}: domain score ${r.domainScore} < 40, skipped`);
-  }
-
-  const report: BatchReport = {
-    ok: failed.length === 0,
-    dryRun: args.dryRun,
-    fetchedFromApi: allApps.length,
-    tier3Processed: tier3Apps.length,
-    succeeded: succeeded.length,
-    failed: failed.length,
-    skippedLowScore: skippedLowScore.length,
-    skippedHashUnchanged: skippedHash.length,
-    beta: beta.length,
-    results,
-  };
-
-  writeJson(report);
-
-  if (failed.length > 0) {
-    process.exitCode = 1;
-  }
+  // Step 7: Collect results and report
+  const results = collectBatchResults(workItems, upsertActions);
+  logBatchReport(allApps, tier3Apps, results, args.dryRun);
 }
 
 // ---------------------------------------------------------------------------
