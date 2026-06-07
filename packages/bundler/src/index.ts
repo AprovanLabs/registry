@@ -1,9 +1,8 @@
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-import { buildClientToolMap, buildClientToolMapFromDiscovery } from "./client-api.js";
+import { buildClientToolMap } from "./client-api.js";
 import { augmentProviderDocs, type AugmentProviderDocsResult } from "./docs/augment.js";
 import { loadProviderDocs, type LoadProviderDocsOptions, type LoadProviderDocsResult } from "./docs/load.js";
-import { discoverOperationsFromOpenApi } from "./openapi-discovery.js";
 import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
 import { runEnrichPhase, type RunEnrichPhaseOptions, type RunEnrichPhaseResult } from "./phases/enrich.js";
 import { runResearchPhase, type RunResearchPhaseOptions, type RunResearchPhaseResult } from "./phases/research.js";
@@ -31,7 +30,6 @@ import {
   renderProviderPackageJson,
   renderProviderReadme,
   renderProviderTypes,
-  renderProviderTypesFromDiscovery,
   renderRootPackageEntry,
   renderRootPackageJson,
   renderRootTsconfig,
@@ -171,23 +169,8 @@ export async function generateRegistryTypes(
   const provider = resolveProvider(providers, options.provider);
   const [{ tools }, rawOpenApiDocument] = await Promise.all([loadProviderTools(provider), loadOpenApiDocument(provider)]);
   const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
-
-  // Use direct OpenAPI discovery as fallback when UTCP returns no tools.
-  const useDiscovery = tools.length === 0;
-  const discoveredOperations = useDiscovery ? discoverOperationsFromOpenApi(openApiDocument) : [];
-
-  const publicTypeMap = useDiscovery ? new Map() : buildPublicTypeMap(openApiDocument, tools);
-  const clientToolMap = useDiscovery
-    ? buildClientToolMapFromDiscovery(openApiDocument, discoveredOperations, provider)
-    : buildClientToolMap(openApiDocument, tools, provider);
-
-  const operationCount = useDiscovery ? discoveredOperations.length : tools.length;
-
-  if (useDiscovery && discoveredOperations.length > 0) {
-    process.stderr.write(
-      `[${provider.name}] UTCP returned 0 tools; using direct OpenAPI discovery (${discoveredOperations.length} operations found).\n`,
-    );
-  }
+  const publicTypeMap = buildPublicTypeMap(openApiDocument, tools);
+  const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
 
   const outputRoot = options.outputRoot ?? DEFAULT_OUTPUT_ROOT;
   const providerDir = resolveProviderOutputDir(provider.name, outputRoot);
@@ -225,10 +208,6 @@ export async function generateRegistryTypes(
         ])
       : [];
 
-  const typesContent = useDiscovery
-    ? renderProviderTypesFromDiscovery(provider, discoveredOperations, clientToolMap)
-    : renderProviderTypes(provider, tools, publicTypeMap, clientToolMap);
-
   const outputPaths = await Promise.all([
     writeTextFile(path.join(outputRoot, "package.json"), renderRootPackageJson(providers)),
     writeTextFile(path.join(outputRoot, "tsconfig.json"), renderRootTsconfig()),
@@ -247,7 +226,7 @@ export async function generateRegistryTypes(
         ]),
     writeTextFile(path.join(providerDir, "README.md"), renderProviderReadme(provider)),
     writeTextFile(path.join(providerDir, "index.ts"), renderProviderEntry(provider.name, providerClientImportPath)),
-    writeTextFile(path.join(providerDir, "types.ts"), typesContent),
+    writeTextFile(path.join(providerDir, "types.ts"), renderProviderTypes(provider, tools, publicTypeMap, clientToolMap)),
     writeTextFile(
       path.join(providerDir, "metadata.ts"),
       renderProviderMetadata(provider, clientToolMap, providerClientImportPath),
@@ -259,7 +238,7 @@ export async function generateRegistryTypes(
   return {
     provider: provider.name,
     outputPaths,
-    toolCount: operationCount,
+    toolCount: tools.length,
   };
 }
 

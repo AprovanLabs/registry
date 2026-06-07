@@ -10,7 +10,6 @@ import {
 } from "./provider.js";
 import { escapeComment, quotePropertyName, schemaToTypeScriptType } from "./schema.js";
 import type { ClientToolDefinition, ToolRuntimeMetadata } from "./client-api.js";
-import type { DiscoveredOperation } from "./openapi-discovery.js";
 import type { ProviderPackageDocsMetadata } from "./docs/types.js";
 import type { RegistryProvider } from "./provider.js";
 import type { Tool } from "@utcp/sdk";
@@ -187,38 +186,6 @@ function toClientTools(
       tags: tool.tags,
     };
   });
-}
-
-function toClientToolsFromDiscovery(
-  provider: Pick<RegistryProvider, "name" | "options">,
-  operations: DiscoveredOperation[],
-  clientToolMap: Map<string, ClientToolDefinition>,
-): ClientTool[] {
-  return operations.map((op) => {
-    const toolName = `${provider.name}_${op.name}`;
-    const generatedMetadata = clientToolMap.get(toolName);
-
-    return {
-      accessPath: generatedMetadata?.accessPath ?? [sanitizeIdentifier(toCamelCase(op.name))],
-      description: op.description || op.name,
-      hasInput: generatedMetadata?.hasInput ?? true,
-      hasOptions: generatedMetadata?.hasOptions ?? false,
-      inputType: generatedMetadata?.inputType ?? "{ [key: string]: unknown }",
-      optionsOptional: generatedMetadata?.optionsOptional ?? true,
-      optionsType: generatedMetadata?.optionsType ?? "{}",
-      outputType: "unknown",
-      tags: op.tags,
-    };
-  });
-}
-
-export function renderProviderTypesFromDiscovery(
-  provider: Pick<RegistryProvider, "name" | "options">,
-  operations: DiscoveredOperation[],
-  clientToolMap: Map<string, ClientToolDefinition>,
-): string {
-  const clientTools = toClientToolsFromDiscovery(provider, operations, clientToolMap);
-  return renderProviderTypesFromClientTools(provider, clientTools);
 }
 
 function renderProviderTypesFromClientTools(

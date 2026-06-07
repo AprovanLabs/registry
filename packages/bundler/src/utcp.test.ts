@@ -40,25 +40,17 @@ describe("loadProviderTools", () => {
     create.mockClear();
   });
 
-  it("passes the primary configured auth method into UTCP discovery", async () => {
-    const primaryAuth = {
-      auth_type: "api_key",
-      api_key: "${DD_API_KEY}",
-      var_name: "DD-API-KEY",
-      location: "header",
-    };
-
+  it("omits auth from the UTCP discovery template so variable resolution does not block tool enumeration", async () => {
     await loadProviderTools({
       name: "datadog",
       url: "https://example.com/openapi.yaml",
       fetch_method: "GET",
       options: {
         auth: [
-          primaryAuth,
           {
             auth_type: "api_key",
-            api_key: "${DD_APP_KEY}",
-            var_name: "DD-APPLICATION-KEY",
+            api_key: "${DD_API_KEY}",
+            var_name: "DD-API-KEY",
             location: "header",
           },
         ],
@@ -66,14 +58,13 @@ describe("loadProviderTools", () => {
     });
 
     expect(validateTemplate).toHaveBeenCalledWith(
-      expect.objectContaining({
-        name: "datadog",
-        auth: primaryAuth,
+      expect.not.objectContaining({
+        auth: expect.anything(),
       }),
     );
     expect(validateConfig).toHaveBeenCalledWith(
       expect.objectContaining({
-        manual_call_templates: [expect.objectContaining({ auth: primaryAuth })],
+        manual_call_templates: [expect.not.objectContaining({ auth: expect.anything() })],
       }),
     );
     expect(getTools).toHaveBeenCalledTimes(1);

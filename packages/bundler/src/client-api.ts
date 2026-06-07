@@ -1,8 +1,6 @@
-
 import { getDocumentPathItem } from "./openapi-path.js";
 import { stripProviderToolName, type RegistryProvider } from "./provider.js";
 import { schemaToTypeScriptType } from "./schema.js";
-import type { DiscoveredOperation } from "./openapi-discovery.js";
 import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
 
@@ -516,6 +514,25 @@ function buildOptionsSchema(request: RequestDefinition, runtimeMetadata: ToolRun
   };
 }
 
+function collectParameterDescriptions(
+  document: OpenAPIV3.Document,
+  tool: Tool,
+): Record<string, string> {
+  const { operation } = getOperationContext(document, tool);
+  const descriptions: Record<string, string> = {};
+  const parameterValues = operation?.parameters ?? [];
+
+  for (const parameterValue of parameterValues) {
+    const parameter = resolveParameter(document, parameterValue);
+
+    if (parameter?.description) {
+      descriptions[parameter.name] = parameter.description;
+    }
+  }
+
+  return descriptions;
+}
+
 export function buildClientToolMap(
   document: OpenAPIV3.Document,
   tools: Tool[],
@@ -530,6 +547,9 @@ export function buildClientToolMap(
       const { hasInput, schema: inputSchema, runtimeMetadata } = buildInputSchema(request);
       const { schema: optionsSchema, optional: optionsOptional, hasOptions } = buildOptionsSchema(request, runtimeMetadata);
       const accessPath = createUniqueAccessPath(rawToolName, usedPaths);
+      const parameterDescriptions = collectParameterDescriptions(document, tool);
+      const { operation } = getOperationContext(document, tool);
+      const operationDescription = operation?.summary ?? operation?.description ?? tool.description;
 
       return [
         tool.name,
@@ -547,128 +567,16 @@ export function buildClientToolMap(
               tool.tool_call_template && typeof tool.tool_call_template.content_type === "string"
                 ? tool.tool_call_template.content_type
                 : undefined,
+            description: operationDescription || undefined,
             method:
               tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
                 ? tool.tool_call_template.http_method
                 : "GET",
+            parameterDescriptions: Object.keys(parameterDescriptions).length > 0 ? parameterDescriptions : undefined,
             routeTemplate:
               tool.tool_call_template && typeof tool.tool_call_template.url === "string"
                 ? tool.tool_call_template.url.replace(/^https?:\/\/[^/]+/u, "")
                 : "/",
-          },
-        },
-      ];
-    }),
-  );
-}
-
-function buildRequestDefinitionFromPath(
-  document: OpenAPIV3.Document,
-  path: string,
-  method: string,
-): RequestDefinition {
-  const pathItem = document.paths?.[path];
-  const operation = pathItem?.[method.toLowerCase() as keyof OpenAPIV3.PathItemObject] as OpenAPIV3.OperationObject | undefined;
-  const parameterMap = new Map<string, ParameterDefinition>();
-  const parameterValues = [...(pathItem?.parameters ?? []), ...(operation?.parameters ?? [])];
-
-  for (const parameterValue of parameterValues) {
-    const parameter = resolveParameter(document, parameterValue);
-
-    if (!parameter || !["cookie", "header", "path", "query"].includes(parameter.in)) {
-      continue;
-    }
-
-    const schema = resolveSchema(
-      document,
-      parameter.schema ?? getPreferredContentSchema(document, parameter.content),
-    );
-
-    if (!schema) {
-      continue;
-    }
-
-    parameterMap.set(`${parameter.in}:${parameter.name}`, {
-      location: parameter.in as ParameterLocation,
-      name: parameter.name,
-      required: parameter.in === "path" ? true : Boolean(parameter.required),
-      schema,
-    });
-  }
-
-  const requestBody = resolveRequestBody(document, operation?.requestBody);
-  const bodySchema = getPreferredContentSchema(document, requestBody?.content);
-
-  return {
-    bodyRequired: Boolean(requestBody?.required),
-    bodySchema,
-    parameters: [...parameterMap.values()],
-  };
-}
-
-function collectParameterDescriptions(
-  document: OpenAPIV3.Document,
-  path: string,
-  method: string,
-): Record<string, string> {
-  const pathItem = document.paths?.[path];
-  const operation = pathItem?.[method.toLowerCase() as keyof OpenAPIV3.PathItemObject] as OpenAPIV3.OperationObject | undefined;
-  const descriptions: Record<string, string> = {};
-  const parameterValues = [...(pathItem?.parameters ?? []), ...(operation?.parameters ?? [])];
-
-  for (const parameterValue of parameterValues) {
-    const parameter = resolveParameter(document, parameterValue);
-
-    if (parameter?.description) {
-      descriptions[parameter.name] = parameter.description;
-    }
-  }
-
-  return descriptions;
-}
-
-/**
- * Build a client tool map directly from discovered OpenAPI operations,
- * bypassing the UTCP SDK entirely. This uses the same downstream logic
- * (parameter classification, schema resolution, type generation) as
- * `buildClientToolMap`, but reads operations from the OpenAPI document
- * directly instead of relying on UTCP tool discovery.
- */
-export function buildClientToolMapFromDiscovery(
-  document: OpenAPIV3.Document,
-  operations: DiscoveredOperation[],
-  provider: Pick<RegistryProvider, "name" | "options">,
-): Map<string, ClientToolDefinition> {
-  const usedPaths = new Set<string>();
-
-  return new Map(
-    operations.map((op) => {
-      const rawToolName = op.name;
-      const request = buildRequestDefinitionFromPath(document, op.path, op.method);
-      const { hasInput, schema: inputSchema, runtimeMetadata } = buildInputSchema(request);
-      const { schema: optionsSchema, optional: optionsOptional, hasOptions } = buildOptionsSchema(request, runtimeMetadata);
-      const accessPath = createUniqueAccessPath(rawToolName, usedPaths);
-      const parameterDescriptions = collectParameterDescriptions(document, op.path, op.method);
-
-      const toolName = `${provider.name}_${rawToolName}`;
-
-      return [
-        toolName,
-        {
-          accessPath,
-          hasInput,
-          hasOptions,
-          inputType: schemaToTypeScriptType(inputSchema),
-          optionsOptional,
-          optionsType: schemaToTypeScriptType(optionsSchema),
-          runtimeMetadata: {
-            ...runtimeMetadata,
-            accessPath,
-            contentType: op.contentType,
-            description: op.description || undefined,
-            method: op.method,
-            parameterDescriptions: Object.keys(parameterDescriptions).length > 0 ? parameterDescriptions : undefined,
-            routeTemplate: op.path,
           },
         },
       ];
