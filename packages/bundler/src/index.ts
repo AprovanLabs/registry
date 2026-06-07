@@ -112,8 +112,9 @@ export async function augmentRegistryProviderDocs(
   const outputRoot = options.outputRoot ?? DEFAULT_OUTPUT_ROOT;
   const providers = await loadRegistryProviders();
   const provider = resolveProvider(providers, options.provider);
-  const [rawOpenApiDocument, { tools }] = await Promise.all([loadOpenApiDocument(provider), loadProviderTools(provider)]);
+  const rawOpenApiDocument = await loadOpenApiDocument(provider);
   const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
+  const { tools } = await loadProviderTools(provider, rawOpenApiDocument);
   const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
   const augmented = await augmentProviderDocs({
     provider: provider.name,
@@ -167,8 +168,9 @@ export async function generateRegistryTypes(
 ): Promise<GenerateRegistryTypesResult> {
   const providers = await loadRegistryProviders();
   const provider = resolveProvider(providers, options.provider);
-  const [{ tools }, rawOpenApiDocument] = await Promise.all([loadProviderTools(provider), loadOpenApiDocument(provider)]);
+  const rawOpenApiDocument = await loadOpenApiDocument(provider);
   const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
+  const { tools } = await loadProviderTools(provider, rawOpenApiDocument);
   const publicTypeMap = buildPublicTypeMap(openApiDocument, tools);
   const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
 
