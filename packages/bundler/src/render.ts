@@ -1,4 +1,5 @@
 import { readFileSync } from "node:fs";
+import { groupOpenApiOperations } from "./docs/grouping.js";
 import {
   getProviderAuthOptions,
   getProviderPackageName,
@@ -179,7 +180,7 @@ function toClientTools(
 
     return {
       accessPath: generatedMetadata?.accessPath ?? [sanitizeIdentifier(rawToolName)],
-      description: tool.description,
+      description: tool.description ?? "",
       hasInput: generatedMetadata?.hasInput ?? inputType !== "{}",
       hasOptions: generatedMetadata?.hasOptions ?? false,
       inputSchema: generatedMetadata?.inputSchema ?? (hasPublicType ? undefined : tool.inputs),
@@ -188,7 +189,7 @@ function toClientTools(
       optionsType: generatedMetadata?.optionsType ?? "{}",
       outputSchema: hasPublicType ? undefined : tool.outputs,
       outputType: publicTypeMap.get(tool.name)?.outputType ?? schemaToTypeScriptType(tool.outputs),
-      tags: tool.tags,
+      tags: tool.tags ?? [],
     };
   });
 }
@@ -307,16 +308,166 @@ export function renderProviderTypes(
   return renderProviderTypesFromClientTools(provider, clientTools);
 }
 
+function groupClientToolsByTag(
+  clientTools: ClientTool[],
+  openApiDocument: OpenAPIV3.Document,
+): Map<string, ClientTool[]> {
+  const groups = new Map<string, ClientTool[]>();
+
+  // Get the doc groups from OpenAPI (same grouping used for docs)
+  const docGroups = groupOpenApiOperations(openApiDocument);
+
+  // Build a map from operationId to group key
+  const operationIdToGroupKey = new Map<string, string>();
+  for (const docGroup of docGroups) {
+    for (const op of docGroup.operations) {
+      if (op.operationId) {
+        operationIdToGroupKey.set(op.operationId, docGroup.key);
+      }
+    }
+  }
+
+  for (const tool of clientTools) {
+    // Try to find the operationId from the accessPath
+    const operationPath = tool.accessPath.join(".");
+    let tag = "general";
+
+    // Look for matching operationId in the OpenAPI document
+    for (const [opId, groupKey] of operationIdToGroupKey.entries()) {
+      if (operationPath.toLowerCase().includes(opId.toLowerCase().replace(/-/g, ""))) {
+        tag = groupKey;
+        break;
+      }
+    }
+
+    if (!groups.has(tag)) {
+      groups.set(tag, []);
+    }
+    groups.get(tag)!.push(tool);
+  }
+
+  return groups;
+}
+
+function toTypeName(groupKey: string): string {
+  return toPascalCase(groupKey) + "Operations";
+}
+
+function renderGroupTypes(
+  provider: Pick<RegistryProvider, "name" | "options">,
+  groupKey: string,
+  clientTools: ClientTool[],
+): string {
+  const typeName = toTypeName(groupKey);
+
+  const toolEntries = clientTools
+    .map((tool) => {
+      const methodName = tool.accessPath[tool.accessPath.length - 1] ?? "call";
+      const parameters = [
+        tool.hasInput ? `input: ${tool.inputType}` : undefined,
+        tool.hasOptions ? `options${tool.optionsOptional ? "?" : ""}: ${tool.optionsType}` : undefined,
+      ].filter((p): p is string => Boolean(p));
+      const invocation = [
+        tool.hasInput ? "input" : undefined,
+        tool.hasOptions ? "options" : undefined,
+      ].filter((a): a is string => Boolean(a));
+
+      return [
+        `  /**`,
+        `   * ${escapeComment(tool.description ?? "")}`,
+        `   * Tags: ${escapeComment(tool.tags.join(", "))}`,
+        `   * Access as: ${provider.name}.${tool.accessPath.join(".")}(${invocation.join(", ")})`,
+        `   */`,
+        `  ${quotePropertyName(methodName)}: (${parameters.join(", ")}) => Promise<${tool.outputType}>;`,
+      ].join("\n");
+    })
+    .join("\n\n");
+
+  return [
+    `export type ${typeName} = {`,
+    toolEntries,
+    "};",
+    "",
+  ].join("\n");
+}
+
+export function renderProviderGroupTypes(
+  provider: Pick<RegistryProvider, "name" | "options">,
+  openApiDocument: OpenAPIV3.Document,
+  tools: Tool[],
+  publicTypeMap: Map<string, PublicToolTypes>,
+  clientToolMap: Map<string, ClientToolDefinition>,
+): Map<string, string> {
+  const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
+  const groups = groupClientToolsByTag(clientTools, openApiDocument);
+
+  const output = new Map<string, string>();
+
+  for (const [groupKey, groupTools] of groups.entries()) {
+    const fileName = `${groupKey}.ts`;
+    const content = renderGroupTypes(provider, groupKey, groupTools);
+    output.set(fileName, content);
+  }
+
+  return output;
+}
+
+export function renderProviderTypesIndex(
+  provider: Pick<RegistryProvider, "name" | "options">,
+  openApiDocument: OpenAPIV3.Document,
+  tools: Tool[],
+  publicTypeMap: Map<string, PublicToolTypes>,
+  clientToolMap: Map<string, ClientToolDefinition>,
+): string {
+  const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
+  const groups = groupClientToolsByTag(clientTools, openApiDocument);
+
+  const providerTypeName = toPascalCase(provider.name);
+
+  const imports = [...groups.keys()]
+    .sort()
+    .map((groupKey) => {
+      const typeName = toTypeName(groupKey);
+      return `import type { ${typeName} } from "./${groupKey}.js";`;
+    })
+    .join("\n");
+
+  const composition = [...groups.keys()]
+    .sort()
+    .map((groupKey) => {
+      const typeName = toTypeName(groupKey);
+      const propertyName = toCamelCase(groupKey);
+      return `  ${propertyName}: ${typeName};`;
+    })
+    .join("\n");
+
+  const reExports = [...groups.keys()]
+    .sort()
+    .map((groupKey) => `export * from "./${groupKey}.js";`)
+    .join("\n");
+
+  return [
+    imports,
+    "",
+    `export type ${providerTypeName}Client = {`,
+    composition,
+    "};",
+    "",
+    reExports,
+    "",
+  ].join("\n");
+}
+
 export function renderProviderEntry(providerName: string, clientImportPath = "../client.js"): string {
   const providerTypeName = toPascalCase(providerName);
 
   return `import type { CreateClientOptions } from ${JSON.stringify(clientImportPath)};
 import { createClient, createLazyClient } from ${JSON.stringify(clientImportPath)};
-import type { ${providerTypeName}Client } from "./types.js";
+import type { ${providerTypeName}Client } from "./types/index.js";
 import { toolMetadata } from "./metadata.js";
 import openApiDocument from "./openapi.json" with { type: "json" };
 
-export * from "./types.js";
+export * from "./types/index.js";
 
 export function create${providerTypeName}Client(
   options: Omit<CreateClientOptions, "name" | "openApiDocument" | "toolMetadata"> = {},

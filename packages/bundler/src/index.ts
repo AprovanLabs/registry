@@ -26,10 +26,12 @@ import {
   renderNamespacePackageJson,
   renderRootClient,
   renderProviderEntry,
+  renderProviderGroupTypes,
   renderProviderMetadata,
   renderProviderPackageJson,
   renderProviderReadme,
   renderProviderTypes,
+  renderProviderTypesIndex,
   renderRootPackageEntry,
   renderRootPackageJson,
   renderRootTsconfig,
@@ -228,7 +230,18 @@ export async function generateRegistryTypes(
         ]),
     writeTextFile(path.join(providerDir, "README.md"), renderProviderReadme(provider, { openApiDocument })),
     writeTextFile(path.join(providerDir, "index.ts"), renderProviderEntry(provider.name, providerClientImportPath)),
-    writeTextFile(path.join(providerDir, "types.ts"), renderProviderTypes(provider, tools, publicTypeMap, clientToolMap)),
+    ...(await (async () => {
+      const typesDir = path.join(providerDir, "types");
+      const groupTypeFiles = renderProviderGroupTypes(provider, openApiDocument, tools, publicTypeMap, clientToolMap);
+      const indexContent = renderProviderTypesIndex(provider, openApiDocument, tools, publicTypeMap, clientToolMap);
+      const typePaths = await Promise.all(
+        [...groupTypeFiles.entries()].map(([fileName, content]) =>
+          writeTextFile(path.join(typesDir, fileName), content)
+        )
+      );
+      typePaths.push(await writeTextFile(path.join(typesDir, "index.ts"), indexContent));
+      return typePaths;
+    })()),
     writeTextFile(
       path.join(providerDir, "metadata.ts"),
       renderProviderMetadata(provider, clientToolMap, providerClientImportPath),
