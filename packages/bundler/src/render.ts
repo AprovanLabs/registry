@@ -10,6 +10,7 @@ import {
 } from "./provider.js";
 import { escapeComment, quotePropertyName, schemaToTypeScriptType } from "./schema.js";
 import type { ClientToolDefinition, ToolRuntimeMetadata } from "./client-api.js";
+import type { DiscoveredOperation } from "./openapi-discovery.js";
 import type { ProviderPackageDocsMetadata } from "./docs/types.js";
 import type { RegistryProvider } from "./provider.js";
 import type { Tool } from "@utcp/sdk";
@@ -188,13 +189,42 @@ function toClientTools(
   });
 }
 
-export function renderProviderTypes(
+function toClientToolsFromDiscovery(
   provider: Pick<RegistryProvider, "name" | "options">,
-  tools: Tool[],
-  publicTypeMap: Map<string, PublicToolTypes>,
+  operations: DiscoveredOperation[],
+  clientToolMap: Map<string, ClientToolDefinition>,
+): ClientTool[] {
+  return operations.map((op) => {
+    const toolName = `${provider.name}_${op.name}`;
+    const generatedMetadata = clientToolMap.get(toolName);
+
+    return {
+      accessPath: generatedMetadata?.accessPath ?? [sanitizeIdentifier(toCamelCase(op.name))],
+      description: op.description || op.name,
+      hasInput: generatedMetadata?.hasInput ?? true,
+      hasOptions: generatedMetadata?.hasOptions ?? false,
+      inputType: generatedMetadata?.inputType ?? "{ [key: string]: unknown }",
+      optionsOptional: generatedMetadata?.optionsOptional ?? true,
+      optionsType: generatedMetadata?.optionsType ?? "{}",
+      outputType: "unknown",
+      tags: op.tags,
+    };
+  });
+}
+
+export function renderProviderTypesFromDiscovery(
+  provider: Pick<RegistryProvider, "name" | "options">,
+  operations: DiscoveredOperation[],
   clientToolMap: Map<string, ClientToolDefinition>,
 ): string {
-  const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
+  const clientTools = toClientToolsFromDiscovery(provider, operations, clientToolMap);
+  return renderProviderTypesFromClientTools(provider, clientTools);
+}
+
+function renderProviderTypesFromClientTools(
+  provider: Pick<RegistryProvider, "name" | "options">,
+  clientTools: ClientTool[],
+): string {
   const providerTypeName = toPascalCase(provider.name);
 
   type ClientTreeNode = {
@@ -269,6 +299,16 @@ export function renderProviderTypes(
     "};",
     "",
   ].join("\n");
+}
+
+export function renderProviderTypes(
+  provider: Pick<RegistryProvider, "name" | "options">,
+  tools: Tool[],
+  publicTypeMap: Map<string, PublicToolTypes>,
+  clientToolMap: Map<string, ClientToolDefinition>,
+): string {
+  const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
+  return renderProviderTypesFromClientTools(provider, clientTools);
 }
 
 export function renderProviderEntry(providerName: string, clientImportPath = "../client.js"): string {
