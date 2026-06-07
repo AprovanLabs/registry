@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-
 import { loadDocsPromptAssets } from "./prompt.js";
 
 describe("loadDocsPromptAssets", () => {

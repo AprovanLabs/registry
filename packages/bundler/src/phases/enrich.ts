@@ -1,10 +1,8 @@
 import { access, mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-
-import type { OpenAPIV3 } from "openapi-types";
 import { parse as parseYaml, stringify as stringifyYaml } from "yaml";
-
 import { DEFAULT_OUTPUT_ROOT, loadRegistryProviders, resolveProvider, resolveProviderOutputDir } from "../provider.js";
+import type { OpenAPIV3 } from "openapi-types";
 
 export type PaginationHint = {
   type: "cursor" | "offset" | "page";

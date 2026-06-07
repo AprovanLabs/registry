@@ -1,6 +1,13 @@
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
-
+import { buildClientToolMap } from "./client-api.js";
+import { augmentProviderDocs, type AugmentProviderDocsResult } from "./docs/augment.js";
+import { loadProviderDocs, type LoadProviderDocsOptions, type LoadProviderDocsResult } from "./docs/load.js";
+import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
+import { runEnrichPhase, type RunEnrichPhaseOptions, type RunEnrichPhaseResult } from "./phases/enrich.js";
+import { runResearchPhase, type RunResearchPhaseOptions, type RunResearchPhaseResult } from "./phases/research.js";
+import { runReviewPhase, type RunReviewPhaseOptions, type RunReviewPhaseResult } from "./phases/review.js";
+import { runShipPhase, type RunShipPhaseOptions, type RunShipPhaseResult } from "./phases/ship.js";
 import {
   DEFAULT_DOCS_CACHE_ROOT,
   DEFAULT_OUTPUT_ROOT,
@@ -13,10 +20,6 @@ import {
   resolveProviderPackageRootDir,
   splitProviderName,
 } from "./provider.js";
-import { buildClientToolMap } from "./client-api.js";
-import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
-import { augmentProviderDocs, type AugmentProviderDocsOptions, type AugmentProviderDocsResult } from "./docs/augment.js";
-import { loadProviderDocs, type LoadProviderDocsOptions, type LoadProviderDocsResult } from "./docs/load.js";
 import {
   renderCopyAssetsScript,
   renderNamespaceEntry,
@@ -32,10 +35,6 @@ import {
   renderRootTsconfig,
 } from "./render.js";
 import { loadProviderTools } from "./utcp.js";
-import { runEnrichPhase, type RunEnrichPhaseOptions, type RunEnrichPhaseResult } from "./phases/enrich.js";
-import { runResearchPhase, type RunResearchPhaseOptions, type RunResearchPhaseResult } from "./phases/research.js";
-import { runReviewPhase, type RunReviewPhaseOptions, type RunReviewPhaseResult } from "./phases/review.js";
-import { runShipPhase, type RunShipPhaseOptions, type RunShipPhaseResult } from "./phases/ship.js";
 
 export {
   runResearchPhase,

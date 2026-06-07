@@ -1,6 +1,5 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-
 import { applyProviderOpenApiOptions, loadOpenApiDocument } from "../openapi.js";
 import {
   DEFAULT_DOCS_CACHE_ROOT,
@@ -16,8 +15,8 @@ import { discoverDocsReferences } from "./discover.js";
 import { fetchDocsSources } from "./fetch.js";
 import { hashOpenApiDocument } from "./hash.js";
 import { createDocsManifest, writeDocsManifest } from "./manifest.js";
-import type { DocsDiscoveredReference } from "./types.js";
 import { validateDocsReferences } from "./validate.js";
+import type { DocsDiscoveredReference } from "./types.js";
 
 export type LoadProviderDocsOptions = {
   provider: string;

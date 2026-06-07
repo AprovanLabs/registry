@@ -1,6 +1,7 @@
 import { CheckIcon, CopyIcon, LoaderCircleIcon, PlayIcon, TerminalIcon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-
+import type { OperationInfo, OpenApiSchemaType } from "@/lib/openapi";
+import { ProviderCredentialConfig } from "@/components/ProviderCredentialConfig";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,9 +13,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
-import type { OperationInfo, OpenApiSchemaType } from "@/lib/openapi";
-import { ProviderCredentialConfig } from "@/components/ProviderCredentialConfig";
 import {
   type ProviderCredentialConfig as CredentialConfig,
   buildAuthHeaders,
@@ -22,6 +20,7 @@ import {
   getProviderCredential,
   saveGatewayUrl,
 } from "@/lib/local-credentials";
+import { cn } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
 // Types

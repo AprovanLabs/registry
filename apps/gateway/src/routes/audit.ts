@@ -10,8 +10,8 @@
  */
 
 import { Hono } from "hono";
-import { requireAuth, requireAdmin } from "../middleware/auth.js";
 import { getAuditStore } from "../audit.js";
+import { requireAuth, requireAdmin } from "../middleware/auth.js";
 
 export const auditRouter = new Hono();
 

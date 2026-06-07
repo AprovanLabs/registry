@@ -16,8 +16,8 @@
  */
 
 import { serve } from "@hono/node-server";
-import { createApp } from "./app.js";
 import { configureTelemetry } from "@utdk/common/telemetry";
+import { createApp } from "./app.js";
 
 const PORT = Number(process.env["GATEWAY_PORT"] ?? 4000);
 

@@ -1,14 +1,12 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
-
-import type { Tool } from "@utcp/sdk";
-import type { OpenAPIV3 } from "openapi-types";
 import { parse as parseYaml } from "yaml";
-
 import { getDocumentPathItem } from "./openapi-path.js";
-import type { RegistryProvider } from "./provider.js";
 import { resolveRepoPath } from "./provider.js";
 import { schemaToTypeScriptType } from "./schema.js";
+import type { RegistryProvider } from "./provider.js";
+import type { Tool } from "@utcp/sdk";
+import type { OpenAPIV3 } from "openapi-types";
 
 type PublicToolTypes = {
   inputType: string;

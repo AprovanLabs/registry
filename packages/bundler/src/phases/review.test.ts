@@ -1,9 +1,7 @@
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { tmpdir } from "node:os";
-
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-
 import { runReviewPhase } from "./review.js";
 import type { InfraRunner } from "../verification/scorecard.js";
 

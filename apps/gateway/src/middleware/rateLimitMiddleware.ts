@@ -9,8 +9,8 @@
  *   GATEWAY_RATE_LIMIT_BURST  — burst capacity (default: 20)
  */
 
-import type { Context, Next } from "hono";
 import { RateLimiter } from "@utdk/common/rateLimit";
+import type { Context, Next } from "hono";
 
 const DEFAULT_RPS = 10;
 const DEFAULT_BURST = 20;

@@ -1,6 +1,5 @@
 import { HttpCallTemplateSerializer } from "@utcp/http";
 import { UtcpClient, UtcpClientConfigSerializer, type Tool } from "@utcp/sdk";
-
 import { getPrimaryProviderAuthOption, type RegistryProvider } from "./provider.js";
 
 export type LoadedProviderTools = {

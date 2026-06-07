@@ -694,7 +694,7 @@ function buildRegistryEntry(providerName: string): ProviderEntry {
  * Upsert a single provider entry in data/registry.json.
  * Returns whether the entry was added, updated, or is a dry-run.
  */
-async function upsertRegistryEntry(
+async function _upsertRegistryEntry(
   repoRoot: string,
   entry: ProviderEntry,
   dryRun: boolean,

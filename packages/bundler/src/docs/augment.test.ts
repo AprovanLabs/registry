@@ -1,9 +1,7 @@
 import { mkdir, mkdtemp, rm, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { tmpdir } from "node:os";
-
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-
 import { augmentProviderDocs } from "./augment.js";
 import { createDocsManifest, writeDocsManifest } from "./manifest.js";
 

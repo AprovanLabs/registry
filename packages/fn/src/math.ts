@@ -18,17 +18,6 @@ type UnaryNumberInput =
       x?: number;
     };
 
-type BinaryNumberInput =
-  | [number, number]
-  | {
-      a?: number;
-      b?: number;
-      left?: number;
-      right?: number;
-      x?: number;
-      y?: number;
-    };
-
 function isRecord(value: unknown): value is NumberRecord {
   return Boolean(value && typeof value === "object" && !Array.isArray(value));
 }

@@ -1,9 +1,7 @@
-import { defineConfig } from "vitest/config";
+import { defineConfig } from "@aprovan/vitest-config";
 
-export default defineConfig({
-  test: {
-    environment: "node",
-    globals: false,
+export default {
+  test: defineConfig("node", {
     include: ["tests/**/*.test.ts"],
     alias: {
       "@utdk/common/telemetry": new URL("../../packages/utdk/common/telemetry.ts", import.meta.url).pathname,
@@ -11,5 +9,5 @@ export default defineConfig({
       "@utdk/common/auth": new URL("../../packages/utdk/common/auth.ts", import.meta.url).pathname,
       "@utdk/common": new URL("../../packages/utdk/common/index.ts", import.meta.url).pathname,
     },
-  },
-});
+  }),
+};

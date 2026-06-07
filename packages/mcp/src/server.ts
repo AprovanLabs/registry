@@ -18,21 +18,20 @@
  *   Send SIGHUP to reload provider list from the current UTDK_PROVIDERS env value.
  */
 
+import { Server } from "@modelcontextprotocol/sdk/server/index.js";
+import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
-import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
-
 import {
   executeTool,
   initTelemetry,
   loadProviders,
   parseProviderNames,
 } from "./loader.js";
-import type { ProviderTool } from "./loader.js";
 import { searchTools, groupTools } from "./search.js";
+import type { ProviderTool } from "./loader.js";
 
 // ---------------------------------------------------------------------------
 // Schema normalization

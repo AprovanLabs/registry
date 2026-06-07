@@ -9,7 +9,6 @@
 
 import { readdir, readFile, stat } from "node:fs/promises";
 import path from "node:path";
-
 import { resolveProviderOutputDir } from "../provider.js";
 
 // ---------------------------------------------------------------------------

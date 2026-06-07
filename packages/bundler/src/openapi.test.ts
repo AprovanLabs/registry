@@ -1,9 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-
+import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
+import type { RegistryProvider } from "./provider.js";
 import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
-import type { RegistryProvider } from "./provider.js";
-import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
 
 function createTool(name: string, httpMethod: string, url: string): Tool {
   return {

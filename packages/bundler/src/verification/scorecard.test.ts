@@ -1,9 +1,7 @@
 import { mkdtemp, mkdir, rm, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { tmpdir } from "node:os";
-
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-
 import { MIN_DOMAIN_SCORE, runScorecard, type InfraRunner } from "./scorecard.js";
 
 // ---------------------------------------------------------------------------

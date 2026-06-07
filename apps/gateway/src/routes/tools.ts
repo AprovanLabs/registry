@@ -22,14 +22,14 @@
  * - Logs request/response metadata (not bodies)
  */
 
+import { withSpan } from "@utdk/common/telemetry";
 import { Hono } from "hono";
+import { getAuditStore } from "../audit.js";
+import { getCredentialStore, type CredentialPayload } from "../credentials.js";
+import { getExecutor, type IsolateResult } from "../isolate.js";
 import { requireAuth, type GatewayJWTPayload } from "../middleware/auth.js";
 import { rateLimitByCallerAndProvider } from "../middleware/rateLimitMiddleware.js";
-import { getCredentialStore, type CredentialPayload } from "../credentials.js";
 import { getPermissionStore } from "../permissions.js";
-import { getExecutor, type IsolateResult } from "../isolate.js";
-import { withSpan } from "@utdk/common/telemetry";
-import { getAuditStore } from "../audit.js";
 
 export const toolsRouter = new Hono();
 

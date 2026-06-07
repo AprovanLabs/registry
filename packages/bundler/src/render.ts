@@ -1,11 +1,4 @@
 import { readFileSync } from "node:fs";
-
-import type { Tool } from "@utcp/sdk";
-import type { OpenAPIV3 } from "openapi-types";
-
-import type { ClientToolDefinition, ToolRuntimeMetadata } from "./client-api.js";
-import type { ProviderPackageDocsMetadata } from "./docs/types.js";
-import type { RegistryProvider } from "./provider.js";
 import {
   getProviderAuthOptions,
   getProviderPackageName,
@@ -16,6 +9,11 @@ import {
   stripProviderToolName,
 } from "./provider.js";
 import { escapeComment, quotePropertyName, schemaToTypeScriptType } from "./schema.js";
+import type { ClientToolDefinition, ToolRuntimeMetadata } from "./client-api.js";
+import type { ProviderPackageDocsMetadata } from "./docs/types.js";
+import type { RegistryProvider } from "./provider.js";
+import type { Tool } from "@utcp/sdk";
+import type { OpenAPIV3 } from "openapi-types";
 
 type PublicToolTypes = {
   inputType: string;

@@ -12,10 +12,10 @@
  */
 
 import * as React from "react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 // In Astro/Vite the env var must be prefixed PUBLIC_ to be available client-side.
 // Fallback to localhost:4000 for local development.
 const GATEWAY_URL: string =
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   ((import.meta as unknown as { env: Record<string, string> }).env
     .PUBLIC_GATEWAY_URL as string | undefined) ?? "http://localhost:4000";
 

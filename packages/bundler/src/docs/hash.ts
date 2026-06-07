@@ -1,5 +1,4 @@
 import { createHash } from "node:crypto";
-
 import { DOCS_MANIFEST_SCHEMA_VERSION } from "./types.js";
 
 export type DocsStaleReason =

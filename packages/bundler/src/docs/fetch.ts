@@ -1,6 +1,5 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
-
 import { hashContent } from "./hash.js";
 import type { DocsCachedSourceFile, DocsReferenceCategory } from "./types.js";
 import type { DocsValidatedReference } from "./validate.js";

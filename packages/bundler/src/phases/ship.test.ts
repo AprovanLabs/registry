@@ -1,12 +1,10 @@
 import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { tmpdir } from "node:os";
-
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-
 import { runShipPhase } from "./ship.js";
-import type { ScorecardResult } from "../verification/scorecard.js";
 import type { AgentReadinessResult } from "./agentReadiness.js";
+import type { ScorecardResult } from "../verification/scorecard.js";
 
 const tempDirs: string[] = [];
 

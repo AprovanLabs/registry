@@ -1,18 +1,16 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-
-import type { Tool } from "@utcp/sdk";
-import type { OpenAPIV3 } from "openapi-types";
-
-import type { ClientToolDefinition } from "../client-api.js";
 import { resolveProviderDocsIndexPath, resolveProviderDocsManifestPath, resolveProviderOutputDir } from "../provider.js";
 import { stripProviderToolName, type RegistryProvider } from "../provider.js";
 import { schemaToTypeScriptType } from "../schema.js";
-import { getDocsStaleCheckResult } from "./hash.js";
 import { groupOpenApiOperations } from "./grouping.js";
+import { getDocsStaleCheckResult } from "./hash.js";
 import { readDocsManifest } from "./manifest.js";
 import { loadDocsPromptAssets } from "./prompt.js";
 import { DocsPipelineError, type ProviderPackageDocsMetadata } from "./types.js";
+import type { ClientToolDefinition } from "../client-api.js";
+import type { Tool } from "@utcp/sdk";
+import type { OpenAPIV3 } from "openapi-types";
 
 export type AugmentProviderDocsOptions = {
   provider: string;

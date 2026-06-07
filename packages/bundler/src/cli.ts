@@ -1,11 +1,11 @@
 import { DocsPipelineError } from "./docs/types.js";
-import { augmentRegistryProviderDocs, generateRegistryTypes, loadRegistryProviderDocs, runFullPipeline } from "./index.js";
 import { runEnrichPhase } from "./phases/enrich.js";
 import { runResearchPhase } from "./phases/research.js";
 import { runReviewPhase } from "./phases/review.js";
 import { runShipPhase } from "./phases/ship.js";
 import { DEFAULT_OUTPUT_ROOT } from "./provider.js";
 import { runSmokeTest } from "./verification/smoke.js";
+import { augmentRegistryProviderDocs, loadRegistryProviderDocs, runFullPipeline } from "./index.js";
 
 type CliCommand = "generate" | "load-docs" | "augment-docs";
 type PipelinePhase = "research" | "enrich" | "review" | "ship";

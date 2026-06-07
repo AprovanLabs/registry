@@ -1,7 +1,6 @@
 import { describe, expect, it } from "vitest";
-
-import type { RegistryProvider } from "../provider.js";
 import { discoverDocsReferences } from "./discover.js";
+import type { RegistryProvider } from "../provider.js";
 import type { DocsDiscoveredReference } from "./types.js";
 
 describe("discoverDocsReferences", () => {
