@@ -229,6 +229,39 @@ describe("nested provider rendering", () => {
     expect(rendered).toContain('"../../client.js"');
   });
 
+  it("includes description and parameterDescriptions in metadata output", () => {
+    const entry = createClientToolDefinition(["listItems"]);
+    entry.runtimeMetadata.description = "Returns a paginated list of items";
+    entry.runtimeMetadata.parameterDescriptions = {
+      limit: "Maximum items to return",
+      offset: "Offset for pagination",
+    };
+
+    const rendered = renderProviderMetadata(
+      { name: "example" },
+      new Map([["example.listItems", entry]]),
+    );
+
+    expect(rendered).toContain('"description": "Returns a paginated list of items"');
+    expect(rendered).toContain('"parameterDescriptions"');
+    expect(rendered).toContain('"limit": "Maximum items to return"');
+    expect(rendered).toContain('"offset": "Offset for pagination"');
+  });
+
+  it("omits undefined description and parameterDescriptions from metadata output", () => {
+    const entry = createClientToolDefinition(["getItem"]);
+    entry.runtimeMetadata.description = undefined;
+    entry.runtimeMetadata.parameterDescriptions = undefined;
+
+    const rendered = renderProviderMetadata(
+      { name: "example" },
+      new Map([["example.getItem", entry]]),
+    );
+
+    expect(rendered).not.toContain('"description"');
+    expect(rendered).not.toContain('"parameterDescriptions"');
+  });
+
   it("includes provider auth metadata in package json utdk metadata", () => {
     const rendered = renderProviderPackageJson(
       {
