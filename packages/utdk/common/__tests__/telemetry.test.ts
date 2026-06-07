@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { withSpan, withSpanSync, configureTelemetry } from "../telemetry.js";
 
 beforeEach(async () => {
@@ -28,7 +28,7 @@ describe("withSpan (telemetry disabled)", () => {
     expect(spanReceived).toBeDefined();
     // Noop span should not throw when methods are called
     expect(() => {
-      const s = spanReceived as { setAttribute: Function; end: Function };
+      const s = spanReceived as { setAttribute: (...args: unknown[]) => unknown; end: () => void };
       s.setAttribute("key", "val");
       s.end();
     }).not.toThrow();

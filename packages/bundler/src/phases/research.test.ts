@@ -1,9 +1,7 @@
 import { mkdtemp, readFile, rm } from "node:fs/promises";
-import path from "node:path";
 import { tmpdir } from "node:os";
-
+import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
-
 import { runResearchPhase } from "./research.js";
 
 const tempDirs: string[] = [];

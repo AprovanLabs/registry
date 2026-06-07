@@ -7,8 +7,8 @@
  */
 
 import { Hono } from "hono";
-import { requireAuth, requireAdmin } from "../middleware/auth.js";
 import { getApiKeyStore, type CreateApiKeyInput } from "../apikeys.js";
+import { requireAuth, requireAdmin } from "../middleware/auth.js";
 
 export const apiKeysRouter = new Hono();
 

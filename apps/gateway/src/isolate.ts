@@ -51,7 +51,7 @@ async function tryLoadIsolate(): Promise<IsolateExecutor | undefined> {
     // Attempt to import the real isolate runtime (APR-15).
     // The package does not exist yet; the dynamic import will throw at runtime
     // and the fallback executor will be used instead.
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+     
     // @ts-ignore — @utdk/isolate is not yet published (APR-15)
     const mod = (await import("@utdk/isolate")) as {
       Isolate: new () => IsolateExecutor;

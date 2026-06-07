@@ -6,12 +6,10 @@
  */
 
 import { OpenApiConverter } from "@utcp/http";
-import type { Tool } from "@utcp/sdk";
-import type { AuthProvider } from "@utdk/common";
 import { withSpan, configureTelemetry } from "@utdk/common";
-
 import { buildAuthProvider } from "./auth.js";
 import type { UtdkAuthConfig } from "./auth.js";
+import type { AuthProvider } from "@utdk/common";
 
 export interface ProviderTool {
   /** MCP tool name (e.g. "github__repos_list") */

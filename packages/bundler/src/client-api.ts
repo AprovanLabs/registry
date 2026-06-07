@@ -1,9 +1,9 @@
-import type { Tool } from "@utcp/sdk";
-import type { OpenAPIV3 } from "openapi-types";
 
 import { getDocumentPathItem } from "./openapi-path.js";
 import { stripProviderToolName, type RegistryProvider } from "./provider.js";
 import { schemaToTypeScriptType } from "./schema.js";
+import type { Tool } from "@utcp/sdk";
+import type { OpenAPIV3 } from "openapi-types";
 
 export type ToolRuntimeMetadata = {
   accessPath: string[];

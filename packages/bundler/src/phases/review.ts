@@ -1,5 +1,5 @@
 import { DEFAULT_OUTPUT_ROOT, loadRegistryProviders, resolveProvider } from "../provider.js";
-import { MIN_DOMAIN_SCORE, runScorecard, type InfraRunner, type ScorecardResult } from "../verification/scorecard.js";
+import { runScorecard, type InfraRunner, type ScorecardResult } from "../verification/scorecard.js";
 import { runAgentReadiness, type AgentReadinessResult } from "./agentReadiness.js";
 
 export type RunReviewPhaseResult = {

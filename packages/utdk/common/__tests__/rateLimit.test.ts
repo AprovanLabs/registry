@@ -38,7 +38,7 @@ describe("RateLimiter", () => {
   });
 
   it("allows requests within the burst capacity immediately", async () => {
-    let nowValue = 0;
+    const nowValue = 0;
     const limiter = new RateLimiter({
       requestsPerSecond: 10,
       burst: 5,
@@ -58,7 +58,7 @@ describe("RateLimiter", () => {
   });
 
   it("records Retry-After header and delays future requests", async () => {
-    let nowValue = 0;
+    const nowValue = 0;
     const limiter = new RateLimiter({
       requestsPerSecond: 100,
       burst: 100,

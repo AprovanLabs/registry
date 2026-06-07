@@ -1,8 +1,8 @@
-import type { CreateClientOptions } from "../../client.js";
 import { createClient, createLazyClient } from "../../client.js";
-import type { GoogleYoutubeClient } from "./types.js";
 import { toolMetadata } from "./metadata.js";
 import openApiDocument from "./openapi.json" with { type: "json" };
+import type { GoogleYoutubeClient } from "./types.js";
+import type { CreateClientOptions } from "../../client.js";
 
 export * from "./types.js";
 

@@ -7,12 +7,12 @@
 
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { apiKeysRouter } from "./routes/apikeys.js";
+import { auditRouter } from "./routes/audit.js";
+import { authRouter } from "./routes/auth.js";
 import { credentialsRouter } from "./routes/credentials.js";
 import { permissionsRouter } from "./routes/permissions.js";
 import { toolsRouter } from "./routes/tools.js";
-import { authRouter } from "./routes/auth.js";
-import { auditRouter } from "./routes/audit.js";
-import { apiKeysRouter } from "./routes/apikeys.js";
 
 export function createApp(): Hono {
   const app = new Hono();

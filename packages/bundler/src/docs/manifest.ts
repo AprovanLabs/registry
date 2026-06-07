@@ -1,9 +1,8 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-
 import {
   DOCS_MANIFEST_SCHEMA_VERSION,
-  DocsManifest,
+  type DocsManifest,
   DocsPipelineError,
 } from "./types.js";
 

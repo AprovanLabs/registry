@@ -19,7 +19,6 @@
 import { readFileSync } from "fs";
 import { join } from "path";
 import { createClient } from "utdk/client";
-
 import { resolveAuth, authEnvVars } from "./auth.js";
 import {
   defaultOutputMode,

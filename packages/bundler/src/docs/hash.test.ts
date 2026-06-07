@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-
 import { getDocsStaleCheckResult, hashOpenApiDocument } from "./hash.js";
 
 describe("docs hash helpers", () => {

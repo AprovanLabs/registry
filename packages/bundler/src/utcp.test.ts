@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { loadProviderTools } from "./utcp.js";
 
 const { close, create, getTools, validateConfig, validateTemplate } = vi.hoisted(() => ({
   validateTemplate: vi.fn((value: unknown) => value),
@@ -29,8 +30,6 @@ vi.mock("@utcp/sdk", () => ({
     }
   },
 }));
-
-import { loadProviderTools } from "./utcp.js";
 
 describe("loadProviderTools", () => {
   beforeEach(() => {

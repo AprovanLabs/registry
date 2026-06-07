@@ -19,7 +19,6 @@ import {
   XIcon,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,7 +29,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import {
   type LocalCredentialType,
   type ProviderCredentialConfig as CredentialConfig,
@@ -39,6 +37,7 @@ import {
   removeProviderCredential,
   saveProviderCredential,
 } from "@/lib/local-credentials";
+import { cn } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
 // Types

@@ -1,7 +1,5 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
-
 import { OpenApiConverter } from "@utcp/http";
-
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { assembleRequest, createClient, type ToolRuntimeMetadata } from "./client.js";
 
 const metadata: ToolRuntimeMetadata = {

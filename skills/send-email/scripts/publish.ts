@@ -1,6 +1,6 @@
 import github from 'github';
-import slack from 'slack';
 import { gmail } from 'googleapis';
+import slack from 'slack';
 
 export default async function main({
   name,

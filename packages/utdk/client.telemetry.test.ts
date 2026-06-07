@@ -11,7 +11,6 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-
 import { createClient } from "./client.js";
 import { configureTelemetry, injectTraceContext, withSpan } from "./common/telemetry.js";
 
@@ -102,7 +101,7 @@ describe("telemetry: span creation", () => {
     await client.listItems();
 
     expect(vi.mocked(withSpan)).toHaveBeenCalledOnce();
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     
     const [ctx] = vi.mocked(withSpan).mock.calls[0]!;
     expect((ctx as { spanName?: string }).spanName).toBe("utdk.request");
     expect((ctx as { provider: string }).provider).toBe("myProvider");

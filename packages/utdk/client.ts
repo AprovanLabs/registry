@@ -1,9 +1,8 @@
 import { OpenApiConverter } from "@utcp/http";
-import type { Tool } from "@utcp/sdk";
-import type { AuthProvider } from "./common/auth.js";
-
 import { configureTelemetry, injectTraceContext, withSpan } from "./common/telemetry.js";
+import type { AuthProvider } from "./common/auth.js";
 import type { TelemetryExporter } from "./common/telemetry.js";
+import type { Tool } from "@utcp/sdk";
 
 type OpenApiDocument = object;
 

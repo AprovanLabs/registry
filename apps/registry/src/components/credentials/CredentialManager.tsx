@@ -10,6 +10,7 @@
 
 import { KeyRoundIcon, LogOutIcon, PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { AddCredentialForm } from "./AddCredentialForm";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +32,6 @@ import {
   login,
   saveSession,
 } from "@/lib/gateway";
-import { AddCredentialForm } from "./AddCredentialForm";
 
 // ---------------------------------------------------------------------------
 // Types

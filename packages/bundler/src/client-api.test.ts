@@ -1,8 +1,8 @@
+import { describe, expect, it } from "vitest";
+import { buildClientToolMap } from "./client-api.js";
 import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
-import { describe, expect, it } from "vitest";
 
-import { buildClientToolMap } from "./client-api.js";
 
 function createTool(name: string, httpMethod: string, url: string, contentType = "application/json"): Tool {
   return {

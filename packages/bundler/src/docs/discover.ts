@@ -1,7 +1,7 @@
-import type { OpenAPIV3 } from "openapi-types";
 
 import type { RegistryProvider } from "../provider.js";
 import type { DocsDiscoveredReference, DocsReferenceCategory, DocsReferenceSource } from "./types.js";
+import type { OpenAPIV3 } from "openapi-types";
 
 export type DiscoverDocsReferencesOptions = {
   provider: RegistryProvider;

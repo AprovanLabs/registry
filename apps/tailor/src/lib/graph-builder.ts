@@ -1,7 +1,7 @@
-import type { Edge, Node } from "@xyflow/react";
-import type { FlowAnalysis, FlowStep, FocusView } from "./types";
-import type { ArgChip, StepNodeData, ParallelNodeData } from "./node-types";
 import { buildLocalProducedMap } from "./flow-analyzer";
+import type { ArgChip, StepNodeData, ParallelNodeData } from "./node-types";
+import type { FlowAnalysis, FlowStep, FocusView } from "./types";
+import type { Edge, Node } from "@xyflow/react";
 
 export function methodName(step: FlowStep) {
   const object = step.object ? `${step.object}.` : "";
@@ -119,7 +119,7 @@ export function buildGraph(
         data: {
           title: "Promise.all",
           description: step.description,
-          calls: step.calls.map((call, callIndex) => ({
+          calls: step.calls.map((call, _callIndex) => ({
             name: methodName(call),
             description: call.description,
             args: resolveArgs(call.args, localProduced, analysis.produced, inputValues, index),

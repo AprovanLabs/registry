@@ -8,8 +8,8 @@
  */
 
 import { Hono } from "hono";
-import { signToken } from "../middleware/auth.js";
 import { getApiKeyStore } from "../apikeys.js";
+import { signToken } from "../middleware/auth.js";
 
 export const authRouter = new Hono();
 

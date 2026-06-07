@@ -10,8 +10,8 @@
  */
 
 import { Hono } from "hono";
-import { requireAuth, requireAdmin } from "../middleware/auth.js";
 import { getCredentialStore, type CredentialInput } from "../credentials.js";
+import { requireAuth, requireAdmin } from "../middleware/auth.js";
 
 export const credentialsRouter = new Hono();
 

@@ -1,11 +1,10 @@
 import { BoxesIcon, FileTextIcon, SearchIcon } from "lucide-react";
 import { useMemo, useState } from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
 import { withBasePath } from "@/lib/site";
+import { cn } from "@/lib/utils";
 
 type BrowserEntry = {
   kind: "namespace" | "provider";

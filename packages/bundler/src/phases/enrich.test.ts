@@ -1,11 +1,9 @@
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
-import path from "node:path";
 import { tmpdir } from "node:os";
-
-import type { OpenAPIV3 } from "openapi-types";
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-
 import { detectOperationPaginationHint, detectPaginationHints, runEnrichPhase } from "./enrich.js";
+import type { OpenAPIV3 } from "openapi-types";
 
 const tempDirs: string[] = [];
 

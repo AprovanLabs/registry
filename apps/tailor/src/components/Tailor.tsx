@@ -1,15 +1,14 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
 import { Background, Controls, ReactFlow } from "@xyflow/react";
-
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { analyzeScript } from "../lib/flow-analyzer";
 import { buildGraph } from "../lib/graph-builder";
 import { SOURCE } from "../lib/source";
-import type { FlowAnalysis, FocusView } from "../lib/types";
-import { StepNode } from "./StepNode";
-import { ParallelNode } from "./ParallelNode";
 import { Breadcrumbs } from "./Breadcrumbs";
 import { ImportsPanel } from "./ImportsPanel";
+import { ParallelNode } from "./ParallelNode";
 import { ParamsPanel } from "./ParamsPanel";
+import { StepNode } from "./StepNode";
+import type { FlowAnalysis, FocusView } from "../lib/types";
 
 const nodeTypes = {
   step: StepNode,

@@ -11,8 +11,8 @@
  *   Validates the shared secret and issues a short-lived JWT.
  */
 
-import type { Context, Next } from "hono";
 import { SignJWT, jwtVerify, type JWTPayload } from "jose";
+import type { Context, Next } from "hono";
 
 // ---------------------------------------------------------------------------
 // Types

@@ -1,8 +1,4 @@
-import type { Tool } from "@utcp/sdk";
 import { describe, expect, it } from "vitest";
-
-import type { ClientToolDefinition } from "./client-api.js";
-import type { RegistryProvider } from "./provider.js";
 import {
   renderProviderReadme,
   renderNamespaceEntry,
@@ -12,6 +8,9 @@ import {
   renderProviderTypes,
   renderRootPackageJson,
 } from "./render.js";
+import type { ClientToolDefinition } from "./client-api.js";
+import type { RegistryProvider } from "./provider.js";
+import type { Tool } from "@utcp/sdk";
 
 function createTool(name: string): Tool {
   return {

@@ -3,10 +3,8 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { promisify } from "node:util";
-
-import type { OpenAPIV3 } from "openapi-types";
-
 import { resolveProviderOutputDir } from "../provider.js";
+import type { OpenAPIV3 } from "openapi-types";
 
 const execFileAsync = promisify(execFile);
 

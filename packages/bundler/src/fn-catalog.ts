@@ -36,7 +36,7 @@ function parseCatalog(html: string): CatalogEntry[] {
   let currentCategory = "";
 
   for (const match of html.matchAll(tokenPattern)) {
-    const [category = "", href = "", dataName = "", dataDesc = "", title = "", toolPath = ""] = match
+    const [category = "", href = "", _dataName = "", dataDesc = "", title = "", toolPath = ""] = match
       .slice(1)
       .map((value) => value?.replace(/\s+/g, " ").trim() ?? "");
 
