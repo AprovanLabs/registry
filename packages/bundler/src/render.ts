@@ -188,13 +188,10 @@ function toClientTools(
   });
 }
 
-export function renderProviderTypes(
+function renderProviderTypesFromClientTools(
   provider: Pick<RegistryProvider, "name" | "options">,
-  tools: Tool[],
-  publicTypeMap: Map<string, PublicToolTypes>,
-  clientToolMap: Map<string, ClientToolDefinition>,
+  clientTools: ClientTool[],
 ): string {
-  const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
   const providerTypeName = toPascalCase(provider.name);
 
   type ClientTreeNode = {
@@ -269,6 +266,16 @@ export function renderProviderTypes(
     "};",
     "",
   ].join("\n");
+}
+
+export function renderProviderTypes(
+  provider: Pick<RegistryProvider, "name" | "options">,
+  tools: Tool[],
+  publicTypeMap: Map<string, PublicToolTypes>,
+  clientToolMap: Map<string, ClientToolDefinition>,
+): string {
+  const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
+  return renderProviderTypesFromClientTools(provider, clientTools);
 }
 
 export function renderProviderEntry(providerName: string, clientImportPath = "../client.js"): string {

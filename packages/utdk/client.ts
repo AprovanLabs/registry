@@ -28,8 +28,10 @@ export type ToolRuntimeMetadata = {
   bodyKind: "none" | "properties" | "raw";
   bodyPropertyKeys: string[];
   contentType?: string;
+  description?: string;
   headerParameterKeys: string[];
   method: string;
+  parameterDescriptions?: Record<string, string>;
   routeTemplate: string;
   pathConflictKeys: string[];
   pathParameterKeys: string[];

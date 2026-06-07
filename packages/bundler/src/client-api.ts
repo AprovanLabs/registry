@@ -1,4 +1,3 @@
-
 import { getDocumentPathItem } from "./openapi-path.js";
 import { stripProviderToolName, type RegistryProvider } from "./provider.js";
 import { schemaToTypeScriptType } from "./schema.js";
@@ -11,8 +10,10 @@ export type ToolRuntimeMetadata = {
   bodyKind: "none" | "properties" | "raw";
   bodyPropertyKeys: string[];
   contentType?: string;
+  description?: string;
   headerParameterKeys: string[];
   method: string;
+  parameterDescriptions?: Record<string, string>;
   routeTemplate: string;
   pathConflictKeys: string[];
   pathParameterKeys: string[];
@@ -513,6 +514,25 @@ function buildOptionsSchema(request: RequestDefinition, runtimeMetadata: ToolRun
   };
 }
 
+function collectParameterDescriptions(
+  document: OpenAPIV3.Document,
+  tool: Tool,
+): Record<string, string> {
+  const { operation } = getOperationContext(document, tool);
+  const descriptions: Record<string, string> = {};
+  const parameterValues = operation?.parameters ?? [];
+
+  for (const parameterValue of parameterValues) {
+    const parameter = resolveParameter(document, parameterValue);
+
+    if (parameter?.description) {
+      descriptions[parameter.name] = parameter.description;
+    }
+  }
+
+  return descriptions;
+}
+
 export function buildClientToolMap(
   document: OpenAPIV3.Document,
   tools: Tool[],
@@ -527,6 +547,9 @@ export function buildClientToolMap(
       const { hasInput, schema: inputSchema, runtimeMetadata } = buildInputSchema(request);
       const { schema: optionsSchema, optional: optionsOptional, hasOptions } = buildOptionsSchema(request, runtimeMetadata);
       const accessPath = createUniqueAccessPath(rawToolName, usedPaths);
+      const parameterDescriptions = collectParameterDescriptions(document, tool);
+      const { operation } = getOperationContext(document, tool);
+      const operationDescription = operation?.summary ?? operation?.description ?? tool.description;
 
       return [
         tool.name,
@@ -544,10 +567,12 @@ export function buildClientToolMap(
               tool.tool_call_template && typeof tool.tool_call_template.content_type === "string"
                 ? tool.tool_call_template.content_type
                 : undefined,
+            description: operationDescription || undefined,
             method:
               tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
                 ? tool.tool_call_template.http_method
                 : "GET",
+            parameterDescriptions: Object.keys(parameterDescriptions).length > 0 ? parameterDescriptions : undefined,
             routeTemplate:
               tool.tool_call_template && typeof tool.tool_call_template.url === "string"
                 ? tool.tool_call_template.url.replace(/^https?:\/\/[^/]+/u, "")

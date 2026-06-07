@@ -171,6 +171,7 @@ export async function generateRegistryTypes(
   const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
   const publicTypeMap = buildPublicTypeMap(openApiDocument, tools);
   const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
+
   const outputRoot = options.outputRoot ?? DEFAULT_OUTPUT_ROOT;
   const providerDir = resolveProviderOutputDir(provider.name, outputRoot);
   const providerPackageRootDir = resolveProviderPackageRootDir(provider.name, outputRoot);
