@@ -396,4 +396,71 @@ describe("nested provider rendering", () => {
 
     expect(rendered).toBe("# OpenAI\n\nGenerated docs.\n");
   });
+
+  it("generates enriched readme from OpenAPI document when no generatedReadme is provided", () => {
+    const rendered = renderProviderReadme(
+      {
+        name: "openai",
+        url: "https://example.com/openapi.json",
+        options: {
+          auth: {
+            auth_type: "api_key",
+            api_key: "Bearer ${OPENAI_API_KEY}",
+            var_name: "Authorization",
+            location: "header",
+          },
+        },
+      } as RegistryProvider,
+      {
+        openApiDocument: {
+          openapi: "3.0.0",
+          info: {
+            title: "OpenAI API",
+            version: "1.0.0",
+            description: "The OpenAI REST API.",
+          },
+          paths: {
+            "/responses": {
+              post: {
+                operationId: "responses.create",
+                summary: "Create response",
+                tags: ["Responses"],
+                responses: { "200": { description: "ok" } },
+              },
+            },
+            "/models": {
+              get: {
+                operationId: "models.list",
+                summary: "List models",
+                tags: ["Models"],
+                responses: { "200": { description: "ok" } },
+              },
+            },
+          },
+        } as never,
+      },
+    );
+
+    expect(rendered).toContain("# OpenAI API");
+    expect(rendered).toContain("The OpenAI REST API.");
+    expect(rendered).toContain("**Operations**: 2");
+    expect(rendered).toContain('**Authentication**: api_key');
+    expect(rendered).toContain("**Top capabilities**: Models, Responses");
+    expect(rendered).toContain("@utdk/openai");
+    expect(rendered).toContain("## Quick start");
+  });
+
+  it("falls back to basic one-liner when no OpenAPI document or generatedReadme is provided", () => {
+    const rendered = renderProviderReadme(
+      {
+        name: "openai",
+        url: "https://example.com/openapi.json",
+      } as RegistryProvider,
+    );
+
+    expect(rendered).toContain("# openai");
+    expect(rendered).toContain("Generated UTDK provider types");
+    expect(rendered).not.toContain("## Quick start");
+    expect(rendered).not.toContain("## Documentation");
+  });
 });

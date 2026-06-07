@@ -451,13 +451,84 @@ export function renderProviderReadme(
   provider: RegistryProvider,
   options: {
     generatedReadme?: string;
+    openApiDocument?: OpenAPIV3.Document;
   } = {},
 ): string {
   if (options.generatedReadme) {
     return options.generatedReadme.endsWith("\n") ? options.generatedReadme : `${options.generatedReadme}\n`;
   }
 
-  return `# ${provider.name}\n\nGenerated UTDK provider types and OpenAPI-backed client for ${provider.url}.\n`;
+  const openApiDocument = options.openApiDocument;
+
+  if (!openApiDocument) {
+    return `# ${provider.name}\n\nGenerated UTDK provider types and OpenAPI-backed client for ${provider.url}.\n`;
+  }
+
+  const title = getNonEmptyString(openApiDocument.info?.title) ?? provider.name;
+  const description =
+    getNonEmptyString(openApiDocument.info?.description) ??
+    `Generated UTDK provider types and OpenAPI-backed client for ${provider.url}.`;
+  const auth = getProviderAuthOptions(provider.options);
+  const authText =
+    auth.length > 0
+      ? auth
+          .map((a) =>
+            typeof a === "object" && a && "auth_type" in a
+              ? String((a as Record<string, unknown>).auth_type)
+              : "custom",
+          )
+          .join(", ")
+      : "None";
+
+  let operationCount = 0;
+  const tagCounts = new Map<string, number>();
+
+  for (const pathItem of Object.values(openApiDocument.paths ?? {})) {
+    if (!pathItem || typeof pathItem !== "object") continue;
+
+    for (const method of ["get", "post", "put", "delete", "patch", "head", "options", "trace"] as const) {
+      const operation = (pathItem as OpenAPIV3.PathItemObject)[method];
+      if (operation && typeof operation === "object" && !("$ref" in operation)) {
+        operationCount++;
+        const tag = operation.tags?.[0];
+        if (tag) {
+          tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+        }
+      }
+    }
+  }
+
+  const topTags = [...tagCounts.entries()]
+    .sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]))
+    .slice(0, 5)
+    .map(([tag]) => tag);
+
+  return [
+    `# ${title}`,
+    "",
+    description,
+    "",
+    `- **Provider URL**: ${provider.url}`,
+    `- **Operations**: ${operationCount}`,
+    `- **Authentication**: ${authText}`,
+    topTags.length > 0 ? `- **Top capabilities**: ${topTags.join(", ")}` : null,
+    "",
+    "## Quick start",
+    "",
+    "```ts",
+    `import client from "@utdk/${provider.name}";`,
+    "",
+    "// Use the typed client to call provider operations",
+    "const result = await client.someOperation({});",
+    "```",
+    "",
+    "## Documentation",
+    "",
+    "Refer to the typed client interface (`types.ts`) for complete operation signatures with TypeScript types.",
+    "",
+  ]
+    .filter((line): line is string => line !== null)
+    .join("\n");
 }
 
 export function renderNamespaceEntry(namespaceSegments: string[], providers: RegistryProvider[]): string {
