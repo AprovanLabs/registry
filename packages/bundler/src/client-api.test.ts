@@ -280,4 +280,134 @@ describe("buildClientToolMap", () => {
     expect(metadata?.runtimeMetadata.bodyKind).toBe("properties");
     expect(metadata?.runtimeMetadata.bodyAllowsAdditionalProperties).toBe(true);
   });
+
+  it("populates description from operation summary", () => {
+    const tool = createTool("example.getFoo", "GET", "https://api.example.com/v1/foo");
+    const openApiDocument = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/foo": {
+          get: {
+            summary: "Retrieve a foo by ID",
+            responses: {
+              "200": { description: "ok" },
+            },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    const metadata = buildClientToolMap(openApiDocument, [tool], { name: "example" }).get(tool.name);
+
+    expect(metadata?.runtimeMetadata.description).toBe("Retrieve a foo by ID");
+  });
+
+  it("falls back to operation description when summary is absent", () => {
+    const tool = createTool("example.getFoo", "GET", "https://api.example.com/v1/foo");
+    const openApiDocument = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/foo": {
+          get: {
+            description: "Retrieves a foo from the collection",
+            responses: {
+              "200": { description: "ok" },
+            },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    const metadata = buildClientToolMap(openApiDocument, [tool], { name: "example" }).get(tool.name);
+
+    expect(metadata?.runtimeMetadata.description).toBe("Retrieves a foo from the collection");
+  });
+
+  it("falls back to tool description when operation has neither summary nor description", () => {
+    const tool = createTool("example.getFoo", "GET", "https://api.example.com/v1/foo");
+    const openApiDocument = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/foo": {
+          get: {
+            responses: {
+              "200": { description: "ok" },
+            },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    const metadata = buildClientToolMap(openApiDocument, [tool], { name: "example" }).get(tool.name);
+
+    expect(metadata?.runtimeMetadata.description).toBe("example.getFoo");
+  });
+
+  it("populates parameterDescriptions from operation parameters", () => {
+    const tool = createTool("example.getFoo", "GET", "https://api.example.com/v1/foo");
+    const openApiDocument = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/foo": {
+          get: {
+            parameters: [
+              {
+                in: "query",
+                name: "limit",
+                description: "Maximum number of items to return",
+                schema: { type: "integer" },
+              },
+              {
+                in: "query",
+                name: "offset",
+                description: "Number of items to skip before starting collection",
+                schema: { type: "integer" },
+              },
+              {
+                in: "query",
+                name: "filter",
+                schema: { type: "string" },
+              },
+            ],
+            responses: {
+              "200": { description: "ok" },
+            },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    const metadata = buildClientToolMap(openApiDocument, [tool], { name: "example" }).get(tool.name);
+
+    expect(metadata?.runtimeMetadata.parameterDescriptions).toEqual({
+      limit: "Maximum number of items to return",
+      offset: "Number of items to skip before starting collection",
+    });
+  });
+
+  it("leaves description and parameterDescriptions undefined when absent", () => {
+    const tool = createTool("example.getBar", "GET", "https://api.example.com/v1/bar");
+    const openApiDocument = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/bar": {
+          get: {
+            responses: {
+              "200": { description: "ok" },
+            },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    const metadata = buildClientToolMap(openApiDocument, [tool], { name: "example" }).get(tool.name);
+
+    expect(metadata?.runtimeMetadata.description).toBe("example.getBar");
+    expect(metadata?.runtimeMetadata.parameterDescriptions).toBeUndefined();
+  });
 });
