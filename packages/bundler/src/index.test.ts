@@ -96,20 +96,22 @@ describe("docs CLI integration flow", () => {
     expect(packageJson.utdk?.docs?.promptHash).toMatch(/^[a-f0-9]{64}$/);
   });
 
-  it("fails augment-docs with a cache-missing error when load artifacts are absent", async () => {
+  it("generates docs with fallback when load artifacts are absent", async () => {
     installDocsFetchMock();
     const docsCacheRoot = await createTempDir();
     const outputRoot = await createTempDir();
 
-    await expect(
-      augmentRegistryProviderDocs({
-        provider: "openai",
-        docsCacheRoot,
-        outputRoot,
-      }),
-    ).rejects.toMatchObject({
-      code: "DOCS_CACHE_MISSING",
+    const augmentResult = await augmentRegistryProviderDocs({
+      provider: "openai",
+      docsCacheRoot,
+      outputRoot,
     });
+
+    expect(augmentResult.docsPaths.length).toBeGreaterThan(0);
+    expect(augmentResult.staleReason).toBe("docs-cache-missing");
+
+    const readme = await readFile(augmentResult.readmePath, "utf8");
+    expect(readme).toContain("## Capability guides");
   });
 
   it("blocks non-stale overwrite unless overwrite-docs is provided", async () => {

@@ -76,4 +76,42 @@ describe("augmentProviderDocs", () => {
     expect(result.metadata.manifestPath).toBe(manifestPath);
     expect(result.staleReason).toBe("openapi-hash-missing");
   });
+
+  it("generates docs from OpenAPI when manifest is missing (fallback)", async () => {
+    const docsCacheRoot = await createTempDir();
+    const outputRoot = await createTempDir();
+    const provider = "openai";
+
+    const result = await augmentProviderDocs({
+      provider,
+      docsCacheRoot,
+      outputRoot,
+      openApiDocument: {
+        openapi: "3.0.0",
+        info: { title: "OpenAI", version: "1.0.0" },
+        paths: {
+          "/responses": {
+            post: {
+              operationId: "responses.create",
+              summary: "Create response",
+              tags: ["Responses"],
+              responses: {
+                "200": { description: "ok" },
+              },
+            },
+          },
+        },
+      } as never,
+    });
+
+    expect(result.staleReason).toBe("docs-cache-missing");
+    expect(result.readme).toContain("## Capability guides");
+    expect(result.readme).toContain("## Source Index");
+    expect(result.docs).toHaveLength(1);
+    expect(result.docs[0]?.relativePath).toBe("responses.md");
+    expect(result.docs[0]?.content).toContain("## Operations");
+    expect(result.metadata.sourceCount).toBe(0);
+    expect(result.metadata.openApiHash).toBeNull();
+    expect(result.metadata.promptHash).toMatch(/^[a-f0-9]{64}$/);
+  });
 });

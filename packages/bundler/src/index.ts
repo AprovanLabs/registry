@@ -226,7 +226,7 @@ export async function generateRegistryTypes(
             }),
           ),
         ]),
-    writeTextFile(path.join(providerDir, "README.md"), renderProviderReadme(provider)),
+    writeTextFile(path.join(providerDir, "README.md"), renderProviderReadme(provider, { openApiDocument })),
     writeTextFile(path.join(providerDir, "index.ts"), renderProviderEntry(provider.name, providerClientImportPath)),
     writeTextFile(path.join(providerDir, "types.ts"), renderProviderTypes(provider, tools, publicTypeMap, clientToolMap)),
     writeTextFile(
@@ -253,6 +253,7 @@ export type FullPipelineResult = {
   scaffold: GenerateRegistryTypesResult;
   research: RunResearchPhaseResult | { error: string };
   enrich: RunEnrichPhaseResult | { error: string };
+  docs: AugmentRegistryProviderDocsResult | { error: string };
   review: RunReviewPhaseResult | { error: string };
   ship: RunShipPhaseResult | { error: string };
 };
@@ -271,9 +272,10 @@ export async function runFullPipeline(options: FullPipelineOptions): Promise<Ful
     outputRoot: options.outputRoot,
   });
 
-  const [research, enrich] = await Promise.all([
+  const [research, enrich, docs] = await Promise.all([
     safeRun(() => runResearchPhase({ provider: options.provider, outputRoot: options.outputRoot })),
     safeRun(() => runEnrichPhase({ provider: options.provider, outputRoot: options.outputRoot })),
+    safeRun(() => augmentRegistryProviderDocs({ provider: options.provider, outputRoot: options.outputRoot })),
   ]);
 
   const review = await safeRun(() =>
@@ -301,5 +303,5 @@ export async function runFullPipeline(options: FullPipelineOptions): Promise<Ful
     );
   }
 
-  return { scaffold, research, enrich, review, ship };
+  return { scaffold, research, enrich, docs, review, ship };
 }

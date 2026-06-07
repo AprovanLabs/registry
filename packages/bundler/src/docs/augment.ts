@@ -362,51 +362,48 @@ export async function augmentProviderDocs(options: AugmentProviderDocsOptions): 
   const docsOutputPath = path.join(outputDir, "docs");
   const manifest = await readDocsManifest(manifestPath);
 
-  if (!manifest) {
-    throw new DocsPipelineError("DOCS_CACHE_MISSING", `Docs cache manifest not found at ${manifestPath}.`, {
-      provider: options.provider,
-      manifestPath,
-      indexPath,
-    });
-  }
-
-  let indexMarkdown: string;
-
-  try {
-    indexMarkdown = await readFile(indexPath, "utf8");
-  } catch (error: unknown) {
-    if (typeof error === "object" && error && "code" in error && error.code === "ENOENT") {
-      throw new DocsPipelineError("DOCS_CACHE_MISSING", `Docs cache index not found at ${indexPath}.`, {
-        provider: options.provider,
-        manifestPath,
-        indexPath,
-      });
-    }
-
-    throw error;
-  }
+  let indexMarkdown = "";
+  let staleReason = "";
 
   const prompts = await loadDocsPromptAssets();
-  const existing = await readExistingDocsMetadata(outputDir);
-  const staleCheck = getDocsStaleCheckResult({
-    previousManifestVersion: manifest.schemaVersion,
-    previousOpenApiHash: existing.openApiHash,
-    nextOpenApiHash: manifest.openApi.hash,
-    previousPromptHash: existing.promptHash,
-    nextPromptHash: prompts.hash,
-  });
 
-  if (!options.overwriteDocs && !staleCheck.isStale && (existing.openApiHash != null || existing.promptHash != null)) {
-    throw new DocsPipelineError(
-      "DOCS_OVERWRITE_BLOCKED",
-      `Docs outputs for ${options.provider} are up to date. Pass --overwrite-docs to replace unchanged README/docs output.`,
-      {
-        provider: options.provider,
-        staleReason: staleCheck.reason,
-        manifestPath,
-        indexPath,
-      },
-    );
+  if (!manifest) {
+    indexMarkdown = "";
+    staleReason = "docs-cache-missing";
+  } else {
+    try {
+      indexMarkdown = await readFile(indexPath, "utf8");
+    } catch (error: unknown) {
+      if (typeof error === "object" && error && "code" in error && error.code === "ENOENT") {
+        indexMarkdown = "";
+      } else {
+        throw error;
+      }
+    }
+
+    const existing = await readExistingDocsMetadata(outputDir);
+    const staleCheck = getDocsStaleCheckResult({
+      previousManifestVersion: manifest.schemaVersion,
+      previousOpenApiHash: existing.openApiHash,
+      nextOpenApiHash: manifest.openApi.hash,
+      previousPromptHash: existing.promptHash,
+      nextPromptHash: prompts.hash,
+    });
+
+    if (!options.overwriteDocs && !staleCheck.isStale && (existing.openApiHash != null || existing.promptHash != null)) {
+      throw new DocsPipelineError(
+        "DOCS_OVERWRITE_BLOCKED",
+        `Docs outputs for ${options.provider} are up to date. Pass --overwrite-docs to replace unchanged README/docs output.`,
+        {
+          provider: options.provider,
+          staleReason: staleCheck.reason,
+          manifestPath,
+          indexPath,
+        },
+      );
+    }
+
+    staleReason = staleCheck.reason;
   }
 
   const groups = groupOpenApiOperations(options.openApiDocument);
@@ -464,6 +461,6 @@ export async function augmentProviderDocs(options: AugmentProviderDocsOptions): 
       openApiHash: manifest?.openApi.hash ?? null,
       promptHash: prompts.hash,
     },
-    staleReason: staleCheck.reason,
+    staleReason: staleReason,
   };
 }
