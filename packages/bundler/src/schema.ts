@@ -120,11 +120,11 @@ export function escapeComment(text: string): string {
   return text.replace(/\*\//g, "*\\/").replace(/\n/g, " ");
 }
 
-export function schemaToObjectContent(rawSchema: unknown): string {
+export function schemaToObjectContent(rawSchema: unknown, indent = "    "): string {
   const schema = rawSchema as SchemaLike | undefined;
 
   if (!schema || typeof schema !== "object" || (schema.type !== "object" && !schema.properties)) {
-    return "    [key: string]: unknown;";
+    return `${indent}[key: string]: unknown;`;
   }
 
   const properties = schema.properties ?? {};
@@ -136,16 +136,16 @@ export function schemaToObjectContent(rawSchema: unknown): string {
     const description = typeof propSchema.description === "string" ? propSchema.description : "";
 
     if (description) {
-      lines.push(`    /** ${escapeComment(description)} */`);
+      lines.push(`${indent}/** ${escapeComment(description)} */`);
     }
 
-    lines.push(`    ${quotePropertyName(propName)}${optionalMarker}: ${schemaToTypeScriptType(propSchema)};`);
+    lines.push(`${indent}${quotePropertyName(propName)}${optionalMarker}: ${schemaToTypeScriptType(propSchema)};`);
   }
 
   if (schema.additionalProperties && typeof schema.additionalProperties === "object") {
-    lines.push(`    [key: string]: ${schemaToTypeScriptType(schema.additionalProperties)} | undefined;`);
+    lines.push(`${indent}[key: string]: ${schemaToTypeScriptType(schema.additionalProperties)} | undefined;`);
   } else if (schema.additionalProperties === true || lines.length === 0) {
-    lines.push("    [key: string]: unknown;");
+    lines.push(`${indent}[key: string]: unknown;`);
   }
 
   return lines.join("\n");

@@ -8,7 +8,7 @@ import {
   splitProviderName,
   stripProviderToolName,
 } from "./provider.js";
-import { escapeComment, quotePropertyName, schemaToTypeScriptType } from "./schema.js";
+import { escapeComment, quotePropertyName, schemaToObjectContent, schemaToTypeScriptType } from "./schema.js";
 import type { ClientToolDefinition, ToolRuntimeMetadata } from "./client-api.js";
 import type { ProviderPackageDocsMetadata } from "./docs/types.js";
 import type { RegistryProvider } from "./provider.js";
@@ -25,9 +25,11 @@ type ClientTool = {
   description: string;
   hasInput: boolean;
   hasOptions: boolean;
+  inputSchema?: unknown;
   inputType: string;
   optionsOptional: boolean;
   optionsType: string;
+  outputSchema?: unknown;
   outputType: string;
   tags: string[];
 };
@@ -172,6 +174,7 @@ function toClientTools(
   return tools.map((tool) => {
     const rawToolName = stripProviderToolName(tool.name, provider);
     const generatedMetadata = clientToolMap.get(tool.name);
+    const hasPublicType = publicTypeMap.has(tool.name);
     const inputType = generatedMetadata?.inputType ?? publicTypeMap.get(tool.name)?.inputType ?? schemaToTypeScriptType(tool.inputs);
 
     return {
@@ -179,9 +182,11 @@ function toClientTools(
       description: tool.description,
       hasInput: generatedMetadata?.hasInput ?? inputType !== "{}",
       hasOptions: generatedMetadata?.hasOptions ?? false,
+      inputSchema: generatedMetadata?.inputSchema ?? (hasPublicType ? undefined : tool.inputs),
       inputType,
       optionsOptional: generatedMetadata?.optionsOptional ?? true,
       optionsType: generatedMetadata?.optionsType ?? "{}",
+      outputSchema: hasPublicType ? undefined : tool.outputs,
       outputType: publicTypeMap.get(tool.name)?.outputType ?? schemaToTypeScriptType(tool.outputs),
       tags: tool.tags,
     };
@@ -217,6 +222,18 @@ function renderProviderTypesFromClientTools(
     current.tool = tool;
   }
 
+  function isExpandableObjectSchema(schema: unknown): boolean {
+    const s = schema as { type?: string; properties?: Record<string, unknown> } | undefined;
+    if (!s || typeof s !== "object") return false;
+    if (s.type !== "object" && !s.properties) return false;
+    return Object.keys(s.properties ?? {}).length > 0;
+  }
+
+  function renderExpandedType(rawSchema: unknown, propertyIndent: string, closingIndent: string): string {
+    const content = schemaToObjectContent(rawSchema, propertyIndent);
+    return `{\n${content}\n${closingIndent}}`;
+  }
+
   function renderClientTree(node: ClientTreeNode, depth: number): string {
     return [...node.children.entries()]
       .sort(([left], [right]) => left.localeCompare(right))
@@ -224,8 +241,20 @@ function renderProviderTypesFromClientTools(
         const indent = "  ".repeat(depth);
 
         if (child.tool) {
+          const propertyIndent = "  ".repeat(depth + 1);
+
+          const inputTypeStr =
+            child.tool.inputSchema && isExpandableObjectSchema(child.tool.inputSchema)
+              ? renderExpandedType(child.tool.inputSchema, propertyIndent, indent)
+              : child.tool.inputType;
+
+          const outputTypeStr =
+            child.tool.outputSchema && isExpandableObjectSchema(child.tool.outputSchema)
+              ? renderExpandedType(child.tool.outputSchema, propertyIndent, indent)
+              : child.tool.outputType;
+
           const parameters = [
-            child.tool.hasInput ? `input: ${child.tool.inputType}` : undefined,
+            child.tool.hasInput ? `input: ${inputTypeStr}` : undefined,
             child.tool.hasOptions ? `options${child.tool.optionsOptional ? "?" : ""}: ${child.tool.optionsType}` : undefined,
           ].filter((parameter): parameter is string => Boolean(parameter));
           const invocation = [
@@ -239,7 +268,7 @@ function renderProviderTypesFromClientTools(
             `${indent} * Tags: ${escapeComment(child.tool.tags.join(", "))}`,
             `${indent} * Access as: ${provider.name}.${child.tool.accessPath.join(".")}(${invocation.join(", ")})`,
             `${indent} */`,
-            `${indent}${quotePropertyName(segment)}: (${parameters.join(", ")}) => Promise<${child.tool.outputType}>;`,
+            `${indent}${quotePropertyName(segment)}: (${parameters.join(", ")}) => Promise<${outputTypeStr}>;`,
           ].join("\n");
         }
 
