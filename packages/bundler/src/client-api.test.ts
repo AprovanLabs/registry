@@ -410,4 +410,80 @@ describe("buildClientToolMap", () => {
     expect(metadata?.runtimeMetadata.description).toBe("example.getBar");
     expect(metadata?.runtimeMetadata.parameterDescriptions).toBeUndefined();
   });
+
+  it("includes parameter descriptions in inputSchema property schemas", () => {
+    const tool = createTool("example.getRepo", "GET", "https://api.example.com/v1/{owner}/{repo}");
+    const openApiDocument = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/{owner}/{repo}": {
+          get: {
+            parameters: [
+              {
+                in: "path",
+                name: "owner",
+                required: true,
+                description: "The account owner of the repository.",
+                schema: { type: "string" },
+              },
+              {
+                in: "path",
+                name: "repo",
+                required: true,
+                description: "The repository name without the .git extension.",
+                schema: { type: "string" },
+              },
+              {
+                in: "query",
+                name: "per_page",
+                description: "The number of results per page.",
+                schema: { type: "integer" },
+              },
+            ],
+            responses: {
+              "200": { description: "ok" },
+            },
+          },
+        },
+      },
+    } as unknown as OpenAPIV3.Document;
+
+    const metadata = buildClientToolMap(openApiDocument, [tool], { name: "example" }).get(tool.name);
+
+    expect(metadata?.inputSchema?.properties?.["owner"]).toMatchObject({
+      type: "string",
+      description: "The account owner of the repository.",
+    });
+    expect(metadata?.inputSchema?.properties?.["repo"]).toMatchObject({
+      type: "string",
+      description: "The repository name without the .git extension.",
+    });
+    expect(metadata?.inputSchema?.properties?.["per_page"]).toMatchObject({
+      type: "integer",
+      description: "The number of results per page.",
+    });
+  });
+
+  it("omits inputSchema when tool has no input properties", () => {
+    const tool = createTool("example.ping", "GET", "https://api.example.com/v1/ping");
+    const openApiDocument = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/ping": {
+          get: {
+            responses: {
+              "200": { description: "ok" },
+            },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    const metadata = buildClientToolMap(openApiDocument, [tool], { name: "example" }).get(tool.name);
+
+    expect(metadata?.hasInput).toBe(false);
+    expect(metadata?.inputSchema).toBeUndefined();
+  });
 });

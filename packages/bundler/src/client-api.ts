@@ -25,6 +25,7 @@ export type ClientToolDefinition = {
   accessPath: string[];
   hasInput: boolean;
   hasOptions: boolean;
+  inputSchema?: OpenAPIV3.SchemaObject;
   inputType: string;
   optionsOptional: boolean;
   optionsType: string;
@@ -34,6 +35,7 @@ export type ClientToolDefinition = {
 type ParameterLocation = "cookie" | "header" | "path" | "query";
 
 type ParameterDefinition = {
+  description?: string;
   location: ParameterLocation;
   name: string;
   required: boolean;
@@ -306,6 +308,7 @@ function buildRequestDefinition(document: OpenAPIV3.Document, tool: Tool): Reque
     }
 
     parameterMap.set(`${parameter.in}:${parameter.name}`, {
+      description: parameter.description,
       location: parameter.in as ParameterLocation,
       name: parameter.name,
       required: parameter.in === "path" ? true : Boolean(parameter.required),
@@ -433,7 +436,9 @@ function buildInputSchema(request: RequestDefinition): {
       continue;
     }
 
-    properties[parameter.name] = parameter.schema;
+    properties[parameter.name] = parameter.description
+      ? { ...parameter.schema, description: parameter.description }
+      : parameter.schema;
 
     if (parameter.required) {
       required.add(parameter.name);
@@ -557,6 +562,7 @@ export function buildClientToolMap(
           accessPath,
           hasInput,
           hasOptions,
+          inputSchema: hasInput ? inputSchema : undefined,
           inputType: schemaToTypeScriptType(inputSchema),
           optionsOptional,
           optionsType: schemaToTypeScriptType(optionsSchema),

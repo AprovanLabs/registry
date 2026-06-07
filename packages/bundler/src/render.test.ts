@@ -58,6 +58,118 @@ function createClientToolDefinition(accessPath: string[]): ClientToolDefinition 
 }
 
 describe("renderProviderTypes", () => {
+  it("emits JSDoc comments and multi-line format for object input schemas with descriptions", () => {
+    const rendered = renderProviderTypes(
+      { name: "github" },
+      [createTool("github.repos/get")],
+      new Map(),
+      new Map([
+        [
+          "github.repos/get",
+          {
+            ...createClientToolDefinition(["repos", "get"]),
+            hasInput: true,
+            inputSchema: {
+              type: "object",
+              properties: {
+                owner: { type: "string", description: "The account owner of the repository." },
+                repo: { type: "string", description: "The name of the repository without the .git extension." },
+                issue_number: { type: "number" },
+              },
+              required: ["owner", "repo"],
+            },
+            inputType: "{ owner: string; repo: string; issue_number?: number }",
+          },
+        ],
+      ]),
+    );
+
+    expect(rendered).toContain("/** The account owner of the repository. */");
+    expect(rendered).toContain("owner: string;");
+    expect(rendered).toContain("/** The name of the repository without the .git extension. */");
+    expect(rendered).toContain("repo: string;");
+    expect(rendered).toContain("issue_number?: number;");
+    expect(rendered).toMatch(/input: \{\n/);
+    expect(rendered).not.toContain("input: { owner: string");
+  });
+
+  it("emits JSDoc comments and multi-line format for object output schemas with descriptions", () => {
+    const rendered = renderProviderTypes(
+      { name: "github" },
+      [
+        {
+          ...createTool("github.users/get"),
+          outputs: {
+            type: "object",
+            properties: {
+              login: { type: "string", description: "The user's login handle." },
+              id: { type: "number", description: "Unique identifier for the user." },
+            },
+            required: ["login", "id"],
+          },
+        },
+      ],
+      new Map(),
+      new Map([["github.users/get", createClientToolDefinition(["users", "get"])]]),
+    );
+
+    expect(rendered).toContain("/** The user's login handle. */");
+    expect(rendered).toContain("login: string;");
+    expect(rendered).toContain("/** Unique identifier for the user. */");
+    expect(rendered).toContain("id: number;");
+    expect(rendered).toMatch(/Promise<\{\n/);
+  });
+
+  it("keeps compact inline format when inputSchema has no properties with descriptions", () => {
+    const rendered = renderProviderTypes(
+      { name: "example" },
+      [createTool("example.ping")],
+      new Map(),
+      new Map([
+        [
+          "example.ping",
+          {
+            ...createClientToolDefinition(["ping"]),
+            hasInput: false,
+          },
+        ],
+      ]),
+    );
+
+    expect(rendered).toContain("ping: () => Promise<{ [key: string]: unknown }>;");
+    expect(rendered).not.toMatch(/Promise<\{\n/);
+  });
+
+  it("preserves pre-rendered types from publicTypeMap without expansion", () => {
+    const rendered = renderProviderTypes(
+      { name: "github" },
+      [createTool("github.users/get-by-username")],
+      new Map([
+        [
+          "github.users/get-by-username",
+          {
+            inputType: "{ username: string }",
+            outputType: "{ login: string }",
+          },
+        ],
+      ]),
+      new Map([
+        [
+          "github.users/get-by-username",
+          {
+            ...createClientToolDefinition(["users", "getByUsername"]),
+            hasInput: true,
+            inputType: "{ username: string }",
+          },
+        ],
+      ]),
+    );
+
+    expect(rendered).toContain("input: { username: string }");
+    expect(rendered).toContain("Promise<{ login: string }>");
+    expect(rendered).not.toMatch(/input: \{\n/);
+  });
+
   it("preserves operationId word boundaries in accessor names", () => {
     const rendered = renderProviderTypes(
       { name: "datadog" },
