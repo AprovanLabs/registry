@@ -1,6 +1,8 @@
 import { OpenApiConverter } from "@utcp/http";
+import { getDocumentPathItem } from "./openapi-path.js";
 import { loadOpenApiDocument } from "./openapi.js";
 import { getPrimaryProviderAuthOption, type RegistryProvider } from "./provider.js";
+import type { DiscoveredOperation } from "./openapi-discovery.js";
 import type { Auth, Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
 
@@ -159,4 +161,54 @@ export async function loadProviderTools(
       name: tool.name.startsWith(`${manualName}.`) ? tool.name : `${manualName}.${tool.name}`,
     })),
   };
+}
+
+/**
+ * Converts UTCP `Tool[]` to `DiscoveredOperation[]` so that all downstream
+ * type-generation functions can accept a single unified type.
+ *
+ * UTCP tools store the full URL in `tool_call_template.url`. This function
+ * resolves that URL back to its OpenAPI path key using the document's path map.
+ */
+export function toolsToDiscoveredOperations(
+  tools: Tool[],
+  document: OpenAPIV3.Document,
+): DiscoveredOperation[] {
+  return tools.flatMap((tool) => {
+    const method =
+      tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
+        ? tool.tool_call_template.http_method
+        : undefined;
+    const rawUrl =
+      tool.tool_call_template && typeof tool.tool_call_template.url === "string"
+        ? tool.tool_call_template.url
+        : undefined;
+
+    if (!method || !rawUrl) {
+      return [];
+    }
+
+    const { pathname } = getDocumentPathItem(document, rawUrl);
+    const contentType =
+      tool.tool_call_template && typeof tool.tool_call_template.content_type === "string"
+        ? tool.tool_call_template.content_type
+        : undefined;
+
+    const pathItem = document.paths?.[pathname];
+    const operation = pathItem?.[method.toLowerCase() as keyof OpenAPIV3.PathItemObject] as
+      | OpenAPIV3.OperationObject
+      | undefined;
+
+    return [
+      {
+        name: tool.name,
+        method: method.toUpperCase(),
+        path: pathname,
+        routeTemplate: rawUrl.replace(/^https?:\/\/[^/]+/u, ""),
+        contentType,
+        description: operation?.summary ?? operation?.description ?? tool.description,
+        tags: operation?.tags ?? (Array.isArray(tool.tags) ? (tool.tags as string[]) : []),
+      } satisfies DiscoveredOperation,
+    ];
+  });
 }

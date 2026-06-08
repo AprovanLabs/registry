@@ -1,29 +1,23 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
+import type { DiscoveredOperation } from "./openapi-discovery.js";
 import type { RegistryProvider } from "./provider.js";
-import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
 
-function createTool(name: string, httpMethod: string, url: string): Tool {
+function createDiscoveredOperation(
+  name: string,
+  method: string,
+  path: string,
+): DiscoveredOperation {
   return {
     name,
+    method,
+    path,
+    routeTemplate: path,
+    contentType: "application/json",
     description: name,
     tags: [],
-    tool_call_template: {
-      call_template_type: "http",
-      http_method: httpMethod,
-      url,
-      content_type: "application/json",
-    },
-    inputs: {
-      type: "object",
-      properties: {},
-    },
-    outputs: {
-      type: "object",
-      properties: {},
-    },
-  } as unknown as Tool;
+  };
 }
 
 describe("loadOpenApiDocument", () => {
@@ -81,8 +75,9 @@ describe("loadOpenApiDocument", () => {
 });
 
 describe("buildPublicTypeMap", () => {
-  it("matches operations when the server url contributes a base path", () => {
-    const tool = createTool("openai.createResponse", "POST", "https://api.openai.com/v1/responses");
+  it("derives output type from the OpenAPI response schema", () => {
+    // path = "/responses" matches directly in document.paths (server base handled at runtime)
+    const op = createDiscoveredOperation("openai.createResponse", "POST", "/responses");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "OpenAI", version: "1.0.0" },
@@ -125,9 +120,9 @@ describe("buildPublicTypeMap", () => {
       },
     } as const;
 
-    const typeMap = buildPublicTypeMap(openApiDocument as never, [tool]);
+    const typeMap = buildPublicTypeMap(openApiDocument as never, [op]);
 
-    expect(typeMap.get(tool.name)?.outputType).toBe("{ id: string }");
+    expect(typeMap.get(op.name)?.outputType).toBe("{ id: string }");
   });
 });
 

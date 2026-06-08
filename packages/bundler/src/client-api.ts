@@ -1,7 +1,6 @@
-import { getDocumentPathItem } from "./openapi-path.js";
 import { stripProviderToolName, type RegistryProvider } from "./provider.js";
 import { schemaToTypeScriptType } from "./schema.js";
-import type { Tool } from "@utcp/sdk";
+import type { DiscoveredOperation } from "./openapi-discovery.js";
 import type { OpenAPIV3 } from "openapi-types";
 
 export type ToolRuntimeMetadata = {
@@ -139,20 +138,10 @@ function resolveSchema(
 
 function getOperationContext(
   document: OpenAPIV3.Document,
-  tool: Tool,
+  op: DiscoveredOperation,
 ): { operation?: OpenAPIV3.OperationObject; pathItem?: OpenAPIV3.PathItemObject } {
-  const method =
-    tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
-      ? tool.tool_call_template.http_method.toLowerCase()
-      : undefined;
-  const rawUrl =
-    tool.tool_call_template && typeof tool.tool_call_template.url === "string" ? tool.tool_call_template.url : undefined;
-
-  if (!method || !rawUrl) {
-    return {};
-  }
-
-  const { pathItem } = getDocumentPathItem(document, rawUrl);
+  const method = op.method.toLowerCase();
+  const pathItem = document.paths?.[op.path];
 
   if (!pathItem || !(method in pathItem)) {
     return {};
@@ -286,8 +275,8 @@ function createUniqueAccessPath(rawToolName: string, usedPaths: Set<string>): st
   return accessPath;
 }
 
-function buildRequestDefinition(document: OpenAPIV3.Document, tool: Tool): RequestDefinition {
-  const { operation, pathItem } = getOperationContext(document, tool);
+function buildRequestDefinition(document: OpenAPIV3.Document, op: DiscoveredOperation): RequestDefinition {
+  const { operation, pathItem } = getOperationContext(document, op);
   const parameterMap = new Map<string, ParameterDefinition>();
   const parameterValues = [...(pathItem?.parameters ?? []), ...(operation?.parameters ?? [])];
 
@@ -521,9 +510,9 @@ function buildOptionsSchema(request: RequestDefinition, runtimeMetadata: ToolRun
 
 function collectParameterDescriptions(
   document: OpenAPIV3.Document,
-  tool: Tool,
+  op: DiscoveredOperation,
 ): Record<string, string> {
-  const { operation } = getOperationContext(document, tool);
+  const { operation } = getOperationContext(document, op);
   const descriptions: Record<string, string> = {};
   const parameterValues = operation?.parameters ?? [];
 
@@ -540,24 +529,24 @@ function collectParameterDescriptions(
 
 export function buildClientToolMap(
   document: OpenAPIV3.Document,
-  tools: Tool[],
+  operations: DiscoveredOperation[],
   provider: Pick<RegistryProvider, "name" | "options">,
 ): Map<string, ClientToolDefinition> {
   const usedPaths = new Set<string>();
 
   return new Map(
-    tools.map((tool) => {
-      const rawToolName = stripProviderToolName(tool.name, provider);
-      const request = buildRequestDefinition(document, tool);
+    operations.map((op) => {
+      const rawToolName = stripProviderToolName(op.name, provider);
+      const request = buildRequestDefinition(document, op);
       const { hasInput, schema: inputSchema, runtimeMetadata } = buildInputSchema(request);
       const { schema: optionsSchema, optional: optionsOptional, hasOptions } = buildOptionsSchema(request, runtimeMetadata);
       const accessPath = createUniqueAccessPath(rawToolName, usedPaths);
-      const parameterDescriptions = collectParameterDescriptions(document, tool);
-      const { operation } = getOperationContext(document, tool);
-      const operationDescription = operation?.summary ?? operation?.description ?? tool.description;
+      const parameterDescriptions = collectParameterDescriptions(document, op);
+      const { operation } = getOperationContext(document, op);
+      const operationDescription = operation?.summary ?? operation?.description ?? op.description;
 
       return [
-        tool.name,
+        op.name,
         {
           accessPath,
           hasInput,
@@ -569,20 +558,11 @@ export function buildClientToolMap(
           runtimeMetadata: {
             ...runtimeMetadata,
             accessPath,
-            contentType:
-              tool.tool_call_template && typeof tool.tool_call_template.content_type === "string"
-                ? tool.tool_call_template.content_type
-                : undefined,
+            contentType: op.contentType,
             description: operationDescription || undefined,
-            method:
-              tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
-                ? tool.tool_call_template.http_method
-                : "GET",
+            method: op.method,
             parameterDescriptions: Object.keys(parameterDescriptions).length > 0 ? parameterDescriptions : undefined,
-            routeTemplate:
-              tool.tool_call_template && typeof tool.tool_call_template.url === "string"
-                ? tool.tool_call_template.url.replace(/^https?:\/\/[^/]+/u, "")
-                : "/",
+            routeTemplate: op.routeTemplate,
           },
         },
       ];

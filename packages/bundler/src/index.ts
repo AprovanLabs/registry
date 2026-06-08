@@ -3,6 +3,7 @@ import path from "node:path";
 import { buildClientToolMap } from "./client-api.js";
 import { augmentProviderDocs, type AugmentProviderDocsResult } from "./docs/augment.js";
 import { loadProviderDocs, type LoadProviderDocsOptions, type LoadProviderDocsResult } from "./docs/load.js";
+import { discoverOperationsFromOpenApi } from "./openapi-discovery.js";
 import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
 import { runEnrichPhase, type RunEnrichPhaseOptions, type RunEnrichPhaseResult } from "./phases/enrich.js";
 import { runResearchPhase, type RunResearchPhaseOptions, type RunResearchPhaseResult } from "./phases/research.js";
@@ -30,13 +31,12 @@ import {
   renderProviderMetadata,
   renderProviderPackageJson,
   renderProviderReadme,
-  renderProviderTypes,
   renderProviderTypesIndex,
   renderRootPackageEntry,
   renderRootPackageJson,
   renderRootTsconfig,
 } from "./render.js";
-import { loadProviderTools } from "./utcp.js";
+import { addMissingOperationIds, loadProviderTools, toolsToDiscoveredOperations } from "./utcp.js";
 
 export {
   runResearchPhase,
@@ -116,14 +116,21 @@ export async function augmentRegistryProviderDocs(
   const provider = resolveProvider(providers, options.provider);
   const rawOpenApiDocument = await loadOpenApiDocument(provider);
   const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
+  const specWithIds = addMissingOperationIds(rawOpenApiDocument);
   const { tools } = await loadProviderTools(provider, rawOpenApiDocument);
-  const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
+  const operations =
+    tools.length > 0
+      ? toolsToDiscoveredOperations(tools, specWithIds)
+      : discoverOperationsFromOpenApi(specWithIds, provider.name);
+  const publicTypeMap = buildPublicTypeMap(openApiDocument, operations);
+  const clientToolMap = buildClientToolMap(openApiDocument, operations, provider);
   const augmented = await augmentProviderDocs({
     provider: provider.name,
     providerOptions: provider.options,
     openApiDocument,
-    tools,
+    operations,
     clientToolMap,
+    publicTypeMap,
     docsCacheRoot,
     outputRoot,
     overwriteDocs: options.overwriteDocs,
@@ -172,9 +179,14 @@ export async function generateRegistryTypes(
   const provider = resolveProvider(providers, options.provider);
   const rawOpenApiDocument = await loadOpenApiDocument(provider);
   const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
+  const specWithIds = addMissingOperationIds(rawOpenApiDocument);
   const { tools } = await loadProviderTools(provider, rawOpenApiDocument);
-  const publicTypeMap = buildPublicTypeMap(openApiDocument, tools);
-  const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
+  const operations =
+    tools.length > 0
+      ? toolsToDiscoveredOperations(tools, specWithIds)
+      : discoverOperationsFromOpenApi(specWithIds, provider.name);
+  const publicTypeMap = buildPublicTypeMap(openApiDocument, operations);
+  const clientToolMap = buildClientToolMap(openApiDocument, operations, provider);
 
   const outputRoot = options.outputRoot ?? DEFAULT_OUTPUT_ROOT;
   const providerDir = resolveProviderOutputDir(provider.name, outputRoot);
@@ -232,8 +244,8 @@ export async function generateRegistryTypes(
     writeTextFile(path.join(providerDir, "index.ts"), renderProviderEntry(provider.name, providerClientImportPath)),
     ...(await (async () => {
       const typesDir = path.join(providerDir, "types");
-      const groupTypeFiles = renderProviderGroupTypes(provider, openApiDocument, tools, publicTypeMap, clientToolMap);
-      const indexContent = renderProviderTypesIndex(provider, openApiDocument, tools, publicTypeMap, clientToolMap);
+      const groupTypeFiles = renderProviderGroupTypes(provider, openApiDocument, operations, publicTypeMap, clientToolMap);
+      const indexContent = renderProviderTypesIndex(provider, openApiDocument, operations, publicTypeMap, clientToolMap);
       const typePaths = await Promise.all(
         [...groupTypeFiles.entries()].map(([fileName, content]) =>
           writeTextFile(path.join(typesDir, fileName), content)
@@ -253,7 +265,7 @@ export async function generateRegistryTypes(
   return {
     provider: provider.name,
     outputPaths,
-    toolCount: tools.length,
+    toolCount: operations.length,
   };
 }
 

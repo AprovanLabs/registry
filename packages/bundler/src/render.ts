@@ -9,11 +9,11 @@ import {
   splitProviderName,
   stripProviderToolName,
 } from "./provider.js";
-import { escapeComment, quotePropertyName, schemaToObjectContent, schemaToTypeScriptType } from "./schema.js";
+import { escapeComment, quotePropertyName, schemaToObjectContent } from "./schema.js";
 import type { ClientToolDefinition, ToolRuntimeMetadata } from "./client-api.js";
 import type { ProviderPackageDocsMetadata } from "./docs/types.js";
+import type { DiscoveredOperation } from "./openapi-discovery.js";
 import type { RegistryProvider } from "./provider.js";
-import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
 
 type PublicToolTypes = {
@@ -168,28 +168,27 @@ function toCamelCase(name: string): string {
 
 function toClientTools(
   provider: Pick<RegistryProvider, "name" | "options">,
-  tools: Tool[],
+  operations: DiscoveredOperation[],
   publicTypeMap: Map<string, PublicToolTypes>,
   clientToolMap: Map<string, ClientToolDefinition>,
 ): ClientTool[] {
-  return tools.map((tool) => {
-    const rawToolName = stripProviderToolName(tool.name, provider);
-    const generatedMetadata = clientToolMap.get(tool.name);
-    const hasPublicType = publicTypeMap.has(tool.name);
-    const inputType = generatedMetadata?.inputType ?? publicTypeMap.get(tool.name)?.inputType ?? schemaToTypeScriptType(tool.inputs);
+  return operations.map((op) => {
+    const rawToolName = stripProviderToolName(op.name, provider);
+    const generatedMetadata = clientToolMap.get(op.name);
+    const inputType = generatedMetadata?.inputType ?? publicTypeMap.get(op.name)?.inputType ?? "{}";
 
     return {
       accessPath: generatedMetadata?.accessPath ?? [sanitizeIdentifier(rawToolName)],
-      description: tool.description ?? "",
+      description: op.description ?? "",
       hasInput: generatedMetadata?.hasInput ?? inputType !== "{}",
       hasOptions: generatedMetadata?.hasOptions ?? false,
-      inputSchema: generatedMetadata?.inputSchema ?? (hasPublicType ? undefined : tool.inputs),
+      inputSchema: generatedMetadata?.inputSchema,
       inputType,
       optionsOptional: generatedMetadata?.optionsOptional ?? true,
       optionsType: generatedMetadata?.optionsType ?? "{}",
-      outputSchema: hasPublicType ? undefined : tool.outputs,
-      outputType: publicTypeMap.get(tool.name)?.outputType ?? schemaToTypeScriptType(tool.outputs),
-      tags: tool.tags ?? [],
+      outputSchema: undefined,
+      outputType: publicTypeMap.get(op.name)?.outputType ?? "{ [key: string]: unknown }",
+      tags: op.tags,
     };
   });
 }
@@ -300,11 +299,11 @@ function renderProviderTypesFromClientTools(
 
 export function renderProviderTypes(
   provider: Pick<RegistryProvider, "name" | "options">,
-  tools: Tool[],
+  operations: DiscoveredOperation[],
   publicTypeMap: Map<string, PublicToolTypes>,
   clientToolMap: Map<string, ClientToolDefinition>,
 ): string {
-  const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
+  const clientTools = toClientTools(provider, operations, publicTypeMap, clientToolMap);
   return renderProviderTypesFromClientTools(provider, clientTools);
 }
 
@@ -394,11 +393,11 @@ function renderGroupTypes(
 export function renderProviderGroupTypes(
   provider: Pick<RegistryProvider, "name" | "options">,
   openApiDocument: OpenAPIV3.Document,
-  tools: Tool[],
+  operations: DiscoveredOperation[],
   publicTypeMap: Map<string, PublicToolTypes>,
   clientToolMap: Map<string, ClientToolDefinition>,
 ): Map<string, string> {
-  const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
+  const clientTools = toClientTools(provider, operations, publicTypeMap, clientToolMap);
   const groups = groupClientToolsByTag(clientTools, openApiDocument);
 
   const output = new Map<string, string>();
@@ -415,11 +414,11 @@ export function renderProviderGroupTypes(
 export function renderProviderTypesIndex(
   provider: Pick<RegistryProvider, "name" | "options">,
   openApiDocument: OpenAPIV3.Document,
-  tools: Tool[],
+  operations: DiscoveredOperation[],
   publicTypeMap: Map<string, PublicToolTypes>,
   clientToolMap: Map<string, ClientToolDefinition>,
 ): string {
-  const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
+  const clientTools = toClientTools(provider, operations, publicTypeMap, clientToolMap);
   const groups = groupClientToolsByTag(clientTools, openApiDocument);
 
   const providerTypeName = toPascalCase(provider.name);

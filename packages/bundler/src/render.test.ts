@@ -9,29 +9,19 @@ import {
   renderRootPackageJson,
 } from "./render.js";
 import type { ClientToolDefinition } from "./client-api.js";
+import type { DiscoveredOperation } from "./openapi-discovery.js";
 import type { RegistryProvider } from "./provider.js";
-import type { Tool } from "@utcp/sdk";
 
-function createTool(name: string): Tool {
+function createOp(name: string): DiscoveredOperation {
   return {
     name,
+    method: "GET",
+    path: "/",
+    routeTemplate: "/",
+    contentType: "application/json",
     description: `Tool ${name}`,
     tags: [],
-    tool_call_template: {
-      call_template_type: "http",
-      http_method: "GET",
-      url: "https://example.com",
-      content_type: "application/json",
-    },
-    inputs: {
-      type: "object",
-      properties: {},
-    },
-    outputs: {
-      type: "object",
-      properties: {},
-    },
-  } as unknown as Tool;
+  };
 }
 
 function createClientToolDefinition(accessPath: string[]): ClientToolDefinition {
@@ -61,7 +51,7 @@ describe("renderProviderTypes", () => {
   it("emits JSDoc comments and multi-line format for object input schemas with descriptions", () => {
     const rendered = renderProviderTypes(
       { name: "github" },
-      [createTool("github.repos/get")],
+      [createOp("github.repos/get")],
       new Map(),
       new Map([
         [
@@ -93,37 +83,29 @@ describe("renderProviderTypes", () => {
     expect(rendered).not.toContain("input: { owner: string");
   });
 
-  it("emits JSDoc comments and multi-line format for object output schemas with descriptions", () => {
+  it("renders output type from publicTypeMap", () => {
     const rendered = renderProviderTypes(
       { name: "github" },
-      [
-        {
-          ...createTool("github.users/get"),
-          outputs: {
-            type: "object",
-            properties: {
-              login: { type: "string", description: "The user's login handle." },
-              id: { type: "number", description: "Unique identifier for the user." },
-            },
-            required: ["login", "id"],
+      [createOp("github.users/get")],
+      new Map([
+        [
+          "github.users/get",
+          {
+            inputType: "{}",
+            outputType: "{ login: string; id: number }",
           },
-        },
-      ],
-      new Map(),
+        ],
+      ]),
       new Map([["github.users/get", createClientToolDefinition(["users", "get"])]]),
     );
 
-    expect(rendered).toContain("/** The user's login handle. */");
-    expect(rendered).toContain("login: string;");
-    expect(rendered).toContain("/** Unique identifier for the user. */");
-    expect(rendered).toContain("id: number;");
-    expect(rendered).toMatch(/Promise<\{\n/);
+    expect(rendered).toContain("Promise<{ login: string; id: number }>");
   });
 
   it("keeps compact inline format when inputSchema has no properties with descriptions", () => {
     const rendered = renderProviderTypes(
       { name: "example" },
-      [createTool("example.ping")],
+      [createOp("example.ping")],
       new Map(),
       new Map([
         [
@@ -143,7 +125,7 @@ describe("renderProviderTypes", () => {
   it("preserves pre-rendered types from publicTypeMap without expansion", () => {
     const rendered = renderProviderTypes(
       { name: "github" },
-      [createTool("github.users/get-by-username")],
+      [createOp("github.users/get-by-username")],
       new Map([
         [
           "github.users/get-by-username",
@@ -173,7 +155,7 @@ describe("renderProviderTypes", () => {
   it("preserves operationId word boundaries in accessor names", () => {
     const rendered = renderProviderTypes(
       { name: "datadog" },
-      [createTool("datadog.AddMemberTeam")],
+      [createOp("datadog.AddMemberTeam")],
       new Map(),
       new Map([["datadog.AddMemberTeam", createClientToolDefinition(["addMemberTeam"])]]),
     );
@@ -186,7 +168,7 @@ describe("renderProviderTypes", () => {
   it("normalizes mixed naming styles consistently", () => {
     const rendered = renderProviderTypes(
       { name: "example" },
-      [createTool("example.api_keys/ListAPIKeys"), createTool("example.events/list-events")],
+      [createOp("example.api_keys/ListAPIKeys"), createOp("example.events/list-events")],
       new Map(),
       new Map([
         ["example.api_keys/ListAPIKeys", createClientToolDefinition(["apiKeys", "listApiKeys"])],
@@ -203,7 +185,7 @@ describe("renderProviderTypes", () => {
   it("inlines method types and labels the second argument as options", () => {
     const rendered = renderProviderTypes(
       { name: "github" },
-      [createTool("github.users/get-by-username")],
+      [createOp("github.users/get-by-username")],
       new Map([
         [
           "github.users/get-by-username",
@@ -239,7 +221,7 @@ describe("renderProviderTypes", () => {
   it("omits the input argument for tools with no input or options", () => {
     const rendered = renderProviderTypes(
       { name: "example" },
-      [createTool("example.get-queue")],
+      [createOp("example.get-queue")],
       new Map(),
       new Map([
         [
@@ -260,7 +242,7 @@ describe("renderProviderTypes", () => {
   it("uses options as the only argument for input-less tools with overrides", () => {
     const rendered = renderProviderTypes(
       { name: "example" },
-      [createTool("example.inspect")],
+      [createOp("example.inspect")],
       new Map(),
       new Map([
         [

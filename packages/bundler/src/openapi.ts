@@ -1,11 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
-import { getDocumentPathItem } from "./openapi-path.js";
 import { resolveRepoPath } from "./provider.js";
 import { schemaToTypeScriptType } from "./schema.js";
+import type { DiscoveredOperation } from "./openapi-discovery.js";
 import type { RegistryProvider } from "./provider.js";
-import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
 
 type PublicToolTypes = {
@@ -72,9 +71,9 @@ function resolveSchema(
   const arraySchema = schema as OpenAPIV3.ArraySchemaObject;
 
   if (arraySchema.items) {
-    (resolved as any).items = Array.isArray(arraySchema.items)
+    (resolved as OpenAPIV3.ArraySchemaObject).items = (Array.isArray(arraySchema.items)
       ? arraySchema.items.map((item: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject) => resolveSchema(document, item, seen) ?? { type: "object" })
-      : (resolveSchema(document, arraySchema.items, seen) ?? { type: "object" });
+      : (resolveSchema(document, arraySchema.items, seen) ?? { type: "object" })) as OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject;
   }
 
   if (schema.additionalProperties && typeof schema.additionalProperties === "object") {
@@ -104,20 +103,10 @@ function resolveSchema(
 
 function getOperation(
   document: OpenAPIV3.Document,
-  tool: Tool,
+  op: DiscoveredOperation,
 ): OpenAPIV3.OperationObject | undefined {
-  const method =
-    tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
-      ? tool.tool_call_template.http_method.toLowerCase()
-      : undefined;
-  const rawUrl =
-    tool.tool_call_template && typeof tool.tool_call_template.url === "string" ? tool.tool_call_template.url : undefined;
-
-  if (!method || !rawUrl) {
-    return undefined;
-  }
-
-  const { pathItem } = getDocumentPathItem(document, rawUrl);
+  const method = op.method.toLowerCase();
+  const pathItem = document.paths?.[op.path];
 
   if (!pathItem || !(method in pathItem)) {
     return undefined;
@@ -250,17 +239,17 @@ export function applyProviderOpenApiOptions(
   };
 }
 
-export function buildPublicTypeMap(document: OpenAPIV3.Document, tools: Tool[]): Map<string, PublicToolTypes> {
+export function buildPublicTypeMap(document: OpenAPIV3.Document, operations: DiscoveredOperation[]): Map<string, PublicToolTypes> {
   return new Map(
-    tools.map((tool) => {
-      const operation = getOperation(document, tool);
+    operations.map((op) => {
+      const operation = getOperation(document, op);
       const responseSchema = getResponseSchema(document, operation);
 
       return [
-        tool.name,
+        op.name,
         {
-          inputType: schemaToTypeScriptType(tool.inputs),
-          outputType: responseSchema ? schemaToTypeScriptType(responseSchema) : schemaToTypeScriptType(tool.outputs),
+          inputType: "{}",
+          outputType: responseSchema ? schemaToTypeScriptType(responseSchema) : "{ [key: string]: unknown }",
         },
       ];
     }),

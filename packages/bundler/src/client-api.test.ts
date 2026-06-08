@@ -1,34 +1,33 @@
 import { describe, expect, it } from "vitest";
 import { buildClientToolMap } from "./client-api.js";
-import type { Tool } from "@utcp/sdk";
+import type { DiscoveredOperation } from "./openapi-discovery.js";
 import type { OpenAPIV3 } from "openapi-types";
 
-
-function createTool(name: string, httpMethod: string, url: string, contentType = "application/json"): Tool {
+/**
+ * `path` must match the key used in `document.paths` for the test.
+ * For documents with a server base path (e.g. `/v1`), pass the OpenAPI path
+ * key WITHOUT the base (e.g. `"/responses"` not `"/v1/responses"`).
+ */
+function createOp(
+  name: string,
+  method: string,
+  path: string,
+  contentType = "application/json",
+): DiscoveredOperation {
   return {
     name,
+    method: method.toUpperCase(),
+    path,
+    routeTemplate: path,
+    contentType,
     description: name,
     tags: [],
-    tool_call_template: {
-      call_template_type: "http",
-      http_method: httpMethod,
-      url,
-      content_type: contentType,
-    },
-    inputs: {
-      type: "object",
-      properties: {},
-    },
-    outputs: {
-      type: "object",
-      properties: {},
-    },
-  } as unknown as Tool;
+  };
 }
 
 describe("buildClientToolMap", () => {
   it("renames duplicate nested method leaves to call", () => {
-    const tool = createTool("example.CreateLogsMetric/CreateLogsMetric", "POST", "https://api.example.com/v1/logs/metrics");
+    const tool = createOp("example.CreateLogsMetric/CreateLogsMetric", "POST", "/v1/logs/metrics");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Example", version: "1.0.0" },
@@ -71,7 +70,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("keeps body fields in input and moves conflicting transport fields to overrides", () => {
-    const tool = createTool("example.fooBar", "POST", "https://api.example.com/v1/{id}/example");
+    const tool = createOp("example.fooBar", "POST", "/v1/{id}/example");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Example", version: "1.0.0" },
@@ -122,7 +121,8 @@ describe("buildClientToolMap", () => {
   });
 
   it("matches operations when the server url contributes a base path", () => {
-    const tool = createTool("openai.createResponse", "POST", "https://api.openai.com/v1/responses");
+    // path = "/responses" matches directly in document.paths (server adds /v1 at runtime)
+    const tool = createOp("openai.createResponse", "POST", "/responses");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "OpenAI", version: "1.0.0" },
@@ -171,7 +171,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("strips the full provider prefix for dotted provider names", () => {
-    const tool = createTool("google.books.volumes/list", "GET", "https://www.googleapis.com/books/v1/volumes");
+    const tool = createOp("google.books.volumes/list", "GET", "/books/v1/volumes");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Google Books", version: "1.0.0" },
@@ -201,7 +201,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("keeps primitive request bodies as raw body input", () => {
-    const tool = createTool("spotify.uploadPlaylistCover", "PUT", "https://api.spotify.com/playlists/{playlist_id}/images", "image/jpeg");
+    const tool = createOp("spotify.uploadPlaylistCover", "PUT", "/playlists/{playlist_id}/images", "image/jpeg");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Spotify", version: "1.0.0" },
@@ -237,7 +237,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("promotes object bodies with additionalProperties to top-level input", () => {
-    const tool = createTool("spotify.createPlaylist", "POST", "https://api.spotify.com/users/{user_id}/playlists");
+    const tool = createOp("spotify.createPlaylist", "POST", "/users/{user_id}/playlists");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Spotify", version: "1.0.0" },
@@ -282,7 +282,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("populates description from operation summary", () => {
-    const tool = createTool("example.getFoo", "GET", "https://api.example.com/v1/foo");
+    const tool = createOp("example.getFoo", "GET", "/v1/foo");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Example", version: "1.0.0" },
@@ -304,7 +304,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("falls back to operation description when summary is absent", () => {
-    const tool = createTool("example.getFoo", "GET", "https://api.example.com/v1/foo");
+    const tool = createOp("example.getFoo", "GET", "/v1/foo");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Example", version: "1.0.0" },
@@ -326,7 +326,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("falls back to tool description when operation has neither summary nor description", () => {
-    const tool = createTool("example.getFoo", "GET", "https://api.example.com/v1/foo");
+    const tool = createOp("example.getFoo", "GET", "/v1/foo");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Example", version: "1.0.0" },
@@ -347,7 +347,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("populates parameterDescriptions from operation parameters", () => {
-    const tool = createTool("example.getFoo", "GET", "https://api.example.com/v1/foo");
+    const tool = createOp("example.getFoo", "GET", "/v1/foo");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Example", version: "1.0.0" },
@@ -390,7 +390,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("leaves description and parameterDescriptions undefined when absent", () => {
-    const tool = createTool("example.getBar", "GET", "https://api.example.com/v1/bar");
+    const tool = createOp("example.getBar", "GET", "/v1/bar");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Example", version: "1.0.0" },
@@ -412,7 +412,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("includes parameter descriptions in inputSchema property schemas", () => {
-    const tool = createTool("example.getRepo", "GET", "https://api.example.com/v1/{owner}/{repo}");
+    const tool = createOp("example.getRepo", "GET", "/v1/{owner}/{repo}");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Example", version: "1.0.0" },
@@ -466,7 +466,7 @@ describe("buildClientToolMap", () => {
   });
 
   it("omits inputSchema when tool has no input properties", () => {
-    const tool = createTool("example.ping", "GET", "https://api.example.com/v1/ping");
+    const tool = createOp("example.ping", "GET", "/v1/ping");
     const openApiDocument = {
       openapi: "3.0.0",
       info: { title: "Example", version: "1.0.0" },

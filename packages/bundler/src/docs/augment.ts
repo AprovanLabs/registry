@@ -2,22 +2,24 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { resolveProviderDocsIndexPath, resolveProviderDocsManifestPath, resolveProviderOutputDir } from "../provider.js";
 import { stripProviderToolName, type RegistryProvider } from "../provider.js";
-import { schemaToTypeScriptType } from "../schema.js";
 import { groupOpenApiOperations } from "./grouping.js";
 import { getDocsStaleCheckResult } from "./hash.js";
 import { readDocsManifest } from "./manifest.js";
 import { loadDocsPromptAssets } from "./prompt.js";
 import { DocsPipelineError, type ProviderPackageDocsMetadata } from "./types.js";
 import type { ClientToolDefinition } from "../client-api.js";
-import type { Tool } from "@utcp/sdk";
+import type { DiscoveredOperation } from "../openapi-discovery.js";
 import type { OpenAPIV3 } from "openapi-types";
+
+type PublicTypeMap = Map<string, { inputType: string; outputType: string }>;
 
 export type AugmentProviderDocsOptions = {
   provider: string;
   providerOptions?: RegistryProvider["options"];
   openApiDocument: OpenAPIV3.Document;
-  tools?: Tool[];
+  operations?: DiscoveredOperation[];
   clientToolMap?: Map<string, ClientToolDefinition>;
+  publicTypeMap?: PublicTypeMap;
   docsCacheRoot: string;
   outputRoot: string;
   overwriteDocs?: boolean;
@@ -120,8 +122,9 @@ function isParameterObject(
 function buildOperationLookup(
   provider: string,
   providerOptions: RegistryProvider["options"] | undefined,
-  tools: Tool[] | undefined,
+  operations: DiscoveredOperation[] | undefined,
   clientToolMap: Map<string, ClientToolDefinition> | undefined,
+  publicTypeMap: PublicTypeMap | undefined,
 ): {
   byMethodAndPath: Map<string, AugmentedOperation>;
   byOperationId: Map<string, AugmentedOperation>;
@@ -129,26 +132,26 @@ function buildOperationLookup(
   const byMethodAndPath = new Map<string, AugmentedOperation>();
   const byOperationId = new Map<string, AugmentedOperation>();
 
-  for (const tool of tools ?? []) {
-    const mapped = clientToolMap?.get(tool.name);
+  for (const op of operations ?? []) {
+    const mapped = clientToolMap?.get(op.name);
 
     if (!mapped) {
       continue;
     }
 
-    const strippedToolName = stripProviderToolName(tool.name, {
+    const strippedToolName = stripProviderToolName(op.name, {
       name: provider,
       options: providerOptions,
     });
     const operation: AugmentedOperation = {
       accessPath: mapped.accessPath,
-      description: tool.description,
+      description: op.description,
       hasInput: mapped.hasInput,
       hasOptions: mapped.hasOptions,
       inputType: mapped.inputType,
       optionsOptional: mapped.optionsOptional,
       optionsType: mapped.optionsType,
-      outputType: schemaToTypeScriptType(tool.outputs),
+      outputType: publicTypeMap?.get(op.name)?.outputType ?? "{ [key: string]: unknown }",
       toolName: strippedToolName,
     };
 
@@ -407,7 +410,7 @@ export async function augmentProviderDocs(options: AugmentProviderDocsOptions): 
   }
 
   const groups = groupOpenApiOperations(options.openApiDocument);
-  const operationLookup = buildOperationLookup(options.provider, options.providerOptions, options.tools, options.clientToolMap);
+  const operationLookup = buildOperationLookup(options.provider, options.providerOptions, options.operations, options.clientToolMap, options.publicTypeMap);
   const packageSpecifier = getClientPackageSpecifier(options.provider);
   const clientVariable = toCamelCase(options.provider.split(/[./]/u).at(-1) ?? options.provider);
   const groupDocOpts: GroupDocOptions = {
