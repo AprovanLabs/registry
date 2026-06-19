@@ -1,53 +1,69 @@
 # github
 
-Generated UTDK provider docs from cached source material.
+@utdk/github is a generated, typed client for this provider.
 
-## Groups
+This client wraps the provider API in typed methods focused on Repos, Actions, Orgs, Issues.
 
-- Actions (184 operations)
-- Activity (32 operations)
-- Agent Tasks (5 operations)
-- Apps (37 operations)
-- Billing (10 operations)
-- Campaigns (5 operations)
-- Checks (12 operations)
-- Classroom (6 operations)
-- Code Scanning (21 operations)
-- Code Security (20 operations)
-- Codes Of Conduct (2 operations)
-- Codespaces (48 operations)
-- Copilot (25 operations)
-- Credentials (1 operations)
-- Dependabot (22 operations)
-- Dependency Graph (3 operations)
-- Emojis (1 operations)
-- Enterprise Team Memberships (6 operations)
-- Enterprise Team Organizations (6 operations)
-- Enterprise Teams (5 operations)
-- Gists (20 operations)
-- Git (13 operations)
-- Gitignore (2 operations)
-- Hosted Compute (6 operations)
-- Interactions (9 operations)
-- Issues (55 operations)
-- Licenses (3 operations)
-- Markdown (2 operations)
-- Meta (5 operations)
-- Migrations (22 operations)
-- Oidc (8 operations)
-- Orgs (108 operations)
-- Packages (27 operations)
-- Private Registries (6 operations)
-- Projects (26 operations)
-- Pulls (27 operations)
-- Rate Limit (1 operations)
-- Reactions (15 operations)
-- Repos (201 operations)
-- Search (7 operations)
-- Secret Scanning (9 operations)
-- Security Advisories (10 operations)
-- Teams (32 operations)
-- Users (47 operations)
+## Quick start
+
+```ts
+import github from "@utdk/github";
+
+// Example operation call (see guides below for full signatures)
+await github.someOperation({});
+```
+
+## Capability guides
+
+- [Actions](./docs/actions.md) - 187 operations
+- [Activity](./docs/activity.md) - 32 operations
+- [Agent Tasks](./docs/agent-tasks.md) - 5 operations
+- [Agents](./docs/agents.md) - 30 operations
+- [Apps](./docs/apps.md) - 37 operations
+- [Billing](./docs/billing.md) - 13 operations
+- [Campaigns](./docs/campaigns.md) - 5 operations
+- [Checks](./docs/checks.md) - 12 operations
+- [Classroom](./docs/classroom.md) - 6 operations
+- [Code Quality](./docs/code-quality.md) - 2 operations
+- [Code Scanning](./docs/code-scanning.md) - 21 operations
+- [Code Security](./docs/code-security.md) - 20 operations
+- [Codes Of Conduct](./docs/codes-of-conduct.md) - 2 operations
+- [Codespaces](./docs/codespaces.md) - 48 operations
+- [Copilot](./docs/copilot.md) - 31 operations
+- [Copilot Spaces](./docs/copilot-spaces.md) - 28 operations
+- [Credentials](./docs/credentials.md) - 1 operations
+- [Dependabot](./docs/dependabot.md) - 25 operations
+- [Dependency Graph](./docs/dependency-graph.md) - 5 operations
+- [Emojis](./docs/emojis.md) - 1 operations
+- [Enterprise Team Memberships](./docs/enterprise-team-memberships.md) - 6 operations
+- [Enterprise Team Organizations](./docs/enterprise-team-organizations.md) - 6 operations
+- [Enterprise Teams](./docs/enterprise-teams.md) - 5 operations
+- [Gists](./docs/gists.md) - 20 operations
+- [Git](./docs/git.md) - 13 operations
+- [Gitignore](./docs/gitignore.md) - 2 operations
+- [Hosted Compute](./docs/hosted-compute.md) - 6 operations
+- [Interactions](./docs/interactions.md) - 9 operations
+- [Issues](./docs/issues.md) - 55 operations
+- [Licenses](./docs/licenses.md) - 3 operations
+- [Markdown](./docs/markdown.md) - 2 operations
+- [Meta](./docs/meta.md) - 5 operations
+- [Migrations](./docs/migrations.md) - 22 operations
+- [Oidc](./docs/oidc.md) - 8 operations
+- [Orgs](./docs/orgs.md) - 108 operations
+- [Packages](./docs/packages.md) - 27 operations
+- [Private Registries](./docs/private-registries.md) - 6 operations
+- [Projects](./docs/projects.md) - 26 operations
+- [Pulls](./docs/pulls.md) - 27 operations
+- [Rate Limit](./docs/rate-limit.md) - 1 operations
+- [Reactions](./docs/reactions.md) - 15 operations
+- [Repos](./docs/repos.md) - 202 operations
+- [Search](./docs/search.md) - 7 operations
+- [Secret Scanning](./docs/secret-scanning.md) - 9 operations
+- [Security Advisories](./docs/security-advisories.md) - 10 operations
+- [Teams](./docs/teams.md) - 32 operations
+- [Users](./docs/users.md) - 47 operations
+
+Each guide is organized by callable operation name (for example, `client.someOperation`), with typed input/output snippets.
 
 ## Source Index
 

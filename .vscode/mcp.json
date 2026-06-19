@@ -1,0 +1,13 @@
+{
+  "servers": {
+    "utdk": {
+      "command": "~/Documents/Code/AprovanLabs/registry/apps/mcp-server/node_modules/.bin/tsx",
+      "args": ["~/Documents/Code/AprovanLabs/registry/apps/mcp-server/src/server.ts"],
+      "cwd": "~/Documents/Code/AprovanLabs/registry/apps/mcp-server",
+      "env": {
+        "UTDK_PROVIDERS": "github,slack",
+        "PATH": "~/.nvm/versions/node/v22.15.0/bin:/usr/local/bin:/usr/bin:/bin"
+      }
+    }
+  }
+}

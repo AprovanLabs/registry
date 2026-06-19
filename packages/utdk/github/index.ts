@@ -1,10 +1,10 @@
+import type { CreateClientOptions } from "../client.js";
 import { createClient, createLazyClient } from "../client.js";
+import type { GithubClient } from "./types/index.js";
 import { toolMetadata } from "./metadata.js";
 import openApiDocument from "./openapi.json" with { type: "json" };
-import type { GithubClient } from "./types.js";
-import type { CreateClientOptions } from "../client.js";
 
-export * from "./types.js";
+export * from "./types/index.js";
 
 export function createGithubClient(
   options: Omit<CreateClientOptions, "name" | "openApiDocument" | "toolMetadata"> = {},

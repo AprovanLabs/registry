@@ -232,8 +232,8 @@ export async function generateRegistryTypes(
     writeTextFile(path.join(providerDir, "index.ts"), renderProviderEntry(provider.name, providerClientImportPath)),
     ...(await (async () => {
       const typesDir = path.join(providerDir, "types");
-      const groupTypeFiles = renderProviderGroupTypes(provider, openApiDocument, tools, publicTypeMap, clientToolMap);
-      const indexContent = renderProviderTypesIndex(provider, openApiDocument, tools, publicTypeMap, clientToolMap);
+      const groupTypeFiles = renderProviderGroupTypes(provider, tools, publicTypeMap, clientToolMap);
+      const indexContent = renderProviderTypesIndex(provider, tools, publicTypeMap, clientToolMap);
       const typePaths = await Promise.all(
         [...groupTypeFiles.entries()].map(([fileName, content]) =>
           writeTextFile(path.join(typesDir, fileName), content)

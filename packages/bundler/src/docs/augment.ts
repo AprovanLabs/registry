@@ -1,6 +1,10 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import { resolveProviderDocsIndexPath, resolveProviderDocsManifestPath, resolveProviderOutputDir } from "../provider.js";
+import {
+  resolveProviderDocsIndexPath,
+  resolveProviderDocsManifestPath,
+  resolveProviderOutputDir,
+} from "../provider.js";
 import { stripProviderToolName, type RegistryProvider } from "../provider.js";
 import { schemaToTypeScriptType } from "../schema.js";
 import { groupOpenApiOperations } from "./grouping.js";
@@ -94,13 +98,16 @@ function toCamelCase(name: string): string {
   }
 
   const [first = "client", ...rest] = parts;
-  return first.toLowerCase() + rest.map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join("");
+  return (
+    first.toLowerCase() +
+    rest.map((part) => part.charAt(0).toUpperCase() + part.slice(1).toLowerCase()).join("")
+  );
 }
 
 function getOperationFromPath(
   document: OpenAPIV3.Document,
   operationPath: string,
-  operationMethod: string,
+  operationMethod: string
 ): OpenAPIV3.OperationObject | undefined {
   const pathItem = document.paths?.[operationPath];
 
@@ -108,11 +115,13 @@ function getOperationFromPath(
     return undefined;
   }
 
-  return pathItem[operationMethod.toLowerCase() as keyof OpenAPIV3.PathItemObject] as OpenAPIV3.OperationObject | undefined;
+  return pathItem[operationMethod.toLowerCase() as keyof OpenAPIV3.PathItemObject] as
+    | OpenAPIV3.OperationObject
+    | undefined;
 }
 
 function isParameterObject(
-  parameter: OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject,
+  parameter: OpenAPIV3.ParameterObject | OpenAPIV3.ReferenceObject
 ): parameter is OpenAPIV3.ParameterObject {
   return typeof parameter === "object" && !("$ref" in parameter);
 }
@@ -121,7 +130,7 @@ function buildOperationLookup(
   provider: string,
   providerOptions: RegistryProvider["options"] | undefined,
   tools: Tool[] | undefined,
-  clientToolMap: Map<string, ClientToolDefinition> | undefined,
+  clientToolMap: Map<string, ClientToolDefinition> | undefined
 ): {
   byMethodAndPath: Map<string, AugmentedOperation>;
   byOperationId: Map<string, AugmentedOperation>;
@@ -153,7 +162,10 @@ function buildOperationLookup(
     };
 
     byOperationId.set(strippedToolName, operation);
-    byMethodAndPath.set(getOperationKey(mapped.runtimeMetadata.method, mapped.runtimeMetadata.routeTemplate), operation);
+    byMethodAndPath.set(
+      getOperationKey(mapped.runtimeMetadata.method, mapped.runtimeMetadata.routeTemplate),
+      operation
+    );
   }
 
   return { byMethodAndPath, byOperationId };
@@ -166,7 +178,10 @@ function formatResponseCodes(operation: OpenAPIV3.OperationObject | undefined): 
     return "Not declared in OpenAPI";
   }
 
-  return responseCodes.sort((left, right) => left.localeCompare(right)).map((code) => `\`${code}\``).join(", ");
+  return responseCodes
+    .sort((left, right) => left.localeCompare(right))
+    .map((code) => `\`${code}\``)
+    .join(", ");
 }
 
 function formatListOrNone(values: string[]): string {
@@ -181,7 +196,7 @@ function getOperationMethodName(
   operation: AugmentedOperation | undefined,
   fallbackOperationId: string | undefined,
   method: string,
-  route: string,
+  route: string
 ): string {
   if (operation) {
     return operation.accessPath.join(".");
@@ -253,30 +268,40 @@ type GroupDocOptions = {
 
 function buildGroupDocContent(
   group: ReturnType<typeof groupOpenApiOperations>[number],
-  opts: GroupDocOptions,
+  opts: GroupDocOptions
 ): string {
   const { openApiDocument, operationLookup, packageSpecifier, clientVariable, promptsHash } = opts;
   return [
     `# ${group.title}`,
     "",
-    "Use these operations through the generated client (not direct HTTP calls).",
-    "",
     `Import path: \`${packageSpecifier}\``,
     "",
-    "## Operations",
-    "",
     ...group.operations.flatMap((operation) => {
-      const openApiOperation = getOperationFromPath(openApiDocument, operation.path, operation.method);
+      const openApiOperation = getOperationFromPath(
+        openApiDocument,
+        operation.path,
+        operation.method
+      );
       const operationDetails =
         operationLookup.byMethodAndPath.get(getOperationKey(operation.method, operation.path)) ??
-        (operation.operationId ? operationLookup.byOperationId.get(operation.operationId) : undefined);
-      const methodName = getOperationMethodName(operationDetails, operation.operationId, operation.method, operation.path);
+        (operation.operationId
+          ? operationLookup.byOperationId.get(operation.operationId)
+          : undefined);
+      const methodName = getOperationMethodName(
+        operationDetails,
+        operation.operationId,
+        operation.method,
+        operation.path
+      );
       const callPath = `${clientVariable}.${methodName}`;
       const aliasBase = toPascalCase(methodName);
       const inputAlias = `${aliasBase}Input`;
       const outputAlias = `${aliasBase}Output`;
       const operationDescription =
-        operation.summary ?? openApiOperation?.summary ?? openApiOperation?.description ?? operationDetails?.description;
+        operation.summary ??
+        openApiOperation?.summary ??
+        openApiOperation?.description ??
+        operationDetails?.description;
       const pathParams = openApiOperation?.parameters
         ?.filter(isParameterObject)
         .filter((parameter) => parameter.in === "path")
@@ -294,19 +319,24 @@ function buildGroupDocContent(
       ]
         .filter((value): value is string => Boolean(value))
         .join(", ");
-      const fallbackSourceUrl = openApiDocument.externalDocs?.url ?? toOptionalString(openApiDocument.info?.contact?.url);
+      const fallbackSourceUrl =
+        openApiDocument.externalDocs?.url ?? toOptionalString(openApiDocument.info?.contact?.url);
 
       return [
         `### \`${callPath}\``,
         "",
         `- **HTTP**: \`${operation.method.toUpperCase()} ${operation.path}\``,
         operationDescription ? `- **What it does**: ${operationDescription}` : undefined,
-        operation.operationId ? `- **OpenAPI operationId**: \`${operation.operationId}\`` : undefined,
+        operation.operationId
+          ? `- **OpenAPI operationId**: \`${operation.operationId}\``
+          : undefined,
         `- **Path params**: ${formatListOrNone(pathParams ?? [])}`,
         `- **Query params**: ${formatListOrNone(queryParams ?? [])}`,
         `- **Response codes**: ${formatResponseCodes(openApiOperation)}`,
         operationDetails?.hasOptions
-          ? `- **Transport options**: \`${operationDetails.optionsType}\`${operationDetails.optionsOptional ? " (optional)" : ""}`
+          ? `- **Transport options**: \`${operationDetails.optionsType}\`${
+              operationDetails.optionsOptional ? " (optional)" : ""
+            }`
           : "- **Transport options**: None",
         fallbackSourceUrl ? `- **Source**: [OpenAPI reference](${fallbackSourceUrl})` : undefined,
         "- **TypeScript**: [Client interface](../types.ts)",
@@ -315,7 +345,9 @@ function buildGroupDocContent(
         "",
         `- Client input type: \`${inputType}\``,
         operationDetails?.hasOptions
-          ? `- Client transport options: \`${operationDetails.optionsType}\`${operationDetails.optionsOptional ? " (optional)" : ""}`
+          ? `- Client transport options: \`${operationDetails.optionsType}\`${
+              operationDetails.optionsOptional ? " (optional)" : ""
+            }`
           : "- Client transport options: None",
         "",
         "**Outputs**",
@@ -355,7 +387,9 @@ function buildGroupDocContent(
 // Main augmentation pipeline
 // ---------------------------------------------------------------------------
 
-export async function augmentProviderDocs(options: AugmentProviderDocsOptions): Promise<AugmentProviderDocsResult> {
+export async function augmentProviderDocs(
+  options: AugmentProviderDocsOptions
+): Promise<AugmentProviderDocsResult> {
   const manifestPath = resolveProviderDocsManifestPath(options.provider, options.docsCacheRoot);
   const indexPath = resolveProviderDocsIndexPath(options.provider, options.docsCacheRoot);
   const outputDir = resolveProviderOutputDir(options.provider, options.outputRoot);
@@ -390,7 +424,11 @@ export async function augmentProviderDocs(options: AugmentProviderDocsOptions): 
       nextPromptHash: prompts.hash,
     });
 
-    if (!options.overwriteDocs && !staleCheck.isStale && (existing.openApiHash != null || existing.promptHash != null)) {
+    if (
+      !options.overwriteDocs &&
+      !staleCheck.isStale &&
+      (existing.openApiHash != null || existing.promptHash != null)
+    ) {
       throw new DocsPipelineError(
         "DOCS_OVERWRITE_BLOCKED",
         `Docs outputs for ${options.provider} are up to date. Pass --overwrite-docs to replace unchanged README/docs output.`,
@@ -399,7 +437,7 @@ export async function augmentProviderDocs(options: AugmentProviderDocsOptions): 
           staleReason: staleCheck.reason,
           manifestPath,
           indexPath,
-        },
+        }
       );
     }
 
@@ -407,7 +445,12 @@ export async function augmentProviderDocs(options: AugmentProviderDocsOptions): 
   }
 
   const groups = groupOpenApiOperations(options.openApiDocument);
-  const operationLookup = buildOperationLookup(options.provider, options.providerOptions, options.tools, options.clientToolMap);
+  const operationLookup = buildOperationLookup(
+    options.provider,
+    options.providerOptions,
+    options.tools,
+    options.clientToolMap
+  );
   const packageSpecifier = getClientPackageSpecifier(options.provider);
   const clientVariable = toCamelCase(options.provider.split(/[./]/u).at(-1) ?? options.provider);
   const groupDocOpts: GroupDocOptions = {
@@ -439,7 +482,10 @@ export async function augmentProviderDocs(options: AugmentProviderDocsOptions): 
     "",
     "## Capability guides",
     "",
-    ...groups.map((group) => `- [${group.title}](./docs/${group.key}.md) - ${group.operations.length} operations`),
+    ...groups.map(
+      (group) =>
+        `- [${group.title}](./docs/${group.key}.md) - ${group.operations.length} operations`
+    ),
     "",
     "Each guide is organized by callable operation name (for example, `client.someOperation`), with typed input/output snippets.",
     "",

@@ -1,5 +1,4 @@
 import { readFileSync } from "node:fs";
-import { groupOpenApiOperations } from "./docs/grouping.js";
 import {
   getProviderAuthOptions,
   getProviderPackageName,
@@ -308,45 +307,26 @@ export function renderProviderTypes(
   return renderProviderTypesFromClientTools(provider, clientTools);
 }
 
-function groupClientToolsByTag(
-  clientTools: ClientTool[],
-  openApiDocument: OpenAPIV3.Document,
-): Map<string, ClientTool[]> {
-  const groups = new Map<string, ClientTool[]>();
-
-  // Get the doc groups from OpenAPI (same grouping used for docs)
-  const docGroups = groupOpenApiOperations(openApiDocument);
-
-  // Build a map from operationId to group key
-  const operationIdToGroupKey = new Map<string, string>();
-  for (const docGroup of docGroups) {
-    for (const op of docGroup.operations) {
-      if (op.operationId) {
-        operationIdToGroupKey.set(op.operationId, docGroup.key);
-      }
-    }
-  }
+function groupClientToolsByNamespace(clientTools: ClientTool[]): {
+  namespaced: Map<string, ClientTool[]>;
+  toplevel: ClientTool[];
+} {
+  const namespaced = new Map<string, ClientTool[]>();
+  const toplevel: ClientTool[] = [];
 
   for (const tool of clientTools) {
-    // Try to find the operationId from the accessPath
-    const operationPath = tool.accessPath.join(".");
-    let tag = "general";
-
-    // Look for matching operationId in the OpenAPI document
-    for (const [opId, groupKey] of operationIdToGroupKey.entries()) {
-      if (operationPath.toLowerCase().includes(opId.toLowerCase().replace(/-/g, ""))) {
-        tag = groupKey;
-        break;
+    if (tool.accessPath.length > 1) {
+      const namespace = tool.accessPath[0]!;
+      if (!namespaced.has(namespace)) {
+        namespaced.set(namespace, []);
       }
+      namespaced.get(namespace)!.push(tool);
+    } else {
+      toplevel.push(tool);
     }
-
-    if (!groups.has(tag)) {
-      groups.set(tag, []);
-    }
-    groups.get(tag)!.push(tool);
   }
 
-  return groups;
+  return { namespaced, toplevel };
 }
 
 function toTypeName(groupKey: string): string {
@@ -393,20 +373,18 @@ function renderGroupTypes(
 
 export function renderProviderGroupTypes(
   provider: Pick<RegistryProvider, "name" | "options">,
-  openApiDocument: OpenAPIV3.Document,
   tools: Tool[],
   publicTypeMap: Map<string, PublicToolTypes>,
   clientToolMap: Map<string, ClientToolDefinition>,
 ): Map<string, string> {
   const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
-  const groups = groupClientToolsByTag(clientTools, openApiDocument);
+  const { namespaced } = groupClientToolsByNamespace(clientTools);
 
   const output = new Map<string, string>();
 
-  for (const [groupKey, groupTools] of groups.entries()) {
-    const fileName = `${groupKey}.ts`;
-    const content = renderGroupTypes(provider, groupKey, groupTools);
-    output.set(fileName, content);
+  for (const [namespace, groupTools] of namespaced.entries()) {
+    const content = renderGroupTypes(provider, namespace, groupTools);
+    output.set(`${namespace}.ts`, content);
   }
 
   return output;
@@ -414,36 +392,60 @@ export function renderProviderGroupTypes(
 
 export function renderProviderTypesIndex(
   provider: Pick<RegistryProvider, "name" | "options">,
-  openApiDocument: OpenAPIV3.Document,
   tools: Tool[],
   publicTypeMap: Map<string, PublicToolTypes>,
   clientToolMap: Map<string, ClientToolDefinition>,
 ): string {
   const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
-  const groups = groupClientToolsByTag(clientTools, openApiDocument);
+  const { namespaced, toplevel } = groupClientToolsByNamespace(clientTools);
 
   const providerTypeName = toPascalCase(provider.name);
 
-  const imports = [...groups.keys()]
+  const imports = [...namespaced.keys()]
     .sort()
-    .map((groupKey) => {
-      const typeName = toTypeName(groupKey);
-      return `import type { ${typeName} } from "./${groupKey}.js";`;
+    .map((namespace) => {
+      const typeName = toTypeName(namespace);
+      return `import type { ${typeName} } from "./${namespace}.js";`;
     })
     .join("\n");
 
-  const composition = [...groups.keys()]
+  const namespacedEntries = [...namespaced.keys()]
     .sort()
-    .map((groupKey) => {
-      const typeName = toTypeName(groupKey);
-      const propertyName = toCamelCase(groupKey);
-      return `  ${propertyName}: ${typeName};`;
+    .map((namespace) => {
+      const typeName = toTypeName(namespace);
+      return `  ${namespace}: ${typeName};`;
     })
     .join("\n");
 
-  const reExports = [...groups.keys()]
+  const toplevelEntries = toplevel
+    .map((tool) => {
+      const methodName = tool.accessPath[0] ?? "call";
+      const parameters = [
+        tool.hasInput ? `input: ${tool.inputType}` : undefined,
+        tool.hasOptions ? `options${tool.optionsOptional ? "?" : ""}: ${tool.optionsType}` : undefined,
+      ].filter((p): p is string => Boolean(p));
+      const invocation = [
+        tool.hasInput ? "input" : undefined,
+        tool.hasOptions ? "options" : undefined,
+      ].filter((a): a is string => Boolean(a));
+
+      return [
+        `  /**`,
+        `   * ${escapeComment(tool.description ?? "")}`,
+        `   * Tags: ${escapeComment(tool.tags.join(", "))}`,
+        `   * Access as: ${provider.name}.${tool.accessPath.join(".")}(${invocation.join(", ")})`,
+        `   */`,
+        `  ${quotePropertyName(methodName)}: (${parameters.join(", ")}) => Promise<${tool.outputType}>;`,
+      ].join("\n");
+    })
+    .join("\n\n");
+
+  const compositionParts = [namespacedEntries, toplevelEntries].filter(Boolean);
+  const composition = compositionParts.join("\n\n");
+
+  const reExports = [...namespaced.keys()]
     .sort()
-    .map((groupKey) => `export * from "./${groupKey}.js";`)
+    .map((namespace) => `export * from "./${namespace}.js";`)
     .join("\n");
 
   return [
