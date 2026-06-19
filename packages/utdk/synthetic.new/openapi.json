@@ -1,0 +1,1177 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Synthetic (https://synthetic.new) OpenAI-compatible API",
+    "version": "1.0.0",
+    "contact": {
+      "email": "hi@synthetic.new"
+    },
+    "description": "OpenAI-compatible API for LLM inference w/ Synthetic",
+    "termsOfService": "https://synthetic.new/policies/terms-of-service"
+  },
+  "servers": [
+    {
+      "url": "https://api.synthetic.new"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Models",
+      "x-scalar-order": [
+        "synthetic-httpssyntheticnew-openai-compatible-api-1/tag/models/GET/openai/v1/models"
+      ]
+    }
+  ],
+  "paths": {
+    "/openai/v1/models": {
+      "get": {
+        "operationId": "listModels",
+        "tags": [
+          "Models"
+        ],
+        "summary": "List models",
+        "description": "List all models provided by Synthetic. Synthetic-hosted models return SelfHostedModelDetails. Proxied models return ProxiedModelDetails.",
+        "parameters": [
+          {
+            "name": "provider",
+            "in": "query",
+            "required": false,
+            "description": "Optionally filter models by provider.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "synthetic",
+                "together",
+                "fireworks",
+                "groq",
+                "deepinfra"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of available models",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "oneOf": [
+                      {
+                        "$ref": "#/components/schemas/SelfHostedModelDetails"
+                      },
+                      {
+                        "$ref": "#/components/schemas/ProxiedModelDetails"
+                      }
+                    ],
+                    "discriminator": {
+                      "propertyName": "provider",
+                      "mapping": {
+                        "synthetic": "#/components/schemas/SelfHostedModelDetails",
+                        "together": "#/components/schemas/ProxiedModelDetails",
+                        "fireworks": "#/components/schemas/ProxiedModelDetails",
+                        "groq": "#/components/schemas/ProxiedModelDetails",
+                        "deepinfra": "#/components/schemas/ProxiedModelDetails"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "synthetic": {
+                    "description": "Synthetic hosted model (recommended)",
+                    "value": {
+                      "provider": "synthetic",
+                      "always_on": true,
+                      "id": "hf:zai-org/GLM-5.1",
+                      "hugging_face_id": "zai-org/GLM-5.1",
+                      "name": "zai-org/GLM-5.1",
+                      "input_modalities": [
+                        "text"
+                      ],
+                      "output_modalities": [
+                        "text"
+                      ],
+                      "context_length": 196608,
+                      "max_output_length": 65536,
+                      "pricing": {
+                        "prompt": "$0.000001",
+                        "completion": "$0.000003",
+                        "image": "0",
+                        "request": "0",
+                        "input_cache_reads": "$0.000001",
+                        "input_cache_writes": "0"
+                      },
+                      "created": 1775520000,
+                      "quantization": "nvfp4",
+                      "supported_sampling_parameters": [
+                        "temperature",
+                        "top_k",
+                        "top_p",
+                        "repetition_penalty",
+                        "frequency_penalty",
+                        "presence_penalty",
+                        "stop",
+                        "seed"
+                      ],
+                      "supported_features": [
+                        "tools",
+                        "json_mode",
+                        "structured_outputs",
+                        "reasoning"
+                      ],
+                      "openrouter": {
+                        "slug": "zai-org/glm-5.1"
+                      },
+                      "datacenters": [
+                        {
+                          "country_code": "US"
+                        }
+                      ]
+                    }
+                  },
+                  "proxied": {
+                    "description": "Proxied model",
+                    "value": {
+                      "provider": "together",
+                      "always_on": true,
+                      "id": "hf:Qwen/Qwen3.5-397B-A17B",
+                      "hugging_face_id": "Qwen/Qwen3.5-397B-A17B",
+                      "name": "Qwen/Qwen3.5-397B-A17B",
+                      "input_modalities": [
+                        "text",
+                        "image"
+                      ],
+                      "output_modalities": [
+                        "text"
+                      ],
+                      "context_length": 262144,
+                      "pricing": {
+                        "prompt": "$0.0000006",
+                        "completion": "$0.0000036",
+                        "image": "0",
+                        "request": "0",
+                        "input_cache_reads": "$0.0000006",
+                        "input_cache_writes": "0"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProxiedModelDetails": {
+        "title": "ProxiedModelDetails",
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "always_on",
+              "id",
+              "hugging_face_id",
+              "name",
+              "input_modalities",
+              "output_modalities",
+              "context_length",
+              "pricing"
+            ],
+            "properties": {
+              "always_on": {
+                "type": "boolean"
+              },
+              "id": {
+                "type": "string"
+              },
+              "hugging_face_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "input_modalities": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "text",
+                    "image"
+                  ]
+                }
+              },
+              "output_modalities": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "text",
+                    "image"
+                  ]
+                }
+              },
+              "context_length": {
+                "type": "number"
+              },
+              "pricing": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "prompt",
+                      "completion",
+                      "image",
+                      "request",
+                      "input_cache_reads",
+                      "input_cache_writes"
+                    ],
+                    "properties": {
+                      "prompt": {
+                        "type": "string"
+                      },
+                      "completion": {
+                        "type": "string"
+                      },
+                      "image": {
+                        "type": "string"
+                      },
+                      "request": {
+                        "type": "string"
+                      },
+                      "input_cache_reads": {
+                        "type": "string"
+                      },
+                      "input_cache_writes": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "per_minute"
+                    ],
+                    "properties": {
+                      "per_minute": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              },
+              "created": {
+                "type": "number"
+              },
+              "max_output_length": {
+                "type": "number"
+              },
+              "quantization": {
+                "enum": [
+                  "int4",
+                  "int8",
+                  "fp4",
+                  "fp6",
+                  "fp8",
+                  "fp16",
+                  "bf16",
+                  "fp32",
+                  "nvfp4",
+                  "unknown"
+                ]
+              },
+              "supported_sampling_parameters": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "temperature",
+                    "top_p",
+                    "top_k",
+                    "repetition_penalty",
+                    "frequency_penalty",
+                    "presence_penalty",
+                    "stop",
+                    "seed"
+                  ]
+                }
+              },
+              "supported_features": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "tools",
+                    "json_mode",
+                    "structured_outputs",
+                    "web_search",
+                    "reasoning"
+                  ]
+                }
+              },
+              "description": {
+                "type": "string"
+              },
+              "openrouter": {
+                "type": "object",
+                "required": [
+                  "slug"
+                ],
+                "properties": {
+                  "slug": {
+                    "type": "string"
+                  }
+                }
+              },
+              "datacenters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "country_code"
+                  ],
+                  "properties": {
+                    "country_code": {
+                      "enum": [
+                        "AD",
+                        "AE",
+                        "AF",
+                        "AG",
+                        "AI",
+                        "AL",
+                        "AM",
+                        "AO",
+                        "AQ",
+                        "AR",
+                        "AS",
+                        "AT",
+                        "AU",
+                        "AW",
+                        "AX",
+                        "AZ",
+                        "BA",
+                        "BB",
+                        "BD",
+                        "BE",
+                        "BF",
+                        "BG",
+                        "BH",
+                        "BI",
+                        "BJ",
+                        "BL",
+                        "BM",
+                        "BN",
+                        "BO",
+                        "BQ",
+                        "BR",
+                        "BS",
+                        "BT",
+                        "BU",
+                        "BV",
+                        "BW",
+                        "BY",
+                        "BZ",
+                        "CA",
+                        "CC",
+                        "CD",
+                        "CF",
+                        "CG",
+                        "CH",
+                        "CI",
+                        "CK",
+                        "CL",
+                        "CM",
+                        "CN",
+                        "CO",
+                        "CR",
+                        "CU",
+                        "CV",
+                        "CW",
+                        "CX",
+                        "CY",
+                        "CZ",
+                        "DE",
+                        "DJ",
+                        "DK",
+                        "DM",
+                        "DO",
+                        "DZ",
+                        "EC",
+                        "EE",
+                        "EG",
+                        "EH",
+                        "ER",
+                        "ES",
+                        "ET",
+                        "FI",
+                        "FJ",
+                        "FK",
+                        "FM",
+                        "FO",
+                        "FR",
+                        "GA",
+                        "GB",
+                        "GD",
+                        "GE",
+                        "GF",
+                        "GG",
+                        "GH",
+                        "GI",
+                        "GL",
+                        "GM",
+                        "GN",
+                        "GP",
+                        "GQ",
+                        "GR",
+                        "GS",
+                        "GT",
+                        "GU",
+                        "GW",
+                        "GY",
+                        "HK",
+                        "HM",
+                        "HN",
+                        "HR",
+                        "HT",
+                        "HU",
+                        "ID",
+                        "IE",
+                        "IL",
+                        "IM",
+                        "IN",
+                        "IO",
+                        "IQ",
+                        "IR",
+                        "IS",
+                        "IT",
+                        "JE",
+                        "JM",
+                        "JO",
+                        "JP",
+                        "KE",
+                        "KG",
+                        "KH",
+                        "KI",
+                        "KM",
+                        "KN",
+                        "KP",
+                        "KR",
+                        "KW",
+                        "KY",
+                        "KZ",
+                        "LA",
+                        "LB",
+                        "LC",
+                        "LI",
+                        "LK",
+                        "LR",
+                        "LS",
+                        "LT",
+                        "LU",
+                        "LV",
+                        "LY",
+                        "MA",
+                        "MC",
+                        "MD",
+                        "ME",
+                        "MF",
+                        "MG",
+                        "MH",
+                        "MK",
+                        "ML",
+                        "MM",
+                        "MN",
+                        "MO",
+                        "MP",
+                        "MQ",
+                        "MR",
+                        "MS",
+                        "MT",
+                        "MU",
+                        "MV",
+                        "MW",
+                        "MX",
+                        "MY",
+                        "MZ",
+                        "NA",
+                        "NC",
+                        "NE",
+                        "NF",
+                        "NG",
+                        "NI",
+                        "NL",
+                        "NO",
+                        "NP",
+                        "NR",
+                        "NU",
+                        "NZ",
+                        "OM",
+                        "PA",
+                        "PE",
+                        "PF",
+                        "PG",
+                        "PH",
+                        "PK",
+                        "PL",
+                        "PM",
+                        "PN",
+                        "PR",
+                        "PS",
+                        "PT",
+                        "PW",
+                        "PY",
+                        "QA",
+                        "RE",
+                        "RO",
+                        "RS",
+                        "RU",
+                        "RW",
+                        "SA",
+                        "SB",
+                        "SC",
+                        "SD",
+                        "SE",
+                        "SG",
+                        "SH",
+                        "SI",
+                        "SJ",
+                        "SK",
+                        "SL",
+                        "SM",
+                        "SN",
+                        "SO",
+                        "SR",
+                        "SS",
+                        "ST",
+                        "SV",
+                        "SX",
+                        "SY",
+                        "SZ",
+                        "TC",
+                        "TD",
+                        "TF",
+                        "TG",
+                        "TH",
+                        "TJ",
+                        "TK",
+                        "TL",
+                        "TM",
+                        "TN",
+                        "TO",
+                        "TR",
+                        "TT",
+                        "TV",
+                        "TW",
+                        "TZ",
+                        "UA",
+                        "UG",
+                        "UM",
+                        "US",
+                        "UY",
+                        "UZ",
+                        "VA",
+                        "VC",
+                        "VE",
+                        "VG",
+                        "VI",
+                        "VN",
+                        "VU",
+                        "WF",
+                        "WS",
+                        "YE",
+                        "YT",
+                        "ZA",
+                        "ZM",
+                        "ZW"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "provider"
+            ],
+            "properties": {
+              "provider": {
+                "enum": [
+                  "together",
+                  "fireworks",
+                  "groq",
+                  "deepinfra"
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "SelfHostedModelDetails": {
+        "title": "SelfHostedModelDetails",
+        "allOf": [
+          {
+            "type": "object",
+            "required": [
+              "always_on",
+              "id",
+              "hugging_face_id",
+              "name",
+              "input_modalities",
+              "output_modalities",
+              "context_length",
+              "pricing"
+            ],
+            "properties": {
+              "always_on": {
+                "type": "boolean"
+              },
+              "id": {
+                "type": "string"
+              },
+              "hugging_face_id": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "input_modalities": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "text",
+                    "image"
+                  ]
+                }
+              },
+              "output_modalities": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "text",
+                    "image"
+                  ]
+                }
+              },
+              "context_length": {
+                "type": "number"
+              },
+              "pricing": {
+                "anyOf": [
+                  {
+                    "type": "object",
+                    "required": [
+                      "prompt",
+                      "completion",
+                      "image",
+                      "request",
+                      "input_cache_reads",
+                      "input_cache_writes"
+                    ],
+                    "properties": {
+                      "prompt": {
+                        "type": "string"
+                      },
+                      "completion": {
+                        "type": "string"
+                      },
+                      "image": {
+                        "type": "string"
+                      },
+                      "request": {
+                        "type": "string"
+                      },
+                      "input_cache_reads": {
+                        "type": "string"
+                      },
+                      "input_cache_writes": {
+                        "type": "string"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "required": [
+                      "per_minute"
+                    ],
+                    "properties": {
+                      "per_minute": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                ]
+              },
+              "created": {
+                "type": "number"
+              },
+              "max_output_length": {
+                "type": "number"
+              },
+              "quantization": {
+                "enum": [
+                  "int4",
+                  "int8",
+                  "fp4",
+                  "fp6",
+                  "fp8",
+                  "fp16",
+                  "bf16",
+                  "fp32",
+                  "nvfp4",
+                  "unknown"
+                ]
+              },
+              "supported_sampling_parameters": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "temperature",
+                    "top_p",
+                    "top_k",
+                    "repetition_penalty",
+                    "frequency_penalty",
+                    "presence_penalty",
+                    "stop",
+                    "seed"
+                  ]
+                }
+              },
+              "supported_features": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "tools",
+                    "json_mode",
+                    "structured_outputs",
+                    "web_search",
+                    "reasoning"
+                  ]
+                }
+              },
+              "description": {
+                "type": "string"
+              },
+              "openrouter": {
+                "type": "object",
+                "required": [
+                  "slug"
+                ],
+                "properties": {
+                  "slug": {
+                    "type": "string"
+                  }
+                }
+              },
+              "datacenters": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "country_code"
+                  ],
+                  "properties": {
+                    "country_code": {
+                      "enum": [
+                        "AD",
+                        "AE",
+                        "AF",
+                        "AG",
+                        "AI",
+                        "AL",
+                        "AM",
+                        "AO",
+                        "AQ",
+                        "AR",
+                        "AS",
+                        "AT",
+                        "AU",
+                        "AW",
+                        "AX",
+                        "AZ",
+                        "BA",
+                        "BB",
+                        "BD",
+                        "BE",
+                        "BF",
+                        "BG",
+                        "BH",
+                        "BI",
+                        "BJ",
+                        "BL",
+                        "BM",
+                        "BN",
+                        "BO",
+                        "BQ",
+                        "BR",
+                        "BS",
+                        "BT",
+                        "BU",
+                        "BV",
+                        "BW",
+                        "BY",
+                        "BZ",
+                        "CA",
+                        "CC",
+                        "CD",
+                        "CF",
+                        "CG",
+                        "CH",
+                        "CI",
+                        "CK",
+                        "CL",
+                        "CM",
+                        "CN",
+                        "CO",
+                        "CR",
+                        "CU",
+                        "CV",
+                        "CW",
+                        "CX",
+                        "CY",
+                        "CZ",
+                        "DE",
+                        "DJ",
+                        "DK",
+                        "DM",
+                        "DO",
+                        "DZ",
+                        "EC",
+                        "EE",
+                        "EG",
+                        "EH",
+                        "ER",
+                        "ES",
+                        "ET",
+                        "FI",
+                        "FJ",
+                        "FK",
+                        "FM",
+                        "FO",
+                        "FR",
+                        "GA",
+                        "GB",
+                        "GD",
+                        "GE",
+                        "GF",
+                        "GG",
+                        "GH",
+                        "GI",
+                        "GL",
+                        "GM",
+                        "GN",
+                        "GP",
+                        "GQ",
+                        "GR",
+                        "GS",
+                        "GT",
+                        "GU",
+                        "GW",
+                        "GY",
+                        "HK",
+                        "HM",
+                        "HN",
+                        "HR",
+                        "HT",
+                        "HU",
+                        "ID",
+                        "IE",
+                        "IL",
+                        "IM",
+                        "IN",
+                        "IO",
+                        "IQ",
+                        "IR",
+                        "IS",
+                        "IT",
+                        "JE",
+                        "JM",
+                        "JO",
+                        "JP",
+                        "KE",
+                        "KG",
+                        "KH",
+                        "KI",
+                        "KM",
+                        "KN",
+                        "KP",
+                        "KR",
+                        "KW",
+                        "KY",
+                        "KZ",
+                        "LA",
+                        "LB",
+                        "LC",
+                        "LI",
+                        "LK",
+                        "LR",
+                        "LS",
+                        "LT",
+                        "LU",
+                        "LV",
+                        "LY",
+                        "MA",
+                        "MC",
+                        "MD",
+                        "ME",
+                        "MF",
+                        "MG",
+                        "MH",
+                        "MK",
+                        "ML",
+                        "MM",
+                        "MN",
+                        "MO",
+                        "MP",
+                        "MQ",
+                        "MR",
+                        "MS",
+                        "MT",
+                        "MU",
+                        "MV",
+                        "MW",
+                        "MX",
+                        "MY",
+                        "MZ",
+                        "NA",
+                        "NC",
+                        "NE",
+                        "NF",
+                        "NG",
+                        "NI",
+                        "NL",
+                        "NO",
+                        "NP",
+                        "NR",
+                        "NU",
+                        "NZ",
+                        "OM",
+                        "PA",
+                        "PE",
+                        "PF",
+                        "PG",
+                        "PH",
+                        "PK",
+                        "PL",
+                        "PM",
+                        "PN",
+                        "PR",
+                        "PS",
+                        "PT",
+                        "PW",
+                        "PY",
+                        "QA",
+                        "RE",
+                        "RO",
+                        "RS",
+                        "RU",
+                        "RW",
+                        "SA",
+                        "SB",
+                        "SC",
+                        "SD",
+                        "SE",
+                        "SG",
+                        "SH",
+                        "SI",
+                        "SJ",
+                        "SK",
+                        "SL",
+                        "SM",
+                        "SN",
+                        "SO",
+                        "SR",
+                        "SS",
+                        "ST",
+                        "SV",
+                        "SX",
+                        "SY",
+                        "SZ",
+                        "TC",
+                        "TD",
+                        "TF",
+                        "TG",
+                        "TH",
+                        "TJ",
+                        "TK",
+                        "TL",
+                        "TM",
+                        "TN",
+                        "TO",
+                        "TR",
+                        "TT",
+                        "TV",
+                        "TW",
+                        "TZ",
+                        "UA",
+                        "UG",
+                        "UM",
+                        "US",
+                        "UY",
+                        "UZ",
+                        "VA",
+                        "VC",
+                        "VE",
+                        "VG",
+                        "VI",
+                        "VN",
+                        "VU",
+                        "WF",
+                        "WS",
+                        "YE",
+                        "YT",
+                        "ZA",
+                        "ZM",
+                        "ZW"
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "pricing",
+              "created",
+              "max_output_length",
+              "quantization",
+              "supported_sampling_parameters",
+              "supported_features"
+            ],
+            "properties": {
+              "pricing": {
+                "type": "object",
+                "required": [
+                  "prompt",
+                  "completion",
+                  "image",
+                  "request",
+                  "input_cache_reads",
+                  "input_cache_writes"
+                ],
+                "properties": {
+                  "prompt": {
+                    "type": "string"
+                  },
+                  "completion": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string"
+                  },
+                  "request": {
+                    "type": "string"
+                  },
+                  "input_cache_reads": {
+                    "type": "string"
+                  },
+                  "input_cache_writes": {
+                    "type": "string"
+                  }
+                }
+              },
+              "created": {
+                "type": "number"
+              },
+              "max_output_length": {
+                "type": "number"
+              },
+              "quantization": {
+                "enum": [
+                  "int4",
+                  "int8",
+                  "fp4",
+                  "fp6",
+                  "fp8",
+                  "fp16",
+                  "bf16",
+                  "fp32",
+                  "nvfp4",
+                  "unknown"
+                ]
+              },
+              "supported_sampling_parameters": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "temperature",
+                    "top_p",
+                    "top_k",
+                    "repetition_penalty",
+                    "frequency_penalty",
+                    "presence_penalty",
+                    "stop",
+                    "seed"
+                  ]
+                }
+              },
+              "supported_features": {
+                "type": "array",
+                "items": {
+                  "enum": [
+                    "tools",
+                    "json_mode",
+                    "structured_outputs",
+                    "web_search",
+                    "reasoning"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "type": "object",
+            "required": [
+              "provider",
+              "pricing"
+            ],
+            "properties": {
+              "provider": {
+                "const": "synthetic"
+              },
+              "pricing": {
+                "type": "object",
+                "required": [
+                  "prompt",
+                  "completion",
+                  "image",
+                  "request",
+                  "input_cache_reads",
+                  "input_cache_writes"
+                ],
+                "properties": {
+                  "prompt": {
+                    "type": "string"
+                  },
+                  "completion": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string"
+                  },
+                  "request": {
+                    "type": "string"
+                  },
+                  "input_cache_reads": {
+                    "type": "string"
+                  },
+                  "input_cache_writes": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  },
+  "x-scalar-watch-mode": false,
+  "x-scalar-order": [
+    "synthetic-httpssyntheticnew-openai-compatible-api-1/description/introduction",
+    "synthetic-httpssyntheticnew-openai-compatible-api-1/tag/models",
+    "synthetic-httpssyntheticnew-openai-compatible-api-1/models"
+  ]
+}
