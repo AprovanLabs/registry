@@ -12,9 +12,9 @@ https://docs.composio.dev/toolkits/discord
 - https://docs.composio.dev/toolkits/spotify
 
 ```ts
-import openai from './openai/index.js';
-import github from './github/index.js';
-import datadog from './datadog/index.js';
+import openai from '@utdk/openai';
+import github from '@utdk/github';
+import datadog from '@utdk/datadog';
 
 const response = await openai.createResponse({
     model: "gpt-5",
@@ -28,15 +28,29 @@ const metrics = await datadog.getLogsMetric({
 })
 ```
 
+Capture on-change
+
 ```ts
-import rxjs from 'rxjs';
-import youtube from "./spotify/index.js";
-import spotify from "./spotify/index.js";
+import { mergeLatest } from 'rxjs';
+import youtube from "@utdk/youtube";
+import spotify from "@utdk/spotify";
 
 mergeLatest(youtube.latestVideos())
-.pipe(
-    next((d) => spotify.addToPlaylist({ name: "Test Playlist", youtubeId: d.id }))
-);
+    .pipe(
+        next((video) => spotify.addToPlaylist({ name: "Test Playlist", youtubeId: video.id }))
+    );
 ```
 
 https://github.com/mvanhorn/printing-press-library/tree/main/library/food-and-dining/pagliacci
+
+https://printingpress.dev/
+
+https://www.tavily.com/product
+
+https://www.macaly.com/
+
+https://github.com/macaly/almostnode
+
+https://github.com/Open-ACP/OpenACP
+
+https://www.aionui.com/
