@@ -26,6 +26,15 @@ services:
       # Rate limiting
       GATEWAY_RATE_LIMIT_RPS: "${GATEWAY_RATE_LIMIT_RPS:-10}"
       GATEWAY_RATE_LIMIT_BURST: "${GATEWAY_RATE_LIMIT_BURST:-20}"
+
+      # DynamoDB local endpoint (ExtendDB)
+      DYNAMO_ENDPOINT: "http://extenddb:8000"
+      AWS_REGION: "${AWS_REGION:-us-east-1}"
+      AWS_ACCESS_KEY_ID: "${AWS_ACCESS_KEY_ID:-local}"
+      AWS_SECRET_ACCESS_KEY: "${AWS_SECRET_ACCESS_KEY:-local}"
+    depends_on:
+      extenddb:
+        condition: service_healthy
     volumes:
       - gateway-data:/data
     healthcheck:
@@ -34,6 +43,21 @@ services:
       timeout: 5s
       retries: 3
       start_period: 5s
+    restart: unless-stopped
+
+  # ExtendDB — local DynamoDB-compatible store for dev/CI
+  extenddb:
+    image: public.ecr.aws/aws/extenddb:latest
+    ports:
+      - "8000:8000"
+    environment:
+      EXTENDDB_REGION: us-east-1
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8000/shell/ || exit 1"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 2s
     restart: unless-stopped
 
   # OpenTelemetry Collector (optional — comment out if not needed)
