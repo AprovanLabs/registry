@@ -13,6 +13,9 @@
  *   GATEWAY_RATE_LIMIT_RPS    — Requests per second per caller+provider (default: 10)
  *   GATEWAY_RATE_LIMIT_BURST  — Burst capacity (default: 20)
  *   OTEL_EXPORTER_OTLP_ENDPOINT — OTLP endpoint for telemetry (optional)
+ *   COGNITO_USER_POOL_ID      — Cognito user pool for DCR client provisioning (required for /oauth/register)
+ *   COGNITO_REGION            — AWS region for Cognito (falls back to AWS_REGION, then us-east-1)
+ *   COGNITO_DOMAIN            — Cognito hosted UI domain, e.g. auth.example.com (informational)
  */
 
 import { serve } from "@hono/node-server";
