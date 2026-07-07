@@ -24,29 +24,9 @@
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.29.0",
-    "@utcp/http": "^1.1.1",
     "@utcp/sdk": "^1.1.0",
-    "@utdk/common": "workspace:*"
-  },
-  "optionalDependencies": {
-    "@utdk/airtable": "workspace:*",
-    "@utdk/datadog": "workspace:*",
-    "@utdk/figma": "workspace:*",
-    "@utdk/github": "workspace:*",
-    "@utdk/google": "workspace:*",
-    "@utdk/hubspot": "workspace:*",
-    "@utdk/intercom": "workspace:*",
-    "@utdk/jira": "workspace:*",
-    "@utdk/linear": "workspace:*",
-    "@utdk/notion": "workspace:*",
-    "@utdk/openai": "workspace:*",
-    "@utdk/salesforce": "workspace:*",
-    "@utdk/sendgrid": "workspace:*",
-    "@utdk/slack": "workspace:*",
-    "@utdk/spotify": "workspace:*",
-    "@utdk/stripe": "workspace:*",
-    "@utdk/twilio": "workspace:*",
-    "@utdk/zendesk": "workspace:*"
+    "@utdk/common": "workspace:*",
+    "@utdk/mcp-core": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",
