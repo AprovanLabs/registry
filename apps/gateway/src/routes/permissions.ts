@@ -44,7 +44,7 @@ permissionsRouter.post("/", async (c) => {
   };
 
   const store = getPermissionStore();
-  const perm = store.grant(workspaceId, input);
+  const perm = await store.grant(workspaceId, input);
   return c.json(perm, 201);
 });
 
@@ -58,7 +58,7 @@ permissionsRouter.get("/", async (c) => {
   const callerId = c.req.query("callerId");
 
   const store = getPermissionStore();
-  const perms = store.list(workspaceId, callerId);
+  const perms = await store.list(workspaceId, callerId);
   return c.json({ permissions: perms });
 });
 
@@ -76,7 +76,7 @@ permissionsRouter.delete("/:id", async (c) => {
   }
 
   const store = getPermissionStore();
-  const revoked = store.revoke(workspaceId, id);
+  const revoked = await store.revoke(workspaceId, id);
 
   if (!revoked) {
     return c.json({ error: "Permission not found" }, 404);
