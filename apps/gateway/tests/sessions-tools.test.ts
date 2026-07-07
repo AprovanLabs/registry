@@ -1,19 +1,23 @@
 /**
  * Unit tests for:
- *   - POST /auth/sessions  (APR-297 acceptance criterion 1)
- *   - GET /tools           (APR-297 acceptance criterion 2)
- *   - POST /tools/:ns/:proc with LRU shared client (APR-297 acceptance criterion 3)
+ *   - POST /auth/sessions  (workspace picker, APR-280)
+ *   - GET /tools           (workspace-filtered discovery)
+ *   - POST /tools/:ns/:proc with LRU shared client
+ *
+ * Auth is exercised via mocked Cognito verification + a mocked DDB document
+ * client (see tests/helpers.ts).
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { createApp } from "../src/app.js";
 import { resetCredentialStore } from "../src/credentials.js";
 import { resetExecutor, setExecutor, resetProviderCache, setProviderModuleForTesting, isProviderCached, type IsolateExecutor } from "../src/isolate.js";
+import { resetCognitoVerifier } from "../src/middleware/auth.js";
 import { resetRateLimiters } from "../src/middleware/rateLimitMiddleware.js";
 import { resetPermissionStore } from "../src/permissions.js";
-import { setCognitoVerifier, resetCognitoVerifier } from "../src/routes/auth.js";
 import { resetToolListCache } from "../src/routes/tools.js";
 import { resetToolCache, getClientBuildCount, getOrBuildClient } from "../src/toolCache.js";
+import { setupAuth } from "./helpers.js";
 
 // ---------------------------------------------------------------------------
 // DynamoDB mock — intercepts all document client calls
@@ -57,16 +61,31 @@ vi.mock("utdk/github", () => ({
 }));
 
 // ---------------------------------------------------------------------------
+// Auth fixtures
+// ---------------------------------------------------------------------------
+
+const ADMIN_TOKEN = "test-cognito-admin-token";
+const CALLER_TOKEN = "test-cognito-caller-token";
+const ADMIN_SUB = "admin-user";
+const CALLER_SUB = "caller-user";
+const WORKSPACE_ID = "ws-test";
+const PICKER_TOKEN = "test-cognito-picker-token";
+const PICKER_SUB = "picker-user";
+const PICKER_WORKSPACE = "ws-pick";
+
+// ---------------------------------------------------------------------------
 // Setup
 // ---------------------------------------------------------------------------
 
-const TEST_JWT_SECRET = "test-jwt-secret-for-sessions-tests";
-const TEST_ADMIN_SECRET = "test-admin-secret-for-sessions-tests";
-
 beforeEach(() => {
-  process.env["GATEWAY_JWT_SECRET"] = TEST_JWT_SECRET;
-  process.env["GATEWAY_ADMIN_SECRET"] = TEST_ADMIN_SECRET;
   process.env["GATEWAY_WORKSPACE_KEY"] = "test-workspace-key";
+  setupAuth({
+    mockDdbSend,
+    users: [
+      { sub: ADMIN_SUB, token: ADMIN_TOKEN, role: "admin", workspaceId: WORKSPACE_ID },
+      { sub: CALLER_SUB, token: CALLER_TOKEN, role: "member", workspaceId: WORKSPACE_ID },
+    ],
+  });
 
   resetCredentialStore();
   resetPermissionStore();
@@ -75,8 +94,6 @@ beforeEach(() => {
   resetToolCache();
   resetToolListCache();
   resetProviderCache();
-  resetCognitoVerifier();
-  mockDdbSend.mockReset();
   mockGithubClientFactory.mockReset();
 });
 
@@ -92,81 +109,73 @@ afterEach(() => {
 });
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Helpers — return a Bearer token for the configured admin / caller fixture.
 // ---------------------------------------------------------------------------
 
-async function getAdminToken(app: ReturnType<typeof createApp>, workspaceId = "ws-test"): Promise<string> {
-  const res = await app.request("/auth/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ callerId: "admin", workspaceId, role: "admin", secret: TEST_ADMIN_SECRET }),
-  });
-  const body = await res.json() as { token: string };
-  return body.token;
+async function getAdminToken(_app?: ReturnType<typeof createApp>): Promise<string> {
+  return ADMIN_TOKEN;
 }
 
-async function getCallerToken(app: ReturnType<typeof createApp>, callerId: string, workspaceId = "ws-test"): Promise<string> {
-  const res = await app.request("/auth/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ callerId, workspaceId, role: "caller", secret: TEST_ADMIN_SECRET }),
-  });
-  const body = await res.json() as { token: string };
-  return body.token;
+async function getCallerToken(
+  _app?: ReturnType<typeof createApp>,
+  _callerId?: string,
+  _workspaceId?: string,
+): Promise<string> {
+  return CALLER_TOKEN;
 }
 
 // ---------------------------------------------------------------------------
-// POST /auth/sessions  — acceptance criterion 1
+// POST /auth/sessions — workspace picker
 // ---------------------------------------------------------------------------
 
 describe("POST /auth/sessions", () => {
-  it("returns a session token when Cognito JWT is valid", async () => {
-    const mockSub = "cognito-user-abc123";
-    const mockWid = "ws-cognito-workspace";
-
-    setCognitoVerifier({
-      verify: vi.fn().mockResolvedValue({ sub: mockSub }),
+  beforeEach(() => {
+    setupAuth({
+      mockDdbSend,
+      users: [
+        { sub: PICKER_SUB, token: PICKER_TOKEN, role: "member", workspaceId: PICKER_WORKSPACE },
+      ],
     });
+  });
 
-    // DDB: Memberships query returns one membership; Sessions PutCommand succeeds.
-    mockDdbSend.mockImplementation((cmd: { input?: { TableName?: string } }) => {
-      const table = cmd?.input?.["TableName"] as string | undefined;
-      if (table === "Memberships") {
-        return Promise.resolve({ Items: [{ workspaceId: mockWid, userSub: mockSub }] });
-      }
-      return Promise.resolve({});
-    });
-
+  it("sets the active workspace and returns workspace_id", async () => {
     const app = createApp();
     const res = await app.request("/auth/sessions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer cognito-access-token",
+        Authorization: `Bearer ${PICKER_TOKEN}`,
       },
+      body: JSON.stringify({ workspace_id: PICKER_WORKSPACE }),
     });
 
     expect(res.status).toBe(200);
-    const body = await res.json() as { token: string; expires_at: string; workspace_id: string; expires_in: number };
-    expect(typeof body.token).toBe("string");
-    expect(body.token.length).toBeGreaterThan(0);
-    expect(body.workspace_id).toBe(mockWid);
-    expect(body.expires_in).toBe(900);
-    expect(typeof body.expires_at).toBe("string");
+    const body = await res.json() as { workspace_id: string };
+    expect(body.workspace_id).toBe(PICKER_WORKSPACE);
+
+    // The picker persists the choice via a Put against the Sessions table.
+    const putCalls = mockDdbSend.mock.calls.filter(
+      (c) =>
+        (c[0] as { input?: { TableName?: string } }).input?.TableName ===
+        "Sessions",
+    );
+    expect(putCalls.length).toBe(1);
+    const item = (putCalls[0]![0] as {
+      input?: { Item?: Record<string, unknown> };
+    }).input?.Item;
+    expect(item?.["userSub"]).toBe(PICKER_SUB);
+    expect(item?.["currentWorkspaceId"]).toBe(PICKER_WORKSPACE);
   });
 
-  it("returns 401 when Cognito JWT is expired or invalid", async () => {
-    setCognitoVerifier({
-      verify: vi.fn().mockRejectedValue(new Error("Token expired")),
-    });
-
+  it("returns 401 when the Cognito token is invalid", async () => {
     const app = createApp();
     const res = await app.request("/auth/sessions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer expired-or-invalid-token",
+        Authorization: "Bearer not-a-real-token",
       },
+      body: JSON.stringify({ workspace_id: PICKER_WORKSPACE }),
     });
 
     expect(res.status).toBe(401);
@@ -175,8 +184,6 @@ describe("POST /auth/sessions", () => {
   });
 
   it("returns 401 when Authorization header is missing", async () => {
-    setCognitoVerifier({ verify: vi.fn() });
-
     const app = createApp();
     const res = await app.request("/auth/sessions", {
       method: "POST",
@@ -186,64 +193,34 @@ describe("POST /auth/sessions", () => {
     expect(res.status).toBe(401);
   });
 
-  it("returns 403 when user has no workspace membership", async () => {
-    const mockSub = "user-no-workspace";
-
-    setCognitoVerifier({
-      verify: vi.fn().mockResolvedValue({ sub: mockSub }),
-    });
-
-    mockDdbSend.mockResolvedValue({ Items: [] });
-
+  it("returns 400 when workspace_id is missing", async () => {
     const app = createApp();
     const res = await app.request("/auth/sessions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: "Bearer valid-token",
+        Authorization: `Bearer ${PICKER_TOKEN}`,
       },
+      body: JSON.stringify({}),
+    });
+
+    expect(res.status).toBe(400);
+    const body = await res.json() as { code?: string };
+    expect(body.code).toBe("workspace_not_selected");
+  });
+
+  it("returns 403 when not a member of the requested workspace", async () => {
+    const app = createApp();
+    const res = await app.request("/auth/sessions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${PICKER_TOKEN}`,
+      },
+      body: JSON.stringify({ workspace_id: "ws-not-a-member" }),
     });
 
     expect(res.status).toBe(403);
-    const body = await res.json() as { error: string };
-    expect(body.error).toContain("No workspace membership");
-  });
-
-  it("selects preferred workspace_id when provided in body", async () => {
-    const mockSub = "user-multi-workspace";
-    const preferredWid = "ws-preferred";
-    const otherWid = "ws-other";
-
-    setCognitoVerifier({
-      verify: vi.fn().mockResolvedValue({ sub: mockSub }),
-    });
-
-    mockDdbSend.mockImplementation((cmd: { input?: { TableName?: string } }) => {
-      const table = cmd?.input?.["TableName"] as string | undefined;
-      if (table === "Memberships") {
-        return Promise.resolve({
-          Items: [
-            { workspaceId: otherWid, userSub: mockSub },
-            { workspaceId: preferredWid, userSub: mockSub },
-          ],
-        });
-      }
-      return Promise.resolve({});
-    });
-
-    const app = createApp();
-    const res = await app.request("/auth/sessions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: "Bearer valid-token",
-      },
-      body: JSON.stringify({ workspace_id: preferredWid }),
-    });
-
-    expect(res.status).toBe(200);
-    const body = await res.json() as { workspace_id: string };
-    expect(body.workspace_id).toBe(preferredWid);
   });
 });
 
@@ -368,7 +345,7 @@ describe("POST /tools/:ns/:proc (shared client LRU)", () => {
     await app.request("/permissions", {
       method: "POST",
       headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
-      body: JSON.stringify({ callerId: "test-user", provider: "github", operation: "*" }),
+      body: JSON.stringify({ callerId: CALLER_SUB, provider: "github", operation: "*" }),
     });
     await app.request("/credentials", {
       method: "POST",

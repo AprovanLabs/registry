@@ -7,7 +7,6 @@
 
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { apiKeysRouter } from "./routes/apikeys.js";
 import { auditRouter } from "./routes/audit.js";
 import { authRouter } from "./routes/auth.js";
 import { credentialsRouter } from "./routes/credentials.js";
@@ -44,7 +43,6 @@ export function createApp(): Hono {
   app.route("/permissions", permissionsRouter);
   app.route("/tools", toolsRouter);
   app.route("/audit", auditRouter);
-  app.route("/api-keys", apiKeysRouter);
 
   // ---------------------------------------------------------------------------
   // 404 fallback

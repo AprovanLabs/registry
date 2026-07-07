@@ -101,30 +101,6 @@ async function parseError(res: Response): Promise<GatewayError> {
 }
 
 /**
- * Issue a JWT for the given caller.
- *
- * @param callerId  Arbitrary caller identifier (e.g. the user's email or name).
- * @param workspaceId  Workspace the token scopes to.
- * @param secret  The `GATEWAY_ADMIN_SECRET` value.
- * @param role  "admin" to allow credential writes, "caller" for read-only.
- */
-export async function login(
-  callerId: string,
-  workspaceId: string,
-  secret: string,
-  role: "admin" | "caller" = "admin",
-): Promise<string> {
-  const res = await fetch(gatewayUrl("/auth/token"), {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ callerId, workspaceId, secret, role }),
-  });
-  if (!res.ok) throw await parseError(res);
-  const data = (await res.json()) as { token: string };
-  return data.token;
-}
-
-/**
  * List all credentials for the workspace encoded in the JWT.
  */
 export async function listCredentials(token: string): Promise<CredentialRecord[]> {

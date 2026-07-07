@@ -21,8 +21,8 @@ permissionsRouter.use("*", requireAuth, requireAdmin);
 // ---------------------------------------------------------------------------
 
 permissionsRouter.post("/", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
 
   let body: unknown;
   try {
@@ -40,7 +40,7 @@ permissionsRouter.post("/", async (c) => {
 
   const input: GrantInput = {
     ...(body as { callerId: string; provider: string; operation: string }),
-    grantedBy: payload.sub,
+    grantedBy: principal.sub,
   };
 
   const store = getPermissionStore();
@@ -53,8 +53,8 @@ permissionsRouter.post("/", async (c) => {
 // ---------------------------------------------------------------------------
 
 permissionsRouter.get("/", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const callerId = c.req.query("callerId");
 
   const store = getPermissionStore();
@@ -67,8 +67,8 @@ permissionsRouter.get("/", async (c) => {
 // ---------------------------------------------------------------------------
 
 permissionsRouter.delete("/:id", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const id = c.req.param("id") ?? "";
 
   if (!id) {

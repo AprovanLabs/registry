@@ -27,8 +27,8 @@ credentialsRouter.use("DELETE", requireAdmin);
 // ---------------------------------------------------------------------------
 
 credentialsRouter.post("/", requireAdmin, async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
 
   let body: unknown;
   try {
@@ -56,8 +56,8 @@ credentialsRouter.post("/", requireAdmin, async (c) => {
 // ---------------------------------------------------------------------------
 
 credentialsRouter.get("/", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
 
   const store = getCredentialStore();
   const records = await store.list(workspaceId);
@@ -69,8 +69,8 @@ credentialsRouter.get("/", async (c) => {
 // ---------------------------------------------------------------------------
 
 credentialsRouter.delete("/:id", requireAdmin, async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const id = c.req.param("id") ?? "";
 
   if (!id) {

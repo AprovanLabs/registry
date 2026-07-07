@@ -1,112 +1,76 @@
 /**
- * DynamoDB-backed session store.
+ * DynamoDB-backed session store for the active-workspace picker.
  *
- * Responsible for:
- *   1. Resolving a workspace ID for a Cognito userSub via the Memberships table.
- *   2. Writing short-lived session records to the Sessions table (TTL auto-cleanup).
- *   3. Looking up existing session records (used by POST /tools to validate tokens).
+ * Each user (Cognito `sub`) has at most one `Sessions` item keyed by `userSub`
+ * carrying `currentWorkspaceId`. The auth middleware reads this to scope every
+ * request to the user's active workspace; `POST /auth/sessions` writes it when
+ * the user picks a workspace. A TTL attribute (`expiresAt`) lets DynamoDB
+ * reclaim stale rows.
  */
 
-import { QueryCommand, PutCommand, GetCommand } from "@aws-sdk/lib-dynamodb";
+import { GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
 import { getDynamoDocClient } from "./db/client.js";
 
 // ---------------------------------------------------------------------------
-// Types
+// Table name (override in tests via env)
 // ---------------------------------------------------------------------------
 
-export interface SessionRecord {
-  userSub: string;
-  sessionId: string;
-  workspaceId: string;
-  createdAt: string;
-  expiresAt: number;
-}
-
-export interface MembershipRecord {
-  workspaceId: string;
-  userSub: string;
-  role?: string;
-}
-
-// ---------------------------------------------------------------------------
-// Table / index names (override in tests via env)
-// ---------------------------------------------------------------------------
-
-const MEMBERSHIPS_TABLE = () =>
-  process.env["MEMBERSHIPS_TABLE"] ?? "Memberships";
-const MEMBERSHIPS_GSI = () =>
-  process.env["MEMBERSHIPS_GSI"] ?? "ByUserSub";
 const SESSIONS_TABLE = () =>
   process.env["SESSIONS_TABLE"] ?? "Sessions";
+
+const DEFAULT_SESSION_TTL_SECONDS = (): number => {
+  const raw = Number(process.env["GATEWAY_SESSION_TTL_SECONDS"]);
+  return Number.isFinite(raw) && raw > 0 ? raw : 604_800; // 7 days
+};
 
 // ---------------------------------------------------------------------------
 // Public API
 // ---------------------------------------------------------------------------
 
 /**
- * Resolve the workspace ID for a user via the Memberships GSI.
- * If the user belongs to multiple workspaces, returns the first one found.
- * Pass `preferredWorkspaceId` to pick a specific workspace (validates membership).
+ * Read the user's active workspace id from the Sessions table.
+ * Returns undefined when no session row exists, `currentWorkspaceId` is unset,
+ * or the row has expired (TTL reaped or about to be).
  */
-export async function resolveWorkspaceForUser(
+export async function getCurrentWorkspace(
   userSub: string,
-  preferredWorkspaceId?: string,
 ): Promise<string | undefined> {
-  const client = getDynamoDocClient();
-  const result = await client.send(
-    new QueryCommand({
-      TableName: MEMBERSHIPS_TABLE(),
-      IndexName: MEMBERSHIPS_GSI(),
-      KeyConditionExpression: "userSub = :sub",
-      ExpressionAttributeValues: { ":sub": userSub },
-    }),
-  );
-
-  const memberships = (result.Items ?? []) as MembershipRecord[];
-  if (memberships.length === 0) return undefined;
-
-  if (preferredWorkspaceId) {
-    const match = memberships.find(
-      (m) => m.workspaceId === preferredWorkspaceId,
-    );
-    return match?.workspaceId;
-  }
-
-  return memberships[0]!.workspaceId;
-}
-
-/**
- * Write a session record to the Sessions table.
- * The item TTL is set so DynamoDB automatically removes it after expiry.
- */
-export async function putSession(record: SessionRecord): Promise<void> {
-  const client = getDynamoDocClient();
-  await client.send(
-    new PutCommand({
-      TableName: SESSIONS_TABLE(),
-      Item: record,
-    }),
-  );
-}
-
-/**
- * Look up a session by userSub (the DDB hash key).
- * Returns undefined if missing or expired.
- */
-export async function getSession(
-  userSub: string,
-): Promise<SessionRecord | undefined> {
   const client = getDynamoDocClient();
   const result = await client.send(
     new GetCommand({
       TableName: SESSIONS_TABLE(),
       Key: { userSub },
+      ProjectionExpression: "currentWorkspaceId, expiresAt",
     }),
   );
-
   if (!result.Item) return undefined;
-  const item = result.Item as SessionRecord;
-  const nowSecs = Math.floor(Date.now() / 1000);
-  if (item.expiresAt <= nowSecs) return undefined;
-  return item;
+  const item = result.Item as { currentWorkspaceId?: string; expiresAt?: number };
+  // Honour the TTL client-side so a stale (not-yet-reaped) row is treated as absent.
+  if (
+    typeof item.expiresAt === "number" &&
+    item.expiresAt <= Math.floor(Date.now() / 1000)
+  ) {
+    return undefined;
+  }
+  return item.currentWorkspaceId;
+}
+
+/**
+ * Persist the user's active workspace choice. Writes `currentWorkspaceId`
+ * and a unix-seconds `expiresAt` (the TTL attribute on the Sessions table).
+ */
+export async function setCurrentWorkspace(
+  userSub: string,
+  workspaceId: string,
+  ttlSeconds?: number,
+): Promise<void> {
+  const client = getDynamoDocClient();
+  const ttl = ttlSeconds ?? DEFAULT_SESSION_TTL_SECONDS();
+  const expiresAt = Math.floor(Date.now() / 1000) + ttl;
+  await client.send(
+    new PutCommand({
+      TableName: SESSIONS_TABLE(),
+      Item: { userSub, currentWorkspaceId: workspaceId, expiresAt },
+    }),
+  );
 }

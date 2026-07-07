@@ -4,23 +4,25 @@
  * Starts the Hono HTTP server using @hono/node-server.
  *
  * Environment variables:
- *   GATEWAY_PORT              — HTTP port (default: 4000)
- *   GATEWAY_WORKSPACE_KEY     — AES-256 encryption key for credentials (required in production)
- *   GATEWAY_JWT_SECRET        — HS256 signing key for JWTs (required in production)
- *   GATEWAY_ADMIN_SECRET      — Shared secret for token issuance (required in production)
- *   GATEWAY_STORE_PATH        — Path for persistent credential storage (optional)
- *   GATEWAY_PERMISSIONS_PATH  — Path for persistent permission storage (optional)
- *   GATEWAY_RATE_LIMIT_RPS    — Requests per second per caller+provider (default: 10)
- *   GATEWAY_RATE_LIMIT_BURST  — Burst capacity (default: 20)
- *   OTEL_EXPORTER_OTLP_ENDPOINT — OTLP endpoint for telemetry (optional)
- *   COGNITO_USER_POOL_ID      — Cognito user pool for DCR client provisioning (required for /oauth/register)
- *   COGNITO_REGION            — AWS region for Cognito (falls back to AWS_REGION, then us-east-1)
- *   COGNITO_DOMAIN            — Cognito hosted UI domain, e.g. auth.example.com (informational)
+ *   GATEWAY_PORT                 — HTTP port (default: 4000)
+ *   GATEWAY_WORKSPACE_KEY        — AES-256 encryption key for credentials (required in production)
+ *   GATEWAY_COGNITO_USER_POOL_ID  — Cognito user pool id for access-token verification (required)
+ *   GATEWAY_COGNITO_CLIENT_ID    — Cognito app client id for access-token verification (required)
+ *   GATEWAY_AWS_REGION           — AWS region for Cognito (falls back to AWS_REGION, then us-east-1)
+ *   GATEWAY_STORE_PATH           — Path for persistent credential storage (optional)
+ *   GATEWAY_PERMISSIONS_PATH     — Path for persistent permission storage (optional)
+ *   GATEWAY_RATE_LIMIT_RPS       — Requests per second per caller+provider (default: 10)
+ *   GATEWAY_RATE_LIMIT_BURST     — Burst capacity (default: 20)
+ *   OTEL_EXPORTER_OTLP_ENDPOINT  — OTLP endpoint for telemetry (optional)
+ *   COGNITO_USER_POOL_ID         — Cognito user pool for DCR client provisioning (required for /oauth/register)
+ *   COGNITO_REGION               — AWS region for Cognito (falls back to AWS_REGION, then us-east-1)
+ *   COGNITO_DOMAIN              — Cognito hosted UI domain, e.g. auth.example.com (informational)
  */
 
 import { serve } from "@hono/node-server";
 import { configureTelemetry } from "@utdk/common/telemetry";
 import { createApp } from "./app.js";
+import { initAuth } from "./middleware/auth.js";
 
 const PORT = Number(process.env["GATEWAY_PORT"] ?? 4000);
 
@@ -47,12 +49,13 @@ await configureTelemetry({
 if (!process.env["GATEWAY_WORKSPACE_KEY"]) {
   process.stderr.write("[gateway] WARNING: GATEWAY_WORKSPACE_KEY not set; using insecure dev key\n");
 }
-if (!process.env["GATEWAY_JWT_SECRET"]) {
-  process.stderr.write("[gateway] WARNING: GATEWAY_JWT_SECRET not set; using insecure dev key\n");
-}
-if (!process.env["GATEWAY_ADMIN_SECRET"]) {
-  process.stderr.write("[gateway] WARNING: GATEWAY_ADMIN_SECRET not set; using insecure dev secret\n");
-}
+
+// ---------------------------------------------------------------------------
+// Hydrate the Cognito JWKS so the first request does not pay the latency.
+// Non-fatal: verification falls back to a lazy fetch on failure.
+// ---------------------------------------------------------------------------
+
+await initAuth();
 
 // ---------------------------------------------------------------------------
 // Start server

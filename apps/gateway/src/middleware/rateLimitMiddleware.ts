@@ -29,12 +29,12 @@ function getLimiter(key: string): RateLimiter {
 }
 
 /**
- * Rate limit per user ID (sub from JWT).
- * Expects `c.var.jwtPayload` (set by requireAuth or flexibleAuth).
+ * Rate limit per user id (sub from the resolved principal).
+ * Expects `c.var.principal` (set by `requireAuth`).
  */
 export async function rateLimitByUserId(c: Context, next: Next): Promise<void> {
-  const payload = c.get("jwtPayload");
-  const userId = payload?.sub ?? "anonymous";
+  const principal = c.get("principal");
+  const userId = principal?.sub ?? "anonymous";
   const limiter = getLimiter(userId);
   await limiter.acquire();
   await next();
@@ -45,8 +45,8 @@ export async function rateLimitByUserId(c: Context, next: Next): Promise<void> {
  * @deprecated Use rateLimitByUserId for new routes.
  */
 export async function rateLimitByCallerAndProvider(c: Context, next: Next): Promise<void> {
-  const payload = c.get("jwtPayload");
-  const callerId = payload?.sub ?? "anonymous";
+  const principal = c.get("principal");
+  const callerId = principal?.sub ?? "anonymous";
   const provider = c.req.param("provider") ?? "unknown";
   const key = `${callerId}:${provider}`;
 

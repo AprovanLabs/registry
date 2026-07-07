@@ -112,8 +112,9 @@ The MCP client stores the returned `refresh_token` in its install context for su
 |---|---|---|
 | `GATEWAY_PORT` | `4000` | HTTP port |
 | `GATEWAY_WORKSPACE_KEY` | *(insecure dev key)* | AES-256 key for credential encryption |
-| `GATEWAY_JWT_SECRET` | *(insecure dev key)* | HS256 signing key for gateway JWTs |
-| `GATEWAY_ADMIN_SECRET` | *(insecure dev secret)* | Shared secret for `POST /auth/token` |
+| `GATEWAY_COGNITO_USER_POOL_ID` | *(required)* | Cognito user pool id for access-token verification |
+| `GATEWAY_COGNITO_CLIENT_ID` | *(required)* | Cognito app client id for access-token verification |
+| `GATEWAY_AWS_REGION` | `AWS_REGION` → `us-east-1` | AWS region for Cognito |
 | `GATEWAY_STORE_PATH` | *(in-memory)* | Path for persistent credential storage |
 | `GATEWAY_PERMISSIONS_PATH` | *(in-memory)* | Path for persistent permission storage |
 | `GATEWAY_RATE_LIMIT_RPS` | `10` | Requests/second per caller+provider |
