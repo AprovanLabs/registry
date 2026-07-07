@@ -8,7 +8,7 @@
  *   - Revoke (delete) credential
  */
 
-import { KeyRoundIcon, LogOutIcon, PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
+import { LogOutIcon, PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AddCredentialForm } from "./AddCredentialForm";
 import { Badge } from "@/components/ui/badge";
@@ -29,98 +29,23 @@ import {
   deleteCredential,
   listCredentials,
   loadSession,
-  login,
-  saveSession,
 } from "@/lib/gateway";
 
 // ---------------------------------------------------------------------------
-// Types
+// Sign-in required placeholder
 // ---------------------------------------------------------------------------
 
-type View = "login" | "list";
-
-// ---------------------------------------------------------------------------
-// Login form
-// ---------------------------------------------------------------------------
-
-function LoginForm({ onLogin }: { onLogin: (token: string, workspaceId: string) => void }) {
-  const [callerId, setCallerId] = useState("");
-  const [workspaceId, setWorkspaceId] = useState("");
-  const [secret, setSecret] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const token = await login(callerId.trim(), workspaceId.trim(), secret, "admin");
-      saveSession(token, workspaceId.trim());
-      onLogin(token, workspaceId.trim());
-    } catch (err) {
-      setError(err instanceof GatewayError ? err.message : "Login failed. Check gateway URL and secret.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
+function SignInRequired() {
   return (
     <div className="mx-auto max-w-sm">
       <Card>
         <CardHeader>
-          <div className="flex items-center gap-2">
-            <KeyRoundIcon className="size-5 text-muted-foreground" />
-            <CardTitle>Connect to Gateway</CardTitle>
-          </div>
+          <CardTitle>Sign in required</CardTitle>
           <CardDescription>
-            Enter your gateway credentials to manage API keys and OAuth tokens.
+            Sign in via Cognito and pick a workspace to manage your provider
+            credentials.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium">Your ID</span>
-              <Input
-                autoComplete="username"
-                onChange={(e) => setCallerId(e.target.value)}
-                placeholder="you@example.com"
-                required
-                type="text"
-                value={callerId}
-              />
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium">Workspace ID</span>
-              <Input
-                onChange={(e) => setWorkspaceId(e.target.value)}
-                placeholder="my-workspace"
-                required
-                type="text"
-                value={workspaceId}
-              />
-            </label>
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium">Admin Secret</span>
-              <Input
-                autoComplete="current-password"
-                onChange={(e) => setSecret(e.target.value)}
-                placeholder="GATEWAY_ADMIN_SECRET value"
-                required
-                type="password"
-                value={secret}
-              />
-            </label>
-            {error ? (
-              <p className="rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-                {error}
-              </p>
-            ) : null}
-            <Button disabled={loading} size="lg" type="submit">
-              {loading ? "Connecting…" : "Connect"}
-            </Button>
-          </form>
-        </CardContent>
       </Card>
     </div>
   );
@@ -403,31 +328,23 @@ function CredentialList({
 // ---------------------------------------------------------------------------
 
 export function CredentialManager() {
-  const [view, setView] = useState<View>("login");
   const [token, setToken] = useState<string | null>(null);
 
-  // Restore session on mount
+  // Restore session on mount.
   useEffect(() => {
     const session = loadSession();
     if (session) {
       setToken(session.token);
-      setView("list");
     }
   }, []);
 
-  function handleLogin(newToken: string) {
-    setToken(newToken);
-    setView("list");
-  }
-
   function handleLogout() {
     setToken(null);
-    setView("login");
   }
 
-  if (view === "list" && token) {
+  if (token) {
     return <CredentialList onLogout={handleLogout} token={token} />;
   }
 
-  return <LoginForm onLogin={handleLogin} />;
+  return <SignInRequired />;
 }

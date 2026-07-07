@@ -24,202 +24,53 @@ import {
   CallToolRequestSchema,
   ListToolsRequestSchema,
 } from "@modelcontextprotocol/sdk/types.js";
+import { configureTelemetry } from "@utdk/common";
 import {
-  executeTool,
-  initTelemetry,
+  handleCallTool,
+  handleListTools,
+  handleSearchTools,
+  handleToolInfo,
   loadProviders,
   parseProviderNames,
-} from "./loader.js";
-import { searchTools, groupTools } from "./search.js";
-import type { ProviderTool } from "./loader.js";
+  META_TOOLS,
+  type Execute,
+  type ProviderTool,
+} from "@utdk/mcp-core";
+import { buildAuthProvider } from "./auth.js";
+import { executeTool } from "./loader.js";
 
 // ---------------------------------------------------------------------------
-// Schema normalization
+// fetch-based execute callback
 // ---------------------------------------------------------------------------
 
 /**
- * Ensure the input schema is a valid MCP tool inputSchema (type: "object").
+ * Adapt the stdio server's `fetch`-based {@link executeTool} into the
+ * transport-agnostic {@link Execute} contract from @utdk/mcp-core.
+ * `executeTool` returns parsed output on success and throws on HTTP errors;
+ * here success becomes `{ ok: true, data }` and a thrown error becomes
+ * `{ ok: false, error }`. The hosted gateway (Phase 2) passes its own
+ * executor that maps onto the same contract.
  */
-function normalizeInputSchema(schema: Record<string, unknown>): {
-  type: "object";
-  properties?: Record<string, object>;
-  required?: string[];
-} {
-  return {
-    type: "object",
-    ...(schema["properties"]
-      ? { properties: schema["properties"] as Record<string, object> }
-      : {}),
-    ...(schema["required"] ? { required: schema["required"] as string[] } : {}),
-  };
-}
-
-// ---------------------------------------------------------------------------
-// Meta-tool definitions (served by tools/list)
-// ---------------------------------------------------------------------------
-
-const META_TOOLS = [
-  {
-    name: "list_tools",
-    description:
-      "List available tool names without full schemas. Pass an optional provider to filter results, or group_by to organize by category.",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        provider: {
-          type: "string",
-          description: "Filter results to tools from this provider name (e.g. 'github')",
-        },
-        group_by: {
-          type: "string",
-          enum: ["provider", "tag"],
-          description:
-            "Group results by 'provider' or by OpenAPI 'tag'. When omitted, returns a flat list of names.",
-        },
-      },
-    },
-  },
-  {
-    name: "search_tools",
-    description:
-      "Find tools by keyword. Searches tool names, OpenAPI tags, and descriptions using TF-IDF relevance ranking so the LLM can locate relevant tools without browsing the full catalog.",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        query: {
-          type: "string",
-          description: "Natural language or keyword search (all words must appear in name, tags, or description)",
-        },
-        provider: {
-          type: "string",
-          description: "Restrict search to tools from this provider name (e.g. 'github')",
-        },
-        limit: {
-          type: "number",
-          description: "Maximum number of results to return (default 10)",
-        },
-      },
-      required: ["query"],
-    },
-  },
-  {
-    name: "tool_info",
-    description:
-      "Get the full schema and metadata for a specific tool by name. Use this after list_tools or search_tools to retrieve the complete input schema before calling the tool.",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        tool_name: {
-          type: "string",
-          description: "The MCP tool name (e.g. 'github__repos_list')",
-        },
-      },
-      required: ["tool_name"],
-    },
-  },
-  {
-    name: "call_tool",
-    description:
-      "Execute any registered tool by name with the provided arguments. Use tool_info first to get the correct argument schema.",
-    inputSchema: {
-      type: "object" as const,
-      properties: {
-        tool_name: {
-          type: "string",
-          description: "The MCP tool name to execute (e.g. 'github__repos_list')",
-        },
-        arguments: {
-          type: "object",
-          description: "Arguments to pass to the tool",
-        },
-      },
-      required: ["tool_name", "arguments"],
-    },
-  },
-];
-
-// ---------------------------------------------------------------------------
-// Meta-tool call handlers
-// ---------------------------------------------------------------------------
-
-function handleListTools(tools: ProviderTool[], args: Record<string, unknown>) {
-  const providerFilter =
-    typeof args["provider"] === "string" ? args["provider"] : undefined;
-  const groupBy =
-    args["group_by"] === "provider" || args["group_by"] === "tag"
-      ? (args["group_by"] as "provider" | "tag")
-      : undefined;
-  const filtered = providerFilter
-    ? tools.filter((t) => t.providerName === providerFilter)
-    : tools;
-  const result =
-    groupBy === "provider" || groupBy === "tag"
-      ? groupTools(filtered, groupBy)
-      : filtered.map((t) => t.mcpName);
-  return { content: [{ type: "text" as const, text: JSON.stringify(result, null, 2) }] };
-}
-
-function handleSearchTools(tools: ProviderTool[], args: Record<string, unknown>) {
-  const query = typeof args["query"] === "string" ? args["query"] : "";
-  const providerFilter =
-    typeof args["provider"] === "string" ? args["provider"] : undefined;
-  const limit =
-    typeof args["limit"] === "number" && args["limit"] > 0 ? Math.floor(args["limit"]) : 10;
-  const results = searchTools(tools, query, providerFilter, limit);
-  return { content: [{ type: "text" as const, text: JSON.stringify(results, null, 2) }] };
-}
-
-function handleToolInfo(toolMap: Map<string, ProviderTool>, args: Record<string, unknown>) {
-  const requestedName = typeof args["tool_name"] === "string" ? args["tool_name"] : "";
-  const tool = toolMap.get(requestedName);
-  if (!tool) {
-    return {
-      isError: true,
-      content: [{ type: "text" as const, text: `Unknown tool: ${requestedName}` }],
-    };
-  }
-  return {
-    content: [
-      {
-        type: "text" as const,
-        text: JSON.stringify(
-          {
-            name: tool.mcpName,
-            description: tool.description,
-            provider: tool.providerName,
-            inputSchema: normalizeInputSchema(tool.inputSchema),
-          },
-          null,
-          2,
-        ),
-      },
-    ],
-  };
-}
-
-async function handleCallTool(toolMap: Map<string, ProviderTool>, args: Record<string, unknown>) {
-  const requestedName = typeof args["tool_name"] === "string" ? args["tool_name"] : "";
-  const toolArgs =
-    typeof args["arguments"] === "object" && args["arguments"] !== null
-      ? (args["arguments"] as Record<string, unknown>)
-      : {};
-  const tool = toolMap.get(requestedName);
-  if (!tool) {
-    return {
-      isError: true,
-      content: [{ type: "text" as const, text: `Unknown tool: ${requestedName}` }],
-    };
-  }
+const execute: Execute = async (input) => {
   try {
-    const result = await executeTool(tool, toolArgs);
-    const text = typeof result === "string" ? result : JSON.stringify(result, null, 2);
-    return { content: [{ type: "text" as const, text }] };
+    const data = await executeTool(input.tool, input.args);
+    return { ok: true as const, data };
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    return {
-      isError: true,
-      content: [{ type: "text" as const, text: `Error calling ${requestedName}: ${message}` }],
-    };
+    return { ok: false as const, error: err instanceof Error ? err.message : String(err) };
+  }
+};
+
+// ---------------------------------------------------------------------------
+// Telemetry init (env-driven, stdio-specific)
+// ---------------------------------------------------------------------------
+
+/**
+ * Initialize telemetry if UTDK_OTEL_EXPORTER is set.
+ */
+async function initTelemetry(): Promise<void> {
+  const exporter = process.env["UTDK_OTEL_EXPORTER"];
+  if (exporter === "otlp" || exporter === "console") {
+    await configureTelemetry({ enabled: true, exporter });
   }
 }
 
@@ -252,7 +103,10 @@ function createServer(tools: ProviderTool[]): Server {
     if (toolName === "list_tools") return handleListTools(tools, args);
     if (toolName === "search_tools") return handleSearchTools(tools, args);
     if (toolName === "tool_info") return handleToolInfo(toolMap, args);
-    if (toolName === "call_tool") return handleCallTool(toolMap, args);
+    if (toolName === "call_tool") {
+      const requestedName = typeof args["tool_name"] === "string" ? args["tool_name"] : "";
+      return handleCallTool(toolMap.get(requestedName), args, execute);
+    }
 
     return {
       isError: true,
@@ -282,7 +136,7 @@ async function reloadProviders(): Promise<ProviderTool[]> {
     `[mcp-server] (Re)loading providers: ${providerNames.join(", ") || "(none)"}\n`,
   );
 
-  const tools = await loadProviders(providerNames);
+  const tools = await loadProviders(providerNames, buildAuthProvider);
   process.stderr.write(
     `[mcp-server] Loaded ${tools.length} total tool(s) from ${providerNames.length} provider(s)\n`,
   );
@@ -309,7 +163,7 @@ async function main(): Promise<void> {
     );
   }
 
-  let tools = await loadProviders(providerNames);
+  let tools = await loadProviders(providerNames, buildAuthProvider);
   process.stderr.write(
     `[mcp-server] Ready with ${tools.length} tool(s). Starting MCP stdio server...\n`,
   );

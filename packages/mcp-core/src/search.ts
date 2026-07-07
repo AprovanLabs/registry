@@ -1,10 +1,3 @@
-/**
- * Search and tokenization utilities for the MCP server wrapper tools.
- *
- * Extracted into a separate module so they can be unit-tested without
- * importing the full server entry-point (which starts stdio transport).
- */
-
 import type { ProviderTool } from "./loader.js";
 
 // ---------------------------------------------------------------------------

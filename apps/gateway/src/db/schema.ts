@@ -95,25 +95,100 @@ export const Invites: TableSchema = {
   },
 };
 
+/**
+ * Single-table design for gateway credentials (APR-318).
+ *
+ * Each workspace's items share the partition `PK = WS#<workspaceId>`. The sort
+ * key prefixes the entity type so a single partition query can fan out across
+ * entity types once the other gateway stores migrate here:
+ *   - `SK = CRED#<provider>#<credId>`  — the credential record itself
+ *   - `SK = CREDID#<credId>`          — a pointer from credId → provider, used
+ *                                       by `get`/`delete`/`getPayload` which
+ *                                       don't know the provider up front
+ *
+ * No GSI is required: `resolveForProvider` queries `begins_with(SK, "CRED#<provider>#")`
+ * against the partition, and `list` queries `begins_with(SK, "CRED#")` (which
+ * excludes the `CREDID#` pointers because their 5th character is `I`, not `#`).
+ */
 export const Credentials: TableSchema = {
   tableName: "Credentials",
   createInput: {
     TableName: "Credentials",
     KeySchema: [
-      { AttributeName: "workspaceId", KeyType: "HASH" },
-      { AttributeName: "path", KeyType: "RANGE" },
+      { AttributeName: "PK", KeyType: "HASH" },
+      { AttributeName: "SK", KeyType: "RANGE" },
     ],
     AttributeDefinitions: [
-      { AttributeName: "workspaceId", AttributeType: "S" },
-      { AttributeName: "path", AttributeType: "S" },
-      { AttributeName: "provider", AttributeType: "S" },
+      { AttributeName: "PK", AttributeType: "S" },
+      { AttributeName: "SK", AttributeType: "S" },
     ],
-    GlobalSecondaryIndexes: [
-      {
-        IndexName: "ByProvider",
-        KeySchema: [{ AttributeName: "provider", KeyType: "HASH" }],
-        Projection: { ProjectionType: "ALL" },
-      },
+    BillingMode: "PAY_PER_REQUEST",
+  },
+};
+
+/**
+ * Single-table design for gateway permission grants (APR-320).
+ *
+ * Each workspace's items share the partition `PK = WS#<workspaceId>`. The sort
+ * key encodes the entity:
+ *   - `SK = PERM#<callerId>#<provider>#<operation>` — the grant (`operation`
+ *     may be `*` for a wildcard over all of the provider's operations)
+ *   - `SK = PERMID#<permId>` — a permId → (callerId, provider, operation)
+ *     pointer written alongside the grant so `revoke(wsId, permId)` can
+ *     resolve the tuple and delete both items in one `TransactWriteItems`
+ *
+ * `check()` is a `BatchGetItem` of the exact-op and wildcard items (two items,
+ * one round-trip). `list()` queries `begins_with(SK, "PERM#")`, which excludes
+ * the `PERMID#` pointers (their 5th character is `I`, not `#`). No GSI is
+ * required.
+ */
+export const Permissions: TableSchema = {
+  tableName: "Permissions",
+  createInput: {
+    TableName: "Permissions",
+    KeySchema: [
+      { AttributeName: "PK", KeyType: "HASH" },
+      { AttributeName: "SK", KeyType: "RANGE" },
+    ],
+    AttributeDefinitions: [
+      { AttributeName: "PK", AttributeType: "S" },
+      { AttributeName: "SK", AttributeType: "S" },
+    ],
+    BillingMode: "PAY_PER_REQUEST",
+  },
+};
+
+/**
+ * Single-table design for gateway API keys (APR-319).
+ *
+ * Each workspace's items share the partition `PK = WS#<workspaceId>`. The sort
+ * key prefixes the entity type:
+ *   - `SK = APIKEY#<keyId>`          — the API key record (id, name, callerId,
+ *                                     secretHash, createdAt, createdBy, expiresAt)
+ *   - `SK = APIKEYHASH#<sha256(secret)>` — a hash → keyId mirror so `verify`
+ *                                     is a point lookup instead of a scan
+ *
+ * The mirror item carries a sparse `ttl` (epoch seconds derived from
+ * `expiresAt`) so DynamoDB auto-evicts expired mirrors and `verify()` fails
+ * closed even if `revoke` is never called. The primary record stores `expiresAt`
+ * as an ISO-8601 string and is checked server-side on verify (the TTL sweep is
+ * best-effort).
+ *
+ * No GSI is required: `list(wsId)` queries `begins_with(SK, "APIKEY#")`, which
+ * excludes the `APIKEYHASH#` mirrors (their 7th character is `H`, not `#`).
+ */
+export const ApiKeys: TableSchema = {
+  tableName: "ApiKeys",
+  ttlAttribute: "ttl",
+  createInput: {
+    TableName: "ApiKeys",
+    KeySchema: [
+      { AttributeName: "PK", KeyType: "HASH" },
+      { AttributeName: "SK", KeyType: "RANGE" },
+    ],
+    AttributeDefinitions: [
+      { AttributeName: "PK", AttributeType: "S" },
+      { AttributeName: "SK", AttributeType: "S" },
     ],
     BillingMode: "PAY_PER_REQUEST",
   },
@@ -207,6 +282,8 @@ export const ALL_TABLES: TableSchema[] = [
   Sessions,
   Invites,
   Credentials,
+  Permissions,
+  ApiKeys,
   Groups,
   GroupPrefixGrants,
   GroupToolGrants,

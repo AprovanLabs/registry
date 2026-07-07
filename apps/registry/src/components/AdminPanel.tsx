@@ -16,6 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { clearSession, loadSession } from "@/lib/gateway";
 import { cn } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
@@ -55,20 +56,6 @@ interface AuditEntry {
   result: "success" | "forbidden" | "error";
 }
 
-interface ApiKey {
-  id: string;
-  workspaceId: string;
-  name: string;
-  callerId: string;
-  createdAt: string;
-  createdBy: string;
-  expiresAt: string | null;
-}
-
-interface ApiKeyWithSecret extends ApiKey {
-  secret: string;
-}
-
 // ---------------------------------------------------------------------------
 // Gateway client helpers
 // ---------------------------------------------------------------------------
@@ -92,12 +79,11 @@ function gatewayFetch(
 // Tabs
 // ---------------------------------------------------------------------------
 
-type Tab = "members" | "audit" | "apikeys";
+type Tab = "members" | "audit";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "members", label: "Members & Permissions" },
   { id: "audit", label: "Audit Log" },
-  { id: "apikeys", label: "API Keys" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -105,56 +91,30 @@ const TABS: { id: Tab; label: string }[] = [
 // ---------------------------------------------------------------------------
 
 export function AdminPanel() {
-  const [token, setToken] = React.useState("");
-  const [tokenInput, setTokenInput] = React.useState("");
-  const [authError, setAuthError] = React.useState("");
+  const [token, setToken] = React.useState<string | null>(null);
   const [activeTab, setActiveTab] = React.useState<Tab>("members");
 
-  // Token login form: authenticate against the gateway
-  async function handleLogin(e: React.FormEvent) {
-    e.preventDefault();
-    setAuthError("");
-    try {
-      const res = await fetch(`${GATEWAY_URL}/health`);
-      if (!res.ok) throw new Error("Gateway unreachable");
-      // Validate the token by fetching permissions
-      const check = await fetch(`${GATEWAY_URL}/permissions`, {
-        headers: { Authorization: `Bearer ${tokenInput}` },
-      });
-      if (check.status === 401 || check.status === 403) {
-        setAuthError("Invalid token or insufficient role (admin required).");
-        return;
-      }
-      setToken(tokenInput);
-    } catch (err) {
-      setAuthError(err instanceof Error ? err.message : "Connection failed");
-    }
+  // Restore the gateway session (Cognito access token) on mount.
+  React.useEffect(() => {
+    const session = loadSession();
+    if (session) setToken(session.token);
+  }, []);
+
+  function handleDisconnect() {
+    clearSession();
+    setToken(null);
   }
 
   if (!token) {
     return (
       <Card className="max-w-md">
         <CardHeader>
-          <CardTitle>Connect to Gateway</CardTitle>
+          <CardTitle>Sign in required</CardTitle>
           <CardDescription>
-            Enter an admin JWT to manage permissions.
+            Sign in via Cognito and pick a workspace to manage permissions and
+            audit the gateway.
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin} className="flex flex-col gap-3">
-            <Input
-              type="password"
-              placeholder="Bearer token"
-              value={tokenInput}
-              onChange={(e) => setTokenInput(e.target.value)}
-              required
-            />
-            {authError && <p className="text-sm text-destructive">{authError}</p>}
-            <Button type="submit" disabled={!tokenInput.trim()}>
-              Connect
-            </Button>
-          </form>
-        </CardContent>
       </Card>
     );
   }
@@ -178,7 +138,7 @@ export function AdminPanel() {
           </button>
         ))}
         <div className="ml-auto">
-          <Button variant="ghost" size="sm" onClick={() => setToken("")}>
+          <Button variant="ghost" size="sm" onClick={handleDisconnect}>
             Disconnect
           </Button>
         </div>
@@ -186,7 +146,6 @@ export function AdminPanel() {
 
       {activeTab === "members" && <MembersTab token={token} />}
       {activeTab === "audit" && <AuditTab token={token} />}
-      {activeTab === "apikeys" && <ApiKeysTab token={token} />}
     </div>
   );
 }
@@ -572,223 +531,3 @@ function AuditTab({ token }: { token: string }) {
   );
 }
 
-// ---------------------------------------------------------------------------
-// ApiKeysTab — create / list / revoke named API keys
-// ---------------------------------------------------------------------------
-
-function ApiKeysTab({ token }: { token: string }) {
-  const [keys, setKeys] = React.useState<ApiKey[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState("");
-
-  // Create form
-  const [newName, setNewName] = React.useState("");
-  const [newExpiry, setNewExpiry] = React.useState("");
-  const [creating, setCreating] = React.useState(false);
-  const [createError, setCreateError] = React.useState("");
-  const [newSecret, setNewSecret] = React.useState<ApiKeyWithSecret | null>(null);
-
-  async function load() {
-    setLoading(true);
-    setError("");
-    try {
-      const res = await gatewayFetch("/api-keys", token);
-      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      const data = (await res.json()) as { keys: ApiKey[] };
-      setKeys(data.keys);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load API keys");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  React.useEffect(() => {
-    load();
-  }, [token]);
-
-  async function create(e: React.FormEvent) {
-    e.preventDefault();
-    setCreating(true);
-    setCreateError("");
-    setNewSecret(null);
-    try {
-      const body: Record<string, unknown> = { name: newName.trim() };
-      if (newExpiry) {
-        const days = parseInt(newExpiry, 10);
-        if (days > 0) body.expiresInSeconds = days * 86400;
-      }
-      const res = await gatewayFetch("/api-keys", token, {
-        method: "POST",
-        body: JSON.stringify(body),
-      });
-      if (!res.ok) {
-        const errBody = (await res.json()) as { error?: string };
-        throw new Error(errBody.error ?? `${res.status}`);
-      }
-      const created = (await res.json()) as ApiKeyWithSecret;
-      setNewSecret(created);
-      setKeys((prev) => [...prev, created]);
-      setNewName("");
-      setNewExpiry("");
-    } catch (err) {
-      setCreateError(err instanceof Error ? err.message : "Create failed");
-    } finally {
-      setCreating(false);
-    }
-  }
-
-  async function revoke(id: string) {
-    try {
-      const res = await gatewayFetch(`/api-keys/${id}`, token, { method: "DELETE" });
-      if (!res.ok) throw new Error(`${res.status}`);
-      setKeys((prev) => prev.filter((k) => k.id !== id));
-      if (newSecret?.id === id) setNewSecret(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Revoke failed");
-    }
-  }
-
-  return (
-    <div className="flex flex-col gap-6">
-      {/* Create form */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Create API Key</CardTitle>
-          <CardDescription>
-            Named API keys allow programmatic callers to authenticate without the admin secret.
-            The secret is shown once and never stored in plain text — copy it immediately.
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={create} className="flex flex-col gap-3">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">Name</label>
-                <Input
-                  placeholder="My CI runner"
-                  value={newName}
-                  onChange={(e) => setNewName(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Expires in (days) — blank = never
-                </label>
-                <Input
-                  type="number"
-                  min="1"
-                  placeholder="30"
-                  value={newExpiry}
-                  onChange={(e) => setNewExpiry(e.target.value)}
-                />
-              </div>
-            </div>
-            {createError && <p className="text-sm text-destructive">{createError}</p>}
-            <Button type="submit" disabled={creating || !newName.trim()} className="self-start">
-              {creating ? "Creating…" : "Create API Key"}
-            </Button>
-          </form>
-        </CardContent>
-      </Card>
-
-      {/* Newly created key secret banner */}
-      {newSecret && (
-        <Card className="border-ring">
-          <CardHeader>
-            <CardTitle className="text-sm">API Key Created — copy now</CardTitle>
-            <CardDescription>
-              This secret will not be shown again. Grant permissions to{" "}
-              <code className="font-mono text-xs">{newSecret.callerId}</code> using the Members
-              tab.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-2 rounded-lg bg-muted p-3 font-mono text-xs break-all">
-              <span className="flex-1">{newSecret.secret}</span>
-              <Button
-                variant="outline"
-                size="xs"
-                onClick={() => navigator.clipboard.writeText(newSecret.secret)}
-              >
-                Copy
-              </Button>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="mt-2"
-              onClick={() => setNewSecret(null)}
-            >
-              Dismiss
-            </Button>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Keys list */}
-      <Card>
-        <CardHeader>
-          <CardTitle>API Keys</CardTitle>
-          <CardDescription>{keys.length} key(s)</CardDescription>
-        </CardHeader>
-        <CardContent>
-          {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          {!loading && keys.length === 0 && (
-            <p className="text-sm text-muted-foreground">No API keys yet.</p>
-          )}
-          {keys.length > 0 && (
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b text-xs text-muted-foreground">
-                    <th className="pb-2 pr-4 text-left font-medium">Name</th>
-                    <th className="pb-2 pr-4 text-left font-medium">Caller ID</th>
-                    <th className="pb-2 pr-4 text-left font-medium">Created</th>
-                    <th className="pb-2 pr-4 text-left font-medium">Expires</th>
-                    <th className="pb-2" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {keys.map((k) => {
-                    const expired = k.expiresAt && new Date(k.expiresAt) < new Date();
-                    return (
-                      <tr key={k.id} className="border-b last:border-0">
-                        <td className="py-2 pr-4 font-medium">{k.name}</td>
-                        <td className="py-2 pr-4 font-mono text-xs">{k.callerId}</td>
-                        <td className="py-2 pr-4 text-xs text-muted-foreground whitespace-nowrap">
-                          {new Date(k.createdAt).toLocaleString()}
-                        </td>
-                        <td className="py-2 pr-4 text-xs whitespace-nowrap">
-                          {k.expiresAt ? (
-                            <span className={cn(expired && "text-destructive")}>
-                              {new Date(k.expiresAt).toLocaleDateString()}
-                              {expired && " (expired)"}
-                            </span>
-                          ) : (
-                            <span className="text-muted-foreground">Never</span>
-                          )}
-                        </td>
-                        <td className="py-2">
-                          <Button
-                            variant="destructive"
-                            size="xs"
-                            onClick={() => revoke(k.id)}
-                          >
-                            Revoke
-                          </Button>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
-  );
-}

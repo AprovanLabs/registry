@@ -12,6 +12,7 @@
 import { Hono } from "hono";
 import { getCredentialStore, type CredentialInput } from "../credentials.js";
 import { requireAuth, requireAdmin } from "../middleware/auth.js";
+import { invalidateToolListCache } from "./tools.js";
 
 export const credentialsRouter = new Hono();
 
@@ -26,8 +27,8 @@ credentialsRouter.use("DELETE", requireAdmin);
 // ---------------------------------------------------------------------------
 
 credentialsRouter.post("/", requireAdmin, async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
 
   let body: unknown;
   try {
@@ -44,7 +45,9 @@ credentialsRouter.post("/", requireAdmin, async (c) => {
   }
 
   const store = getCredentialStore();
-  const record = store.create(workspaceId, body);
+  const record = await store.create(workspaceId, body);
+  // A new credential may unlock a provider's tools for this workspace.
+  invalidateToolListCache(workspaceId);
   return c.json(record, 201);
 });
 
@@ -53,11 +56,11 @@ credentialsRouter.post("/", requireAdmin, async (c) => {
 // ---------------------------------------------------------------------------
 
 credentialsRouter.get("/", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
 
   const store = getCredentialStore();
-  const records = store.list(workspaceId);
+  const records = await store.list(workspaceId);
   return c.json({ credentials: records });
 });
 
@@ -66,8 +69,8 @@ credentialsRouter.get("/", async (c) => {
 // ---------------------------------------------------------------------------
 
 credentialsRouter.delete("/:id", requireAdmin, async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const id = c.req.param("id") ?? "";
 
   if (!id) {
@@ -75,11 +78,13 @@ credentialsRouter.delete("/:id", requireAdmin, async (c) => {
   }
 
   const store = getCredentialStore();
-  const deleted = store.delete(workspaceId, id);
+  const deleted = await store.delete(workspaceId, id);
 
   if (!deleted) {
     return c.json({ error: "Credential not found" }, 404);
   }
+  // A removed credential may remove a provider's tools from this workspace.
+  invalidateToolListCache(workspaceId);
   return c.json({ deleted: true });
 });
 

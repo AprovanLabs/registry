@@ -21,8 +21,8 @@ permissionsRouter.use("*", requireAuth, requireAdmin);
 // ---------------------------------------------------------------------------
 
 permissionsRouter.post("/", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
 
   let body: unknown;
   try {
@@ -40,11 +40,11 @@ permissionsRouter.post("/", async (c) => {
 
   const input: GrantInput = {
     ...(body as { callerId: string; provider: string; operation: string }),
-    grantedBy: payload.sub,
+    grantedBy: principal.sub,
   };
 
   const store = getPermissionStore();
-  const perm = store.grant(workspaceId, input);
+  const perm = await store.grant(workspaceId, input);
   return c.json(perm, 201);
 });
 
@@ -53,12 +53,12 @@ permissionsRouter.post("/", async (c) => {
 // ---------------------------------------------------------------------------
 
 permissionsRouter.get("/", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const callerId = c.req.query("callerId");
 
   const store = getPermissionStore();
-  const perms = store.list(workspaceId, callerId);
+  const perms = await store.list(workspaceId, callerId);
   return c.json({ permissions: perms });
 });
 
@@ -67,8 +67,8 @@ permissionsRouter.get("/", async (c) => {
 // ---------------------------------------------------------------------------
 
 permissionsRouter.delete("/:id", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const id = c.req.param("id") ?? "";
 
   if (!id) {
@@ -76,7 +76,7 @@ permissionsRouter.delete("/:id", async (c) => {
   }
 
   const store = getPermissionStore();
-  const revoked = store.revoke(workspaceId, id);
+  const revoked = await store.revoke(workspaceId, id);
 
   if (!revoked) {
     return c.json({ error: "Permission not found" }, 404);

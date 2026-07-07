@@ -1,18 +1,50 @@
 /**
  * Integration tests for the gateway.
  *
- * Tests the full request flow:
- *   /auth/token → credentials CRUD → permission grants → tool proxy
+ * Tests the full request flow under the Cognito access-token auth model:
+ *   credentials CRUD → permission grants → tool proxy → GET /tools
  *
- * Uses the Hono test client (app.request()) so no real port is bound.
+ * Auth is exercised via mocked Cognito verification + a mocked DDB document
+ * client (see tests/helpers.ts). Uses the Hono test client (app.request()) so
+ * no real port is bound.
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { createApp } from "../src/app.js";
 import { resetCredentialStore } from "../src/credentials.js";
-import { resetExecutor, setExecutor, type IsolateExecutor } from "../src/isolate.js";
+import {
+  resetExecutor,
+  setExecutor,
+  setProviderModuleForTesting,
+  isProviderCached,
+  resetProviderCache,
+  getProviderModule,
+  type IsolateExecutor,
+} from "../src/isolate.js";
+import { resetCognitoVerifier } from "../src/middleware/auth.js";
 import { resetRateLimiters } from "../src/middleware/rateLimitMiddleware.js";
 import { resetPermissionStore } from "../src/permissions.js";
+import { resetToolListCache } from "../src/routes/tools.js";
+import { setupAuth } from "./helpers.js";
+
+// ---------------------------------------------------------------------------
+// DynamoDB mock — intercepts all document client calls
+// ---------------------------------------------------------------------------
+
+const mockDdbSend = vi.fn();
+
+vi.mock("@aws-sdk/lib-dynamodb", () => ({
+  DynamoDBDocumentClient: {
+    from: vi.fn(() => ({ send: mockDdbSend })),
+  },
+  QueryCommand: vi.fn((input: unknown) => ({ input })),
+  PutCommand: vi.fn((input: unknown) => ({ input })),
+  GetCommand: vi.fn((input: unknown) => ({ input })),
+}));
+
+vi.mock("@aws-sdk/client-dynamodb", () => ({
+  DynamoDBClient: vi.fn(() => ({})),
+}));
 
 // ---------------------------------------------------------------------------
 // Cognito SDK mock (used by DCR tests)
@@ -34,22 +66,37 @@ async function getCognitoMockSend() {
 }
 
 // ---------------------------------------------------------------------------
+// Auth fixtures
+// ---------------------------------------------------------------------------
+
+const ADMIN_TOKEN = "test-cognito-admin-token";
+const CALLER_TOKEN = "test-cognito-caller-token";
+const ADMIN_SUB = "admin-user";
+const CALLER_SUB = "caller-user";
+const WORKSPACE_ID = "ws-test";
+
+// ---------------------------------------------------------------------------
 // Setup
 // ---------------------------------------------------------------------------
 
 const TEST_WORKSPACE_KEY = "test-workspace-key-for-tests-only";
-const TEST_JWT_SECRET = "test-jwt-secret-for-tests-only";
-const TEST_ADMIN_SECRET = "test-admin-secret-for-tests-only";
 
 beforeEach(() => {
   process.env["GATEWAY_WORKSPACE_KEY"] = TEST_WORKSPACE_KEY;
-  process.env["GATEWAY_JWT_SECRET"] = TEST_JWT_SECRET;
-  process.env["GATEWAY_ADMIN_SECRET"] = TEST_ADMIN_SECRET;
+  setupAuth({
+    mockDdbSend,
+    users: [
+      { sub: ADMIN_SUB, token: ADMIN_TOKEN, role: "admin", workspaceId: WORKSPACE_ID },
+      { sub: CALLER_SUB, token: CALLER_TOKEN, role: "member", workspaceId: WORKSPACE_ID },
+    ],
+  });
 
   resetCredentialStore();
   resetPermissionStore();
   resetRateLimiters();
   resetExecutor();
+  resetProviderCache();
+  resetToolListCache();
 });
 
 afterEach(() => {
@@ -57,40 +104,27 @@ afterEach(() => {
   resetPermissionStore();
   resetRateLimiters();
   resetExecutor();
+  resetProviderCache();
+  resetToolListCache();
+  resetCognitoVerifier();
+  delete process.env["PROVIDER_CACHE_SIZE"];
+  delete process.env["TOOL_LIST_CACHE_TTL_MS"];
 });
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Helpers — return a Bearer token for the configured admin / caller fixture.
 // ---------------------------------------------------------------------------
 
-async function getAdminToken(app: ReturnType<typeof createApp>, workspaceId = "ws-test"): Promise<string> {
-  const res = await app.request("/auth/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      callerId: "admin-caller",
-      workspaceId,
-      role: "admin",
-      secret: TEST_ADMIN_SECRET,
-    }),
-  });
-  const body = await res.json() as { token: string };
-  return body.token;
+async function getAdminToken(_app?: ReturnType<typeof createApp>): Promise<string> {
+  return ADMIN_TOKEN;
 }
 
-async function getCallerToken(app: ReturnType<typeof createApp>, callerId: string, workspaceId = "ws-test"): Promise<string> {
-  const res = await app.request("/auth/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      callerId,
-      workspaceId,
-      role: "caller",
-      secret: TEST_ADMIN_SECRET,
-    }),
-  });
-  const body = await res.json() as { token: string };
-  return body.token;
+async function getCallerToken(
+  _app?: ReturnType<typeof createApp>,
+  _callerId?: string,
+  _workspaceId?: string,
+): Promise<string> {
+  return CALLER_TOKEN;
 }
 
 // ---------------------------------------------------------------------------
@@ -108,41 +142,60 @@ describe("GET /health", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Authentication
+// Authentication (Cognito access-token middleware)
 // ---------------------------------------------------------------------------
 
-describe("POST /auth/token", () => {
-  it("issues a token with valid secret", async () => {
+describe("requireAuth", () => {
+  it("returns 401 without an Authorization header", async () => {
     const app = createApp();
-    const res = await app.request("/auth/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        callerId: "mcp-server",
-        workspaceId: "ws-1",
-        role: "caller",
-        secret: TEST_ADMIN_SECRET,
-      }),
-    });
-    expect(res.status).toBe(200);
-    const body = await res.json() as { token: string; expiresIn: number };
-    expect(typeof body.token).toBe("string");
-    expect(body.expiresIn).toBe(3600);
+    const res = await app.request("/credentials");
+    expect(res.status).toBe(401);
   });
 
-  it("returns 401 with invalid secret", async () => {
+  it("returns 401 with an invalid Cognito token", async () => {
     const app = createApp();
-    const res = await app.request("/auth/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        callerId: "mcp-server",
-        workspaceId: "ws-1",
-        role: "caller",
-        secret: "wrong-secret",
-      }),
+    const res = await app.request("/credentials", {
+      headers: { Authorization: "Bearer not-a-real-token" },
     });
     expect(res.status).toBe(401);
+  });
+
+  it("returns 400 when no active workspace is selected", async () => {
+    mockDdbSend.mockImplementation((cmd: { input?: Record<string, unknown> }) => {
+      const table = cmd.input?.["TableName"];
+      if (table === "Sessions") return Promise.resolve({});
+      return Promise.resolve({});
+    });
+    const app = createApp();
+    const res = await app.request("/credentials", {
+      headers: { Authorization: `Bearer ${ADMIN_TOKEN}` },
+    });
+    expect(res.status).toBe(400);
+    const body = await res.json() as { code?: string };
+    expect(body.code).toBe("workspace_not_selected");
+  });
+
+  it("returns 403 when not a member of the active workspace", async () => {
+    mockDdbSend.mockImplementation((cmd: { input?: Record<string, unknown> }) => {
+      const table = cmd.input?.["TableName"];
+      if (table === "Sessions") {
+        return Promise.resolve({
+          Item: {
+            userSub: ADMIN_SUB,
+            currentWorkspaceId: WORKSPACE_ID,
+            expiresAt: Math.floor(Date.now() / 1000) + 3600,
+          },
+        });
+      }
+      if (table === "Memberships") return Promise.resolve({});
+      if (table === "UserGroups") return Promise.resolve({ Items: [] });
+      return Promise.resolve({});
+    });
+    const app = createApp();
+    const res = await app.request("/credentials", {
+      headers: { Authorization: `Bearer ${ADMIN_TOKEN}` },
+    });
+    expect(res.status).toBe(403);
   });
 });
 
@@ -249,14 +302,14 @@ describe("Permissions CRUD", () => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        callerId: "mcp-server",
+        callerId: CALLER_SUB,
         provider: "github",
         operation: "*",
       }),
     });
     expect(grantRes.status).toBe(201);
     const perm = await grantRes.json() as { id: string; callerId: string };
-    expect(perm.callerId).toBe("mcp-server");
+    expect(perm.callerId).toBe(CALLER_SUB);
 
     const listRes = await app.request("/permissions", {
       headers: { Authorization: `Bearer ${token}` },
@@ -320,7 +373,7 @@ describe("POST /tools/:provider/:operation", () => {
         Authorization: `Bearer ${adminToken}`,
       },
       body: JSON.stringify({
-        callerId: "mcp-server",
+        callerId: CALLER_SUB,
         provider: "github",
         operation: "*",
       }),
@@ -371,7 +424,7 @@ describe("POST /tools/:provider/:operation", () => {
         Authorization: `Bearer ${adminToken}`,
       },
       body: JSON.stringify({
-        callerId: "mcp-server",
+        callerId: CALLER_SUB,
         provider: "github",
         operation: "*",
       }),
@@ -573,5 +626,309 @@ describe("POST /oauth/register", () => {
     const body = await res.json() as { error: string; error_description: string };
     expect(body["error"]).toBe("server_error");
     expect(body["error_description"]).toContain("UserPool not found");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// LRU provider cache (APR-306)
+// ---------------------------------------------------------------------------
+
+describe("LRU provider cache", () => {
+  it("caches a provider module on first load and reuses it on hit", async () => {
+    const mod = { createGithubClient: vi.fn() };
+    setProviderModuleForTesting("github", mod);
+
+    const first = await getProviderModule("github");
+    const second = await getProviderModule("github");
+
+    expect(first).toBe(mod);
+    expect(second).toBe(mod);
+    expect(isProviderCached("github")).toBe(true);
+  });
+
+  it("evicts the least-recently-used entry when over PROVIDER_CACHE_SIZE", async () => {
+    process.env["PROVIDER_CACHE_SIZE"] = "3";
+    setProviderModuleForTesting("p1", { id: "p1" });
+    setProviderModuleForTesting("p2", { id: "p2" });
+    setProviderModuleForTesting("p3", { id: "p3" });
+
+    // Touch p1 so p2 becomes the least-recently-used.
+    await getProviderModule("p1");
+
+    // Inserting p4 exceeds the limit and should evict the LRU entry (p2).
+    setProviderModuleForTesting("p4", { id: "p4" });
+
+    expect(isProviderCached("p1")).toBe(true);
+    expect(isProviderCached("p2")).toBe(false);
+    expect(isProviderCached("p3")).toBe(true);
+    expect(isProviderCached("p4")).toBe(true);
+  });
+
+  it("DirectExecutor.execute uses the cached module and injects credentials", async () => {
+    const listFn = vi.fn().mockResolvedValue([{ name: "test-repo" }]);
+    const createGithubClient = vi.fn().mockResolvedValue({ repos: { list: listFn } });
+    setProviderModuleForTesting("github", { createGithubClient });
+
+    const executor = await import("../src/isolate.js").then((m) => m.getExecutor());
+    const result = await executor.execute({
+      provider: "github",
+      operation: "repos.list",
+      args: { per_page: 5 },
+      credentials: { type: "bearer_token", token: "ghp_test" },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual([{ name: "test-repo" }]);
+    expect(createGithubClient).toHaveBeenCalledTimes(1);
+    expect(createGithubClient).toHaveBeenCalledWith({ headers: { Authorization: "Bearer ghp_test" } });
+    expect(listFn).toHaveBeenCalledWith({ per_page: 5 });
+  });
+
+  it("DirectExecutor.execute reuses the cached module across calls (no re-import)", async () => {
+    const createGithubClient = vi.fn().mockResolvedValue({
+      repos: { list: vi.fn().mockResolvedValue([]) },
+    });
+    setProviderModuleForTesting("github", { createGithubClient });
+
+    const { getExecutor } = await import("../src/isolate.js");
+    const executor = await getExecutor();
+
+    await executor.execute({
+      provider: "github",
+      operation: "repos.list",
+      args: {},
+      credentials: undefined,
+    });
+    await executor.execute({
+      provider: "github",
+      operation: "repos.list",
+      args: {},
+      credentials: undefined,
+    });
+
+    // The factory is per-request, but the module is cached — it should be the
+    // same (single) module reference both times, i.e. never re-imported.
+    expect(isProviderCached("github")).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /tools — workspace-filtered tool discovery (APR-306)
+// ---------------------------------------------------------------------------
+
+describe("GET /tools", () => {
+  it("returns 401 without a session JWT", async () => {
+    const app = createApp();
+    const res = await app.request("/tools");
+    expect(res.status).toBe(401);
+  });
+
+  it("returns an empty tool list when no credentials are configured", async () => {
+    const app = createApp();
+    const token = await getCallerToken(app, "mcp-server");
+
+    const res = await app.request("/tools", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(res.status).toBe(200);
+    const body = await res.json() as { tools: unknown[]; workspace_id: string };
+    expect(body.tools).toEqual([]);
+    expect(body.workspace_id).toBe("ws-test");
+  });
+
+  it("returns tools for providers that have a credential configured", async () => {
+    setProviderModuleForTesting("github", {
+      tools: [
+        { name: "github.repos.list", description: "List repos", inputSchema: { type: "object" }, outputSchema: { type: "array" } },
+        { name: "github.repos.get", description: "Get a repo" },
+      ],
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+
+    const callerToken = await getCallerToken(app, "mcp-server");
+    const res = await app.request("/tools", {
+      headers: { Authorization: `Bearer ${callerToken}` },
+    });
+
+    expect(res.status).toBe(200);
+    const body = await res.json() as { tools: Array<Record<string, unknown>>; workspace_id: string };
+    expect(body.workspace_id).toBe("ws-test");
+    expect(body.tools).toHaveLength(2);
+    expect(body.tools[0]!["provider"]).toBe("github");
+    expect(body.tools[0]!["name"]).toBe("github.repos.list");
+    expect(body.tools[0]!["operation"]).toBe("repos.list");
+    expect(body.tools[0]!["description"]).toBe("List repos");
+    expect(body.tools[0]!["inputSchema"]).toEqual({ type: "object" });
+    expect(body.tools[0]!["outputSchema"]).toEqual({ type: "array" });
+    // Tools are namespaced under the provider; operation strips the provider prefix.
+    expect(body.tools[1]!["operation"]).toBe("repos.get");
+  });
+
+  it("does not include providers without a configured credential", async () => {
+    setProviderModuleForTesting("github", {
+      tools: [{ name: "github.repos.list", description: "List repos" }],
+    });
+    setProviderModuleForTesting("linear", {
+      tools: [{ name: "linear.issues.list", description: "List issues" }],
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    // Only github has a credential; linear does not.
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+
+    const callerToken = await getCallerToken(app, "mcp-server");
+    const res = await app.request("/tools", {
+      headers: { Authorization: `Bearer ${callerToken}` },
+    });
+    const body = await res.json() as { tools: Array<Record<string, unknown>> };
+
+    expect(body.tools).toHaveLength(1);
+    expect(body.tools[0]!["provider"]).toBe("github");
+  });
+
+  it("caches the tool list per workspace for the TTL window", async () => {
+    setProviderModuleForTesting("github", {
+      tools: [{ name: "github.repos.list", description: "List repos" }],
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+    const callerToken = await getCallerToken(app, "mcp-server");
+
+    const first = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const firstBody = await first.json() as { tools: unknown[] };
+    expect(firstBody.tools).toHaveLength(1);
+
+    // Drop github from the provider cache. A fresh recomputation would now
+    // skip github (no module), but the per-workspace tool list is still warm.
+    const { invalidateProvider } = await import("../src/isolate.js");
+    invalidateProvider("github");
+    expect(isProviderCached("github")).toBe(false);
+
+    const second = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const secondBody = await second.json() as { tools: unknown[] };
+    // Still served from the tool-list cache — github's absence doesn't matter.
+    expect(secondBody.tools).toHaveLength(1);
+  });
+
+  it("recomputes the tool list after the TTL expires", async () => {
+    process.env["TOOL_LIST_CACHE_TTL_MS"] = "1";
+    setProviderModuleForTesting("github", {
+      tools: [{ name: "github.repos.list", description: "List repos" }],
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+    const callerToken = await getCallerToken(app, "mcp-server");
+
+    const first = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const firstBody = await first.json() as { tools: Array<Record<string, unknown>> };
+    expect(firstBody.tools).toHaveLength(1);
+    expect(firstBody.tools[0]!["name"]).toBe("github.repos.list");
+
+    // Wait for the per-workspace TTL to lapse, then swap the cached module.
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    setProviderModuleForTesting("github", {
+      tools: [{ name: "github.repos.get", description: "Get a repo" }],
+    });
+
+    const second = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const secondBody = await second.json() as { tools: Array<Record<string, unknown>> };
+    expect(secondBody.tools).toHaveLength(1);
+    expect(secondBody.tools[0]!["name"]).toBe("github.repos.get");
+  });
+
+  it("invalidates the tool list when a credential is added", async () => {
+    setProviderModuleForTesting("github", {
+      tools: [{ name: "github.repos.list", description: "List repos" }],
+    });
+    setProviderModuleForTesting("linear", {
+      tools: [{ name: "linear.issues.list", description: "List issues" }],
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+    const callerToken = await getCallerToken(app, "mcp-server");
+
+    const first = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const firstBody = await first.json() as { tools: Array<Record<string, unknown>> };
+    expect(firstBody.tools).toHaveLength(1);
+    expect(firstBody.tools[0]!["provider"]).toBe("github");
+
+    // Adding a linear credential invalidates the cached list; the next call
+    // picks up linear tools too.
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "linear", payload: { type: "bearer_token", token: "lin_test" } }),
+    });
+
+    const second = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const secondBody = await second.json() as { tools: Array<Record<string, unknown>> };
+    const providers = secondBody.tools.map((t) => t["provider"]);
+    expect(providers).toContain("github");
+    expect(providers).toContain("linear");
+  });
+
+  it("derives tools from toolMetadata when a tools export is absent (transitional fallback)", async () => {
+    setProviderModuleForTesting("github", {
+      toolMetadata: {
+        "repos/list": {
+          accessPath: ["repos", "list"],
+          description: "List repositories for the authenticated user",
+          pathParameterKeys: [],
+          queryParameterKeys: ["per_page"],
+          bodyPropertyKeys: [],
+          headerParameterKeys: [],
+          parameterDescriptions: { per_page: "Number of results per page" },
+        },
+      },
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+    const callerToken = await getCallerToken(app, "mcp-server");
+
+    const res = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const body = await res.json() as { tools: Array<Record<string, unknown>> };
+    expect(body.tools).toHaveLength(1);
+    expect(body.tools[0]!["name"]).toBe("github.repos.list");
+    expect(body.tools[0]!["operation"]).toBe("repos.list");
+    expect(body.tools[0]!["description"]).toBe("List repositories for the authenticated user");
+    const inputSchema = body.tools[0]!["inputSchema"] as Record<string, unknown>;
+    expect(inputSchema["type"]).toBe("object");
+    expect(inputSchema["properties"]).toHaveProperty("per_page");
   });
 });

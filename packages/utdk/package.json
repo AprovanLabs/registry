@@ -20,6 +20,7 @@
       "import": "./dist/index.js",
       "default": "./dist/index.js"
     },
+    "./registry.json": "./registry.json",
     "./client": {
       "types": "./dist/client.d.ts",
       "import": "./dist/client.js",

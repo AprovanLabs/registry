@@ -11,8 +11,11 @@ services:
       # Required in production — override with real keys
       GATEWAY_PORT: "4000"
       GATEWAY_WORKSPACE_KEY: "${GATEWAY_WORKSPACE_KEY:-dev-insecure-key}"
-      GATEWAY_JWT_SECRET: "${GATEWAY_JWT_SECRET:-dev-insecure-jwt-secret}"
-      GATEWAY_ADMIN_SECRET: "${GATEWAY_ADMIN_SECRET:-dev-insecure-admin-secret}"
+
+      # Cognito access-token verification (required for auth)
+      GATEWAY_COGNITO_USER_POOL_ID: "${GATEWAY_COGNITO_USER_POOL_ID:-}"
+      GATEWAY_COGNITO_CLIENT_ID: "${GATEWAY_COGNITO_CLIENT_ID:-}"
+      GATEWAY_AWS_REGION: "${GATEWAY_AWS_REGION:-${AWS_REGION:-us-east-1}}"
 
       # File-backed persistence (mounted volume)
       GATEWAY_STORE_PATH: "/data/credentials.json"
