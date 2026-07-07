@@ -247,7 +247,7 @@ toolsRouter.get("/", requireAuth, async (c) => {
   // Only providers with at least one credential configured in the workspace
   // contribute tools — a user who hasn't connected GitHub sees no GitHub tools.
   const credStore = getCredentialStore();
-  const credentials = credStore.list(workspaceId);
+  const credentials = await credStore.list(workspaceId);
   const providers = Array.from(new Set(credentials.map((c) => c.provider)));
 
   const tools: ToolEntry[] = [];
@@ -314,7 +314,7 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
 
     // Resolve credentials from store
     const credStore = getCredentialStore();
-    credentials = credStore.resolveForProvider(workspaceId, provider!);
+    credentials = await credStore.resolveForProvider(workspaceId, provider!);
   }
 
   const provider = c.req.param("provider");

@@ -45,7 +45,7 @@ credentialsRouter.post("/", requireAdmin, async (c) => {
   }
 
   const store = getCredentialStore();
-  const record = store.create(workspaceId, body);
+  const record = await store.create(workspaceId, body);
   // A new credential may unlock a provider's tools for this workspace.
   invalidateToolListCache(workspaceId);
   return c.json(record, 201);
@@ -60,7 +60,7 @@ credentialsRouter.get("/", async (c) => {
   const workspaceId = payload.wid;
 
   const store = getCredentialStore();
-  const records = store.list(workspaceId);
+  const records = await store.list(workspaceId);
   return c.json({ credentials: records });
 });
 
@@ -78,7 +78,7 @@ credentialsRouter.delete("/:id", requireAdmin, async (c) => {
   }
 
   const store = getCredentialStore();
-  const deleted = store.delete(workspaceId, id);
+  const deleted = await store.delete(workspaceId, id);
 
   if (!deleted) {
     return c.json({ error: "Credential not found" }, 404);
