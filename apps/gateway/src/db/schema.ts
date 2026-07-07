@@ -119,6 +119,38 @@ export const Credentials: TableSchema = {
   },
 };
 
+/**
+ * Single-table design for gateway permission grants (APR-320).
+ *
+ * Each workspace's items share the partition `PK = WS#<workspaceId>`. The sort
+ * key encodes the entity:
+ *   - `SK = PERM#<callerId>#<provider>#<operation>` — the grant (`operation`
+ *     may be `*` for a wildcard over all of the provider's operations)
+ *   - `SK = PERMID#<permId>` — a permId → (callerId, provider, operation)
+ *     pointer written alongside the grant so `revoke(wsId, permId)` can
+ *     resolve the tuple and delete both items in one `TransactWriteItems`
+ *
+ * `check()` is a `BatchGetItem` of the exact-op and wildcard items (two items,
+ * one round-trip). `list()` queries `begins_with(SK, "PERM#")`, which excludes
+ * the `PERMID#` pointers (their 5th character is `I`, not `#`). No GSI is
+ * required.
+ */
+export const Permissions: TableSchema = {
+  tableName: "Permissions",
+  createInput: {
+    TableName: "Permissions",
+    KeySchema: [
+      { AttributeName: "PK", KeyType: "HASH" },
+      { AttributeName: "SK", KeyType: "RANGE" },
+    ],
+    AttributeDefinitions: [
+      { AttributeName: "PK", AttributeType: "S" },
+      { AttributeName: "SK", AttributeType: "S" },
+    ],
+    BillingMode: "PAY_PER_REQUEST",
+  },
+};
+
 export const Groups: TableSchema = {
   tableName: "Groups",
   createInput: {
@@ -207,6 +239,7 @@ export const ALL_TABLES: TableSchema[] = [
   Sessions,
   Invites,
   Credentials,
+  Permissions,
   Groups,
   GroupPrefixGrants,
   GroupToolGrants,

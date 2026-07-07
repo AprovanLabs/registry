@@ -305,7 +305,7 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
 
     // Permission check (only in JWT mode)
     const permStore = getPermissionStore();
-    if (!permStore.check(workspaceId, callerId, provider!, operation!)) {
+    if (!(await permStore.check(workspaceId, callerId, provider!, operation!))) {
       const requestId = crypto.randomUUID();
       logMetadata({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
       getAuditStore().append({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
