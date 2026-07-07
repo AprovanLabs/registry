@@ -7,6 +7,11 @@
  * is provided for development purposes.
  *
  * Credentials are injected at call time — never passed through process.env.
+ *
+ * Provider modules are imported on first use and kept in an LRU cache at
+ * module scope so high-use providers stay hot across warm invocations while
+ * rarely-used ones are evicted. Cache size is configurable via
+ * `PROVIDER_CACHE_SIZE` (default: 20).
  */
 
 import type { CredentialPayload } from "./credentials.js";
@@ -38,6 +43,87 @@ export interface IsolateResult {
 
 export interface IsolateExecutor {
   execute(options: IsolateExecuteOptions): Promise<IsolateResult>;
+}
+
+// ---------------------------------------------------------------------------
+// LRU provider module cache
+// ---------------------------------------------------------------------------
+//
+// Providers are imported on first use and kept in a small LRU cache at module
+// scope so the cache survives across warm invocations. Map preserves insertion
+// order, so recency is maintained by delete + re-set on access; the oldest
+// entry is evicted when the cache exceeds `maxSize`.
+
+export interface ProviderModule {
+  [key: string]: unknown;
+}
+
+const DEFAULT_PROVIDER_CACHE_SIZE = 20;
+
+function getProviderCacheMaxSize(): number {
+  const raw = Number(process.env["PROVIDER_CACHE_SIZE"]);
+  return Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_PROVIDER_CACHE_SIZE;
+}
+
+const providerCache = new Map<string, ProviderModule>();
+
+/**
+ * Load a `@utdk/*` provider module by name, caching it in the LRU cache.
+ * On a cache hit the cached module reference is reused (no dynamic import).
+ * On a miss the module is imported, cached, and the oldest entry is evicted
+ * if the cache exceeds its configured max size.
+ */
+export async function getProviderModule(provider: string): Promise<ProviderModule> {
+  const cached = providerCache.get(provider);
+  if (cached) {
+    // Move to most-recently-used position.
+    providerCache.delete(provider);
+    providerCache.set(provider, cached);
+    return cached;
+  }
+
+  const mod = (await import(`utdk/${provider}`)) as ProviderModule;
+  putProviderModule(provider, mod);
+  return mod;
+}
+
+/**
+ * Insert (or replace) a provider module in the cache, evicting the
+ * least-recently-used entry when over the configured size.
+ */
+function putProviderModule(provider: string, mod: ProviderModule): void {
+  providerCache.delete(provider);
+  providerCache.set(provider, mod);
+  const maxSize = getProviderCacheMaxSize();
+  while (providerCache.size > maxSize) {
+    const oldest = providerCache.keys().next().value;
+    if (oldest === undefined) break;
+    providerCache.delete(oldest);
+  }
+}
+
+/**
+ * Inject a provider module directly into the cache (test seam). Lets tests
+ * avoid the real dynamic import (`utdk/<provider>` is only resolvable after
+ * the utdk workspace package is built).
+ */
+export function setProviderModuleForTesting(provider: string, mod: ProviderModule): void {
+  putProviderModule(provider, mod);
+}
+
+/** Whether a provider module is currently cached. */
+export function isProviderCached(provider: string): boolean {
+  return providerCache.has(provider);
+}
+
+/** Drop a single provider from the cache. */
+export function invalidateProvider(provider: string): void {
+  providerCache.delete(provider);
+}
+
+/** Clear every cached provider module (used in tests). */
+export function resetProviderCache(): void {
+  providerCache.clear();
 }
 
 // ---------------------------------------------------------------------------
@@ -106,11 +192,10 @@ class DirectExecutor implements IsolateExecutor {
     const start = Date.now();
 
     try {
-      // Dynamically import the provider package
-      const mod = (await import(`utdk/${options.provider}`)) as Record<
-        string,
-        unknown
-      >;
+      // Load the provider module via the LRU cache. On a cache hit this skips
+      // the dynamic import entirely; on a miss the module is imported once
+      // and cached for subsequent calls.
+      const mod = await getProviderModule(options.provider);
 
       // Get the named client factory export (e.g. createGithubClient)
       // This allows us to inject credentials at construction time

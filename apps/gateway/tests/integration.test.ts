@@ -10,9 +10,18 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { createApp } from "../src/app.js";
 import { resetCredentialStore } from "../src/credentials.js";
-import { resetExecutor, setExecutor, type IsolateExecutor } from "../src/isolate.js";
+import {
+  resetExecutor,
+  setExecutor,
+  setProviderModuleForTesting,
+  isProviderCached,
+  resetProviderCache,
+  getProviderModule,
+  type IsolateExecutor,
+} from "../src/isolate.js";
 import { resetRateLimiters } from "../src/middleware/rateLimitMiddleware.js";
 import { resetPermissionStore } from "../src/permissions.js";
+import { resetToolListCache } from "../src/routes/tools.js";
 
 // ---------------------------------------------------------------------------
 // Cognito SDK mock (used by DCR tests)
@@ -50,6 +59,8 @@ beforeEach(() => {
   resetPermissionStore();
   resetRateLimiters();
   resetExecutor();
+  resetProviderCache();
+  resetToolListCache();
 });
 
 afterEach(() => {
@@ -57,6 +68,10 @@ afterEach(() => {
   resetPermissionStore();
   resetRateLimiters();
   resetExecutor();
+  resetProviderCache();
+  resetToolListCache();
+  delete process.env["PROVIDER_CACHE_SIZE"];
+  delete process.env["TOOL_LIST_CACHE_TTL_MS"];
 });
 
 // ---------------------------------------------------------------------------
@@ -573,5 +588,309 @@ describe("POST /oauth/register", () => {
     const body = await res.json() as { error: string; error_description: string };
     expect(body["error"]).toBe("server_error");
     expect(body["error_description"]).toContain("UserPool not found");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// LRU provider cache (APR-306)
+// ---------------------------------------------------------------------------
+
+describe("LRU provider cache", () => {
+  it("caches a provider module on first load and reuses it on hit", async () => {
+    const mod = { createGithubClient: vi.fn() };
+    setProviderModuleForTesting("github", mod);
+
+    const first = await getProviderModule("github");
+    const second = await getProviderModule("github");
+
+    expect(first).toBe(mod);
+    expect(second).toBe(mod);
+    expect(isProviderCached("github")).toBe(true);
+  });
+
+  it("evicts the least-recently-used entry when over PROVIDER_CACHE_SIZE", async () => {
+    process.env["PROVIDER_CACHE_SIZE"] = "3";
+    setProviderModuleForTesting("p1", { id: "p1" });
+    setProviderModuleForTesting("p2", { id: "p2" });
+    setProviderModuleForTesting("p3", { id: "p3" });
+
+    // Touch p1 so p2 becomes the least-recently-used.
+    await getProviderModule("p1");
+
+    // Inserting p4 exceeds the limit and should evict the LRU entry (p2).
+    setProviderModuleForTesting("p4", { id: "p4" });
+
+    expect(isProviderCached("p1")).toBe(true);
+    expect(isProviderCached("p2")).toBe(false);
+    expect(isProviderCached("p3")).toBe(true);
+    expect(isProviderCached("p4")).toBe(true);
+  });
+
+  it("DirectExecutor.execute uses the cached module and injects credentials", async () => {
+    const listFn = vi.fn().mockResolvedValue([{ name: "test-repo" }]);
+    const createGithubClient = vi.fn().mockResolvedValue({ repos: { list: listFn } });
+    setProviderModuleForTesting("github", { createGithubClient });
+
+    const executor = await import("../src/isolate.js").then((m) => m.getExecutor());
+    const result = await executor.execute({
+      provider: "github",
+      operation: "repos.list",
+      args: { per_page: 5 },
+      credentials: { type: "bearer_token", token: "ghp_test" },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.data).toEqual([{ name: "test-repo" }]);
+    expect(createGithubClient).toHaveBeenCalledTimes(1);
+    expect(createGithubClient).toHaveBeenCalledWith({ headers: { Authorization: "Bearer ghp_test" } });
+    expect(listFn).toHaveBeenCalledWith({ per_page: 5 });
+  });
+
+  it("DirectExecutor.execute reuses the cached module across calls (no re-import)", async () => {
+    const createGithubClient = vi.fn().mockResolvedValue({
+      repos: { list: vi.fn().mockResolvedValue([]) },
+    });
+    setProviderModuleForTesting("github", { createGithubClient });
+
+    const { getExecutor } = await import("../src/isolate.js");
+    const executor = await getExecutor();
+
+    await executor.execute({
+      provider: "github",
+      operation: "repos.list",
+      args: {},
+      credentials: undefined,
+    });
+    await executor.execute({
+      provider: "github",
+      operation: "repos.list",
+      args: {},
+      credentials: undefined,
+    });
+
+    // The factory is per-request, but the module is cached — it should be the
+    // same (single) module reference both times, i.e. never re-imported.
+    expect(isProviderCached("github")).toBe(true);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GET /tools — workspace-filtered tool discovery (APR-306)
+// ---------------------------------------------------------------------------
+
+describe("GET /tools", () => {
+  it("returns 401 without a session JWT", async () => {
+    const app = createApp();
+    const res = await app.request("/tools");
+    expect(res.status).toBe(401);
+  });
+
+  it("returns an empty tool list when no credentials are configured", async () => {
+    const app = createApp();
+    const token = await getCallerToken(app, "mcp-server");
+
+    const res = await app.request("/tools", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(res.status).toBe(200);
+    const body = await res.json() as { tools: unknown[]; workspace_id: string };
+    expect(body.tools).toEqual([]);
+    expect(body.workspace_id).toBe("ws-test");
+  });
+
+  it("returns tools for providers that have a credential configured", async () => {
+    setProviderModuleForTesting("github", {
+      tools: [
+        { name: "github.repos.list", description: "List repos", inputSchema: { type: "object" }, outputSchema: { type: "array" } },
+        { name: "github.repos.get", description: "Get a repo" },
+      ],
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+
+    const callerToken = await getCallerToken(app, "mcp-server");
+    const res = await app.request("/tools", {
+      headers: { Authorization: `Bearer ${callerToken}` },
+    });
+
+    expect(res.status).toBe(200);
+    const body = await res.json() as { tools: Array<Record<string, unknown>>; workspace_id: string };
+    expect(body.workspace_id).toBe("ws-test");
+    expect(body.tools).toHaveLength(2);
+    expect(body.tools[0]!["provider"]).toBe("github");
+    expect(body.tools[0]!["name"]).toBe("github.repos.list");
+    expect(body.tools[0]!["operation"]).toBe("repos.list");
+    expect(body.tools[0]!["description"]).toBe("List repos");
+    expect(body.tools[0]!["inputSchema"]).toEqual({ type: "object" });
+    expect(body.tools[0]!["outputSchema"]).toEqual({ type: "array" });
+    // Tools are namespaced under the provider; operation strips the provider prefix.
+    expect(body.tools[1]!["operation"]).toBe("repos.get");
+  });
+
+  it("does not include providers without a configured credential", async () => {
+    setProviderModuleForTesting("github", {
+      tools: [{ name: "github.repos.list", description: "List repos" }],
+    });
+    setProviderModuleForTesting("linear", {
+      tools: [{ name: "linear.issues.list", description: "List issues" }],
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    // Only github has a credential; linear does not.
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+
+    const callerToken = await getCallerToken(app, "mcp-server");
+    const res = await app.request("/tools", {
+      headers: { Authorization: `Bearer ${callerToken}` },
+    });
+    const body = await res.json() as { tools: Array<Record<string, unknown>> };
+
+    expect(body.tools).toHaveLength(1);
+    expect(body.tools[0]!["provider"]).toBe("github");
+  });
+
+  it("caches the tool list per workspace for the TTL window", async () => {
+    setProviderModuleForTesting("github", {
+      tools: [{ name: "github.repos.list", description: "List repos" }],
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+    const callerToken = await getCallerToken(app, "mcp-server");
+
+    const first = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const firstBody = await first.json() as { tools: unknown[] };
+    expect(firstBody.tools).toHaveLength(1);
+
+    // Drop github from the provider cache. A fresh recomputation would now
+    // skip github (no module), but the per-workspace tool list is still warm.
+    const { invalidateProvider } = await import("../src/isolate.js");
+    invalidateProvider("github");
+    expect(isProviderCached("github")).toBe(false);
+
+    const second = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const secondBody = await second.json() as { tools: unknown[] };
+    // Still served from the tool-list cache — github's absence doesn't matter.
+    expect(secondBody.tools).toHaveLength(1);
+  });
+
+  it("recomputes the tool list after the TTL expires", async () => {
+    process.env["TOOL_LIST_CACHE_TTL_MS"] = "1";
+    setProviderModuleForTesting("github", {
+      tools: [{ name: "github.repos.list", description: "List repos" }],
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+    const callerToken = await getCallerToken(app, "mcp-server");
+
+    const first = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const firstBody = await first.json() as { tools: Array<Record<string, unknown>> };
+    expect(firstBody.tools).toHaveLength(1);
+    expect(firstBody.tools[0]!["name"]).toBe("github.repos.list");
+
+    // Wait for the per-workspace TTL to lapse, then swap the cached module.
+    await new Promise((resolve) => setTimeout(resolve, 5));
+    setProviderModuleForTesting("github", {
+      tools: [{ name: "github.repos.get", description: "Get a repo" }],
+    });
+
+    const second = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const secondBody = await second.json() as { tools: Array<Record<string, unknown>> };
+    expect(secondBody.tools).toHaveLength(1);
+    expect(secondBody.tools[0]!["name"]).toBe("github.repos.get");
+  });
+
+  it("invalidates the tool list when a credential is added", async () => {
+    setProviderModuleForTesting("github", {
+      tools: [{ name: "github.repos.list", description: "List repos" }],
+    });
+    setProviderModuleForTesting("linear", {
+      tools: [{ name: "linear.issues.list", description: "List issues" }],
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+    const callerToken = await getCallerToken(app, "mcp-server");
+
+    const first = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const firstBody = await first.json() as { tools: Array<Record<string, unknown>> };
+    expect(firstBody.tools).toHaveLength(1);
+    expect(firstBody.tools[0]!["provider"]).toBe("github");
+
+    // Adding a linear credential invalidates the cached list; the next call
+    // picks up linear tools too.
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "linear", payload: { type: "bearer_token", token: "lin_test" } }),
+    });
+
+    const second = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const secondBody = await second.json() as { tools: Array<Record<string, unknown>> };
+    const providers = secondBody.tools.map((t) => t["provider"]);
+    expect(providers).toContain("github");
+    expect(providers).toContain("linear");
+  });
+
+  it("derives tools from toolMetadata when a tools export is absent (transitional fallback)", async () => {
+    setProviderModuleForTesting("github", {
+      toolMetadata: {
+        "repos/list": {
+          accessPath: ["repos", "list"],
+          description: "List repositories for the authenticated user",
+          pathParameterKeys: [],
+          queryParameterKeys: ["per_page"],
+          bodyPropertyKeys: [],
+          headerParameterKeys: [],
+          parameterDescriptions: { per_page: "Number of results per page" },
+        },
+      },
+    });
+
+    const app = createApp();
+    const adminToken = await getAdminToken(app);
+    await app.request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({ provider: "github", payload: { type: "bearer_token", token: "ghp_test" } }),
+    });
+    const callerToken = await getCallerToken(app, "mcp-server");
+
+    const res = await app.request("/tools", { headers: { Authorization: `Bearer ${callerToken}` } });
+    const body = await res.json() as { tools: Array<Record<string, unknown>> };
+    expect(body.tools).toHaveLength(1);
+    expect(body.tools[0]!["name"]).toBe("github.repos.list");
+    expect(body.tools[0]!["operation"]).toBe("repos.list");
+    expect(body.tools[0]!["description"]).toBe("List repositories for the authenticated user");
+    const inputSchema = body.tools[0]!["inputSchema"] as Record<string, unknown>;
+    expect(inputSchema["type"]).toBe("object");
+    expect(inputSchema["properties"]).toHaveProperty("per_page");
   });
 });

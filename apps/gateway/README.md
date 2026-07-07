@@ -118,6 +118,8 @@ The MCP client stores the returned `refresh_token` in its install context for su
 | `GATEWAY_PERMISSIONS_PATH` | *(in-memory)* | Path for persistent permission storage |
 | `GATEWAY_RATE_LIMIT_RPS` | `10` | Requests/second per caller+provider |
 | `GATEWAY_RATE_LIMIT_BURST` | `20` | Burst capacity |
+| `PROVIDER_CACHE_SIZE` | `20` | Max providers held in the LRU provider module cache |
+| `TOOL_LIST_CACHE_TTL_MS` | `300000` (5 min) | Per-workspace TTL for the `GET /tools` tool-list cache |
 | `COGNITO_USER_POOL_ID` | *(required for DCR)* | Cognito user pool for DCR client provisioning |
 | `COGNITO_REGION` | `AWS_REGION` → `us-east-1` | AWS region for Cognito |
 | `COGNITO_DOMAIN` | — | Cognito hosted UI domain (e.g. `auth.example.com`) |
