@@ -43,7 +43,7 @@ apiKeysRouter.post("/", async (c) => {
   };
 
   const store = getApiKeyStore();
-  const keyWithSecret = store.create(workspaceId, input);
+  const keyWithSecret = await store.create(workspaceId, input);
 
   // secret is returned here and never again
   return c.json(keyWithSecret, 201);
@@ -53,12 +53,12 @@ apiKeysRouter.post("/", async (c) => {
 // GET /api-keys
 // ---------------------------------------------------------------------------
 
-apiKeysRouter.get("/", (c) => {
+apiKeysRouter.get("/", async (c) => {
   const payload = c.get("jwtPayload");
   const workspaceId = payload.wid;
 
   const store = getApiKeyStore();
-  const keys = store.list(workspaceId);
+  const keys = await store.list(workspaceId);
 
   // Never expose secretHash in the list response
   return c.json({
@@ -70,7 +70,7 @@ apiKeysRouter.get("/", (c) => {
 // DELETE /api-keys/:id
 // ---------------------------------------------------------------------------
 
-apiKeysRouter.delete("/:id", (c) => {
+apiKeysRouter.delete("/:id", async (c) => {
   const payload = c.get("jwtPayload");
   const workspaceId = payload.wid;
   const id = c.req.param("id") ?? "";
@@ -80,7 +80,7 @@ apiKeysRouter.delete("/:id", (c) => {
   }
 
   const store = getApiKeyStore();
-  const revoked = store.revoke(workspaceId, id);
+  const revoked = await store.revoke(workspaceId, id);
 
   if (!revoked) {
     return c.json({ error: "API key not found" }, 404);

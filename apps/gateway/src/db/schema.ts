@@ -158,6 +158,42 @@ export const Permissions: TableSchema = {
   },
 };
 
+/**
+ * Single-table design for gateway API keys (APR-319).
+ *
+ * Each workspace's items share the partition `PK = WS#<workspaceId>`. The sort
+ * key prefixes the entity type:
+ *   - `SK = APIKEY#<keyId>`          — the API key record (id, name, callerId,
+ *                                     secretHash, createdAt, createdBy, expiresAt)
+ *   - `SK = APIKEYHASH#<sha256(secret)>` — a hash → keyId mirror so `verify`
+ *                                     is a point lookup instead of a scan
+ *
+ * The mirror item carries a sparse `ttl` (epoch seconds derived from
+ * `expiresAt`) so DynamoDB auto-evicts expired mirrors and `verify()` fails
+ * closed even if `revoke` is never called. The primary record stores `expiresAt`
+ * as an ISO-8601 string and is checked server-side on verify (the TTL sweep is
+ * best-effort).
+ *
+ * No GSI is required: `list(wsId)` queries `begins_with(SK, "APIKEY#")`, which
+ * excludes the `APIKEYHASH#` mirrors (their 7th character is `H`, not `#`).
+ */
+export const ApiKeys: TableSchema = {
+  tableName: "ApiKeys",
+  ttlAttribute: "ttl",
+  createInput: {
+    TableName: "ApiKeys",
+    KeySchema: [
+      { AttributeName: "PK", KeyType: "HASH" },
+      { AttributeName: "SK", KeyType: "RANGE" },
+    ],
+    AttributeDefinitions: [
+      { AttributeName: "PK", AttributeType: "S" },
+      { AttributeName: "SK", AttributeType: "S" },
+    ],
+    BillingMode: "PAY_PER_REQUEST",
+  },
+};
+
 export const Groups: TableSchema = {
   tableName: "Groups",
   createInput: {
@@ -247,6 +283,7 @@ export const ALL_TABLES: TableSchema[] = [
   Invites,
   Credentials,
   Permissions,
+  ApiKeys,
   Groups,
   GroupPrefixGrants,
   GroupToolGrants,

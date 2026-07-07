@@ -66,7 +66,7 @@ authRouter.post("/token/apikey", async (c) => {
   }
 
   const store = getApiKeyStore();
-  const key = store.verify(body.workspaceId, body.secret);
+  const key = await store.verify(body.workspaceId, body.secret);
   if (!key) {
     return c.json({ error: "Invalid or expired API key" }, 401);
   }
