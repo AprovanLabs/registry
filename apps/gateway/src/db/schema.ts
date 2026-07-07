@@ -95,25 +95,32 @@ export const Invites: TableSchema = {
   },
 };
 
+/**
+ * Single-table design for gateway credentials (APR-318).
+ *
+ * Each workspace's items share the partition `PK = WS#<workspaceId>`. The sort
+ * key prefixes the entity type so a single partition query can fan out across
+ * entity types once the other gateway stores migrate here:
+ *   - `SK = CRED#<provider>#<credId>`  — the credential record itself
+ *   - `SK = CREDID#<credId>`          — a pointer from credId → provider, used
+ *                                       by `get`/`delete`/`getPayload` which
+ *                                       don't know the provider up front
+ *
+ * No GSI is required: `resolveForProvider` queries `begins_with(SK, "CRED#<provider>#")`
+ * against the partition, and `list` queries `begins_with(SK, "CRED#")` (which
+ * excludes the `CREDID#` pointers because their 5th character is `I`, not `#`).
+ */
 export const Credentials: TableSchema = {
   tableName: "Credentials",
   createInput: {
     TableName: "Credentials",
     KeySchema: [
-      { AttributeName: "workspaceId", KeyType: "HASH" },
-      { AttributeName: "path", KeyType: "RANGE" },
+      { AttributeName: "PK", KeyType: "HASH" },
+      { AttributeName: "SK", KeyType: "RANGE" },
     ],
     AttributeDefinitions: [
-      { AttributeName: "workspaceId", AttributeType: "S" },
-      { AttributeName: "path", AttributeType: "S" },
-      { AttributeName: "provider", AttributeType: "S" },
-    ],
-    GlobalSecondaryIndexes: [
-      {
-        IndexName: "ByProvider",
-        KeySchema: [{ AttributeName: "provider", KeyType: "HASH" }],
-        Projection: { ProjectionType: "ALL" },
-      },
+      { AttributeName: "PK", AttributeType: "S" },
+      { AttributeName: "SK", AttributeType: "S" },
     ],
     BillingMode: "PAY_PER_REQUEST",
   },
