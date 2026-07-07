@@ -94,6 +94,18 @@ export const handler = async (
           workspaceId,
           name: workspaceName,
           createdAt: now,
+          plan: "free",
+          limits: {
+            dailyChatCap: 50,
+            maxModels: ["openrouter/auto"],
+            maxToolSteps: 5,
+            maxTokensPerRequest: 4096,
+          },
+          features: {
+            advancedTools: false,
+            customPrompts: false,
+          },
+          updatedAt: now,
         },
       }),
     );
