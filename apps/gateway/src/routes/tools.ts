@@ -26,7 +26,7 @@ import { withSpan } from "@utdk/common/telemetry";
 import { Hono } from "hono";
 import { getAuditStore } from "../audit.js";
 import { getCredentialStore, type CredentialPayload } from "../credentials.js";
-import { getExecutor, type IsolateResult } from "../isolate.js";
+import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
 import { requireAuth, type GatewayJWTPayload } from "../middleware/auth.js";
 import { rateLimitByCallerAndProvider } from "../middleware/rateLimitMiddleware.js";
 import { getPermissionStore } from "../permissions.js";
@@ -98,6 +98,179 @@ async function flexibleAuth(c: any, next: () => Promise<void>): Promise<Response
 }
 
 toolsRouter.use("*", flexibleAuth);
+
+// ---------------------------------------------------------------------------
+// GET /tools — workspace-filtered tool discovery
+// ---------------------------------------------------------------------------
+//
+// Returns the tool schemas for every provider that has at least one credential
+// configured in the caller's workspace. Tool schemas are read from each
+// provider package's static `tools` export (see APR-304) via the LRU provider
+// cache. The result is cached per workspace with a 5-minute TTL.
+
+export interface ToolEntry {
+  provider: string;
+  name: string;
+  operation: string;
+  description?: string;
+  inputSchema?: unknown;
+  outputSchema?: unknown;
+}
+
+interface CachedToolList {
+  tools: ToolEntry[];
+  expiresAt: number;
+}
+
+const DEFAULT_TOOL_LIST_TTL_MS = 5 * 60 * 1000;
+
+function getToolListTtlMs(): number {
+  const raw = Number(process.env["TOOL_LIST_CACHE_TTL_MS"]);
+  return Number.isFinite(raw) && raw > 0 ? raw : DEFAULT_TOOL_LIST_TTL_MS;
+}
+
+const toolListCache = new Map<string, CachedToolList>();
+
+/** Drop the cached tool list for a workspace (call when credentials change). */
+export function invalidateToolListCache(workspaceId: string): void {
+  toolListCache.delete(workspaceId);
+}
+
+/** Clear every cached tool list (used in tests). */
+export function resetToolListCache(): void {
+  toolListCache.clear();
+}
+
+/**
+ * Derive tool entries for a provider from its cached module.
+ *
+ * Primary source: the static `tools` export (APR-304). Each entry is expected
+ * to look like `{ name, description?, inputSchema?, outputSchema? }` where
+ * `name` follows the `provider.operation` convention.
+ *
+ * Transitional fallback: when a `tools` export is not present but the module
+ * re-exports `toolMetadata`, entries are derived from the runtime metadata
+ * map (best-effort input schema from the parameter keys). This keeps
+ * discovery useful before every provider package ships a `tools` export.
+ */
+function deriveToolEntries(provider: string, mod: ProviderModule): ToolEntry[] {
+  const entries: ToolEntry[] = [];
+
+  const toolsExport = mod["tools"];
+  if (Array.isArray(toolsExport)) {
+    for (const t of toolsExport) {
+      if (!t || typeof t !== "object") continue;
+      const entry = t as Record<string, unknown>;
+      const name = typeof entry["name"] === "string" ? entry["name"] : "";
+      if (!name) continue;
+      const operation = name.startsWith(`${provider}.`)
+        ? name.slice(provider.length + 1)
+        : name;
+      entries.push({
+        provider,
+        name,
+        operation,
+        description: typeof entry["description"] === "string" ? entry["description"] : undefined,
+        inputSchema: entry["inputSchema"],
+        outputSchema: entry["outputSchema"],
+      });
+    }
+    return entries;
+  }
+
+  const meta = mod["toolMetadata"];
+  if (meta && typeof meta === "object" && !Array.isArray(meta)) {
+    for (const [, value] of Object.entries(meta as Record<string, unknown>)) {
+      if (!value || typeof value !== "object") continue;
+      const m = value as Record<string, unknown>;
+      const accessPath = Array.isArray(m["accessPath"])
+        ? (m["accessPath"] as unknown[]).map(String)
+        : [];
+      if (accessPath.length === 0) continue;
+      const operation = accessPath.join(".");
+      entries.push({
+        provider,
+        name: `${provider}.${operation}`,
+        operation,
+        description: typeof m["description"] === "string" ? m["description"] : undefined,
+        inputSchema: synthesizeInputSchema(m),
+        outputSchema: undefined,
+      });
+    }
+  }
+
+  return entries;
+}
+
+/** Best-effort JSON schema for a tool derived from runtime metadata. */
+function synthesizeInputSchema(meta: Record<string, unknown>): Record<string, unknown> {
+  const stringKeys = (key: string): string[] =>
+    Array.isArray(meta[key]) ? (meta[key] as unknown[]).map(String) : [];
+
+  const pathKeys = stringKeys("pathParameterKeys");
+  const queryKeys = stringKeys("queryParameterKeys");
+  const bodyKeys = stringKeys("bodyPropertyKeys");
+  const headerKeys = stringKeys("headerParameterKeys");
+  const descriptions =
+    meta["parameterDescriptions"] && typeof meta["parameterDescriptions"] === "object"
+      ? (meta["parameterDescriptions"] as Record<string, unknown>)
+      : {};
+
+  const properties: Record<string, unknown> = {};
+  for (const key of [...pathKeys, ...queryKeys, ...bodyKeys, ...headerKeys]) {
+    properties[key] = {
+      type: "string",
+      ...(typeof descriptions[key] === "string" ? { description: descriptions[key] } : {}),
+    };
+  }
+
+  const schema: Record<string, unknown> = { type: "object", properties };
+  if (pathKeys.length > 0) {
+    schema["required"] = pathKeys;
+  }
+  return schema;
+}
+
+toolsRouter.get("/", requireAuth, async (c) => {
+  const payload = c.get("jwtPayload") as GatewayJWTPayload | undefined;
+  if (!payload) {
+    return c.json({ error: "Missing or invalid Authorization header" }, 401);
+  }
+  const workspaceId = payload.wid;
+
+  const now = Date.now();
+  const cached = toolListCache.get(workspaceId);
+  if (cached && cached.expiresAt > now) {
+    return c.json({ tools: cached.tools, workspace_id: workspaceId });
+  }
+
+  // Only providers with at least one credential configured in the workspace
+  // contribute tools — a user who hasn't connected GitHub sees no GitHub tools.
+  const credStore = getCredentialStore();
+  const credentials = credStore.list(workspaceId);
+  const providers = Array.from(new Set(credentials.map((c) => c.provider)));
+
+  const tools: ToolEntry[] = [];
+  for (const provider of providers) {
+    try {
+      const mod = await getProviderModule(provider);
+      tools.push(...deriveToolEntries(provider, mod));
+    } catch (err) {
+      // A single unresolvable provider should not break discovery for the rest.
+      process.stderr.write(
+        JSON.stringify({
+          ts: new Date().toISOString(),
+          type: "gateway_tool_discovery_error",
+          provider,
+          error: err instanceof Error ? err.message : String(err),
+        }) + "\n",
+      );
+    }
+  }
+
+  toolListCache.set(workspaceId, { tools, expiresAt: now + getToolListTtlMs() });
+  return c.json({ tools, workspace_id: workspaceId });
+});
 
 // ---------------------------------------------------------------------------
 // POST /tools/:provider/:operation

@@ -12,6 +12,7 @@
 import { Hono } from "hono";
 import { getCredentialStore, type CredentialInput } from "../credentials.js";
 import { requireAuth, requireAdmin } from "../middleware/auth.js";
+import { invalidateToolListCache } from "./tools.js";
 
 export const credentialsRouter = new Hono();
 
@@ -45,6 +46,8 @@ credentialsRouter.post("/", requireAdmin, async (c) => {
 
   const store = getCredentialStore();
   const record = store.create(workspaceId, body);
+  // A new credential may unlock a provider's tools for this workspace.
+  invalidateToolListCache(workspaceId);
   return c.json(record, 201);
 });
 
@@ -80,6 +83,8 @@ credentialsRouter.delete("/:id", requireAdmin, async (c) => {
   if (!deleted) {
     return c.json({ error: "Credential not found" }, 404);
   }
+  // A removed credential may remove a provider's tools from this workspace.
+  invalidateToolListCache(workspaceId);
   return c.json({ deleted: true });
 });
 
