@@ -3,20 +3,12 @@
  *
  * POST /tools/:provider/:operation
  *
- * Supports two authentication modes:
- *
- * 1. JWT Mode (production):
- *    - Verifies JWT (requireAuth middleware)
- *    - Checks per-tool permission grant
- *    - Resolves credentials for the provider from the credential store
- *
- * 2. Passthrough Mode (development/testing):
- *    - No JWT required
- *    - Credentials passed directly in headers (Authorization, X-Api-Key, etc.)
- *    - Enabled via X-Gateway-Mode: passthrough header or missing Authorization JWT
- *
- * Common steps:
- * - Applies rate limiting per callerId + provider
+ * Authentication: Cognito access token (verified by `requireAuth`), which sets
+ * `c.var.principal` with the caller's `sub`, active `workspaceId`, `role`, and
+ * `groupIds`. The route:
+ * - Checks the per-tool permission grant for `principal.sub`
+ * - Resolves credentials for the provider from the credential store
+ * - Applies rate limiting per user id
  * - Executes the operation in the Isolate runtime (APR-15)
  * - Emits telemetry span
  * - Logs request/response metadata (not bodies)
@@ -25,79 +17,16 @@
 import { withSpan } from "@utdk/common/telemetry";
 import { Hono } from "hono";
 import { getAuditStore } from "../audit.js";
-import { getCredentialStore, type CredentialPayload } from "../credentials.js";
+import { getCredentialStore } from "../credentials.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
-import { requireAuth, type GatewayJWTPayload } from "../middleware/auth.js";
+import { requireAuth } from "../middleware/auth.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import { getPermissionStore } from "../permissions.js";
 
 export const toolsRouter = new Hono();
 
-// ---------------------------------------------------------------------------
-// Passthrough mode: extract credentials from request headers
-// ---------------------------------------------------------------------------
-
-function extractPassthroughCredentials(headers: Headers): CredentialPayload | null {
-  const authHeader = headers.get("Authorization");
-
-  if (authHeader) {
-    // Check if it's a Bearer token
-    if (authHeader.startsWith("Bearer ")) {
-      return {
-        type: "bearer_token",
-        token: authHeader.slice("Bearer ".length),
-      };
-    }
-    // Could be Basic auth or other schemes
-    return {
-      type: "bearer_token",
-      token: authHeader,
-    };
-  }
-
-  // Check for common API key headers
-  const apiKeyHeaders = ["X-Api-Key", "X-API-KEY", "Api-Key", "x-api-key"];
-  for (const h of apiKeyHeaders) {
-    const value = headers.get(h);
-    if (value) {
-      return {
-        type: "api_key",
-        value,
-        headerName: h,
-      };
-    }
-  }
-
-  // Check provider-specific headers (e.g., Anthropic, Datadog)
-  const ddApiKey = headers.get("DD-API-KEY");
-  if (ddApiKey) {
-    return { type: "api_key", value: ddApiKey, headerName: "DD-API-KEY" };
-  }
-
-  return null;
-}
-
-// ---------------------------------------------------------------------------
-// Flexible auth middleware: JWT or passthrough
-// ---------------------------------------------------------------------------
-
-async function flexibleAuth(c: any, next: () => Promise<void>): Promise<Response | void> {
-  const gatewayMode = c.req.header("X-Gateway-Mode");
-  const authHeader = c.req.header("Authorization");
-
-  // Passthrough mode: no JWT required, credentials from headers
-  if (gatewayMode === "passthrough" || !authHeader?.includes("eyJ")) {
-    // Mark as passthrough mode
-    c.set("passthroughMode", true);
-    c.set("passthroughCredentials", extractPassthroughCredentials(c.req.raw.headers));
-    return next();
-  }
-
-  // JWT mode: use standard auth
-  return requireAuth(c, next);
-}
-
-toolsRouter.use("*", flexibleAuth);
+// Every tool route requires a verified Cognito access token + resolved principal.
+toolsRouter.use("*", requireAuth);
 
 // ---------------------------------------------------------------------------
 // GET /tools — workspace-filtered tool discovery
@@ -231,12 +160,9 @@ function synthesizeInputSchema(meta: Record<string, unknown>): Record<string, un
   return schema;
 }
 
-toolsRouter.get("/", requireAuth, async (c) => {
-  const payload = c.get("jwtPayload") as GatewayJWTPayload | undefined;
-  if (!payload) {
-    return c.json({ error: "Missing or invalid Authorization header" }, 401);
-  }
-  const workspaceId = payload.wid;
+toolsRouter.get("/", async (c) => {
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
 
   const now = Date.now();
   const cached = toolListCache.get(workspaceId);
@@ -277,48 +203,25 @@ toolsRouter.get("/", requireAuth, async (c) => {
 // ---------------------------------------------------------------------------
 
 toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
-  const isPassthrough = c.get("passthroughMode") === true;
-
-  let callerId: string;
-  let workspaceId: string;
-  let credentials: CredentialPayload | null | undefined;
-
-  if (isPassthrough) {
-    // Passthrough mode: use anonymous caller, credentials from headers
-    callerId = "anonymous";
-    workspaceId = "passthrough";
-    credentials = c.get("passthroughCredentials") as CredentialPayload | null;
-
-    if (!credentials) {
-      return c.json({
-        error: "No credentials provided. Include Authorization or X-Api-Key header.",
-      }, 401);
-    }
-  } else {
-    // JWT mode: get from token and credential store
-    const jwtPayload = c.get("jwtPayload") as GatewayJWTPayload;
-    callerId = jwtPayload.sub;
-    workspaceId = jwtPayload.wid;
-
-    const provider = c.req.param("provider");
-    const operation = c.req.param("operation");
-
-    // Permission check (only in JWT mode)
-    const permStore = getPermissionStore();
-    if (!(await permStore.check(workspaceId, callerId, provider!, operation!))) {
-      const requestId = crypto.randomUUID();
-      logMetadata({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
-      getAuditStore().append({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
-      return c.json({ error: "Forbidden: caller does not have permission for this operation" }, 403);
-    }
-
-    // Resolve credentials from store
-    const credStore = getCredentialStore();
-    credentials = await credStore.resolveForProvider(workspaceId, provider!);
-  }
+  const principal = c.get("principal");
+  const callerId = principal.sub;
+  const workspaceId = principal.workspaceId;
 
   const provider = c.req.param("provider");
   const operation = c.req.param("operation");
+
+  // Permission check (async — DDB-backed store, APR-320)
+  const permStore = getPermissionStore();
+  if (!(await permStore.check(workspaceId, callerId, provider!, operation!))) {
+    const requestId = crypto.randomUUID();
+    logMetadata({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
+    getAuditStore().append({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
+    return c.json({ error: "Forbidden: caller does not have permission for this operation" }, 403);
+  }
+
+  // Resolve credentials from store (async — DDB-backed store, APR-318)
+  const credStore = getCredentialStore();
+  const credentials = await credStore.resolveForProvider(workspaceId, provider!);
 
   if (!provider || !operation) {
     return c.json({ error: "Missing provider or operation" }, 400);
@@ -347,7 +250,6 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
       span.setAttribute("caller_id", callerId);
       span.setAttribute("workspace_id", workspaceId);
       span.setAttribute("request_id", requestId);
-      span.setAttribute("passthrough", isPassthrough);
 
       const r = await executor.execute({
         provider,

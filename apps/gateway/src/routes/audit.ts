@@ -18,8 +18,8 @@ export const auditRouter = new Hono();
 auditRouter.use("*", requireAuth, requireAdmin);
 
 auditRouter.get("/", (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
 
   const rawLimit = parseInt(c.req.query("limit") ?? "100", 10);
   const limit = Number.isFinite(rawLimit) ? Math.min(Math.max(1, rawLimit), 500) : 100;

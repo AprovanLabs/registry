@@ -1,10 +1,12 @@
 /**
  * Integration tests for the gateway.
  *
- * Tests the full request flow:
- *   /auth/token → credentials CRUD → permission grants → tool proxy
+ * Tests the full request flow under the Cognito access-token auth model:
+ *   credentials CRUD → permission grants → tool proxy → GET /tools
  *
- * Uses the Hono test client (app.request()) so no real port is bound.
+ * Auth is exercised via mocked Cognito verification + a mocked DDB document
+ * client (see tests/helpers.ts). Uses the Hono test client (app.request()) so
+ * no real port is bound.
  */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
@@ -19,9 +21,30 @@ import {
   getProviderModule,
   type IsolateExecutor,
 } from "../src/isolate.js";
+import { resetCognitoVerifier } from "../src/middleware/auth.js";
 import { resetRateLimiters } from "../src/middleware/rateLimitMiddleware.js";
 import { resetPermissionStore } from "../src/permissions.js";
 import { resetToolListCache } from "../src/routes/tools.js";
+import { setupAuth } from "./helpers.js";
+
+// ---------------------------------------------------------------------------
+// DynamoDB mock — intercepts all document client calls
+// ---------------------------------------------------------------------------
+
+const mockDdbSend = vi.fn();
+
+vi.mock("@aws-sdk/lib-dynamodb", () => ({
+  DynamoDBDocumentClient: {
+    from: vi.fn(() => ({ send: mockDdbSend })),
+  },
+  QueryCommand: vi.fn((input: unknown) => ({ input })),
+  PutCommand: vi.fn((input: unknown) => ({ input })),
+  GetCommand: vi.fn((input: unknown) => ({ input })),
+}));
+
+vi.mock("@aws-sdk/client-dynamodb", () => ({
+  DynamoDBClient: vi.fn(() => ({})),
+}));
 
 // ---------------------------------------------------------------------------
 // Cognito SDK mock (used by DCR tests)
@@ -43,17 +66,30 @@ async function getCognitoMockSend() {
 }
 
 // ---------------------------------------------------------------------------
+// Auth fixtures
+// ---------------------------------------------------------------------------
+
+const ADMIN_TOKEN = "test-cognito-admin-token";
+const CALLER_TOKEN = "test-cognito-caller-token";
+const ADMIN_SUB = "admin-user";
+const CALLER_SUB = "caller-user";
+const WORKSPACE_ID = "ws-test";
+
+// ---------------------------------------------------------------------------
 // Setup
 // ---------------------------------------------------------------------------
 
 const TEST_WORKSPACE_KEY = "test-workspace-key-for-tests-only";
-const TEST_JWT_SECRET = "test-jwt-secret-for-tests-only";
-const TEST_ADMIN_SECRET = "test-admin-secret-for-tests-only";
 
 beforeEach(() => {
   process.env["GATEWAY_WORKSPACE_KEY"] = TEST_WORKSPACE_KEY;
-  process.env["GATEWAY_JWT_SECRET"] = TEST_JWT_SECRET;
-  process.env["GATEWAY_ADMIN_SECRET"] = TEST_ADMIN_SECRET;
+  setupAuth({
+    mockDdbSend,
+    users: [
+      { sub: ADMIN_SUB, token: ADMIN_TOKEN, role: "admin", workspaceId: WORKSPACE_ID },
+      { sub: CALLER_SUB, token: CALLER_TOKEN, role: "member", workspaceId: WORKSPACE_ID },
+    ],
+  });
 
   resetCredentialStore();
   resetPermissionStore();
@@ -70,42 +106,25 @@ afterEach(() => {
   resetExecutor();
   resetProviderCache();
   resetToolListCache();
+  resetCognitoVerifier();
   delete process.env["PROVIDER_CACHE_SIZE"];
   delete process.env["TOOL_LIST_CACHE_TTL_MS"];
 });
 
 // ---------------------------------------------------------------------------
-// Helpers
+// Helpers — return a Bearer token for the configured admin / caller fixture.
 // ---------------------------------------------------------------------------
 
-async function getAdminToken(app: ReturnType<typeof createApp>, workspaceId = "ws-test"): Promise<string> {
-  const res = await app.request("/auth/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      callerId: "admin-caller",
-      workspaceId,
-      role: "admin",
-      secret: TEST_ADMIN_SECRET,
-    }),
-  });
-  const body = await res.json() as { token: string };
-  return body.token;
+async function getAdminToken(_app?: ReturnType<typeof createApp>): Promise<string> {
+  return ADMIN_TOKEN;
 }
 
-async function getCallerToken(app: ReturnType<typeof createApp>, callerId: string, workspaceId = "ws-test"): Promise<string> {
-  const res = await app.request("/auth/token", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      callerId,
-      workspaceId,
-      role: "caller",
-      secret: TEST_ADMIN_SECRET,
-    }),
-  });
-  const body = await res.json() as { token: string };
-  return body.token;
+async function getCallerToken(
+  _app?: ReturnType<typeof createApp>,
+  _callerId?: string,
+  _workspaceId?: string,
+): Promise<string> {
+  return CALLER_TOKEN;
 }
 
 // ---------------------------------------------------------------------------
@@ -123,41 +142,60 @@ describe("GET /health", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Authentication
+// Authentication (Cognito access-token middleware)
 // ---------------------------------------------------------------------------
 
-describe("POST /auth/token", () => {
-  it("issues a token with valid secret", async () => {
+describe("requireAuth", () => {
+  it("returns 401 without an Authorization header", async () => {
     const app = createApp();
-    const res = await app.request("/auth/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        callerId: "mcp-server",
-        workspaceId: "ws-1",
-        role: "caller",
-        secret: TEST_ADMIN_SECRET,
-      }),
-    });
-    expect(res.status).toBe(200);
-    const body = await res.json() as { token: string; expiresIn: number };
-    expect(typeof body.token).toBe("string");
-    expect(body.expiresIn).toBe(3600);
+    const res = await app.request("/credentials");
+    expect(res.status).toBe(401);
   });
 
-  it("returns 401 with invalid secret", async () => {
+  it("returns 401 with an invalid Cognito token", async () => {
     const app = createApp();
-    const res = await app.request("/auth/token", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        callerId: "mcp-server",
-        workspaceId: "ws-1",
-        role: "caller",
-        secret: "wrong-secret",
-      }),
+    const res = await app.request("/credentials", {
+      headers: { Authorization: "Bearer not-a-real-token" },
     });
     expect(res.status).toBe(401);
+  });
+
+  it("returns 400 when no active workspace is selected", async () => {
+    mockDdbSend.mockImplementation((cmd: { input?: Record<string, unknown> }) => {
+      const table = cmd.input?.["TableName"];
+      if (table === "Sessions") return Promise.resolve({});
+      return Promise.resolve({});
+    });
+    const app = createApp();
+    const res = await app.request("/credentials", {
+      headers: { Authorization: `Bearer ${ADMIN_TOKEN}` },
+    });
+    expect(res.status).toBe(400);
+    const body = await res.json() as { code?: string };
+    expect(body.code).toBe("workspace_not_selected");
+  });
+
+  it("returns 403 when not a member of the active workspace", async () => {
+    mockDdbSend.mockImplementation((cmd: { input?: Record<string, unknown> }) => {
+      const table = cmd.input?.["TableName"];
+      if (table === "Sessions") {
+        return Promise.resolve({
+          Item: {
+            userSub: ADMIN_SUB,
+            currentWorkspaceId: WORKSPACE_ID,
+            expiresAt: Math.floor(Date.now() / 1000) + 3600,
+          },
+        });
+      }
+      if (table === "Memberships") return Promise.resolve({});
+      if (table === "UserGroups") return Promise.resolve({ Items: [] });
+      return Promise.resolve({});
+    });
+    const app = createApp();
+    const res = await app.request("/credentials", {
+      headers: { Authorization: `Bearer ${ADMIN_TOKEN}` },
+    });
+    expect(res.status).toBe(403);
   });
 });
 
@@ -264,14 +302,14 @@ describe("Permissions CRUD", () => {
         Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({
-        callerId: "mcp-server",
+        callerId: CALLER_SUB,
         provider: "github",
         operation: "*",
       }),
     });
     expect(grantRes.status).toBe(201);
     const perm = await grantRes.json() as { id: string; callerId: string };
-    expect(perm.callerId).toBe("mcp-server");
+    expect(perm.callerId).toBe(CALLER_SUB);
 
     const listRes = await app.request("/permissions", {
       headers: { Authorization: `Bearer ${token}` },
@@ -335,7 +373,7 @@ describe("POST /tools/:provider/:operation", () => {
         Authorization: `Bearer ${adminToken}`,
       },
       body: JSON.stringify({
-        callerId: "mcp-server",
+        callerId: CALLER_SUB,
         provider: "github",
         operation: "*",
       }),
@@ -386,7 +424,7 @@ describe("POST /tools/:provider/:operation", () => {
         Authorization: `Bearer ${adminToken}`,
       },
       body: JSON.stringify({
-        callerId: "mcp-server",
+        callerId: CALLER_SUB,
         provider: "github",
         operation: "*",
       }),

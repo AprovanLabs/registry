@@ -22,7 +22,6 @@
     "@utdk/common": "workspace:*",
     "aws-jwt-verify": "^4.0.1",
     "hono": "^4.6.20",
-    "jose": "^5.10.0",
     "tslib": "^2.8.1",
     "utdk": "workspace:*"
   },
