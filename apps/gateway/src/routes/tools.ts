@@ -28,7 +28,7 @@ import { getAuditStore } from "../audit.js";
 import { getCredentialStore, type CredentialPayload } from "../credentials.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
 import { requireAuth, type GatewayJWTPayload } from "../middleware/auth.js";
-import { rateLimitByCallerAndProvider } from "../middleware/rateLimitMiddleware.js";
+import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import { getPermissionStore } from "../permissions.js";
 
 export const toolsRouter = new Hono();
@@ -276,7 +276,7 @@ toolsRouter.get("/", requireAuth, async (c) => {
 // POST /tools/:provider/:operation
 // ---------------------------------------------------------------------------
 
-toolsRouter.post("/:provider/:operation{.*}", rateLimitByCallerAndProvider, async (c) => {
+toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   const isPassthrough = c.get("passthroughMode") === true;
 
   let callerId: string;
