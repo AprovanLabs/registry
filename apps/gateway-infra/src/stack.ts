@@ -83,6 +83,26 @@ export class GatewayStack extends Stack {
       exportName: namer().regional("aws-region"),
     });
 
+    new CfnOutput(this, "WORKSPACE_TABLE_NAME", {
+      value: workspacesTable.tableName,
+      exportName: namer().regional("workspace-table-name"),
+    });
+
+    new CfnOutput(this, "WORKSPACE_TABLE_ARN", {
+      value: workspacesTable.tableArn,
+      exportName: namer().regional("workspace-table-arn"),
+    });
+
+    new CfnOutput(this, "MEMBERSHIPS_TABLE_NAME", {
+      value: membershipsTable.tableName,
+      exportName: namer().regional("memberships-table-name"),
+    });
+
+    new CfnOutput(this, "MEMBERSHIPS_TABLE_ARN", {
+      value: membershipsTable.tableArn,
+      exportName: namer().regional("memberships-table-arn"),
+    });
+
     // ---------------------------------------------------------------------------
     // Gateway store tables (APR-317)
     //
