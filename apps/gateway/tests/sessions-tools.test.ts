@@ -32,6 +32,8 @@ vi.mock("@aws-sdk/lib-dynamodb", () => ({
   QueryCommand: vi.fn((input: unknown) => ({ input })),
   PutCommand: vi.fn((input: unknown) => ({ input })),
   GetCommand: vi.fn((input: unknown) => ({ input })),
+  TransactWriteCommand: vi.fn((input: unknown) => ({ input })),
+  BatchGetCommand: vi.fn((input: unknown) => ({ input })),
 }));
 
 vi.mock("@aws-sdk/client-dynamodb", () => ({
@@ -78,7 +80,6 @@ const PICKER_WORKSPACE = "ws-pick";
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
-  process.env["GATEWAY_WORKSPACE_KEY"] = "test-workspace-key";
   setupAuth({
     mockDdbSend,
     users: [

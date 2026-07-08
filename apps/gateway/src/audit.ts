@@ -1,10 +1,8 @@
 /**
- * Audit log for gateway tool calls.
+ * Audit log for gateway tool calls — DynamoDB backend (30-day TTL).
  *
- * Two backends share `IAuditStore`:
- *   - `AuditStore`         — ring-buffer in-memory store (local dev / tests)
- *   - `AuditStoreDynamodb` — 30-day TTL persistent store, selected via
- *                            `GATEWAY_STORE_BACKEND=dynamodb`
+ * Per APR-323, the legacy in-memory ring-buffer backend has been removed.
+ * `AuditStoreDynamodb` is now the sole implementation.
  */
 
 import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
@@ -39,48 +37,6 @@ export interface IAuditStore {
     callerId?: string;
     provider?: string;
   }): Promise<AuditEntry[]>;
-}
-
-// ---------------------------------------------------------------------------
-// In-memory backend
-// ---------------------------------------------------------------------------
-
-const MAX_ENTRIES = 500;
-
-export class AuditStore implements IAuditStore {
-  private readonly entries: AuditEntry[] = [];
-
-  append(entry: Omit<AuditEntry, "id" | "ts" | "result">): void {
-    const id = crypto.randomUUID();
-    const ts = new Date().toISOString();
-    const result =
-      entry.status === 403 ? "forbidden" : entry.status < 400 ? "success" : "error";
-
-    this.entries.push({ id, ts, result, ...entry });
-
-    if (this.entries.length > MAX_ENTRIES) {
-      this.entries.splice(0, this.entries.length - MAX_ENTRIES);
-    }
-  }
-
-  recent(opts: {
-    workspaceId: string;
-    limit?: number;
-    callerId?: string;
-    provider?: string;
-  }): Promise<AuditEntry[]> {
-    const { workspaceId, limit = 100, callerId, provider } = opts;
-
-    const results: AuditEntry[] = [];
-    for (let i = this.entries.length - 1; i >= 0 && results.length < limit; i--) {
-      const e = this.entries[i]!;
-      if (e.workspaceId !== workspaceId) continue;
-      if (callerId !== undefined && e.callerId !== callerId) continue;
-      if (provider !== undefined && e.provider !== provider) continue;
-      results.push(e);
-    }
-    return Promise.resolve(results);
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -202,13 +158,10 @@ export class AuditStoreDynamodb implements IAuditStore {
 
 let _store: IAuditStore | undefined;
 
+/** Resolve the singleton audit store (always DynamoDB). */
 export function getAuditStore(): IAuditStore {
   if (!_store) {
-    if (process.env["GATEWAY_STORE_BACKEND"] === "dynamodb") {
-      _store = new AuditStoreDynamodb();
-    } else {
-      _store = new AuditStore();
-    }
+    _store = new AuditStoreDynamodb();
   }
   return _store;
 }
