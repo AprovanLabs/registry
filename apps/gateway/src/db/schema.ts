@@ -258,18 +258,29 @@ export const UserGroups: TableSchema = {
   },
 };
 
+/**
+ * Single-table design for gateway audit logs (APR-321).
+ *
+ * Each workspace's items share the partition `PK = WS#<workspaceId>`. The sort
+ * key encodes the entity chronologically so `ScanIndexForward=false` returns
+ * the most-recent entries first:
+ *   - `SK = AUDIT#<isoTs>#<uuid>` — one entry per tool call
+ *
+ * A sparse `ttl` attribute (epoch seconds, 30-day horizon) drives DynamoDB TTL
+ * auto-eviction. TTL is best-effort and may lag up to 48h.
+ */
 export const Audit: TableSchema = {
   tableName: "Audit",
-  ttlAttribute: "expiresAt",
+  ttlAttribute: "ttl",
   createInput: {
     TableName: "Audit",
     KeySchema: [
-      { AttributeName: "workspaceId", KeyType: "HASH" },
-      { AttributeName: "timestamp#requestId", KeyType: "RANGE" },
+      { AttributeName: "PK", KeyType: "HASH" },
+      { AttributeName: "SK", KeyType: "RANGE" },
     ],
     AttributeDefinitions: [
-      { AttributeName: "workspaceId", AttributeType: "S" },
-      { AttributeName: "timestamp#requestId", AttributeType: "S" },
+      { AttributeName: "PK", AttributeType: "S" },
+      { AttributeName: "SK", AttributeType: "S" },
     ],
     BillingMode: "PAY_PER_REQUEST",
   },
