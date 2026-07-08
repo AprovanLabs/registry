@@ -16,7 +16,7 @@ import {
   CognitoNotConfiguredError,
   verifyAccessToken,
 } from "../middleware/auth.js";
-import { rateLimitByCallerAndProvider } from "../middleware/rateLimitMiddleware.js";
+import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import { getMembership } from "../memberships.js";
 import { buildMcpServer } from "../mcp/server.js";
 import { getCurrentWorkspace } from "../sessions.js";
@@ -131,7 +131,7 @@ async function requireMcpAuth(c: Context, next: Next): Promise<Response | void> 
 // Middleware chain: auth (with workspace mismatch check) → rate limit
 // ---------------------------------------------------------------------------
 
-mcpRouter.use("/:workspaceId", requireMcpAuth, rateLimitByCallerAndProvider);
+mcpRouter.use("/:workspaceId", requireMcpAuth, rateLimitByUserId);
 
 // ---------------------------------------------------------------------------
 // Handler — stateless mode: new Server + transport per request

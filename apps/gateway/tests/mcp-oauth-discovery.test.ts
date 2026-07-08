@@ -6,7 +6,13 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { createApp } from "../src/app.js";
+import { resetAuditStore } from "../src/audit.js";
+import { resetCredentialStore } from "../src/credentials.js";
+import { resetExecutor } from "../src/isolate.js";
+import { resetMcpCatalog } from "../src/mcp/server.js";
 import { resetCognitoVerifier } from "../src/middleware/auth.js";
+import { resetRateLimiters } from "../src/middleware/rateLimitMiddleware.js";
+import { resetPermissionStore } from "../src/permissions.js";
 import { setupAuth } from "./helpers.js";
 
 // ---------------------------------------------------------------------------
@@ -22,6 +28,8 @@ vi.mock("@aws-sdk/lib-dynamodb", () => ({
   QueryCommand: vi.fn((input: unknown) => ({ input })),
   PutCommand: vi.fn((input: unknown) => ({ input })),
   GetCommand: vi.fn((input: unknown) => ({ input })),
+  BatchGetCommand: vi.fn((input: unknown) => ({ input })),
+  TransactWriteCommand: vi.fn((input: unknown) => ({ input })),
 }));
 
 vi.mock("@aws-sdk/client-dynamodb", () => ({
@@ -43,6 +51,12 @@ beforeEach(() => {
       { sub: ADMIN_SUB, token: ADMIN_TOKEN, role: "admin", workspaceId: VALID_WID },
     ],
   });
+  resetPermissionStore();
+  resetRateLimiters();
+  resetExecutor();
+  resetCredentialStore();
+  resetAuditStore();
+  resetMcpCatalog();
 });
 
 afterEach(() => {
@@ -187,10 +201,8 @@ describe("POST /mcp/:workspaceId — 401 includes WWW-Authenticate", () => {
 // WWW-Authenticate on 403 (insufficient scope) from /mcp/:workspaceId
 // ---------------------------------------------------------------------------
 
-describe("POST /mcp/:workspaceId — 403 includes WWW-Authenticate insufficient_scope", () => {
-  it("returns 403 with WWW-Authenticate error=insufficient_scope when not a member", async () => {
-    // setupAuth registers ADMIN_SUB as a member of VALID_WID; use a separate
-    // workspace to trigger a membership miss.
+describe("POST /mcp/:workspaceId — 403 workspace_mismatch", () => {
+  it("returns 403 workspace_mismatch when URL workspace differs from token's active workspace", async () => {
     const OTHER_WID = "aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee";
     const otherToken = "other-workspace-token";
     const otherSub = "other-sub";
@@ -203,30 +215,19 @@ describe("POST /mcp/:workspaceId — 403 includes WWW-Authenticate insufficient_
     });
 
     const app = createApp();
-
-    // ADMIN_SUB's token belongs to OTHER_WID session → membership lookup for
-    // VALID_WID will fail → 403.
-    // Instead, use otherSub whose active workspace is OTHER_WID — hit /mcp/VALID_WID.
+    // otherSub's active workspace is OTHER_WID, but URL has VALID_WID → mismatch
     const res = await app.request(`/mcp/${VALID_WID}`, {
       method: "POST",
       headers: { Authorization: `Bearer ${otherToken}` },
     });
 
-    // otherSub's session points to OTHER_WID, not VALID_WID, so the membership
-    // check for OTHER_WID will pass, but the URL workspaceId (VALID_WID) is only
-    // used for building the WWW-Authenticate URL, not for checking membership.
-    // The actual membership check is done against the session's activeWorkspaceId.
-    // Since membership IS found (otherSub is in OTHER_WID), we get 501 (stub).
-    // To get 403, we need a token whose session workspace has no membership.
-    expect([403, 501]).toContain(res.status);
-
-    if (res.status === 403) {
-      const wwwAuth = res.headers.get("WWW-Authenticate") ?? "";
-      expect(wwwAuth).toContain('error="insufficient_scope"');
-      expect(wwwAuth).toContain('scope="mcp.invoke"');
-    }
+    expect(res.status).toBe(403);
+    const body = await res.json() as { error: string };
+    expect(body.error).toBe("workspace_mismatch");
   });
+});
 
+describe("POST /mcp/:workspaceId — 403 includes WWW-Authenticate insufficient_scope", () => {
   it("triggers 403 with insufficient_scope header when session workspace membership is missing", async () => {
     // User verifies OK but has no membership in their active workspace.
     const noMemberToken = "no-member-token";
@@ -261,7 +262,8 @@ describe("POST /mcp/:workspaceId — 403 includes WWW-Authenticate insufficient_
     });
 
     const app = createApp();
-    const res = await app.request(`/mcp/${VALID_WID}`, {
+    // Hit the user's own workspace URL so workspace_mismatch doesn't trigger
+    const res = await app.request(`/mcp/${noMemberWid}`, {
       method: "POST",
       headers: { Authorization: `Bearer ${noMemberToken}` },
     });
@@ -274,19 +276,36 @@ describe("POST /mcp/:workspaceId — 403 includes WWW-Authenticate insufficient_
 });
 
 // ---------------------------------------------------------------------------
-// Successful auth → stub 501
+// Successful auth → real MCP handler (Phase 2)
 // ---------------------------------------------------------------------------
 
 describe("POST /mcp/:workspaceId — authenticated request", () => {
-  it("returns 501 (stub) for a valid authenticated request", async () => {
+  it("passes auth and reaches the MCP handler for a valid authenticated request", async () => {
     const app = createApp();
 
+    // A valid JSON-RPC initialize request so the MCP SDK accepts it
     const res = await app.request(`/mcp/${VALID_WID}`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${ADMIN_TOKEN}` },
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json, text/event-stream",
+        Authorization: `Bearer ${ADMIN_TOKEN}`,
+      },
+      body: JSON.stringify({
+        jsonrpc: "2.0",
+        id: 1,
+        method: "initialize",
+        params: {
+          protocolVersion: "2024-11-05",
+          capabilities: {},
+          clientInfo: { name: "test-client", version: "1.0" },
+        },
+      }),
     });
 
-    // Phase 2 replaces the stub; for now 501 signals auth passed.
-    expect(res.status).toBe(501);
+    // 401/403 would mean auth failed; 200 means Phase 2 handler is active
+    expect(res.status).not.toBe(401);
+    expect(res.status).not.toBe(403);
+    expect(res.status).toBe(200);
   });
 });
