@@ -17,7 +17,7 @@ export const auditRouter = new Hono();
 
 auditRouter.use("*", requireAuth, requireAdmin);
 
-auditRouter.get("/", (c) => {
+auditRouter.get("/", async (c) => {
   const principal = c.get("principal");
   const workspaceId = principal.workspaceId;
 
@@ -27,7 +27,7 @@ auditRouter.get("/", (c) => {
   const provider = c.req.query("provider");
 
   const store = getAuditStore();
-  const entries = store.recent({ workspaceId, limit, callerId, provider });
+  const entries = await store.recent({ workspaceId, limit, callerId, provider });
 
   return c.json({ entries });
 });
