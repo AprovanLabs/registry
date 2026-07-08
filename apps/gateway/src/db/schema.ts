@@ -90,6 +90,11 @@ export const Invites: TableSchema = {
         ],
         Projection: { ProjectionType: "ALL" },
       },
+      {
+        IndexName: "ByWorkspace",
+        KeySchema: [{ AttributeName: "workspaceId", KeyType: "HASH" }],
+        Projection: { ProjectionType: "ALL" },
+      },
     ],
     BillingMode: "PAY_PER_REQUEST",
   },

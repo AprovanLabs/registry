@@ -6,15 +6,19 @@
  *
  * POST   /groups                         — create a workspace group
  * GET    /groups                         — list workspace groups
+ * GET    /groups/:id                     — get a single group
  * PATCH  /groups/:id                     — update group name / description
  * DELETE /groups/:id                     — delete group (cascades grants)
  *
+ * GET    /groups/:id/users               — list users in a group
  * POST   /groups/:id/users               — add a user to a group
  * DELETE /groups/:id/users               — remove a user from a group
  *
+ * GET    /groups/:id/prefix-grants       — list prefix grants for a group
  * POST   /groups/:id/prefix-grants       — add a path-prefix grant
  * DELETE /groups/:id/prefix-grants       — remove a path-prefix grant
  *
+ * GET    /groups/:id/tool-grants         — list tool grants for a group
  * POST   /groups/:id/tool-grants         — add a tool grant
  * DELETE /groups/:id/tool-grants         — remove a tool grant
  */
@@ -29,11 +33,15 @@ import {
   deleteGroup,
   getGroup,
   listGroups,
+  listPrefixGrants,
+  listToolGrants,
   removePrefixGrant,
   removeToolGrant,
   removeUserFromGroup,
   updateGroup,
 } from "../groups.js";
+import { getDynamoDocClient } from "../db/client.js";
+import { QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 
 export const groupsRouter = new Hono();
 
@@ -44,8 +52,8 @@ groupsRouter.use("*", requireAuth, requireAdmin);
 // ---------------------------------------------------------------------------
 
 groupsRouter.post("/", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
 
   let body: unknown;
   try {
@@ -68,11 +76,25 @@ groupsRouter.post("/", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.get("/", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
 
   const groups = await listGroups(workspaceId);
   return c.json({ groups });
+});
+
+// ---------------------------------------------------------------------------
+// GET /groups/:id
+// ---------------------------------------------------------------------------
+
+groupsRouter.get("/:id", async (c) => {
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
+  const groupId = c.req.param("id");
+
+  const group = await getGroup(workspaceId, groupId);
+  if (!group) return c.json({ error: "Group not found" }, 404);
+  return c.json(group);
 });
 
 // ---------------------------------------------------------------------------
@@ -80,8 +102,8 @@ groupsRouter.get("/", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.patch("/:id", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -108,8 +130,8 @@ groupsRouter.patch("/:id", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.delete("/:id", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const groupId = c.req.param("id");
 
   const deleted = await deleteGroup(workspaceId, groupId);
@@ -120,12 +142,40 @@ groupsRouter.delete("/:id", async (c) => {
 });
 
 // ---------------------------------------------------------------------------
+// GET /groups/:id/users — list members of a group
+// ---------------------------------------------------------------------------
+
+groupsRouter.get("/:id/users", async (c) => {
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
+  const groupId = c.req.param("id");
+
+  const group = await getGroup(workspaceId, groupId);
+  if (!group) return c.json({ error: "Group not found" }, 404);
+
+  const userGroupsTable = process.env["USERGROUPS_TABLE"] ?? "UserGroups";
+  const result = await getDynamoDocClient().send(
+    new ScanCommand({
+      TableName: userGroupsTable,
+      FilterExpression: "workspaceId = :ws AND groupId = :gid",
+      ExpressionAttributeValues: { ":ws": workspaceId, ":gid": groupId },
+      ProjectionExpression: "userSub",
+    }),
+  );
+  const userSubs = ((result.Items ?? []) as Array<{ userSub?: string }>)
+    .map((i) => i.userSub)
+    .filter((s): s is string => typeof s === "string");
+
+  return c.json({ groupId, userSubs });
+});
+
+// ---------------------------------------------------------------------------
 // POST /groups/:id/users
 // ---------------------------------------------------------------------------
 
 groupsRouter.post("/:id/users", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -152,8 +202,8 @@ groupsRouter.post("/:id/users", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.delete("/:id/users", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -176,12 +226,28 @@ groupsRouter.delete("/:id/users", async (c) => {
 });
 
 // ---------------------------------------------------------------------------
+// GET /groups/:id/prefix-grants
+// ---------------------------------------------------------------------------
+
+groupsRouter.get("/:id/prefix-grants", async (c) => {
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
+  const groupId = c.req.param("id");
+
+  const group = await getGroup(workspaceId, groupId);
+  if (!group) return c.json({ error: "Group not found" }, 404);
+
+  const grants = await listPrefixGrants(workspaceId, groupId);
+  return c.json({ grants });
+});
+
+// ---------------------------------------------------------------------------
 // POST /groups/:id/prefix-grants
 // ---------------------------------------------------------------------------
 
 groupsRouter.post("/:id/prefix-grants", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -208,8 +274,8 @@ groupsRouter.post("/:id/prefix-grants", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.delete("/:id/prefix-grants", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -232,12 +298,28 @@ groupsRouter.delete("/:id/prefix-grants", async (c) => {
 });
 
 // ---------------------------------------------------------------------------
+// GET /groups/:id/tool-grants
+// ---------------------------------------------------------------------------
+
+groupsRouter.get("/:id/tool-grants", async (c) => {
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
+  const groupId = c.req.param("id");
+
+  const group = await getGroup(workspaceId, groupId);
+  if (!group) return c.json({ error: "Group not found" }, 404);
+
+  const grants = await listToolGrants(workspaceId, groupId);
+  return c.json({ grants });
+});
+
+// ---------------------------------------------------------------------------
 // POST /groups/:id/tool-grants
 // ---------------------------------------------------------------------------
 
 groupsRouter.post("/:id/tool-grants", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -267,8 +349,8 @@ groupsRouter.post("/:id/tool-grants", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.delete("/:id/tool-grants", async (c) => {
-  const payload = c.get("jwtPayload");
-  const workspaceId = payload.wid;
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
   const groupId = c.req.param("id");
 
   let body: unknown;

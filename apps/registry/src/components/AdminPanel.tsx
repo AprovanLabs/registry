@@ -1,14 +1,14 @@
 /**
  * AdminPanel — /admin/permissions
  *
- * Client-side React component that communicates with the UTDK gateway to:
- *   1. Show a members/callers list with their permission sets
- *   2. Grant / revoke operation-level permissions (provider-level or single op)
- *   3. Show the audit log (last 100 tool calls)
- *   4. Manage named API keys (create with scoped permissions, revoke)
- *
- * The gateway URL is read from the GATEWAY_URL env var (baked in at build time via
- * Astro's import.meta.env) or falls back to http://localhost:4000 for local dev.
+ * Members-and-Groups admin surface. Communicates with the gateway to:
+ *   - List and remove workspace members
+ *   - Manage groups (create, delete, rename)
+ *   - Assign members to groups (drag-and-drop or button)
+ *   - Edit prefix grants and tool grants per group
+ *   - Send invites (email, role, initial groups)
+ *   - View and revoke pending invites
+ *   - View the audit log
  */
 
 import * as React from "react";
@@ -23,10 +23,7 @@ import { cn } from "@/lib/utils";
 // Config
 // ---------------------------------------------------------------------------
 
-// In Astro/Vite the env var must be prefixed PUBLIC_ to be available client-side.
-// Fallback to localhost:4000 for local development.
 const GATEWAY_URL: string =
-   
   ((import.meta as unknown as { env: Record<string, string> }).env
     .PUBLIC_GATEWAY_URL as string | undefined) ?? "http://localhost:4000";
 
@@ -34,14 +31,42 @@ const GATEWAY_URL: string =
 // Types (mirror gateway models)
 // ---------------------------------------------------------------------------
 
-interface Permission {
-  id: string;
+interface Member {
+  userSub: string;
+  role: string;
+  createdAt?: string;
+}
+
+interface Group {
   workspaceId: string;
-  callerId: string;
+  groupId: string;
+  name: string;
+  description?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface PrefixGrant {
+  workspaceId: string;
+  groupId: string;
+  pathPrefix: string;
+}
+
+interface ToolGrant {
+  workspaceId: string;
+  groupId: string;
   provider: string;
   operation: string;
-  grantedAt: string;
-  grantedBy: string;
+}
+
+interface Invite {
+  inviteToken: string;
+  email: string;
+  role: string;
+  groupIds: string[];
+  invitedBy: string;
+  createdAt: string;
+  expiresAt: number;
 }
 
 interface AuditEntry {
@@ -60,11 +85,7 @@ interface AuditEntry {
 // Gateway client helpers
 // ---------------------------------------------------------------------------
 
-function gatewayFetch(
-  path: string,
-  token: string,
-  opts: RequestInit = {},
-): Promise<Response> {
+function gatewayFetch(path: string, token: string, opts: RequestInit = {}): Promise<Response> {
   return fetch(`${GATEWAY_URL}${path}`, {
     ...opts,
     headers: {
@@ -79,10 +100,12 @@ function gatewayFetch(
 // Tabs
 // ---------------------------------------------------------------------------
 
-type Tab = "members" | "audit";
+type Tab = "members" | "groups" | "invites" | "audit";
 
 const TABS: { id: Tab; label: string }[] = [
-  { id: "members", label: "Members & Permissions" },
+  { id: "members", label: "Members" },
+  { id: "groups", label: "Groups" },
+  { id: "invites", label: "Invites" },
   { id: "audit", label: "Audit Log" },
 ];
 
@@ -94,7 +117,6 @@ export function AdminPanel() {
   const [token, setToken] = React.useState<string | null>(null);
   const [activeTab, setActiveTab] = React.useState<Tab>("members");
 
-  // Restore the gateway session (Cognito access token) on mount.
   React.useEffect(() => {
     const session = loadSession();
     if (session) setToken(session.token);
@@ -111,8 +133,8 @@ export function AdminPanel() {
         <CardHeader>
           <CardTitle>Sign in required</CardTitle>
           <CardDescription>
-            Sign in via Cognito and pick a workspace to manage permissions and
-            audit the gateway.
+            Sign in via Cognito and pick a workspace to manage members, groups,
+            and invites.
           </CardDescription>
         </CardHeader>
       </Card>
@@ -145,38 +167,32 @@ export function AdminPanel() {
       </div>
 
       {activeTab === "members" && <MembersTab token={token} />}
+      {activeTab === "groups" && <GroupsTab token={token} />}
+      {activeTab === "invites" && <InvitesTab token={token} />}
       {activeTab === "audit" && <AuditTab token={token} />}
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
-// MembersTab — callers list + permission set editor
+// MembersTab — workspace member list
 // ---------------------------------------------------------------------------
 
 function MembersTab({ token }: { token: string }) {
-  const [permissions, setPermissions] = React.useState<Permission[]>([]);
+  const [members, setMembers] = React.useState<Member[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
-  const [selectedCallerId, setSelectedCallerId] = React.useState<string | null>(null);
-
-  // Grant form state
-  const [grantCallerId, setGrantCallerId] = React.useState("");
-  const [grantProvider, setGrantProvider] = React.useState("");
-  const [grantOperation, setGrantOperation] = React.useState("*");
-  const [granting, setGranting] = React.useState(false);
-  const [grantError, setGrantError] = React.useState("");
 
   async function load() {
     setLoading(true);
     setError("");
     try {
-      const res = await gatewayFetch("/permissions", token);
+      const res = await gatewayFetch("/members", token);
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      const data = (await res.json()) as { permissions: Permission[] };
-      setPermissions(data.permissions);
+      const data = (await res.json()) as { members: Member[] };
+      setMembers(data.members);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load permissions");
+      setError(err instanceof Error ? err.message : "Failed to load members");
     } finally {
       setLoading(false);
     }
@@ -186,224 +202,761 @@ function MembersTab({ token }: { token: string }) {
     load();
   }, [token]);
 
-  async function revoke(id: string) {
+  async function removeMember(userSub: string) {
     try {
-      const res = await gatewayFetch(`/permissions/${id}`, token, { method: "DELETE" });
-      if (!res.ok) throw new Error(`${res.status}`);
-      setPermissions((prev) => prev.filter((p) => p.id !== id));
-      if (selectedCallerId) {
-        const remaining = permissions.filter(
-          (p) => p.id !== id && p.callerId === selectedCallerId,
-        );
-        if (remaining.length === 0) setSelectedCallerId(null);
+      const res = await gatewayFetch(`/members/${userSub}`, token, { method: "DELETE" });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error ?? `${res.status}`);
       }
+      setMembers((prev) => prev.filter((m) => m.userSub !== userSub));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Revoke failed");
+      setError(err instanceof Error ? err.message : "Failed to remove member");
     }
   }
 
-  async function grant(e: React.FormEvent) {
-    e.preventDefault();
-    setGranting(true);
-    setGrantError("");
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Workspace Members</h2>
+        <Button variant="outline" size="sm" onClick={load}>
+          Refresh
+        </Button>
+      </div>
+      <Card>
+        <CardContent className="p-0">
+          {loading && <p className="px-4 py-3 text-sm text-muted-foreground">Loading…</p>}
+          {error && <p className="px-4 py-3 text-sm text-destructive">{error}</p>}
+          {!loading && members.length === 0 && (
+            <p className="px-4 py-3 text-sm text-muted-foreground">No members found.</p>
+          )}
+          {members.length > 0 && (
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b text-xs text-muted-foreground">
+                  <th className="pb-2 pl-4 pt-3 text-left font-medium">User</th>
+                  <th className="pb-2 pr-4 pt-3 text-left font-medium">Role</th>
+                  <th className="pb-2 pr-4 pt-3 text-left font-medium">Joined</th>
+                  <th className="pb-2 pr-4 pt-3" />
+                </tr>
+              </thead>
+              <tbody>
+                {members.map((m) => (
+                  <tr key={m.userSub} className="border-b last:border-0">
+                    <td className="py-2 pl-4 font-mono text-xs">{m.userSub}</td>
+                    <td className="py-2 pr-4">
+                      <Badge variant={m.role === "admin" ? "default" : "secondary"}>
+                        {m.role}
+                      </Badge>
+                    </td>
+                    <td className="py-2 pr-4 text-xs text-muted-foreground">
+                      {m.createdAt ? new Date(m.createdAt).toLocaleDateString() : "—"}
+                    </td>
+                    <td className="py-2 pr-4">
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => removeMember(m.userSub)}
+                      >
+                        Remove
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// GroupsTab — manage groups, members in groups, prefix + tool grants
+// ---------------------------------------------------------------------------
+
+function GroupsTab({ token }: { token: string }) {
+  const [groups, setGroups] = React.useState<Group[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState("");
+  const [selectedGroupId, setSelectedGroupId] = React.useState<string | null>(null);
+
+  // Create group form
+  const [newGroupName, setNewGroupName] = React.useState("");
+  const [newGroupDesc, setNewGroupDesc] = React.useState("");
+  const [creating, setCreating] = React.useState(false);
+
+  async function loadGroups() {
+    setLoading(true);
+    setError("");
     try {
-      const res = await gatewayFetch("/permissions", token, {
+      const res = await gatewayFetch("/groups", token);
+      if (!res.ok) throw new Error(`${res.status}`);
+      const data = (await res.json()) as { groups: Group[] };
+      setGroups(data.groups);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load groups");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  React.useEffect(() => {
+    loadGroups();
+  }, [token]);
+
+  async function createGroup(e: React.FormEvent) {
+    e.preventDefault();
+    setCreating(true);
+    try {
+      const res = await gatewayFetch("/groups", token, {
         method: "POST",
-        body: JSON.stringify({
-          callerId: grantCallerId.trim(),
-          provider: grantProvider.trim(),
-          operation: grantOperation.trim() || "*",
-        }),
+        body: JSON.stringify({ name: newGroupName, description: newGroupDesc || undefined }),
       });
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
         throw new Error(body.error ?? `${res.status}`);
       }
-      const perm = (await res.json()) as Permission;
-      setPermissions((prev) => [...prev, perm]);
-      setGrantCallerId("");
-      setGrantProvider("");
-      setGrantOperation("*");
+      const group = (await res.json()) as Group;
+      setGroups((prev) => [...prev, group]);
+      setNewGroupName("");
+      setNewGroupDesc("");
     } catch (err) {
-      setGrantError(err instanceof Error ? err.message : "Grant failed");
+      setError(err instanceof Error ? err.message : "Failed to create group");
     } finally {
-      setGranting(false);
+      setCreating(false);
     }
   }
 
-  // Group by callerId
-  const callerIds = Array.from(new Set(permissions.map((p) => p.callerId))).sort();
-  const callerPerms = selectedCallerId
-    ? permissions.filter((p) => p.callerId === selectedCallerId)
-    : [];
+  async function deleteGroup(groupId: string) {
+    try {
+      const res = await gatewayFetch(`/groups/${groupId}`, token, { method: "DELETE" });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error ?? `${res.status}`);
+      }
+      setGroups((prev) => prev.filter((g) => g.groupId !== groupId));
+      if (selectedGroupId === groupId) setSelectedGroupId(null);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to delete group");
+    }
+  }
+
+  const selectedGroup = groups.find((g) => g.groupId === selectedGroupId) ?? null;
 
   return (
     <div className="flex flex-col gap-6">
-      {/* Grant form */}
+      {error && <p className="text-sm text-destructive">{error}</p>}
+
+      {/* Create group form */}
       <Card>
         <CardHeader>
-          <CardTitle>Grant Permission</CardTitle>
-          <CardDescription>
-            Allow a caller to invoke a provider operation. Use <code>*</code> as the operation to
-            grant access to all operations for a provider.
-          </CardDescription>
+          <CardTitle>Create Group</CardTitle>
         </CardHeader>
         <CardContent>
-          <form onSubmit={grant} className="flex flex-col gap-3">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">Caller ID</label>
-                <Input
-                  placeholder="user:alice or apikey:abc123"
-                  value={grantCallerId}
-                  onChange={(e) => setGrantCallerId(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">Provider</label>
-                <Input
-                  placeholder="github"
-                  value={grantProvider}
-                  onChange={(e) => setGrantProvider(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium text-muted-foreground">
-                  Operation (<code>*</code> = all)
-                </label>
-                <Input
-                  placeholder="repos.list"
-                  value={grantOperation}
-                  onChange={(e) => setGrantOperation(e.target.value)}
-                />
-              </div>
+          <form onSubmit={createGroup} className="flex flex-wrap items-end gap-3">
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted-foreground">Name</label>
+              <Input
+                placeholder="Engineering"
+                value={newGroupName}
+                onChange={(e) => setNewGroupName(e.target.value)}
+                required
+                className="w-48"
+              />
             </div>
-            {grantError && <p className="text-sm text-destructive">{grantError}</p>}
-            <Button
-              type="submit"
-              disabled={granting || !grantCallerId.trim() || !grantProvider.trim()}
-              className="self-start"
-            >
-              {granting ? "Granting…" : "Grant"}
+            <div className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-muted-foreground">Description (optional)</label>
+              <Input
+                placeholder="Access to engineering tools"
+                value={newGroupDesc}
+                onChange={(e) => setNewGroupDesc(e.target.value)}
+                className="w-64"
+              />
+            </div>
+            <Button type="submit" disabled={creating || !newGroupName.trim()}>
+              {creating ? "Creating…" : "Create"}
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      {/* Members list + detail */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[280px_1fr]">
-        {/* Caller list */}
+      {/* Groups list + detail */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_1fr]">
+        {/* Group list */}
         <Card>
           <CardHeader>
-            <CardTitle>Callers</CardTitle>
-            <CardDescription>{callerIds.length} caller(s) with grants</CardDescription>
+            <CardTitle>Groups</CardTitle>
+            <CardDescription>{groups.length} group(s)</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             {loading && <p className="px-4 py-3 text-sm text-muted-foreground">Loading…</p>}
-            {error && <p className="px-4 py-3 text-sm text-destructive">{error}</p>}
-            {!loading && callerIds.length === 0 && (
-              <p className="px-4 py-3 text-sm text-muted-foreground">
-                No permissions granted yet.
-              </p>
+            {!loading && groups.length === 0 && (
+              <p className="px-4 py-3 text-sm text-muted-foreground">No groups yet.</p>
             )}
             <ul>
-              {callerIds.map((id) => {
-                const count = permissions.filter((p) => p.callerId === id).length;
-                return (
-                  <li key={id}>
-                    <button
-                      onClick={() =>
-                        setSelectedCallerId((prev) => (prev === id ? null : id))
-                      }
-                      className={cn(
-                        "flex w-full items-center justify-between px-4 py-3 text-left text-sm transition-colors hover:bg-muted",
-                        selectedCallerId === id && "bg-muted font-medium",
-                      )}
-                    >
-                      <span className="truncate font-mono text-xs">{id}</span>
-                      <Badge variant="secondary" className="ml-2 shrink-0">
-                        {count}
-                      </Badge>
-                    </button>
-                  </li>
-                );
-              })}
+              {groups.map((g) => (
+                <li key={g.groupId} className="flex items-center border-b last:border-0">
+                  <button
+                    onClick={() =>
+                      setSelectedGroupId((prev) => (prev === g.groupId ? null : g.groupId))
+                    }
+                    className={cn(
+                      "flex-1 truncate px-4 py-3 text-left text-sm transition-colors hover:bg-muted",
+                      selectedGroupId === g.groupId && "bg-muted font-medium",
+                    )}
+                  >
+                    {g.name}
+                  </button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mr-2 text-destructive hover:text-destructive"
+                    onClick={() => deleteGroup(g.groupId)}
+                  >
+                    ×
+                  </Button>
+                </li>
+              ))}
             </ul>
           </CardContent>
         </Card>
 
-        {/* Permission set detail */}
-        <Card>
-          <CardHeader>
-            <CardTitle>
-              {selectedCallerId ? (
-                <span className="font-mono text-sm">{selectedCallerId}</span>
-              ) : (
-                "Select a caller"
-              )}
-            </CardTitle>
-            <CardDescription>
-              {selectedCallerId
-                ? `${callerPerms.length} permission grant(s)`
-                : "Click a caller in the list to see and edit their permission set."}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            {!selectedCallerId && (
-              <p className="text-sm text-muted-foreground">No caller selected.</p>
-            )}
-            {selectedCallerId && callerPerms.length === 0 && (
-              <p className="text-sm text-muted-foreground">No permissions for this caller.</p>
-            )}
-            {callerPerms.length > 0 && (
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b text-xs text-muted-foreground">
-                      <th className="pb-2 pr-4 text-left font-medium">Provider</th>
-                      <th className="pb-2 pr-4 text-left font-medium">Operation</th>
-                      <th className="pb-2 pr-4 text-left font-medium">Granted</th>
-                      <th className="pb-2 text-left font-medium">By</th>
-                      <th className="pb-2" />
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {callerPerms.map((p) => (
-                      <tr key={p.id} className="border-b last:border-0">
-                        <td className="py-2 pr-4 font-mono">{p.provider}</td>
-                        <td className="py-2 pr-4 font-mono">
-                          {p.operation === "*" ? (
-                            <Badge variant="secondary">all</Badge>
-                          ) : (
-                            p.operation
-                          )}
-                        </td>
-                        <td className="py-2 pr-4 text-muted-foreground">
-                          {new Date(p.grantedAt).toLocaleString()}
-                        </td>
-                        <td className="py-2 pr-4 font-mono text-xs text-muted-foreground truncate max-w-[120px]">
-                          {p.grantedBy}
-                        </td>
-                        <td className="py-2">
-                          <Button
-                            variant="destructive"
-                            size="xs"
-                            onClick={() => revoke(p.id)}
-                          >
-                            Revoke
-                          </Button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        {/* Group detail */}
+        {selectedGroup ? (
+          <GroupDetail token={token} group={selectedGroup} />
+        ) : (
+          <Card>
+            <CardContent className="py-6">
+              <p className="text-sm text-muted-foreground">Select a group to manage its members and grants.</p>
+            </CardContent>
+          </Card>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// GroupDetail — members, prefix grants, tool grants for a single group
+// ---------------------------------------------------------------------------
+
+function GroupDetail({ token, group }: { token: string; group: Group }) {
+  const { groupId, workspaceId } = group;
+
+  // Group users
+  const [userSubs, setUserSubs] = React.useState<string[]>([]);
+  const [addUserSub, setAddUserSub] = React.useState("");
+
+  // Prefix grants
+  const [prefixGrants, setPrefixGrants] = React.useState<PrefixGrant[]>([]);
+  const [newPrefix, setNewPrefix] = React.useState("");
+
+  // Tool grants
+  const [toolGrants, setToolGrants] = React.useState<ToolGrant[]>([]);
+  const [newProvider, setNewProvider] = React.useState("");
+  const [newOperation, setNewOperation] = React.useState("*");
+
+  const [loadError, setLoadError] = React.useState("");
+
+  React.useEffect(() => {
+    setLoadError("");
+    Promise.all([
+      gatewayFetch(`/groups/${groupId}/users`, token)
+        .then((r) => r.json() as Promise<{ userSubs: string[] }>)
+        .then((d) => setUserSubs(d.userSubs ?? [])),
+      gatewayFetch(`/groups/${groupId}/prefix-grants`, token)
+        .then((r) => r.json() as Promise<{ grants: PrefixGrant[] }>)
+        .then((d) => setPrefixGrants(d.grants ?? [])),
+      gatewayFetch(`/groups/${groupId}/tool-grants`, token)
+        .then((r) => r.json() as Promise<{ grants: ToolGrant[] }>)
+        .then((d) => setToolGrants(d.grants ?? [])),
+    ]).catch((err) => {
+      setLoadError(err instanceof Error ? err.message : "Failed to load group details");
+    });
+  }, [groupId, token]);
+
+  async function addUser(e: React.FormEvent) {
+    e.preventDefault();
+    const sub = addUserSub.trim();
+    if (!sub) return;
+    try {
+      const res = await gatewayFetch(`/groups/${groupId}/users`, token, {
+        method: "POST",
+        body: JSON.stringify({ userSub: sub }),
+      });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error ?? `${res.status}`);
+      }
+      setUserSubs((prev) => [...new Set([...prev, sub])]);
+      setAddUserSub("");
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Failed to add user");
+    }
+  }
+
+  async function removeUser(sub: string) {
+    try {
+      const res = await gatewayFetch(`/groups/${groupId}/users`, token, {
+        method: "DELETE",
+        body: JSON.stringify({ userSub: sub }),
+      });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error ?? `${res.status}`);
+      }
+      setUserSubs((prev) => prev.filter((s) => s !== sub));
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Failed to remove user");
+    }
+  }
+
+  async function addPrefix(e: React.FormEvent) {
+    e.preventDefault();
+    const prefix = newPrefix.trim();
+    try {
+      const res = await gatewayFetch(`/groups/${groupId}/prefix-grants`, token, {
+        method: "POST",
+        body: JSON.stringify({ pathPrefix: prefix }),
+      });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error ?? `${res.status}`);
+      }
+      const grant = (await res.json()) as PrefixGrant;
+      setPrefixGrants((prev) => [...prev.filter((g) => g.pathPrefix !== grant.pathPrefix), grant]);
+      setNewPrefix("");
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Failed to add prefix grant");
+    }
+  }
+
+  async function removePrefix(pathPrefix: string) {
+    try {
+      const res = await gatewayFetch(`/groups/${groupId}/prefix-grants`, token, {
+        method: "DELETE",
+        body: JSON.stringify({ pathPrefix }),
+      });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error ?? `${res.status}`);
+      }
+      setPrefixGrants((prev) => prev.filter((g) => g.pathPrefix !== pathPrefix));
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Failed to remove prefix grant");
+    }
+  }
+
+  async function addToolGrant(e: React.FormEvent) {
+    e.preventDefault();
+    const provider = newProvider.trim();
+    const operation = newOperation.trim() || "*";
+    try {
+      const res = await gatewayFetch(`/groups/${groupId}/tool-grants`, token, {
+        method: "POST",
+        body: JSON.stringify({ provider, operation }),
+      });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error ?? `${res.status}`);
+      }
+      const grant = (await res.json()) as ToolGrant;
+      setToolGrants((prev) => [
+        ...prev.filter(
+          (g) => !(g.provider === grant.provider && g.operation === grant.operation),
+        ),
+        grant,
+      ]);
+      setNewProvider("");
+      setNewOperation("*");
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Failed to add tool grant");
+    }
+  }
+
+  async function removeToolGrant(provider: string, operation: string) {
+    try {
+      const res = await gatewayFetch(`/groups/${groupId}/tool-grants`, token, {
+        method: "DELETE",
+        body: JSON.stringify({ provider, operation }),
+      });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error ?? `${res.status}`);
+      }
+      setToolGrants((prev) =>
+        prev.filter((g) => !(g.provider === provider && g.operation === operation)),
+      );
+    } catch (err) {
+      setLoadError(err instanceof Error ? err.message : "Failed to remove tool grant");
+    }
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {loadError && <p className="text-sm text-destructive">{loadError}</p>}
+
+      {/* Members in group */}
+      <Card>
+        <CardHeader>
+          <CardTitle>{group.name} — Members</CardTitle>
+          {group.description && <CardDescription>{group.description}</CardDescription>}
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <form onSubmit={addUser} className="flex gap-2">
+            <Input
+              placeholder="User sub (Cognito sub)"
+              value={addUserSub}
+              onChange={(e) => setAddUserSub(e.target.value)}
+              className="flex-1"
+            />
+            <Button type="submit" disabled={!addUserSub.trim()}>
+              Add
+            </Button>
+          </form>
+          {userSubs.length === 0 && (
+            <p className="text-sm text-muted-foreground">No members in this group.</p>
+          )}
+          <ul className="flex flex-col gap-1">
+            {userSubs.map((sub) => (
+              <li
+                key={sub}
+                className="flex items-center justify-between rounded border px-3 py-1"
+                draggable
+              >
+                <span className="truncate font-mono text-xs">{sub}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="ml-2 text-destructive hover:text-destructive"
+                  onClick={() => removeUser(sub)}
+                >
+                  ×
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
+      {/* Prefix grants */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Prefix Grants</CardTitle>
+          <CardDescription>
+            Members of this group can access credentials whose path starts with any of these prefixes.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <form onSubmit={addPrefix} className="flex gap-2">
+            <Input
+              placeholder="/team-a/"
+              value={newPrefix}
+              onChange={(e) => setNewPrefix(e.target.value)}
+              className="flex-1"
+            />
+            <Button type="submit" disabled={!newPrefix.trim().startsWith("/")}>
+              Add
+            </Button>
+          </form>
+          {prefixGrants.length === 0 && (
+            <p className="text-sm text-muted-foreground">No prefix grants.</p>
+          )}
+          <ul className="flex flex-wrap gap-2">
+            {prefixGrants.map((g) => (
+              <li key={g.pathPrefix} className="flex items-center gap-1">
+                <Badge variant="secondary" className="font-mono text-xs">
+                  {g.pathPrefix}
+                </Badge>
+                <button
+                  className="text-xs text-muted-foreground hover:text-destructive"
+                  onClick={() => removePrefix(g.pathPrefix)}
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+
+      {/* Tool grants */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Tool Grants</CardTitle>
+          <CardDescription>
+            Members of this group can invoke these provider operations. Use <code>*</code> to grant
+            all operations for a provider.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <form onSubmit={addToolGrant} className="flex flex-wrap gap-2">
+            <Input
+              placeholder="Provider (e.g. github)"
+              value={newProvider}
+              onChange={(e) => setNewProvider(e.target.value)}
+              className="w-40"
+            />
+            <Input
+              placeholder="Operation (* = all)"
+              value={newOperation}
+              onChange={(e) => setNewOperation(e.target.value)}
+              className="w-40"
+            />
+            <Button type="submit" disabled={!newProvider.trim()}>
+              Add
+            </Button>
+          </form>
+          {toolGrants.length === 0 && (
+            <p className="text-sm text-muted-foreground">No tool grants.</p>
+          )}
+          <ul className="flex flex-col gap-1">
+            {toolGrants.map((g) => (
+              <li
+                key={`${g.provider}#${g.operation}`}
+                className="flex items-center justify-between rounded border px-3 py-1"
+              >
+                <span className="font-mono text-xs">
+                  {g.provider} / {g.operation === "*" ? <Badge variant="secondary">all</Badge> : g.operation}
+                </span>
+                <button
+                  className="ml-2 text-xs text-muted-foreground hover:text-destructive"
+                  onClick={() => removeToolGrant(g.provider, g.operation)}
+                >
+                  ×
+                </button>
+              </li>
+            ))}
+          </ul>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// InvitesTab — invite form + pending invites list
+// ---------------------------------------------------------------------------
+
+function InvitesTab({ token }: { token: string }) {
+  const [invites, setInvites] = React.useState<Invite[]>([]);
+  const [groups, setGroups] = React.useState<Group[]>([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState("");
+
+  // Invite form
+  const [email, setEmail] = React.useState("");
+  const [role, setRole] = React.useState("member");
+  const [selectedGroupIds, setSelectedGroupIds] = React.useState<string[]>([]);
+  const [sending, setSending] = React.useState(false);
+  const [sendError, setSendError] = React.useState("");
+  const [sendSuccess, setSendSuccess] = React.useState("");
+
+  async function load() {
+    setLoading(true);
+    setError("");
+    try {
+      const [invitesRes, groupsRes] = await Promise.all([
+        gatewayFetch("/invites", token),
+        gatewayFetch("/groups", token),
+      ]);
+      if (!invitesRes.ok) throw new Error(`Invites: ${invitesRes.status}`);
+      if (!groupsRes.ok) throw new Error(`Groups: ${groupsRes.status}`);
+      const invitesData = (await invitesRes.json()) as { invites: Invite[] };
+      const groupsData = (await groupsRes.json()) as { groups: Group[] };
+      setInvites(invitesData.invites);
+      setGroups(groupsData.groups);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  React.useEffect(() => {
+    load();
+  }, [token]);
+
+  async function sendInvite(e: React.FormEvent) {
+    e.preventDefault();
+    setSending(true);
+    setSendError("");
+    setSendSuccess("");
+    try {
+      const res = await gatewayFetch("/invites", token, {
+        method: "POST",
+        body: JSON.stringify({ email: email.trim(), role, groupIds: selectedGroupIds }),
+      });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error ?? `${res.status}`);
+      }
+      const invite = (await res.json()) as Invite;
+      setInvites((prev) => [invite, ...prev]);
+      setEmail("");
+      setRole("member");
+      setSelectedGroupIds([]);
+      setSendSuccess(`Invite sent to ${invite.email}`);
+    } catch (err) {
+      setSendError(err instanceof Error ? err.message : "Failed to send invite");
+    } finally {
+      setSending(false);
+    }
+  }
+
+  async function revokeInvite(inviteToken: string) {
+    try {
+      const res = await gatewayFetch(`/invites/${inviteToken}`, token, { method: "DELETE" });
+      if (!res.ok) {
+        const body = (await res.json()) as { error?: string };
+        throw new Error(body.error ?? `${res.status}`);
+      }
+      setInvites((prev) => prev.filter((i) => i.inviteToken !== inviteToken));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to revoke invite");
+    }
+  }
+
+  function toggleGroup(groupId: string) {
+    setSelectedGroupIds((prev) =>
+      prev.includes(groupId) ? prev.filter((id) => id !== groupId) : [...prev, groupId],
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Send invite form */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Send Invite</CardTitle>
+          <CardDescription>
+            Email a magic link to invite someone to this workspace. New signups go through Cognito;
+            existing users accept the invite from the link.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={sendInvite} className="flex flex-col gap-4">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-muted-foreground">Email</label>
+                <Input
+                  type="email"
+                  placeholder="alice@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-muted-foreground">Role</label>
+                <select
+                  value={role}
+                  onChange={(e) => setRole(e.target.value)}
+                  className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm"
+                >
+                  <option value="member">member</option>
+                  <option value="admin">admin</option>
+                </select>
+              </div>
+            </div>
+
+            {groups.length > 0 && (
+              <div className="flex flex-col gap-1">
+                <label className="text-xs font-medium text-muted-foreground">
+                  Initial Groups (optional)
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {groups.map((g) => (
+                    <button
+                      key={g.groupId}
+                      type="button"
+                      onClick={() => toggleGroup(g.groupId)}
+                      className={cn(
+                        "rounded border px-2 py-1 text-xs transition-colors",
+                        selectedGroupIds.includes(g.groupId)
+                          ? "border-foreground bg-foreground text-background"
+                          : "border-border text-muted-foreground hover:border-foreground",
+                      )}
+                    >
+                      {g.name}
+                    </button>
+                  ))}
+                </div>
               </div>
             )}
-          </CardContent>
-        </Card>
-      </div>
+
+            {sendError && <p className="text-sm text-destructive">{sendError}</p>}
+            {sendSuccess && <p className="text-sm text-green-600">{sendSuccess}</p>}
+            <Button
+              type="submit"
+              disabled={sending || !email.trim()}
+              className="self-start"
+            >
+              {sending ? "Sending…" : "Send Invite"}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* Pending invites */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Pending Invites</CardTitle>
+          <CardDescription>
+            {loading ? "Loading…" : `${invites.length} pending invite(s)`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {error && <p className="text-sm text-destructive">{error}</p>}
+          {!loading && invites.length === 0 && (
+            <p className="text-sm text-muted-foreground">No pending invites.</p>
+          )}
+          {invites.length > 0 && (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-xs text-muted-foreground">
+                    <th className="pb-2 text-left font-medium">Email</th>
+                    <th className="pb-2 pr-4 text-left font-medium">Role</th>
+                    <th className="pb-2 pr-4 text-left font-medium">Groups</th>
+                    <th className="pb-2 pr-4 text-left font-medium">Expires</th>
+                    <th className="pb-2" />
+                  </tr>
+                </thead>
+                <tbody>
+                  {invites.map((inv) => (
+                    <tr key={inv.inviteToken} className="border-b last:border-0">
+                      <td className="py-2 pr-4">{inv.email}</td>
+                      <td className="py-2 pr-4">
+                        <Badge variant={inv.role === "admin" ? "default" : "secondary"}>
+                          {inv.role}
+                        </Badge>
+                      </td>
+                      <td className="py-2 pr-4 text-xs text-muted-foreground">
+                        {inv.groupIds.length > 0 ? inv.groupIds.join(", ") : "—"}
+                      </td>
+                      <td className="py-2 pr-4 text-xs text-muted-foreground">
+                        {new Date(inv.expiresAt * 1000).toLocaleDateString()}
+                      </td>
+                      <td className="py-2">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => revokeInvite(inv.inviteToken)}
+                        >
+                          Revoke
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }
@@ -416,7 +969,6 @@ function AuditTab({ token }: { token: string }) {
   const [entries, setEntries] = React.useState<AuditEntry[]>([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState("");
-  const [filterCaller, setFilterCaller] = React.useState("");
   const [filterProvider, setFilterProvider] = React.useState("");
 
   async function load() {
@@ -424,7 +976,6 @@ function AuditTab({ token }: { token: string }) {
     setError("");
     try {
       const params = new URLSearchParams({ limit: "100" });
-      if (filterCaller.trim()) params.set("callerId", filterCaller.trim());
       if (filterProvider.trim()) params.set("provider", filterProvider.trim());
       const res = await gatewayFetch(`/audit?${params}`, token);
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
@@ -449,19 +1000,9 @@ function AuditTab({ token }: { token: string }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Filters */}
       <Card>
         <CardContent className="pt-4">
           <div className="flex flex-wrap items-end gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-muted-foreground">Caller ID</label>
-              <Input
-                placeholder="Filter by caller…"
-                value={filterCaller}
-                onChange={(e) => setFilterCaller(e.target.value)}
-                className="w-56"
-              />
-            </div>
             <div className="flex flex-col gap-1">
               <label className="text-xs font-medium text-muted-foreground">Provider</label>
               <Input
@@ -481,9 +1022,7 @@ function AuditTab({ token }: { token: string }) {
       <Card>
         <CardHeader>
           <CardTitle>Recent Tool Calls</CardTitle>
-          <CardDescription>
-            {entries.length} event(s) — most recent first
-          </CardDescription>
+          <CardDescription>{entries.length} event(s) — most recent first</CardDescription>
         </CardHeader>
         <CardContent>
           {loading && <p className="text-sm text-muted-foreground">Loading…</p>}
@@ -497,7 +1036,6 @@ function AuditTab({ token }: { token: string }) {
                 <thead>
                   <tr className="border-b text-xs text-muted-foreground">
                     <th className="pb-2 pr-4 text-left font-medium">Timestamp</th>
-                    <th className="pb-2 pr-4 text-left font-medium">Caller</th>
                     <th className="pb-2 pr-4 text-left font-medium">Provider</th>
                     <th className="pb-2 pr-4 text-left font-medium">Operation</th>
                     <th className="pb-2 pr-4 text-left font-medium">Result</th>
@@ -507,16 +1045,13 @@ function AuditTab({ token }: { token: string }) {
                 <tbody>
                   {entries.map((e) => (
                     <tr key={e.id} className="border-b last:border-0">
-                      <td className="py-2 pr-4 text-muted-foreground text-xs whitespace-nowrap">
+                      <td className="py-2 pr-4 text-xs text-muted-foreground whitespace-nowrap">
                         {new Date(e.ts).toLocaleString()}
-                      </td>
-                      <td className="py-2 pr-4 font-mono text-xs truncate max-w-[140px]">
-                        {e.callerId}
                       </td>
                       <td className="py-2 pr-4 font-mono">{e.provider}</td>
                       <td className="py-2 pr-4 font-mono">{e.operation}</td>
                       <td className="py-2 pr-4">{resultBadge(e.result)}</td>
-                      <td className="py-2 text-muted-foreground text-xs">
+                      <td className="py-2 text-xs text-muted-foreground">
                         {e.durationMs != null ? `${e.durationMs}ms` : "—"}
                       </td>
                     </tr>
@@ -530,4 +1065,3 @@ function AuditTab({ token }: { token: string }) {
     </div>
   );
 }
-
