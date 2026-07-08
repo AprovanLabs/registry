@@ -27,6 +27,8 @@ export interface AuditEntry {
   durationMs?: number;
   /** Human-readable label derived from status */
   result: "success" | "forbidden" | "error";
+  /** MCP meta-tool name when the call came via the MCP transport */
+  mcp_tool_name?: string;
 }
 
 export interface IAuditStore {
@@ -118,6 +120,7 @@ export class AuditStoreDynamodb implements IAuditStore {
       status: entry.status,
     };
     if (entry.durationMs !== undefined) item["durationMs"] = entry.durationMs;
+    if (entry.mcp_tool_name !== undefined) item["mcp_tool_name"] = entry.mcp_tool_name;
 
     getDynamoDocClient()
       .send(new PutCommand({ TableName: this.tableName, Item: item }))
@@ -192,6 +195,7 @@ export class AuditStoreDynamodb implements IAuditStore {
       status: item["status"] as number,
       durationMs: item["durationMs"] as number | undefined,
       result: item["result"] as "success" | "forbidden" | "error",
+      mcp_tool_name: item["mcp_tool_name"] as string | undefined,
     };
   }
 }
