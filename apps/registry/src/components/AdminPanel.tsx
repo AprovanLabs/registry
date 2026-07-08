@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { clearSession, loadSession } from "@/lib/gateway";
 import { cn } from "@/lib/utils";
+import { McpInstallWidget } from "@/components/McpInstallWidget";
 
 // ---------------------------------------------------------------------------
 // Config
@@ -79,11 +80,12 @@ function gatewayFetch(
 // Tabs
 // ---------------------------------------------------------------------------
 
-type Tab = "members" | "audit";
+type Tab = "members" | "audit" | "install";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "members", label: "Members & Permissions" },
   { id: "audit", label: "Audit Log" },
+  { id: "install", label: "Install via MCP" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -92,12 +94,16 @@ const TABS: { id: Tab; label: string }[] = [
 
 export function AdminPanel() {
   const [token, setToken] = React.useState<string | null>(null);
+  const [workspaceId, setWorkspaceId] = React.useState<string | null>(null);
   const [activeTab, setActiveTab] = React.useState<Tab>("members");
 
   // Restore the gateway session (Cognito access token) on mount.
   React.useEffect(() => {
     const session = loadSession();
-    if (session) setToken(session.token);
+    if (session) {
+      setToken(session.token);
+      setWorkspaceId(session.workspaceId);
+    }
   }, []);
 
   function handleDisconnect() {
@@ -146,6 +152,9 @@ export function AdminPanel() {
 
       {activeTab === "members" && <MembersTab token={token} />}
       {activeTab === "audit" && <AuditTab token={token} />}
+      {activeTab === "install" && workspaceId && (
+        <McpInstallWidget workspaceId={workspaceId} />
+      )}
     </div>
   );
 }
