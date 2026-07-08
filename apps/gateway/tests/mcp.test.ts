@@ -15,9 +15,9 @@ import { createApp } from "../src/app.js";
 import { resetAuditStore } from "../src/audit.js";
 import { resetCredentialStore } from "../src/credentials.js";
 import { resetExecutor, setExecutor, type IsolateExecutor } from "../src/isolate.js";
+import { resetMcpCatalog } from "../src/mcp/server.js";
 import { resetCognitoVerifier } from "../src/middleware/auth.js";
 import { resetRateLimiters } from "../src/middleware/rateLimitMiddleware.js";
-import { resetMcpCatalog } from "../src/mcp/server.js";
 import { resetPermissionStore } from "../src/permissions.js";
 import { setupAuth, bearer } from "./helpers.js";
 
