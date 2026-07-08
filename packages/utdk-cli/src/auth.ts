@@ -1,14 +1,18 @@
 /**
  * Auth resolution for @utdk/cli.
  *
- * Reads a provider's `utdk.auth` config from its package.json and resolves
- * credentials from environment variables.  Resolution order:
- *   1. UTDK_GATEWAY_URL + UTDK_GATEWAY_TOKEN  (gateway proxy mode)
- *   2. api_key template env var  (e.g. GITHUB_TOKEN from "Bearer ${GITHUB_TOKEN}")
- *   3. ${PROVIDER_NAME}_TOKEN   (generic bearer fallback, also covers oauth2 flows)
+ * Resolution order for gateway proxy mode:
+ *   1. UTDK_GATEWAY_TOKEN env var — "paste your access token" for CI/scripting
+ *   2. Cached Cognito session (from `utdk login`) — transparently refreshed
+ *
+ * When no UTDK_GATEWAY_URL is set, falls back to per-provider auth:
+ *   3. api_key template env var (e.g. GITHUB_TOKEN from "Bearer ${GITHUB_TOKEN}")
+ *   4. ${PROVIDER_NAME}_TOKEN generic bearer fallback
  */
 
 import type { AuthConfig } from "./providers.js";
+import { getCognitoConfig, refreshAccessToken } from "./cognito.js";
+import { isExpired, readTokens, writeTokens } from "./token-cache.js";
 
 /** Minimal interface matching AuthProvider in @utdk/common/auth */
 export type AuthProvider = {
@@ -47,6 +51,44 @@ function resolveTemplate(template: string): string | undefined {
 }
 
 /**
+ * AuthProvider that reads the Cognito token cache and refreshes transparently.
+ * Used when UTDK_GATEWAY_URL is set but UTDK_GATEWAY_TOKEN is not.
+ */
+function cachedCognitoAuth(): AuthProvider {
+  return {
+    async authenticate(headers: Record<string, string>): Promise<void> {
+      let cached = readTokens();
+      if (!cached) {
+        throw new Error(
+          "Not logged in. Run: utdk login\n" +
+            "Or set UTDK_GATEWAY_TOKEN for CI/scripting.",
+        );
+      }
+
+      if (isExpired(cached)) {
+        const config = getCognitoConfig();
+        if (!config) {
+          throw new Error(
+            "Access token expired and UTDK_COGNITO_DOMAIN / UTDK_COGNITO_CLIENT_ID are not set.\n" +
+              "Run: utdk login",
+          );
+        }
+        try {
+          cached = await refreshAccessToken(config, cached.refreshToken);
+        } catch (err) {
+          throw new Error(
+            `Failed to refresh access token: ${err instanceof Error ? err.message : String(err)}\n` +
+              "Run: utdk login",
+          );
+        }
+      }
+
+      headers["Authorization"] = `Bearer ${cached.accessToken}`;
+    },
+  };
+}
+
+/**
  * Build an AuthProvider from the provider's auth configs and env vars.
  * Returns undefined if no credentials are available (unauthenticated request).
  */
@@ -54,14 +96,23 @@ export function resolveAuth(
   providerName: string,
   authConfigs: AuthConfig[],
 ): AuthProvider | undefined {
-  // 1. Gateway proxy mode
   const gatewayUrl = process.env["UTDK_GATEWAY_URL"];
+
+  // 1. Gateway proxy mode — static token (CI/scripting)
   const gatewayToken = process.env["UTDK_GATEWAY_TOKEN"];
   if (gatewayUrl && gatewayToken) {
     return bearerAuth(gatewayToken);
   }
 
-  // 2. Per-config resolution
+  // 2. Gateway proxy mode — cached Cognito session
+  if (gatewayUrl) {
+    const cached = readTokens();
+    if (cached) {
+      return cachedCognitoAuth();
+    }
+  }
+
+  // 3. Per-config resolution
   for (const config of authConfigs) {
     if (config.auth_type === "api_key") {
       const template = config.api_key ?? "";
@@ -89,7 +140,7 @@ export function resolveAuth(
     }
   }
 
-  // 3. Generic fallback: ${PROVIDER}_TOKEN
+  // 4. Generic fallback: ${PROVIDER}_TOKEN
   const upperProvider = providerName.toUpperCase().replace(/-/g, "_");
   const fallback =
     process.env[`${upperProvider}_TOKEN`] ??
