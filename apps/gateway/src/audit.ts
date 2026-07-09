@@ -1,10 +1,8 @@
 /**
- * Audit log for gateway tool calls.
+ * Audit log for gateway tool calls — DynamoDB backend (30-day TTL).
  *
- * Two backends share `IAuditStore`:
- *   - `AuditStore`         — ring-buffer in-memory store (local dev / tests)
- *   - `AuditStoreDynamodb` — 30-day TTL persistent store, selected via
- *                            `GATEWAY_STORE_BACKEND=dynamodb`
+ * Per APR-323, the legacy in-memory ring-buffer backend has been removed.
+ * `AuditStoreDynamodb` is now the sole implementation.
  */
 
 import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
@@ -27,6 +25,8 @@ export interface AuditEntry {
   durationMs?: number;
   /** Human-readable label derived from status */
   result: "success" | "forbidden" | "error";
+  /** MCP meta-tool name when the call came via the MCP transport */
+  mcp_tool_name?: string;
 }
 
 export interface IAuditStore {
@@ -39,48 +39,6 @@ export interface IAuditStore {
     callerId?: string;
     provider?: string;
   }): Promise<AuditEntry[]>;
-}
-
-// ---------------------------------------------------------------------------
-// In-memory backend
-// ---------------------------------------------------------------------------
-
-const MAX_ENTRIES = 500;
-
-export class AuditStore implements IAuditStore {
-  private readonly entries: AuditEntry[] = [];
-
-  append(entry: Omit<AuditEntry, "id" | "ts" | "result">): void {
-    const id = crypto.randomUUID();
-    const ts = new Date().toISOString();
-    const result =
-      entry.status === 403 ? "forbidden" : entry.status < 400 ? "success" : "error";
-
-    this.entries.push({ id, ts, result, ...entry });
-
-    if (this.entries.length > MAX_ENTRIES) {
-      this.entries.splice(0, this.entries.length - MAX_ENTRIES);
-    }
-  }
-
-  recent(opts: {
-    workspaceId: string;
-    limit?: number;
-    callerId?: string;
-    provider?: string;
-  }): Promise<AuditEntry[]> {
-    const { workspaceId, limit = 100, callerId, provider } = opts;
-
-    const results: AuditEntry[] = [];
-    for (let i = this.entries.length - 1; i >= 0 && results.length < limit; i--) {
-      const e = this.entries[i]!;
-      if (e.workspaceId !== workspaceId) continue;
-      if (callerId !== undefined && e.callerId !== callerId) continue;
-      if (provider !== undefined && e.provider !== provider) continue;
-      results.push(e);
-    }
-    return Promise.resolve(results);
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -118,6 +76,7 @@ export class AuditStoreDynamodb implements IAuditStore {
       status: entry.status,
     };
     if (entry.durationMs !== undefined) item["durationMs"] = entry.durationMs;
+    if (entry.mcp_tool_name !== undefined) item["mcp_tool_name"] = entry.mcp_tool_name;
 
     getDynamoDocClient()
       .send(new PutCommand({ TableName: this.tableName, Item: item }))
@@ -192,6 +151,7 @@ export class AuditStoreDynamodb implements IAuditStore {
       status: item["status"] as number,
       durationMs: item["durationMs"] as number | undefined,
       result: item["result"] as "success" | "forbidden" | "error",
+      mcp_tool_name: item["mcp_tool_name"] as string | undefined,
     };
   }
 }
@@ -202,13 +162,10 @@ export class AuditStoreDynamodb implements IAuditStore {
 
 let _store: IAuditStore | undefined;
 
+/** Resolve the singleton audit store (always DynamoDB). */
 export function getAuditStore(): IAuditStore {
   if (!_store) {
-    if (process.env["GATEWAY_STORE_BACKEND"] === "dynamodb") {
-      _store = new AuditStoreDynamodb();
-    } else {
-      _store = new AuditStore();
-    }
+    _store = new AuditStoreDynamodb();
   }
   return _store;
 }

@@ -5,12 +5,9 @@
  *
  * Environment variables:
  *   GATEWAY_PORT                 — HTTP port (default: 4000)
- *   GATEWAY_WORKSPACE_KEY        — AES-256 encryption key for credentials (required in production)
  *   GATEWAY_COGNITO_USER_POOL_ID  — Cognito user pool id for access-token verification (required)
  *   GATEWAY_COGNITO_CLIENT_ID    — Cognito app client id for access-token verification (required)
  *   GATEWAY_AWS_REGION           — AWS region for Cognito (falls back to AWS_REGION, then us-east-1)
- *   GATEWAY_STORE_PATH           — Path for persistent credential storage (optional)
- *   GATEWAY_PERMISSIONS_PATH     — Path for persistent permission storage (optional)
  *   GATEWAY_RATE_LIMIT_RPS       — Requests per second per caller+provider (default: 10)
  *   GATEWAY_RATE_LIMIT_BURST     — Burst capacity (default: 20)
  *   OTEL_EXPORTER_OTLP_ENDPOINT  — OTLP endpoint for telemetry (optional)
@@ -41,14 +38,6 @@ await configureTelemetry({
   exporter: telemetryExporter,
   tracerName: "@aprovan/gateway",
 });
-
-// ---------------------------------------------------------------------------
-// Warn if running with insecure defaults
-// ---------------------------------------------------------------------------
-
-if (!process.env["GATEWAY_WORKSPACE_KEY"]) {
-  process.stderr.write("[gateway] WARNING: GATEWAY_WORKSPACE_KEY not set; using insecure dev key\n");
-}
 
 // ---------------------------------------------------------------------------
 // Hydrate the Cognito JWKS so the first request does not pay the latency.

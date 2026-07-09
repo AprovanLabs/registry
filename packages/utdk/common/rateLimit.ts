@@ -42,6 +42,20 @@ export class RateLimiter {
   }
 
   /**
+   * Attempt to consume a token without blocking.
+   * Returns true if a token was available (and consumed), false if the bucket
+   * is empty. Callers can use this to return 429 rather than wait.
+   */
+  tryAcquire(): boolean {
+    this.refill();
+    if (this.tokens >= 1) {
+      this.tokens -= 1;
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * Wait until a token is available, then consume it.
    * Also respects any Retry-After delay that was previously recorded.
    */

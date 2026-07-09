@@ -1,27 +1,22 @@
 /**
- * Per-tool permission grants.
+ * Per-tool permission grants — DynamoDB single-table backend.
  *
- * Workspace admins configure which tool operations a caller (identified by callerId)
- * may invoke. The permission store is in-memory with optional file persistence.
+ * Per APR-323, the legacy in-memory/file backend has been removed.
+ * `PermissionStoreDynamodb` is now the sole implementation.
  *
  * A permission entry grants `callerId` the right to call `provider:operation`
  * (or `provider:*` as a wildcard for all operations of a provider).
  *
- * Two interchangeable backends share one async `IPermissionStore` contract:
- *   - In-memory (+ optional file persistence). Default.
- *   - DynamoDB single-table (`PermissionStoreDynamodb`), selected with
- *     `GATEWAY_STORE_BACKEND=dynamodb`. `check(wsId, caller, provider, op)` is a
- *     `BatchGetItem` of the exact-op item `PERM#<caller>#<provider>#<op>` and the
- *     wildcard item `PERM#<caller>#<provider>#*` (two items, one round-trip).
- *     `revoke(wsId, permId)` resolves the permId → tuple via a `PERMID#<permId>`
- *     pointer item, then `TransactWriteItems` both items away.
+ * `check(wsId, caller, provider, op)` is a `BatchGetItem` of the exact-op item
+ * `PERM#<caller>#<provider>#<op>` and the wildcard item
+ * `PERM#<caller>#<provider>#*` (two items, one round-trip).
+ * `revoke(wsId, permId)` resolves the permId → tuple via a `PERMID#<permId>`
+ * pointer item, then `TransactWriteItems` both items away.
  *
- * The public API is async so a DynamoDB backend can satisfy it; the in-memory
- * backend is async too for a shared contract.
+ * The public API is async so callers `await` every method.
  */
 
 import { randomBytes } from "crypto";
-import { readFileSync, writeFileSync, existsSync } from "fs";
 import {
   BatchGetCommand,
   GetCommand,
@@ -53,14 +48,9 @@ export interface GrantInput {
 }
 
 // ---------------------------------------------------------------------------
-// Store interface (shared by both backends)
+// Store interface
 // ---------------------------------------------------------------------------
 
-/**
- * Backend-agnostic permission store. Methods are async so a DynamoDB backend
- * can satisfy the same contract as the in-memory store. Callers `await` every
- * method; the in-memory backend resolves immediately.
- */
 export interface IPermissionStore {
   grant(workspaceId: string, input: GrantInput): Promise<Permission>;
   revoke(workspaceId: string, id: string): Promise<boolean>;
@@ -75,99 +65,6 @@ export interface IPermissionStore {
 
 function makeId(): string {
   return randomBytes(12).toString("hex");
-}
-
-// ---------------------------------------------------------------------------
-// In-memory store
-// ---------------------------------------------------------------------------
-
-interface SerializedStore {
-  permissions: Permission[];
-}
-
-export class PermissionStore implements IPermissionStore {
-  private readonly store: Map<string, Permission> = new Map();
-  private readonly storePath: string | undefined;
-
-  constructor(storePath?: string) {
-    this.storePath = storePath;
-    if (storePath && existsSync(storePath)) {
-      this.load(storePath);
-    }
-  }
-
-  private load(path: string): void {
-    try {
-      const raw = readFileSync(path, "utf8");
-      const data = JSON.parse(raw) as SerializedStore;
-      for (const perm of data.permissions) {
-        this.store.set(perm.id, perm);
-      }
-    } catch {
-      // Start fresh on parse error
-    }
-  }
-
-  private persist(): void {
-    if (!this.storePath) return;
-    const data: SerializedStore = { permissions: Array.from(this.store.values()) };
-    writeFileSync(this.storePath, JSON.stringify(data, null, 2), "utf8");
-  }
-
-  // ---------------------------------------------------------------------------
-  // Public API
-  // ---------------------------------------------------------------------------
-
-  grant(workspaceId: string, input: GrantInput): Promise<Permission> {
-    const perm: Permission = {
-      id: makeId(),
-      workspaceId,
-      callerId: input.callerId,
-      provider: input.provider,
-      operation: input.operation,
-      grantedAt: new Date().toISOString(),
-      grantedBy: input.grantedBy,
-    };
-    this.store.set(perm.id, perm);
-    this.persist();
-    return Promise.resolve(perm);
-  }
-
-  revoke(workspaceId: string, id: string): Promise<boolean> {
-    const perm = this.store.get(id);
-    if (!perm || perm.workspaceId !== workspaceId) return Promise.resolve(false);
-    this.store.delete(id);
-    this.persist();
-    return Promise.resolve(true);
-  }
-
-  list(workspaceId: string, callerId?: string): Promise<Permission[]> {
-    const results: Permission[] = [];
-    for (const perm of this.store.values()) {
-      if (perm.workspaceId !== workspaceId) continue;
-      if (callerId !== undefined && perm.callerId !== callerId) continue;
-      results.push(perm);
-    }
-    return Promise.resolve(results);
-  }
-
-  /**
-   * Check whether `callerId` is allowed to call `provider:operation`.
-   *
-   * A permission grants access if:
-   * - `perm.callerId === callerId`
-   * - `perm.provider === provider`
-   * - `perm.operation === operation` OR `perm.operation === "*"`
-   */
-  check(workspaceId: string, callerId: string, provider: string, operation: string): Promise<boolean> {
-    for (const perm of this.store.values()) {
-      if (perm.workspaceId !== workspaceId) continue;
-      if (perm.callerId !== callerId) continue;
-      if (perm.provider !== provider) continue;
-      if (perm.operation === operation || perm.operation === "*") return Promise.resolve(true);
-    }
-    return Promise.resolve(false);
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -359,20 +256,10 @@ export class PermissionStoreDynamodb implements IPermissionStore {
 
 let _store: IPermissionStore | undefined;
 
-/**
- * Resolve the singleton permission store. The backend is selected by the
- * `GATEWAY_STORE_BACKEND` env var: `dynamodb` uses `PermissionStoreDynamodb`
- * (DynamoDB single-table, BatchGet check, permId pointer for revoke); any other
- * value (or unset) uses the in-memory store with optional file persistence.
- */
+/** Resolve the singleton permission store (always DynamoDB). */
 export function getPermissionStore(): IPermissionStore {
   if (!_store) {
-    if (process.env["GATEWAY_STORE_BACKEND"] === "dynamodb") {
-      _store = new PermissionStoreDynamodb();
-    } else {
-      const storePath = process.env["GATEWAY_PERMISSIONS_PATH"];
-      _store = new PermissionStore(storePath);
-    }
+    _store = new PermissionStoreDynamodb();
   }
   return _store;
 }

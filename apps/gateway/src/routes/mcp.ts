@@ -1,23 +1,24 @@
 /**
- * MCP workspace router — /mcp/:workspaceId
+ * MCP Streamable-HTTP transport route.
  *
- * Provides the gateway endpoint that MCP clients connect to. Auth follows RFC
- * 6750 §3 and §3.1: 401 responses include a WWW-Authenticate header pointing
- * at the RFC 9728 resource metadata document so OAuth-aware clients can
- * auto-discover Cognito and complete the flow without a hand-fed token.
+ * POST /mcp/:workspaceId
  *
- * Phase 2 will replace the stub handler with the real streamable-HTTP MCP
- * session logic. This file owns the auth layer and the error envelope; the
- * handler is intentionally minimal for now.
+ * Exposes four Aprovan meta-tools (`list_tools`, `search_tools`, `tool_info`,
+ * `call_tool`) via the MCP Streamable-HTTP protocol. Auth follows RFC 6750
+ * §3.1: 401 responses include a WWW-Authenticate header with resource_metadata
+ * pointing at the RFC 9728 discovery document for the workspace.
  */
 
+import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
 import type { Context, Next } from "hono";
 import { Hono } from "hono";
-import { getMembership } from "../memberships.js";
 import {
   CognitoNotConfiguredError,
   verifyAccessToken,
 } from "../middleware/auth.js";
+import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
+import { getMembership } from "../memberships.js";
+import { buildMcpServer } from "../mcp/server.js";
 import { getCurrentWorkspace } from "../sessions.js";
 import { listUserGroupIds } from "../userGroups.js";
 
@@ -41,8 +42,9 @@ function buildMetadataUrl(host: string, workspaceId: string): string {
 // ---------------------------------------------------------------------------
 // MCP-specific auth middleware
 //
-// Mirrors requireAuth but emits RFC 6750-compliant WWW-Authenticate headers on
-// 401 and 403 so MCP clients can initiate the OAuth discovery flow.
+// Emits RFC 6750-compliant WWW-Authenticate headers on 401 (with
+// resource_metadata pointing at the RFC 9728 discovery document) and 403.
+// Also checks that the URL workspace matches the principal's active workspace.
 // ---------------------------------------------------------------------------
 
 async function requireMcpAuth(c: Context, next: Next): Promise<Response | void> {
@@ -89,6 +91,11 @@ async function requireMcpAuth(c: Context, next: Next): Promise<Response | void> 
     );
   }
 
+  // Workspace mismatch check — URL param must match the token's active workspace.
+  if (workspaceId && activeWorkspaceId !== workspaceId) {
+    return c.json({ error: "workspace_mismatch" }, 403);
+  }
+
   // Membership in the active workspace.
   let membership;
   try {
@@ -121,10 +128,25 @@ async function requireMcpAuth(c: Context, next: Next): Promise<Response | void> 
 }
 
 // ---------------------------------------------------------------------------
-// Routes
+// Middleware chain: auth (with workspace mismatch check) → rate limit
 // ---------------------------------------------------------------------------
 
-mcpRouter.all("/:workspaceId", requireMcpAuth, (c) => {
-  // Phase 2 will replace this with the real streamable-HTTP MCP session.
-  return c.json({ error: "not_implemented", message: "MCP endpoint not yet available" }, 501);
+mcpRouter.use("/:workspaceId", requireMcpAuth, rateLimitByUserId);
+
+// ---------------------------------------------------------------------------
+// Handler — stateless mode: new Server + transport per request
+// ---------------------------------------------------------------------------
+
+mcpRouter.all("/:workspaceId", async (c) => {
+  const principal = c.get("principal");
+
+  const transport = new WebStandardStreamableHTTPServerTransport({
+    sessionIdGenerator: undefined,
+    enableJsonResponse: true,
+  });
+
+  const server = await buildMcpServer(principal);
+  await server.connect(transport);
+
+  return transport.handleRequest(c.req.raw);
 });
