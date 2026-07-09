@@ -16,6 +16,12 @@ export default {
       "@utdk/common": new URL("../../packages/utdk/common/index.ts", import.meta.url).pathname,
       "@utdk/mcp-core": new URL("../../packages/mcp-core/src/index.ts", import.meta.url).pathname,
       "utdk/registry.json": new URL("../../packages/utdk/registry.json", import.meta.url).pathname,
+      // Vite 5.4.x does not resolve wildcard subpath exports with directory separators;
+      // alias the deep import directly to the dist file.
+      "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js": new URL(
+        "node_modules/@modelcontextprotocol/sdk/dist/esm/server/webStandardStreamableHttp.js",
+        import.meta.url,
+      ).pathname,
     },
   }),
 };
