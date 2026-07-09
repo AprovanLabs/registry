@@ -12,12 +12,12 @@ import { CheckCircleIcon, XCircleIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { getAccessToken } from "@/lib/auth";
 import {
   GatewayError,
   addCredential,
   clearOAuthPending,
   loadOAuthPending,
-  loadSession,
 } from "@/lib/gateway";
 import { withBasePath } from "@/lib/site";
 
@@ -61,8 +61,8 @@ export function OAuthCallback() {
         return;
       }
 
-      const session = loadSession();
-      if (!session) {
+      const token = await getAccessToken();
+      if (!token) {
         setStatus("error");
         setMessage("Your session has expired. Please sign in again.");
         return;
@@ -71,7 +71,7 @@ export function OAuthCallback() {
       setProvider(pending.provider);
 
       try {
-        await addCredential(session.token, {
+        await addCredential(token, {
           provider: pending.provider,
           label: pending.label,
           payload: {
