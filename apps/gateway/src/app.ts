@@ -51,6 +51,7 @@ export function createApp(): Hono {
   app.route("/groups", groupsRouter);
   app.route("/permissions", permissionsRouter);
   app.route("/tools", toolsRouter);
+  app.route("/mcp", mcpRouter);
   app.route("/audit", auditRouter);
 
   // ---------------------------------------------------------------------------
