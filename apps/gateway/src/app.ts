@@ -11,7 +11,9 @@ import { auditRouter } from "./routes/audit.js";
 import { authRouter } from "./routes/auth.js";
 import { credentialsRouter } from "./routes/credentials.js";
 import { groupsRouter } from "./routes/groups.js";
+import { invitesRouter } from "./routes/invites.js";
 import { mcpRouter } from "./routes/mcp.js";
+import { membersRouter } from "./routes/members.js";
 import { oauthRouter } from "./routes/oauth.js";
 import { permissionsRouter } from "./routes/permissions.js";
 import { toolsRouter } from "./routes/tools.js";
@@ -49,9 +51,10 @@ export function createApp(): Hono {
   app.route("/oauth", oauthRouter);
   app.route("/credentials", credentialsRouter);
   app.route("/groups", groupsRouter);
+  app.route("/invites", invitesRouter);
+  app.route("/members", membersRouter);
   app.route("/permissions", permissionsRouter);
   app.route("/tools", toolsRouter);
-  app.route("/mcp", mcpRouter);
   app.route("/audit", auditRouter);
 
   // ---------------------------------------------------------------------------

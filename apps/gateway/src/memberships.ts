@@ -7,7 +7,7 @@
  * active workspace is one the caller is a member of.
  */
 
-import { GetCommand } from "@aws-sdk/lib-dynamodb";
+import { DeleteCommand, GetCommand, PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { getDynamoDocClient } from "./db/client.js";
 
 // ---------------------------------------------------------------------------
@@ -19,6 +19,7 @@ export interface MembershipRecord {
   userSub: string;
   /** Workspace-scoped role, e.g. "admin" | "member". */
   role?: string;
+  createdAt?: string;
 }
 
 // ---------------------------------------------------------------------------
@@ -48,4 +49,46 @@ export async function getMembership(
     }),
   );
   return result.Item as MembershipRecord | undefined;
+}
+
+/** List all membership rows for a workspace. */
+export async function listMembers(workspaceId: string): Promise<MembershipRecord[]> {
+  const client = getDynamoDocClient();
+  const result = await client.send(
+    new QueryCommand({
+      TableName: MEMBERSHIPS_TABLE(),
+      KeyConditionExpression: "workspaceId = :ws",
+      ExpressionAttributeValues: { ":ws": workspaceId },
+    }),
+  );
+  return (result.Items ?? []) as MembershipRecord[];
+}
+
+/** Add or upsert a membership row (used by invite accept). */
+export async function putMembership(record: MembershipRecord): Promise<void> {
+  const item: Record<string, string> = {
+    workspaceId: record.workspaceId,
+    userSub: record.userSub,
+    role: record.role ?? "member",
+    createdAt: record.createdAt ?? new Date().toISOString(),
+  };
+  await getDynamoDocClient().send(
+    new PutCommand({ TableName: MEMBERSHIPS_TABLE(), Item: item }),
+  );
+}
+
+/** Remove a membership row. Returns false if it did not exist. */
+export async function removeMember(
+  workspaceId: string,
+  userSub: string,
+): Promise<boolean> {
+  const existing = await getMembership(workspaceId, userSub);
+  if (!existing) return false;
+  await getDynamoDocClient().send(
+    new DeleteCommand({
+      TableName: MEMBERSHIPS_TABLE(),
+      Key: { workspaceId, userSub },
+    }),
+  );
+  return true;
 }
