@@ -25,9 +25,9 @@
  *   MEMBERSHIPS_TABLE_NAME — defaults to gateway-prd-use1-memberships
  */
 
+import { parseArgs } from "node:util";
 import { DynamoDBClient, ConditionalCheckFailedException } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { parseArgs } from "node:util";
 
 const { values: args } = parseArgs({
   options: {

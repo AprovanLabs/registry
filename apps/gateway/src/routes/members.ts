@@ -6,8 +6,8 @@
  */
 
 import { Hono } from "hono";
-import { requireAdmin, requireAuth } from "../middleware/auth.js";
 import { listMembers, removeMember } from "../memberships.js";
+import { requireAdmin, requireAuth } from "../middleware/auth.js";
 
 export const membersRouter = new Hono();
 

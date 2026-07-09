@@ -276,6 +276,8 @@ function buildGroupDocContent(
     "",
     `Import path: \`${packageSpecifier}\``,
     "",
+    "## Operations",
+    "",
     ...group.operations.flatMap((operation) => {
       const openApiOperation = getOperationFromPath(
         openApiDocument,

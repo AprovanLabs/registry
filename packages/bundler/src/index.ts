@@ -30,7 +30,6 @@ import {
   renderProviderMetadata,
   renderProviderPackageJson,
   renderProviderReadme,
-  renderProviderTypes,
   renderProviderTypesIndex,
   renderRootPackageEntry,
   renderRootPackageJson,

@@ -445,7 +445,7 @@ function GroupsTab({ token }: { token: string }) {
 // ---------------------------------------------------------------------------
 
 function GroupDetail({ token, group }: { token: string; group: Group }) {
-  const { groupId, workspaceId } = group;
+  const { groupId } = group;
 
   // Group users
   const [userSubs, setUserSubs] = React.useState<string[]>([]);
