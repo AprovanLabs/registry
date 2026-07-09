@@ -64,6 +64,27 @@ export async function listMembers(workspaceId: string): Promise<MembershipRecord
   return (result.Items ?? []) as MembershipRecord[];
 }
 
+/**
+ * List every workspace a user belongs to, via the `ByUserSub` GSI on
+ * `Memberships`. Used by `GET /session` to populate the workspace picker —
+ * the auth middleware cannot do this because it only resolves the *active*
+ * workspace.
+ */
+export async function listMembershipsForUser(
+  userSub: string,
+): Promise<MembershipRecord[]> {
+  const client = getDynamoDocClient();
+  const result = await client.send(
+    new QueryCommand({
+      TableName: MEMBERSHIPS_TABLE(),
+      IndexName: "ByUserSub",
+      KeyConditionExpression: "userSub = :us",
+      ExpressionAttributeValues: { ":us": userSub },
+    }),
+  );
+  return (result.Items ?? []) as MembershipRecord[];
+}
+
 /** Add or upsert a membership row (used by invite accept). */
 export async function putMembership(record: MembershipRecord): Promise<void> {
   const item: Record<string, string> = {

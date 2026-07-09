@@ -16,6 +16,7 @@ import { mcpRouter } from "./routes/mcp.js";
 import { membersRouter } from "./routes/members.js";
 import { oauthRouter } from "./routes/oauth.js";
 import { permissionsRouter } from "./routes/permissions.js";
+import { sessionRouter } from "./routes/session.js";
 import { toolsRouter } from "./routes/tools.js";
 import { wellKnownRouter } from "./routes/well-known.js";
 
@@ -47,6 +48,7 @@ export function createApp(): Hono {
   app.route("/.well-known", wellKnownRouter);
 
   app.route("/auth", authRouter);
+  app.route("/session", sessionRouter);
   app.route("/mcp", mcpRouter);
   app.route("/oauth", oauthRouter);
   app.route("/credentials", credentialsRouter);
