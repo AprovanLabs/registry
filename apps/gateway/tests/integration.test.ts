@@ -40,6 +40,8 @@ vi.mock("@aws-sdk/lib-dynamodb", () => ({
   QueryCommand: vi.fn((input: unknown) => ({ input })),
   PutCommand: vi.fn((input: unknown) => ({ input })),
   GetCommand: vi.fn((input: unknown) => ({ input })),
+  TransactWriteCommand: vi.fn((input: unknown) => ({ input })),
+  BatchGetCommand: vi.fn((input: unknown) => ({ input })),
 }));
 
 vi.mock("@aws-sdk/client-dynamodb", () => ({
@@ -79,10 +81,7 @@ const WORKSPACE_ID = "ws-test";
 // Setup
 // ---------------------------------------------------------------------------
 
-const TEST_WORKSPACE_KEY = "test-workspace-key-for-tests-only";
-
 beforeEach(() => {
-  process.env["GATEWAY_WORKSPACE_KEY"] = TEST_WORKSPACE_KEY;
   setupAuth({
     mockDdbSend,
     users: [
@@ -447,10 +446,10 @@ describe("POST /tools/:provider/:operation", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Credential encryption
+// Credential payload not exposed in list response
 // ---------------------------------------------------------------------------
 
-describe("Credential encryption", () => {
+describe("Credential payload not exposed in list response", () => {
   it("does not return plaintext credentials in list response", async () => {
     const app = createApp();
     const token = await getAdminToken(app);

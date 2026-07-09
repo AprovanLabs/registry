@@ -2,7 +2,8 @@
  * Rate limiting middleware.
  *
  * Applies token-bucket rate limiting per user (sub from JWT).
- * For non-enterprise accounts, limits are scoped per user ID.
+ * All gateway paths (REST tools + MCP) share the same per-user bucket so a
+ * caller that exhausts their budget via MCP is also blocked on the REST path.
  *
  * Configuration via env vars:
  *   GATEWAY_RATE_LIMIT_RPS    — requests per second (default: 10)
@@ -29,14 +30,17 @@ function getLimiter(key: string): RateLimiter {
 }
 
 /**
- * Rate limit per user id (sub from the resolved principal).
- * Expects `c.var.principal` (set by `requireAuth`).
+ * Rate limit per user id (sub from the resolved principal). Returns 429 when
+ * the per-user token bucket is exhausted. Shared by the REST tools path and
+ * the MCP path so both drain the same bucket.
  */
-export async function rateLimitByUserId(c: Context, next: Next): Promise<void> {
+export async function rateLimitByUserId(c: Context, next: Next): Promise<Response | void> {
   const principal = c.get("principal");
   const userId = principal?.sub ?? "anonymous";
   const limiter = getLimiter(userId);
-  await limiter.acquire();
+  if (!limiter.tryAcquire()) {
+    return c.json({ error: "rate_limit_exceeded" }, 429);
+  }
   await next();
 }
 
@@ -44,14 +48,16 @@ export async function rateLimitByUserId(c: Context, next: Next): Promise<void> {
  * Rate limit per callerId + provider combination (kept for backward compat).
  * @deprecated Use rateLimitByUserId for new routes.
  */
-export async function rateLimitByCallerAndProvider(c: Context, next: Next): Promise<void> {
+export async function rateLimitByCallerAndProvider(c: Context, next: Next): Promise<Response | void> {
   const principal = c.get("principal");
   const callerId = principal?.sub ?? "anonymous";
   const provider = c.req.param("provider") ?? "unknown";
   const key = `${callerId}:${provider}`;
 
   const limiter = getLimiter(key);
-  await limiter.acquire();
+  if (!limiter.tryAcquire()) {
+    return c.json({ error: "rate_limit_exceeded" }, 429);
+  }
 
   await next();
 }
