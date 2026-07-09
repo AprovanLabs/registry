@@ -9,7 +9,7 @@ interface Props {
 
 const {
   title,
-  description = "Browse published UTDK packages, copy package names, and inspect generated docs.",
+  description = "Browse published UTDK packages, copy package names, inspect generated docs, and connect MCP clients.",
 } = Astro.props;
 
 const currentPath = Astro.url.pathname;
@@ -31,6 +31,12 @@ const currentPath = Astro.url.pathname;
           Registry
         </a>
         <div class="flex items-center gap-4 ml-auto">
+          <a
+            class={`text-sm transition-colors ${currentPath.startsWith(withBasePath("/docs/mcp")) ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
+            href={withBasePath("/docs/mcp")}
+          >
+            MCP
+          </a>
           <a
             class={`text-sm transition-colors ${currentPath.startsWith(withBasePath("/account/credentials")) ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
             href={withBasePath("/account/credentials")}

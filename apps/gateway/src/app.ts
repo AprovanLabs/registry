@@ -12,10 +12,12 @@ import { authRouter } from "./routes/auth.js";
 import { credentialsRouter } from "./routes/credentials.js";
 import { groupsRouter } from "./routes/groups.js";
 import { invitesRouter } from "./routes/invites.js";
+import { mcpRouter } from "./routes/mcp.js";
 import { membersRouter } from "./routes/members.js";
 import { oauthRouter } from "./routes/oauth.js";
 import { permissionsRouter } from "./routes/permissions.js";
 import { toolsRouter } from "./routes/tools.js";
+import { wellKnownRouter } from "./routes/well-known.js";
 
 export function createApp(): Hono {
   const app = new Hono();
@@ -40,7 +42,12 @@ export function createApp(): Hono {
   // ---------------------------------------------------------------------------
   // Routes
   // ---------------------------------------------------------------------------
+
+  // Unauthenticated — must be mounted before requireAuth touches any prefix.
+  app.route("/.well-known", wellKnownRouter);
+
   app.route("/auth", authRouter);
+  app.route("/mcp", mcpRouter);
   app.route("/oauth", oauthRouter);
   app.route("/credentials", credentialsRouter);
   app.route("/groups", groupsRouter);

@@ -111,14 +111,14 @@ The MCP client stores the returned `refresh_token` in its install context for su
 | Variable | Default | Description |
 |---|---|---|
 | `GATEWAY_PORT` | `4000` | HTTP port |
-| `GATEWAY_WORKSPACE_KEY` | *(insecure dev key)* | AES-256 key for credential encryption |
 | `GATEWAY_COGNITO_USER_POOL_ID` | *(required)* | Cognito user pool id for access-token verification |
 | `GATEWAY_COGNITO_CLIENT_ID` | *(required)* | Cognito app client id for access-token verification |
 | `GATEWAY_AWS_REGION` | `AWS_REGION` → `us-east-1` | AWS region for Cognito |
-| `GATEWAY_STORE_PATH` | *(in-memory)* | Path for persistent credential storage |
-| `GATEWAY_PERMISSIONS_PATH` | *(in-memory)* | Path for persistent permission storage |
 | `GATEWAY_RATE_LIMIT_RPS` | `10` | Requests/second per caller+provider |
 | `GATEWAY_RATE_LIMIT_BURST` | `20` | Burst capacity |
+| `CREDENTIALS_TABLE` | `Credentials` | DynamoDB table name for credential storage |
+| `PERMISSIONS_TABLE` | `Permissions` | DynamoDB table name for permission storage |
+| `AUDIT_TABLE` | `Audit` | DynamoDB table name for audit log |
 | `PROVIDER_CACHE_SIZE` | `20` | Max providers held in the LRU provider module cache |
 | `TOOL_LIST_CACHE_TTL_MS` | `300000` (5 min) | Per-workspace TTL for the `GET /tools` tool-list cache |
 | `COGNITO_USER_POOL_ID` | *(required for DCR)* | Cognito user pool for DCR client provisioning |

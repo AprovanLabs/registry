@@ -40,6 +40,8 @@ vi.mock("@aws-sdk/lib-dynamodb", () => ({
   QueryCommand: vi.fn((input: unknown) => ({ input })),
   PutCommand: vi.fn((input: unknown) => ({ input })),
   GetCommand: vi.fn((input: unknown) => ({ input })),
+  TransactWriteCommand: vi.fn((input: unknown) => ({ input })),
+  BatchGetCommand: vi.fn((input: unknown) => ({ input })),
 }));
 
 vi.mock("@aws-sdk/client-dynamodb", () => ({
@@ -79,10 +81,7 @@ const WORKSPACE_ID = "ws-test";
 // Setup
 // ---------------------------------------------------------------------------
 
-const TEST_WORKSPACE_KEY = "test-workspace-key-for-tests-only";
-
 beforeEach(() => {
-  process.env["GATEWAY_WORKSPACE_KEY"] = TEST_WORKSPACE_KEY;
   setupAuth({
     mockDdbSend,
     users: [
@@ -126,6 +125,78 @@ async function getCallerToken(
 ): Promise<string> {
   return CALLER_TOKEN;
 }
+
+// ---------------------------------------------------------------------------
+// Workspace picker — POST /auth/sessions
+// ---------------------------------------------------------------------------
+
+describe("POST /auth/sessions", () => {
+  it("returns 401 without an Authorization header", async () => {
+    const app = createApp();
+    const res = await app.request("/auth/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ workspace_id: WORKSPACE_ID }),
+    });
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 401 with an invalid token", async () => {
+    const app = createApp();
+    const res = await app.request("/auth/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: "Bearer bad-token" },
+      body: JSON.stringify({ workspace_id: WORKSPACE_ID }),
+    });
+    expect(res.status).toBe(401);
+  });
+
+  it("returns 400 when workspace_id is missing", async () => {
+    const app = createApp();
+    const res = await app.request("/auth/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${ADMIN_TOKEN}` },
+      body: JSON.stringify({}),
+    });
+    expect(res.status).toBe(400);
+    const body = await res.json() as { code: string };
+    expect(body.code).toBe("workspace_not_selected");
+  });
+
+  it("returns 403 when user is not a member of the workspace", async () => {
+    mockDdbSend.mockImplementationOnce((cmd: { input?: Record<string, unknown> }) => {
+      const table = cmd.input?.["TableName"];
+      if (table === "Memberships") return Promise.resolve({});
+      return Promise.resolve({});
+    });
+    const app = createApp();
+    const res = await app.request("/auth/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${CALLER_TOKEN}` },
+      body: JSON.stringify({ workspace_id: "some-other-workspace" }),
+    });
+    expect(res.status).toBe(403);
+  });
+
+  it("returns 200 and persists the workspace selection when membership is valid", async () => {
+    mockDdbSend
+      .mockImplementationOnce(() =>
+        Promise.resolve({
+          Item: { workspaceId: WORKSPACE_ID, userSub: ADMIN_SUB, role: "admin" },
+        }),
+      )
+      .mockImplementationOnce(() => Promise.resolve({}));
+    const app = createApp();
+    const res = await app.request("/auth/sessions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${ADMIN_TOKEN}` },
+      body: JSON.stringify({ workspace_id: WORKSPACE_ID }),
+    });
+    expect(res.status).toBe(200);
+    const body = await res.json() as { workspace_id: string };
+    expect(body.workspace_id).toBe(WORKSPACE_ID);
+  });
+});
 
 // ---------------------------------------------------------------------------
 // Health check
@@ -320,6 +391,70 @@ describe("Permissions CRUD", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Groups — admin gate
+// ---------------------------------------------------------------------------
+
+describe("Groups admin gate", () => {
+  it("returns 403 when a non-admin member tries to create a group", async () => {
+    const app = createApp();
+    const token = await getCallerToken(app);
+    const res = await app.request("/groups", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ name: "My Group" }),
+    });
+    expect(res.status).toBe(403);
+  });
+
+  it("returns 403 when a non-admin member tries to list groups", async () => {
+    const app = createApp();
+    const token = await getCallerToken(app);
+    const res = await app.request("/groups", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    expect(res.status).toBe(403);
+  });
+
+  it("allows an admin to create a group", async () => {
+    mockDdbSend.mockImplementation((cmd: { input?: Record<string, unknown> }) => {
+      const table = cmd.input?.["TableName"];
+      if (table === "Sessions") {
+        const key = cmd.input?.["Key"] as Record<string, string> | undefined;
+        if (key?.["userSub"] === ADMIN_SUB) {
+          return Promise.resolve({
+            Item: { userSub: ADMIN_SUB, currentWorkspaceId: WORKSPACE_ID, expiresAt: Math.floor(Date.now() / 1000) + 3600 },
+          });
+        }
+        return Promise.resolve({});
+      }
+      if (table === "Memberships") {
+        const key = cmd.input?.["Key"] as Record<string, string> | undefined;
+        if (key?.["userSub"] === ADMIN_SUB && key?.["workspaceId"] === WORKSPACE_ID) {
+          return Promise.resolve({ Item: { workspaceId: WORKSPACE_ID, userSub: ADMIN_SUB, role: "admin" } });
+        }
+        return Promise.resolve({});
+      }
+      if (table === "UserGroups") return Promise.resolve({ Items: [] });
+      if (table === "Groups") return Promise.resolve({});
+      return Promise.resolve({});
+    });
+
+    const app = createApp();
+    const token = await getAdminToken(app);
+    const res = await app.request("/groups", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ name: "My Group" }),
+    });
+    expect(res.status).toBe(201);
+    const body = await res.json() as { name: string; groupId: string; workspaceId: string };
+    expect(body.name).toBe("My Group");
+    expect(body.workspaceId).toBe(WORKSPACE_ID);
+    expect(typeof body.groupId).toBe("string");
+  });
+});
+
+// ---------------------------------------------------------------------------
 // Tool proxy
 // ---------------------------------------------------------------------------
 
@@ -447,10 +582,10 @@ describe("POST /tools/:provider/:operation", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Credential encryption
+// Credential payload not exposed in list response
 // ---------------------------------------------------------------------------
 
-describe("Credential encryption", () => {
+describe("Credential payload not exposed in list response", () => {
   it("does not return plaintext credentials in list response", async () => {
     const app = createApp();
     const token = await getAdminToken(app);

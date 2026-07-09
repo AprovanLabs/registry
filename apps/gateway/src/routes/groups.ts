@@ -52,8 +52,7 @@ groupsRouter.use("*", requireAuth, requireAdmin);
 // ---------------------------------------------------------------------------
 
 groupsRouter.post("/", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
+  const { workspaceId } = c.get("principal");
 
   let body: unknown;
   try {
@@ -76,8 +75,7 @@ groupsRouter.post("/", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.get("/", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
+  const { workspaceId } = c.get("principal");
 
   const groups = await listGroups(workspaceId);
   return c.json({ groups });
@@ -102,8 +100,7 @@ groupsRouter.get("/:id", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.patch("/:id", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
+  const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -130,8 +127,7 @@ groupsRouter.patch("/:id", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.delete("/:id", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
+  const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
 
   const deleted = await deleteGroup(workspaceId, groupId);
@@ -174,8 +170,7 @@ groupsRouter.get("/:id/users", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.post("/:id/users", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
+  const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -202,8 +197,7 @@ groupsRouter.post("/:id/users", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.delete("/:id/users", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
+  const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -246,8 +240,7 @@ groupsRouter.get("/:id/prefix-grants", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.post("/:id/prefix-grants", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
+  const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -274,8 +267,7 @@ groupsRouter.post("/:id/prefix-grants", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.delete("/:id/prefix-grants", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
+  const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -318,8 +310,7 @@ groupsRouter.get("/:id/tool-grants", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.post("/:id/tool-grants", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
+  const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
 
   let body: unknown;
@@ -349,8 +340,7 @@ groupsRouter.post("/:id/tool-grants", async (c) => {
 // ---------------------------------------------------------------------------
 
 groupsRouter.delete("/:id/tool-grants", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
+  const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
 
   let body: unknown;

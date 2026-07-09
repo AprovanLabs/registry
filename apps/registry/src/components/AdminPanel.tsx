@@ -18,6 +18,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { clearSession, loadSession } from "@/lib/gateway";
 import { cn } from "@/lib/utils";
+import { McpInstallWidget } from "@/components/McpInstallWidget";
 
 // ---------------------------------------------------------------------------
 // Config
@@ -100,13 +101,14 @@ function gatewayFetch(path: string, token: string, opts: RequestInit = {}): Prom
 // Tabs
 // ---------------------------------------------------------------------------
 
-type Tab = "members" | "groups" | "invites" | "audit";
+type Tab = "members" | "groups" | "invites" | "audit" | "install";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "members", label: "Members" },
   { id: "groups", label: "Groups" },
   { id: "invites", label: "Invites" },
   { id: "audit", label: "Audit Log" },
+  { id: "install", label: "Install via MCP" },
 ];
 
 // ---------------------------------------------------------------------------
@@ -115,11 +117,15 @@ const TABS: { id: Tab; label: string }[] = [
 
 export function AdminPanel() {
   const [token, setToken] = React.useState<string | null>(null);
+  const [workspaceId, setWorkspaceId] = React.useState<string | null>(null);
   const [activeTab, setActiveTab] = React.useState<Tab>("members");
 
   React.useEffect(() => {
     const session = loadSession();
-    if (session) setToken(session.token);
+    if (session) {
+      setToken(session.token);
+      setWorkspaceId(session.workspaceId);
+    }
   }, []);
 
   function handleDisconnect() {
@@ -170,6 +176,9 @@ export function AdminPanel() {
       {activeTab === "groups" && <GroupsTab token={token} />}
       {activeTab === "invites" && <InvitesTab token={token} />}
       {activeTab === "audit" && <AuditTab token={token} />}
+      {activeTab === "install" && workspaceId && (
+        <McpInstallWidget workspaceId={workspaceId} />
+      )}
     </div>
   );
 }
