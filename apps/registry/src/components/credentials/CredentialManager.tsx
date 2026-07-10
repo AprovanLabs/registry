@@ -11,6 +11,7 @@
 import { LogOutIcon, PlusIcon, SearchIcon, Trash2Icon } from "lucide-react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { AddCredentialForm } from "./AddCredentialForm";
+import { AuthGate } from "@/components/auth/AuthGate";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,28 +29,7 @@ import {
   clearSession,
   deleteCredential,
   listCredentials,
-  loadSession,
 } from "@/lib/gateway";
-
-// ---------------------------------------------------------------------------
-// Sign-in required placeholder
-// ---------------------------------------------------------------------------
-
-function SignInRequired() {
-  return (
-    <div className="mx-auto max-w-sm">
-      <Card>
-        <CardHeader>
-          <CardTitle>Sign in required</CardTitle>
-          <CardDescription>
-            Sign in via Cognito and pick a workspace to manage your provider
-            credentials.
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    </div>
-  );
-}
 
 // ---------------------------------------------------------------------------
 // Credential card
@@ -328,23 +308,9 @@ function CredentialList({
 // ---------------------------------------------------------------------------
 
 export function CredentialManager() {
-  const [token, setToken] = useState<string | null>(null);
-
-  // Restore session on mount.
-  useEffect(() => {
-    const session = loadSession();
-    if (session) {
-      setToken(session.token);
-    }
-  }, []);
-
-  function handleLogout() {
-    setToken(null);
-  }
-
-  if (token) {
-    return <CredentialList onLogout={handleLogout} token={token} />;
-  }
-
-  return <SignInRequired />;
+  return (
+    <AuthGate caption="manage your provider credentials">
+      {({ token, signOut }) => <CredentialList onLogout={signOut} token={token} />}
+    </AuthGate>
+  );
 }

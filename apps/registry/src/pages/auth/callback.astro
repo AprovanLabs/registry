@@ -1,0 +1,13 @@
+---
+import { AuthCallback } from "@/components/auth/AuthCallback";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  description="Completing Cognito sign-in."
+  title="Sign in — Aprovan Registry"
+>
+  <main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <AuthCallback client:only="react" />
+  </main>
+</BaseLayout>

@@ -15,6 +15,13 @@
 import { vi } from "vitest";
 import { setCognitoVerifier } from "../src/middleware/auth.js";
 
+export interface TestMembership {
+  /** Workspace id the user belongs to. */
+  workspaceId: string;
+  /** Workspace-scoped role, default "member". */
+  role?: string;
+}
+
 export interface TestUser {
   /** Cognito sub. */
   sub: string;
@@ -26,6 +33,17 @@ export interface TestUser {
   workspaceId?: string;
   /** Group ids in the active workspace, default []. */
   groupIds?: string[];
+  /**
+   * Every workspace the user is a member of (for `GET /session`). Defaults to
+   * a single membership derived from `workspaceId` + `role` so existing
+   * single-workspace fixtures keep working.
+   */
+  memberships?: TestMembership[];
+}
+
+export interface TestWorkspace {
+  id: string;
+  name: string;
 }
 
 export interface SetupAuthOptions {
@@ -34,6 +52,13 @@ export interface SetupAuthOptions {
   users: TestUser[];
   /** Default workspace id, default "ws-test". */
   defaultWorkspaceId?: string;
+  /** `Workspaces` table fixture used by `GET /session` to resolve names. */
+  workspaces?: TestWorkspace[];
+}
+
+interface ResolvedMembership {
+  workspaceId: string;
+  role: string;
 }
 
 interface ResolvedUser {
@@ -42,6 +67,7 @@ interface ResolvedUser {
   role: string;
   workspaceId: string;
   groupIds: string[];
+  memberships: ResolvedMembership[];
 }
 
 /**
@@ -55,13 +81,21 @@ interface ResolvedUser {
  */
 export function setupAuth(opts: SetupAuthOptions): void {
   const defaultWorkspaceId = opts.defaultWorkspaceId ?? "ws-test";
-  const users: ResolvedUser[] = opts.users.map((u) => ({
-    sub: u.sub,
-    token: u.token,
-    role: u.role ?? "admin",
-    workspaceId: u.workspaceId ?? defaultWorkspaceId,
-    groupIds: u.groupIds ?? [],
-  }));
+  const workspaces: TestWorkspace[] = opts.workspaces ?? [];
+  const users: ResolvedUser[] = opts.users.map((u) => {
+    const activeWorkspaceId = u.workspaceId ?? defaultWorkspaceId;
+    const activeRole = u.role ?? "admin";
+    return {
+      sub: u.sub,
+      token: u.token,
+      role: activeRole,
+      workspaceId: activeWorkspaceId,
+      groupIds: u.groupIds ?? [],
+      memberships:
+        u.memberships ??
+        [{ workspaceId: activeWorkspaceId, role: activeRole }],
+    };
+  });
 
   const tokenToUser = new Map(users.map((u) => [u.token, u]));
 
@@ -151,13 +185,29 @@ export function setupAuth(opts: SetupAuthOptions): void {
       // Memberships — GetCommand
       // -----------------------------------------------------------------------
       if (table === "Memberships" && key) {
-        const user = users.find(
-          (u) => u.workspaceId === key["workspaceId"] && u.sub === key["userSub"],
+        const user = users.find((u) => u.sub === key["userSub"]);
+        const membership = user?.memberships.find(
+          (m) => m.workspaceId === key["workspaceId"],
         );
-        if (user) {
+        if (user && membership) {
           return Promise.resolve({
-            Item: { workspaceId: user.workspaceId, userSub: user.sub, role: user.role },
+            Item: {
+              workspaceId: membership.workspaceId,
+              userSub: user.sub,
+              role: membership.role,
+            },
           });
+        }
+        return Promise.resolve({});
+      }
+
+      // -----------------------------------------------------------------------
+      // Workspaces — GetCommand (keyed by workspaceId)
+      // -----------------------------------------------------------------------
+      if (table === "Workspaces" && key && typeof key["workspaceId"] === "string") {
+        const ws = workspaces.find((w) => w.id === key["workspaceId"]);
+        if (ws) {
+          return Promise.resolve({ Item: { workspaceId: ws.id, name: ws.name } });
         }
         return Promise.resolve({});
       }
@@ -202,6 +252,20 @@ export function setupAuth(opts: SetupAuthOptions): void {
             });
           }
           return Promise.resolve({ Items: [] });
+        }
+
+        // Memberships ByUserSub GSI — `GET /session` lists a user's workspaces
+        if (table === "Memberships" && input["IndexName"] === "ByUserSub") {
+          const us = exprValues[":us"] as string | undefined;
+          const user = users.find((u) => u.sub === us);
+          if (!user) return Promise.resolve({ Items: [] });
+          return Promise.resolve({
+            Items: user.memberships.map((m) => ({
+              workspaceId: m.workspaceId,
+              userSub: user.sub,
+              role: m.role,
+            })),
+          });
         }
 
         // Generic PK/SK query with optional SK prefix filter

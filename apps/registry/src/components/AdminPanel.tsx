@@ -12,13 +12,13 @@
  */
 
 import * as React from "react";
+import { AuthGate } from "@/components/auth/AuthGate";
+import { McpInstallWidget } from "@/components/McpInstallWidget";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { clearSession, loadSession } from "@/lib/gateway";
 import { cn } from "@/lib/utils";
-import { McpInstallWidget } from "@/components/McpInstallWidget";
 
 // ---------------------------------------------------------------------------
 // Config
@@ -116,36 +116,29 @@ const TABS: { id: Tab; label: string }[] = [
 // ---------------------------------------------------------------------------
 
 export function AdminPanel() {
-  const [token, setToken] = React.useState<string | null>(null);
-  const [workspaceId, setWorkspaceId] = React.useState<string | null>(null);
+  return (
+    <AuthGate caption="manage members, groups, and invites">
+      {({ token, workspaceId, signOut }) => (
+        <AdminPanelContent
+          signOut={signOut}
+          token={token}
+          workspaceId={workspaceId}
+        />
+      )}
+    </AuthGate>
+  );
+}
+
+function AdminPanelContent({
+  token,
+  workspaceId,
+  signOut,
+}: {
+  token: string;
+  workspaceId: string;
+  signOut: () => Promise<void>;
+}) {
   const [activeTab, setActiveTab] = React.useState<Tab>("members");
-
-  React.useEffect(() => {
-    const session = loadSession();
-    if (session) {
-      setToken(session.token);
-      setWorkspaceId(session.workspaceId);
-    }
-  }, []);
-
-  function handleDisconnect() {
-    clearSession();
-    setToken(null);
-  }
-
-  if (!token) {
-    return (
-      <Card className="max-w-md">
-        <CardHeader>
-          <CardTitle>Sign in required</CardTitle>
-          <CardDescription>
-            Sign in via Cognito and pick a workspace to manage members, groups,
-            and invites.
-          </CardDescription>
-        </CardHeader>
-      </Card>
-    );
-  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -166,7 +159,7 @@ export function AdminPanel() {
           </button>
         ))}
         <div className="ml-auto">
-          <Button variant="ghost" size="sm" onClick={handleDisconnect}>
+          <Button variant="ghost" size="sm" onClick={signOut}>
             Disconnect
           </Button>
         </div>

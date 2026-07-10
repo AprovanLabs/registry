@@ -1,5 +1,5 @@
 /**
- * Workspace picker route.
+ * Workspace picker route (legacy alias).
  *
  * POST /auth/sessions  — select the caller's active workspace.
  *
@@ -11,17 +11,21 @@
  * access token plus a chosen `workspace_id`, the gateway validates membership
  * and persists the choice.
  *
+ * `POST /session/workspace` (see `routes/session.ts`) is the canonical
+ * registry-UI endpoint and shares `selectActiveWorkspace` with this alias.
+ * `workspace_id` (snake_case) is preserved here for backward compatibility with
+ * existing callers/tests; new callers should prefer `POST /session/workspace`.
+ *
  * The legacy `POST /auth/token` and `POST /auth/token/apikey` token-issuance
  * endpoints were removed — the gateway no longer mints its own JWTs.
  */
 
 import { Hono } from "hono";
-import { getMembership } from "../memberships.js";
 import {
   CognitoNotConfiguredError,
   verifyAccessToken,
 } from "../middleware/auth.js";
-import { setCurrentWorkspace } from "../sessions.js";
+import { selectActiveWorkspace } from "./session.js";
 
 export const authRouter = new Hono();
 
@@ -63,27 +67,9 @@ authRouter.post("/sessions", async (c) => {
     );
   }
 
-  let membership;
-  try {
-    membership = await getMembership(preferredWorkspaceId, userSub);
-  } catch (err) {
-    process.stderr.write(
-      `[gateway] membership read failed: ${err instanceof Error ? err.message : String(err)}\n`,
-    );
-    return c.json({ error: "Failed to resolve membership" }, 500);
+  const result = await selectActiveWorkspace(userSub, preferredWorkspaceId);
+  if (!result.ok) {
+    return c.json(result.body, result.status);
   }
-  if (!membership) {
-    return c.json({ error: "No membership in that workspace" }, 403);
-  }
-
-  try {
-    await setCurrentWorkspace(userSub, preferredWorkspaceId);
-  } catch (err) {
-    process.stderr.write(
-      `[gateway] session write failed: ${err instanceof Error ? err.message : String(err)}\n`,
-    );
-    return c.json({ error: "Failed to persist workspace selection" }, 500);
-  }
-
-  return c.json({ workspace_id: preferredWorkspaceId });
+  return c.json({ workspace_id: result.workspaceId });
 });

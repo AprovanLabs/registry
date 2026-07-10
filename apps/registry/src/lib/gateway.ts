@@ -143,6 +143,54 @@ export async function deleteCredential(token: string, id: string): Promise<void>
 }
 
 // ---------------------------------------------------------------------------
+// Session — active workspace + workspace picker (APR-281)
+// ---------------------------------------------------------------------------
+
+export interface WorkspaceSummary {
+  id: string;
+  name: string;
+  role: string;
+}
+
+export interface SessionInfo {
+  activeWorkspaceId: string | null;
+  workspaces: WorkspaceSummary[];
+}
+
+/**
+ * Fetch the caller's session: their active workspace (if any) and every
+ * workspace they are a member of. Used by the workspace picker.
+ */
+export async function getSession(token: string): Promise<SessionInfo> {
+  const res = await fetch(gatewayUrl("/session"), {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  if (!res.ok) throw await parseError(res);
+  return (await res.json()) as SessionInfo;
+}
+
+/**
+ * Select the active workspace. Validates membership server-side and persists
+ * the choice as `Sessions[sub].currentWorkspaceId`.
+ */
+export async function selectWorkspace(
+  token: string,
+  workspaceId: string,
+): Promise<string> {
+  const res = await fetch(gatewayUrl("/session/workspace"), {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ workspaceId }),
+  });
+  if (!res.ok) throw await parseError(res);
+  const body = (await res.json()) as { activeWorkspaceId: string };
+  return body.activeWorkspaceId;
+}
+
+// ---------------------------------------------------------------------------
 // Session helpers (sessionStorage-backed JWT)
 // ---------------------------------------------------------------------------
 
