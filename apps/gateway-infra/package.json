@@ -8,6 +8,7 @@
     "build": "tsc",
     "watch": "tsc -w",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "cdk": "cdk",
     "synth": "cdk synth",
     "diff": "cdk diff",
@@ -25,6 +26,7 @@
     "@types/node": "^25.5.0",
     "aws-cdk": "^2.180.0",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.7.3"
+    "typescript": "^5.7.3",
+    "vitest": "2.1.5"
   }
 }
