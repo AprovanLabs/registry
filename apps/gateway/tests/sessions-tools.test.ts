@@ -11,7 +11,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { createApp } from "../src/app.js";
 import { resetCredentialStore } from "../src/credentials.js";
-import { resetExecutor, setExecutor, resetProviderCache, setProviderModuleForTesting, isProviderCached, type IsolateExecutor } from "../src/isolate.js";
+import { resetExecutor, setExecutor, resetProviderCache, setProviderModuleForTesting, isProviderCached } from "../src/isolate.js";
 import { resetCognitoVerifier } from "../src/middleware/auth.js";
 import { resetRateLimiters } from "../src/middleware/rateLimitMiddleware.js";
 import { resetPermissionStore } from "../src/permissions.js";

@@ -1,5 +1,5 @@
-import * as React from "react";
 import { CheckIcon, CopyIcon } from "lucide-react";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { withBasePath } from "@/lib/site";

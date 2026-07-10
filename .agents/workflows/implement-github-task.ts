@@ -1,5 +1,5 @@
-import github from "@utdk/github"; 
 import apprentice from "@aprovan/apprentice"; 
+import github from "@utdk/github"; 
 
 export const metadata = {
   name: "Implement GitHub Task",

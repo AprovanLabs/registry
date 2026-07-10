@@ -10,8 +10,8 @@
 
 import { Hono } from "hono";
 import { sendInviteEmail } from "../email.js";
-import { consumeInvite, createInvite, listInvites, revokeInvite } from "../invites.js";
 import { addUserToGroup } from "../groups.js";
+import { consumeInvite, createInvite, listInvites, revokeInvite } from "../invites.js";
 import { putMembership } from "../memberships.js";
 import {
   CognitoNotConfiguredError,

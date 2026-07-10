@@ -20,10 +20,10 @@
  */
 
 import { CognitoJwtVerifier } from "aws-jwt-verify";
-import type { Context, Next } from "hono";
 import { getMembership } from "../memberships.js";
 import { getCurrentWorkspace } from "../sessions.js";
 import { listUserGroupIds } from "../userGroups.js";
+import type { Context, Next } from "hono";
 
 // ---------------------------------------------------------------------------
 // Types

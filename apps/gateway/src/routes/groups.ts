@@ -23,8 +23,9 @@
  * DELETE /groups/:id/tool-grants         — remove a tool grant
  */
 
+import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { Hono } from "hono";
-import { requireAdmin, requireAuth } from "../middleware/auth.js";
+import { getDynamoDocClient } from "../db/client.js";
 import {
   addPrefixGrant,
   addToolGrant,
@@ -40,8 +41,7 @@ import {
   removeUserFromGroup,
   updateGroup,
 } from "../groups.js";
-import { getDynamoDocClient } from "../db/client.js";
-import { QueryCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { requireAdmin, requireAuth } from "../middleware/auth.js";
 
 export const groupsRouter = new Hono();
 

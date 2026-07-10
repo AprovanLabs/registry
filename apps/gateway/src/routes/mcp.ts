@@ -10,17 +10,17 @@
  */
 
 import { WebStandardStreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/webStandardStreamableHttp.js";
-import type { Context, Next } from "hono";
 import { Hono } from "hono";
+import { buildMcpServer } from "../mcp/server.js";
+import { getMembership } from "../memberships.js";
 import {
   CognitoNotConfiguredError,
   verifyAccessToken,
 } from "../middleware/auth.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
-import { getMembership } from "../memberships.js";
-import { buildMcpServer } from "../mcp/server.js";
 import { getCurrentWorkspace } from "../sessions.js";
 import { listUserGroupIds } from "../userGroups.js";
+import type { Context, Next } from "hono";
 
 export const mcpRouter = new Hono();
 
