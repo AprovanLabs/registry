@@ -1,12 +1,17 @@
 /**
  * Auth chain for @utdk/mcp-server.
  *
- * Resolves credentials in priority order: environment variables → gateway proxy.
- * Auth configuration is read from the provider package's `utdk.auth` field.
+ * When UTDK_GATEWAY_URL is set, auth is resolved for the gateway:
+ *   1. UTDK_GATEWAY_TOKEN env var — static bearer (CI/scripting)
+ *   2. Cached Cognito session from `utdk login` — transparently refreshed
+ *
+ * When UTDK_GATEWAY_URL is not set, auth is resolved per-provider from
+ * environment variables or the provider's utdk.auth config.
  */
 
 import { ApiKey, BearerToken, OAuth2ClientCredentials } from "@utdk/common";
 import type { AuthProvider } from "@utdk/common";
+import { getGatewayToken } from "./token-cache.js";
 
 export type { AuthProvider };
 
@@ -88,15 +93,48 @@ function authFromConfig(config: UtdkAuthConfig): AuthProvider | undefined {
 }
 
 /**
+ * AuthProvider that reads the Cognito token cache (written by `utdk login`)
+ * and refreshes transparently when the access token is near expiry.
+ */
+function cachedCognitoProvider(): AuthProvider {
+  return {
+    async authenticate(headers: Record<string, string>): Promise<void> {
+      const token = await getGatewayToken();
+      if (!token) {
+        throw new Error(
+          "Gateway session not found. Run `utdk login` or set UTDK_GATEWAY_TOKEN.",
+        );
+      }
+      headers["Authorization"] = `Bearer ${token}`;
+    },
+  };
+}
+
+/**
  * Build an AuthProvider for a provider from its utdk auth config array.
- * Tries each config entry in order; returns the first that resolves from env.
- * Returns undefined if no credentials are available (unauthenticated or gateway-delegated).
+ *
+ * When UTDK_GATEWAY_URL is set, returns gateway auth (static token or
+ * cached Cognito session).  Otherwise resolves provider-specific auth from
+ * env vars and the utdk.auth config.
  */
 export function buildAuthProvider(
   providerName: string,
   authConfigs: UtdkAuthConfig[],
 ): AuthProvider | undefined {
-  // First try the explicit provider TOKEN env var (e.g. GITHUB_TOKEN, SLACK_TOKEN)
+  const gatewayUrl = process.env["UTDK_GATEWAY_URL"];
+
+  if (gatewayUrl) {
+    // 1. Static token override (CI/scripting)
+    const gatewayToken = process.env["UTDK_GATEWAY_TOKEN"];
+    if (gatewayToken) {
+      return new BearerToken(gatewayToken);
+    }
+
+    // 2. Cached Cognito session from `utdk login`
+    return cachedCognitoProvider();
+  }
+
+  // 3. Per-provider auth from env / utdk.auth config
   const providerToken = process.env[`${providerName.toUpperCase()}_TOKEN`];
   if (providerToken) {
     return new BearerToken(providerToken);

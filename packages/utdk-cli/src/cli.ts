@@ -3,6 +3,8 @@
  *
  * Usage:
  *   utdk [--output json|table] [--agent] <provider> <operation> [--flag value…]
+ *   utdk login [--no-browser]
+ *   utdk logout
  *   utdk --help
  *   utdk --version
  *   utdk <provider> --help
@@ -16,10 +18,12 @@
  *   7  rate limited (HTTP 429)
  */
 
+import { execSync } from "child_process";
 import { readFileSync } from "fs";
 import { join } from "path";
 import { createClient } from "utdk/client";
 import { resolveAuth, authEnvVars } from "./auth.js";
+import { getCognitoConfig, runAuthCodeFlow } from "./cognito.js";
 import {
   defaultOutputMode,
   renderHelpList,
@@ -35,6 +39,7 @@ import {
   UTDK_ROOT,
   type OperationInfo,
 } from "./providers.js";
+import { clearTokens, readTokens } from "./token-cache.js";
 
 // ---------------------------------------------------------------------------
 // CLI version
@@ -175,6 +180,8 @@ function printGlobalHelp(): void {
       "",
       "Usage:",
       "  utdk [--output json|table] [--agent] <provider> <operation> [--flag value…]",
+      "  utdk login [--no-browser]",
+      "  utdk logout",
       "  utdk <provider> --help",
       "  utdk --help",
       "",
@@ -183,6 +190,16 @@ function printGlobalHelp(): void {
       "  --agent              Compact JSON output optimised for agent parsing",
       "  --help, -h           Show this help or provider/operation help",
       "  --version, -v        Print version",
+      "",
+      "Auth commands:",
+      "  login                Authenticate via Cognito PKCE (caches refresh token)",
+      "  logout               Clear the cached session",
+      "",
+      "Auth env vars (gateway proxy mode):",
+      "  UTDK_GATEWAY_URL     Route all calls through this gateway",
+      "  UTDK_GATEWAY_TOKEN   Bearer token override (CI/scripting; skips login)",
+      "  UTDK_COGNITO_DOMAIN  Cognito hosted-UI domain for login/refresh",
+      "  UTDK_COGNITO_CLIENT_ID  Cognito app client id",
       "",
       "Providers:",
     ].join("\n"),
@@ -362,6 +379,104 @@ async function executeOperation(
 }
 
 // ---------------------------------------------------------------------------
+// Login / logout commands
+// ---------------------------------------------------------------------------
+
+/** Open a URL in the default system browser (best-effort). */
+function openBrowser(url: string): void {
+  try {
+    const platform = process.platform;
+    if (platform === "darwin") {
+      execSync(`open "${url}"`, { stdio: "ignore" });
+    } else if (platform === "win32") {
+      execSync(`cmd /c start "" "${url}"`, { stdio: "ignore" });
+    } else {
+      execSync(`xdg-open "${url}"`, { stdio: "ignore" });
+    }
+  } catch {
+    // Browser open failed; the URL was already printed to stderr
+  }
+}
+
+async function runLogin(
+  params: Record<string, unknown>,
+  outputMode: OutputMode,
+): Promise<number> {
+  const config = getCognitoConfig();
+  if (!config) {
+    const msg =
+      "UTDK_COGNITO_DOMAIN and UTDK_COGNITO_CLIENT_ID must be set to use `utdk login`.\n" +
+      "Or set UTDK_GATEWAY_TOKEN to skip interactive login.";
+    if (outputMode === "json" || outputMode === "agent") {
+      writeOutput({ ok: false, error: msg }, outputMode);
+    } else {
+      process.stderr.write(`Error: ${msg}\n`);
+    }
+    return 2;
+  }
+
+  const noBrowser = Boolean(params["no-browser"]);
+
+  process.stderr.write(
+    `Authenticating via Cognito PKCE (port ${config.redirectPort})…\n`,
+  );
+
+  try {
+    const openUrl = noBrowser
+      ? (url: string) => {
+          process.stdout.write(`\nOpen this URL in your browser:\n\n  ${url}\n\n`);
+        }
+      : (url: string) => {
+          process.stderr.write(`\nOpening browser…\n`);
+          openBrowser(url);
+          process.stderr.write(
+            `If the browser did not open, visit:\n\n  ${url}\n\n`,
+          );
+        };
+
+    const tokens = await runAuthCodeFlow(config, openUrl);
+
+    if (outputMode === "json" || outputMode === "agent") {
+      writeOutput(
+        {
+          ok: true,
+          expiresAt: tokens.expiresAt,
+          message: "Logged in successfully.",
+        },
+        outputMode,
+      );
+    } else {
+      process.stdout.write(
+        `Logged in successfully. Session cached at ~/.local/state/utdk/tokens.json\n`,
+      );
+    }
+    return 0;
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    if (outputMode === "json" || outputMode === "agent") {
+      writeOutput({ ok: false, error: msg }, outputMode);
+    } else {
+      process.stderr.write(`Login failed: ${msg}\n`);
+    }
+    return 4;
+  }
+}
+
+async function runLogout(outputMode: OutputMode): Promise<number> {
+  const had = readTokens() !== undefined;
+  clearTokens();
+  if (outputMode === "json" || outputMode === "agent") {
+    writeOutput(
+      { ok: true, message: had ? "Logged out." : "No active session." },
+      outputMode,
+    );
+  } else {
+    process.stdout.write(had ? "Logged out.\n" : "No active session.\n");
+  }
+  return 0;
+}
+
+// ---------------------------------------------------------------------------
 // Main entry
 // ---------------------------------------------------------------------------
 
@@ -389,6 +504,14 @@ export async function runCli(argv: string[]): Promise<number> {
   if (!args.provider) {
     printGlobalHelp();
     return 0;
+  }
+
+  // Built-in auth commands
+  if (args.provider === "login") {
+    return runLogin(args.params, outputMode);
+  }
+  if (args.provider === "logout") {
+    return runLogout(outputMode);
   }
 
   // Validate provider
