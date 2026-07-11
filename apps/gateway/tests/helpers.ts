@@ -34,6 +34,13 @@ export interface TestUser {
   /** Group ids in the active workspace, default []. */
   groupIds?: string[];
   /**
+   * Persisted active workspace id written to the `Users` table
+   * (`activeWorkspaceId`) and mirrored to the `Sessions` row. Defaults to
+   * `workspaceId` so existing fixtures keep an active workspace; set to `null`
+   * to model a user with no selection (both reads return empty).
+   */
+  activeWorkspaceId?: string | null;
+  /**
    * Every workspace the user is a member of (for `GET /session`). Defaults to
    * a single membership derived from `workspaceId` + `role` so existing
    * single-workspace fixtures keep working.
@@ -66,6 +73,8 @@ interface ResolvedUser {
   token: string;
   role: string;
   workspaceId: string;
+  /** Persisted preference; `null` means no active workspace selected. */
+  activeWorkspaceId: string | null;
   groupIds: string[];
   memberships: ResolvedMembership[];
 }
@@ -83,17 +92,19 @@ export function setupAuth(opts: SetupAuthOptions): void {
   const defaultWorkspaceId = opts.defaultWorkspaceId ?? "ws-test";
   const workspaces: TestWorkspace[] = opts.workspaces ?? [];
   const users: ResolvedUser[] = opts.users.map((u) => {
-    const activeWorkspaceId = u.workspaceId ?? defaultWorkspaceId;
+    const homeWorkspaceId = u.workspaceId ?? defaultWorkspaceId;
     const activeRole = u.role ?? "admin";
     return {
       sub: u.sub,
       token: u.token,
       role: activeRole,
-      workspaceId: activeWorkspaceId,
+      workspaceId: homeWorkspaceId,
+      activeWorkspaceId:
+        u.activeWorkspaceId === undefined ? homeWorkspaceId : u.activeWorkspaceId,
       groupIds: u.groupIds ?? [],
       memberships:
         u.memberships ??
-        [{ workspaceId: activeWorkspaceId, role: activeRole }],
+        [{ workspaceId: homeWorkspaceId, role: activeRole }],
     };
   });
 
@@ -163,16 +174,29 @@ export function setupAuth(opts: SetupAuthOptions): void {
       const key = input["Key"] as Record<string, unknown> | undefined;
 
       // -----------------------------------------------------------------------
+      // Users — GetCommand: keyed by sub (reads the persisted activeWorkspaceId)
+      // -----------------------------------------------------------------------
+      if (table === "Users" && key && typeof key["sub"] === "string") {
+        const user = users.find((u) => u.sub === key["sub"]);
+        if (user && user.activeWorkspaceId !== null) {
+          return Promise.resolve({
+            Item: { sub: user.sub, activeWorkspaceId: user.activeWorkspaceId },
+          });
+        }
+        return Promise.resolve({});
+      }
+
+      // -----------------------------------------------------------------------
       // Sessions — GetCommand: keyed by userSub (not PK/SK)
       // -----------------------------------------------------------------------
       if (table === "Sessions" && key) {
         if (typeof key["userSub"] === "string") {
           const user = users.find((u) => u.sub === key["userSub"]);
-          if (user) {
+          if (user && user.activeWorkspaceId !== null) {
             return Promise.resolve({
               Item: {
                 userSub: user.sub,
-                currentWorkspaceId: user.workspaceId,
+                currentWorkspaceId: user.activeWorkspaceId,
                 expiresAt: Math.floor(Date.now() / 1000) + 3600,
               },
             });

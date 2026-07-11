@@ -26,6 +26,7 @@ vi.mock("@aws-sdk/lib-dynamodb", () => ({
   QueryCommand: vi.fn((input: unknown) => ({ input })),
   PutCommand: vi.fn((input: unknown) => ({ input })),
   GetCommand: vi.fn((input: unknown) => ({ input })),
+  UpdateCommand: vi.fn((input: unknown) => ({ input })),
   TransactWriteCommand: vi.fn((input: unknown) => ({ input })),
   BatchGetCommand: vi.fn((input: unknown) => ({ input })),
 }));
@@ -72,8 +73,9 @@ beforeEach(() => {
         sub: NO_SESSION_SUB,
         token: NO_SESSION_TOKEN,
         role: "admin",
-        // No active workspace: the per-test override returns {} for Sessions.
+        // No active workspace: both the Users and Sessions reads return empty.
         workspaceId: "ws-a",
+        activeWorkspaceId: null,
         memberships: [
           { workspaceId: "ws-a", role: "admin" },
           { workspaceId: "ws-b", role: "member" },
@@ -111,11 +113,9 @@ describe("GET /session", () => {
     ]);
   });
 
-  it("returns activeWorkspaceId null when no session row exists", async () => {
-    // The first DDB call is the Sessions Get; return empty so the active
-    // workspace is treated as unset.
-    mockDdbSend.mockImplementationOnce(() => Promise.resolve({}));
-
+  it("returns activeWorkspaceId null when no active workspace is set", async () => {
+    // The NO_SESSION fixture has activeWorkspaceId: null, so both the Users
+    // and Sessions reads return empty and the active workspace is unset.
     const app = createApp();
     const res = await app.request("/session", {
       headers: { Authorization: `Bearer ${NO_SESSION_TOKEN}` },
@@ -128,6 +128,25 @@ describe("GET /session", () => {
     };
     expect(body.activeWorkspaceId).toBeNull();
     expect(body.workspaces).toHaveLength(2);
+  });
+
+  it("falls back to the ephemeral Sessions row when Users has no activeWorkspaceId", async () => {
+    // Simulate a user who selected a workspace before activeWorkspaceId existed:
+    // the Users row is absent (first call returns {}) but the Sessions row
+    // still carries the choice.
+    mockDdbSend.mockImplementationOnce(() => Promise.resolve({}));
+
+    const app = createApp();
+    const res = await app.request("/session", {
+      headers: { Authorization: `Bearer ${MULTI_TOKEN}` },
+    });
+
+    expect(res.status).toBe(200);
+    const body = await res.json() as {
+      activeWorkspaceId: string | null;
+      workspaces: { id: string; name: string }[];
+    };
+    expect(body.activeWorkspaceId).toBe("ws-a");
   });
 
   it("falls back to the workspace id as the name when the Workspaces row is missing", async () => {
@@ -196,7 +215,25 @@ describe("POST /session/workspace", () => {
     const body = await res.json() as { activeWorkspaceId: string };
     expect(body.activeWorkspaceId).toBe("ws-b");
 
-    // The picker persists the choice via a Put against the Sessions table.
+    // The picker persists the choice to the durable Users table (activeWorkspaceId)
+    // via an Update that only touches activeWorkspaceId.
+    const usersCalls = mockDdbSend.mock.calls.filter(
+      (c) =>
+        (c[0] as { input?: { TableName?: string } }).input?.TableName === "Users",
+    );
+    expect(usersCalls.length).toBe(1);
+    const usersInput = (usersCalls[0]![0] as {
+      input?: {
+        Key?: Record<string, unknown>;
+        UpdateExpression?: string;
+        ExpressionAttributeValues?: Record<string, unknown>;
+      };
+    }).input;
+    expect(usersInput?.Key?.["sub"]).toBe(MULTI_SUB);
+    expect(usersInput?.UpdateExpression).toContain("activeWorkspaceId");
+    expect(usersInput?.ExpressionAttributeValues?.[":ws"]).toBe("ws-b");
+
+    // …and mirrors it to the ephemeral Sessions table (currentWorkspaceId).
     const putCalls = mockDdbSend.mock.calls.filter(
       (c) =>
         (c[0] as { input?: { TableName?: string } }).input?.TableName ===
