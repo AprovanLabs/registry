@@ -32,6 +32,7 @@ vi.mock("@aws-sdk/lib-dynamodb", () => ({
   QueryCommand: vi.fn((input: unknown) => ({ input })),
   PutCommand: vi.fn((input: unknown) => ({ input })),
   GetCommand: vi.fn((input: unknown) => ({ input })),
+  UpdateCommand: vi.fn((input: unknown) => ({ input })),
   TransactWriteCommand: vi.fn((input: unknown) => ({ input })),
   BatchGetCommand: vi.fn((input: unknown) => ({ input })),
 }));
@@ -154,7 +155,23 @@ describe("POST /auth/sessions", () => {
     const body = await res.json() as { workspace_id: string };
     expect(body.workspace_id).toBe(PICKER_WORKSPACE);
 
-    // The picker persists the choice via a Put against the Sessions table.
+    // The picker persists the choice to the durable Users table.
+    const usersCalls = mockDdbSend.mock.calls.filter(
+      (c) =>
+        (c[0] as { input?: { TableName?: string } }).input?.TableName === "Users",
+    );
+    expect(usersCalls.length).toBe(1);
+    const usersInput = (usersCalls[0]![0] as {
+      input?: {
+        Key?: Record<string, unknown>;
+        UpdateExpression?: string;
+        ExpressionAttributeValues?: Record<string, unknown>;
+      };
+    }).input;
+    expect(usersInput?.Key?.["sub"]).toBe(PICKER_SUB);
+    expect(usersInput?.ExpressionAttributeValues?.[":ws"]).toBe(PICKER_WORKSPACE);
+
+    // …and mirrors it to the ephemeral Sessions table.
     const putCalls = mockDdbSend.mock.calls.filter(
       (c) =>
         (c[0] as { input?: { TableName?: string } }).input?.TableName ===

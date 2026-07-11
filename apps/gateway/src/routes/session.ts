@@ -20,6 +20,7 @@ import {
   verifyAccessToken,
 } from "../middleware/auth.js";
 import { getCurrentWorkspace, setCurrentWorkspace } from "../sessions.js";
+import { getActiveWorkspaceId, setActiveWorkspaceId } from "../users.js";
 import { getWorkspaces } from "../workspaces.js";
 
 export const sessionRouter = new Hono();
@@ -77,6 +78,7 @@ export async function selectActiveWorkspace(
     return { ok: false, status: 403, body: { error: "No membership in that workspace" } };
   }
   try {
+    await setActiveWorkspaceId(userSub, workspaceId);
     await setCurrentWorkspace(userSub, workspaceId);
   } catch (err) {
     process.stderr.write(
@@ -105,7 +107,12 @@ sessionRouter.get("/", async (c) => {
 
   let activeWorkspaceId: string | undefined;
   try {
-    activeWorkspaceId = await getCurrentWorkspace(sub);
+    // Prefer the durable Users row; fall back to the ephemeral Sessions row
+    // for users who selected a workspace before activeWorkspaceId existed.
+    activeWorkspaceId = await getActiveWorkspaceId(sub);
+    if (!activeWorkspaceId) {
+      activeWorkspaceId = await getCurrentWorkspace(sub);
+    }
   } catch (err) {
     process.stderr.write(
       `[gateway] session read failed: ${err instanceof Error ? err.message : String(err)}\n`,
