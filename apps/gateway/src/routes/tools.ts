@@ -160,18 +160,11 @@ function synthesizeInputSchema(meta: Record<string, unknown>): Record<string, un
   return schema;
 }
 
-toolsRouter.get("/", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
-
+async function getOrBuildToolList(workspaceId: string): Promise<ToolEntry[]> {
   const now = Date.now();
   const cached = toolListCache.get(workspaceId);
-  if (cached && cached.expiresAt > now) {
-    return c.json({ tools: cached.tools, workspace_id: workspaceId });
-  }
+  if (cached && cached.expiresAt > now) return cached.tools;
 
-  // Only providers with at least one credential configured in the workspace
-  // contribute tools — a user who hasn't connected GitHub sees no GitHub tools.
   const credStore = getCredentialStore();
   const credentials = await credStore.list(workspaceId);
   const providers = Array.from(new Set(credentials.map((c) => c.provider)));
@@ -182,7 +175,6 @@ toolsRouter.get("/", async (c) => {
       const mod = await getProviderModule(provider);
       tools.push(...deriveToolEntries(provider, mod));
     } catch (err) {
-      // A single unresolvable provider should not break discovery for the rest.
       process.stderr.write(
         JSON.stringify({
           ts: new Date().toISOString(),
@@ -195,7 +187,85 @@ toolsRouter.get("/", async (c) => {
   }
 
   toolListCache.set(workspaceId, { tools, expiresAt: now + getToolListTtlMs() });
-  return c.json({ tools, workspace_id: workspaceId });
+  return tools;
+}
+
+toolsRouter.get("/", async (c) => {
+  const principal = c.get("principal");
+  const tools = await getOrBuildToolList(principal.workspaceId);
+  return c.json({ tools, workspace_id: principal.workspaceId });
+});
+
+// ---------------------------------------------------------------------------
+// POST /tools/search — search/filter the workspace-visible tool catalog
+// ---------------------------------------------------------------------------
+//
+// Request body (all fields optional):
+//   tool_name  — exact lookup by tool name; short-circuits other filters
+//   namespace  — filter by provider namespace (alias: provider name)
+//   query      — keyword search over name, operation, and description
+//   limit      — max results (default 10)
+//
+// Responses:
+//   tool_name hit  → { success: true, tool: ToolEntry }
+//   tool_name miss → { success: false, error: "Tool '<name>' not found" }
+//   general search → { success: true, count: N, tools: ToolEntry[], namespaces: string[] }
+
+export interface SearchToolsRequest {
+  tool_name?: string;
+  namespace?: string;
+  query?: string;
+  limit?: number;
+}
+
+export type SearchToolsResponse =
+  | { success: true; tool: ToolEntry }
+  | { success: false; error: string }
+  | { success: true; count: number; tools: ToolEntry[]; namespaces: string[] };
+
+/** Pure search logic — exported for unit tests. */
+export function searchTools(tools: ToolEntry[], opts: SearchToolsRequest): SearchToolsResponse {
+  const { tool_name, namespace, query, limit = 10 } = opts;
+
+  if (tool_name) {
+    const found = tools.find((t) => t.name === tool_name);
+    if (!found) return { success: false, error: `Tool '${tool_name}' not found` };
+    return { success: true, tool: found };
+  }
+
+  let results = namespace ? tools.filter((t) => t.provider === namespace) : [...tools];
+
+  if (query) {
+    const keywords = query.toLowerCase().split(/\s+/).filter(Boolean);
+    results = results
+      .map((tool) => {
+        const text = `${tool.name} ${tool.provider} ${tool.operation} ${tool.description ?? ""}`.toLowerCase();
+        const score = keywords.filter((kw) => text.includes(kw)).length / keywords.length;
+        return { tool, score };
+      })
+      .filter(({ score }) => score > 0)
+      .sort((a, b) => b.score - a.score)
+      .map(({ tool }) => tool);
+  }
+
+  results = results.slice(0, limit);
+  const namespaces = Array.from(new Set(results.map((t) => t.provider)));
+  return { success: true, count: results.length, tools: results, namespaces };
+}
+
+toolsRouter.post("/search", async (c) => {
+  const principal = c.get("principal");
+  const tools = await getOrBuildToolList(principal.workspaceId);
+
+  let body: SearchToolsRequest = {};
+  try {
+    const raw = await c.req.json<SearchToolsRequest>();
+    if (raw && typeof raw === "object") body = raw;
+  } catch {
+    // empty body → all fields default
+  }
+
+  return c.json(searchTools(tools, body));
 });
 
 // ---------------------------------------------------------------------------
