@@ -213,6 +213,25 @@ describe("GET /health", () => {
   });
 });
 
+describe("CORS preflight", () => {
+  it("allows browser-style preflight requests with local custom headers", async () => {
+    const app = createApp();
+    const res = await app.request("/tools/github/meta.root", {
+      method: "OPTIONS",
+      headers: {
+        origin: "http://localhost:3000",
+        "access-control-request-method": "POST",
+        "access-control-request-headers": "authorization, content-type, x-workspace-id",
+      },
+    });
+
+    expect(res.status).toBe(204);
+    expect(res.headers.get("access-control-allow-origin")).toBe("http://localhost:3000");
+    expect(res.headers.get("access-control-allow-headers")).toContain("x-workspace-id");
+    expect(res.headers.get("access-control-allow-methods")).toContain("POST");
+  });
+});
+
 // ---------------------------------------------------------------------------
 // Authentication (Cognito access-token middleware)
 // ---------------------------------------------------------------------------

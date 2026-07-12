@@ -435,7 +435,7 @@ describe("MCP call_tool executor payload", () => {
 
 describe("GET /.well-known/oauth-protected-resource/mcp/:workspaceId — (test 1)", () => {
   it("returns 200 with authorization_servers and resource URL for a valid UUID", async () => {
-    process.env["GATEWAY_COGNITO_USER_POOL_ID"] = "us-east-1_TestPool";
+    process.env["COGNITO_USER_POOL_ID"] = "us-east-1_TestPool";
     const app = createApp();
 
     const res = await app.request(
@@ -449,7 +449,7 @@ describe("GET /.well-known/oauth-protected-resource/mcp/:workspaceId — (test 1
     expect(typeof body["resource"]).toBe("string");
     expect((body["resource"] as string).endsWith(`/mcp/${WORKSPACE_UUID}`)).toBe(true);
 
-    delete process.env["GATEWAY_COGNITO_USER_POOL_ID"];
+    delete process.env["COGNITO_USER_POOL_ID"];
   });
 });
 

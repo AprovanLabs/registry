@@ -274,8 +274,6 @@ function buildGroupDocContent(
   return [
     `# ${group.title}`,
     "",
-    `Import path: \`${packageSpecifier}\``,
-    "",
     "## Operations",
     "",
     ...group.operations.flatMap((operation) => {

@@ -1,10 +1,11 @@
 /**
  * Cognito PKCE authentication for the registry UI.
  *
- * The gateway no longer mints its own JWTs — every gateway call is authorized
- * with a Cognito **access token** acquired here via the authorization-code +
- * PKCE flow (`oidc-client-ts`). The refresh token is persisted in browser
- * storage so silent renewal can refresh the access token before it expires.
+ * Every gateway call is authorized with a Cognito **access token** acquired
+ * here via the authorization-code + PKCE flow (`oidc-client-ts`).
+ * 
+ * The refresh token is persisted in browser storage so silent renewal can
+ * refresh the access token before it expires.
  *
  * Config (public, build-time):
  *   PUBLIC_COGNITO_AUTHORITY  — Cognito hosted-UI domain, e.g.

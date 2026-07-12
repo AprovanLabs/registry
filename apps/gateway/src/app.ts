@@ -6,7 +6,6 @@
  */
 
 import { Hono } from "hono";
-import { cors } from "hono/cors";
 import { auditRouter } from "./routes/audit.js";
 import { authRouter } from "./routes/auth.js";
 import { credentialsRouter } from "./routes/credentials.js";
@@ -20,20 +19,51 @@ import { sessionRouter } from "./routes/session.js";
 import { toolsRouter } from "./routes/tools.js";
 import { wellKnownRouter } from "./routes/well-known.js";
 
+function isLocalDevOrigin(origin: string): boolean {
+  try {
+    const url = new URL(origin);
+    return ["localhost", "127.0.0.1", "0.0.0.0"].includes(url.hostname);
+  } catch {
+    return false;
+  }
+}
+
 export function createApp(): Hono {
   const app = new Hono();
 
   // ---------------------------------------------------------------------------
-  // CORS middleware — allow requests from the registry frontend
+  // CORS middleware — allow local browser clients to call the gateway
   // ---------------------------------------------------------------------------
-  app.use(
-    "/*",
-    cors({
-      origin: "*", // In production, restrict to your registry domain
-      allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-      allowHeaders: ["Content-Type", "Authorization"],
-    }),
-  );
+  app.use("/*", async (c, next) => {
+    const origin = c.req.header("Origin");
+    const requestHeaders = c.req.header("Access-Control-Request-Headers");
+
+    if (origin) {
+      const allowOrigin = isLocalDevOrigin(origin) ? origin : "*";
+      const responseHeaders = new Headers();
+      responseHeaders.set("Access-Control-Allow-Origin", allowOrigin);
+      responseHeaders.set("Vary", "Origin");
+      responseHeaders.set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+      responseHeaders.set(
+        "Access-Control-Allow-Headers",
+        requestHeaders ?? "Content-Type, Authorization",
+      );
+      responseHeaders.set("Access-Control-Expose-Headers", "Content-Type, Authorization");
+
+      if (c.req.method === "OPTIONS") {
+        return new Response(null, { status: 204, headers: responseHeaders });
+      }
+
+      await next();
+      const response = c.res;
+      for (const [key, value] of responseHeaders.entries()) {
+        response.headers.set(key, value);
+      }
+      return response;
+    }
+
+    await next();
+  });
 
   // ---------------------------------------------------------------------------
   // Health check — unauthenticated

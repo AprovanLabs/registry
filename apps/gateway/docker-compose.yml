@@ -11,9 +11,9 @@ services:
       GATEWAY_PORT: "4000"
 
       # Cognito access-token verification (required for auth)
-      GATEWAY_COGNITO_USER_POOL_ID: "${GATEWAY_COGNITO_USER_POOL_ID:-}"
-      GATEWAY_COGNITO_CLIENT_ID: "${GATEWAY_COGNITO_CLIENT_ID:-}"
-      GATEWAY_AWS_REGION: "${GATEWAY_AWS_REGION:-${AWS_REGION:-us-east-1}}"
+      COGNITO_USER_POOL_ID: "${COGNITO_USER_POOL_ID:-}"
+      COGNITO_CLIENT_ID: "${COGNITO_CLIENT_ID:-}"
+      AWS_REGION: "${AWS_REGION:-${AWS_REGION:-us-east-1}}"
 
       # Telemetry — point at the OTEL collector when available
       GATEWAY_TELEMETRY_EXPORTER: "${GATEWAY_TELEMETRY_EXPORTER:-console}"

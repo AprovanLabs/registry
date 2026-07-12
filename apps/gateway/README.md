@@ -111,8 +111,8 @@ The MCP client stores the returned `refresh_token` in its install context for su
 | Variable | Default | Description |
 |---|---|---|
 | `GATEWAY_PORT` | `4000` | HTTP port |
-| `GATEWAY_COGNITO_USER_POOL_ID` | *(required)* | Cognito user pool id for access-token verification |
-| `GATEWAY_COGNITO_CLIENT_ID` | *(required)* | Cognito app client id for access-token verification |
+| `COGNITO_USER_POOL_ID` | *(required)* | Cognito user pool id for access-token verification |
+| `COGNITO_CLIENT_ID` | *(required)* | Cognito app client id for access-token verification |
 | `GATEWAY_AWS_REGION` | `AWS_REGION` → `us-east-1` | AWS region for Cognito |
 | `GATEWAY_RATE_LIMIT_RPS` | `10` | Requests/second per caller+provider |
 | `GATEWAY_RATE_LIMIT_BURST` | `20` | Burst capacity |

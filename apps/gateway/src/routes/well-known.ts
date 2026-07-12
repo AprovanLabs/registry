@@ -9,7 +9,7 @@
  * without a hand-fed token.
  *
  * Required env var (shared with requireAuth):
- *   GATEWAY_COGNITO_USER_POOL_ID — Cognito user pool id (format: <region>_<id>)
+ *   COGNITO_USER_POOL_ID — Cognito user pool id (format: <region>_<id>)
  */
 
 import { Hono } from "hono";
@@ -28,12 +28,12 @@ function isValidUuid(value: string): boolean {
 }
 
 /**
- * Derive the Cognito issuer URL from GATEWAY_COGNITO_USER_POOL_ID.
+ * Derive the Cognito issuer URL from COGNITO_USER_POOL_ID.
  * Pool ID format: `<region>_<id>` (e.g. `us-east-1_ABC123`).
  * Issuer URL:     `https://cognito-idp.<region>.amazonaws.com/<poolId>`
  */
 function getCognitoIssuer(): string | null {
-  const poolId = process.env["GATEWAY_COGNITO_USER_POOL_ID"];
+  const poolId = process.env["COGNITO_USER_POOL_ID"];
   if (!poolId) return null;
   const region = poolId.split("_")[0];
   if (!region) return null;

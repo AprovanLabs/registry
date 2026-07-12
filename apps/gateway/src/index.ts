@@ -5,8 +5,8 @@
  *
  * Environment variables:
  *   GATEWAY_PORT                 — HTTP port (default: 4000)
- *   GATEWAY_COGNITO_USER_POOL_ID  — Cognito user pool id for access-token verification (required)
- *   GATEWAY_COGNITO_CLIENT_ID    — Cognito app client id for access-token verification (required)
+ *   COGNITO_USER_POOL_ID  — Cognito user pool id for access-token verification (required)
+ *   COGNITO_CLIENT_ID    — Cognito app client id for access-token verification (required)
  *   GATEWAY_AWS_REGION           — AWS region for Cognito (falls back to AWS_REGION, then us-east-1)
  *   GATEWAY_RATE_LIMIT_RPS       — Requests per second per caller+provider (default: 10)
  *   GATEWAY_RATE_LIMIT_BURST     — Burst capacity (default: 20)

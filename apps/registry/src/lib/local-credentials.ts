@@ -175,29 +175,7 @@ export function isOAuth2Expired(cred: OAuth2Credential): boolean {
   return Date.now() > cred.expiresAt - bufferMs;
 }
 
-// ---------------------------------------------------------------------------
-// Gateway URL persistence
-// ---------------------------------------------------------------------------
-
-/**
- * Get saved gateway URL.
- */
-export function getGatewayUrl(): string {
-  if (typeof window === "undefined") return "";
-  return localStorage.getItem(GATEWAY_URL_KEY) ?? "";
-}
-
-/**
- * Save gateway URL.
- */
-export function saveGatewayUrl(url: string): void {
-  if (typeof window === "undefined") return;
-  if (url) {
-    localStorage.setItem(GATEWAY_URL_KEY, url);
-  } else {
-    localStorage.removeItem(GATEWAY_URL_KEY);
-  }
-}
+export const gatewayUrl = "http://localhost:4000";
 
 // ---------------------------------------------------------------------------
 // Known provider auth configurations

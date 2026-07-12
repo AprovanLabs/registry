@@ -186,6 +186,12 @@
       "provenancePath": "./github/provenance.json",
       "generatedAt": "2026-06-08T02:17:27.956Z",
       "bundlerVersion": "0.1.1"
+    },
+    "posthog": {
+      "packageName": "@utdk/posthog",
+      "provenancePath": "./posthog/provenance.json",
+      "generatedAt": "2026-07-12T21:24:25.211Z",
+      "bundlerVersion": "0.1.1"
     }
   }
 }

@@ -60,15 +60,15 @@ let _verifier: CognitoVerifier | null | undefined;
 
 /**
  * Lazily build the Cognito access-token verifier from
- * `GATEWAY_COGNITO_USER_POOL_ID` / `GATEWAY_COGNITO_CLIENT_ID`. Returns null
+ * `COGNITO_USER_POOL_ID` / `COGNITO_CLIENT_ID`. Returns null
  * when the env vars are not set (dev/test); tests inject a double via
  * `setCognitoVerifier`.
  */
 function getCognitoVerifier(): CognitoVerifier | null {
   if (_verifier !== undefined) return _verifier;
 
-  const userPoolId = process.env["GATEWAY_COGNITO_USER_POOL_ID"];
-  const clientId = process.env["GATEWAY_COGNITO_CLIENT_ID"];
+  const userPoolId = process.env["COGNITO_USER_POOL_ID"];
+  const clientId = process.env["COGNITO_CLIENT_ID"];
   if (!userPoolId || !clientId) {
     _verifier = null;
     return null;

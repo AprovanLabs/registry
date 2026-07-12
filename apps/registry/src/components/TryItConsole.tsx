@@ -16,9 +16,8 @@ import { Separator } from "@/components/ui/separator";
 import {
   type ProviderCredentialConfig as CredentialConfig,
   buildAuthHeaders,
-  getGatewayUrl,
+  gatewayUrl,
   getProviderCredential,
-  saveGatewayUrl,
 } from "@/lib/local-credentials";
 import { cn } from "@/lib/utils";
 
@@ -95,30 +94,18 @@ function buildCurlSnippet(
   provider: string,
   operation: OperationInfo,
   args: Record<string, unknown>,
-  gatewayUrl: string,
   credConfig: CredentialConfig | null,
-  mode: "gateway" | "direct",
 ): string {
   const authHeaders = buildAuthHeaders(credConfig);
   const headerLines = Object.entries(authHeaders)
     .map(([k, v]) => `  -H '${k}: ${v}'`)
     .join(" \\\n");
 
-  if (mode === "gateway" && gatewayUrl) {
-    const url = `${gatewayUrl.replace(/\/$/, "")}/tools/${provider}/${operation.sdkPath}`;
-    const body = JSON.stringify(args, null, 2);
-    return `curl -X POST '${url}' \\
-  -H 'Content-Type: application/json' \\
+  const url = `${gatewayUrl.replace(/\/$/, "")}/tools/${provider}/${operation.sdkPath}`;
+  const body = JSON.stringify(args, null, 2);
+  return `curl -X POST '${url}' \\
+-H 'Content-Type: application/json' \\
 ${headerLines ? headerLines + " \\\n" : ""}  -d '${body}'`;
-  } else {
-    // Direct mode: construct actual API URL (simplified example)
-    // In practice, the URL pattern depends on the provider's base URL
-    const body = JSON.stringify(args, null, 2);
-    return `# Direct API call (example)
-curl -X ${operation.httpMethod.toUpperCase()} '${operation.httpPath}' \\
-  -H 'Content-Type: application/json' \\
-${headerLines ? headerLines + " \\\n" : ""}  -d '${body}'`;
-  }
 }
 
 function methodColor(method: string): string {
@@ -162,7 +149,7 @@ function FieldInput({
           id={labelId}
           onChange={(e) => onChange(e.target.checked ? "true" : "false")}
           type="checkbox"
-          className="h-4 w-4 rounded border-input accent-primary"
+          className="w-4 h-4 rounded border-input accent-primary"
         />
         <label className="text-sm text-muted-foreground" htmlFor={labelId}>
           {value === "true" ? "true" : "false"}
@@ -225,7 +212,7 @@ function ParameterGroup({
 
   return (
     <div className="flex flex-col gap-3">
-      <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+      <p className="text-xs font-semibold tracking-wide uppercase text-muted-foreground">
         {title}
       </p>
       {fields.map((field) => (
@@ -280,8 +267,8 @@ function CopyableCode({
   }, []);
 
   return (
-    <div className="rounded-xl border bg-muted/50">
-      <div className="flex items-center justify-between gap-3 border-b px-4 py-2">
+    <div className="border rounded-xl bg-muted/50">
+      <div className="flex items-center justify-between gap-3 px-4 py-2 border-b">
         <p className="text-xs font-medium text-muted-foreground">{label}</p>
         <button
           className={cn(
@@ -292,14 +279,14 @@ function CopyableCode({
           type="button"
         >
           {copied ? (
-            <CheckIcon className="h-3 w-3" />
+            <CheckIcon className="w-3 h-3" />
           ) : (
-            <CopyIcon className="h-3 w-3" />
+            <CopyIcon className="w-3 h-3" />
           )}
           {copied ? "Copied" : "Copy"}
         </button>
       </div>
-      <pre className="overflow-x-auto p-4 text-xs leading-relaxed">
+      <pre className="p-4 overflow-x-auto text-xs leading-relaxed">
         <code>{code}</code>
       </pre>
     </div>
@@ -309,8 +296,6 @@ function CopyableCode({
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
-
-type ExecutionMode = "gateway" | "direct";
 
 export function TryItConsole({
   provider,
@@ -360,14 +345,6 @@ export function TryItConsole({
     return initial;
   });
 
-  // Load persisted gateway URL
-  const [gatewayUrl, setGatewayUrl] = useState(() => {
-    if (typeof window !== "undefined") {
-      return getGatewayUrl() || defaultGatewayUrl;
-    }
-    return defaultGatewayUrl;
-  });
-  const [mode, setMode] = useState<ExecutionMode>("gateway");
   const [credConfig, setCredConfig] = useState<CredentialConfig | null>(() => {
     if (typeof window !== "undefined") {
       return getProviderCredential(provider);
@@ -382,11 +359,6 @@ export function TryItConsole({
     ok: boolean;
   } | null>(null);
   const [fetchError, setFetchError] = useState<string | null>(null);
-
-  // Persist gateway URL when it changes
-  useEffect(() => {
-    saveGatewayUrl(gatewayUrl);
-  }, [gatewayUrl]);
 
   const handleFieldChange = useCallback((name: string, value: string) => {
     setValues((prev) => ({ ...prev, [name]: value }));
@@ -404,8 +376,8 @@ export function TryItConsole({
   );
 
   const curlSnippet = useMemo(
-    () => buildCurlSnippet(provider, operation, currentArgs, gatewayUrl, credConfig, mode),
-    [provider, operation, currentArgs, gatewayUrl, credConfig, mode],
+    () => buildCurlSnippet(provider, operation, currentArgs, credConfig),
+    [provider, operation, currentArgs, credConfig],
   );
 
   async function handleSubmit(e: React.FormEvent) {
@@ -416,34 +388,24 @@ export function TryItConsole({
 
     try {
       const authHeaders = buildAuthHeaders(credConfig);
+      const url = `${gatewayUrl.replace(/\/$/, "")}/tools/${provider}/${operation.sdkPath}`;
+      const resp = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeaders,
+        },
+        body: JSON.stringify(currentArgs),
+      });
 
-      if (mode === "gateway") {
-        // Gateway mode: proxy through the gateway
-        if (!gatewayUrl) {
-          throw new Error("Gateway URL is required in gateway mode");
-        }
-        const url = `${gatewayUrl.replace(/\/$/, "")}/tools/${provider}/${operation.sdkPath}`;
-        const resp = await fetch(url, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            ...authHeaders,
-          },
-          body: JSON.stringify(currentArgs),
-        });
-
-        let body: unknown;
-        try {
-          body = await resp.json();
-        } catch {
-          body = await resp.text();
-        }
-
-        setResponseData({ status: resp.status, body, ok: resp.ok });
-      } else {
-        // Direct mode: for now, show an error since we'd need the actual provider base URL
-        throw new Error("Direct mode requires provider base URL configuration (coming soon)");
+      let body: unknown;
+      try {
+        body = await resp.json();
+      } catch {
+        body = await resp.text();
       }
+
+      setResponseData({ status: resp.status, body, ok: resp.ok });
     } catch (err) {
       setFetchError(err instanceof Error ? err.message : "Network error — is the gateway running?");
     } finally {
@@ -462,67 +424,6 @@ export function TryItConsole({
         providerTitle={providerTitle}
         onConfigChange={handleCredConfigChange}
       />
-
-      {/* Gateway configuration */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Gateway</CardTitle>
-          <CardDescription>
-            The gateway proxies requests and injects credentials server-side.
-            Configure credentials above, then enter your gateway URL.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-4">
-          {/* Mode selector */}
-          <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium">Execution Mode</label>
-            <div className="flex gap-2">
-              <button
-                type="button"
-                onClick={() => setMode("gateway")}
-                className={cn(
-                  "flex-1 rounded-lg border px-3 py-2 text-sm transition-colors",
-                  mode === "gateway"
-                    ? "border-primary bg-primary/5 text-foreground font-medium"
-                    : "border-input bg-background text-muted-foreground hover:bg-muted",
-                )}
-              >
-                Gateway Proxy
-              </button>
-              <button
-                type="button"
-                onClick={() => setMode("direct")}
-                disabled
-                className={cn(
-                  "flex-1 rounded-lg border px-3 py-2 text-sm transition-colors",
-                  mode === "direct"
-                    ? "border-primary bg-primary/5 text-foreground font-medium"
-                    : "border-input bg-background text-muted-foreground hover:bg-muted",
-                  "opacity-50 cursor-not-allowed",
-                )}
-                title="Coming soon"
-              >
-                Direct (coming soon)
-              </button>
-            </div>
-          </div>
-
-          <div className="grid gap-1.5">
-            <label className="text-sm font-medium" htmlFor="gateway-url">
-              Gateway URL
-            </label>
-            <Input
-              id="gateway-url"
-              placeholder="http://localhost:4000"
-              value={gatewayUrl}
-              onChange={(e) => setGatewayUrl(e.target.value)}
-            />
-            <p className="text-xs text-muted-foreground">
-              Saved automatically to browser storage.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Parameter form */}
       <form onSubmit={(e) => void handleSubmit(e)}>
@@ -579,23 +480,18 @@ export function TryItConsole({
 
             <div className="flex items-center gap-3 pt-2">
               <Button
-                disabled={isLoading || !gatewayUrl || !hasCredential}
+                disabled={isLoading || !hasCredential}
                 size="default"
                 type="submit"
               >
                 {isLoading ? (
-                  <LoaderCircleIcon className="h-4 w-4 animate-spin" data-icon="inline-start" />
+                  <LoaderCircleIcon className="w-4 h-4 animate-spin" data-icon="inline-start" />
                 ) : (
-                  <PlayIcon className="h-4 w-4" data-icon="inline-start" />
+                  <PlayIcon className="w-4 h-4" data-icon="inline-start" />
                 )}
                 Send
               </Button>
-              {!gatewayUrl && (
-                <p className="text-xs text-muted-foreground">
-                  Enter a gateway URL above to enable sending.
-                </p>
-              )}
-              {gatewayUrl && !hasCredential && (
+              {!hasCredential && (
                 <p className="text-xs text-muted-foreground">
                   Configure credentials above to enable sending.
                 </p>
@@ -620,7 +516,7 @@ export function TryItConsole({
           </CardHeader>
           <CardContent>
             {fetchError ? (
-              <div className="rounded-lg border border-destructive/40 bg-destructive/5 p-4 text-sm text-destructive">
+              <div className="p-4 text-sm border rounded-lg border-destructive/40 bg-destructive/5 text-destructive">
                 {fetchError}
               </div>
             ) : responseData ? (
@@ -650,7 +546,7 @@ export function TryItConsole({
         <CardHeader>
           <div className="flex flex-wrap items-center gap-2">
             <CardTitle>Code snippet</CardTitle>
-            <TerminalIcon className="h-4 w-4 text-muted-foreground" />
+            <TerminalIcon className="w-4 h-4 text-muted-foreground" />
           </div>
           <CardDescription>
             Updates live as you fill in the form above.

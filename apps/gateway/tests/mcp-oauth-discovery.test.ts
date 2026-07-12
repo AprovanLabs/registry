@@ -61,7 +61,7 @@ beforeEach(() => {
 
 afterEach(() => {
   resetCognitoVerifier();
-  delete process.env["GATEWAY_COGNITO_USER_POOL_ID"];
+  delete process.env["COGNITO_USER_POOL_ID"];
 });
 
 // ---------------------------------------------------------------------------
@@ -70,7 +70,7 @@ afterEach(() => {
 
 describe("GET /.well-known/oauth-protected-resource/mcp/:workspaceId", () => {
   it("returns 200 with RFC 9728 metadata document for a valid UUID", async () => {
-    process.env["GATEWAY_COGNITO_USER_POOL_ID"] = "us-east-1_TestPool";
+    process.env["COGNITO_USER_POOL_ID"] = "us-east-1_TestPool";
     const app = createApp();
 
     const res = await app.request(
@@ -100,8 +100,8 @@ describe("GET /.well-known/oauth-protected-resource/mcp/:workspaceId", () => {
     expect(body.error).toBe("invalid_workspace_id");
   });
 
-  it("returns empty authorization_servers when GATEWAY_COGNITO_USER_POOL_ID is unset", async () => {
-    delete process.env["GATEWAY_COGNITO_USER_POOL_ID"];
+  it("returns empty authorization_servers when COGNITO_USER_POOL_ID is unset", async () => {
+    delete process.env["COGNITO_USER_POOL_ID"];
     const app = createApp();
 
     const res = await app.request(
@@ -114,7 +114,7 @@ describe("GET /.well-known/oauth-protected-resource/mcp/:workspaceId", () => {
   });
 
   it("derives resource URL from X-Forwarded-Host header", async () => {
-    process.env["GATEWAY_COGNITO_USER_POOL_ID"] = "us-east-1_TestPool";
+    process.env["COGNITO_USER_POOL_ID"] = "us-east-1_TestPool";
     const app = createApp();
 
     const res = await app.request(

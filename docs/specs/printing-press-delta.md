@@ -294,7 +294,6 @@ registry/
 │           ├── credentials.ts
 │           └── permissions.ts
 └── scripts/
-    ├── ingest-composio.ts               ← NEW: Composio batch ingestion
     └── ingest-printing-press.ts         ← NEW: Printing press catalog import
 ```
 

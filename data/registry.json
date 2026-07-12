@@ -16,17 +16,18 @@
     }
   },
   {
-    "name": "newsapi",
-    "transport_type": "text",
-    "file_path": "./newsapi_manual.json",
+    "name": "posthog",
+    "transport_type": "http",
+    "fetch_method": "GET",
+    "url": "https://us.posthog.com/api/schema/",
     "metadata": {
-      "description": "Retrieves breaking news headlines and articles from thousands of news sources and blogs worldwide",
-      "category": "News & Media",
-      "last_updated": "2024-01-15",
-      "maintainer": "NewsAPI.org",
-      "documentation_url": "https://newsapi.org/docs",
-      "version": "2.0",
-      "openapi_version": "3.0.0"
+      "description": "Capture, evaluate, create, update, and delete nearly all of your information in PostHog",
+      "category": "Development Tools",
+      "last_updated": "2024-07-12",
+      "maintainer": "Posthog",
+      "documentation_url": "https://posthog.com/docs/api",
+      "version": "1.0",
+      "openapi_version": "3.1.0"
     }
   },
   {
