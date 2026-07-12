@@ -22,6 +22,7 @@ import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule
 import { requireAuth } from "../middleware/auth.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import { getPermissionStore } from "../permissions.js";
+import { getServiceRegistry, type ServiceToolInfo } from "../registry/service-registry.js";
 
 export const toolsRouter = new Hono();
 
@@ -194,9 +195,26 @@ toolsRouter.get("/", async (c) => {
     }
   }
 
+  // Also include tools from ServiceRegistry (MCP, UTCP, etc.) — APR-339.
+  // These are not credential-gated because the backends own their own auth.
+  for (const info of getServiceRegistry().getServiceInfo()) {
+    tools.push(serviceToolInfoToEntry(info));
+  }
+
   toolListCache.set(workspaceId, { tools, expiresAt: now + getToolListTtlMs() });
   return c.json({ tools, workspace_id: workspaceId });
 });
+
+function serviceToolInfoToEntry(info: ServiceToolInfo): ToolEntry {
+  return {
+    provider: info.namespace,
+    name: info.name,
+    operation: info.procedure,
+    description: info.description,
+    inputSchema: info.parameters,
+    outputSchema: info.outputs,
+  };
+}
 
 // ---------------------------------------------------------------------------
 // POST /tools/:provider/:operation
@@ -210,21 +228,17 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   const provider = c.req.param("provider");
   const operation = c.req.param("operation");
 
-  // Permission check (async — DDB-backed store, APR-320)
-  const permStore = getPermissionStore();
-  if (!(await permStore.check(workspaceId, callerId, provider!, operation!))) {
-    const requestId = crypto.randomUUID();
-    logMetadata({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
-    getAuditStore().append({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
-    return c.json({ error: "Forbidden: caller does not have permission for this operation" }, 403);
-  }
-
-  // Resolve credentials from store (async — DDB-backed store, APR-318)
-  const credStore = getCredentialStore();
-  const credentials = await credStore.resolveForProvider(workspaceId, provider!);
-
   if (!provider || !operation) {
     return c.json({ error: "Missing provider or operation" }, 400);
+  }
+
+  // Permission check (async — DDB-backed store, APR-320)
+  const permStore = getPermissionStore();
+  if (!(await permStore.check(workspaceId, callerId, provider, operation))) {
+    const requestId = crypto.randomUUID();
+    logMetadata({ requestId, workspaceId, callerId, provider, operation, status: 403 });
+    getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status: 403 });
+    return c.json({ error: "Forbidden: caller does not have permission for this operation" }, 403);
   }
 
   const requestId = crypto.randomUUID();
@@ -241,7 +255,59 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
     // Empty body is fine; some operations take no arguments
   }
 
-  // Execute via Isolate with telemetry
+  // Route: ServiceRegistry namespaces (MCP/UTCP) vs @utdk/* via IsolateExecutor
+  const serviceReg = getServiceRegistry();
+  if (serviceReg.hasNamespace(provider)) {
+    // ServiceRegistry path — APR-339. Backends handle their own credentials.
+    let data: unknown;
+    let callError: string | undefined;
+    let success = false;
+
+    const spanResult = await withSpan<{ success: boolean; data?: unknown; error?: string; durationMs: number }>(
+      { provider, operation, spanName: `gateway ${provider} ${operation}` },
+      async (span) => {
+        span.setAttribute("caller_id", callerId);
+        span.setAttribute("workspace_id", workspaceId);
+        span.setAttribute("request_id", requestId);
+        span.setAttribute("route", "service_registry");
+
+        const start = Date.now();
+        try {
+          const result = await serviceReg.call(provider, operation, args);
+          const durationMs = Date.now() - start;
+          span.setAttribute("success", true);
+          span.setAttribute("duration_ms", durationMs);
+          return { success: true, data: result, durationMs };
+        } catch (err) {
+          const durationMs = Date.now() - start;
+          const error = err instanceof Error ? err.message : String(err);
+          span.setAttribute("success", false);
+          span.setAttribute("error", error);
+          span.setAttribute("duration_ms", durationMs);
+          return { success: false, error, durationMs };
+        }
+      },
+    );
+
+    success = spanResult.success;
+    data = spanResult.data;
+    callError = spanResult.error;
+    const durationMs = spanResult.durationMs;
+
+    const status = success ? 200 : (callError?.includes("not found") ? 404 : 502);
+    logMetadata({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
+    getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
+
+    if (!success) {
+      return c.json({ error: callError ?? "Service call failed" }, status as 404 | 502);
+    }
+    return c.json({ data, meta: { requestId, durationMs } });
+  }
+
+  // @utdk/* path — existing IsolateExecutor route (credential-backed)
+  const credStore = getCredentialStore();
+  const credentials = await credStore.resolveForProvider(workspaceId, provider);
+
   const executor = await getExecutor();
 
   const isolateResult = await withSpan<IsolateResult>(
@@ -270,7 +336,6 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
 
   const durationMs = Date.now() - startTime;
 
-  // 5. Log request/response metadata (no bodies)
   const status = isolateResult.success ? 200 : 500;
   logMetadata({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
   getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
