@@ -2,8 +2,8 @@ import { afterEach, describe, expect, it } from "vitest";
 import { createApp } from "../src/app.js";
 
 afterEach(() => {
-  delete process.env["GATEWAY_OIDC_ISSUER"];
-  delete process.env["GATEWAY_OIDC_AUDIENCE"];
+  delete process.env["OIDC_ISSUER"];
+  delete process.env["OIDCAUDIENCE"];
 });
 
 describe("greenfield gateway contract", () => {

@@ -28,8 +28,8 @@ let verifierOverride: TokenVerifier | null | undefined;
 let verifier: TokenVerifier | undefined;
 
 export function getAuthMode(): AuthMode {
-  return process.env["GATEWAY_OIDC_ISSUER"] &&
-    process.env["GATEWAY_OIDC_AUDIENCE"]
+  return process.env["OIDC_ISSUER"] &&
+    process.env["OIDCAUDIENCE"]
     ? "oidc"
     : "none";
 }
@@ -40,11 +40,11 @@ function createVerifier(): TokenVerifier {
     return verifierOverride;
   }
   if (verifier) return verifier;
-  const issuer = process.env["GATEWAY_OIDC_ISSUER"];
-  const audience = process.env["GATEWAY_OIDC_AUDIENCE"];
+  const issuer = process.env["OIDC_ISSUER"];
+  const audience = process.env["OIDCAUDIENCE"];
   if (!issuer || !audience) throw new Error("OIDC configuration is incomplete");
   const match = issuer.match(/cognito-idp\.[^/]+\.amazonaws\.com\/([^/]+)$/);
-  if (!match?.[1]) throw new Error("GATEWAY_OIDC_ISSUER is not a Cognito issuer");
+  if (!match?.[1]) throw new Error("OIDC_ISSUER is not a Cognito issuer");
   verifier = CognitoJwtVerifier.create({
     userPoolId: match[1],
     clientId: audience,

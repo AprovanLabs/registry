@@ -1,13 +1,43 @@
 /**
- * Gateway API client.
+ * Gateway API client for the registry UI.
  *
- * Wraps the REST API exposed by apps/gateway.
- * The gateway base URL is read from the PUBLIC_GATEWAY_URL environment variable
- * (default: http://localhost:4000 for local development).
+ * Session/workspace calls, error handling, and session persistence come from
+ * the shared `@aprovan/ui/gateway` client so registry and patchwork share one
+ * implementation. Credential and OAuth-PKCE helpers below are registry-specific
+ * and stay local.
+ *
+ * The gateway base URL is read from `PUBLIC_GATEWAY_URL` (default
+ * http://localhost:4000 for local development).
  */
 
+import {
+  createGatewayClient,
+  clearStoredSession,
+  GatewayError,
+  loadStoredSession,
+  saveStoredSession,
+  type GatewayClient,
+  type SessionInfo,
+  type WorkspaceSummary,
+} from "@aprovan/ui/gateway";
+
+export { GatewayError };
+export type { SessionInfo, WorkspaceSummary };
+
+function gatewayBaseUrl(): string {
+  return (
+    (import.meta.env.PUBLIC_GATEWAY_URL as string | undefined)?.replace(/\/$/, "") ??
+    "http://localhost:4000"
+  );
+}
+
+/** A shared gateway client bound to an explicit access token. */
+function withToken(token: string): GatewayClient {
+  return createGatewayClient({ baseUrl: gatewayBaseUrl(), getToken: () => token });
+}
+
 // ---------------------------------------------------------------------------
-// Types (mirrors apps/gateway/src/credentials.ts)
+// Credential types (mirrors apps/gateway/src/credentials.ts)
 // ---------------------------------------------------------------------------
 
 export type CredentialType =
@@ -69,104 +99,44 @@ export interface CredentialRecord {
 }
 
 // ---------------------------------------------------------------------------
-// Gateway client
+// Credentials
 // ---------------------------------------------------------------------------
 
-function gatewayUrl(path: string): string {
-  const base =
-    (import.meta.env.PUBLIC_GATEWAY_URL as string | undefined)?.replace(/\/$/, "") ??
-    "http://localhost:4000";
-  return `${base}${path}`;
-}
-
-export class GatewayError extends Error {
-  constructor(
-    public readonly status: number,
-    message: string,
-  ) {
-    super(message);
-    this.name = "GatewayError";
-  }
-}
-
-async function parseError(res: Response): Promise<GatewayError> {
-  let message = res.statusText;
-  try {
-    const body = (await res.json()) as { error?: string };
-    if (typeof body.error === "string") message = body.error;
-  } catch {
-    // ignore
-  }
-  return new GatewayError(res.status, message);
-}
-
-/**
- * List all credentials for the workspace encoded in the JWT.
- */
+/** List all credentials for the workspace encoded in the JWT. */
 export async function listCredentials(token: string): Promise<CredentialRecord[]> {
-  const res = await fetch(gatewayUrl("/credentials"), {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw await parseError(res);
-  const data = (await res.json()) as { credentials: CredentialRecord[] };
+  const data = await withToken(token).request<{ credentials: CredentialRecord[] }>(
+    "/credentials",
+  );
   return data.credentials;
 }
 
-/**
- * Register a new credential.
- */
+/** Register a new credential. */
 export async function addCredential(
   token: string,
   input: CredentialInput,
 ): Promise<CredentialRecord> {
-  const res = await fetch(gatewayUrl("/credentials"), {
+  return withToken(token).request<CredentialRecord>("/credentials", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
   });
-  if (!res.ok) throw await parseError(res);
-  return (await res.json()) as CredentialRecord;
 }
 
-/**
- * Delete a credential by ID.
- */
+/** Delete a credential by ID. */
 export async function deleteCredential(token: string, id: string): Promise<void> {
-  const res = await fetch(gatewayUrl(`/credentials/${id}`), {
-    method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw await parseError(res);
+  await withToken(token).request<void>(`/credentials/${id}`, { method: "DELETE" });
 }
 
 // ---------------------------------------------------------------------------
 // Session — active workspace + workspace picker (APR-281)
 // ---------------------------------------------------------------------------
 
-export interface WorkspaceSummary {
-  id: string;
-  name: string;
-  role: string;
-}
-
-export interface SessionInfo {
-  activeWorkspaceId: string | null;
-  workspaces: WorkspaceSummary[];
-}
-
 /**
  * Fetch the caller's session: their active workspace (if any) and every
  * workspace they are a member of. Used by the workspace picker.
  */
 export async function getSession(token: string): Promise<SessionInfo> {
-  const res = await fetch(gatewayUrl("/session"), {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  if (!res.ok) throw await parseError(res);
-  return (await res.json()) as SessionInfo;
+  return withToken(token).getSession();
 }
 
 /**
@@ -177,45 +147,32 @@ export async function selectWorkspace(
   token: string,
   workspaceId: string,
 ): Promise<string> {
-  const res = await fetch(gatewayUrl("/session/workspace"), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body: JSON.stringify({ workspaceId }),
-  });
-  if (!res.ok) throw await parseError(res);
-  const body = (await res.json()) as { activeWorkspaceId: string };
-  return body.activeWorkspaceId;
+  return withToken(token).selectWorkspace(workspaceId);
 }
 
 // ---------------------------------------------------------------------------
 // Session helpers (sessionStorage-backed JWT)
 // ---------------------------------------------------------------------------
 
-const TOKEN_KEY = "utdk_gateway_token";
-const WORKSPACE_KEY = "utdk_gateway_workspace";
+const SESSION_KEYS = {
+  token: "utdk_gateway_token",
+  workspace: "utdk_gateway_workspace",
+} as const;
 
 export function saveSession(token: string, workspaceId: string): void {
-  sessionStorage.setItem(TOKEN_KEY, token);
-  sessionStorage.setItem(WORKSPACE_KEY, workspaceId);
+  saveStoredSession(SESSION_KEYS, { token, workspaceId });
 }
 
 export function loadSession(): { token: string; workspaceId: string } | null {
-  const token = sessionStorage.getItem(TOKEN_KEY);
-  const workspaceId = sessionStorage.getItem(WORKSPACE_KEY);
-  if (!token || !workspaceId) return null;
-  return { token, workspaceId };
+  return loadStoredSession(SESSION_KEYS);
 }
 
 export function clearSession(): void {
-  sessionStorage.removeItem(TOKEN_KEY);
-  sessionStorage.removeItem(WORKSPACE_KEY);
+  clearStoredSession(SESSION_KEYS);
 }
 
 // ---------------------------------------------------------------------------
-// OAuth2 PKCE / auth-code helpers
+// OAuth2 PKCE / auth-code helpers (registry-specific)
 // ---------------------------------------------------------------------------
 
 const OAUTH_PENDING_KEY = "utdk_oauth_pending";

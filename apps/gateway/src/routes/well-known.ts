@@ -26,7 +26,7 @@ export const wellKnownRouter = new Hono();
  * Issuer URL:     `https://cognito-idp.<region>.amazonaws.com/<poolId>`
  */
 function getCognitoIssuer(): string | null {
-  const configured = process.env["GATEWAY_OIDC_ISSUER"];
+  const configured = process.env["OIDC_ISSUER"];
   if (configured) return configured;
   const poolId = process.env["COGNITO_USER_POOL_ID"];
   if (!poolId) return null;

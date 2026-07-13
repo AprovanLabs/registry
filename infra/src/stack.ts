@@ -1,33 +1,24 @@
 import { type Namer } from "@aprovan/cdk";
-import { RemovalPolicy, Stack, type StackProps, CfnOutput } from "aws-cdk-lib";
+import { CfnOutput, RemovalPolicy, Stack, type StackProps } from "aws-cdk-lib";
 import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
 import { type Construct } from "constructs";
+import { GatewayLambda } from "./gateway-lambda.js";
 
 export interface RegistryAppProps extends StackProps {
   environmentName: string;
   names: Namer;
+  sharedEnv: Record<string, string>;
 }
 
 export class RegistryApp extends Stack {
   constructor(scope: Construct, id: string, props: RegistryAppProps) {
     super(scope, id, props);
-    const { environmentName, names } = props;
+    const { environmentName, names, sharedEnv } = props;
     const isProd = environmentName === "prd";
-
-    // ---------------------------------------------------------------------------
-    // Gateway store tables (APR-317)
-    //
-    // All four tables share a PK (S) + SK (S) single-table key scheme so that
-    // each workspace's items live under a single partition key `WS#<workspaceId>`
-    // and are distinguished by SK prefix (CRED#, APIKEY#, PERM#, AUDIT#).
-    //
-    // PITR is always enabled. Deletion protection and RETAIN removal policy are
-    // only active in prod — dev environments can be torn down freely.
-    // ---------------------------------------------------------------------------
 
     const storeTableProps = {
       billingMode: BillingMode.PAY_PER_REQUEST,
-      pointInTimeRecovery: true,
+      pointInTimeRecoverySpecification: { pointInTimeRecoveryEnabled: true },
       deletionProtection: isProd,
       removalPolicy: isProd ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
     };
@@ -81,12 +72,12 @@ export class RegistryApp extends Stack {
       exportName: names.regional("permissions-table-arn"),
     });
 
-    const auditTable = new Table(this, "AuditTable", {
+    const auditTable = new Table(this, "AuditStoreTable", {
       ...storeTableProps,
-      tableName: names.regional("audit"),
-      partitionKey: { name: "workspaceId", type: AttributeType.STRING },
-      sortKey: { name: "timestamp#requestId", type: AttributeType.STRING },
-      timeToLiveAttribute: "expiresAt",
+      tableName: names.regional("audit-store"),
+      partitionKey: { name: "PK", type: AttributeType.STRING },
+      sortKey: { name: "SK", type: AttributeType.STRING },
+      timeToLiveAttribute: "ttl",
     });
 
     new CfnOutput(this, "AUDIT_TABLE_NAME", {
@@ -96,6 +87,67 @@ export class RegistryApp extends Stack {
     new CfnOutput(this, "AUDIT_TABLE_ARN", {
       value: auditTable.tableArn,
       exportName: names.regional("audit-table-arn"),
+    });
+
+    const sessionsTable = new Table(this, "SessionsTable", {
+      ...storeTableProps,
+      tableName: names.regional("sessions"),
+      partitionKey: { name: "userId", type: AttributeType.STRING },
+      timeToLiveAttribute: "expiresAt",
+    });
+
+    const groupsTable = new Table(this, "GroupsTable", {
+      ...storeTableProps,
+      tableName: names.regional("groups"),
+      partitionKey: { name: "workspaceId", type: AttributeType.STRING },
+      sortKey: { name: "groupId", type: AttributeType.STRING },
+    });
+
+    const groupPrefixGrantsTable = new Table(this, "GroupPrefixGrantsTable", {
+      ...storeTableProps,
+      tableName: names.regional("group-prefix-grants"),
+      partitionKey: { name: "workspaceId#groupId", type: AttributeType.STRING },
+      sortKey: { name: "pathPrefix", type: AttributeType.STRING },
+    });
+
+    const groupToolGrantsTable = new Table(this, "GroupToolGrantsTable", {
+      ...storeTableProps,
+      tableName: names.regional("group-tool-grants"),
+      partitionKey: { name: "workspaceId#groupId", type: AttributeType.STRING },
+      sortKey: { name: "provider#operation", type: AttributeType.STRING },
+    });
+
+    const userGroupsTable = new Table(this, "UserGroupsTable", {
+      ...storeTableProps,
+      tableName: names.regional("user-groups"),
+      partitionKey: { name: "workspaceId#userId", type: AttributeType.STRING },
+      sortKey: { name: "groupId", type: AttributeType.STRING },
+    });
+
+    const gateway = new GatewayLambda(this, "Gateway", {
+      environmentName,
+      names,
+      sharedEnv,
+      credentialsTable,
+      permissionsTable,
+      auditTable,
+      sessionsTable,
+      groupsTable,
+      groupPrefixGrantsTable,
+      groupToolGrantsTable,
+      userGroupsTable,
+    });
+
+    new CfnOutput(this, "GatewayFunctionUrl", {
+      value: gateway.functionUrl.url,
+      exportName: names.regional("gateway-function-url"),
+    });
+    new CfnOutput(this, "GatewayFunctionUrlDomain", {
+      value: gateway.functionUrlDomain,
+      exportName: names.regional("gateway-function-url-domain"),
+    });
+    new CfnOutput(this, "GatewayFunctionName", {
+      value: gateway.function.functionName,
     });
   }
 }

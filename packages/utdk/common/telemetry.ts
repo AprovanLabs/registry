@@ -99,7 +99,7 @@ export async function configureTelemetry(options: TelemetryOptions): Promise<voi
   _options = {
     enabled: options.enabled ?? true,
     exporter: options.exporter ?? "noop",
-    tracerName: options.tracerName ?? "@utdk/common",
+    tracerName: options.tracerName ?? "unkonwn",
   };
 
   if (!_options.enabled || _options.exporter === "noop") {

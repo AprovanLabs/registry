@@ -41,7 +41,7 @@ const telemetryExporter = process.env["OTEL_EXPORTER_OTLP_ENDPOINT"]
 await configureTelemetry({
   enabled: telemetryExporter !== "noop",
   exporter: telemetryExporter,
-  tracerName: "@aprovan/registry-app",
+  tracerName: "@aprovan/gateway",
 });
 
 // ---------------------------------------------------------------------------
