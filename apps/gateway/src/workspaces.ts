@@ -25,8 +25,8 @@ export interface WorkspaceRecord {
 // Table name (override in tests via env)
 // ---------------------------------------------------------------------------
 
-const WORKSPACES_TABLE = () =>
-  process.env["WORKSPACES_TABLE"] ?? "Workspaces";
+const DYNAMODB_WORKSPACES_TABLE = () =>
+  process.env["DYNAMODB_WORKSPACES_TABLE"] ?? "Workspaces";
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -42,7 +42,7 @@ export async function getWorkspace(
   const client = getDynamoDocClient();
   const result = await client.send(
     new GetCommand({
-      TableName: WORKSPACES_TABLE(),
+      TableName: DYNAMODB_WORKSPACES_TABLE(),
       Key: { workspaceId },
       ProjectionExpression: "workspaceId, name, plan, createdAt, updatedAt",
     }),
@@ -65,7 +65,7 @@ export async function getWorkspaces(
       client
         .send(
           new GetCommand({
-            TableName: WORKSPACES_TABLE(),
+            TableName: DYNAMODB_WORKSPACES_TABLE(),
             Key: { workspaceId: id },
             ProjectionExpression: "workspaceId, name",
           }),

@@ -21,8 +21,8 @@
  *
  *   AWS_REGION           — defaults to us-east-1
  *   AWS_PROFILE          — optional; picks up a named profile from ~/.aws/credentials
- *   WORKSPACES_TABLE_NAME — defaults to gateway-prd-use1-workspaces
- *   MEMBERSHIPS_TABLE_NAME — defaults to gateway-prd-use1-memberships
+ *   DYNAMODB_WORKSPACES_TABLE_NAME — defaults to gateway-prd-use1-workspaces
+ *   DYNAMODB_MEMBERSHIPS_TABLE_NAME — defaults to gateway-prd-use1-memberships
  */
 
 import { parseArgs } from "node:util";
@@ -39,9 +39,9 @@ const { values: args } = parseArgs({
 });
 
 const workspaceName = args["workspace-name"];
-const userSub = args["user-sub"];
+const userId = args["user-sub"];
 
-if (!workspaceName || !userSub) {
+if (!workspaceName || !userId) {
   console.error("Usage: seed-workspace.ts --workspace-name <name> --user-sub <sub> [--workspace-id <uuid>]");
   process.exit(1);
 }
@@ -50,10 +50,10 @@ const region = process.env.AWS_REGION ?? "us-east-1";
 const regionCode = region === "us-east-1" ? "use1" : region === "us-east-2" ? "use2" : "usw1";
 const env = process.env.ENVIRONMENT ?? "prd";
 
-const WORKSPACES_TABLE =
-  process.env.WORKSPACES_TABLE_NAME ?? `gateway-${env}-${regionCode}-workspaces`;
-const MEMBERSHIPS_TABLE =
-  process.env.MEMBERSHIPS_TABLE_NAME ?? `gateway-${env}-${regionCode}-memberships`;
+const DYNAMODB_WORKSPACES_TABLE =
+  process.env.DYNAMODB_WORKSPACES_TABLE_NAME ?? `gateway-${env}-${regionCode}-workspaces`;
+const DYNAMODB_MEMBERSHIPS_TABLE =
+  process.env.DYNAMODB_MEMBERSHIPS_TABLE_NAME ?? `gateway-${env}-${regionCode}-memberships`;
 
 const baseClient = new DynamoDBClient({ region });
 const ddb = DynamoDBDocumentClient.from(baseClient);
@@ -62,14 +62,14 @@ const workspaceId = args["workspace-id"] ?? crypto.randomUUID();
 const now = new Date().toISOString();
 
 async function run() {
-  console.log(`Seeding workspace "${workspaceName}" (${workspaceId}) for user ${userSub}`);
-  console.log(`  Workspaces table : ${WORKSPACES_TABLE}`);
-  console.log(`  Memberships table: ${MEMBERSHIPS_TABLE}`);
+  console.log(`Seeding workspace "${workspaceName}" (${workspaceId}) for user ${userId}`);
+  console.log(`  Workspaces table : ${DYNAMODB_WORKSPACES_TABLE}`);
+  console.log(`  Memberships table: ${DYNAMODB_MEMBERSHIPS_TABLE}`);
 
   try {
     await ddb.send(
       new PutCommand({
-        TableName: WORKSPACES_TABLE,
+        TableName: DYNAMODB_WORKSPACES_TABLE,
         Item: {
           workspaceId,
           name: workspaceName,
@@ -102,15 +102,15 @@ async function run() {
   try {
     await ddb.send(
       new PutCommand({
-        TableName: MEMBERSHIPS_TABLE,
+        TableName: DYNAMODB_MEMBERSHIPS_TABLE,
         Item: {
           workspaceId,
-          userSub,
+          userId,
           role: "admin",
           createdAt: now,
         },
         ConditionExpression:
-          "attribute_not_exists(workspaceId) AND attribute_not_exists(userSub)",
+          "attribute_not_exists(workspaceId) AND attribute_not_exists(userId)",
       }),
     );
     console.log("✓ Membership created");

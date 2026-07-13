@@ -1,7 +1,7 @@
 /**
  * DynamoDB-backed membership lookup.
  *
- * `Memberships` is keyed by `workspaceId` (HASH) + `userSub` (RANGE), so a
+ * `Memberships` is keyed by `workspaceId` (HASH) + `userId` (RANGE), so a
  * direct GetItem resolves whether a user belongs to a workspace and the role
  * they hold there. The auth middleware uses this to enforce that a request's
  * active workspace is one the caller is a member of.
@@ -16,7 +16,7 @@ import { getDynamoDocClient } from "./db/client.js";
 
 export interface MembershipRecord {
   workspaceId: string;
-  userSub: string;
+  userId: string;
   /** Workspace-scoped role, e.g. "admin" | "member". */
   role?: string;
   createdAt?: string;
@@ -26,8 +26,8 @@ export interface MembershipRecord {
 // Table name (override in tests via env)
 // ---------------------------------------------------------------------------
 
-const MEMBERSHIPS_TABLE = () =>
-  process.env["MEMBERSHIPS_TABLE"] ?? "Memberships";
+const DYNAMODB_MEMBERSHIPS_TABLE = () =>
+  process.env["DYNAMODB_MEMBERSHIPS_TABLE"] ?? "Memberships";
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -39,13 +39,13 @@ const MEMBERSHIPS_TABLE = () =>
  */
 export async function getMembership(
   workspaceId: string,
-  userSub: string,
+  userId: string,
 ): Promise<MembershipRecord | undefined> {
   const client = getDynamoDocClient();
   const result = await client.send(
     new GetCommand({
-      TableName: MEMBERSHIPS_TABLE(),
-      Key: { workspaceId, userSub },
+      TableName: DYNAMODB_MEMBERSHIPS_TABLE(),
+      Key: { workspaceId, userId },
     }),
   );
   return result.Item as MembershipRecord | undefined;
@@ -56,7 +56,7 @@ export async function listMembers(workspaceId: string): Promise<MembershipRecord
   const client = getDynamoDocClient();
   const result = await client.send(
     new QueryCommand({
-      TableName: MEMBERSHIPS_TABLE(),
+      TableName: DYNAMODB_MEMBERSHIPS_TABLE(),
       KeyConditionExpression: "workspaceId = :ws",
       ExpressionAttributeValues: { ":ws": workspaceId },
     }),
@@ -65,21 +65,21 @@ export async function listMembers(workspaceId: string): Promise<MembershipRecord
 }
 
 /**
- * List every workspace a user belongs to, via the `ByUserSub` GSI on
+ * List every workspace a user belongs to, via the `ByUserId` GSI on
  * `Memberships`. Used by `GET /session` to populate the workspace picker —
  * the auth middleware cannot do this because it only resolves the *active*
  * workspace.
  */
 export async function listMembershipsForUser(
-  userSub: string,
+  userId: string,
 ): Promise<MembershipRecord[]> {
   const client = getDynamoDocClient();
   const result = await client.send(
     new QueryCommand({
-      TableName: MEMBERSHIPS_TABLE(),
-      IndexName: "ByUserSub",
-      KeyConditionExpression: "userSub = :us",
-      ExpressionAttributeValues: { ":us": userSub },
+      TableName: DYNAMODB_MEMBERSHIPS_TABLE(),
+      IndexName: "ByUserId",
+      KeyConditionExpression: "userId = :us",
+      ExpressionAttributeValues: { ":us": userId },
     }),
   );
   return (result.Items ?? []) as MembershipRecord[];
@@ -89,26 +89,26 @@ export async function listMembershipsForUser(
 export async function putMembership(record: MembershipRecord): Promise<void> {
   const item: Record<string, string> = {
     workspaceId: record.workspaceId,
-    userSub: record.userSub,
+    userId: record.userId,
     role: record.role ?? "member",
     createdAt: record.createdAt ?? new Date().toISOString(),
   };
   await getDynamoDocClient().send(
-    new PutCommand({ TableName: MEMBERSHIPS_TABLE(), Item: item }),
+    new PutCommand({ TableName: DYNAMODB_MEMBERSHIPS_TABLE(), Item: item }),
   );
 }
 
 /** Remove a membership row. Returns false if it did not exist. */
 export async function removeMember(
   workspaceId: string,
-  userSub: string,
+  userId: string,
 ): Promise<boolean> {
-  const existing = await getMembership(workspaceId, userSub);
+  const existing = await getMembership(workspaceId, userId);
   if (!existing) return false;
   await getDynamoDocClient().send(
     new DeleteCommand({
-      TableName: MEMBERSHIPS_TABLE(),
-      Key: { workspaceId, userSub },
+      TableName: DYNAMODB_MEMBERSHIPS_TABLE(),
+      Key: { workspaceId, userId },
     }),
   );
   return true;

@@ -24,7 +24,7 @@ import { getDynamoDocClient } from "./db/client.js";
 // Table name (override in tests via env)
 // ---------------------------------------------------------------------------
 
-const INVITES_TABLE = () => process.env["INVITES_TABLE"] ?? "Invites";
+const DYNAMODB_INVITES_TABLE = () => process.env["DYNAMODB_INVITES_TABLE"] ?? "Invites";
 
 const DEFAULT_TTL_SECONDS = 7 * 24 * 3600; // 7 days
 
@@ -75,7 +75,7 @@ export async function createInvite(
 
   await getDynamoDocClient().send(
     new PutCommand({
-      TableName: INVITES_TABLE(),
+      TableName: DYNAMODB_INVITES_TABLE(),
       Item: item as unknown as Record<string, unknown>,
     }),
   );
@@ -90,7 +90,7 @@ export async function createInvite(
 export async function getInvite(inviteToken: string): Promise<InviteRecord | undefined> {
   const result = await getDynamoDocClient().send(
     new GetCommand({
-      TableName: INVITES_TABLE(),
+      TableName: DYNAMODB_INVITES_TABLE(),
       Key: { inviteToken },
     }),
   );
@@ -106,7 +106,7 @@ export async function getInvite(inviteToken: string): Promise<InviteRecord | und
 export async function listInvites(workspaceId: string): Promise<InviteRecord[]> {
   const result = await getDynamoDocClient().send(
     new QueryCommand({
-      TableName: INVITES_TABLE(),
+      TableName: DYNAMODB_INVITES_TABLE(),
       IndexName: "ByWorkspace",
       KeyConditionExpression: "workspaceId = :ws",
       ExpressionAttributeValues: { ":ws": workspaceId },
@@ -124,7 +124,7 @@ export async function revokeInvite(inviteToken: string): Promise<boolean> {
   if (!existing) return false;
   await getDynamoDocClient().send(
     new DeleteCommand({
-      TableName: INVITES_TABLE(),
+      TableName: DYNAMODB_INVITES_TABLE(),
       Key: { inviteToken },
     }),
   );
@@ -140,7 +140,7 @@ export async function consumeInvite(inviteToken: string): Promise<InviteRecord |
   if (!invite) return undefined;
   await getDynamoDocClient().send(
     new DeleteCommand({
-      TableName: INVITES_TABLE(),
+      TableName: DYNAMODB_INVITES_TABLE(),
       Key: { inviteToken },
     }),
   );

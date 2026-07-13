@@ -16,7 +16,7 @@
  *   COGNITO_DOMAIN              — Cognito hosted UI domain, e.g. auth.example.com (informational)
  */
 
-import { loadAprovanEnv } from "@aprovan/main";
+import { loadAprovanEnv } from "@aprovan/node";
 import { serve } from "@hono/node-server";
 import { configureTelemetry } from "@utdk/common/telemetry";
 import { createApp } from "./app.js";

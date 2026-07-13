@@ -21,8 +21,8 @@ import { getDynamoDocClient } from "./db/client.js";
 // Table name (override in tests via env)
 // ---------------------------------------------------------------------------
 
-const USERS_TABLE = () =>
-  process.env["USERS_TABLE"] ?? "Users";
+const DYNAMODB_USERS_TABLE = () =>
+  process.env["DYNAMODB_USERS_TABLE"] ?? "Users";
 
 // ---------------------------------------------------------------------------
 // Public API
@@ -34,13 +34,13 @@ const USERS_TABLE = () =>
  * (e.g. a new user who has not yet picked a workspace).
  */
 export async function getActiveWorkspaceId(
-  userSub: string,
+  userId: string,
 ): Promise<string | undefined> {
   const client = getDynamoDocClient();
   const result = await client.send(
     new GetCommand({
-      TableName: USERS_TABLE(),
-      Key: { sub: userSub },
+      TableName: DYNAMODB_USERS_TABLE(),
+      Key: { sub: userId },
       ProjectionExpression: "activeWorkspaceId",
     }),
   );
@@ -55,14 +55,14 @@ export async function getActiveWorkspaceId(
  * user record (email, createdAt, …) is preserved.
  */
 export async function setActiveWorkspaceId(
-  userSub: string,
+  userId: string,
   workspaceId: string,
 ): Promise<void> {
   const client = getDynamoDocClient();
   await client.send(
     new UpdateCommand({
-      TableName: USERS_TABLE(),
-      Key: { sub: userSub },
+      TableName: DYNAMODB_USERS_TABLE(),
+      Key: { sub: userId },
       UpdateExpression: "SET activeWorkspaceId = :ws",
       ExpressionAttributeValues: { ":ws": workspaceId },
     }),

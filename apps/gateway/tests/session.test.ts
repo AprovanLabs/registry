@@ -4,7 +4,7 @@
  *   - POST /session/workspace  — select the active workspace (camelCase body)
  *
  * Auth is exercised via mocked Cognito verification + a mocked DDB document
- * client (see tests/helpers.ts). The `ByUserSub` GSI on Memberships and the
+ * client (see tests/helpers.ts). The `ByUserId` GSI on Memberships and the
  * Workspaces table are covered by the extended `setupAuth` fixtures.
  */
 
@@ -243,7 +243,7 @@ describe("POST /session/workspace", () => {
     const item = (putCalls[0]![0] as {
       input?: { Item?: Record<string, unknown> };
     }).input?.Item;
-    expect(item?.["userSub"]).toBe(MULTI_SUB);
+    expect(item?.["userId"]).toBe(MULTI_SUB);
     expect(item?.["currentWorkspaceId"]).toBe("ws-b");
   });
 

@@ -1,7 +1,7 @@
 /**
  * DynamoDB-backed session store for the active-workspace picker.
  *
- * Each user (Cognito `sub`) has at most one `Sessions` item keyed by `userSub`
+ * Each user (Cognito `sub`) has at most one `Sessions` item keyed by `userId`
  * carrying `currentWorkspaceId`. The auth middleware reads this to scope every
  * request to the user's active workspace; `POST /auth/sessions` writes it when
  * the user picks a workspace. A TTL attribute (`expiresAt`) lets DynamoDB
@@ -33,13 +33,13 @@ const DEFAULT_SESSION_TTL_SECONDS = (): number => {
  * or the row has expired (TTL reaped or about to be).
  */
 export async function getCurrentWorkspace(
-  userSub: string,
+  userId: string,
 ): Promise<string | undefined> {
   const client = getDynamoDocClient();
   const result = await client.send(
     new GetCommand({
       TableName: SESSIONS_TABLE(),
-      Key: { userSub },
+      Key: { userId },
       ProjectionExpression: "currentWorkspaceId, expiresAt",
     }),
   );
@@ -60,7 +60,7 @@ export async function getCurrentWorkspace(
  * and a unix-seconds `expiresAt` (the TTL attribute on the Sessions table).
  */
 export async function setCurrentWorkspace(
-  userSub: string,
+  userId: string,
   workspaceId: string,
   ttlSeconds?: number,
 ): Promise<void> {
@@ -70,7 +70,7 @@ export async function setCurrentWorkspace(
   await client.send(
     new PutCommand({
       TableName: SESSIONS_TABLE(),
-      Item: { userSub, currentWorkspaceId: workspaceId, expiresAt },
+      Item: { userId, currentWorkspaceId: workspaceId, expiresAt },
     }),
   );
 }

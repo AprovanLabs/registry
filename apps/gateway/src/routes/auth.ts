@@ -37,9 +37,9 @@ authRouter.post("/sessions", async (c) => {
   }
   const accessToken = authHeader.slice("Bearer ".length);
 
-  let userSub: string;
+  let userId: string;
   try {
-    userSub = await verifyAccessToken(accessToken);
+    userId = await verifyAccessToken(accessToken);
   } catch {
     return c.json({ error: "Invalid or expired Cognito token" }, 401);
   }
@@ -61,7 +61,7 @@ authRouter.post("/sessions", async (c) => {
     );
   }
 
-  const result = await selectActiveWorkspace(userSub, preferredWorkspaceId);
+  const result = await selectActiveWorkspace(userId, preferredWorkspaceId);
   if (!result.ok) {
     return c.json(result.body, result.status);
   }

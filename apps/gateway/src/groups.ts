@@ -5,7 +5,7 @@
  *   Groups          — PK: workspaceId, SK: groupId
  *   GroupPrefixGrants — PK: workspaceId#groupId, SK: pathPrefix
  *   GroupToolGrants  — PK: workspaceId#groupId, SK: provider#operation
- *   UserGroups       — PK: workspaceId#userSub, SK: groupId
+ *   UserGroups       — PK: workspaceId#userId, SK: groupId
  */
 
 import { randomBytes } from "crypto";
@@ -56,7 +56,7 @@ export interface ToolGrantRecord {
 
 export interface UserGroupRecord {
   workspaceId: string;
-  userSub: string;
+  userId: string;
   groupId: string;
 }
 
@@ -187,16 +187,16 @@ export async function deleteGroup(
 export async function addUserToGroup(
   workspaceId: string,
   groupId: string,
-  userSub: string,
+  userId: string,
 ): Promise<void> {
   await getDynamoDocClient().send(
     new PutCommand({
       TableName: USER_GROUPS_TABLE(),
       Item: {
-        "workspaceId#userSub": `${workspaceId}#${userSub}`,
+        "workspaceId#userId": `${workspaceId}#${userId}`,
         groupId,
         workspaceId,
-        userSub,
+        userId,
       },
     }),
   );
@@ -205,13 +205,13 @@ export async function addUserToGroup(
 export async function removeUserFromGroup(
   workspaceId: string,
   groupId: string,
-  userSub: string,
+  userId: string,
 ): Promise<boolean> {
   const result = await getDynamoDocClient().send(
     new GetCommand({
       TableName: USER_GROUPS_TABLE(),
       Key: {
-        "workspaceId#userSub": `${workspaceId}#${userSub}`,
+        "workspaceId#userId": `${workspaceId}#${userId}`,
         groupId,
       },
     }),
@@ -222,7 +222,7 @@ export async function removeUserFromGroup(
     new DeleteCommand({
       TableName: USER_GROUPS_TABLE(),
       Key: {
-        "workspaceId#userSub": `${workspaceId}#${userSub}`,
+        "workspaceId#userId": `${workspaceId}#${userId}`,
         groupId,
       },
     }),

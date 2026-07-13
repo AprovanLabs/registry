@@ -21,7 +21,7 @@
     "clean": "rm -rf dist"
   },
   "dependencies": {
-    "@aprovan/main": "^0.1.0",
+    "@aprovan/node": "^0.1.0",
     "@aws-sdk/client-cognito-identity-provider": "^3.1077.0",
     "@aws-sdk/client-dynamodb": "^3.1077.0",
     "@aws-sdk/client-ses": "^3.1077.0",

@@ -1,7 +1,7 @@
 /**
  * DynamoDB-backed user-group lookup.
  *
- * `UserGroups` is keyed by `workspaceId#userSub` (HASH) + `groupId` (RANGE),
+ * `UserGroups` is keyed by `workspaceId#userId` (HASH) + `groupId` (RANGE),
  * so a single Query returns every group a user belongs to in a workspace.
  * The auth middleware loads these to populate `principal.groupIds` for
  * group-based permission grants.
@@ -27,15 +27,15 @@ const USERGROUPS_TABLE = () =>
  */
 export async function listUserGroupIds(
   workspaceId: string,
-  userSub: string,
+  userId: string,
 ): Promise<string[]> {
   const client = getDynamoDocClient();
   const result = await client.send(
     new QueryCommand({
       TableName: USERGROUPS_TABLE(),
       KeyConditionExpression: "#pk = :pk",
-      ExpressionAttributeNames: { "#pk": "workspaceId#userSub" },
-      ExpressionAttributeValues: { ":pk": `${workspaceId}#${userSub}` },
+      ExpressionAttributeNames: { "#pk": "workspaceId#userId" },
+      ExpressionAttributeValues: { ":pk": `${workspaceId}#${userId}` },
       ProjectionExpression: "groupId",
     }),
   );

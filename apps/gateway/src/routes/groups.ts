@@ -155,14 +155,14 @@ groupsRouter.get("/:id/users", async (c) => {
       TableName: userGroupsTable,
       FilterExpression: "workspaceId = :ws AND groupId = :gid",
       ExpressionAttributeValues: { ":ws": workspaceId, ":gid": groupId },
-      ProjectionExpression: "userSub",
+      ProjectionExpression: "userId",
     }),
   );
-  const userSubs = ((result.Items ?? []) as Array<{ userSub?: string }>)
-    .map((i) => i.userSub)
+  const userIds = ((result.Items ?? []) as Array<{ userId?: string }>)
+    .map((i) => i.userId)
     .filter((s): s is string => typeof s === "string");
 
-  return c.json({ groupId, userSubs });
+  return c.json({ groupId, userIds });
 });
 
 // ---------------------------------------------------------------------------
@@ -181,15 +181,15 @@ groupsRouter.post("/:id/users", async (c) => {
   }
 
   if (!isUserSubInput(body)) {
-    return c.json({ error: "Invalid input. Required: userSub (string)" }, 400);
+    return c.json({ error: "Invalid input. Required: userId (string)" }, 400);
   }
 
   const group = await getGroup(workspaceId, groupId);
   if (!group) return c.json({ error: "Group not found" }, 404);
 
-  const { userSub } = body as { userSub: string };
-  await addUserToGroup(workspaceId, groupId, userSub);
-  return c.json({ workspaceId, groupId, userSub }, 201);
+  const { userId } = body as { userId: string };
+  await addUserToGroup(workspaceId, groupId, userId);
+  return c.json({ workspaceId, groupId, userId }, 201);
 });
 
 // ---------------------------------------------------------------------------
@@ -208,11 +208,11 @@ groupsRouter.delete("/:id/users", async (c) => {
   }
 
   if (!isUserSubInput(body)) {
-    return c.json({ error: "Invalid input. Required: userSub (string)" }, 400);
+    return c.json({ error: "Invalid input. Required: userId (string)" }, 400);
   }
 
-  const { userSub } = body as { userSub: string };
-  const removed = await removeUserFromGroup(workspaceId, groupId, userSub);
+  const { userId } = body as { userId: string };
+  const removed = await removeUserFromGroup(workspaceId, groupId, userId);
   if (!removed) {
     return c.json({ error: "User not found in group" }, 404);
   }
@@ -385,10 +385,10 @@ function isPatchGroupInput(v: unknown): v is { name?: string; description?: stri
   return true;
 }
 
-function isUserSubInput(v: unknown): v is { userSub: string } {
+function isUserSubInput(v: unknown): v is { userId: string } {
   if (!v || typeof v !== "object") return false;
   const o = v as Record<string, unknown>;
-  return typeof o["userSub"] === "string" && o["userSub"].length > 0;
+  return typeof o["userId"] === "string" && o["userId"].length > 0;
 }
 
 function isPrefixGrantInput(v: unknown): v is { pathPrefix: string } {

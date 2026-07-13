@@ -19,8 +19,8 @@
   },
   "devDependencies": {
     "@aprovan/tsconfig": "^0.1.0",
-    "@types/react": "^19.1.8",
-    "react": "^19.1.0",
+    "@types/react": "^19.2.7",
+    "react": "19.2.7",
     "tsup": "^8.5.0",
     "typescript": "^5.7.3"
   },

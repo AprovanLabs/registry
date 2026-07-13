@@ -42,16 +42,16 @@ export const Memberships: TableSchema = {
     TableName: "Memberships",
     KeySchema: [
       { AttributeName: "workspaceId", KeyType: "HASH" },
-      { AttributeName: "userSub", KeyType: "RANGE" },
+      { AttributeName: "userId", KeyType: "RANGE" },
     ],
     AttributeDefinitions: [
       { AttributeName: "workspaceId", AttributeType: "S" },
-      { AttributeName: "userSub", AttributeType: "S" },
+      { AttributeName: "userId", AttributeType: "S" },
     ],
     GlobalSecondaryIndexes: [
       {
-        IndexName: "ByUserSub",
-        KeySchema: [{ AttributeName: "userSub", KeyType: "HASH" }],
+        IndexName: "ByUserId",
+        KeySchema: [{ AttributeName: "userId", KeyType: "HASH" }],
         Projection: { ProjectionType: "ALL" },
       },
     ],
@@ -64,8 +64,8 @@ export const Sessions: TableSchema = {
   ttlAttribute: "expiresAt",
   createInput: {
     TableName: "Sessions",
-    KeySchema: [{ AttributeName: "userSub", KeyType: "HASH" }],
-    AttributeDefinitions: [{ AttributeName: "userSub", AttributeType: "S" }],
+    KeySchema: [{ AttributeName: "userId", KeyType: "HASH" }],
+    AttributeDefinitions: [{ AttributeName: "userId", AttributeType: "S" }],
     BillingMode: "PAY_PER_REQUEST",
   },
 };
@@ -252,11 +252,11 @@ export const UserGroups: TableSchema = {
   createInput: {
     TableName: "UserGroups",
     KeySchema: [
-      { AttributeName: "workspaceId#userSub", KeyType: "HASH" },
+      { AttributeName: "workspaceId#userId", KeyType: "HASH" },
       { AttributeName: "groupId", KeyType: "RANGE" },
     ],
     AttributeDefinitions: [
-      { AttributeName: "workspaceId#userSub", AttributeType: "S" },
+      { AttributeName: "workspaceId#userId", AttributeType: "S" },
       { AttributeName: "groupId", AttributeType: "S" },
     ],
     BillingMode: "PAY_PER_REQUEST",

@@ -146,11 +146,11 @@ async function provisionTables(): Promise<boolean> {
     client,
     USER_GROUPS_TABLE,
     [
-      { AttributeName: "workspaceId#userSub", KeyType: "HASH" },
+      { AttributeName: "workspaceId#userId", KeyType: "HASH" },
       { AttributeName: "groupId", KeyType: "RANGE" },
     ],
     [
-      { AttributeName: "workspaceId#userSub", AttributeType: "S" },
+      { AttributeName: "workspaceId#userId", AttributeType: "S" },
       { AttributeName: "groupId", AttributeType: "S" },
     ],
   );

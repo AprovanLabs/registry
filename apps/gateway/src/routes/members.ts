@@ -2,7 +2,7 @@
  * Workspace member management routes.
  *
  * GET    /members         — admin only; list members of the active workspace
- * DELETE /members/:userSub — admin only; remove a member from the workspace
+ * DELETE /members/:userId — admin only; remove a member from the workspace
  */
 
 import { Hono } from "hono";
@@ -32,7 +32,7 @@ membersRouter.get("/", async (c) => {
 
   return c.json({
     members: members.map((m) => ({
-      userSub: m.userSub,
+      userId: m.userId,
       role: m.role ?? "member",
       createdAt: m.createdAt,
     })),
@@ -40,12 +40,12 @@ membersRouter.get("/", async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// DELETE /members/:userSub
+// DELETE /members/:userId
 // ---------------------------------------------------------------------------
 
-membersRouter.delete("/:userSub", async (c) => {
+membersRouter.delete("/:userId", async (c) => {
   const principal = c.get("principal");
-  const targetSub = c.req.param("userSub");
+  const targetSub = c.req.param("userId");
 
   if (targetSub === principal.sub) {
     return c.json({ error: "Cannot remove yourself from the workspace" }, 400);

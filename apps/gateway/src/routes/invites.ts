@@ -165,9 +165,9 @@ invitesRouter.post("/:token/accept", async (c) => {
   }
   const accessToken = authHeader.slice("Bearer ".length);
 
-  let userSub: string;
+  let userId: string;
   try {
-    userSub = await verifyAccessToken(accessToken);
+    userId = await verifyAccessToken(accessToken);
   } catch {
     return c.json({ error: "Invalid or expired token" }, 401);
   }
@@ -191,7 +191,7 @@ invitesRouter.post("/:token/accept", async (c) => {
   try {
     await putMembership({
       workspaceId: invite.workspaceId,
-      userSub,
+      userId,
       role: invite.role,
     });
   } catch (err) {
@@ -203,7 +203,7 @@ invitesRouter.post("/:token/accept", async (c) => {
 
   for (const groupId of invite.groupIds) {
     try {
-      await addUserToGroup(invite.workspaceId, groupId, userSub);
+      await addUserToGroup(invite.workspaceId, groupId, userId);
     } catch (err) {
       process.stderr.write(
         `[gateway] addUserToGroup(${groupId}) failed (non-fatal): ${err instanceof Error ? err.message : String(err)}\n`,

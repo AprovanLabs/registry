@@ -33,7 +33,7 @@ const GATEWAY_URL: string =
 // ---------------------------------------------------------------------------
 
 interface Member {
-  userSub: string;
+  userId: string;
   role: string;
   createdAt?: string;
 }
@@ -204,14 +204,14 @@ function MembersTab({ token }: { token: string }) {
     load();
   }, [token]);
 
-  async function removeMember(userSub: string) {
+  async function removeMember(userId: string) {
     try {
-      const res = await gatewayFetch(`/members/${userSub}`, token, { method: "DELETE" });
+      const res = await gatewayFetch(`/members/${userId}`, token, { method: "DELETE" });
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
         throw new Error(body.error ?? `${res.status}`);
       }
-      setMembers((prev) => prev.filter((m) => m.userSub !== userSub));
+      setMembers((prev) => prev.filter((m) => m.userId !== userId));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to remove member");
     }
@@ -244,8 +244,8 @@ function MembersTab({ token }: { token: string }) {
               </thead>
               <tbody>
                 {members.map((m) => (
-                  <tr key={m.userSub} className="border-b last:border-0">
-                    <td className="py-2 pl-4 font-mono text-xs">{m.userSub}</td>
+                  <tr key={m.userId} className="border-b last:border-0">
+                    <td className="py-2 pl-4 font-mono text-xs">{m.userId}</td>
                     <td className="py-2 pr-4">
                       <Badge variant={m.role === "admin" ? "default" : "secondary"}>
                         {m.role}
@@ -258,7 +258,7 @@ function MembersTab({ token }: { token: string }) {
                       <Button
                         variant="destructive"
                         size="sm"
-                        onClick={() => removeMember(m.userSub)}
+                        onClick={() => removeMember(m.userId)}
                       >
                         Remove
                       </Button>
@@ -448,7 +448,7 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
   const { groupId } = group;
 
   // Group users
-  const [userSubs, setUserSubs] = React.useState<string[]>([]);
+  const [userIds, setUserSubs] = React.useState<string[]>([]);
   const [addUserSub, setAddUserSub] = React.useState("");
 
   // Prefix grants
@@ -466,8 +466,8 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
     setLoadError("");
     Promise.all([
       gatewayFetch(`/groups/${groupId}/users`, token)
-        .then((r) => r.json() as Promise<{ userSubs: string[] }>)
-        .then((d) => setUserSubs(d.userSubs ?? [])),
+        .then((r) => r.json() as Promise<{ userIds: string[] }>)
+        .then((d) => setUserSubs(d.userIds ?? [])),
       gatewayFetch(`/groups/${groupId}/prefix-grants`, token)
         .then((r) => r.json() as Promise<{ grants: PrefixGrant[] }>)
         .then((d) => setPrefixGrants(d.grants ?? [])),
@@ -486,7 +486,7 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
     try {
       const res = await gatewayFetch(`/groups/${groupId}/users`, token, {
         method: "POST",
-        body: JSON.stringify({ userSub: sub }),
+        body: JSON.stringify({ userId: sub }),
       });
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
@@ -503,7 +503,7 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
     try {
       const res = await gatewayFetch(`/groups/${groupId}/users`, token, {
         method: "DELETE",
-        body: JSON.stringify({ userSub: sub }),
+        body: JSON.stringify({ userId: sub }),
       });
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
@@ -618,11 +618,11 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
               Add
             </Button>
           </form>
-          {userSubs.length === 0 && (
+          {userIds.length === 0 && (
             <p className="text-sm text-muted-foreground">No members in this group.</p>
           )}
           <ul className="flex flex-col gap-1">
-            {userSubs.map((sub) => (
+            {userIds.map((sub) => (
               <li
                 key={sub}
                 className="flex items-center justify-between rounded border px-3 py-1"

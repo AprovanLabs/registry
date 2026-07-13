@@ -1,14 +1,18 @@
+import { type Namer } from "@aprovan/cdk";
 import { RemovalPolicy, Stack, type StackProps, CfnOutput } from "aws-cdk-lib";
 import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
 import { type Construct } from "constructs";
-import { ENVIRONMENT } from "./core/constants.js";
-import { namer } from "./core/utils.js";
 
-const isProd = ENVIRONMENT === "prd";
+export interface RegistryAppProps extends StackProps {
+  environmentName: string;
+  names: Namer;
+}
 
 export class RegistryApp extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
+  constructor(scope: Construct, id: string, props: RegistryAppProps) {
     super(scope, id, props);
+    const { environmentName, names } = props;
+    const isProd = environmentName === "prd";
 
     // ---------------------------------------------------------------------------
     // Gateway store tables (APR-317)
@@ -30,23 +34,23 @@ export class RegistryApp extends Stack {
 
     const credentialsTable = new Table(this, "CredentialsTable", {
       ...storeTableProps,
-      tableName: namer().regional("credentials"),
+      tableName: names.regional("credentials"),
       partitionKey: { name: "PK", type: AttributeType.STRING },
       sortKey: { name: "SK", type: AttributeType.STRING },
     });
 
     new CfnOutput(this, "CREDENTIALS_TABLE_NAME", {
       value: credentialsTable.tableName,
-      exportName: namer().regional("credentials-table-name"),
+      exportName: names.regional("credentials-table-name"),
     });
     new CfnOutput(this, "CREDENTIALS_TABLE_ARN", {
       value: credentialsTable.tableArn,
-      exportName: namer().regional("credentials-table-arn"),
+      exportName: names.regional("credentials-table-arn"),
     });
 
     const apiKeysTable = new Table(this, "ApiKeysTable", {
       ...storeTableProps,
-      tableName: namer().regional("api-keys"),
+      tableName: names.regional("api-keys"),
       partitionKey: { name: "PK", type: AttributeType.STRING },
       sortKey: { name: "SK", type: AttributeType.STRING },
       timeToLiveAttribute: "ttl",
@@ -54,32 +58,32 @@ export class RegistryApp extends Stack {
 
     new CfnOutput(this, "APIKEYS_TABLE_NAME", {
       value: apiKeysTable.tableName,
-      exportName: namer().regional("api-keys-table-name"),
+      exportName: names.regional("api-keys-table-name"),
     });
     new CfnOutput(this, "APIKEYS_TABLE_ARN", {
       value: apiKeysTable.tableArn,
-      exportName: namer().regional("api-keys-table-arn"),
+      exportName: names.regional("api-keys-table-arn"),
     });
 
     const permissionsTable = new Table(this, "PermissionsTable", {
       ...storeTableProps,
-      tableName: namer().regional("permissions"),
+      tableName: names.regional("permissions"),
       partitionKey: { name: "PK", type: AttributeType.STRING },
       sortKey: { name: "SK", type: AttributeType.STRING },
     });
 
     new CfnOutput(this, "PERMISSIONS_TABLE_NAME", {
       value: permissionsTable.tableName,
-      exportName: namer().regional("permissions-table-name"),
+      exportName: names.regional("permissions-table-name"),
     });
     new CfnOutput(this, "PERMISSIONS_TABLE_ARN", {
       value: permissionsTable.tableArn,
-      exportName: namer().regional("permissions-table-arn"),
+      exportName: names.regional("permissions-table-arn"),
     });
 
     const auditTable = new Table(this, "AuditTable", {
       ...storeTableProps,
-      tableName: namer().regional("audit"),
+      tableName: names.regional("audit"),
       partitionKey: { name: "workspaceId", type: AttributeType.STRING },
       sortKey: { name: "timestamp#requestId", type: AttributeType.STRING },
       timeToLiveAttribute: "expiresAt",
@@ -87,11 +91,11 @@ export class RegistryApp extends Stack {
 
     new CfnOutput(this, "AUDIT_TABLE_NAME", {
       value: auditTable.tableName,
-      exportName: namer().regional("audit-table-name"),
+      exportName: names.regional("audit-table-name"),
     });
     new CfnOutput(this, "AUDIT_TABLE_ARN", {
       value: auditTable.tableArn,
-      exportName: namer().regional("audit-table-arn"),
+      exportName: names.regional("audit-table-arn"),
     });
   }
 }

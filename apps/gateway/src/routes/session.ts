@@ -51,17 +51,17 @@ export interface SelectError {
 }
 
 /**
- * Validate that `userSub` is a member of `workspaceId` and persist it as the
+ * Validate that `userId` is a member of `workspaceId` and persist it as the
  * active workspace. Shared by `POST /session/workspace` and the legacy
  * `POST /auth/sessions` alias.
  */
 export async function selectActiveWorkspace(
-  userSub: string,
+  userId: string,
   workspaceId: string,
 ): Promise<SelectResult | SelectError> {
   let membership;
   try {
-    membership = await getMembership(workspaceId, userSub);
+    membership = await getMembership(workspaceId, userId);
   } catch (err) {
     process.stderr.write(
       `[gateway] membership read failed: ${err instanceof Error ? err.message : String(err)}\n`,
@@ -72,8 +72,8 @@ export async function selectActiveWorkspace(
     return { ok: false, status: 403, body: { error: "No membership in that workspace" } };
   }
   try {
-    await setActiveWorkspaceId(userSub, workspaceId);
-    await setCurrentWorkspace(userSub, workspaceId);
+    await setActiveWorkspaceId(userId, workspaceId);
+    await setCurrentWorkspace(userId, workspaceId);
   } catch (err) {
     process.stderr.write(
       `[gateway] session write failed: ${err instanceof Error ? err.message : String(err)}\n`,

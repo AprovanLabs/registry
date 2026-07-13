@@ -187,15 +187,15 @@ export function setupAuth(opts: SetupAuthOptions): void {
       }
 
       // -----------------------------------------------------------------------
-      // Sessions — GetCommand: keyed by userSub (not PK/SK)
+      // Sessions — GetCommand: keyed by userId (not PK/SK)
       // -----------------------------------------------------------------------
       if (table === "Sessions" && key) {
-        if (typeof key["userSub"] === "string") {
-          const user = users.find((u) => u.sub === key["userSub"]);
+        if (typeof key["userId"] === "string") {
+          const user = users.find((u) => u.sub === key["userId"]);
           if (user && user.activeWorkspaceId !== null) {
             return Promise.resolve({
               Item: {
-                userSub: user.sub,
+                userId: user.sub,
                 currentWorkspaceId: user.activeWorkspaceId,
                 expiresAt: Math.floor(Date.now() / 1000) + 3600,
               },
@@ -209,7 +209,7 @@ export function setupAuth(opts: SetupAuthOptions): void {
       // Memberships — GetCommand
       // -----------------------------------------------------------------------
       if (table === "Memberships" && key) {
-        const user = users.find((u) => u.sub === key["userSub"]);
+        const user = users.find((u) => u.sub === key["userId"]);
         const membership = user?.memberships.find(
           (m) => m.workspaceId === key["workspaceId"],
         );
@@ -217,7 +217,7 @@ export function setupAuth(opts: SetupAuthOptions): void {
           return Promise.resolve({
             Item: {
               workspaceId: membership.workspaceId,
-              userSub: user.sub,
+              userId: user.sub,
               role: membership.role,
             },
           });
@@ -270,7 +270,7 @@ export function setupAuth(opts: SetupAuthOptions): void {
           if (user) {
             return Promise.resolve({
               Items: user.groupIds.map((g) => ({
-                "workspaceId#userSub": pk,
+                "workspaceId#userId": pk,
                 groupId: g,
               })),
             });
@@ -278,15 +278,15 @@ export function setupAuth(opts: SetupAuthOptions): void {
           return Promise.resolve({ Items: [] });
         }
 
-        // Memberships ByUserSub GSI — `GET /session` lists a user's workspaces
-        if (table === "Memberships" && input["IndexName"] === "ByUserSub") {
+        // Memberships ByUserId GSI — `GET /session` lists a user's workspaces
+        if (table === "Memberships" && input["IndexName"] === "ByUserId") {
           const us = exprValues[":us"] as string | undefined;
           const user = users.find((u) => u.sub === us);
           if (!user) return Promise.resolve({ Items: [] });
           return Promise.resolve({
             Items: user.memberships.map((m) => ({
               workspaceId: m.workspaceId,
-              userSub: user.sub,
+              userId: user.sub,
               role: m.role,
             })),
           });
