@@ -15,14 +15,30 @@
     "provider": "petstore",
     "generation": 1,
     "generatedAt": "2026-05-30T22:05:43.514Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "${PETSTORE_API_KEY}",
-        "var_name": "api_key",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "petstore_auth",
+          "type": "oauth2",
+          "flows": {
+            "implicit": {
+              "authorizationUrl": "https://petstore3.swagger.io/oauth/authorize",
+              "scopes": {
+                "write:pets": "modify pets in your account",
+                "read:pets": "read your pets"
+              }
+            }
+          }
+        },
+        {
+          "id": "api_key",
+          "type": "apiKey",
+          "name": "api_key",
+          "in": "header"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Swagger Petstore - OpenAPI 3.0",
       "url": "https://petstore3.swagger.io/api/v3/openapi.json",

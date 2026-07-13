@@ -44,7 +44,7 @@ jobs:
         run: pnpm install
 
       - name: Build registry app
-        run: pnpm --filter @aprovan/registry-ui build
+        run: pnpm --filter @aprovan/registry-web build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

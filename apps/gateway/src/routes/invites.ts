@@ -14,7 +14,6 @@ import { addUserToGroup } from "../groups.js";
 import { consumeInvite, createInvite, listInvites, revokeInvite } from "../invites.js";
 import { putMembership } from "../memberships.js";
 import {
-  CognitoNotConfiguredError,
   requireAdmin,
   requireAuth,
   verifyAccessToken,
@@ -169,10 +168,7 @@ invitesRouter.post("/:token/accept", async (c) => {
   let userSub: string;
   try {
     userSub = await verifyAccessToken(accessToken);
-  } catch (err) {
-    if (err instanceof CognitoNotConfiguredError) {
-      return c.json({ error: "Cognito verifier not configured" }, 500);
-    }
+  } catch {
     return c.json({ error: "Invalid or expired token" }, 401);
   }
 

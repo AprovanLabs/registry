@@ -15,10 +15,7 @@
 
 import { Hono } from "hono";
 import { getMembership, listMembershipsForUser } from "../memberships.js";
-import {
-  CognitoNotConfiguredError,
-  verifyAccessToken,
-} from "../middleware/auth.js";
+import { verifyAccessToken } from "../middleware/auth.js";
 import { getCurrentWorkspace, setCurrentWorkspace } from "../sessions.js";
 import { getActiveWorkspaceId, setActiveWorkspaceId } from "../users.js";
 import { getWorkspaces } from "../workspaces.js";
@@ -38,10 +35,7 @@ async function requireCognitoSub(c: ContextLike): Promise<string | Response> {
   const accessToken = authHeader.slice("Bearer ".length);
   try {
     return await verifyAccessToken(accessToken);
-  } catch (err) {
-    if (err instanceof CognitoNotConfiguredError) {
-      return c.json({ error: "Cognito verifier not configured" }, 500);
-    }
+  } catch {
     return c.json({ error: "Invalid or expired Cognito token" }, 401);
   }
 }

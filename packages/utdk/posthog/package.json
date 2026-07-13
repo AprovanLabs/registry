@@ -14,7 +14,16 @@
     "provider": "posthog",
     "generation": 5,
     "generatedAt": "2026-07-12T21:26:44.549Z",
-    "auth": [],
+    "auth": {
+      "schemes": [
+        {
+          "id": "PersonalAPIKeyAuth",
+          "type": "http",
+          "scheme": "bearer"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "PostHog API",
       "url": "https://us.posthog.com/api/schema/",

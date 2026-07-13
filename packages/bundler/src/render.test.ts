@@ -394,15 +394,23 @@ describe("nested provider rendering", () => {
           title: "OpenAI API",
           version: "1.0.0",
         },
+        components: {
+          securitySchemes: {
+            bearer: {
+              type: "http",
+              scheme: "bearer",
+            },
+          },
+        },
       } as never,
       undefined,
       new Date("2026-04-07T00:00:00.000Z"),
     );
 
     expect(rendered).toContain('"provider": "openai"');
-    expect(rendered).toContain('"auth": [');
-    expect(rendered).toContain('"auth_type": "api_key"');
-    expect(rendered).toContain('"var_name": "Authorization"');
+    expect(rendered).toContain('"auth": {');
+    expect(rendered).toContain('"id": "bearer"');
+    expect(rendered).toContain('"scheme": "bearer"');
   });
 
   it("includes provider OpenAPI icon metadata in package json utdk metadata", () => {
@@ -492,7 +500,8 @@ describe("nested provider rendering", () => {
     expect(rendered).toContain('"private": true');
     expect(rendered).not.toContain('"name": "@utdk/google/books"');
     expect(rendered).toContain('"provider": "google/books"');
-    expect(rendered).toContain('"auth": [');
+    expect(rendered).toContain('"auth": {');
+    expect(rendered).toContain('"schemes": []');
   });
 
   it("renders docs metadata additively under utdk.docs", () => {
@@ -564,6 +573,11 @@ describe("nested provider rendering", () => {
             version: "1.0.0",
             description: "The OpenAI REST API.",
           },
+          components: {
+            securitySchemes: {
+              bearer: { type: "http", scheme: "bearer" },
+            },
+          },
           paths: {
             "/responses": {
               post: {
@@ -589,7 +603,7 @@ describe("nested provider rendering", () => {
     expect(rendered).toContain("# OpenAI API");
     expect(rendered).toContain("The OpenAI REST API.");
     expect(rendered).toContain("**Operations**: 2");
-    expect(rendered).toContain('**Authentication**: api_key');
+    expect(rendered).toContain("**Authentication**: http:bearer");
     expect(rendered).toContain("**Top capabilities**: Models, Responses");
     expect(rendered).toContain("@utdk/openai");
     expect(rendered).toContain("## Quick start");

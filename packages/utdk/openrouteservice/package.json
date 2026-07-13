@@ -2,7 +2,7 @@
   "name": "@utdk/openrouteservice",
   "version": "2.0.0-20260530.2",
   "type": "module",
-  "description": "Generated UTDK provider client for OpenRouteService API. Open-source routing, geocoding, isochrone, distance-matrix, and VRP optimization API\nbuilt on OpenStreetMap. Pelias powers geocoding; Vroom powers optimization.\n\nThis spec covers the endpoints commonly used for back-end agent workflows\n(geocoding, matrices for VRP solvers, route ETAs, isochrones, full VRP solve).\nThe full ORS surface (POIs, snap-to-road, elevation, optimization advanced\nconstraints) can be added incrementally — see notes in the catalog entry.\n\nThe hosted free API (`https://api.openrouteservice.org`) exposes routing,\nmatrix, isochrones, optimization, and geocoding. Self-hosted ORS Docker\ncovers the ORS backend endpoints (routing, matrix, isochrones, optimization);\ngeocoding is hosted-public-API only.\n\nAuth: pass the API key in the `Authorization` header. Sign up free at\nhttps://openrouteservice.org/dev/#/signup.\n\nRate limits (free plan, hosted): 2,000 directions/day, 500 matrix/day,\n500 optimization/day, 500 isochrones/day, 1,000 geocode/day, 40/min on\nmost endpoints. Self-hosted backend endpoints: no hosted request caps.",
+  "description": "Generated UTDK provider client for OpenRouteService API. Open-source routing, geocoding, isochrone, distance-matrix, and VRP optimization API\nbuilt on OpenStreetMap. Pelias powers geocoding; Vroom powers optimization.\n\nThis spec covers the endpoints commonly used for back-end agent workflows\n(geocoding, matrices for VRP solvers, route ETAs, isochrones, full VRP solve).\nThe full ORS surface (POIs, snap-to-road, elevation, optimization advanced\nconstraints) can be added incrementally \u2014 see notes in the catalog entry.\n\nThe hosted free API (`https://api.openrouteservice.org`) exposes routing,\nmatrix, isochrones, optimization, and geocoding. Self-hosted ORS Docker\ncovers the ORS backend endpoints (routing, matrix, isochrones, optimization);\ngeocoding is hosted-public-API only.\n\nAuth: pass the API key in the `Authorization` header. Sign up free at\nhttps://openrouteservice.org/dev/#/signup.\n\nRate limits (free plan, hosted): 2,000 directions/day, 500 matrix/day,\n500 optimization/day, 500 isochrones/day, 1,000 geocode/day, 40/min on\nmost endpoints. Self-hosted backend endpoints: no hosted request caps.",
   "homepage": "https://openrouteservice.org",
   "keywords": [
     "openrouteservice",
@@ -14,14 +14,18 @@
     "provider": "openrouteservice",
     "generation": 2,
     "generatedAt": "2026-05-30T18:16:06.572Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "${ORS_API_KEY}",
-        "var_name": "Authorization",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "apiKey",
+          "type": "apiKey",
+          "description": "Free key from https://openrouteservice.org/dev/#/signup. Pass the raw key\nas the `Authorization` header value (no `Bearer ` prefix). The CLI reads\nthe key from the `ORS_API_KEY` environment variable.\n",
+          "name": "Authorization",
+          "in": "header"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "OpenRouteService API",
       "url": "https://raw.githubusercontent.com/mvanhorn/cli-printing-press/main/catalog/specs/openrouteservice-spec.yaml",

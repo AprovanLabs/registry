@@ -14,14 +14,17 @@
     "provider": "mercury",
     "generation": 2,
     "generatedAt": "2026-05-30T18:16:06.744Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "Bearer ${MERCURY_API_TOKEN}",
-        "var_name": "Authorization",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "bearerAuth",
+          "type": "http",
+          "description": "Bearer token authentication for Mercury API.\n\nUse your API token in the Authorization header:\n`Authorization: Bearer TOKEN`\n\nExample:\n`Authorization: Bearer secret-token:REDACTED`\n\nYour Mercury API token should include the 'secret-token:' prefix.\nTokens can be generated from your Mercury dashboard settings.\n",
+          "scheme": "bearer"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Mercury API",
       "url": "https://dash.readme.com/api/v1/api-registry/ilz81omom1n4vx",

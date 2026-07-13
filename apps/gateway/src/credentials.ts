@@ -10,8 +10,20 @@
  * The public API is async so callers `await` every method.
  */
 
-import { randomBytes } from "crypto";
+import {
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+} from "node:crypto";
+import {
+  mkdirSync,
+  readFileSync,
+  writeFileSync,
+} from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { GetCommand, PutCommand, QueryCommand, TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
+import Database from "better-sqlite3";
 import { getDynamoDocClient } from "./db/client.js";
 
 // ---------------------------------------------------------------------------
@@ -279,16 +291,181 @@ export class CredentialStoreDynamodb implements ICredentialStore {
   }
 }
 
+export class CredentialStoreSqlite implements ICredentialStore {
+  private readonly database: Database.Database;
+  private readonly key: Buffer;
+
+  constructor(directory = join(homedir(), ".aprovan")) {
+    mkdirSync(directory, { recursive: true, mode: 0o700 });
+    const keyPath = join(directory, "key");
+    try {
+      this.key = Buffer.from(readFileSync(keyPath, "utf8"), "base64");
+    } catch {
+      this.key = randomBytes(32);
+      writeFileSync(keyPath, this.key.toString("base64"), { mode: 0o600 });
+    }
+    this.database = new Database(join(directory, "gateway.db"));
+    this.database.exec(`
+      CREATE TABLE IF NOT EXISTS credentials (
+        id TEXT PRIMARY KEY,
+        workspace_id TEXT NOT NULL,
+        provider TEXT NOT NULL,
+        label TEXT,
+        type TEXT NOT NULL,
+        payload TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+      );
+      CREATE INDEX IF NOT EXISTS credentials_workspace_provider
+      ON credentials(workspace_id, provider);
+    `);
+  }
+
+  async create(
+    workspaceId: string,
+    input: CredentialInput,
+  ): Promise<CredentialRecord> {
+    const id = randomBytes(12).toString("hex");
+    const now = new Date().toISOString();
+    this.database
+      .prepare(
+        `INSERT INTO credentials
+        (id, workspace_id, provider, label, type, payload, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .run(
+        id,
+        workspaceId,
+        input.provider,
+        input.label ?? null,
+        input.payload.type,
+        this.encrypt(input.payload),
+        now,
+        now,
+      );
+    return {
+      id,
+      workspaceId,
+      provider: input.provider,
+      label: input.label,
+      type: input.payload.type,
+      createdAt: now,
+      updatedAt: now,
+    };
+  }
+
+  async list(workspaceId: string): Promise<CredentialRecord[]> {
+    const rows = this.database
+      .prepare(
+        `SELECT id, workspace_id, provider, label, type, created_at, updated_at
+         FROM credentials WHERE workspace_id = ? ORDER BY provider, created_at`,
+      )
+      .all(workspaceId) as Record<string, unknown>[];
+    return rows.map((row) => this.record(row));
+  }
+
+  async get(
+    workspaceId: string,
+    id: string,
+  ): Promise<CredentialRecord | undefined> {
+    const row = this.database
+      .prepare(
+        `SELECT id, workspace_id, provider, label, type, created_at, updated_at
+         FROM credentials WHERE workspace_id = ? AND id = ?`,
+      )
+      .get(workspaceId, id);
+    return row
+      ? this.record(row as Record<string, unknown>)
+      : undefined;
+  }
+
+  async delete(workspaceId: string, id: string): Promise<boolean> {
+    return (
+      this.database
+        .prepare("DELETE FROM credentials WHERE workspace_id = ? AND id = ?")
+        .run(workspaceId, id).changes > 0
+    );
+  }
+
+  async getPayload(
+    workspaceId: string,
+    id: string,
+  ): Promise<CredentialPayload | undefined> {
+    const row = this.database
+      .prepare(
+        "SELECT payload FROM credentials WHERE workspace_id = ? AND id = ?",
+      )
+      .get(workspaceId, id) as { payload?: string } | undefined;
+    return row?.payload ? this.decrypt(row.payload) : undefined;
+  }
+
+  async resolveForProvider(
+    workspaceId: string,
+    provider: string,
+  ): Promise<CredentialPayload | undefined> {
+    const row = this.database
+      .prepare(
+        `SELECT payload FROM credentials
+         WHERE workspace_id = ? AND provider = ? ORDER BY created_at LIMIT 1`,
+      )
+      .get(workspaceId, provider) as { payload?: string } | undefined;
+    return row?.payload ? this.decrypt(row.payload) : undefined;
+  }
+
+  private encrypt(payload: CredentialPayload): string {
+    const iv = randomBytes(12);
+    const cipher = createCipheriv("aes-256-gcm", this.key, iv);
+    const encrypted = Buffer.concat([
+      cipher.update(JSON.stringify(payload), "utf8"),
+      cipher.final(),
+    ]);
+    return Buffer.concat([iv, cipher.getAuthTag(), encrypted]).toString("base64");
+  }
+
+  private decrypt(value: string): CredentialPayload {
+    const data = Buffer.from(value, "base64");
+    const decipher = createDecipheriv(
+      "aes-256-gcm",
+      this.key,
+      data.subarray(0, 12),
+    );
+    decipher.setAuthTag(data.subarray(12, 28));
+    return JSON.parse(
+      Buffer.concat([
+        decipher.update(data.subarray(28)),
+        decipher.final(),
+      ]).toString("utf8"),
+    ) as CredentialPayload;
+  }
+
+  private record(row: Record<string, unknown>): CredentialRecord {
+    return {
+      id: String(row["id"]),
+      workspaceId: String(row["workspace_id"]),
+      provider: String(row["provider"]),
+      label: typeof row["label"] === "string" ? row["label"] : undefined,
+      type: row["type"] as CredentialType,
+      createdAt: String(row["created_at"]),
+      updatedAt: String(row["updated_at"]),
+    };
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Singleton factory
 // ---------------------------------------------------------------------------
 
 let _store: ICredentialStore | undefined;
 
-/** Resolve the singleton credential store (always DynamoDB). */
 export function getCredentialStore(): ICredentialStore {
   if (!_store) {
-    _store = new CredentialStoreDynamodb();
+    const backend =
+      process.env["STORE_BACKEND"] ??
+      (process.env["CREDENTIALS_TABLE"] ? "dynamodb" : "sqlite");
+    _store =
+      backend === "dynamodb"
+        ? new CredentialStoreDynamodb()
+        : new CredentialStoreSqlite();
   }
   return _store;
 }

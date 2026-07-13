@@ -1,5 +1,5 @@
 {
-  "name": "@aprovan/registry-ui",
+  "name": "@aprovan/registry-web",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -15,6 +15,9 @@
     "node": ">=22.12.0"
   },
   "dependencies": {
+    "@aprovan/registry-main": "workspace:*",
+    "@aprovan/registry-ui": "workspace:*",
+    "@aprovan/ui": "^0.1.0",
     "@astrojs/react": "^5.0.3",
     "@fontsource-variable/geist": "^5.2.8",
     "astro": "^6.1.4",

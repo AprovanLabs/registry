@@ -45,3 +45,9 @@ Generated: 2026-04-08T15:33:58.629Z
 
 - [Registry Documentation](https://www.figma.com/developers/api) (openapi)
 - [Terms of Service](https://www.figma.com/developer-terms/) (openapi)
+
+## Authentication
+
+- `PersonalAccessToken`: apiKey
+- `OAuth2`: oauth2
+- `OrgOAuth2`: oauth2

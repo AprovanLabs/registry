@@ -21,10 +21,7 @@
  */
 
 import { Hono } from "hono";
-import {
-  CognitoNotConfiguredError,
-  verifyAccessToken,
-} from "../middleware/auth.js";
+import { verifyAccessToken } from "../middleware/auth.js";
 import { selectActiveWorkspace } from "./session.js";
 
 export const authRouter = new Hono();
@@ -43,10 +40,7 @@ authRouter.post("/sessions", async (c) => {
   let userSub: string;
   try {
     userSub = await verifyAccessToken(accessToken);
-  } catch (err) {
-    if (err instanceof CognitoNotConfiguredError) {
-      return c.json({ error: "Cognito verifier not configured" }, 500);
-    }
+  } catch {
     return c.json({ error: "Invalid or expired Cognito token" }, 401);
   }
 

@@ -15,14 +15,17 @@
     "provider": "launchdarkly",
     "generation": 2,
     "generatedAt": "2026-05-30T18:16:06.819Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "${LAUNCHDARKLY_API_KEY}",
-        "var_name": "Authorization",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "ApiKey",
+          "type": "apiKey",
+          "name": "Authorization",
+          "in": "header"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "LaunchDarkly REST API",
       "url": "https://app.launchdarkly.com/api/v2/openapi.json",

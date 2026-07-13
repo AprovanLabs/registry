@@ -1,4 +1,9 @@
-import { ENVIRONMENT, ORG_ID, PROJECT_ID, REGION_SHORT_CODE } from "./constants";
+import {
+  ENVIRONMENT,
+  ORG_ID,
+  PROJECT_ID,
+  REGION_SHORT_CODE,
+} from "./constants.js";
 
 const sanitizeName = (name: string): string =>
   name.toLowerCase().replace(/[^a-z0-9]/g, "-");

@@ -14,14 +14,10 @@
     "provider": "telegram",
     "generation": 2,
     "generatedAt": "2026-05-30T18:16:15.724Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "${TELEGRAM_BOT_TOKEN}",
-        "var_name": "token",
-        "location": "query"
-      }
-    ],
+    "auth": {
+      "schemes": [],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Telegram Bot API",
       "url": "https://api.apis.guru/v2/specs/telegram.org/5.0.0/openapi.json",

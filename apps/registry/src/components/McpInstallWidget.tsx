@@ -19,7 +19,8 @@ function buildSnippet(workspaceId: string): string {
     {
       mcpServers: {
         aprovan: {
-          url: `${GATEWAY_BASE}/mcp/${workspaceId}`,
+          url: `${GATEWAY_BASE}/mcp`,
+          headers: { "X-Aprovan-Workspace": workspaceId },
         },
       },
     },

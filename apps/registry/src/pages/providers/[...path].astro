@@ -1,5 +1,5 @@
 ---
-import { TryItConsole } from "@/components/TryItConsole";
+import { TryItConsole } from "@aprovan/registry-ui";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -228,11 +228,10 @@ const totalOps = allOperations.length;
         <div>
           <h2 class="mb-4 text-xl font-semibold tracking-tight">Try it</h2>
           <TryItConsole
+            baseUrl={defaultGatewayUrl}
             client:load
-            defaultGatewayUrl={defaultGatewayUrl}
-            operation={operation}
+            operation={operation.sdkPath}
             provider={providerPath}
-            providerTitle={entry.title}
           />
         </div>
       </section>

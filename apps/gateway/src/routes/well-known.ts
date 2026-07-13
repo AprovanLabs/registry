@@ -1,7 +1,7 @@
 /**
  * RFC 9728 — OAuth Protected Resource Metadata
  *
- * GET /.well-known/oauth-protected-resource/mcp/:workspaceId
+ * GET /.well-known/oauth-protected-resource/mcp
  *
  * Unauthenticated endpoint that returns a metadata document describing the
  * Cognito authorization server backing a given MCP workspace endpoint. MCP
@@ -20,19 +20,14 @@ export const wellKnownRouter = new Hono();
 // Helpers
 // ---------------------------------------------------------------------------
 
-const UUID_RE =
-  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-
-function isValidUuid(value: string): boolean {
-  return UUID_RE.test(value);
-}
-
 /**
  * Derive the Cognito issuer URL from COGNITO_USER_POOL_ID.
  * Pool ID format: `<region>_<id>` (e.g. `us-east-1_ABC123`).
  * Issuer URL:     `https://cognito-idp.<region>.amazonaws.com/<poolId>`
  */
 function getCognitoIssuer(): string | null {
+  const configured = process.env["GATEWAY_OIDC_ISSUER"];
+  if (configured) return configured;
   const poolId = process.env["COGNITO_USER_POOL_ID"];
   if (!poolId) return null;
   const region = poolId.split("_")[0];
@@ -48,34 +43,28 @@ function getGatewayHost(
   forwardedHost: string | undefined,
   host: string | undefined,
 ): string {
-  return forwardedHost ?? host ?? "gateway.aprovan.com";
+  return forwardedHost ?? host ?? "aprovan.com";
 }
 
 // ---------------------------------------------------------------------------
 // GET /.well-known/oauth-protected-resource/mcp/:workspaceId
 // ---------------------------------------------------------------------------
 
-wellKnownRouter.get("/oauth-protected-resource/mcp/:workspaceId", (c) => {
-  const workspaceId = c.req.param("workspaceId");
-
-  if (!isValidUuid(workspaceId)) {
-    return c.json({ error: "invalid_workspace_id" }, 400);
-  }
-
+wellKnownRouter.get("/oauth-protected-resource/mcp", (c) => {
   const host = getGatewayHost(
     c.req.header("x-forwarded-host"),
     c.req.header("host"),
   );
 
-  const resource = `https://${host}/mcp/${workspaceId}`;
+  const resource = `https://${host}/mcp`;
   const issuer = getCognitoIssuer();
 
   return c.json({
     resource,
     authorization_servers: issuer ? [issuer] : [],
     bearer_methods_supported: ["header"],
-    resource_name: `Aprovan Gateway — workspace ${workspaceId}`,
-    resource_documentation: "https://aprovan.com/docs/mcp",
+    resource_name: "Aprovan Gateway",
+    resource_documentation: "https://aprovan.com/registry/docs/mcp",
   });
 });
 
@@ -83,4 +72,4 @@ wellKnownRouter.get("/oauth-protected-resource/mcp/:workspaceId", (c) => {
 // Exports used by tests
 // ---------------------------------------------------------------------------
 
-export { isValidUuid, getCognitoIssuer, getGatewayHost };
+export { getCognitoIssuer, getGatewayHost };

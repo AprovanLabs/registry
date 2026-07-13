@@ -12,7 +12,14 @@
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
-import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
+import {
+  CallToolRequestSchema,
+  GetPromptRequestSchema,
+  ListPromptsRequestSchema,
+  ListResourcesRequestSchema,
+  ListToolsRequestSchema,
+  ReadResourceRequestSchema,
+} from "@modelcontextprotocol/sdk/types.js";
 import { withSpan } from "@utdk/common/telemetry";
 import {
   handleCallTool,
@@ -26,10 +33,11 @@ import {
   type ProviderTool,
 } from "@utdk/mcp-core";
 import { getAuditStore } from "../audit.js";
+import { getContentStore } from "../content-store.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor } from "../isolate.js";
+import { getAuthMode, type Principal } from "../middleware/auth.js";
 import { getPermissionStore } from "../permissions.js";
-import type { Principal } from "../middleware/auth.js";
 
 // ---------------------------------------------------------------------------
 // Module-level catalog cache (loaded once at first call)
@@ -61,6 +69,7 @@ export function resetMcpCatalog(): void {
 // ---------------------------------------------------------------------------
 
 async function permittedTools(all: ProviderTool[], principal: Principal): Promise<ProviderTool[]> {
+  if (getAuthMode() === "none") return all;
   const permStore = getPermissionStore();
   const results: ProviderTool[] = [];
   for (const tool of all) {
@@ -93,8 +102,14 @@ export async function buildMcpServer(principal: Principal): Promise<Server> {
   const permittedMap = new Map<string, ProviderTool>(permitted.map((t) => [t.mcpName, t]));
 
   const server = new Server(
-    { name: "@aprovan/gateway-mcp", version: "0.1.0" },
-    { capabilities: { tools: { listChanged: false } } },
+    { name: "@aprovan/registry-app", version: "0.1.0" },
+    {
+      capabilities: {
+        tools: { listChanged: false },
+        prompts: { listChanged: false },
+        resources: { listChanged: false },
+      },
+    },
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: META_TOOLS }));
@@ -130,6 +145,54 @@ export async function buildMcpServer(principal: Principal): Promise<Server> {
         {
           type: "text" as const,
           text: `Unknown tool: ${toolName}. Use list_tools or search_tools to discover tools, then call_tool to execute them.`,
+        },
+      ],
+    };
+  });
+
+  server.setRequestHandler(ListPromptsRequestSchema, async () => ({
+    prompts: getContentStore()
+      .list("prompt", principal.workspaceId)
+      .map((prompt) => ({ name: prompt.name })),
+  }));
+  server.setRequestHandler(GetPromptRequestSchema, async (request) => {
+    const prompt = getContentStore().get(
+      "prompt",
+      principal.workspaceId,
+      request.params.name,
+    );
+    if (!prompt) throw new Error(`Prompt not found: ${request.params.name}`);
+    return {
+      messages: [
+        {
+          role: "user" as const,
+          content: { type: "text" as const, text: prompt.content },
+        },
+      ],
+    };
+  });
+  server.setRequestHandler(ListResourcesRequestSchema, async () => ({
+    resources: getContentStore()
+      .list("artifact", principal.workspaceId)
+      .map((artifact) => ({
+        uri: `aprovan://${artifact.name}/${artifact.hash}`,
+        name: artifact.name,
+        mimeType: artifact.mimeType,
+      })),
+  }));
+  server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
+    const url = new URL(request.params.uri);
+    const [name, hash] = `${url.host}${url.pathname}`.split("/").filter(Boolean);
+    const artifact = name
+      ? getContentStore().get("artifact", principal.workspaceId, name, hash)
+      : undefined;
+    if (!artifact) throw new Error(`Resource not found: ${request.params.uri}`);
+    return {
+      contents: [
+        {
+          uri: request.params.uri,
+          mimeType: artifact.mimeType,
+          text: artifact.content,
         },
       ],
     };

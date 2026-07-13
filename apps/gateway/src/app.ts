@@ -6,8 +6,10 @@
  */
 
 import { Hono } from "hono";
+import { getAuthMode } from "./middleware/auth.js";
 import { auditRouter } from "./routes/audit.js";
 import { authRouter } from "./routes/auth.js";
+import { artifactsRouter, promptsRouter } from "./routes/content.js";
 import { credentialsRouter } from "./routes/credentials.js";
 import { groupsRouter } from "./routes/groups.js";
 import { invitesRouter } from "./routes/invites.js";
@@ -18,6 +20,7 @@ import { permissionsRouter } from "./routes/permissions.js";
 import { sessionRouter } from "./routes/session.js";
 import { toolsRouter } from "./routes/tools.js";
 import { wellKnownRouter } from "./routes/well-known.js";
+import type { GatewayConfig } from "./contract.js";
 
 function isLocalDevOrigin(origin: string): boolean {
   try {
@@ -69,6 +72,23 @@ export function createApp(): Hono {
   // Health check — unauthenticated
   // ---------------------------------------------------------------------------
   app.get("/health", (c) => c.json({ status: "ok", service: "gateway" }));
+  app.get("/config", (c) => {
+    const config: GatewayConfig = {
+      mode: getAuthMode(),
+      auth: {
+        authority: process.env["COGNITO_AUTHORITY"],
+        clientId: process.env["COGNITO_CLIENT_ID"],
+        domain: process.env["COGNITO_DOMAIN"],
+      },
+      features: {
+        ephemeralCredentials:
+          process.env["GATEWAY_EPHEMERAL_CREDENTIALS"] !== "0",
+        streaming: true,
+      },
+      version: process.env["npm_package_version"] ?? "0.1.0",
+    };
+    return c.json(config);
+  });
 
   // ---------------------------------------------------------------------------
   // Routes
@@ -88,6 +108,8 @@ export function createApp(): Hono {
   app.route("/permissions", permissionsRouter);
   app.route("/tools", toolsRouter);
   app.route("/audit", auditRouter);
+  app.route("/prompts", promptsRouter);
+  app.route("/artifacts", artifactsRouter);
 
   // ---------------------------------------------------------------------------
   // 404 fallback

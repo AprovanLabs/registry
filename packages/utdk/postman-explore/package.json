@@ -14,7 +14,10 @@
     "provider": "postman-explore",
     "generation": 2,
     "generatedAt": "2026-05-30T18:16:15.342Z",
-    "auth": [],
+    "auth": {
+      "schemes": [],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Postman Explore API",
       "url": "https://raw.githubusercontent.com/mvanhorn/cli-printing-press/main/catalog/specs/postman-explore-spec.yaml",

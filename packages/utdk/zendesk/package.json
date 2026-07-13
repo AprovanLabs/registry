@@ -15,14 +15,17 @@
     "provider": "zendesk",
     "generation": 2,
     "generatedAt": "2026-05-30T12:26:08.147Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "Bearer ${ZENDESK_API_TOKEN}",
-        "var_name": "Authorization",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "BearerAuth",
+          "type": "http",
+          "description": "Zendesk API token in format 'email@example.com/token:{api_token}' encoded as Bearer token, or OAuth 2.0 access token",
+          "scheme": "bearer"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Zendesk Support API",
       "url": "repo://data/openapi/zendesk.json",

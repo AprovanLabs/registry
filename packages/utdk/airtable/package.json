@@ -15,14 +15,17 @@
     "provider": "airtable",
     "generation": 2,
     "generatedAt": "2026-05-30T12:22:24.390Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "Bearer ${AIRTABLE_API_KEY}",
-        "var_name": "Authorization",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "BearerAuth",
+          "type": "http",
+          "description": "Airtable personal access token or OAuth 2.0 access token",
+          "scheme": "bearer"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Airtable REST API",
       "url": "repo://data/openapi/airtable.json",

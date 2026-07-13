@@ -14,14 +14,17 @@
     "provider": "sendgrid",
     "generation": 1,
     "generatedAt": "2026-05-30T12:25:57.707Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "Bearer ${SENDGRID_API_KEY}",
-        "var_name": "Authorization",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "Authorization",
+          "type": "apiKey",
+          "name": "Authorization",
+          "in": "header"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Email Activity (beta)",
       "url": "https://api.apis.guru/v2/specs/sendgrid.com/1.0.0/openapi.json",

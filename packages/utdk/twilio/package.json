@@ -15,13 +15,16 @@
     "provider": "twilio",
     "generation": 2,
     "generatedAt": "2026-05-30T22:05:43.397Z",
-    "auth": [
-      {
-        "auth_type": "basic",
-        "username": "${TWILIO_ACCOUNT_SID}",
-        "password": "${TWILIO_AUTH_TOKEN}"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "accountSid_authToken",
+          "type": "http",
+          "scheme": "basic"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Twilio - Api",
       "url": "https://raw.githubusercontent.com/twilio/twilio-oai/main/spec/json/twilio_api_v2010.json",

@@ -19,9 +19,11 @@ import { Hono } from "hono";
 import { getAuditStore } from "../audit.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
-import { requireAuth } from "../middleware/auth.js";
+import { getAuthMode, requireAuth } from "../middleware/auth.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import { getPermissionStore } from "../permissions.js";
+import type { ToolCallRequest } from "../contract.js";
+import type { CredentialPayload } from "../credentials.js";
 
 export const toolsRouter = new Hono();
 
@@ -160,14 +162,11 @@ function synthesizeInputSchema(meta: Record<string, unknown>): Record<string, un
   return schema;
 }
 
-toolsRouter.get("/", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
-
+async function discoverTools(workspaceId: string): Promise<ToolEntry[]> {
   const now = Date.now();
   const cached = toolListCache.get(workspaceId);
   if (cached && cached.expiresAt > now) {
-    return c.json({ tools: cached.tools, workspace_id: workspaceId });
+    return cached.tools;
   }
 
   // Only providers with at least one credential configured in the workspace
@@ -195,7 +194,33 @@ toolsRouter.get("/", async (c) => {
   }
 
   toolListCache.set(workspaceId, { tools, expiresAt: now + getToolListTtlMs() });
+  return tools;
+}
+
+toolsRouter.get("/", async (c) => {
+  const workspaceId = c.get("principal").workspaceId;
+  const tools = await discoverTools(workspaceId);
   return c.json({ tools, workspace_id: workspaceId });
+});
+
+toolsRouter.get("/search", async (c) => {
+  const query = (c.req.query("q") ?? "").trim().toLowerCase();
+  const tools = await discoverTools(c.get("principal").workspaceId);
+  const matches = query
+    ? tools.filter((tool) =>
+        [tool.provider, tool.operation, tool.description]
+          .filter(Boolean)
+          .some((value) => value!.toLowerCase().includes(query)),
+      )
+    : tools;
+  return c.json({
+    tools: matches.map((tool) => ({
+      provider: tool.provider,
+      operation: tool.operation,
+      description: tool.description,
+      inputSchema: tool.inputSchema,
+    })),
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -212,16 +237,15 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
 
   // Permission check (async — DDB-backed store, APR-320)
   const permStore = getPermissionStore();
-  if (!(await permStore.check(workspaceId, callerId, provider!, operation!))) {
+  if (
+    getAuthMode() === "oidc" &&
+    !(await permStore.check(workspaceId, callerId, provider!, operation!))
+  ) {
     const requestId = crypto.randomUUID();
     logMetadata({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
     getAuditStore().append({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
     return c.json({ error: "Forbidden: caller does not have permission for this operation" }, 403);
   }
-
-  // Resolve credentials from store (async — DDB-backed store, APR-318)
-  const credStore = getCredentialStore();
-  const credentials = await credStore.resolveForProvider(workspaceId, provider!);
 
   if (!provider || !operation) {
     return c.json({ error: "Missing provider or operation" }, 400);
@@ -230,16 +254,35 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   const requestId = crypto.randomUUID();
   const startTime = Date.now();
 
-  // Parse request body (args for the operation)
-  let args: Record<string, unknown> = {};
+  let body: ToolCallRequest;
   try {
-    const body = await c.req.json<Record<string, unknown>>();
-    if (body && typeof body === "object") {
-      args = body;
-    }
+    body = await c.req.json<ToolCallRequest>();
   } catch {
-    // Empty body is fine; some operations take no arguments
+    return c.json({ error: "Expected { args, credential? }" }, 400);
   }
+  if (!body.args || typeof body.args !== "object" || Array.isArray(body.args)) {
+    return c.json({ error: "args must be an object" }, 400);
+  }
+  let credentials: CredentialPayload | undefined;
+  if (body.credential) {
+    if (process.env["GATEWAY_EPHEMERAL_CREDENTIALS"] === "0") {
+      return c.json({ error: "Ephemeral credentials are disabled" }, 403);
+    }
+    credentials =
+      body.credential.type === "bearer_token"
+        ? { type: "bearer_token", token: body.credential.token ?? "" }
+        : {
+            type: "api_key",
+            value: body.credential.value ?? "",
+            headerName: body.credential.name,
+          };
+  } else {
+    credentials = await getCredentialStore().resolveForProvider(
+      workspaceId,
+      provider,
+    );
+  }
+  const args = body.args;
 
   // Execute via Isolate with telemetry
   const executor = await getExecutor();

@@ -14,14 +14,10 @@
     "provider": "notion",
     "generation": 1,
     "generatedAt": "2026-05-30T12:25:12.332Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "Bearer ${NOTION_API_KEY}",
-        "var_name": "Authorization",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Notion API",
       "url": "https://api.apis.guru/v2/specs/notion.com/1.0.0/openapi.json",

@@ -82,3 +82,7 @@ Generated: 2026-04-07T04:00:11.035Z
 - [Registry Documentation](https://docs.github.com/en/rest) (openapi)
 - [GitHub v3 REST API](https://docs.github.com/rest/) (openapi)
 - [Terms of Service](https://docs.github.com/articles/github-terms-of-service) (openapi)
+
+## Authentication
+
+No authentication scheme is declared by the provider specification.

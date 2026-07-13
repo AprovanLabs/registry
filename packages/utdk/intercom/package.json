@@ -15,14 +15,16 @@
     "provider": "intercom",
     "generation": 1,
     "generatedAt": "2026-05-30T12:26:03.369Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "Bearer ${INTERCOM_ACCESS_TOKEN}",
-        "var_name": "Authorization",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "bearerAuth",
+          "type": "http",
+          "scheme": "bearer"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Intercom API",
       "url": "https://raw.githubusercontent.com/intercom/Intercom-OpenAPI/main/descriptions/2.15/api.intercom.io.yaml",

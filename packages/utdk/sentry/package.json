@@ -15,14 +15,21 @@
     "provider": "sentry",
     "generation": 1,
     "generatedAt": "2026-05-30T18:14:52.136Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "Bearer ${SENTRY_AUTH_TOKEN}",
-        "var_name": "Authorization",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "auth_token",
+          "type": "http",
+          "scheme": "bearer"
+        },
+        {
+          "id": "dsn",
+          "type": "http",
+          "scheme": "DSN"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "API Reference",
       "url": "https://raw.githubusercontent.com/getsentry/sentry-api-schema/main/openapi-derefed.json",

@@ -170,3 +170,7 @@ Generated: 2026-07-12T21:26:28.865Z
 ### reference
 
 - [Registry Documentation](https://posthog.com/docs/api) (openapi)
+
+## Authentication
+
+- `PersonalAPIKeyAuth`: http (bearer)

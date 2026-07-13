@@ -14,14 +14,29 @@
     "provider": "plaid",
     "generation": 2,
     "generatedAt": "2026-05-30T18:16:15.703Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "${PLAID_CLIENT_ID}",
-        "var_name": "PLAID-CLIENT-ID",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "clientId",
+          "type": "apiKey",
+          "name": "PLAID-CLIENT-ID",
+          "in": "header"
+        },
+        {
+          "id": "secret",
+          "type": "apiKey",
+          "name": "PLAID-SECRET",
+          "in": "header"
+        },
+        {
+          "id": "plaidVersion",
+          "type": "apiKey",
+          "name": "Plaid-Version",
+          "in": "header"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "The Plaid API",
       "url": "https://raw.githubusercontent.com/plaid/plaid-openapi/master/2020-09-14.yml",

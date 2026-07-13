@@ -16,10 +16,15 @@
  *   COGNITO_DOMAIN              — Cognito hosted UI domain, e.g. auth.example.com (informational)
  */
 
+import { loadAprovanEnv } from "@aprovan/main";
 import { serve } from "@hono/node-server";
 import { configureTelemetry } from "@utdk/common/telemetry";
 import { createApp } from "./app.js";
 import { initAuth } from "./middleware/auth.js";
+
+if (process.env["APROVAN_ENV"]) {
+  await loadAprovanEnv(process.env["APROVAN_ENV"]);
+}
 
 const PORT = Number(process.env["GATEWAY_PORT"] ?? 4000);
 
@@ -36,7 +41,7 @@ const telemetryExporter = process.env["OTEL_EXPORTER_OTLP_ENDPOINT"]
 await configureTelemetry({
   enabled: telemetryExporter !== "noop",
   exporter: telemetryExporter,
-  tracerName: "@aprovan/gateway",
+  tracerName: "@aprovan/registry-app",
 });
 
 // ---------------------------------------------------------------------------

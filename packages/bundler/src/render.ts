@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
 import {
-  getProviderAuthOptions,
   getProviderPackageName,
   getProviderPackageRootName,
   normalizeProviderName,
@@ -19,6 +18,48 @@ type PublicToolTypes = {
   inputType: string;
   outputType: string;
 };
+
+type AuthScheme = {
+  id: string;
+  type: string;
+  description?: string;
+  scheme?: string;
+  name?: string;
+  in?: string;
+  flows?: unknown;
+  openIdConnectUrl?: string;
+};
+
+function getStructuredAuth(document: OpenAPIV3.Document): {
+  schemes: AuthScheme[];
+  operationOverrides: Record<string, never>;
+} {
+  const definitions = document.components?.securitySchemes ?? {};
+  const schemes = Object.entries(definitions).flatMap(([id, definition]) => {
+    if ("$ref" in definition) return [];
+    const common = {
+      id,
+      type: definition.type,
+      ...(definition.description
+        ? { description: definition.description }
+        : {}),
+    };
+    if (definition.type === "http") {
+      return [{ ...common, scheme: definition.scheme }];
+    }
+    if (definition.type === "apiKey") {
+      return [{ ...common, name: definition.name, in: definition.in }];
+    }
+    if (definition.type === "oauth2") {
+      return [{ ...common, flows: definition.flows }];
+    }
+    if (definition.type === "openIdConnect") {
+      return [{ ...common, openIdConnectUrl: definition.openIdConnectUrl }];
+    }
+    return [common];
+  });
+  return { schemes, operationOverrides: {} };
+}
 
 type ClientTool = {
   accessPath: string[];
@@ -650,14 +691,12 @@ export function renderProviderReadme(
   const description =
     getNonEmptyString(openApiDocument.info?.description) ??
     `Generated UTDK provider types and OpenAPI-backed client for ${provider.url}.`;
-  const auth = getProviderAuthOptions(provider.options);
+  const auth = getStructuredAuth(openApiDocument);
   const authText =
-    auth.length > 0
-      ? auth
+    auth.schemes.length > 0
+      ? auth.schemes
           .map((a) =>
-            typeof a === "object" && a && "auth_type" in a
-              ? String((a as Record<string, unknown>).auth_type)
-              : "custom",
+            a.scheme ? `${a.type}:${a.scheme}` : a.type,
           )
           .join(", ")
       : "None";
@@ -798,7 +837,7 @@ export function renderProviderPackageJson(
     getNonEmptyString(openApiDocument.externalDocs?.url) ??
     getNonEmptyString(openApiDocument.info?.contact?.url) ??
     provider.url;
-  const auth = getProviderAuthOptions(provider.options);
+  const auth = getStructuredAuth(openApiDocument);
   const icon = getProviderOpenApiIcon(provider, openApiDocument);
 
   const packageJson = {

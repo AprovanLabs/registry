@@ -15,15 +15,38 @@
     "provider": "google-cloud-run",
     "generation": 1,
     "generatedAt": "2026-05-30T22:05:31.200Z",
-    "auth": [
-      {
-        "auth_type": "oauth2",
-        "token_url": "https://oauth2.googleapis.com/token",
-        "client_id": "${GOOGLE_CLIENT_ID}",
-        "client_secret": "${GOOGLE_CLIENT_SECRET}",
-        "scope": "https://www.googleapis.com/auth/cloud-platform"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "Oauth2",
+          "type": "oauth2",
+          "description": "Oauth 2.0 implicit authentication",
+          "flows": {
+            "implicit": {
+              "authorizationUrl": "https://accounts.google.com/o/oauth2/auth",
+              "scopes": {
+                "https://www.googleapis.com/auth/cloud-platform": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+              }
+            }
+          }
+        },
+        {
+          "id": "Oauth2c",
+          "type": "oauth2",
+          "description": "Oauth 2.0 authorizationCode authentication",
+          "flows": {
+            "authorizationCode": {
+              "authorizationUrl": "https://accounts.google.com/o/oauth2/auth",
+              "scopes": {
+                "https://www.googleapis.com/auth/cloud-platform": "See, edit, configure, and delete your Google Cloud data and see the email address for your Google Account."
+              },
+              "tokenUrl": "https://accounts.google.com/o/oauth2/token"
+            }
+          }
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Cloud Run Admin API",
       "url": "https://api.apis.guru/v2/specs/googleapis.com/run/v2/openapi.yaml",

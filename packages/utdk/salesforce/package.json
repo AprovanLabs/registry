@@ -15,15 +15,33 @@
     "provider": "salesforce",
     "generation": 1,
     "generatedAt": "2026-05-30T12:24:56.801Z",
-    "auth": [
-      {
-        "auth_type": "oauth2",
-        "token_url": "https://login.salesforce.com/services/oauth2/token",
-        "client_id": "${SALESFORCE_CLIENT_ID}",
-        "client_secret": "${SALESFORCE_CLIENT_SECRET}",
-        "scope": "api refresh_token"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "OAuth2",
+          "type": "oauth2",
+          "description": "Salesforce OAuth 2.0 authentication",
+          "flows": {
+            "authorizationCode": {
+              "authorizationUrl": "https://login.salesforce.com/services/oauth2/authorize",
+              "tokenUrl": "https://login.salesforce.com/services/oauth2/token",
+              "scopes": {
+                "api": "Access and manage your data",
+                "full": "Full access to all resources",
+                "refresh_token": "Perform requests at any time"
+              }
+            },
+            "clientCredentials": {
+              "tokenUrl": "https://login.salesforce.com/services/oauth2/token",
+              "scopes": {
+                "api": "Access and manage your data"
+              }
+            }
+          }
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Salesforce REST API",
       "url": "repo://data/openapi/salesforce.json",

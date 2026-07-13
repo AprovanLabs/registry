@@ -14,14 +14,23 @@
     "provider": "stripe",
     "generation": 2,
     "generatedAt": "2026-05-30T22:05:55.171Z",
-    "auth": [
-      {
-        "auth_type": "api_key",
-        "api_key": "Bearer ${STRIPE_SECRET_KEY}",
-        "var_name": "Authorization",
-        "location": "header"
-      }
-    ],
+    "auth": {
+      "schemes": [
+        {
+          "id": "basicAuth",
+          "type": "http",
+          "description": "Basic HTTP authentication. Allowed headers-- Authorization: Basic <api_key> | Authorization: Basic <base64 hash of `api_key:`>",
+          "scheme": "basic"
+        },
+        {
+          "id": "bearerAuth",
+          "type": "http",
+          "description": "Bearer HTTP authentication. Allowed headers-- Authorization: Bearer <api_key>",
+          "scheme": "bearer"
+        }
+      ],
+      "operationOverrides": {}
+    },
     "openapi": {
       "title": "Stripe API",
       "url": "https://raw.githubusercontent.com/stripe/openapi/master/openapi/spec3.json",
