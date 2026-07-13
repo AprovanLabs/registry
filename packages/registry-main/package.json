@@ -4,7 +4,7 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./src/index.ts",
+      "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
     }
   },
@@ -12,9 +12,6 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit"
-  },
-  "dependencies": {
-    "@aprovan/registry-app": "workspace:*"
   },
   "devDependencies": {
     "@aprovan/tsconfig": "^0.1.0",
