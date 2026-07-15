@@ -20,31 +20,22 @@ import {
   CreateUserPoolClientCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
 import { Hono } from "hono";
+import { z } from "zod";
 
 export const oauthRouter = new Hono();
 
 // ---------------------------------------------------------------------------
-// Types
+// Schema
 // ---------------------------------------------------------------------------
 
-interface DCRRequest {
-  redirect_uris: string[];
-  client_name?: string;
-  grant_types?: string[];
-  response_types?: string[];
-  token_endpoint_auth_method?: string;
-  scope?: string;
-}
-
-function isDCRRequest(value: unknown): value is DCRRequest {
-  if (!value || typeof value !== "object") return false;
-  const v = value as Record<string, unknown>;
-  return (
-    Array.isArray(v["redirect_uris"]) &&
-    v["redirect_uris"].length > 0 &&
-    (v["redirect_uris"] as unknown[]).every((u) => typeof u === "string")
-  );
-}
+const dcrRequestSchema = z.object({
+  redirect_uris: z.array(z.string()).min(1),
+  client_name: z.string().optional(),
+  grant_types: z.array(z.string()).optional(),
+  response_types: z.array(z.string()).optional(),
+  token_endpoint_auth_method: z.string().optional(),
+  scope: z.string().optional(),
+});
 
 // ---------------------------------------------------------------------------
 // Cognito helpers
@@ -73,9 +64,9 @@ oauthRouter.post("/register", async (c) => {
     );
   }
 
-  let body: unknown;
+  let raw: unknown;
   try {
-    body = await c.req.json();
+    raw = await c.req.json();
   } catch {
     return c.json(
       { error: "invalid_client_metadata", error_description: "Request body must be valid JSON" },
@@ -83,7 +74,8 @@ oauthRouter.post("/register", async (c) => {
     );
   }
 
-  if (!isDCRRequest(body)) {
+  const parsed = dcrRequestSchema.safeParse(raw);
+  if (!parsed.success) {
     return c.json(
       {
         error: "invalid_redirect_uri",
@@ -92,6 +84,7 @@ oauthRouter.post("/register", async (c) => {
       400,
     );
   }
+  const body = parsed.data;
 
   // Normalise optional fields
   const grantTypes = body.grant_types ?? ["authorization_code", "refresh_token"];

@@ -10,11 +10,39 @@
  */
 
 import { Hono } from "hono";
-import { getCredentialStore, type CredentialInput } from "../credentials.js";
+import { z } from "zod";
+import { getCredentialStore } from "../credentials.js";
 import { requireAuth, requireAdmin } from "../middleware/auth.js";
+import { validateBody } from "../middleware/validate.js";
 import { invalidateToolListCache } from "./tools.js";
 
 export const credentialsRouter = new Hono();
+
+const credentialSchema = z.object({
+  provider: z.string().min(1),
+  label: z.string().optional(),
+  payload: z.discriminatedUnion("type", [
+    z.object({ type: z.literal("bearer_token"), token: z.string() }),
+    z.object({ type: z.literal("api_key"), value: z.string(), headerName: z.string().optional() }),
+    z.object({
+      type: z.literal("oauth2_client"),
+      clientId: z.string(),
+      clientSecret: z.string(),
+      tokenUrl: z.string(),
+      scopes: z.array(z.string()).optional(),
+    }),
+    z.object({
+      type: z.literal("oauth2_authcode"),
+      clientId: z.string(),
+      clientSecret: z.string(),
+      tokenUrl: z.string(),
+      code: z.string(),
+      redirectUri: z.string(),
+      codeVerifier: z.string().optional(),
+      scopes: z.array(z.string()).optional(),
+    }),
+  ]),
+});
 
 // All credential routes require auth
 credentialsRouter.use("*", requireAuth);
@@ -26,26 +54,12 @@ credentialsRouter.use("DELETE", requireAdmin);
 // POST /credentials
 // ---------------------------------------------------------------------------
 
-credentialsRouter.post("/", requireAdmin, async (c) => {
+credentialsRouter.post("/", requireAdmin, validateBody(credentialSchema), async (c) => {
   const principal = c.get("principal");
   const workspaceId = principal.workspaceId;
 
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
-  }
-
-  if (!isCredentialInput(body)) {
-    return c.json(
-      { error: "Invalid credential input. Required: provider (string), payload (object with type)" },
-      400,
-    );
-  }
-
   const store = getCredentialStore();
-  const record = await store.create(workspaceId, body);
+  const record = await store.create(workspaceId, c.req.valid("json"));
   // A new credential may unlock a provider's tools for this workspace.
   invalidateToolListCache(workspaceId);
   return c.json(record, 201);
@@ -87,19 +101,3 @@ credentialsRouter.delete("/:id", requireAdmin, async (c) => {
   invalidateToolListCache(workspaceId);
   return c.json({ deleted: true });
 });
-
-// ---------------------------------------------------------------------------
-// Type guard
-// ---------------------------------------------------------------------------
-
-function isCredentialInput(value: unknown): value is CredentialInput {
-  if (!value || typeof value !== "object") return false;
-  const v = value as Record<string, unknown>;
-  if (typeof v["provider"] !== "string") return false;
-  if (!v["payload"] || typeof v["payload"] !== "object") return false;
-  const p = v["payload"] as Record<string, unknown>;
-  if (!["bearer_token", "api_key", "oauth2_client", "oauth2_authcode"].includes(p["type"] as string)) {
-    return false;
-  }
-  return true;
-}

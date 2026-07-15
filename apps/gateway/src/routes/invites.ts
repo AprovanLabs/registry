@@ -9,6 +9,7 @@
  */
 
 import { Hono } from "hono";
+import { z } from "zod";
 import { sendInviteEmail } from "../email.js";
 import { addUserToGroup } from "../groups.js";
 import { consumeInvite, createInvite, listInvites, revokeInvite } from "../invites.js";
@@ -19,38 +20,23 @@ import {
   requireAuth,
   verifyAccessToken,
 } from "../middleware/auth.js";
+import { validateBody } from "../middleware/validate.js";
 
 export const invitesRouter = new Hono();
+
+const createInviteSchema = z.object({
+  email: z.string().trim().min(1),
+  role: z.string().default("member"),
+  groupIds: z.array(z.string()).default([]),
+});
 
 // ---------------------------------------------------------------------------
 // POST /invites — admin creates an invite
 // ---------------------------------------------------------------------------
 
-invitesRouter.post("/", requireAuth, requireAdmin, async (c) => {
+invitesRouter.post("/", requireAuth, requireAdmin, validateBody(createInviteSchema), async (c) => {
   const principal = c.get("principal");
-
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
-  }
-
-  if (!isCreateInviteInput(body)) {
-    return c.json(
-      {
-        error:
-          "Invalid input. Required: email (string). Optional: role (string), groupIds (string[])",
-      },
-      400,
-    );
-  }
-
-  const { email, role = "member", groupIds = [] } = body as {
-    email: string;
-    role?: string;
-    groupIds?: string[];
-  };
+  const { email, role, groupIds } = c.req.valid("json");
 
   let invite;
   try {
@@ -217,21 +203,3 @@ invitesRouter.post("/:token/accept", async (c) => {
     groupIds: invite.groupIds,
   });
 });
-
-// ---------------------------------------------------------------------------
-// Type guard
-// ---------------------------------------------------------------------------
-
-function isCreateInviteInput(
-  v: unknown,
-): v is { email: string; role?: string; groupIds?: string[] } {
-  if (!v || typeof v !== "object") return false;
-  const o = v as Record<string, unknown>;
-  if (typeof o["email"] !== "string" || o["email"].trim() === "") return false;
-  if (o["role"] !== undefined && typeof o["role"] !== "string") return false;
-  if (o["groupIds"] !== undefined) {
-    if (!Array.isArray(o["groupIds"])) return false;
-    if ((o["groupIds"] as unknown[]).some((g) => typeof g !== "string")) return false;
-  }
-  return true;
-}

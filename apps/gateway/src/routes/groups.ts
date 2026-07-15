@@ -25,6 +25,7 @@
 
 import { ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { Hono } from "hono";
+import { z } from "zod";
 import { getDynamoDocClient } from "../db/client.js";
 import {
   addPrefixGrant,
@@ -42,30 +43,42 @@ import {
   updateGroup,
 } from "../groups.js";
 import { requireAdmin, requireAuth } from "../middleware/auth.js";
+import { validateBody } from "../middleware/validate.js";
 
 export const groupsRouter = new Hono();
 
 groupsRouter.use("*", requireAuth, requireAdmin);
 
 // ---------------------------------------------------------------------------
+// Schemas
+// ---------------------------------------------------------------------------
+
+const createGroupSchema = z.object({
+  name: z.string().trim().min(1),
+  description: z.string().optional(),
+});
+
+const patchGroupSchema = z.object({
+  name: z.string().trim().min(1).optional(),
+  description: z.string().optional(),
+});
+
+const userSubSchema = z.object({ userId: z.string().min(1) });
+
+const prefixGrantSchema = z.object({ pathPrefix: z.string().startsWith("/") });
+
+const toolGrantSchema = z.object({
+  provider: z.string().min(1),
+  operation: z.string().min(1),
+});
+
+// ---------------------------------------------------------------------------
 // POST /groups
 // ---------------------------------------------------------------------------
 
-groupsRouter.post("/", async (c) => {
+groupsRouter.post("/", validateBody(createGroupSchema), async (c) => {
   const { workspaceId } = c.get("principal");
-
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
-  }
-
-  if (!isCreateGroupInput(body)) {
-    return c.json({ error: "Invalid input. Required: name (string). Optional: description (string)" }, 400);
-  }
-
-  const { name, description } = body as { name: string; description?: string };
+  const { name, description } = c.req.valid("json");
   const group = await createGroup(workspaceId, name, description);
   return c.json(group, 201);
 });
@@ -99,22 +112,10 @@ groupsRouter.get("/:id", async (c) => {
 // PATCH /groups/:id
 // ---------------------------------------------------------------------------
 
-groupsRouter.patch("/:id", async (c) => {
+groupsRouter.patch("/:id", validateBody(patchGroupSchema), async (c) => {
   const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
-
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
-  }
-
-  if (!isPatchGroupInput(body)) {
-    return c.json({ error: "Invalid input. Accepted fields: name (string), description (string)" }, 400);
-  }
-
-  const { name, description } = body as { name?: string; description?: string };
+  const { name, description } = c.req.valid("json");
   const updated = await updateGroup(workspaceId, groupId, { name, description });
   if (!updated) {
     return c.json({ error: "Group not found" }, 404);
@@ -169,25 +170,14 @@ groupsRouter.get("/:id/users", async (c) => {
 // POST /groups/:id/users
 // ---------------------------------------------------------------------------
 
-groupsRouter.post("/:id/users", async (c) => {
+groupsRouter.post("/:id/users", validateBody(userSubSchema), async (c) => {
   const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
-
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
-  }
-
-  if (!isUserSubInput(body)) {
-    return c.json({ error: "Invalid input. Required: userId (string)" }, 400);
-  }
+  const { userId } = c.req.valid("json");
 
   const group = await getGroup(workspaceId, groupId);
   if (!group) return c.json({ error: "Group not found" }, 404);
 
-  const { userId } = body as { userId: string };
   await addUserToGroup(workspaceId, groupId, userId);
   return c.json({ workspaceId, groupId, userId }, 201);
 });
@@ -196,22 +186,10 @@ groupsRouter.post("/:id/users", async (c) => {
 // DELETE /groups/:id/users
 // ---------------------------------------------------------------------------
 
-groupsRouter.delete("/:id/users", async (c) => {
+groupsRouter.delete("/:id/users", validateBody(userSubSchema), async (c) => {
   const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
-
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
-  }
-
-  if (!isUserSubInput(body)) {
-    return c.json({ error: "Invalid input. Required: userId (string)" }, 400);
-  }
-
-  const { userId } = body as { userId: string };
+  const { userId } = c.req.valid("json");
   const removed = await removeUserFromGroup(workspaceId, groupId, userId);
   if (!removed) {
     return c.json({ error: "User not found in group" }, 404);
@@ -239,25 +217,14 @@ groupsRouter.get("/:id/prefix-grants", async (c) => {
 // POST /groups/:id/prefix-grants
 // ---------------------------------------------------------------------------
 
-groupsRouter.post("/:id/prefix-grants", async (c) => {
+groupsRouter.post("/:id/prefix-grants", validateBody(prefixGrantSchema), async (c) => {
   const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
-
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
-  }
-
-  if (!isPrefixGrantInput(body)) {
-    return c.json({ error: "Invalid input. Required: pathPrefix (string starting with /)" }, 400);
-  }
+  const { pathPrefix } = c.req.valid("json");
 
   const group = await getGroup(workspaceId, groupId);
   if (!group) return c.json({ error: "Group not found" }, 404);
 
-  const { pathPrefix } = body as { pathPrefix: string };
   const grant = await addPrefixGrant(workspaceId, groupId, pathPrefix);
   return c.json(grant, 201);
 });
@@ -266,22 +233,10 @@ groupsRouter.post("/:id/prefix-grants", async (c) => {
 // DELETE /groups/:id/prefix-grants
 // ---------------------------------------------------------------------------
 
-groupsRouter.delete("/:id/prefix-grants", async (c) => {
+groupsRouter.delete("/:id/prefix-grants", validateBody(prefixGrantSchema), async (c) => {
   const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
-
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
-  }
-
-  if (!isPrefixGrantInput(body)) {
-    return c.json({ error: "Invalid input. Required: pathPrefix (string)" }, 400);
-  }
-
-  const { pathPrefix } = body as { pathPrefix: string };
+  const { pathPrefix } = c.req.valid("json");
   const removed = await removePrefixGrant(workspaceId, groupId, pathPrefix);
   if (!removed) {
     return c.json({ error: "Prefix grant not found" }, 404);
@@ -309,28 +264,14 @@ groupsRouter.get("/:id/tool-grants", async (c) => {
 // POST /groups/:id/tool-grants
 // ---------------------------------------------------------------------------
 
-groupsRouter.post("/:id/tool-grants", async (c) => {
+groupsRouter.post("/:id/tool-grants", validateBody(toolGrantSchema), async (c) => {
   const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
-
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
-  }
-
-  if (!isToolGrantInput(body)) {
-    return c.json(
-      { error: "Invalid input. Required: provider (string), operation (string, may be *)" },
-      400,
-    );
-  }
+  const { provider, operation } = c.req.valid("json");
 
   const group = await getGroup(workspaceId, groupId);
   if (!group) return c.json({ error: "Group not found" }, 404);
 
-  const { provider, operation } = body as { provider: string; operation: string };
   const grant = await addToolGrant(workspaceId, groupId, provider, operation);
   return c.json(grant, 201);
 });
@@ -339,67 +280,13 @@ groupsRouter.post("/:id/tool-grants", async (c) => {
 // DELETE /groups/:id/tool-grants
 // ---------------------------------------------------------------------------
 
-groupsRouter.delete("/:id/tool-grants", async (c) => {
+groupsRouter.delete("/:id/tool-grants", validateBody(toolGrantSchema), async (c) => {
   const { workspaceId } = c.get("principal");
   const groupId = c.req.param("id");
-
-  let body: unknown;
-  try {
-    body = await c.req.json();
-  } catch {
-    return c.json({ error: "Invalid JSON body" }, 400);
-  }
-
-  if (!isToolGrantInput(body)) {
-    return c.json(
-      { error: "Invalid input. Required: provider (string), operation (string)" },
-      400,
-    );
-  }
-
-  const { provider, operation } = body as { provider: string; operation: string };
+  const { provider, operation } = c.req.valid("json");
   const removed = await removeToolGrant(workspaceId, groupId, provider, operation);
   if (!removed) {
     return c.json({ error: "Tool grant not found" }, 404);
   }
   return c.json({ removed: true });
 });
-
-// ---------------------------------------------------------------------------
-// Type guards
-// ---------------------------------------------------------------------------
-
-function isCreateGroupInput(v: unknown): v is { name: string; description?: string } {
-  if (!v || typeof v !== "object") return false;
-  const o = v as Record<string, unknown>;
-  if (typeof o["name"] !== "string" || o["name"].trim() === "") return false;
-  if (o["description"] !== undefined && typeof o["description"] !== "string") return false;
-  return true;
-}
-
-function isPatchGroupInput(v: unknown): v is { name?: string; description?: string } {
-  if (!v || typeof v !== "object") return false;
-  const o = v as Record<string, unknown>;
-  if (o["name"] !== undefined && (typeof o["name"] !== "string" || o["name"].trim() === "")) return false;
-  if (o["description"] !== undefined && typeof o["description"] !== "string") return false;
-  return true;
-}
-
-function isUserSubInput(v: unknown): v is { userId: string } {
-  if (!v || typeof v !== "object") return false;
-  const o = v as Record<string, unknown>;
-  return typeof o["userId"] === "string" && o["userId"].length > 0;
-}
-
-function isPrefixGrantInput(v: unknown): v is { pathPrefix: string } {
-  if (!v || typeof v !== "object") return false;
-  const o = v as Record<string, unknown>;
-  return typeof o["pathPrefix"] === "string" && o["pathPrefix"].startsWith("/");
-}
-
-function isToolGrantInput(v: unknown): v is { provider: string; operation: string } {
-  if (!v || typeof v !== "object") return false;
-  const o = v as Record<string, unknown>;
-  return typeof o["provider"] === "string" && o["provider"].length > 0 &&
-    typeof o["operation"] === "string" && o["operation"].length > 0;
-}
