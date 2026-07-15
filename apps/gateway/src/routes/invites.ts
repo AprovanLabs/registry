@@ -14,6 +14,7 @@ import { addUserToGroup } from "../groups.js";
 import { consumeInvite, createInvite, listInvites, revokeInvite } from "../invites.js";
 import { putMembership } from "../memberships.js";
 import {
+  readBearerToken,
   requireAdmin,
   requireAuth,
   verifyAccessToken,
@@ -159,11 +160,10 @@ invitesRouter.delete("/:token", requireAuth, requireAdmin, async (c) => {
 // ---------------------------------------------------------------------------
 
 invitesRouter.post("/:token/accept", async (c) => {
-  const authHeader = c.req.header("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
+  const accessToken = readBearerToken(c);
+  if (!accessToken) {
     return c.json({ error: "Missing or invalid Authorization header" }, 401);
   }
-  const accessToken = authHeader.slice("Bearer ".length);
 
   let userId: string;
   try {

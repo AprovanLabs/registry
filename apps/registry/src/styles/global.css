@@ -3,6 +3,12 @@
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
 
+/* Workspace/shared packages are symlinked under node_modules, which Tailwind's
+   automatic source detection skips — register them explicitly so their
+   class names are generated. */
+@source "../../../../packages/registry-ui/src";
+@source "../../node_modules/@aprovan/ui/dist";
+
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {

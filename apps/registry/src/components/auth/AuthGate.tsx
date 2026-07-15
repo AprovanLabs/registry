@@ -86,12 +86,12 @@ export function AuthGate({
         setPhase("no-workspace");
       }
     } catch (err) {
-      // 401 → the access token is no good; re-sign-in. Other errors surface.
-      if (err instanceof GatewayError && err.status === 401) {
-        setPhase("signed-out");
-      } else {
-        setError(err instanceof Error ? err.message : "Failed to load session.");
-        setPhase("signed-out");
+      // 401 usually means the Cognito token failed gateway verification.
+      // Keep the message visible — silent signed-out looks like a no-op refresh.
+      setError(err instanceof Error ? err.message : "Failed to load session.");
+      setPhase("signed-out");
+      if (!(err instanceof GatewayError && err.status === 401)) {
+        // non-401 already covered by setError above
       }
     }
   }
@@ -129,7 +129,7 @@ export function AuthGate({
   }
 
   return (
-    <div className="mx-auto max-w-sm">
+    <div className="max-w-sm mx-auto">
       <Card>
         <CardHeader>
           <CardTitle>
@@ -140,13 +140,13 @@ export function AuthGate({
               ? "Cognito sign-in is not configured for this environment."
               : phase === "no-workspace"
                 ? "Pick a workspace to continue."
-                : `Sign in via Cognito and pick a workspace to ${caption}.`}
+                : `Sign in and pick a workspace to ${caption}.`}
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           {error && <p className="text-sm text-destructive">{error}</p>}
           {phase === "loading" && (
-            <div className="h-2 w-full animate-pulse rounded bg-muted" />
+            <div className="w-full h-2 rounded animate-pulse bg-muted" />
           )}
           {phase === "no-workspace" && token ? (
             <WorkspacePicker token={token} onPicked={handlePicked} />
@@ -157,7 +157,7 @@ export function AuthGate({
               onClick={handleSignIn}
             >
               <LogInIcon />
-              Sign in with Cognito
+              Sign in
             </Button>
           )}
         </CardContent>

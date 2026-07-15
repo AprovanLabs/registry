@@ -155,8 +155,26 @@ export class GatewayLambda extends Construct {
       }),
     );
 
+    // The Function URL is IAM-protected: an AWS Organizations policy blocks
+    // public (unsigned) Function URL invocation account-wide, so unsigned
+    // requests return AccessDeniedException regardless of the resource policy.
+    // Access flows exclusively through CloudFront (aprovan.com/api/gateway/*),
+    // which SigV4-signs each request via an Origin Access Control (OAC). The
+    // matching OAC lives in the core WebStack (us-east-1); the invoke grant for
+    // that signed request must live here, on the function's own account/region.
     this.functionUrl = this.function.addFunctionUrl({
-      authType: lambda.FunctionUrlAuthType.NONE,
+      authType: lambda.FunctionUrlAuthType.AWS_IAM,
+    });
+
+    const stack = Stack.of(this);
+    this.function.addPermission("CloudFrontOacInvoke", {
+      principal: new iam.ServicePrincipal("cloudfront.amazonaws.com"),
+      action: "lambda:InvokeFunctionUrl",
+      functionUrlAuthType: lambda.FunctionUrlAuthType.AWS_IAM,
+      // Scoped to this account's CloudFront distributions. The specific
+      // distribution id lives in the core WebStack (created after this stack),
+      // so a wildcard avoids a cross-repo deploy-ordering cycle.
+      sourceArn: `arn:${stack.partition}:cloudfront::${stack.account}:distribution/*`,
     });
 
     this.functionUrlDomain = Fn.select(

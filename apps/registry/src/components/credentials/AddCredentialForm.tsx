@@ -8,8 +8,8 @@
  *   - OAuth2 authorization code (redirects to provider, returns via /account/oauth-callback)
  */
 
-import { XIcon } from "lucide-react";
-import { useState } from "react";
+import { CheckIcon, SearchIcon, XIcon } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,6 +20,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import {
+  type CatalogProviderSummary,
+  fetchCatalogProviders,
+} from "@/lib/catalog";
 import {
   type CredentialRecord,
   type CredentialType,
@@ -58,37 +62,6 @@ const CREDENTIAL_TYPES: { value: CredentialType; label: string; description: str
   },
 ];
 
-// Known providers pre-populated for convenience.
-const KNOWN_PROVIDERS = [
-  { value: "github", label: "GitHub" },
-  { value: "spotify", label: "Spotify" },
-  { value: "openai", label: "OpenAI" },
-  { value: "datadog", label: "Datadog" },
-  { value: "figma", label: "Figma" },
-  { value: "slack", label: "Slack" },
-  { value: "stripe", label: "Stripe" },
-];
-
-// OAuth2 auth URL defaults for known providers
-const KNOWN_OAUTH_URLS: Record<string, { authUrl: string; tokenUrl: string }> = {
-  github: {
-    authUrl: "https://github.com/login/oauth/authorize",
-    tokenUrl: "https://github.com/login/oauth/access_token",
-  },
-  spotify: {
-    authUrl: "https://accounts.spotify.com/authorize",
-    tokenUrl: "https://accounts.spotify.com/api/token",
-  },
-  figma: {
-    authUrl: "https://www.figma.com/oauth",
-    tokenUrl: "https://www.figma.com/api/oauth/token",
-  },
-  slack: {
-    authUrl: "https://slack.com/oauth/v2/authorize",
-    tokenUrl: "https://slack.com/api/oauth.v2.access",
-  },
-};
-
 // ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
@@ -106,6 +79,12 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
   const [credType, setCredType] = useState<CredentialType>("bearer_token");
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
+
+  // Catalog-driven provider picker
+  const [catalog, setCatalog] = useState<CatalogProviderSummary[]>([]);
+  const [catalogError, setCatalogError] = useState<string | null>(null);
+  const [providerQuery, setProviderQuery] = useState("");
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   // Bearer token fields
   const [bearerToken, setBearerToken] = useState("");
@@ -129,13 +108,61 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
 
   const resolvedProvider = provider === "__custom__" ? customProvider.trim() : provider;
 
-  // Auto-fill OAuth URLs for known providers
-  function handleProviderChange(value: string) {
-    setProvider(value);
-    if (value && value !== "__custom__" && KNOWN_OAUTH_URLS[value]) {
-      setAuthUrl(KNOWN_OAUTH_URLS[value].authUrl);
-      setOauthTokenUrl(KNOWN_OAUTH_URLS[value].tokenUrl);
-      setTokenUrl(KNOWN_OAUTH_URLS[value].tokenUrl);
+  useEffect(() => {
+    fetchCatalogProviders()
+      .then(setCatalog)
+      .catch(() => {
+        setCatalogError(
+          "Could not load the provider catalog — enter a provider ID manually.",
+        );
+        setProvider("__custom__");
+      });
+  }, []);
+
+  const selectedCatalogEntry = useMemo(
+    () => catalog.find((entry) => entry.id === provider) ?? null,
+    [catalog, provider],
+  );
+
+  /** Credential types the selected provider supports (all, when unknown). */
+  const supportedTypes = useMemo(() => {
+    if (!selectedCatalogEntry) return CREDENTIAL_TYPES;
+    const methods = selectedCatalogEntry.auth.methods;
+    return CREDENTIAL_TYPES.filter((ct) => methods.includes(ct.value));
+  }, [selectedCatalogEntry]);
+
+  const filteredCatalog = useMemo(() => {
+    const query = providerQuery.trim().toLowerCase();
+    if (!query) return catalog.slice(0, 8);
+    return catalog
+      .filter(
+        (entry) =>
+          entry.id.toLowerCase().includes(query) ||
+          entry.title.toLowerCase().includes(query) ||
+          (entry.description ?? "").toLowerCase().includes(query),
+      )
+      .slice(0, 8);
+  }, [catalog, providerQuery]);
+
+  // Prefill auth fields from the provider's OpenAPI security schemes.
+  function handleProviderPicked(entry: CatalogProviderSummary) {
+    setProvider(entry.id);
+    setProviderQuery(entry.title);
+    setPickerOpen(false);
+
+    const { auth } = entry;
+    if (auth.apiKeyHeader) setApiKeyHeader(auth.apiKeyHeader);
+    if (auth.oauth?.authUrl) setAuthUrl(auth.oauth.authUrl);
+    if (auth.oauth?.tokenUrl) {
+      setOauthTokenUrl(auth.oauth.tokenUrl);
+      setTokenUrl(auth.oauth.tokenUrl);
+    }
+
+    // Keep the selected credential type valid for this provider.
+    const methods = auth.methods;
+    if (!methods.includes(credType)) {
+      const first = CREDENTIAL_TYPES.find((ct) => methods.includes(ct.value));
+      if (first) setCredType(first.value);
     }
   }
 
@@ -232,39 +259,104 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
       </CardHeader>
       <form onSubmit={handleSubmit}>
         <CardContent className="flex flex-col gap-4 pt-4 max-h-[60vh] overflow-y-auto">
-          {/* Provider */}
+          {/* Provider — searchable, backed by the registry catalog */}
           <div className="flex flex-col gap-1.5">
-            <label className="text-sm font-medium" htmlFor="provider-select">
+            <label className="text-sm font-medium" htmlFor="provider-search">
               Provider
             </label>
-            <select
-              className="h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
-              id="provider-select"
-              onChange={(e) => handleProviderChange(e.target.value)}
-              required
-              value={provider}
-            >
-              <option value="">Select a provider…</option>
-              {KNOWN_PROVIDERS.map((p) => (
-                <option key={p.value} value={p.value}>
-                  {p.label}
-                </option>
-              ))}
-              <option value="__custom__">Custom…</option>
-            </select>
+            <div className="relative">
+              <SearchIcon className="pointer-events-none absolute top-1/2 left-2.5 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                autoComplete="off"
+                className="pl-9"
+                id="provider-search"
+                onChange={(e) => {
+                  setProviderQuery(e.target.value);
+                  setPickerOpen(true);
+                  if (provider && provider !== "__custom__") setProvider("");
+                }}
+                onBlur={() => window.setTimeout(() => setPickerOpen(false), 150)}
+                onFocus={() => setPickerOpen(true)}
+                placeholder="Search the catalog (e.g. GitHub, Slack)…"
+                type="text"
+                value={providerQuery}
+              />
+              {pickerOpen && provider !== "__custom__" && (
+                <div className="absolute top-full left-0 z-20 mt-1 max-h-64 w-full overflow-y-auto rounded-lg border bg-background shadow-md">
+                  {filteredCatalog.map((entry) => (
+                    <button
+                      className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-muted"
+                      key={entry.id}
+                      onClick={() => handleProviderPicked(entry)}
+                      type="button"
+                    >
+                      <span className="flex min-w-0 flex-1 flex-col">
+                        <span className="flex items-center gap-1.5">
+                          <span className="font-medium">{entry.title}</span>
+                          <code className="text-xs text-muted-foreground">{entry.id}</code>
+                        </span>
+                        {entry.description && (
+                          <span className="truncate text-xs text-muted-foreground">
+                            {entry.description}
+                          </span>
+                        )}
+                      </span>
+                      {provider === entry.id && <CheckIcon className="size-4 shrink-0" />}
+                    </button>
+                  ))}
+                  {filteredCatalog.length === 0 && (
+                    <p className="px-3 py-2 text-sm text-muted-foreground">
+                      No catalog match for “{providerQuery.trim()}”.
+                    </p>
+                  )}
+                  <button
+                    className="flex w-full items-center gap-2 border-t px-3 py-2 text-left text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    onClick={() => {
+                      setProvider("__custom__");
+                      setPickerOpen(false);
+                    }}
+                    type="button"
+                  >
+                    Use a custom provider ID…
+                  </button>
+                </div>
+              )}
+            </div>
+            {catalogError && (
+              <p className="text-xs text-muted-foreground">{catalogError}</p>
+            )}
+            {selectedCatalogEntry && !selectedCatalogEntry.auth.declared && (
+              <p className="text-xs text-muted-foreground">
+                {selectedCatalogEntry.title} does not declare auth schemes in its
+                OpenAPI spec — all credential types are shown.
+              </p>
+            )}
           </div>
 
           {provider === "__custom__" && (
-            <label className="flex flex-col gap-1.5">
-              <span className="text-sm font-medium">Provider ID</span>
-              <Input
-                onChange={(e) => setCustomProvider(e.target.value)}
-                placeholder="e.g. my-api"
-                required
-                type="text"
-                value={customProvider}
-              />
-            </label>
+            <div className="flex flex-col gap-1.5">
+              <label className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium">Provider ID</span>
+                <Input
+                  onChange={(e) => setCustomProvider(e.target.value)}
+                  placeholder="e.g. my-api"
+                  required
+                  type="text"
+                  value={customProvider}
+                />
+              </label>
+              <button
+                className="self-start text-xs text-muted-foreground transition-colors hover:text-foreground"
+                onClick={() => {
+                  setProvider("");
+                  setCustomProvider("");
+                  setProviderQuery("");
+                }}
+                type="button"
+              >
+                ← Search the catalog instead
+              </button>
+            </div>
           )}
 
           {/* Label */}
@@ -280,11 +372,17 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
             />
           </label>
 
-          {/* Credential type */}
+          {/* Credential type — only the avenues the provider supports */}
           <div className="flex flex-col gap-1.5">
             <span className="text-sm font-medium">Type</span>
+            {selectedCatalogEntry?.auth.declared && (
+              <p className="text-xs text-muted-foreground">
+                {selectedCatalogEntry.title} supports {supportedTypes.length} of{" "}
+                {CREDENTIAL_TYPES.length} credential types.
+              </p>
+            )}
             <div className="flex flex-col gap-2">
-              {CREDENTIAL_TYPES.map((ct) => (
+              {supportedTypes.map((ct) => (
                 <label
                   key={ct.value}
                   className={`flex cursor-pointer items-start gap-3 rounded-lg border p-3 transition-colors ${
@@ -455,6 +553,18 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
                   type="text"
                   value={oauthScopes}
                 />
+                {selectedCatalogEntry?.auth.oauth?.scopes &&
+                  Object.keys(selectedCatalogEntry.auth.oauth.scopes).length > 0 && (
+                    <span className="text-xs text-muted-foreground">
+                      Available:{" "}
+                      {Object.keys(selectedCatalogEntry.auth.oauth.scopes)
+                        .slice(0, 6)
+                        .join(", ")}
+                      {Object.keys(selectedCatalogEntry.auth.oauth.scopes).length > 6
+                        ? "…"
+                        : ""}
+                    </span>
+                  )}
               </label>
             </>
           )}

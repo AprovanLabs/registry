@@ -120,7 +120,19 @@ export class GatewayClient {
       { ...init, headers },
     );
     if (!response.ok) {
-      throw new Error(`Gateway request failed (${response.status})`);
+      let detail = "";
+      try {
+        const body = (await response.json()) as { error?: string; detail?: string };
+        if (typeof body.error === "string") detail = body.error;
+        if (typeof body.detail === "string") detail += `: ${body.detail}`;
+      } catch {
+        // non-JSON error body; report status only
+      }
+      throw new Error(
+        detail
+          ? `Gateway request failed (${response.status}): ${detail}`
+          : `Gateway request failed (${response.status})`,
+      );
     }
     return response;
   }

@@ -6,7 +6,7 @@
  * Authentication: Cognito access token (verified by `requireAuth`), which sets
  * `c.var.principal` with the caller's `sub`, active `workspaceId`, `role`, and
  * `groupIds`. The route:
- * - Checks the per-tool permission grant for `principal.sub`
+ * - Authorizes via `mayInvokeTool` (direct grant, group tool grant, or admin)
  * - Resolves credentials for the provider from the credential store
  * - Applies rate limiting per user id
  * - Executes the operation in the Isolate runtime (APR-15)
@@ -16,12 +16,12 @@
 
 import { withSpan } from "@utdk/common/telemetry";
 import { Hono } from "hono";
+import { mayInvokeTool } from "../authorize.js";
 import { getAuditStore } from "../audit.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
 import { getAuthMode, requireAuth } from "../middleware/auth.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
-import { getPermissionStore } from "../permissions.js";
 import type { ToolCallRequest } from "../contract.js";
 import type { CredentialPayload } from "../credentials.js";
 
@@ -235,11 +235,9 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   const provider = c.req.param("provider");
   const operation = c.req.param("operation");
 
-  // Permission check (async — DDB-backed store, APR-320)
-  const permStore = getPermissionStore();
   if (
     getAuthMode() === "oidc" &&
-    !(await permStore.check(workspaceId, callerId, provider!, operation!))
+    !(await mayInvokeTool(principal, provider!, operation!))
   ) {
     const requestId = crypto.randomUUID();
     logMetadata({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });

@@ -86,12 +86,18 @@ interface AuditEntry {
 // Gateway client helpers
 // ---------------------------------------------------------------------------
 
+// The gateway sits behind CloudFront OAC, whose SigV4 signing overwrites the
+// standard `Authorization` header. The user token rides in this app-specific
+// header instead (matches @aprovan/ui DEFAULT_AUTH_HEADER and the gateway's
+// ACCESS_TOKEN_HEADER); CloudFront forwards it untouched.
+const AUTH_HEADER = "X-Aprovan-Authorization";
+
 function gatewayFetch(path: string, token: string, opts: RequestInit = {}): Promise<Response> {
   return fetch(`${GATEWAY_URL}${path}`, {
     ...opts,
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
+      [AUTH_HEADER]: `Bearer ${token}`,
       ...(opts.headers ?? {}),
     },
   });

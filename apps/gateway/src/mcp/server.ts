@@ -5,10 +5,10 @@
  * The full tool catalog is loaded once at boot and cached at module scope;
  * only the per-caller permitted subset is exposed inside each Server.
  *
- * Tools are filtered through `permittedTools` which calls PermissionStore.check
- * for every (provider, operation) pair using the same check semantics as
- * `routes/tools.ts`. The `call_tool` meta-tool re-uses `getExecutor()` (the
- * same singleton as `routes/tools.ts`) for sandboxed execution.
+ * Tools are filtered through `permittedTools` / `mayInvokeTool` using the same
+ * check semantics as `routes/tools.ts`. The `call_tool` meta-tool re-uses
+ * `getExecutor()` (the same singleton as `routes/tools.ts`) for sandboxed
+ * execution.
  */
 
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
@@ -32,12 +32,12 @@ import {
   type Execute,
   type ProviderTool,
 } from "@utdk/mcp-core";
+import { mayInvokeTool } from "../authorize.js";
 import { getAuditStore } from "../audit.js";
 import { getContentStore } from "../content-store.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor } from "../isolate.js";
 import { getAuthMode, type Principal } from "../middleware/auth.js";
-import { getPermissionStore } from "../permissions.js";
 
 // ---------------------------------------------------------------------------
 // Module-level catalog cache (loaded once at first call)
@@ -70,16 +70,12 @@ export function resetMcpCatalog(): void {
 
 async function permittedTools(all: ProviderTool[], principal: Principal): Promise<ProviderTool[]> {
   if (getAuthMode() === "none") return all;
-  const permStore = getPermissionStore();
+  if (principal.role === "admin") return all;
   const results: ProviderTool[] = [];
   for (const tool of all) {
-    const allowed = await permStore.check(
-      principal.workspaceId,
-      principal.sub,
-      tool.providerName,
-      toolOperation(tool),
-    );
-    if (allowed) results.push(tool);
+    if (await mayInvokeTool(principal, tool.providerName, toolOperation(tool))) {
+      results.push(tool);
+    }
   }
   return results;
 }

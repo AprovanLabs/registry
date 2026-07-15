@@ -36,13 +36,22 @@ export async function getCurrentWorkspace(
   userId: string,
 ): Promise<string | undefined> {
   const client = getDynamoDocClient();
-  const result = await client.send(
-    new GetCommand({
-      TableName: SESSIONS_TABLE(),
-      Key: { userId },
-      ProjectionExpression: "currentWorkspaceId, expiresAt",
-    }),
-  );
+  let result;
+  try {
+    result = await client.send(
+      new GetCommand({
+        TableName: SESSIONS_TABLE(),
+        Key: { userId },
+        ProjectionExpression: "currentWorkspaceId, expiresAt",
+      }),
+    );
+  } catch (err) {
+    // Local/dev often has Users/Memberships from SSM but no Sessions table yet.
+    // Treat a missing table (or row read failure) as "no active workspace".
+    const name = err instanceof Error ? err.name : "";
+    if (name === "ResourceNotFoundException") return undefined;
+    throw err;
+  }
   if (!result.Item) return undefined;
   const item = result.Item as { currentWorkspaceId?: string; expiresAt?: number };
   // Honour the TTL client-side so a stale (not-yet-reaped) row is treated as absent.

@@ -15,7 +15,7 @@
 
 import { Hono } from "hono";
 import { getMembership, listMembershipsForUser } from "../memberships.js";
-import { verifyAccessToken } from "../middleware/auth.js";
+import { readBearerToken, verifyAccessToken } from "../middleware/auth.js";
 import { getCurrentWorkspace, setCurrentWorkspace } from "../sessions.js";
 import { getActiveWorkspaceId, setActiveWorkspaceId } from "../users.js";
 import { getWorkspaces } from "../workspaces.js";
@@ -28,15 +28,16 @@ export const sessionRouter = new Hono();
 
 /** Authenticate via a bare Cognito access token, returning the user sub. */
 async function requireCognitoSub(c: ContextLike): Promise<string | Response> {
-  const authHeader = c.req.header("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
+  const accessToken = readBearerToken(c);
+  if (!accessToken) {
     return c.json({ error: "Missing or invalid Authorization header" }, 401);
   }
-  const accessToken = authHeader.slice("Bearer ".length);
   try {
     return await verifyAccessToken(accessToken);
-  } catch {
-    return c.json({ error: "Invalid or expired Cognito token" }, 401);
+  } catch (err) {
+    const detail = err instanceof Error ? err.message : String(err);
+    process.stderr.write(`[gateway] cognito verify failed: ${detail}\n`);
+    return c.json({ error: "Invalid or expired Cognito token", detail }, 401);
   }
 }
 

@@ -66,11 +66,16 @@ export type OperationInfo = {
 // ---------------------------------------------------------------------------
 
 /**
- * Converts a segment (e.g. "list-for-user") to camelCase (e.g. "listForUser").
- * Matches the @utdk client's toCamelCase behavior.
+ * Converts a segment (e.g. "list-for-user" or "listWebhooks") to camelCase
+ * (e.g. "listForUser" / "listWebhooks"). Must match @utdk client's toCamelCase,
+ * including splitting existing camelCase / PascalCase identifiers.
  */
 function segmentToCamelCase(segment: string): string {
   const words = segment
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Za-z])([0-9])/g, "$1 $2")
+    .replace(/([0-9])([A-Za-z])/g, "$1 $2")
     .replace(/[^a-zA-Z0-9]+/g, " ")
     .trim()
     .split(/\s+/)

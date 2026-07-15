@@ -21,7 +21,7 @@
  */
 
 import { Hono } from "hono";
-import { verifyAccessToken } from "../middleware/auth.js";
+import { readBearerToken, verifyAccessToken } from "../middleware/auth.js";
 import { selectActiveWorkspace } from "./session.js";
 
 export const authRouter = new Hono();
@@ -31,11 +31,10 @@ export const authRouter = new Hono();
 // ---------------------------------------------------------------------------
 
 authRouter.post("/sessions", async (c) => {
-  const authHeader = c.req.header("Authorization");
-  if (!authHeader?.startsWith("Bearer ")) {
+  const accessToken = readBearerToken(c);
+  if (!accessToken) {
     return c.json({ error: "Missing or invalid Authorization header" }, 401);
   }
-  const accessToken = authHeader.slice("Bearer ".length);
 
   let userId: string;
   try {

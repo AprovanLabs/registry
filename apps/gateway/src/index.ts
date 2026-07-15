@@ -4,26 +4,43 @@
  * Starts the Hono HTTP server using @hono/node-server.
  *
  * Environment variables:
+ *   APROVAN_ENV                  — Load shared Cognito/DynamoDB config from
+ *                                  `/aprovan/<env>/env` in SSM (default: `prd`).
+ *                                  Set to `off` to skip and use only `.env`.
  *   GATEWAY_PORT                 — HTTP port (default: 4000)
- *   COGNITO_USER_POOL_ID  — Cognito user pool id for access-token verification (required)
- *   COGNITO_CLIENT_ID    — Cognito app client id for access-token verification (required)
- *   GATEWAY_AWS_REGION           — AWS region for Cognito (falls back to AWS_REGION, then us-east-1)
+ *   OIDC_ISSUER / OIDCAUDIENCE   — Cognito issuer + app client id for JWT verify
+ *                                  (populated from SSM when APROVAN_ENV is set)
+ *   GATEWAY_AWS_REGION           — AWS region for Cognito (falls back to AWS_REGION)
  *   GATEWAY_RATE_LIMIT_RPS       — Requests per second per caller+provider (default: 10)
  *   GATEWAY_RATE_LIMIT_BURST     — Burst capacity (default: 20)
  *   OTEL_EXPORTER_OTLP_ENDPOINT  — OTLP endpoint for telemetry (optional)
- *   COGNITO_USER_POOL_ID         — Cognito user pool for DCR client provisioning (required for /oauth/register)
- *   COGNITO_REGION               — AWS region for Cognito (falls back to AWS_REGION, then us-east-1)
- *   COGNITO_DOMAIN              — Cognito hosted UI domain, e.g. auth.example.com (informational)
+ *   COGNITO_USER_POOL_ID         — Cognito user pool for DCR client provisioning
+ *   COGNITO_DOMAIN               — Cognito hosted UI domain (informational)
  */
 
-import { loadAprovanEnv } from "@aprovan/node";
+import { loadAprovanEnv, dotenv } from "@aprovan/node";
 import { serve } from "@hono/node-server";
 import { configureTelemetry } from "@utdk/common/telemetry";
 import { createApp } from "./app.js";
-import { initAuth } from "./middleware/auth.js";
+import { initAuth, getAuthMode } from "./middleware/auth.js";
 
-if (process.env["APROVAN_ENV"]) {
-  await loadAprovanEnv(process.env["APROVAN_ENV"]);
+dotenv.config();
+
+// Load `/aprovan/<env>/env` from SSM (Cognito + DynamoDB table names). Local
+// `.env` / process env wins (`overwrite: false`) so ports and overrides stick.
+const aprovanEnv = process.env["APROVAN_ENV"] ?? "prd";
+if (aprovanEnv !== "off" && aprovanEnv !== "false") {
+  process.env["AWS_REGION"] ??= "us-east-2";
+  process.env["AWS_DEFAULT_REGION"] ??= process.env["AWS_REGION"];
+  try {
+    await loadAprovanEnv(aprovanEnv, { overwrite: false });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    throw new Error(
+      `Failed to load /aprovan/${aprovanEnv}/env from SSM (${process.env["AWS_REGION"]}): ${message}\n` +
+        "Set APROVAN_ENV=off to skip, or configure AWS credentials (e.g. AWS_PROFILE=aprovan).",
+    );
+  }
 }
 
 const PORT = Number(process.env["GATEWAY_PORT"] ?? 4000);
@@ -58,5 +75,7 @@ await initAuth();
 const app = createApp();
 
 serve({ fetch: app.fetch, port: PORT }, (info) => {
-  process.stderr.write(`[gateway] Listening on http://localhost:${info.port}\n`);
+  process.stderr.write(
+    `[gateway] Listening on http://localhost:${info.port} (auth=${getAuthMode()})\n`,
+  );
 });

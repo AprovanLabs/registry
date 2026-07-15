@@ -20,16 +20,11 @@ import {
   type SessionInfo,
   type WorkspaceSummary,
 } from "@aprovan/ui/gateway";
+import { gatewayBaseUrl } from "@/lib/site";
 
 export { GatewayError };
+export { gatewayBaseUrl };
 export type { SessionInfo, WorkspaceSummary };
-
-function gatewayBaseUrl(): string {
-  return (
-    (import.meta.env.PUBLIC_GATEWAY_URL as string | undefined)?.replace(/\/$/, "") ??
-    "http://localhost:4000"
-  );
-}
 
 /** A shared gateway client bound to an explicit access token. */
 function withToken(token: string): GatewayClient {

@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@aprovan/registry-main": "workspace:*",
-    "@aprovan/ui": "^0.1.0"
+    "@aprovan/ui": "^0.2.1"
   },
   "devDependencies": {
     "@aprovan/tsconfig": "^0.1.0",

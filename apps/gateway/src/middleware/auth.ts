@@ -34,6 +34,30 @@ export function getAuthMode(): AuthMode {
     : "none";
 }
 
+/**
+ * Header carrying the caller's bearer token. Deliberately NOT `Authorization`:
+ * the gateway sits behind CloudFront with Origin Access Control, whose SigV4
+ * signing overwrites `Authorization` with its own signature. The browser
+ * client (@aprovan/ui, DEFAULT_AUTH_HEADER) sends the user token here instead.
+ */
+export const ACCESS_TOKEN_HEADER = "X-Aprovan-Authorization";
+
+interface HeaderCarrier {
+  req: { header(name: string): string | undefined };
+}
+
+/**
+ * Extract the caller's bearer token. Prefers {@link ACCESS_TOKEN_HEADER};
+ * falls back to the standard `Authorization` header for direct/dev access that
+ * doesn't traverse CloudFront. Returns the bare token (no `Bearer ` prefix),
+ * or null when absent or malformed.
+ */
+export function readBearerToken(c: HeaderCarrier): string | null {
+  const raw = c.req.header(ACCESS_TOKEN_HEADER) ?? c.req.header("Authorization");
+  if (!raw?.startsWith("Bearer ")) return null;
+  return raw.slice("Bearer ".length).trim();
+}
+
 function createVerifier(): TokenVerifier {
   if (verifierOverride !== undefined) {
     if (!verifierOverride) throw new Error("OIDC verifier is unavailable");
@@ -83,9 +107,9 @@ export async function initAuth(): Promise<void> {
 }
 
 async function oidcPrincipal(c: Context): Promise<Principal> {
-  const auth = c.req.header("Authorization");
-  if (!auth?.startsWith("Bearer ")) throw new Error("missing_token");
-  const sub = await verifyAccessToken(auth.slice(7));
+  const token = readBearerToken(c);
+  if (!token) throw new Error("missing_token");
+  const sub = await verifyAccessToken(token);
   const requested = c.req.header("X-Aprovan-Workspace");
   const workspaceId = requested || (await getCurrentWorkspace(sub));
   if (!workspaceId) throw new Error("workspace_not_selected");

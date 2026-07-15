@@ -19,8 +19,8 @@ import {
   getRegistryEntry,
   getRegistryRoutes,
 } from "@/lib/registry";
+import { providersHref } from "@/lib/catalog";
 import { withBasePath } from "@/lib/site";
-import { loadProviderOperations } from "@/lib/openapi";
 
 export async function getStaticPaths() {
   const routes = await getRegistryRoutes();
@@ -37,15 +37,16 @@ interface Props {
 }
 
 const { providerPath, docSlug } = Astro.props;
-const [catalog, entry, operations] = await Promise.all([
+const [catalog, entry] = await Promise.all([
   getRegistryCatalog(),
   getRegistryEntry(providerPath),
-  loadProviderOperations(providerPath),
 ]);
 
 if (!entry) {
   throw new Error(`Unknown registry entry: ${providerPath}`);
 }
+
+const operations = entry.operations;
 
 const activeDoc = getDocPage(entry, docSlug);
 const overviewHref = withBasePath(`/packages/${entry.providerPath}`);
@@ -314,7 +315,7 @@ const parentEntry = entry.parentProviderPath
                     {operations.length} operation{operations.length === 1 ? "" : "s"} —{" "}
                     <a
                       class="font-medium text-primary underline-offset-4 hover:underline"
-                      href={withBasePath(`/providers/${entry.providerPath}/${operations[0]!.operationId}`)}
+                      href={providersHref(entry.providerPath, operations[0]!.operationId)}
                     >
                       open try-it console
                     </a>
@@ -351,7 +352,7 @@ const parentEntry = entry.parentProviderPath
                           <td class="py-2 pl-2">
                             <a
                               class="inline-flex h-6 items-center rounded-md border px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                              href={withBasePath(`/providers/${entry.providerPath}/${op.operationId}`)}
+                              href={providersHref(entry.providerPath, op.operationId)}
                             >
                               Try
                             </a>

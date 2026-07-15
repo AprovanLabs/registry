@@ -1,36 +1,7 @@
 ---
-import { Badge } from "@/components/ui/badge";
-import { ProvidersGrid } from "@/components/ProvidersGrid";
-import type { ProviderSearchEntry, OperationSearchEntry } from "@/components/ProvidersGrid";
+import { ProviderExplorer } from "@/components/ProviderExplorer";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getRegistryCatalog } from "@/lib/registry";
 import { withBasePath } from "@/lib/site";
-
-const catalog = await getRegistryCatalog();
-const providerEntries = catalog.entries.filter((e) => e.kind === "provider");
-
-const providers: ProviderSearchEntry[] = providerEntries.map((e) => ({
-  providerPath: e.providerPath,
-  title: e.title,
-  summary: e.summary,
-  openApiIcon: e.openApiIcon,
-  operationCount: e.operationCount,
-  scorecardDomain: e.scorecardDomain,
-}));
-
-const operations: OperationSearchEntry[] = providerEntries.flatMap((e) =>
-  e.operations.map((op) => ({
-    providerPath: e.providerPath,
-    providerTitle: e.title,
-    operationId: op.operationId,
-    sdkPath: op.sdkPath,
-    method: op.httpMethod,
-    path: op.httpPath,
-    summary: op.summary,
-  })),
-);
-
-const totalOperations = providerEntries.reduce((sum, e) => sum + e.operationCount, 0);
 ---
 
 <BaseLayout
@@ -39,16 +10,12 @@ const totalOperations = providerEntries.reduce((sum, e) => sum + e.operationCoun
 >
   <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
     <section class="flex flex-col gap-3">
-      <div class="flex flex-wrap items-center gap-2">
-        <Badge>Tool Catalog</Badge>
-        <Badge variant="outline">{providers.length} providers</Badge>
-        <Badge variant="secondary">{totalOperations.toLocaleString()} tools</Badge>
-      </div>
       <h1 class="max-w-3xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
         Browse every tool.
       </h1>
       <p class="max-w-2xl text-muted-foreground">
-        Search across all providers and tools. Click a provider to see its full operation list, or search for a specific tool name or operation.
+        Search across all providers and tools. Data loads from static catalog JSON —
+        open a provider to try any operation.
       </p>
       <div class="flex gap-3 text-sm">
         <a
@@ -60,6 +27,8 @@ const totalOperations = providerEntries.reduce((sum, e) => sum + e.operationCoun
       </div>
     </section>
 
-    <ProvidersGrid client:load providers={providers} operations={operations} />
+    <ProviderExplorer client:only="react">
+      <p slot="fallback" class="text-sm text-muted-foreground">Loading catalog…</p>
+    </ProviderExplorer>
   </main>
 </BaseLayout>

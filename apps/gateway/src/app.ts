@@ -49,7 +49,7 @@ export function createApp(): Hono {
       responseHeaders.set("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
       responseHeaders.set(
         "Access-Control-Allow-Headers",
-        requestHeaders ?? "Content-Type, Authorization",
+        requestHeaders ?? "Content-Type, Authorization, X-Aprovan-Authorization, X-Aprovan-Workspace",
       );
       responseHeaders.set("Access-Control-Expose-Headers", "Content-Type, Authorization");
 

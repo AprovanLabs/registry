@@ -10,6 +10,9 @@
     "lint:fix": "eslint --fix \"**/*.ts?(x)\"",
     "format": "prettier --write .",
     "typecheck": "turbo run typecheck",
+    "deploy": "./scripts/deploy.sh all",
+    "deploy:web": "./scripts/deploy-web.sh",
+    "deploy:infra": "./scripts/deploy-infra.sh",
     "clean": "turbo run clean && rm -rf node_modules packages/*/node_modules packages/*/dist"
   },
   "devDependencies": {
@@ -18,6 +21,7 @@
     "@aprovan/tsconfig": "^0.1.0",
     "@aprovan/vitest-config": "^0.1.0",
     "@types/node": "^25.5.0",
+    "esbuild": "^0.25.6",
     "eslint": "^9.0.0",
     "lint-staged": "^13.0.3",
     "prettier": "^3.0.0",

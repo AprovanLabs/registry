@@ -14,6 +14,7 @@ type OpenApiDocument = {
   components?: {
     schemas?: Record<string, unknown>;
     parameters?: Record<string, unknown>;
+    securitySchemes?: Record<string, unknown>;
   };
 };
 
@@ -112,6 +113,127 @@ export type RegistryDocPage = {
   html: string;
 };
 
+/** Credential types the gateway can store (mirrors apps/gateway credentials). */
+export type ProviderAuthMethod =
+  | "bearer_token"
+  | "api_key"
+  | "oauth2_client"
+  | "oauth2_authcode";
+
+export type ProviderAuthInfo = {
+  /** Credential types the provider's OpenAPI spec supports. */
+  methods: ProviderAuthMethod[];
+  /**
+   * Whether the spec actually declared `securitySchemes`. When false the
+   * methods list is a permissive fallback, not a provider guarantee.
+   */
+  declared: boolean;
+  /** Header name for `api_key` credentials (e.g. `X-Figma-Token`). */
+  apiKeyHeader: string | null;
+  oauth: {
+    authUrl: string | null;
+    tokenUrl: string | null;
+    /** scope → human description, straight from the spec. */
+    scopes: Record<string, string>;
+  } | null;
+};
+
+const ALL_AUTH_METHODS: ProviderAuthMethod[] = [
+  "bearer_token",
+  "api_key",
+  "oauth2_client",
+  "oauth2_authcode",
+];
+
+/**
+ * Derive the supported credential avenues for a provider from its OpenAPI
+ * `securitySchemes`. Specs that declare nothing (e.g. GitHub's official spec)
+ * fall back to every method with `declared: false`.
+ */
+export function extractProviderAuth(
+  openApiDocument: OpenApiDocument | null,
+): ProviderAuthInfo {
+  const schemes = openApiDocument?.components?.securitySchemes;
+  const fallback: ProviderAuthInfo = {
+    methods: ALL_AUTH_METHODS,
+    declared: false,
+    apiKeyHeader: null,
+    oauth: null,
+  };
+  if (!schemes || typeof schemes !== "object") return fallback;
+
+  const methods = new Set<ProviderAuthMethod>();
+  let apiKeyHeader: string | null = null;
+  let hasOAuth = false;
+  const oauthInfo: NonNullable<ProviderAuthInfo["oauth"]> = {
+    authUrl: null,
+    tokenUrl: null,
+    scopes: {},
+  };
+
+  for (const raw of Object.values(schemes)) {
+    if (!raw || typeof raw !== "object") continue;
+    const scheme = raw as Record<string, unknown>;
+    const type = typeof scheme.type === "string" ? scheme.type.toLowerCase() : "";
+
+    if (type === "http") {
+      const httpScheme =
+        typeof scheme.scheme === "string" ? scheme.scheme.toLowerCase() : "";
+      if (httpScheme === "bearer") methods.add("bearer_token");
+      continue;
+    }
+
+    if (type === "apikey") {
+      methods.add("api_key");
+      if (scheme.in === "header" && typeof scheme.name === "string") {
+        apiKeyHeader ??= scheme.name;
+      }
+      continue;
+    }
+
+    if (type === "oauth2") {
+      const flows =
+        scheme.flows && typeof scheme.flows === "object"
+          ? (scheme.flows as Record<string, unknown>)
+          : {};
+      for (const [flowName, rawFlow] of Object.entries(flows)) {
+        if (!rawFlow || typeof rawFlow !== "object") continue;
+        const flow = rawFlow as Record<string, unknown>;
+        const scopes =
+          flow.scopes && typeof flow.scopes === "object"
+            ? (flow.scopes as Record<string, string>)
+            : {};
+        if (flowName === "clientCredentials") {
+          methods.add("oauth2_client");
+        } else if (flowName === "authorizationCode" || flowName === "implicit") {
+          methods.add("oauth2_authcode");
+        } else {
+          continue;
+        }
+        hasOAuth = true;
+        if (typeof flow.authorizationUrl === "string") {
+          oauthInfo.authUrl = flow.authorizationUrl;
+        }
+        if (typeof flow.tokenUrl === "string") {
+          oauthInfo.tokenUrl = flow.tokenUrl;
+        }
+        Object.assign(oauthInfo.scopes, scopes);
+      }
+      // OAuth2 providers virtually always accept their issued access token as
+      // a bearer credential, so allow pasting one directly.
+      methods.add("bearer_token");
+    }
+  }
+
+  if (methods.size === 0) return fallback;
+  return {
+    methods: [...methods],
+    declared: true,
+    apiKeyHeader,
+    oauth: hasOAuth ? oauthInfo : null,
+  };
+}
+
 export type RegistryEntry = {
   kind: "namespace" | "provider";
   providerPath: string;
@@ -132,6 +254,7 @@ export type RegistryEntry = {
   operationCount: number;
   scorecardDomain: number | null;
   scorecardInfrastructure: string | null;
+  auth: ProviderAuthInfo;
   operations: RegistryOperation[];
   parentProviderPath: string | null;
   parentPackageName: string | null;
@@ -217,11 +340,16 @@ export function buildOperationSnippet(
 }
 
 /**
- * Converts a segment (e.g. "list-for-user") to camelCase (e.g. "listForUser").
- * Matches the @utdk client's toCamelCase behavior.
+ * Converts a segment (e.g. "list-for-user" or "listWebhooks") to camelCase
+ * (e.g. "listForUser" / "listWebhooks"). Must match @utdk client's toCamelCase,
+ * including splitting existing camelCase / PascalCase identifiers.
  */
 function segmentToCamelCase(segment: string): string {
   const words = segment
+    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .replace(/([A-Za-z])([0-9])/g, "$1 $2")
+    .replace(/([0-9])([A-Za-z])/g, "$1 $2")
     .replace(/[^a-zA-Z0-9]+/g, " ")
     .trim()
     .split(/\s+/)
@@ -384,6 +512,7 @@ async function buildRegistryEntry(
     operationCount: countOperations(openApiDocument),
     scorecardDomain,
     scorecardInfrastructure,
+    auth: extractProviderAuth(openApiDocument),
     operations,
     parentProviderPath,
     parentPackageName: null,

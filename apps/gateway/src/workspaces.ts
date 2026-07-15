@@ -44,7 +44,8 @@ export async function getWorkspace(
     new GetCommand({
       TableName: DYNAMODB_WORKSPACES_TABLE(),
       Key: { workspaceId },
-      ProjectionExpression: "workspaceId, name, plan, createdAt, updatedAt",
+      ProjectionExpression: "workspaceId, #n, plan, createdAt, updatedAt",
+      ExpressionAttributeNames: { "#n": "name" },
     }),
   );
   return result.Item as WorkspaceRecord | undefined;
@@ -67,7 +68,8 @@ export async function getWorkspaces(
           new GetCommand({
             TableName: DYNAMODB_WORKSPACES_TABLE(),
             Key: { workspaceId: id },
-            ProjectionExpression: "workspaceId, name",
+            ProjectionExpression: "workspaceId, #n",
+            ExpressionAttributeNames: { "#n": "name" },
           }),
         )
         .then((r) => (r.Item ? (r.Item as WorkspaceRecord) : undefined)),
