@@ -1,691 +1,320 @@
 # Gists
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.gists.list`
-
-- **HTTP**: `GET /gists`
-- **What it does**: List gists for the authenticated user
-- **OpenAPI operationId**: `gists/list`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ since?: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; forks_url: string; commits_url: string; id: string; node_id: string; git_pull_url: string; git_push_url: string; html_url: string; files: { [key: string]: { filename?: string; type?: string; language?: s...`
-- OpenAPI response codes: `200`, `304`, `403`
+20 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type GistsListInput = Parameters<typeof github.gists.list> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsListOutput = Awaited<ReturnType<typeof github.gists.list>>;
-
-const input: GistsListInput = {} as { since?: string; per_page?: number; page?: number };
-const result: GistsListOutput = await github.gists.list(input);
-
-// Result shape (from schema): ({ url: string; forks_url: string; commits_url: string; id: string; node_id: string; git_pull_url: string; git_push_url: string; html_url: string; files: { [key: string]: { filename?: string; type?: string; language?: s...
 ```
 
-### `github.gists.create`
+## `github.gists.list`
 
-- **HTTP**: `POST /gists`
-- **What it does**: Create a gist
-- **OpenAPI operationId**: `gists/create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ description?: string; files: { [key: string]: { content: string } | undefined }; public?: boolean | "true" | "false" }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ forks?: ({ id?: string; url?: string; user?: { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string;...`
-- OpenAPI response codes: `201`, `304`, `403`, `404`, `422`
+List gists for the authenticated user — [API reference](https://docs.github.com/rest/gists/gists#list-gists-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsCreateInput = Parameters<typeof github.gists.create> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsCreateOutput = Awaited<ReturnType<typeof github.gists.create>>;
-
-const input: GistsCreateInput = {} as { description?: string; files: { [key: string]: { content: string } | undefined }; public?: boolean | "true" | "false" };
-const result: GistsCreateOutput = await github.gists.create(input);
-
-// Result shape (from schema): { forks?: ({ id?: string; url?: string; user?: { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string;...
+github.gists.list(input: {
+  /** Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. */
+  since?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(BaseGist)[]>
 ```
 
-### `github.gists.delete`
+<sub>`GET /gists` · `gists/list`</sub>
 
-- **HTTP**: `DELETE /gists/{gist_id}`
-- **What it does**: Delete a gist
-- **OpenAPI operationId**: `gists/delete`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.create`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `403`, `404`
+Create a gist — [API reference](https://docs.github.com/rest/gists/gists#create-a-gist)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsDeleteInput = Parameters<typeof github.gists.delete> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsDeleteOutput = Awaited<ReturnType<typeof github.gists.delete>>;
-
-const input: GistsDeleteInput = {} as { gist_id: string };
-const result: GistsDeleteOutput = await github.gists.delete(input);
-
-// Result shape (from schema): unknown
+github.gists.create(input: {
+  /** Description of the gist */
+  description?: string;
+  /** Names and content for the files that make up the gist */
+  files: { [key: string]: { content: string } | undefined };
+  public?: boolean | "true" | "false";
+}): Promise<GistSimple>
 ```
 
-### `github.gists.get`
+<sub>`POST /gists` · `gists/create`</sub>
 
-- **HTTP**: `GET /gists/{gist_id}`
-- **What it does**: Get a gist
-- **OpenAPI operationId**: `gists/get`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.delete`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ forks?: ({ id?: string; url?: string; user?: { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string;...`
-- OpenAPI response codes: `200`, `304`, `403`, `404`
+Delete a gist — [API reference](https://docs.github.com/rest/gists/gists#delete-a-gist)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsGetInput = Parameters<typeof github.gists.get> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsGetOutput = Awaited<ReturnType<typeof github.gists.get>>;
-
-const input: GistsGetInput = {} as { gist_id: string };
-const result: GistsGetOutput = await github.gists.get(input);
-
-// Result shape (from schema): { forks?: ({ id?: string; url?: string; user?: { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string;...
+github.gists.delete(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+}): Promise<BasicError>
 ```
 
-### `github.gists.update`
+<sub>`DELETE /gists/{gist_id}` · `gists/delete`</sub>
 
-- **HTTP**: `PATCH /gists/{gist_id}`
-- **What it does**: Update a gist
-- **OpenAPI operationId**: `gists/update`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.get`
 
-**Inputs**
-
-- Client input type: `{ description?: string; files?: { [key: string]: { content?: string; filename?: string | null } | null | undefined }; gist_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ forks?: ({ id?: string; url?: string; user?: { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string;...`
-- OpenAPI response codes: `200`, `404`, `422`
+Get a gist — [API reference](https://docs.github.com/rest/gists/gists#get-a-gist)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsUpdateInput = Parameters<typeof github.gists.update> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsUpdateOutput = Awaited<ReturnType<typeof github.gists.update>>;
-
-const input: GistsUpdateInput = {} as { description?: string; files?: { [key: string]: { content?: string; filename?: string | null } | null | undefined }; gist_id: string };
-const result: GistsUpdateOutput = await github.gists.update(input);
-
-// Result shape (from schema): { forks?: ({ id?: string; url?: string; user?: { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string;...
+github.gists.get(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+}): Promise<GistSimple>
 ```
 
-### `github.gists.getRevision`
+<sub>`GET /gists/{gist_id}` · `gists/get`</sub>
 
-- **HTTP**: `GET /gists/{gist_id}/{sha}`
-- **What it does**: Get a gist revision
-- **OpenAPI operationId**: `gists/get-revision`
-- **Path params**: `sha`
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.update`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string; sha: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ forks?: ({ id?: string; url?: string; user?: { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string;...`
-- OpenAPI response codes: `200`, `403`, `404`, `422`
+Update a gist — [API reference](https://docs.github.com/rest/gists/gists#update-a-gist)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsGetRevisionInput = Parameters<typeof github.gists.getRevision> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsGetRevisionOutput = Awaited<ReturnType<typeof github.gists.getRevision>>;
-
-const input: GistsGetRevisionInput = {} as { gist_id: string; sha: string };
-const result: GistsGetRevisionOutput = await github.gists.getRevision(input);
-
-// Result shape (from schema): { forks?: ({ id?: string; url?: string; user?: { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string;...
+github.gists.update(input: {
+  /** The description of the gist. */
+  description?: string;
+  /** The gist files to be updated, renamed, or deleted. Each `key` must match the current filename (including extension) of the targeted gist file. For example: `hello.py`.  To delete a file, set the whole file to null. For example: `hello.py : null`. The file will also be deleted if the specified object does not contain at least one of `content` or `filename`. */
+  files?: { [key: string]: { content?: string; filename?: string | null } | null | undefined };
+  /** The unique identifier of the gist. */
+  gist_id: string;
+}): Promise<GistSimple>
 ```
 
-### `github.gists.listComments`
+<sub>`PATCH /gists/{gist_id}` · `gists/update`</sub>
 
-- **HTTP**: `GET /gists/{gist_id}/comments`
-- **What it does**: List gist comments
-- **OpenAPI operationId**: `gists/list-comments`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.getRevision`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; url: string; body: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; ht...`
-- OpenAPI response codes: `200`, `304`, `403`, `404`
+Get a gist revision — [API reference](https://docs.github.com/rest/gists/gists#get-a-gist-revision)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsListCommentsInput = Parameters<typeof github.gists.listComments> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsListCommentsOutput = Awaited<ReturnType<typeof github.gists.listComments>>;
-
-const input: GistsListCommentsInput = {} as { gist_id: string; per_page?: number; page?: number };
-const result: GistsListCommentsOutput = await github.gists.listComments(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; url: string; body: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; ht...
+github.gists.getRevision(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+  sha: string;
+}): Promise<GistSimple>
 ```
 
-### `github.gists.createComment`
+<sub>`GET /gists/{gist_id}/{sha}` · `gists/get-revision`</sub>
 
-- **HTTP**: `POST /gists/{gist_id}/comments`
-- **What it does**: Create a gist comment
-- **OpenAPI operationId**: `gists/create-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.listComments`
 
-**Inputs**
-
-- Client input type: `{ body: string; gist_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; url: string; body: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; htm...`
-- OpenAPI response codes: `201`, `304`, `403`, `404`
+List gist comments — [API reference](https://docs.github.com/rest/gists/comments#list-gist-comments)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsCreateCommentInput = Parameters<typeof github.gists.createComment> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsCreateCommentOutput = Awaited<ReturnType<typeof github.gists.createComment>>;
-
-const input: GistsCreateCommentInput = {} as { body: string; gist_id: string };
-const result: GistsCreateCommentOutput = await github.gists.createComment(input);
-
-// Result shape (from schema): { id: number; node_id: string; url: string; body: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; htm...
+github.gists.listComments(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(GistComment)[]>
 ```
 
-### `github.gists.deleteComment`
+<sub>`GET /gists/{gist_id}/comments` · `gists/list-comments`</sub>
 
-- **HTTP**: `DELETE /gists/{gist_id}/comments/{comment_id}`
-- **What it does**: Delete a gist comment
-- **OpenAPI operationId**: `gists/delete-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.createComment`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string; comment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `403`, `404`
+Create a gist comment — [API reference](https://docs.github.com/rest/gists/comments#create-a-gist-comment)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsDeleteCommentInput = Parameters<typeof github.gists.deleteComment> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsDeleteCommentOutput = Awaited<ReturnType<typeof github.gists.deleteComment>>;
-
-const input: GistsDeleteCommentInput = {} as { gist_id: string; comment_id: number };
-const result: GistsDeleteCommentOutput = await github.gists.deleteComment(input);
-
-// Result shape (from schema): unknown
+github.gists.createComment(input: {
+  /** The comment text. */
+  body: string;
+  /** The unique identifier of the gist. */
+  gist_id: string;
+}): Promise<GistComment>
 ```
 
-### `github.gists.getComment`
+<sub>`POST /gists/{gist_id}/comments` · `gists/create-comment`</sub>
 
-- **HTTP**: `GET /gists/{gist_id}/comments/{comment_id}`
-- **What it does**: Get a gist comment
-- **OpenAPI operationId**: `gists/get-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.deleteComment`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string; comment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; url: string; body: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; htm...`
-- OpenAPI response codes: `200`, `304`, `403`, `404`
+Delete a gist comment — [API reference](https://docs.github.com/rest/gists/comments#delete-a-gist-comment)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsGetCommentInput = Parameters<typeof github.gists.getComment> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsGetCommentOutput = Awaited<ReturnType<typeof github.gists.getComment>>;
-
-const input: GistsGetCommentInput = {} as { gist_id: string; comment_id: number };
-const result: GistsGetCommentOutput = await github.gists.getComment(input);
-
-// Result shape (from schema): { id: number; node_id: string; url: string; body: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; htm...
+github.gists.deleteComment(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+  /** The unique identifier of the comment. */
+  comment_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.gists.updateComment`
+<sub>`DELETE /gists/{gist_id}/comments/{comment_id}` · `gists/delete-comment`</sub>
 
-- **HTTP**: `PATCH /gists/{gist_id}/comments/{comment_id}`
-- **What it does**: Update a gist comment
-- **OpenAPI operationId**: `gists/update-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.getComment`
 
-**Inputs**
-
-- Client input type: `{ body: string; gist_id: string; comment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; url: string; body: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; htm...`
-- OpenAPI response codes: `200`, `404`
+Get a gist comment — [API reference](https://docs.github.com/rest/gists/comments#get-a-gist-comment)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsUpdateCommentInput = Parameters<typeof github.gists.updateComment> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsUpdateCommentOutput = Awaited<ReturnType<typeof github.gists.updateComment>>;
-
-const input: GistsUpdateCommentInput = {} as { body: string; gist_id: string; comment_id: number };
-const result: GistsUpdateCommentOutput = await github.gists.updateComment(input);
-
-// Result shape (from schema): { id: number; node_id: string; url: string; body: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; htm...
+github.gists.getComment(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+  /** The unique identifier of the comment. */
+  comment_id: number;
+}): Promise<GistComment>
 ```
 
-### `github.gists.listCommits`
+<sub>`GET /gists/{gist_id}/comments/{comment_id}` · `gists/get-comment`</sub>
 
-- **HTTP**: `GET /gists/{gist_id}/commits`
-- **What it does**: List gist commits
-- **OpenAPI operationId**: `gists/list-commits`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.updateComment`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; version: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_...`
-- OpenAPI response codes: `200`, `304`, `403`, `404`
+Update a gist comment — [API reference](https://docs.github.com/rest/gists/comments#update-a-gist-comment)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsListCommitsInput = Parameters<typeof github.gists.listCommits> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsListCommitsOutput = Awaited<ReturnType<typeof github.gists.listCommits>>;
-
-const input: GistsListCommitsInput = {} as { gist_id: string; per_page?: number; page?: number };
-const result: GistsListCommitsOutput = await github.gists.listCommits(input);
-
-// Result shape (from schema): ({ url: string; version: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_...
+github.gists.updateComment(input: {
+  /** The comment text. */
+  body: string;
+  /** The unique identifier of the gist. */
+  gist_id: string;
+  /** The unique identifier of the comment. */
+  comment_id: number;
+}): Promise<GistComment>
 ```
 
-### `github.gists.listForks`
+<sub>`PATCH /gists/{gist_id}/comments/{comment_id}` · `gists/update-comment`</sub>
 
-- **HTTP**: `GET /gists/{gist_id}/forks`
-- **What it does**: List gist forks
-- **OpenAPI operationId**: `gists/list-forks`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.listCommits`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ forks?: ({ id?: string; url?: string; user?: { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string...`
-- OpenAPI response codes: `200`, `304`, `403`, `404`
+List gist commits — [API reference](https://docs.github.com/rest/gists/gists#list-gist-commits)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsListForksInput = Parameters<typeof github.gists.listForks> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsListForksOutput = Awaited<ReturnType<typeof github.gists.listForks>>;
-
-const input: GistsListForksInput = {} as { gist_id: string; per_page?: number; page?: number };
-const result: GistsListForksOutput = await github.gists.listForks(input);
-
-// Result shape (from schema): ({ forks?: ({ id?: string; url?: string; user?: { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string...
+github.gists.listCommits(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(GistCommit)[]>
 ```
 
-### `github.gists.fork`
+<sub>`GET /gists/{gist_id}/commits` · `gists/list-commits`</sub>
 
-- **HTTP**: `POST /gists/{gist_id}/forks`
-- **What it does**: Fork a gist
-- **OpenAPI operationId**: `gists/fork`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.listForks`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; forks_url: string; commits_url: string; id: string; node_id: string; git_pull_url: string; git_push_url: string; html_url: string; files: { [key: string]: { filename?: string; type?: string; language?: st...`
-- OpenAPI response codes: `201`, `304`, `403`, `404`, `422`
+List gist forks — [API reference](https://docs.github.com/rest/gists/gists#list-gist-forks)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsForkInput = Parameters<typeof github.gists.fork> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsForkOutput = Awaited<ReturnType<typeof github.gists.fork>>;
-
-const input: GistsForkInput = {} as { gist_id: string };
-const result: GistsForkOutput = await github.gists.fork(input);
-
-// Result shape (from schema): { url: string; forks_url: string; commits_url: string; id: string; node_id: string; git_pull_url: string; git_push_url: string; html_url: string; files: { [key: string]: { filename?: string; type?: string; language?: st...
+github.gists.listForks(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(GistSimple)[]>
 ```
 
-### `github.gists.unstar`
+<sub>`GET /gists/{gist_id}/forks` · `gists/list-forks`</sub>
 
-- **HTTP**: `DELETE /gists/{gist_id}/star`
-- **What it does**: Unstar a gist
-- **OpenAPI operationId**: `gists/unstar`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.fork`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `403`, `404`
+Fork a gist — [API reference](https://docs.github.com/rest/gists/gists#fork-a-gist)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsUnstarInput = Parameters<typeof github.gists.unstar> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsUnstarOutput = Awaited<ReturnType<typeof github.gists.unstar>>;
-
-const input: GistsUnstarInput = {} as { gist_id: string };
-const result: GistsUnstarOutput = await github.gists.unstar(input);
-
-// Result shape (from schema): unknown
+github.gists.fork(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+}): Promise<BaseGist>
 ```
 
-### `github.gists.checkIsStarred`
+<sub>`POST /gists/{gist_id}/forks` · `gists/fork`</sub>
 
-- **HTTP**: `GET /gists/{gist_id}/star`
-- **What it does**: Check if a gist is starred
-- **OpenAPI operationId**: `gists/check-is-starred`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.unstar`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `403`, `404`
+Unstar a gist — [API reference](https://docs.github.com/rest/gists/gists#unstar-a-gist)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsCheckIsStarredInput = Parameters<typeof github.gists.checkIsStarred> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsCheckIsStarredOutput = Awaited<ReturnType<typeof github.gists.checkIsStarred>>;
-
-const input: GistsCheckIsStarredInput = {} as { gist_id: string };
-const result: GistsCheckIsStarredOutput = await github.gists.checkIsStarred(input);
-
-// Result shape (from schema): unknown
+github.gists.unstar(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+}): Promise<BasicError>
 ```
 
-### `github.gists.star`
+<sub>`DELETE /gists/{gist_id}/star` · `gists/unstar`</sub>
 
-- **HTTP**: `PUT /gists/{gist_id}/star`
-- **What it does**: Star a gist
-- **OpenAPI operationId**: `gists/star`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.checkIsStarred`
 
-**Inputs**
-
-- Client input type: `{ gist_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `403`, `404`
+Check if a gist is starred — [API reference](https://docs.github.com/rest/gists/gists#check-if-a-gist-is-starred)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsStarInput = Parameters<typeof github.gists.star> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsStarOutput = Awaited<ReturnType<typeof github.gists.star>>;
-
-const input: GistsStarInput = {} as { gist_id: string };
-const result: GistsStarOutput = await github.gists.star(input);
-
-// Result shape (from schema): unknown
+github.gists.checkIsStarred(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+}): Promise<BasicError>
 ```
 
-### `github.gists.listPublic`
+<sub>`GET /gists/{gist_id}/star` · `gists/check-is-starred`</sub>
 
-- **HTTP**: `GET /gists/public`
-- **What it does**: List public gists
-- **OpenAPI operationId**: `gists/list-public`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.star`
 
-**Inputs**
-
-- Client input type: `{ since?: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; forks_url: string; commits_url: string; id: string; node_id: string; git_pull_url: string; git_push_url: string; html_url: string; files: { [key: string]: { filename?: string; type?: string; language?: s...`
-- OpenAPI response codes: `200`, `304`, `403`, `422`
+Star a gist — [API reference](https://docs.github.com/rest/gists/gists#star-a-gist)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsListPublicInput = Parameters<typeof github.gists.listPublic> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsListPublicOutput = Awaited<ReturnType<typeof github.gists.listPublic>>;
-
-const input: GistsListPublicInput = {} as { since?: string; per_page?: number; page?: number };
-const result: GistsListPublicOutput = await github.gists.listPublic(input);
-
-// Result shape (from schema): ({ url: string; forks_url: string; commits_url: string; id: string; node_id: string; git_pull_url: string; git_push_url: string; html_url: string; files: { [key: string]: { filename?: string; type?: string; language?: s...
+github.gists.star(input: {
+  /** The unique identifier of the gist. */
+  gist_id: string;
+}): Promise<BasicError>
 ```
 
-### `github.gists.listStarred`
+<sub>`PUT /gists/{gist_id}/star` · `gists/star`</sub>
 
-- **HTTP**: `GET /gists/starred`
-- **What it does**: List starred gists
-- **OpenAPI operationId**: `gists/list-starred`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.listPublic`
 
-**Inputs**
-
-- Client input type: `{ since?: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; forks_url: string; commits_url: string; id: string; node_id: string; git_pull_url: string; git_push_url: string; html_url: string; files: { [key: string]: { filename?: string; type?: string; language?: s...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+List public gists — [API reference](https://docs.github.com/rest/gists/gists#list-public-gists)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsListStarredInput = Parameters<typeof github.gists.listStarred> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsListStarredOutput = Awaited<ReturnType<typeof github.gists.listStarred>>;
-
-const input: GistsListStarredInput = {} as { since?: string; per_page?: number; page?: number };
-const result: GistsListStarredOutput = await github.gists.listStarred(input);
-
-// Result shape (from schema): ({ url: string; forks_url: string; commits_url: string; id: string; node_id: string; git_pull_url: string; git_push_url: string; html_url: string; files: { [key: string]: { filename?: string; type?: string; language?: s...
+github.gists.listPublic(input: {
+  /** Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. */
+  since?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(BaseGist)[]>
 ```
 
-### `github.gists.listForUser`
+<sub>`GET /gists/public` · `gists/list-public`</sub>
 
-- **HTTP**: `GET /users/{username}/gists`
-- **What it does**: List gists for a user
-- **OpenAPI operationId**: `gists/list-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.gists.listStarred`
 
-**Inputs**
-
-- Client input type: `{ username: string; since?: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; forks_url: string; commits_url: string; id: string; node_id: string; git_pull_url: string; git_push_url: string; html_url: string; files: { [key: string]: { filename?: string; type?: string; language?: s...`
-- OpenAPI response codes: `200`, `422`
+List starred gists — [API reference](https://docs.github.com/rest/gists/gists#list-starred-gists)
 
 ```ts
-import github from "@utdk/github";
-
-type GistsListForUserInput = Parameters<typeof github.gists.listForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type GistsListForUserOutput = Awaited<ReturnType<typeof github.gists.listForUser>>;
-
-const input: GistsListForUserInput = {} as { username: string; since?: string; per_page?: number; page?: number };
-const result: GistsListForUserOutput = await github.gists.listForUser(input);
-
-// Result shape (from schema): ({ url: string; forks_url: string; commits_url: string; id: string; node_id: string; git_pull_url: string; git_push_url: string; html_url: string; files: { [key: string]: { filename?: string; type?: string; language?: s...
+github.gists.listStarred(input: {
+  /** Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. */
+  since?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(BaseGist)[]>
 ```
 
+<sub>`GET /gists/starred` · `gists/list-starred`</sub>
+
+## `github.gists.listForUser`
+
+List gists for a user — [API reference](https://docs.github.com/rest/gists/gists#list-gists-for-a-user)
+
+```ts
+github.gists.listForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. */
+  since?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(BaseGist)[]>
+```
+
+<sub>`GET /users/{username}/gists` · `gists/list-for-user`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

@@ -1,215 +1,100 @@
 # Classroom
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.classroom.getAnAssignment`
-
-- **HTTP**: `GET /assignments/{assignment_id}`
-- **What it does**: Get an assignment
-- **OpenAPI operationId**: `classroom/get-an-assignment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ assignment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; public_repo: boolean; title: string; type: "individual" | "group"; invite_link: string; invitations_enabled: boolean; slug: string; students_are_repo_admins: boolean; feedback_pull_requests_enabled: boolea...`
-- OpenAPI response codes: `200`, `404`
+6 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type ClassroomGetAnAssignmentInput = Parameters<typeof github.classroom.getAnAssignment> extends [infer T, ...unknown[]] ? T : undefined;
-type ClassroomGetAnAssignmentOutput = Awaited<ReturnType<typeof github.classroom.getAnAssignment>>;
-
-const input: ClassroomGetAnAssignmentInput = {} as { assignment_id: number };
-const result: ClassroomGetAnAssignmentOutput = await github.classroom.getAnAssignment(input);
-
-// Result shape (from schema): { id: number; public_repo: boolean; title: string; type: "individual" | "group"; invite_link: string; invitations_enabled: boolean; slug: string; students_are_repo_admins: boolean; feedback_pull_requests_enabled: boolea...
 ```
 
-### `github.classroom.listAcceptedAssignmentsForAnAssignment`
+## `github.classroom.getAnAssignment`
 
-- **HTTP**: `GET /assignments/{assignment_id}/accepted_assignments`
-- **What it does**: List accepted assignments for an assignment
-- **OpenAPI operationId**: `classroom/list-accepted-assignments-for-an-assignment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ assignment_id: number; page?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; submitted: boolean; passing: boolean; commit_count: number; grade: string; students: ({ id: number; login: string; avatar_url: string; html_url: string })[]; repository: { id: number; full_name: string; h...`
-- OpenAPI response codes: `200`
+Closing down - Get an assignment — [API reference](https://docs.github.com/rest/classroom/classroom#closing-down---get-an-assignment)
 
 ```ts
-import github from "@utdk/github";
-
-type ClassroomListAcceptedAssignmentsForAnAssignmentInput = Parameters<typeof github.classroom.listAcceptedAssignmentsForAnAssignment> extends [infer T, ...unknown[]] ? T : undefined;
-type ClassroomListAcceptedAssignmentsForAnAssignmentOutput = Awaited<ReturnType<typeof github.classroom.listAcceptedAssignmentsForAnAssignment>>;
-
-const input: ClassroomListAcceptedAssignmentsForAnAssignmentInput = {} as { assignment_id: number; page?: number; per_page?: number };
-const result: ClassroomListAcceptedAssignmentsForAnAssignmentOutput = await github.classroom.listAcceptedAssignmentsForAnAssignment(input);
-
-// Result shape (from schema): ({ id: number; submitted: boolean; passing: boolean; commit_count: number; grade: string; students: ({ id: number; login: string; avatar_url: string; html_url: string })[]; repository: { id: number; full_name: string; h...
+github.classroom.getAnAssignment(input: {
+  /** The unique identifier of the classroom assignment. */
+  assignment_id: number;
+}): Promise<ClassroomAssignment>
 ```
 
-### `github.classroom.getAssignmentGrades`
+<sub>`GET /assignments/{assignment_id}` · `classroom/get-an-assignment`</sub>
 
-- **HTTP**: `GET /assignments/{assignment_id}/grades`
-- **What it does**: Get assignment grades
-- **OpenAPI operationId**: `classroom/get-assignment-grades`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.classroom.listAcceptedAssignmentsForAnAssignment`
 
-**Inputs**
-
-- Client input type: `{ assignment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ assignment_name: string; assignment_url: string; starter_code_url: string; github_username: string; roster_identifier: string; student_repository_name: string; student_repository_url: string; submission_timestamp: st...`
-- OpenAPI response codes: `200`, `404`
+Closing down - List accepted assignments for an assignment — [API reference](https://docs.github.com/rest/classroom/classroom#closing-down---list-accepted-assignments-for-an-assignment)
 
 ```ts
-import github from "@utdk/github";
-
-type ClassroomGetAssignmentGradesInput = Parameters<typeof github.classroom.getAssignmentGrades> extends [infer T, ...unknown[]] ? T : undefined;
-type ClassroomGetAssignmentGradesOutput = Awaited<ReturnType<typeof github.classroom.getAssignmentGrades>>;
-
-const input: ClassroomGetAssignmentGradesInput = {} as { assignment_id: number };
-const result: ClassroomGetAssignmentGradesOutput = await github.classroom.getAssignmentGrades(input);
-
-// Result shape (from schema): ({ assignment_name: string; assignment_url: string; starter_code_url: string; github_username: string; roster_identifier: string; student_repository_name: string; student_repository_url: string; submission_timestamp: st...
+github.classroom.listAcceptedAssignmentsForAnAssignment(input: {
+  /** The unique identifier of the classroom assignment. */
+  assignment_id: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<(ClassroomAcceptedAssignment)[]>
 ```
 
-### `github.classroom.listClassrooms`
+<sub>`GET /assignments/{assignment_id}/accepted_assignments` · `classroom/list-accepted-assignments-for-an-assignment`</sub>
 
-- **HTTP**: `GET /classrooms`
-- **What it does**: List classrooms
-- **OpenAPI operationId**: `classroom/list-classrooms`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.classroom.getAssignmentGrades`
 
-**Inputs**
-
-- Client input type: `{ page?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; name: string; archived: boolean; url: string })[]`
-- OpenAPI response codes: `200`
+Closing down - Get assignment grades — [API reference](https://docs.github.com/rest/classroom/classroom#closing-down---get-assignment-grades)
 
 ```ts
-import github from "@utdk/github";
-
-type ClassroomListClassroomsInput = Parameters<typeof github.classroom.listClassrooms> extends [infer T, ...unknown[]] ? T : undefined;
-type ClassroomListClassroomsOutput = Awaited<ReturnType<typeof github.classroom.listClassrooms>>;
-
-const input: ClassroomListClassroomsInput = {} as { page?: number; per_page?: number };
-const result: ClassroomListClassroomsOutput = await github.classroom.listClassrooms(input);
-
-// Result shape (from schema): ({ id: number; name: string; archived: boolean; url: string })[]
+github.classroom.getAssignmentGrades(input: {
+  /** The unique identifier of the classroom assignment. */
+  assignment_id: number;
+}): Promise<(ClassroomAssignmentGrade)[]>
 ```
 
-### `github.classroom.getAClassroom`
+<sub>`GET /assignments/{assignment_id}/grades` · `classroom/get-assignment-grades`</sub>
 
-- **HTTP**: `GET /classrooms/{classroom_id}`
-- **What it does**: Get a classroom
-- **OpenAPI operationId**: `classroom/get-a-classroom`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.classroom.listClassrooms`
 
-**Inputs**
-
-- Client input type: `{ classroom_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; archived: boolean; organization: { id: number; login: string; node_id: string; html_url: string; name: string | null; avatar_url: string }; url: string }`
-- OpenAPI response codes: `200`, `404`
+Closing down - List classrooms — [API reference](https://docs.github.com/rest/classroom/classroom#closing-down---list-classrooms)
 
 ```ts
-import github from "@utdk/github";
-
-type ClassroomGetAClassroomInput = Parameters<typeof github.classroom.getAClassroom> extends [infer T, ...unknown[]] ? T : undefined;
-type ClassroomGetAClassroomOutput = Awaited<ReturnType<typeof github.classroom.getAClassroom>>;
-
-const input: ClassroomGetAClassroomInput = {} as { classroom_id: number };
-const result: ClassroomGetAClassroomOutput = await github.classroom.getAClassroom(input);
-
-// Result shape (from schema): { id: number; name: string; archived: boolean; organization: { id: number; login: string; node_id: string; html_url: string; name: string | null; avatar_url: string }; url: string }
+github.classroom.listClassrooms(input: {
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<(SimpleClassroom)[]>
 ```
 
-### `github.classroom.listAssignmentsForAClassroom`
+<sub>`GET /classrooms` · `classroom/list-classrooms`</sub>
 
-- **HTTP**: `GET /classrooms/{classroom_id}/assignments`
-- **What it does**: List assignments for a classroom
-- **OpenAPI operationId**: `classroom/list-assignments-for-a-classroom`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.classroom.getAClassroom`
 
-**Inputs**
-
-- Client input type: `{ classroom_id: number; page?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; public_repo: boolean; title: string; type: "individual" | "group"; invite_link: string; invitations_enabled: boolean; slug: string; students_are_repo_admins: boolean; feedback_pull_requests_enabled: boole...`
-- OpenAPI response codes: `200`
+Closing down - Get a classroom — [API reference](https://docs.github.com/rest/classroom/classroom#closing-down---get-a-classroom)
 
 ```ts
-import github from "@utdk/github";
-
-type ClassroomListAssignmentsForAClassroomInput = Parameters<typeof github.classroom.listAssignmentsForAClassroom> extends [infer T, ...unknown[]] ? T : undefined;
-type ClassroomListAssignmentsForAClassroomOutput = Awaited<ReturnType<typeof github.classroom.listAssignmentsForAClassroom>>;
-
-const input: ClassroomListAssignmentsForAClassroomInput = {} as { classroom_id: number; page?: number; per_page?: number };
-const result: ClassroomListAssignmentsForAClassroomOutput = await github.classroom.listAssignmentsForAClassroom(input);
-
-// Result shape (from schema): ({ id: number; public_repo: boolean; title: string; type: "individual" | "group"; invite_link: string; invitations_enabled: boolean; slug: string; students_are_repo_admins: boolean; feedback_pull_requests_enabled: boole...
+github.classroom.getAClassroom(input: {
+  /** The unique identifier of the classroom. */
+  classroom_id: number;
+}): Promise<Classroom>
 ```
 
+<sub>`GET /classrooms/{classroom_id}` · `classroom/get-a-classroom`</sub>
+
+## `github.classroom.listAssignmentsForAClassroom`
+
+Closing down - List assignments for a classroom — [API reference](https://docs.github.com/rest/classroom/classroom#closing-down---list-assignments-for-a-classroom)
+
+```ts
+github.classroom.listAssignmentsForAClassroom(input: {
+  /** The unique identifier of the classroom. */
+  classroom_id: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<(SimpleClassroomAssignment)[]>
+```
+
+<sub>`GET /classrooms/{classroom_id}/assignments` · `classroom/list-assignments-for-a-classroom`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

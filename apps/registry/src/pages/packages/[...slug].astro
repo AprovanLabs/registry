@@ -2,6 +2,7 @@
 import { CopyButton } from "@/components/CopyButton";
 import MarkdownInline from "@/components/MarkdownInline.astro";
 import MarkdownContent from "@/components/MarkdownContent.astro";
+import { SdkExplorer } from "@/components/SdkExplorer";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -19,7 +20,7 @@ import {
   getRegistryEntry,
   getRegistryRoutes,
 } from "@/lib/registry";
-import { providersHref } from "@/lib/catalog";
+import { buildSdkSymbols } from "@/lib/sdk";
 import { withBasePath } from "@/lib/site";
 
 export async function getStaticPaths() {
@@ -75,6 +76,13 @@ const parentEntry = entry.parentProviderPath
       (candidate) => candidate.providerPath === entry.parentProviderPath,
     ) ?? null
   : null;
+const sdkSymbols = entry.kind === "provider" ? buildSdkSymbols(entry) : [];
+const logoUrl = entry.branding?.logo ?? entry.openApiIcon;
+const siteUrl = entry.branding?.site ?? entry.homepage;
+const originDomain = entry.provenance?.originDomain ?? null;
+// Chain-of-ownership rule: link the vendor's original spec, never the
+// aggregator cache we fetched through.
+const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
 ---
 
 <BaseLayout
@@ -144,7 +152,40 @@ const parentEntry = entry.parentProviderPath
                 </a>
               ) : null}
             </div>
-            <CardTitle className="text-3xl">{entry.title}</CardTitle>
+            <div class="flex items-center gap-3">
+              {logoUrl ? (
+                <img
+                  alt=""
+                  class="size-10 shrink-0 rounded-lg border bg-background object-contain p-1"
+                  height="40"
+                  loading="lazy"
+                  src={logoUrl}
+                  width="40"
+                />
+              ) : null}
+              <CardTitle className="text-3xl">{entry.title}</CardTitle>
+            </div>
+            {originDomain ? (
+              <p class="font-mono text-xs text-muted-foreground">
+                <span class="text-syntax-type">{entry.providerPath}</span>
+                {" · owned by "}
+                {siteUrl ? (
+                  <a class="underline-offset-4 hover:underline" href={siteUrl} rel="noreferrer" target="_blank">
+                    {originDomain}
+                  </a>
+                ) : (
+                  originDomain
+                )}
+                {specUrl ? (
+                  <>
+                    {" · "}
+                    <a class="underline-offset-4 hover:underline" href={specUrl} rel="noreferrer" target="_blank">
+                      original spec
+                    </a>
+                  </>
+                ) : null}
+              </p>
+            ) : null}
             <CardDescription className="text-base leading-7">
               {entry.descriptionHtml ? (
                 <MarkdownInline html={entry.descriptionHtml} />
@@ -233,10 +274,10 @@ const parentEntry = entry.parentProviderPath
                   Homepage
                 </dt>
                 <dd class="text-sm">
-                  {entry.homepage ? (
+                  {siteUrl ? (
                     <a
                       class="font-medium text-primary underline-offset-4 hover:underline"
-                      href={entry.homepage}
+                      href={siteUrl}
                       rel="noreferrer"
                       target="_blank"
                     >
@@ -252,10 +293,10 @@ const parentEntry = entry.parentProviderPath
                   API spec
                 </dt>
                 <dd class="text-sm">
-                  {entry.openApiUrl ? (
+                  {specUrl ? (
                     <a
                       class="font-medium text-primary underline-offset-4 hover:underline"
-                      href={entry.openApiUrl}
+                      href={specUrl}
                       rel="noreferrer"
                       target="_blank"
                     >
@@ -307,62 +348,46 @@ const parentEntry = entry.parentProviderPath
               </Card>
             )}
 
-            {operations.length > 0 && (
+            {entry.authIntel ? (
               <Card>
                 <CardHeader>
-                  <CardTitle>Operations</CardTitle>
-                  <CardDescription>
-                    {operations.length} operation{operations.length === 1 ? "" : "s"} —{" "}
-                    <a
-                      class="font-medium text-primary underline-offset-4 hover:underline"
-                      href={providersHref(entry.providerPath, operations[0]!.operationId)}
-                    >
-                      open try-it console
-                    </a>
-                  </CardDescription>
+                  <CardTitle>Authentication</CardTitle>
+                  <CardDescription>{entry.authIntel.summary}</CardDescription>
                 </CardHeader>
-                <CardContent className="overflow-x-auto">
-                  <table class="w-full text-sm">
-                    <thead>
-                      <tr class="border-b text-left text-xs font-medium text-muted-foreground uppercase">
-                        <th class="pb-2 pr-4">Method</th>
-                        <th class="pb-2 pr-4">Operation ID</th>
-                        <th class="pb-2 pr-4 hidden sm:table-cell">Path</th>
-                        <th class="pb-2 hidden md:table-cell">Summary</th>
-                        <th class="pb-2"></th>
-                      </tr>
-                    </thead>
-                    <tbody class="divide-y">
-                      {operations.map((op) => (
-                        <tr class="transition-colors hover:bg-muted/30">
-                          <td class="py-2 pr-4">
-                            <span class="font-mono text-xs text-muted-foreground">
-                              {op.httpMethod}
-                            </span>
-                          </td>
-                          <td class="py-2 pr-4 font-mono text-xs">
-                            {op.operationId}
-                          </td>
-                          <td class="py-2 pr-4 font-mono text-xs text-muted-foreground hidden sm:table-cell">
-                            {op.httpPath}
-                          </td>
-                          <td class="py-2 text-xs text-muted-foreground hidden md:table-cell max-w-xs truncate">
-                            {op.summary}
-                          </td>
-                          <td class="py-2 pl-2">
-                            <a
-                              class="inline-flex h-6 items-center rounded-md border px-2 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                              href={providersHref(entry.providerPath, op.operationId)}
-                            >
-                              Try
-                            </a>
-                          </td>
-                        </tr>
+                <CardContent className="flex flex-col gap-3">
+                  <div class="flex flex-wrap gap-2">
+                    {entry.authIntel.methods.map((method) => (
+                      <Badge variant="secondary">{method}</Badge>
+                    ))}
+                    {entry.authIntel.apiKeyHeader ? (
+                      <Badge variant="outline">header: {entry.authIntel.apiKeyHeader}</Badge>
+                    ) : null}
+                  </div>
+                  {entry.authIntel.setupSteps.length > 0 ? (
+                    <ol class="flex list-decimal flex-col gap-2 pl-5 text-sm">
+                      {entry.authIntel.setupSteps.map((step) => (
+                        <li>
+                          <span class="font-medium">{step.title}</span>
+                          <span class="text-muted-foreground"> — {step.detail}</span>
+                        </li>
                       ))}
-                    </tbody>
-                  </table>
+                    </ol>
+                  ) : null}
+                  <p class="text-xs text-muted-foreground">
+                    Credentials are stored once in the registry credentials area; the gateway
+                    injects them on every call.
+                  </p>
                 </CardContent>
               </Card>
+            ) : null}
+
+            {operations.length > 0 && (
+              <SdkExplorer
+                client:load
+                packageName={entry.packageName}
+                provider={entry.providerPath}
+                symbols={sdkSymbols}
+              />
             )}
 
             {childEntries.length ? (

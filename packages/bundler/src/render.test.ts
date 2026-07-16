@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  createProviderSchemaTypes,
+  renderProviderGroupTypes,
   renderProviderReadme,
+  renderProviderSchemas,
   renderNamespaceEntry,
   renderNamespacePackageJson,
   renderProviderMetadata,
@@ -93,7 +96,7 @@ describe("renderProviderTypes", () => {
     expect(rendered).not.toContain("input: { owner: string");
   });
 
-  it("emits JSDoc comments and multi-line format for object output schemas with descriptions", () => {
+  it("renders object output schemas compactly", () => {
     const rendered = renderProviderTypes(
       { name: "github" },
       [
@@ -113,11 +116,7 @@ describe("renderProviderTypes", () => {
       new Map([["github.users/get", createClientToolDefinition(["users", "get"])]]),
     );
 
-    expect(rendered).toContain("/** The user's login handle. */");
-    expect(rendered).toContain("login: string;");
-    expect(rendered).toContain("/** Unique identifier for the user. */");
-    expect(rendered).toContain("id: number;");
-    expect(rendered).toMatch(/Promise<\{\n/);
+    expect(rendered).toContain("Promise<{ login: string; id: number }>");
   });
 
   it("keeps compact inline format when inputSchema has no properties with descriptions", () => {
@@ -253,7 +252,6 @@ describe("renderProviderTypes", () => {
     );
 
     expect(rendered).toContain("getQueue: () => Promise<{ [key: string]: unknown }>;");
-    expect(rendered).toContain("Access as: example.getQueue()");
     expect(rendered).not.toContain("getQueue: (input:");
   });
 
@@ -277,7 +275,6 @@ describe("renderProviderTypes", () => {
     );
 
     expect(rendered).toContain('inspect: (options: { headers: { "x-api-key": string } }) => Promise<{ [key: string]: unknown }>;');
-    expect(rendered).toContain("Access as: example.inspect(options)");
     expect(rendered).not.toContain("inspect: (input:");
   });
 });
@@ -621,5 +618,82 @@ describe("nested provider rendering", () => {
     expect(rendered).toContain("Generated UTDK provider types");
     expect(rendered).not.toContain("## Quick start");
     expect(rendered).not.toContain("## Documentation");
+  });
+});
+
+describe("named schema types", () => {
+  const document = {
+    openapi: "3.0.0",
+    info: { title: "Example", version: "1.0.0" },
+    paths: {},
+    components: {
+      schemas: {
+        "simple-user": {
+          type: "object",
+          description: "A GitHub user.",
+          properties: {
+            login: { type: "string", description: "The user's login handle." },
+            plan: { $ref: "#/components/schemas/plan" },
+          },
+          required: ["login"],
+        },
+        plan: {
+          type: "object",
+          properties: { name: { type: "string" } },
+        },
+      },
+    },
+  } as never;
+
+  it("creates PascalCase names for component schemas", () => {
+    const schemaTypes = createProviderSchemaTypes(document);
+
+    expect(schemaTypes).not.toBeNull();
+    expect(schemaTypes!.refToName.get("#/components/schemas/simple-user")).toBe("SimpleUser");
+    expect(schemaTypes!.refToName.get("#/components/schemas/plan")).toBe("Plan");
+  });
+
+  it("renders schemas.ts with exported named types referencing each other", () => {
+    const schemaTypes = createProviderSchemaTypes(document)!;
+    const rendered = renderProviderSchemas(schemaTypes);
+
+    expect(rendered).toContain("/** A GitHub user. */");
+    expect(rendered).toContain("export type SimpleUser = {");
+    expect(rendered).toContain("plan?: Plan;");
+    expect(rendered).toContain("export type Plan = {");
+  });
+
+  it("references named types in group signatures and imports them from schemas.ts", () => {
+    const schemaTypes = createProviderSchemaTypes(document)!;
+    const groups = renderProviderGroupTypes(
+      { name: "github" },
+      [createTool("github.users/get")],
+      new Map([
+        [
+          "github.users/get",
+          {
+            inputType: "{}",
+            outputType: "{ [key: string]: unknown }",
+            rawResponseSchema: { $ref: "#/components/schemas/simple-user" },
+            docsUrl: "https://docs.github.com/rest/users",
+          },
+        ],
+      ]),
+      new Map([["github.users/get", createClientToolDefinition(["users", "get"])]]),
+      schemaTypes,
+    );
+
+    const usersFile = groups.get("users.ts")!;
+    expect(usersFile).toContain('import type { SimpleUser } from "./schemas.js";');
+    expect(usersFile).toContain("Promise<SimpleUser>");
+    expect(usersFile).toContain("@see https://docs.github.com/rest/users");
+    expect(usersFile).not.toContain("Access as:");
+    expect(groups.get("schemas.ts")).toContain("export type SimpleUser = {");
+  });
+
+  it("returns null when the document declares no component schemas", () => {
+    expect(
+      createProviderSchemaTypes({ openapi: "3.0.0", info: {}, paths: {} } as never),
+    ).toBeNull();
   });
 });

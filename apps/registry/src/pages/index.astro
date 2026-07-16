@@ -58,8 +58,16 @@ await github.users.getByUsername({ username: 'octocat' });`,
         {updatedAtLabel ? <Badge variant="outline">Updated {updatedAtLabel}</Badge> : null}
       </div>
       <h1 class="max-w-3xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-        Call any API.
+        Every API is an SDK.
       </h1>
+      <p class="max-w-2xl text-base leading-7 text-muted-foreground">
+        Import any provider as
+        <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-sm text-syntax-string">@utdk/&lt;name&gt;</code>
+        — or skip the import entirely: in the sandboxed isolate runtime, providers are
+        namespace values, so
+        <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-sm"><span class="text-syntax-keyword">await</span> <span class="text-syntax-type">github</span>.<span class="text-syntax-fn">getRepos</span>({"{"} username {"}"})</code>
+        just works. Typed clients, hover-ready docs, credentials handled by the gateway.
+      </p>
     </section>
 
     <SnippetCarousel client:load items={snippetItems} />

@@ -1,315 +1,216 @@
 # Interactions
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.interactions.removeRestrictionsForOrg`
-
-- **HTTP**: `DELETE /orgs/{org}/interaction-limits`
-- **What it does**: Remove interaction restrictions for an organization
-- **OpenAPI operationId**: `interactions/remove-restrictions-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+14 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type InteractionsRemoveRestrictionsForOrgInput = Parameters<typeof github.interactions.removeRestrictionsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type InteractionsRemoveRestrictionsForOrgOutput = Awaited<ReturnType<typeof github.interactions.removeRestrictionsForOrg>>;
-
-const input: InteractionsRemoveRestrictionsForOrgInput = {} as { org: string };
-const result: InteractionsRemoveRestrictionsForOrgOutput = await github.interactions.removeRestrictionsForOrg(input);
-
-// Result shape (from schema): unknown
 ```
 
-### `github.interactions.getRestrictionsForOrg`
+## `github.interactions.removeRestrictionsForOrg`
 
-- **HTTP**: `GET /orgs/{org}/interaction-limits`
-- **What it does**: Get interaction restrictions for an organization
-- **OpenAPI operationId**: `interactions/get-restrictions-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `200`
+Remove interaction restrictions for an organization — [API reference](https://docs.github.com/rest/interactions/orgs#remove-interaction-restrictions-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type InteractionsGetRestrictionsForOrgInput = Parameters<typeof github.interactions.getRestrictionsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type InteractionsGetRestrictionsForOrgOutput = Awaited<ReturnType<typeof github.interactions.getRestrictionsForOrg>>;
-
-const input: InteractionsGetRestrictionsForOrgInput = {} as { org: string };
-const result: InteractionsGetRestrictionsForOrgOutput = await github.interactions.getRestrictionsForOrg(input);
-
-// Result shape (from schema): { [key: string]: unknown }
+github.interactions.removeRestrictionsForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<unknown>
 ```
 
-### `github.interactions.setRestrictionsForOrg`
+<sub>`DELETE /orgs/{org}/interaction-limits` · `interactions/remove-restrictions-for-org`</sub>
 
-- **HTTP**: `PUT /orgs/{org}/interaction-limits`
-- **What it does**: Set interaction restrictions for an organization
-- **OpenAPI operationId**: `interactions/set-restrictions-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.interactions.getRestrictionsForOrg`
 
-**Inputs**
-
-- Client input type: `{ limit: "existing_users" | "contributors_only" | "collaborators_only"; expiry?: "one_day" | "three_days" | "one_week" | "one_month" | "six_months"; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ limit: "existing_users" | "contributors_only" | "collaborators_only"; origin: string; expires_at: string }`
-- OpenAPI response codes: `200`, `422`
+Get interaction restrictions for an organization — [API reference](https://docs.github.com/rest/interactions/orgs#get-interaction-restrictions-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type InteractionsSetRestrictionsForOrgInput = Parameters<typeof github.interactions.setRestrictionsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type InteractionsSetRestrictionsForOrgOutput = Awaited<ReturnType<typeof github.interactions.setRestrictionsForOrg>>;
-
-const input: InteractionsSetRestrictionsForOrgInput = {} as { limit: "existing_users" | "contributors_only" | "collaborators_only"; expiry?: "one_day" | "three_days" | "one_week" | "one_month" | "six_months"; org: string };
-const result: InteractionsSetRestrictionsForOrgOutput = await github.interactions.setRestrictionsForOrg(input);
-
-// Result shape (from schema): { limit: "existing_users" | "contributors_only" | "collaborators_only"; origin: string; expires_at: string }
+github.interactions.getRestrictionsForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<InteractionLimitResponse | { [key: string]: unknown }>
 ```
 
-### `github.interactions.removeRestrictionsForRepo`
+<sub>`GET /orgs/{org}/interaction-limits` · `interactions/get-restrictions-for-org`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/interaction-limits`
-- **What it does**: Remove interaction restrictions for a repository
-- **OpenAPI operationId**: `interactions/remove-restrictions-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.interactions.setRestrictionsForOrg`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`
+Set interaction restrictions for an organization — [API reference](https://docs.github.com/rest/interactions/orgs#set-interaction-restrictions-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type InteractionsRemoveRestrictionsForRepoInput = Parameters<typeof github.interactions.removeRestrictionsForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type InteractionsRemoveRestrictionsForRepoOutput = Awaited<ReturnType<typeof github.interactions.removeRestrictionsForRepo>>;
-
-const input: InteractionsRemoveRestrictionsForRepoInput = {} as { owner: string; repo: string };
-const result: InteractionsRemoveRestrictionsForRepoOutput = await github.interactions.removeRestrictionsForRepo(input);
-
-// Result shape (from schema): unknown
+github.interactions.setRestrictionsForOrg(input: {
+  limit: InteractionGroup;
+  expiry?: InteractionExpiry;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<InteractionLimitResponse>
 ```
 
-### `github.interactions.getRestrictionsForRepo`
+<sub>`PUT /orgs/{org}/interaction-limits` · `interactions/set-restrictions-for-org`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/interaction-limits`
-- **What it does**: Get interaction restrictions for a repository
-- **OpenAPI operationId**: `interactions/get-restrictions-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.interactions.removeRestrictionsForRepo`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `200`
+Remove interaction restrictions for a repository — [API reference](https://docs.github.com/rest/interactions/repos#remove-interaction-restrictions-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type InteractionsGetRestrictionsForRepoInput = Parameters<typeof github.interactions.getRestrictionsForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type InteractionsGetRestrictionsForRepoOutput = Awaited<ReturnType<typeof github.interactions.getRestrictionsForRepo>>;
-
-const input: InteractionsGetRestrictionsForRepoInput = {} as { owner: string; repo: string };
-const result: InteractionsGetRestrictionsForRepoOutput = await github.interactions.getRestrictionsForRepo(input);
-
-// Result shape (from schema): { [key: string]: unknown }
+github.interactions.removeRestrictionsForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<unknown>
 ```
 
-### `github.interactions.setRestrictionsForRepo`
+<sub>`DELETE /repos/{owner}/{repo}/interaction-limits` · `interactions/remove-restrictions-for-repo`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/interaction-limits`
-- **What it does**: Set interaction restrictions for a repository
-- **OpenAPI operationId**: `interactions/set-restrictions-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.interactions.getRestrictionsForRepo`
 
-**Inputs**
-
-- Client input type: `{ limit: "existing_users" | "contributors_only" | "collaborators_only"; expiry?: "one_day" | "three_days" | "one_week" | "one_month" | "six_months"; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ limit: "existing_users" | "contributors_only" | "collaborators_only"; origin: string; expires_at: string }`
-- OpenAPI response codes: `200`, `409`
+Get interaction restrictions for a repository — [API reference](https://docs.github.com/rest/interactions/repos#get-interaction-restrictions-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type InteractionsSetRestrictionsForRepoInput = Parameters<typeof github.interactions.setRestrictionsForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type InteractionsSetRestrictionsForRepoOutput = Awaited<ReturnType<typeof github.interactions.setRestrictionsForRepo>>;
-
-const input: InteractionsSetRestrictionsForRepoInput = {} as { limit: "existing_users" | "contributors_only" | "collaborators_only"; expiry?: "one_day" | "three_days" | "one_week" | "one_month" | "six_months"; owner: string; repo: string };
-const result: InteractionsSetRestrictionsForRepoOutput = await github.interactions.setRestrictionsForRepo(input);
-
-// Result shape (from schema): { limit: "existing_users" | "contributors_only" | "collaborators_only"; origin: string; expires_at: string }
+github.interactions.getRestrictionsForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<InteractionLimitResponse | { [key: string]: unknown }>
 ```
 
-### `github.interactions.removeRestrictionsForAuthenticatedUser`
+<sub>`GET /repos/{owner}/{repo}/interaction-limits` · `interactions/get-restrictions-for-repo`</sub>
 
-- **HTTP**: `DELETE /user/interaction-limits`
-- **What it does**: Remove interaction restrictions from your public repositories
-- **OpenAPI operationId**: `interactions/remove-restrictions-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.interactions.setRestrictionsForRepo`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Set interaction restrictions for a repository — [API reference](https://docs.github.com/rest/interactions/repos#set-interaction-restrictions-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type InteractionsRemoveRestrictionsForAuthenticatedUserInput = Parameters<typeof github.interactions.removeRestrictionsForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type InteractionsRemoveRestrictionsForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.interactions.removeRestrictionsForAuthenticatedUser>>;
-
-const result: InteractionsRemoveRestrictionsForAuthenticatedUserOutput = await github.interactions.removeRestrictionsForAuthenticatedUser();
-
-// Result shape (from schema): unknown
+github.interactions.setRestrictionsForRepo(input: {
+  limit: InteractionGroup;
+  expiry?: InteractionExpiry;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<InteractionLimitResponse>
 ```
 
-### `github.interactions.getRestrictionsForAuthenticatedUser`
+<sub>`PUT /repos/{owner}/{repo}/interaction-limits` · `interactions/set-restrictions-for-repo`</sub>
 
-- **HTTP**: `GET /user/interaction-limits`
-- **What it does**: Get interaction restrictions for your public repositories
-- **OpenAPI operationId**: `interactions/get-restrictions-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.interactions.removePullRequestBypassListForRepo`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `200`, `204`
+Remove users from the pull request creation cap bypass list for a repository — [API reference](https://docs.github.com/rest/interactions/repos#remove-users-from-the-pull-request-creation-cap-bypass-list-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type InteractionsGetRestrictionsForAuthenticatedUserInput = Parameters<typeof github.interactions.getRestrictionsForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type InteractionsGetRestrictionsForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.interactions.getRestrictionsForAuthenticatedUser>>;
-
-const result: InteractionsGetRestrictionsForAuthenticatedUserOutput = await github.interactions.getRestrictionsForAuthenticatedUser();
-
-// Result shape (from schema): { [key: string]: unknown }
+github.interactions.removePullRequestBypassListForRepo(input: {
+  /** A list of user logins to add or remove from the bypass list. */
+  users: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
 ```
 
-### `github.interactions.setRestrictionsForAuthenticatedUser`
+<sub>`DELETE /repos/{owner}/{repo}/interaction-limits/pulls/bypass-list` · `interactions/remove-pull-request-bypass-list-for-repo`</sub>
 
-- **HTTP**: `PUT /user/interaction-limits`
-- **What it does**: Set interaction restrictions for your public repositories
-- **OpenAPI operationId**: `interactions/set-restrictions-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.interactions.getPullRequestBypassListForRepo`
 
-**Inputs**
-
-- Client input type: `{ limit: "existing_users" | "contributors_only" | "collaborators_only"; expiry?: "one_day" | "three_days" | "one_week" | "one_month" | "six_months" }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ limit: "existing_users" | "contributors_only" | "collaborators_only"; origin: string; expires_at: string }`
-- OpenAPI response codes: `200`, `422`
+Get pull request creation cap bypass list for a repository — [API reference](https://docs.github.com/rest/interactions/repos#get-pull-request-creation-cap-bypass-list-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type InteractionsSetRestrictionsForAuthenticatedUserInput = Parameters<typeof github.interactions.setRestrictionsForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type InteractionsSetRestrictionsForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.interactions.setRestrictionsForAuthenticatedUser>>;
-
-const input: InteractionsSetRestrictionsForAuthenticatedUserInput = {} as { limit: "existing_users" | "contributors_only" | "collaborators_only"; expiry?: "one_day" | "three_days" | "one_week" | "one_month" | "six_months" };
-const result: InteractionsSetRestrictionsForAuthenticatedUserOutput = await github.interactions.setRestrictionsForAuthenticatedUser(input);
-
-// Result shape (from schema): { limit: "existing_users" | "contributors_only" | "collaborators_only"; origin: string; expires_at: string }
+github.interactions.getPullRequestBypassListForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(SimpleUser)[]>
 ```
 
+<sub>`GET /repos/{owner}/{repo}/interaction-limits/pulls/bypass-list` · `interactions/get-pull-request-bypass-list-for-repo`</sub>
+
+## `github.interactions.setPullRequestBypassListForRepo`
+
+Add users to the pull request creation cap bypass list for a repository — [API reference](https://docs.github.com/rest/interactions/repos#add-users-to-the-pull-request-creation-cap-bypass-list-for-a-repository)
+
+```ts
+github.interactions.setPullRequestBypassListForRepo(input: {
+  /** A list of user logins to add or remove from the bypass list. */
+  users: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
+```
+
+<sub>`PUT /repos/{owner}/{repo}/interaction-limits/pulls/bypass-list` · `interactions/set-pull-request-bypass-list-for-repo`</sub>
+
+## `github.interactions.getPullRequestCreationCapForRepo`
+
+Get pull request creation cap for a repository — [API reference](https://docs.github.com/rest/interactions/repos#get-pull-request-creation-cap-for-a-repository)
+
+```ts
+github.interactions.getPullRequestCreationCapForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<{ enabled: boolean; max_open_pull_requests: number }>
+```
+
+<sub>`GET /repos/{owner}/{repo}/interaction-limits/pulls/creation-cap` · `interactions/get-pull-request-creation-cap-for-repo`</sub>
+
+## `github.interactions.updatePullRequestCreationCapForRepo`
+
+Update pull request creation cap for a repository — [API reference](https://docs.github.com/rest/interactions/repos#update-pull-request-creation-cap-for-a-repository)
+
+```ts
+github.interactions.updatePullRequestCreationCapForRepo(input: {
+  /** Whether the pull request creation cap is enabled */
+  enabled: boolean;
+  /** The maximum number of open pull requests a user can have at one time */
+  max_open_pull_requests?: number;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<{ enabled: boolean; max_open_pull_requests: number }>
+```
+
+<sub>`PATCH /repos/{owner}/{repo}/interaction-limits/pulls/creation-cap` · `interactions/update-pull-request-creation-cap-for-repo`</sub>
+
+## `github.interactions.removeRestrictionsForAuthenticatedUser`
+
+Remove interaction restrictions from your public repositories — [API reference](https://docs.github.com/rest/interactions/user#remove-interaction-restrictions-from-your-public-repositories)
+
+```ts
+github.interactions.removeRestrictionsForAuthenticatedUser(): Promise<unknown>
+```
+
+<sub>`DELETE /user/interaction-limits` · `interactions/remove-restrictions-for-authenticated-user`</sub>
+
+## `github.interactions.getRestrictionsForAuthenticatedUser`
+
+Get interaction restrictions for your public repositories — [API reference](https://docs.github.com/rest/interactions/user#get-interaction-restrictions-for-your-public-repositories)
+
+```ts
+github.interactions.getRestrictionsForAuthenticatedUser(): Promise<InteractionLimitResponse | { [key: string]: unknown }>
+```
+
+<sub>`GET /user/interaction-limits` · `interactions/get-restrictions-for-authenticated-user`</sub>
+
+## `github.interactions.setRestrictionsForAuthenticatedUser`
+
+Set interaction restrictions for your public repositories — [API reference](https://docs.github.com/rest/interactions/user#set-interaction-restrictions-for-your-public-repositories)
+
+```ts
+github.interactions.setRestrictionsForAuthenticatedUser(input: {
+  limit: InteractionGroup;
+  expiry?: InteractionExpiry;
+}): Promise<InteractionLimitResponse>
+```
+
+<sub>`PUT /user/interaction-limits` · `interactions/set-restrictions-for-authenticated-user`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

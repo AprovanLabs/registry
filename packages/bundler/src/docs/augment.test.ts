@@ -67,10 +67,10 @@ describe("augmentProviderDocs", () => {
       } as never,
     });
 
-    expect(result.readme).toContain("## Capability guides");
+    expect(result.readme).toContain("## Operations");
     expect(result.docs).toHaveLength(1);
     expect(result.docs[0]?.relativePath).toBe("responses.md");
-    expect(result.docs[0]?.content).toContain("## Operations");
+    expect(result.docs[0]?.content).toContain("## `openai.responsesCreate`");
     expect(result.metadata.sourceCount).toBe(1);
     expect(result.metadata.promptHash).toMatch(/^[a-f0-9]{64}$/);
     expect(result.metadata.manifestPath).toBe(manifestPath);
@@ -105,11 +105,11 @@ describe("augmentProviderDocs", () => {
     });
 
     expect(result.staleReason).toBe("docs-cache-missing");
-    expect(result.readme).toContain("## Capability guides");
+    expect(result.readme).toContain("## Operations");
     expect(result.readme).toContain("## Source Index");
     expect(result.docs).toHaveLength(1);
     expect(result.docs[0]?.relativePath).toBe("responses.md");
-    expect(result.docs[0]?.content).toContain("## Operations");
+    expect(result.docs[0]?.content).toContain("## `openai.responsesCreate`");
     expect(result.metadata.sourceCount).toBe(0);
     expect(result.metadata.openApiHash).toBeNull();
     expect(result.metadata.promptHash).toMatch(/^[a-f0-9]{64}$/);

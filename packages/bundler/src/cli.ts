@@ -1,4 +1,5 @@
 import { DocsPipelineError } from "./docs/types.js";
+import { runAuthIntelPhase } from "./phases/authIntel.js";
 import { runEnrichPhase } from "./phases/enrich.js";
 import { runResearchPhase } from "./phases/research.js";
 import { runReviewPhase } from "./phases/review.js";
@@ -8,7 +9,7 @@ import { runSmokeTest } from "./verification/smoke.js";
 import { augmentRegistryProviderDocs, loadRegistryProviderDocs, runFullPipeline } from "./index.js";
 
 type CliCommand = "generate" | "load-docs" | "augment-docs";
-type PipelinePhase = "research" | "enrich" | "review" | "ship";
+type PipelinePhase = "research" | "enrich" | "auth" | "review" | "ship";
 
 type ParsedCommand = {
   command: CliCommand;
@@ -33,7 +34,7 @@ function getOptionValue(argv: string[], index: number, flag: string): string {
 }
 
 function isValidPhase(value: string): value is PipelinePhase {
-  return value === "research" || value === "enrich" || value === "review" || value === "ship";
+  return value === "research" || value === "enrich" || value === "auth" || value === "review" || value === "ship";
 }
 
 function parseCommand(argv: string[]): ParsedCommand {
@@ -62,7 +63,7 @@ function parseCommand(argv: string[]): ParsedCommand {
     if (token === "--phase") {
       const value = getOptionValue(rest, index, token);
       if (!isValidPhase(value)) {
-        throw new Error(`Unknown phase: ${value}. Valid phases are: research, enrich, review, ship.`);
+        throw new Error(`Unknown phase: ${value}. Valid phases are: research, enrich, auth, review, ship.`);
       }
       parsed.phase = value;
       index += 1;
@@ -143,6 +144,16 @@ async function main(): Promise<void> {
         outputRoot: parsed.outputRoot,
       });
       writeJson({ ok: true, command: "generate", phase: "enrich", provider: parsed.provider, result });
+      return;
+    }
+
+    if (parsed.phase === "auth") {
+      const result = await runAuthIntelPhase({
+        provider: parsed.provider,
+        outputRoot: parsed.outputRoot,
+        overwrite: parsed.overwriteDocs,
+      });
+      writeJson({ ok: true, command: "generate", phase: "auth", provider: parsed.provider, result });
       return;
     }
 

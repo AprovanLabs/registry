@@ -1,895 +1,518 @@
 # Projects
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.projects.listForOrg`
-
-- **HTTP**: `GET /orgs/{org}/projectsV2`
-- **What it does**: List projects for organization
-- **OpenAPI operationId**: `projects/list-for-org`
-- **Path params**: None
-- **Query params**: `q`
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; q?: string; before?: string; after?: string; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+26 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type ProjectsListForOrgInput = Parameters<typeof github.projects.listForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsListForOrgOutput = Awaited<ReturnType<typeof github.projects.listForOrg>>;
-
-const input: ProjectsListForOrgInput = {} as { org: string; q?: string; before?: string; after?: string; per_page?: number };
-const result: ProjectsListForOrgOutput = await github.projects.listForOrg(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_...
 ```
 
-### `github.projects.getForOrg`
+## `github.projects.listForOrg`
 
-- **HTTP**: `GET /orgs/{org}/projectsV2/{project_number}`
-- **What it does**: Get project for organization
-- **OpenAPI operationId**: `projects/get-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ project_number: number; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_u...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+List projects for organization — [API reference](https://docs.github.com/rest/projects/projects#list-projects-for-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsGetForOrgInput = Parameters<typeof github.projects.getForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsGetForOrgOutput = Awaited<ReturnType<typeof github.projects.getForOrg>>;
-
-const input: ProjectsGetForOrgInput = {} as { project_number: number; org: string };
-const result: ProjectsGetForOrgOutput = await github.projects.getForOrg(input);
-
-// Result shape (from schema): { id: number; node_id: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_u...
+github.projects.listForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Limit results to projects of the specified type. */
+  q?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<(ProjectsV2)[]>
 ```
 
-### `github.projects.createDraftItemForOrg`
+<sub>`GET /orgs/{org}/projectsV2` · `projects/list-for-org`</sub>
 
-- **HTTP**: `POST /orgs/{org}/projectsV2/{project_number}/drafts`
-- **What it does**: Create draft item for organization owned project
-- **OpenAPI operationId**: `projects/create-draft-item-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.getForOrg`
 
-**Inputs**
-
-- Client input type: `{ title: string; body?: string; org: string; project_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id?: string; content?: { id: number; node_id: string; url: string; repository_url: string; labels_url: string; comments_url: string; events_url: string; html_url: string; number: number; state: string...`
-- OpenAPI response codes: `201`, `304`, `401`, `403`
+Get project for organization — [API reference](https://docs.github.com/rest/projects/projects#get-project-for-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsCreateDraftItemForOrgInput = Parameters<typeof github.projects.createDraftItemForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsCreateDraftItemForOrgOutput = Awaited<ReturnType<typeof github.projects.createDraftItemForOrg>>;
-
-const input: ProjectsCreateDraftItemForOrgInput = {} as { title: string; body?: string; org: string; project_number: number };
-const result: ProjectsCreateDraftItemForOrgOutput = await github.projects.createDraftItemForOrg(input);
-
-// Result shape (from schema): { id: number; node_id?: string; content?: { id: number; node_id: string; url: string; repository_url: string; labels_url: string; comments_url: string; events_url: string; html_url: string; number: number; state: string...
+github.projects.getForOrg(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ProjectsV2>
 ```
 
-### `github.projects.listFieldsForOrg`
+<sub>`GET /orgs/{org}/projectsV2/{project_number}` · `projects/get-for-org`</sub>
 
-- **HTTP**: `GET /orgs/{org}/projectsV2/{project_number}/fields`
-- **What it does**: List project fields for organization
-- **OpenAPI operationId**: `projects/list-fields-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.createDraftItemForOrg`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; org: string; per_page?: number; before?: string; after?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "si...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Create draft item for organization owned project — [API reference](https://docs.github.com/rest/projects/drafts#create-draft-item-for-organization-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsListFieldsForOrgInput = Parameters<typeof github.projects.listFieldsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsListFieldsForOrgOutput = Awaited<ReturnType<typeof github.projects.listFieldsForOrg>>;
-
-const input: ProjectsListFieldsForOrgInput = {} as { project_number: number; org: string; per_page?: number; before?: string; after?: string };
-const result: ProjectsListFieldsForOrgOutput = await github.projects.listFieldsForOrg(input);
-
-// Result shape (from schema): ({ id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "si...
+github.projects.createDraftItemForOrg(input: {
+  /** The title of the draft issue item to create in the project. */
+  title: string;
+  /** The body content of the draft issue item to create in the project. */
+  body?: string;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The project's number. */
+  project_number: number;
+}): Promise<ProjectsV2ItemSimple>
 ```
 
-### `github.projects.addFieldForOrg`
+<sub>`POST /orgs/{org}/projectsV2/{project_number}/drafts` · `projects/create-draft-item-for-org`</sub>
 
-- **HTTP**: `POST /orgs/{org}/projectsV2/{project_number}/fields`
-- **What it does**: Add a field to an organization-owned project.
-- **OpenAPI operationId**: `projects/add-field-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.listFieldsForOrg`
 
-**Inputs**
-
-- Client input type: `{ body: { issue_field_id: number } | { name: string; data_type: "text" | "number" | "date" } | { name: string; data_type: "single_select"; single_select_options: ({ name?: string; color?: "BLUE" | "GRAY" | "GREEN" | "ORANGE" | "PINK" | "PURPLE" | "RED" | "YELLOW"; description?: string })[] } | { name: string; data_type: "iteration"; iteration_configuration: { start_date?: string; duration?: number; iterations?: ({ title?: string; start_date?: string; duration?: number })[] } }; project_number: number; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "sin...`
-- OpenAPI response codes: `201`, `304`, `401`, `403`, `422`
+List project fields for organization — [API reference](https://docs.github.com/rest/projects/fields#list-project-fields-for-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsAddFieldForOrgInput = Parameters<typeof github.projects.addFieldForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsAddFieldForOrgOutput = Awaited<ReturnType<typeof github.projects.addFieldForOrg>>;
-
-const input: ProjectsAddFieldForOrgInput = {} as { body: { issue_field_id: number } | { name: string; data_type: "text" | "number" | "date" } | { name: string; data_type: "single_select"; single_select_options: ({ name?: string; color?: "BLUE" | "GRAY" | "GREEN" | "ORANGE" | "PINK" | "PURPLE" | "RED" | "YELLOW"; description?: string })[] } | { name: string; data_type: "iteration"; iteration_configuration: { start_date?: string; duration?: number; iterations?: ({ title?: string; start_date?: string; duration?: number })[] } }; project_number: number; org: string };
-const result: ProjectsAddFieldForOrgOutput = await github.projects.addFieldForOrg(input);
-
-// Result shape (from schema): { id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "sin...
+github.projects.listFieldsForOrg(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+}): Promise<(ProjectsV2Field)[]>
 ```
 
-### `github.projects.getFieldForOrg`
+<sub>`GET /orgs/{org}/projectsV2/{project_number}/fields` · `projects/list-fields-for-org`</sub>
 
-- **HTTP**: `GET /orgs/{org}/projectsV2/{project_number}/fields/{field_id}`
-- **What it does**: Get project field for organization
-- **OpenAPI operationId**: `projects/get-field-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.addFieldForOrg`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; field_id: number; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "sin...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Add a field to an organization-owned project. — [API reference](https://docs.github.com/rest/projects/fields#add-a-field-to-an-organization-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsGetFieldForOrgInput = Parameters<typeof github.projects.getFieldForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsGetFieldForOrgOutput = Awaited<ReturnType<typeof github.projects.getFieldForOrg>>;
-
-const input: ProjectsGetFieldForOrgInput = {} as { project_number: number; field_id: number; org: string };
-const result: ProjectsGetFieldForOrgOutput = await github.projects.getFieldForOrg(input);
-
-// Result shape (from schema): { id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "sin...
+github.projects.addFieldForOrg(input: {
+  body: { issue_field_id: number } | { name: string; data_type: "text" | "number" | "date" } | { name: string; data_type: "single_select"; single_select_options: (ProjectsV2FieldSingleSelectOption)[] } | { name: string; data_type: "iteration"; iteration_configuration: ProjectsV2FieldIterationConfiguration };
+  /** The project's number. */
+  project_number: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ProjectsV2Field>
 ```
 
-### `github.projects.listItemsForOrg`
+<sub>`POST /orgs/{org}/projectsV2/{project_number}/fields` · `projects/add-field-for-org`</sub>
 
-- **HTTP**: `GET /orgs/{org}/projectsV2/{project_number}/items`
-- **What it does**: List items for an organization owned project
-- **OpenAPI operationId**: `projects/list-items-for-org`
-- **Path params**: None
-- **Query params**: `q`, `fields`
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.getFieldForOrg`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; org: string; q?: string; fields?: string | (string)[]; before?: string; after?: string; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: s...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Get project field for organization — [API reference](https://docs.github.com/rest/projects/fields#get-project-field-for-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsListItemsForOrgInput = Parameters<typeof github.projects.listItemsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsListItemsForOrgOutput = Awaited<ReturnType<typeof github.projects.listItemsForOrg>>;
-
-const input: ProjectsListItemsForOrgInput = {} as { project_number: number; org: string; q?: string; fields?: string | (string)[]; before?: string; after?: string; per_page?: number };
-const result: ProjectsListItemsForOrgOutput = await github.projects.listItemsForOrg(input);
-
-// Result shape (from schema): ({ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: s...
+github.projects.getFieldForOrg(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The unique identifier of the field. */
+  field_id: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ProjectsV2Field>
 ```
 
-### `github.projects.addItemForOrg`
+<sub>`GET /orgs/{org}/projectsV2/{project_number}/fields/{field_id}` · `projects/get-field-for-org`</sub>
 
-- **HTTP**: `POST /orgs/{org}/projectsV2/{project_number}/items`
-- **What it does**: Add item to organization owned project
-- **OpenAPI operationId**: `projects/add-item-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.listItemsForOrg`
 
-**Inputs**
-
-- Client input type: `{ body: unknown | unknown; org: string; project_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id?: string; content?: { id: number; node_id: string; url: string; repository_url: string; labels_url: string; comments_url: string; events_url: string; html_url: string; number: number; state: string...`
-- OpenAPI response codes: `201`, `304`, `401`, `403`
+List items for an organization owned project — [API reference](https://docs.github.com/rest/projects/items#list-items-for-an-organization-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsAddItemForOrgInput = Parameters<typeof github.projects.addItemForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsAddItemForOrgOutput = Awaited<ReturnType<typeof github.projects.addItemForOrg>>;
-
-const input: ProjectsAddItemForOrgInput = {} as { body: unknown | unknown; org: string; project_number: number };
-const result: ProjectsAddItemForOrgOutput = await github.projects.addItemForOrg(input);
-
-// Result shape (from schema): { id: number; node_id?: string; content?: { id: number; node_id: string; url: string; repository_url: string; labels_url: string; comments_url: string; events_url: string; html_url: string; number: number; state: string...
+github.projects.listItemsForOrg(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Search query to filter items, see [Filtering projects](https://docs.github.com/issues/planning-and-tracking-with-projects/customizing-views-in-your-project/filtering-projects) for more information. */
+  q?: string;
+  /** Limit results to specific fields, by their IDs. If not specified, the title field will be returned.  Example: `fields[]=123&fields[]=456&fields[]=789` or `fields=123,456,789` */
+  fields?: string | (string)[];
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<(ProjectsV2ItemWithContent)[]>
 ```
 
-### `github.projects.deleteItemForOrg`
+<sub>`GET /orgs/{org}/projectsV2/{project_number}/items` · `projects/list-items-for-org`</sub>
 
-- **HTTP**: `DELETE /orgs/{org}/projectsV2/{project_number}/items/{item_id}`
-- **What it does**: Delete project item for organization
-- **OpenAPI operationId**: `projects/delete-item-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.addItemForOrg`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; org: string; item_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `401`, `403`
+Add item to organization owned project — [API reference](https://docs.github.com/rest/projects/items#add-item-to-organization-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsDeleteItemForOrgInput = Parameters<typeof github.projects.deleteItemForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsDeleteItemForOrgOutput = Awaited<ReturnType<typeof github.projects.deleteItemForOrg>>;
-
-const input: ProjectsDeleteItemForOrgInput = {} as { project_number: number; org: string; item_id: number };
-const result: ProjectsDeleteItemForOrgOutput = await github.projects.deleteItemForOrg(input);
-
-// Result shape (from schema): unknown
+github.projects.addItemForOrg(input: {
+  body: unknown | unknown;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The project's number. */
+  project_number: number;
+}): Promise<ProjectsV2ItemSimple>
 ```
 
-### `github.projects.getOrgItem`
+<sub>`POST /orgs/{org}/projectsV2/{project_number}/items` · `projects/add-item-for-org`</sub>
 
-- **HTTP**: `GET /orgs/{org}/projectsV2/{project_number}/items/{item_id}`
-- **What it does**: Get an item for an organization owned project
-- **OpenAPI operationId**: `projects/get-org-item`
-- **Path params**: None
-- **Query params**: `fields`
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.deleteItemForOrg`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; org: string; item_id: number; fields?: string | (string)[] }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: st...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Delete project item for organization — [API reference](https://docs.github.com/rest/projects/items#delete-project-item-for-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsGetOrgItemInput = Parameters<typeof github.projects.getOrgItem> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsGetOrgItemOutput = Awaited<ReturnType<typeof github.projects.getOrgItem>>;
-
-const input: ProjectsGetOrgItemInput = {} as { project_number: number; org: string; item_id: number; fields?: string | (string)[] };
-const result: ProjectsGetOrgItemOutput = await github.projects.getOrgItem(input);
-
-// Result shape (from schema): { id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: st...
+github.projects.deleteItemForOrg(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the project item. */
+  item_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.projects.updateItemForOrg`
+<sub>`DELETE /orgs/{org}/projectsV2/{project_number}/items/{item_id}` · `projects/delete-item-for-org`</sub>
 
-- **HTTP**: `PATCH /orgs/{org}/projectsV2/{project_number}/items/{item_id}`
-- **What it does**: Update project item for organization
-- **OpenAPI operationId**: `projects/update-item-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.getOrgItem`
 
-**Inputs**
-
-- Client input type: `{ fields: ({ id: number; value: string | number | null })[]; project_number: number; org: string; item_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: st...`
-- OpenAPI response codes: `200`, `401`, `403`, `404`, `422`
+Get an item for an organization owned project — [API reference](https://docs.github.com/rest/projects/items#get-an-item-for-an-organization-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsUpdateItemForOrgInput = Parameters<typeof github.projects.updateItemForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsUpdateItemForOrgOutput = Awaited<ReturnType<typeof github.projects.updateItemForOrg>>;
-
-const input: ProjectsUpdateItemForOrgInput = {} as { fields: ({ id: number; value: string | number | null })[]; project_number: number; org: string; item_id: number };
-const result: ProjectsUpdateItemForOrgOutput = await github.projects.updateItemForOrg(input);
-
-// Result shape (from schema): { id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: st...
+github.projects.getOrgItem(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the project item. */
+  item_id: number;
+  /** Limit results to specific fields, by their IDs. If not specified, the title field will be returned.  Example: fields[]=123&fields[]=456&fields[]=789 or fields=123,456,789 */
+  fields?: string | (string)[];
+}): Promise<ProjectsV2ItemWithContent>
 ```
 
-### `github.projects.createViewForOrg`
+<sub>`GET /orgs/{org}/projectsV2/{project_number}/items/{item_id}` · `projects/get-org-item`</sub>
 
-- **HTTP**: `POST /orgs/{org}/projectsV2/{project_number}/views`
-- **What it does**: Create a view for an organization-owned project
-- **OpenAPI operationId**: `projects/create-view-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`, `404`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.updateItemForOrg`
 
-**Inputs**
-
-- Client input type: `{ name: string; layout: "table" | "board" | "roadmap"; filter?: string; visible_fields?: (number)[]; org: string; project_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; number: number; name: string; layout: "table" | "board" | "roadmap"; node_id: string; project_url: string; html_url: string; creator: { name?: string | null; email?: string | null; login: string; id: numbe...`
-- OpenAPI response codes: `201`, `304`, `401`, `403`, `404`, `422`, `503`
+Update project item for organization — [API reference](https://docs.github.com/rest/projects/items#update-project-item-for-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsCreateViewForOrgInput = Parameters<typeof github.projects.createViewForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsCreateViewForOrgOutput = Awaited<ReturnType<typeof github.projects.createViewForOrg>>;
-
-const input: ProjectsCreateViewForOrgInput = {} as { name: string; layout: "table" | "board" | "roadmap"; filter?: string; visible_fields?: (number)[]; org: string; project_number: number };
-const result: ProjectsCreateViewForOrgOutput = await github.projects.createViewForOrg(input);
-
-// Result shape (from schema): { id: number; number: number; name: string; layout: "table" | "board" | "roadmap"; node_id: string; project_url: string; html_url: string; creator: { name?: string | null; email?: string | null; login: string; id: numbe...
+github.projects.updateItemForOrg(input: {
+  /** A list of field updates to apply. */
+  fields: ({ id: number; value: string | number | null })[];
+  /** The project's number. */
+  project_number: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the project item. */
+  item_id: number;
+}): Promise<ProjectsV2ItemWithContent>
 ```
 
-### `github.projects.listViewItemsForOrg`
+<sub>`PATCH /orgs/{org}/projectsV2/{project_number}/items/{item_id}` · `projects/update-item-for-org`</sub>
 
-- **HTTP**: `GET /orgs/{org}/projectsV2/{project_number}/views/{view_number}/items`
-- **What it does**: List items for an organization project view
-- **OpenAPI operationId**: `projects/list-view-items-for-org`
-- **Path params**: None
-- **Query params**: `fields`
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.createViewForOrg`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; org: string; view_number: number; fields?: string | (string)[]; before?: string; after?: string; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: s...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Create a view for an organization-owned project — [API reference](https://docs.github.com/rest/projects/views#create-a-view-for-an-organization-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsListViewItemsForOrgInput = Parameters<typeof github.projects.listViewItemsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsListViewItemsForOrgOutput = Awaited<ReturnType<typeof github.projects.listViewItemsForOrg>>;
-
-const input: ProjectsListViewItemsForOrgInput = {} as { project_number: number; org: string; view_number: number; fields?: string | (string)[]; before?: string; after?: string; per_page?: number };
-const result: ProjectsListViewItemsForOrgOutput = await github.projects.listViewItemsForOrg(input);
-
-// Result shape (from schema): ({ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: s...
+github.projects.createViewForOrg(input: {
+  /** The name of the view. */
+  name: string;
+  /** The layout of the view. */
+  layout: "table" | "board" | "roadmap";
+  /** The filter query for the view. See [Filtering projects](https://docs.github.com/issues/planning-and-tracking-with-projects/customizing-views-in-your-project/filtering-projects) for more information. */
+  filter?: string;
+  /** `visible_fields` is not applicable to `roadmap` layout views. For `table` and `board` layouts, this represents the field IDs that should be visible in the view. If not provided, the default visible fields will be used. */
+  visible_fields?: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The project's number. */
+  project_number: number;
+}): Promise<ProjectsV2View>
 ```
 
-### `github.projects.createDraftItemForAuthenticatedUser`
+<sub>`POST /orgs/{org}/projectsV2/{project_number}/views` · `projects/create-view-for-org`</sub>
 
-- **HTTP**: `POST /user/{user_id}/projectsV2/{project_number}/drafts`
-- **What it does**: Create draft item for user owned project
-- **OpenAPI operationId**: `projects/create-draft-item-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.listViewItemsForOrg`
 
-**Inputs**
-
-- Client input type: `{ title: string; body?: string; user_id: string; project_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id?: string; content?: { id: number; node_id: string; url: string; repository_url: string; labels_url: string; comments_url: string; events_url: string; html_url: string; number: number; state: string...`
-- OpenAPI response codes: `201`, `304`, `401`, `403`
+List items for an organization project view — [API reference](https://docs.github.com/rest/projects/items#list-items-for-an-organization-project-view)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsCreateDraftItemForAuthenticatedUserInput = Parameters<typeof github.projects.createDraftItemForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsCreateDraftItemForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.projects.createDraftItemForAuthenticatedUser>>;
-
-const input: ProjectsCreateDraftItemForAuthenticatedUserInput = {} as { title: string; body?: string; user_id: string; project_number: number };
-const result: ProjectsCreateDraftItemForAuthenticatedUserOutput = await github.projects.createDraftItemForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; node_id?: string; content?: { id: number; node_id: string; url: string; repository_url: string; labels_url: string; comments_url: string; events_url: string; html_url: string; number: number; state: string...
+github.projects.listViewItemsForOrg(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number that identifies the project view. */
+  view_number: number;
+  /** Limit results to specific fields, by their IDs. If not specified, the title field will be returned.  Example: `fields[]=123&fields[]=456&fields[]=789` or `fields=123,456,789` */
+  fields?: string | (string)[];
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<(ProjectsV2ItemWithContent)[]>
 ```
 
-### `github.projects.createViewForUser`
+<sub>`GET /orgs/{org}/projectsV2/{project_number}/views/{view_number}/items` · `projects/list-view-items-for-org`</sub>
 
-- **HTTP**: `POST /users/{user_id}/projectsV2/{project_number}/views`
-- **What it does**: Create a view for a user-owned project
-- **OpenAPI operationId**: `projects/create-view-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`, `404`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.createDraftItemForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ name: string; layout: "table" | "board" | "roadmap"; filter?: string; visible_fields?: (number)[]; user_id: string; project_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; number: number; name: string; layout: "table" | "board" | "roadmap"; node_id: string; project_url: string; html_url: string; creator: { name?: string | null; email?: string | null; login: string; id: numbe...`
-- OpenAPI response codes: `201`, `304`, `401`, `403`, `404`, `422`, `503`
+Create draft item for user owned project — [API reference](https://docs.github.com/rest/projects/drafts#create-draft-item-for-user-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsCreateViewForUserInput = Parameters<typeof github.projects.createViewForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsCreateViewForUserOutput = Awaited<ReturnType<typeof github.projects.createViewForUser>>;
-
-const input: ProjectsCreateViewForUserInput = {} as { name: string; layout: "table" | "board" | "roadmap"; filter?: string; visible_fields?: (number)[]; user_id: string; project_number: number };
-const result: ProjectsCreateViewForUserOutput = await github.projects.createViewForUser(input);
-
-// Result shape (from schema): { id: number; number: number; name: string; layout: "table" | "board" | "roadmap"; node_id: string; project_url: string; html_url: string; creator: { name?: string | null; email?: string | null; login: string; id: numbe...
+github.projects.createDraftItemForAuthenticatedUser(input: {
+  /** The title of the draft issue item to create in the project. */
+  title: string;
+  /** The body content of the draft issue item to create in the project. */
+  body?: string;
+  /** The unique identifier of the user. */
+  user_id: string;
+  /** The project's number. */
+  project_number: number;
+}): Promise<ProjectsV2ItemSimple>
 ```
 
-### `github.projects.listForUser`
+<sub>`POST /user/{user_id}/projectsV2/{project_number}/drafts` · `projects/create-draft-item-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /users/{username}/projectsV2`
-- **What it does**: List projects for user
-- **OpenAPI operationId**: `projects/list-for-user`
-- **Path params**: None
-- **Query params**: `q`
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.createViewForUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; q?: string; before?: string; after?: string; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Create a view for a user-owned project — [API reference](https://docs.github.com/rest/projects/views#create-a-view-for-a-user-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsListForUserInput = Parameters<typeof github.projects.listForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsListForUserOutput = Awaited<ReturnType<typeof github.projects.listForUser>>;
-
-const input: ProjectsListForUserInput = {} as { username: string; q?: string; before?: string; after?: string; per_page?: number };
-const result: ProjectsListForUserOutput = await github.projects.listForUser(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_...
+github.projects.createViewForUser(input: {
+  /** The name of the view. */
+  name: string;
+  /** The layout of the view. */
+  layout: "table" | "board" | "roadmap";
+  /** The filter query for the view. See [Filtering projects](https://docs.github.com/issues/planning-and-tracking-with-projects/customizing-views-in-your-project/filtering-projects) for more information. */
+  filter?: string;
+  /** `visible_fields` is not applicable to `roadmap` layout views. For `table` and `board` layouts, this represents the field IDs that should be visible in the view. If not provided, the default visible fields will be used. */
+  visible_fields?: (number)[];
+  /** The unique identifier of the user. */
+  user_id: string;
+  /** The project's number. */
+  project_number: number;
+}): Promise<ProjectsV2View>
 ```
 
-### `github.projects.getForUser`
+<sub>`POST /users/{user_id}/projectsV2/{project_number}/views` · `projects/create-view-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/projectsV2/{project_number}`
-- **What it does**: Get project for user
-- **OpenAPI operationId**: `projects/get-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.listForUser`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_u...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+List projects for user — [API reference](https://docs.github.com/rest/projects/projects#list-projects-for-user)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsGetForUserInput = Parameters<typeof github.projects.getForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsGetForUserOutput = Awaited<ReturnType<typeof github.projects.getForUser>>;
-
-const input: ProjectsGetForUserInput = {} as { project_number: number; username: string };
-const result: ProjectsGetForUserOutput = await github.projects.getForUser(input);
-
-// Result shape (from schema): { id: number; node_id: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_u...
+github.projects.listForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** Limit results to projects of the specified type. */
+  q?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<(ProjectsV2)[]>
 ```
 
-### `github.projects.listFieldsForUser`
+<sub>`GET /users/{username}/projectsV2` · `projects/list-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/projectsV2/{project_number}/fields`
-- **What it does**: List project fields for user
-- **OpenAPI operationId**: `projects/list-fields-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.getForUser`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; username: string; per_page?: number; before?: string; after?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "si...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Get project for user — [API reference](https://docs.github.com/rest/projects/projects#get-project-for-user)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsListFieldsForUserInput = Parameters<typeof github.projects.listFieldsForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsListFieldsForUserOutput = Awaited<ReturnType<typeof github.projects.listFieldsForUser>>;
-
-const input: ProjectsListFieldsForUserInput = {} as { project_number: number; username: string; per_page?: number; before?: string; after?: string };
-const result: ProjectsListFieldsForUserOutput = await github.projects.listFieldsForUser(input);
-
-// Result shape (from schema): ({ id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "si...
+github.projects.getForUser(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<ProjectsV2>
 ```
 
-### `github.projects.addFieldForUser`
+<sub>`GET /users/{username}/projectsV2/{project_number}` · `projects/get-for-user`</sub>
 
-- **HTTP**: `POST /users/{username}/projectsV2/{project_number}/fields`
-- **What it does**: Add field to user owned project
-- **OpenAPI operationId**: `projects/add-field-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.listFieldsForUser`
 
-**Inputs**
-
-- Client input type: `{ body: { name: string; data_type: "text" | "number" | "date" } | { name: string; data_type: "single_select"; single_select_options: ({ name?: string; color?: "BLUE" | "GRAY" | "GREEN" | "ORANGE" | "PINK" | "PURPLE" | "RED" | "YELLOW"; description?: string })[] } | { name: string; data_type: "iteration"; iteration_configuration: { start_date?: string; duration?: number; iterations?: ({ title?: string; start_date?: string; duration?: number })[] } }; username: string; project_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "sin...`
-- OpenAPI response codes: `201`, `304`, `401`, `403`, `422`
+List project fields for user — [API reference](https://docs.github.com/rest/projects/fields#list-project-fields-for-user)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsAddFieldForUserInput = Parameters<typeof github.projects.addFieldForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsAddFieldForUserOutput = Awaited<ReturnType<typeof github.projects.addFieldForUser>>;
-
-const input: ProjectsAddFieldForUserInput = {} as { body: { name: string; data_type: "text" | "number" | "date" } | { name: string; data_type: "single_select"; single_select_options: ({ name?: string; color?: "BLUE" | "GRAY" | "GREEN" | "ORANGE" | "PINK" | "PURPLE" | "RED" | "YELLOW"; description?: string })[] } | { name: string; data_type: "iteration"; iteration_configuration: { start_date?: string; duration?: number; iterations?: ({ title?: string; start_date?: string; duration?: number })[] } }; username: string; project_number: number };
-const result: ProjectsAddFieldForUserOutput = await github.projects.addFieldForUser(input);
-
-// Result shape (from schema): { id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "sin...
+github.projects.listFieldsForUser(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+}): Promise<(ProjectsV2Field)[]>
 ```
 
-### `github.projects.getFieldForUser`
+<sub>`GET /users/{username}/projectsV2/{project_number}/fields` · `projects/list-fields-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/projectsV2/{project_number}/fields/{field_id}`
-- **What it does**: Get project field for user
-- **OpenAPI operationId**: `projects/get-field-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.addFieldForUser`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; field_id: number; username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "sin...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Add field to user owned project — [API reference](https://docs.github.com/rest/projects/fields#add-field-to-user-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsGetFieldForUserInput = Parameters<typeof github.projects.getFieldForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsGetFieldForUserOutput = Awaited<ReturnType<typeof github.projects.getFieldForUser>>;
-
-const input: ProjectsGetFieldForUserInput = {} as { project_number: number; field_id: number; username: string };
-const result: ProjectsGetFieldForUserOutput = await github.projects.getFieldForUser(input);
-
-// Result shape (from schema): { id: number; issue_field_id?: number; node_id?: string; project_url: string; name: string; data_type: "assignees" | "linked_pull_requests" | "reviewers" | "labels" | "milestone" | "repository" | "title" | "text" | "sin...
+github.projects.addFieldForUser(input: {
+  body: { name: string; data_type: "text" | "number" | "date" } | { name: string; data_type: "single_select"; single_select_options: (ProjectsV2FieldSingleSelectOption)[] } | { name: string; data_type: "iteration"; iteration_configuration: ProjectsV2FieldIterationConfiguration };
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The project's number. */
+  project_number: number;
+}): Promise<ProjectsV2Field>
 ```
 
-### `github.projects.listItemsForUser`
+<sub>`POST /users/{username}/projectsV2/{project_number}/fields` · `projects/add-field-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/projectsV2/{project_number}/items`
-- **What it does**: List items for a user owned project
-- **OpenAPI operationId**: `projects/list-items-for-user`
-- **Path params**: None
-- **Query params**: `q`, `fields`
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.getFieldForUser`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; username: string; before?: string; after?: string; per_page?: number; q?: string; fields?: string | (string)[] }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: s...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Get project field for user — [API reference](https://docs.github.com/rest/projects/fields#get-project-field-for-user)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsListItemsForUserInput = Parameters<typeof github.projects.listItemsForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsListItemsForUserOutput = Awaited<ReturnType<typeof github.projects.listItemsForUser>>;
-
-const input: ProjectsListItemsForUserInput = {} as { project_number: number; username: string; before?: string; after?: string; per_page?: number; q?: string; fields?: string | (string)[] };
-const result: ProjectsListItemsForUserOutput = await github.projects.listItemsForUser(input);
-
-// Result shape (from schema): ({ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: s...
+github.projects.getFieldForUser(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The unique identifier of the field. */
+  field_id: number;
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<ProjectsV2Field>
 ```
 
-### `github.projects.addItemForUser`
+<sub>`GET /users/{username}/projectsV2/{project_number}/fields/{field_id}` · `projects/get-field-for-user`</sub>
 
-- **HTTP**: `POST /users/{username}/projectsV2/{project_number}/items`
-- **What it does**: Add item to user owned project
-- **OpenAPI operationId**: `projects/add-item-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.listItemsForUser`
 
-**Inputs**
-
-- Client input type: `{ body: unknown | unknown; username: string; project_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id?: string; content?: { id: number; node_id: string; url: string; repository_url: string; labels_url: string; comments_url: string; events_url: string; html_url: string; number: number; state: string...`
-- OpenAPI response codes: `201`, `304`, `401`, `403`
+List items for a user owned project — [API reference](https://docs.github.com/rest/projects/items#list-items-for-a-user-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsAddItemForUserInput = Parameters<typeof github.projects.addItemForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsAddItemForUserOutput = Awaited<ReturnType<typeof github.projects.addItemForUser>>;
-
-const input: ProjectsAddItemForUserInput = {} as { body: unknown | unknown; username: string; project_number: number };
-const result: ProjectsAddItemForUserOutput = await github.projects.addItemForUser(input);
-
-// Result shape (from schema): { id: number; node_id?: string; content?: { id: number; node_id: string; url: string; repository_url: string; labels_url: string; comments_url: string; events_url: string; html_url: string; number: number; state: string...
+github.projects.listItemsForUser(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** Search query to filter items, see [Filtering projects](https://docs.github.com/issues/planning-and-tracking-with-projects/customizing-views-in-your-project/filtering-projects) for more information. */
+  q?: string;
+  /** Limit results to specific fields, by their IDs. If not specified, the title field will be returned.  Example: `fields[]=123&fields[]=456&fields[]=789` or `fields=123,456,789` */
+  fields?: string | (string)[];
+}): Promise<(ProjectsV2ItemWithContent)[]>
 ```
 
-### `github.projects.deleteItemForUser`
+<sub>`GET /users/{username}/projectsV2/{project_number}/items` · `projects/list-items-for-user`</sub>
 
-- **HTTP**: `DELETE /users/{username}/projectsV2/{project_number}/items/{item_id}`
-- **What it does**: Delete project item for user
-- **OpenAPI operationId**: `projects/delete-item-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.addItemForUser`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; username: string; item_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `401`, `403`
+Add item to user owned project — [API reference](https://docs.github.com/rest/projects/items#add-item-to-user-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsDeleteItemForUserInput = Parameters<typeof github.projects.deleteItemForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsDeleteItemForUserOutput = Awaited<ReturnType<typeof github.projects.deleteItemForUser>>;
-
-const input: ProjectsDeleteItemForUserInput = {} as { project_number: number; username: string; item_id: number };
-const result: ProjectsDeleteItemForUserOutput = await github.projects.deleteItemForUser(input);
-
-// Result shape (from schema): unknown
+github.projects.addItemForUser(input: {
+  body: unknown | unknown;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The project's number. */
+  project_number: number;
+}): Promise<ProjectsV2ItemSimple>
 ```
 
-### `github.projects.getUserItem`
+<sub>`POST /users/{username}/projectsV2/{project_number}/items` · `projects/add-item-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/projectsV2/{project_number}/items/{item_id}`
-- **What it does**: Get an item for a user owned project
-- **OpenAPI operationId**: `projects/get-user-item`
-- **Path params**: None
-- **Query params**: `fields`
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.deleteItemForUser`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; username: string; item_id: number; fields?: string | (string)[] }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: st...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Delete project item for user — [API reference](https://docs.github.com/rest/projects/items#delete-project-item-for-user)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsGetUserItemInput = Parameters<typeof github.projects.getUserItem> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsGetUserItemOutput = Awaited<ReturnType<typeof github.projects.getUserItem>>;
-
-const input: ProjectsGetUserItemInput = {} as { project_number: number; username: string; item_id: number; fields?: string | (string)[] };
-const result: ProjectsGetUserItemOutput = await github.projects.getUserItem(input);
-
-// Result shape (from schema): { id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: st...
+github.projects.deleteItemForUser(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The unique identifier of the project item. */
+  item_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.projects.updateItemForUser`
+<sub>`DELETE /users/{username}/projectsV2/{project_number}/items/{item_id}` · `projects/delete-item-for-user`</sub>
 
-- **HTTP**: `PATCH /users/{username}/projectsV2/{project_number}/items/{item_id}`
-- **What it does**: Update project item for user
-- **OpenAPI operationId**: `projects/update-item-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.getUserItem`
 
-**Inputs**
-
-- Client input type: `{ fields: ({ id: number; value: string | number | null })[]; project_number: number; username: string; item_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: st...`
-- OpenAPI response codes: `200`, `401`, `403`, `404`, `422`
+Get an item for a user owned project — [API reference](https://docs.github.com/rest/projects/items#get-an-item-for-a-user-owned-project)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsUpdateItemForUserInput = Parameters<typeof github.projects.updateItemForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsUpdateItemForUserOutput = Awaited<ReturnType<typeof github.projects.updateItemForUser>>;
-
-const input: ProjectsUpdateItemForUserInput = {} as { fields: ({ id: number; value: string | number | null })[]; project_number: number; username: string; item_id: number };
-const result: ProjectsUpdateItemForUserOutput = await github.projects.updateItemForUser(input);
-
-// Result shape (from schema): { id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: st...
+github.projects.getUserItem(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The unique identifier of the project item. */
+  item_id: number;
+  /** Limit results to specific fields, by their IDs. If not specified, the title field will be returned.  Example: fields[]=123&fields[]=456&fields[]=789 or fields=123,456,789 */
+  fields?: string | (string)[];
+}): Promise<ProjectsV2ItemWithContent>
 ```
 
-### `github.projects.listViewItemsForUser`
+<sub>`GET /users/{username}/projectsV2/{project_number}/items/{item_id}` · `projects/get-user-item`</sub>
 
-- **HTTP**: `GET /users/{username}/projectsV2/{project_number}/views/{view_number}/items`
-- **What it does**: List items for a user project view
-- **OpenAPI operationId**: `projects/list-view-items-for-user`
-- **Path params**: None
-- **Query params**: `fields`
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.projects.updateItemForUser`
 
-**Inputs**
-
-- Client input type: `{ project_number: number; username: string; view_number: number; fields?: string | (string)[]; before?: string; after?: string; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: s...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Update project item for user — [API reference](https://docs.github.com/rest/projects/items#update-project-item-for-user)
 
 ```ts
-import github from "@utdk/github";
-
-type ProjectsListViewItemsForUserInput = Parameters<typeof github.projects.listViewItemsForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ProjectsListViewItemsForUserOutput = Awaited<ReturnType<typeof github.projects.listViewItemsForUser>>;
-
-const input: ProjectsListViewItemsForUserInput = {} as { project_number: number; username: string; view_number: number; fields?: string | (string)[]; before?: string; after?: string; per_page?: number };
-const result: ProjectsListViewItemsForUserOutput = await github.projects.listViewItemsForUser(input);
-
-// Result shape (from schema): ({ id: number; node_id?: string; project_url?: string; content_type: "Issue" | "PullRequest" | "DraftIssue"; content?: { [key: string]: unknown } | null; creator?: { name?: string | null; email?: string | null; login: s...
+github.projects.updateItemForUser(input: {
+  /** A list of field updates to apply. */
+  fields: ({ id: number; value: string | number | null })[];
+  /** The project's number. */
+  project_number: number;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The unique identifier of the project item. */
+  item_id: number;
+}): Promise<ProjectsV2ItemWithContent>
 ```
 
+<sub>`PATCH /users/{username}/projectsV2/{project_number}/items/{item_id}` · `projects/update-item-for-user`</sub>
+
+## `github.projects.listViewItemsForUser`
+
+List items for a user project view — [API reference](https://docs.github.com/rest/projects/items#list-items-for-a-user-project-view)
+
+```ts
+github.projects.listViewItemsForUser(input: {
+  /** The project's number. */
+  project_number: number;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The number that identifies the project view. */
+  view_number: number;
+  /** Limit results to specific fields, by their IDs. If not specified, the title field will be returned.  Example: `fields[]=123&fields[]=456&fields[]=789` or `fields=123,456,789` */
+  fields?: string | (string)[];
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<(ProjectsV2ItemWithContent)[]>
+```
+
+<sub>`GET /users/{username}/projectsV2/{project_number}/views/{view_number}/items` · `projects/list-view-items-for-user`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

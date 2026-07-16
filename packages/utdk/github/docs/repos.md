@@ -1,6879 +1,4007 @@
 # Repos
 
-Use these operations through the generated client (not direct HTTP calls).
+203 operations · `@utdk/github`
+
+```ts
+import github from "@utdk/github";
+```
+
+## `github.repos.listForOrg`
+
+List organization repositories — [API reference](https://docs.github.com/rest/repos/repos#list-organization-repositories)
+
+```ts
+github.repos.listForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Specifies the types of repositories you want returned. */
+  type?: "all" | "public" | "private" | "forks" | "sources" | "member";
+  /** The property to sort the results by. */
+  sort?: "created" | "updated" | "pushed" | "full_name";
+  /** The order to sort by. Default: `asc` when using `full_name`, otherwise `desc`. */
+  direction?: "asc" | "desc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(MinimalRepository)[]>
+```
+
+<sub>`GET /orgs/{org}/repos` · `repos/list-for-org`</sub>
+
+## `github.repos.createInOrg`
+
+Create an organization repository — [API reference](https://docs.github.com/rest/repos/repos#create-an-organization-repository)
+
+```ts
+github.repos.createInOrg(input: {
+  /** The name of the repository. */
+  name: string;
+  /** A short description of the repository. */
+  description?: string;
+  /** A URL with more information about the repository. */
+  homepage?: string;
+  /** Whether the repository is private. */
+  private?: boolean;
+  /** The visibility of the repository. */
+  visibility?: "public" | "private";
+  /** Either `true` to enable issues for this repository or `false` to disable them. */
+  has_issues?: boolean;
+  /** Either `true` to enable projects for this repository or `false` to disable them. **Note:** If you're creating a repository in an organization that has disabled repository projects, the default is `false`, and if you pass `true`, the API returns an error. */
+  has_projects?: boolean;
+  /** Either `true` to enable the wiki for this repository or `false` to disable it. */
+  has_wiki?: boolean;
+  /** Whether downloads are enabled. */
+  has_downloads?: boolean;
+  /** Either `true` to make this repo available as a template repository or `false` to prevent it. */
+  is_template?: boolean;
+  /** The id of the team that will be granted access to this repository. This is only valid when creating a repository in an organization. */
+  team_id?: number;
+  /** Pass `true` to create an initial commit with empty README. */
+  auto_init?: boolean;
+  /** Desired language or platform [.gitignore template](https://github.com/github/gitignore) to apply. Use the name of the template without the extension. For example, "Haskell". */
+  gitignore_template?: string;
+  /** Choose an [open source license template](https://choosealicense.com/) that best suits your needs, and then use the [license keyword](https://docs.github.com/articles/licensing-a-repository/#searching-github-by-license-type) as the `license_template` string. For example, "mit" or "mpl-2.0". */
+  license_template?: string;
+  /** Either `true` to allow squash-merging pull requests, or `false` to prevent squash-merging. */
+  allow_squash_merge?: boolean;
+  /** Either `true` to allow merging pull requests with a merge commit, or `false` to prevent merging pull requests with merge commits. */
+  allow_merge_commit?: boolean;
+  /** Either `true` to allow rebase-merging pull requests, or `false` to prevent rebase-merging. */
+  allow_rebase_merge?: boolean;
+  /** Either `true` to allow auto-merge on pull requests, or `false` to disallow auto-merge. */
+  allow_auto_merge?: boolean;
+  /** Either `true` to allow automatically deleting head branches when pull requests are merged, or `false` to prevent automatic deletion. **The authenticated user must be an organization owner to set this property to `true`.** */
+  delete_branch_on_merge?: boolean;
+  /** Either `true` to allow squash-merge commits to use pull request title, or `false` to use commit message. **This property is closing down. Please use `squash_merge_commit_title` instead. */
+  use_squash_pr_title_as_default?: boolean;
+  /** Required when using `squash_merge_commit_message`.  The default value for a squash merge commit title:  - `PR_TITLE` - default to the pull request's title. - `COMMIT_OR_PR_TITLE` - default to the commit's title (if only one commit) or the pull request's title (when more than one commit). */
+  squash_merge_commit_title?: "PR_TITLE" | "COMMIT_OR_PR_TITLE";
+  /** The default value for a squash merge commit message:  - `PR_BODY` - default to the pull request's body. - `COMMIT_MESSAGES` - default to the branch's commit messages. - `BLANK` - default to a blank commit message. */
+  squash_merge_commit_message?: "PR_BODY" | "COMMIT_MESSAGES" | "BLANK";
+  /** Required when using `merge_commit_message`.  The default value for a merge commit title.  - `PR_TITLE` - default to the pull request's title. - `MERGE_MESSAGE` - default to the classic title for a merge message (e.g., Merge pull request #123 from branch-name). */
+  merge_commit_title?: "PR_TITLE" | "MERGE_MESSAGE";
+  /** The default value for a merge commit message.  - `PR_TITLE` - default to the pull request's title. - `PR_BODY` - default to the pull request's body. - `BLANK` - default to a blank commit message. */
+  merge_commit_message?: "PR_BODY" | "PR_TITLE" | "BLANK";
+  /** The custom properties for the new repository. The keys are the custom property names, and the values are the corresponding custom property values. */
+  custom_properties?: { [key: string]: unknown };
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<FullRepository>
+```
+
+<sub>`POST /orgs/{org}/repos` · `repos/create-in-org`</sub>
 
-Import path: `@utdk/github`
+## `github.repos.getOrgRulesets`
 
-## Operations
+Get all organization repository rulesets — [API reference](https://docs.github.com/rest/orgs/rules#get-all-organization-repository-rulesets)
 
-### `github.repos.listForOrg`
-
-- **HTTP**: `GET /orgs/{org}/repos`
-- **What it does**: List organization repositories
-- **OpenAPI operationId**: `repos/list-for-org`
-- **Path params**: None
-- **Query params**: `type`, `sort`, `direction`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
+```ts
+github.repos.getOrgRulesets(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** A comma-separated list of rule targets to filter by. If provided, only rulesets that apply to the specified targets will be returned. For example, `branch,tag,push`.  */
+  targets?: string;
+}): Promise<(RepositoryRuleset)[]>
+```
 
-- Client input type: `{ org: string; type?: "all" | "public" | "private" | "forks" | "sources" | "member"; sort?: "created" | "updated" | "pushed" | "full_name"; direction?: "asc" | "desc"; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`GET /orgs/{org}/rulesets` · `repos/get-org-rulesets`</sub>
 
-**Outputs**
+## `github.repos.createOrgRuleset`
 
-- Client return type: `({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...`
-- OpenAPI response codes: `200`
+Create an organization repository ruleset — [API reference](https://docs.github.com/rest/orgs/rules#create-an-organization-repository-ruleset)
 
 ```ts
-import github from "@utdk/github";
-
-type ReposListForOrgInput = Parameters<typeof github.repos.listForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListForOrgOutput = Awaited<ReturnType<typeof github.repos.listForOrg>>;
-
-const input: ReposListForOrgInput = {} as { org: string; type?: "all" | "public" | "private" | "forks" | "sources" | "member"; sort?: "created" | "updated" | "pushed" | "full_name"; direction?: "asc" | "desc"; per_page?: number; page?: number };
-const result: ReposListForOrgOutput = await github.repos.listForOrg(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...
+github.repos.createOrgRuleset(input: {
+  /** The name of the ruleset. */
+  name: string;
+  /** The target of the ruleset */
+  target?: "branch" | "tag" | "push" | "repository";
+  enforcement: RepositoryRuleEnforcement;
+  /** The actors that can bypass the rules in this ruleset */
+  bypass_actors?: (RepositoryRulesetBypassActor)[];
+  conditions?: OrgRulesetConditions;
+  /** An array of rules within the ruleset. */
+  rules?: (OrgRules)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<RepositoryRuleset>
 ```
 
-### `github.repos.createInOrg`
+<sub>`POST /orgs/{org}/rulesets` · `repos/create-org-ruleset`</sub>
 
-- **HTTP**: `POST /orgs/{org}/repos`
-- **What it does**: Create an organization repository
-- **OpenAPI operationId**: `repos/create-in-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.deleteOrgRuleset`
 
-**Inputs**
+Delete an organization repository ruleset — [API reference](https://docs.github.com/rest/orgs/rules#delete-an-organization-repository-ruleset)
 
-- Client input type: `{ name: string; description?: string; homepage?: string; private?: boolean; visibility?: "public" | "private"; has_issues?: boolean; has_projects?: boolean; has_wiki?: boolean; has_downloads?: boolean; is_template?: boolean; team_id?: number; auto_init?: boolean; gitignore_template?: string; license_template?: string; allow_squash_merge?: boolean; allow_merge_commit?: boolean; allow_rebase_merge?: boolean; allow_auto_merge?: boolean; delete_branch_on_merge?: boolean; use_squash_pr_title_as_default?: boolean; squash_merge_commit_title?: "PR_TITLE" | "COMMIT_OR_PR_TITLE"; squash_merge_commit_message?: "PR_BODY" | "COMMIT_MESSAGES" | "BLANK"; merge_commit_title?: "PR_TITLE" | "MERGE_MESSAGE"; merge_commit_message?: "PR_BODY" | "PR_TITLE" | "BLANK"; custom_properties?: { [key: string]: unknown }; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: stri...`
-- OpenAPI response codes: `201`, `403`, `422`
-
 ```ts
-import github from "@utdk/github";
-
-type ReposCreateInOrgInput = Parameters<typeof github.repos.createInOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateInOrgOutput = Awaited<ReturnType<typeof github.repos.createInOrg>>;
-
-const input: ReposCreateInOrgInput = {} as { name: string; description?: string; homepage?: string; private?: boolean; visibility?: "public" | "private"; has_issues?: boolean; has_projects?: boolean; has_wiki?: boolean; has_downloads?: boolean; is_template?: boolean; team_id?: number; auto_init?: boolean; gitignore_template?: string; license_template?: string; allow_squash_merge?: boolean; allow_merge_commit?: boolean; allow_rebase_merge?: boolean; allow_auto_merge?: boolean; delete_branch_on_merge?: boolean; use_squash_pr_title_as_default?: boolean; squash_merge_commit_title?: "PR_TITLE" | "COMMIT_OR_PR_TITLE"; squash_merge_commit_message?: "PR_BODY" | "COMMIT_MESSAGES" | "BLANK"; merge_commit_title?: "PR_TITLE" | "MERGE_MESSAGE"; merge_commit_message?: "PR_BODY" | "PR_TITLE" | "BLANK"; custom_properties?: { [key: string]: unknown }; org: string };
-const result: ReposCreateInOrgOutput = await github.repos.createInOrg(input);
-
-// Result shape (from schema): { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: stri...
+github.repos.deleteOrgRuleset(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The ID of the ruleset. */
+  ruleset_id: number;
+}): Promise<BasicError>
 ```
-
-### `github.repos.getOrgRulesets`
 
-- **HTTP**: `GET /orgs/{org}/rulesets`
-- **What it does**: Get all organization repository rulesets
-- **OpenAPI operationId**: `repos/get-org-rulesets`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`DELETE /orgs/{org}/rulesets/{ruleset_id}` · `repos/delete-org-ruleset`</sub>
 
-**Inputs**
+## `github.repos.getOrgRuleset`
 
-- Client input type: `{ org: string; per_page?: number; page?: number; targets?: string }`
-- Client transport options: None
+Get an organization repository ruleset — [API reference](https://docs.github.com/rest/orgs/rules#get-an-organization-repository-ruleset)
 
-**Outputs**
-
-- Client return type: `({ id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?...`
-- OpenAPI response codes: `200`, `404`, `500`
-
 ```ts
-import github from "@utdk/github";
-
-type ReposGetOrgRulesetsInput = Parameters<typeof github.repos.getOrgRulesets> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetOrgRulesetsOutput = Awaited<ReturnType<typeof github.repos.getOrgRulesets>>;
-
-const input: ReposGetOrgRulesetsInput = {} as { org: string; per_page?: number; page?: number; targets?: string };
-const result: ReposGetOrgRulesetsOutput = await github.repos.getOrgRulesets(input);
-
-// Result shape (from schema): ({ id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?...
+github.repos.getOrgRuleset(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The ID of the ruleset. */
+  ruleset_id: number;
+}): Promise<RepositoryRuleset>
 ```
-
-### `github.repos.createOrgRuleset`
-
-- **HTTP**: `POST /orgs/{org}/rulesets`
-- **What it does**: Create an organization repository ruleset
-- **OpenAPI operationId**: `repos/create-org-ruleset`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `404`, `422`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
 
-**Inputs**
+<sub>`GET /orgs/{org}/rulesets/{ruleset_id}` · `repos/get-org-ruleset`</sub>
 
-- Client input type: `{ name: string; target?: "branch" | "tag" | "push" | "repository"; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?: ({ actor_id?: number | null; actor_type: "Integration" | "OrganizationAdmin" | "RepositoryRole" | "Team" | "DeployKey" | "User"; bypass_mode?: "always" | "pull_request" | "exempt" })[]; conditions?: { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_name: { include?: (string)[]; exclude?: (string)[]; protected?: boolean } } | { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_id: { repository_ids?: (number)[] } } | { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_property: { include?: ({ name: string; property_values: (string)[]; source?: "custom" | "system" })[]; exclude?: ({ name: string; property_values: (string)[]; source?: "custom" | "system" })[] } }; rules?: ({ type: "creation" } | { type: "update"; parameters?: { update_allows_fetch_and_merge: boolean } } | { type: "deletion" } | { type: "required_linear_history" } | { type: "required_deployments"; parameters?: { required_deployment_environments: (string)[] } } | { type: "required_signatures" } | { type: "pull_request"; parameters?: { allowed_merge_methods?: ("merge" | "squash" | "rebase")[]; dismiss_stale_reviews_on_push: boolean; require_code_owner_review: boolean; require_last_push_approval: boolean; required_approving_review_count: number; required_review_thread_resolution: boolean; required_reviewers?: ({ file_patterns: (string)[]; minimum_approvals: number; reviewer: { id: number; type: "Team" } })[] } } | { type: "required_status_checks"; parameters?: { do_not_enforce_on_create?: boolean; required_status_checks: ({ context: string; integration_id?: number })[]; strict_required_status_checks_policy: boolean } } | { type: "non_fast_forward" } | { type: "commit_message_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "commit_author_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "committer_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "branch_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "tag_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "file_path_restriction"; parameters?: { restricted_file_paths: (string)[] } } | { type: "max_file_path_length"; parameters?: { max_file_path_length: number } } | { type: "file_extension_restriction"; parameters?: { restricted_file_extensions: (string)[] } } | { type: "max_file_size"; parameters?: { max_file_size: number } } | { type: "workflows"; parameters?: { do_not_enforce_on_create?: boolean; workflows: ({ path: string; ref?: string; repository_id: number; sha?: string })[] } } | { type: "code_scanning"; parameters?: { code_scanning_tools: ({ alerts_threshold: "none" | "errors" | "errors_and_warnings" | "all"; security_alerts_threshold: "none" | "critical" | "high_or_higher" | "medium_or_higher" | "all"; tool: string })[] } } | { type: "copilot_code_review"; parameters?: { review_draft_pull_requests?: boolean; review_on_push?: boolean } })[]; org: string }`
-- Client transport options: None
+## `github.repos.updateOrgRuleset`
 
-**Outputs**
+Update an organization repository ruleset — [API reference](https://docs.github.com/rest/orgs/rules#update-an-organization-repository-ruleset)
 
-- Client return type: `{ id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...`
-- OpenAPI response codes: `201`, `404`, `422`, `500`
-
 ```ts
-import github from "@utdk/github";
-
-type ReposCreateOrgRulesetInput = Parameters<typeof github.repos.createOrgRuleset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateOrgRulesetOutput = Awaited<ReturnType<typeof github.repos.createOrgRuleset>>;
-
-const input: ReposCreateOrgRulesetInput = {} as { name: string; target?: "branch" | "tag" | "push" | "repository"; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?: ({ actor_id?: number | null; actor_type: "Integration" | "OrganizationAdmin" | "RepositoryRole" | "Team" | "DeployKey" | "User"; bypass_mode?: "always" | "pull_request" | "exempt" })[]; conditions?: { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_name: { include?: (string)[]; exclude?: (string)[]; protected?: boolean } } | { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_id: { repository_ids?: (number)[] } } | { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_property: { include?: ({ name: string; property_values: (string)[]; source?: "custom" | "system" })[]; exclude?: ({ name: string; property_values: (string)[]; source?: "custom" | "system" })[] } }; rules?: ({ type: "creation" } | { type: "update"; parameters?: { update_allows_fetch_and_merge: boolean } } | { type: "deletion" } | { type: "required_linear_history" } | { type: "required_deployments"; parameters?: { required_deployment_environments: (string)[] } } | { type: "required_signatures" } | { type: "pull_request"; parameters?: { allowed_merge_methods?: ("merge" | "squash" | "rebase")[]; dismiss_stale_reviews_on_push: boolean; require_code_owner_review: boolean; require_last_push_approval: boolean; required_approving_review_count: number; required_review_thread_resolution: boolean; required_reviewers?: ({ file_patterns: (string)[]; minimum_approvals: number; reviewer: { id: number; type: "Team" } })[] } } | { type: "required_status_checks"; parameters?: { do_not_enforce_on_create?: boolean; required_status_checks: ({ context: string; integration_id?: number })[]; strict_required_status_checks_policy: boolean } } | { type: "non_fast_forward" } | { type: "commit_message_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "commit_author_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "committer_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "branch_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "tag_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "file_path_restriction"; parameters?: { restricted_file_paths: (string)[] } } | { type: "max_file_path_length"; parameters?: { max_file_path_length: number } } | { type: "file_extension_restriction"; parameters?: { restricted_file_extensions: (string)[] } } | { type: "max_file_size"; parameters?: { max_file_size: number } } | { type: "workflows"; parameters?: { do_not_enforce_on_create?: boolean; workflows: ({ path: string; ref?: string; repository_id: number; sha?: string })[] } } | { type: "code_scanning"; parameters?: { code_scanning_tools: ({ alerts_threshold: "none" | "errors" | "errors_and_warnings" | "all"; security_alerts_threshold: "none" | "critical" | "high_or_higher" | "medium_or_higher" | "all"; tool: string })[] } } | { type: "copilot_code_review"; parameters?: { review_draft_pull_requests?: boolean; review_on_push?: boolean } })[]; org: string };
-const result: ReposCreateOrgRulesetOutput = await github.repos.createOrgRuleset(input);
-
-// Result shape (from schema): { id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...
+github.repos.updateOrgRuleset(input: {
+  /** The name of the ruleset. */
+  name?: string;
+  /** The target of the ruleset */
+  target?: "branch" | "tag" | "push" | "repository";
+  enforcement?: RepositoryRuleEnforcement;
+  /** The actors that can bypass the rules in this ruleset */
+  bypass_actors?: (RepositoryRulesetBypassActor)[];
+  conditions?: OrgRulesetConditions;
+  /** An array of rules within the ruleset. */
+  rules?: (OrgRules)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The ID of the ruleset. */
+  ruleset_id: number;
+}): Promise<RepositoryRuleset>
 ```
-
-### `github.repos.deleteOrgRuleset`
-
-- **HTTP**: `DELETE /orgs/{org}/rulesets/{ruleset_id}`
-- **What it does**: Delete an organization repository ruleset
-- **OpenAPI operationId**: `repos/delete-org-ruleset`
-- **Path params**: `ruleset_id`
-- **Query params**: None
-- **Response codes**: `204`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ org: string; ruleset_id: number }`
-- Client transport options: None
+<sub>`PUT /orgs/{org}/rulesets/{ruleset_id}` · `repos/update-org-ruleset`</sub>
 
-**Outputs**
+## `github.repos.getOrgRuleSuites`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `500`
+List organization rule suites — [API reference](https://docs.github.com/rest/orgs/rule-suites#list-organization-rule-suites)
 
 ```ts
-import github from "@utdk/github";
-
-type ReposDeleteOrgRulesetInput = Parameters<typeof github.repos.deleteOrgRuleset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteOrgRulesetOutput = Awaited<ReturnType<typeof github.repos.deleteOrgRuleset>>;
-
-const input: ReposDeleteOrgRulesetInput = {} as { org: string; ruleset_id: number };
-const result: ReposDeleteOrgRulesetOutput = await github.repos.deleteOrgRuleset(input);
-
-// Result shape (from schema): unknown
+github.repos.getOrgRuleSuites(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the ref. Cannot contain wildcard characters. Optionally prefix with `refs/heads/` to limit to branches or `refs/tags/` to limit to tags. Omit the prefix to search across all refs. When specified, only rule evaluations triggered for this ref will be returned. */
+  ref?: string;
+  /** The name of the repository to filter on. */
+  repository_name?: string;
+  /** The time period to filter by.  For example, `day` will filter for rule suites that occurred in the past 24 hours, and `week` will filter for rule suites that occurred in the past 7 days (168 hours). */
+  time_period?: "hour" | "day" | "week" | "month";
+  /** The handle for the GitHub user account to filter on. When specified, only rule evaluations triggered by this actor will be returned. */
+  actor_name?: string;
+  /** The rule suite results to filter on. When specified, only suites with this result will be returned. */
+  rule_suite_result?: "pass" | "fail" | "bypass" | "all";
+  /** The evaluate status to filter on. When specified, only rule suites resulting from rulesets with the specified evaluate status will be returned.   - `all` - all rule suites will be returned.   - `active` - only rule suites resulting from rulesets in active (non-evaluate) mode will be returned.   - `evaluate` - only rule suites resulting from rulesets in evaluate mode will be returned. */
+  evaluate_status?: "all" | "active" | "evaluate";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<RuleSuites>
 ```
 
-### `github.repos.getOrgRuleset`
+<sub>`GET /orgs/{org}/rulesets/rule-suites` · `repos/get-org-rule-suites`</sub>
+
+## `github.repos.getOrgRuleSuite`
+
+Get an organization rule suite — [API reference](https://docs.github.com/rest/orgs/rule-suites#get-an-organization-rule-suite)
+
+```ts
+github.repos.getOrgRuleSuite(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the rule suite result. To get this ID, you can use [GET /repos/{owner}/{repo}/rulesets/rule-suites](https://docs.github.com/rest/repos/rule-suites#list-repository-rule-suites) for repositories and [GET /orgs/{org}/rulesets/rule-suites](https://docs.github.com/rest/orgs/rule-suites#list-organization-rule-suites) for organizations. */
+  rule_suite_id: number;
+}): Promise<RuleSuite>
+```
+
+<sub>`GET /orgs/{org}/rulesets/rule-suites/{rule_suite_id}` · `repos/get-org-rule-suite`</sub>
+
+## `github.repos.delete`
+
+Delete a repository — [API reference](https://docs.github.com/rest/repos/repos#delete-a-repository)
 
-- **HTTP**: `GET /orgs/{org}/rulesets/{ruleset_id}`
-- **What it does**: Get an organization repository ruleset
-- **OpenAPI operationId**: `repos/get-org-ruleset`
-- **Path params**: `ruleset_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
+```ts
+github.repos.delete(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
+```
+
+<sub>`DELETE /repos/{owner}/{repo}` · `repos/delete`</sub>
+
+## `github.repos.get`
+
+Get a repository — [API reference](https://docs.github.com/rest/repos/repos#get-a-repository)
+
+```ts
+github.repos.get(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<FullRepository>
+```
+
+<sub>`GET /repos/{owner}/{repo}` · `repos/get`</sub>
+
+## `github.repos.update`
+
+Update a repository — [API reference](https://docs.github.com/rest/repos/repos#update-a-repository)
+
+```ts
+github.repos.update(input: {
+  /** The name of the repository. */
+  name?: string;
+  /** A short description of the repository. */
+  description?: string;
+  /** A URL with more information about the repository. */
+  homepage?: string;
+  /** Either `true` to make the repository private or `false` to make it public. Default: `false`.   **Note**: You will get a `422` error if the organization restricts [changing repository visibility](https://docs.github.com/articles/repository-permission-levels-for-an-organization#changing-the-visibility-of-repositories) to organization owners and a non-owner tries to change the value of private. */
+  private?: boolean;
+  /** The visibility of the repository. */
+  visibility?: "public" | "private";
+  /** Specify which security and analysis features to enable or disable for the repository.  To use this parameter, you must have admin permissions for the repository or be an owner or security manager for the organization that owns the repository. For more information, see "[Managing security managers in your organization](https://docs.github.com/organizations/managing-peoples-access-to-your-organization-with-roles/managing-security-managers-in-your-organization)."  For example, to enable GitHub Advanced Security, use this data in the body of the `PATCH` request: `{ "security_and_analysis": {"advanced_security": { "status": "enabled" } } }`.  You can check which security and analysis features are currently enabled by using a `GET /repos/{owner}/{repo}` request. */
+  security_and_analysis?: { advanced_security?: { status?: string }; code_security?: { status?: string }; secret_scanning?: { status?: string }; secret_scanning_push_protection?: { status?: string }; secret_scanning_ai_detection?: { status?: string }; secret_scanning_non_provider_patterns?: { status?: string }; secret_scanning_delegated_alert_dismissal?: { status?: string }; secret_scanning_delegated_bypass?: { status?: string }; secret_scanning_delegated_bypass_options?: { reviewers?: ({ reviewer_id: number; reviewer_type: "TEAM" | "ROLE"; mode?: "ALWAYS" | "EXEMPT" })[] } } | null;
+  /** Either `true` to enable issues for this repository or `false` to disable them. */
+  has_issues?: boolean;
+  /** Either `true` to enable projects for this repository or `false` to disable them. **Note:** If you're creating a repository in an organization that has disabled repository projects, the default is `false`, and if you pass `true`, the API returns an error. */
+  has_projects?: boolean;
+  /** Either `true` to enable the wiki for this repository or `false` to disable it. */
+  has_wiki?: boolean;
+  /** Either `true` to allow pull requests for this repository or `false` to prevent pull requests. */
+  has_pull_requests?: boolean;
+  /** The policy that controls who can create pull requests for this repository: `all` or `collaborators_only`. */
+  pull_request_creation_policy?: "all" | "collaborators_only";
+  /** Either `true` to make this repo available as a template repository or `false` to prevent it. */
+  is_template?: boolean;
+  /** Updates the default branch for this repository. */
+  default_branch?: string;
+  /** Either `true` to allow squash-merging pull requests, or `false` to prevent squash-merging. */
+  allow_squash_merge?: boolean;
+  /** Either `true` to allow merging pull requests with a merge commit, or `false` to prevent merging pull requests with merge commits. */
+  allow_merge_commit?: boolean;
+  /** Either `true` to allow rebase-merging pull requests, or `false` to prevent rebase-merging. */
+  allow_rebase_merge?: boolean;
+  /** Either `true` to allow auto-merge on pull requests, or `false` to disallow auto-merge. */
+  allow_auto_merge?: boolean;
+  /** Either `true` to allow automatically deleting head branches when pull requests are merged, or `false` to prevent automatic deletion. */
+  delete_branch_on_merge?: boolean;
+  /** Either `true` to always allow a pull request head branch that is behind its base branch to be updated even if it is not required to be up to date before merging, or false otherwise. */
+  allow_update_branch?: boolean;
+  /** Either `true` to allow squash-merge commits to use pull request title, or `false` to use commit message. **This property is closing down. Please use `squash_merge_commit_title` instead. */
+  use_squash_pr_title_as_default?: boolean;
+  /** Required when using `squash_merge_commit_message`.  The default value for a squash merge commit title:  - `PR_TITLE` - default to the pull request's title. - `COMMIT_OR_PR_TITLE` - default to the commit's title (if only one commit) or the pull request's title (when more than one commit). */
+  squash_merge_commit_title?: "PR_TITLE" | "COMMIT_OR_PR_TITLE";
+  /** The default value for a squash merge commit message:  - `PR_BODY` - default to the pull request's body. - `COMMIT_MESSAGES` - default to the branch's commit messages. - `BLANK` - default to a blank commit message. */
+  squash_merge_commit_message?: "PR_BODY" | "COMMIT_MESSAGES" | "BLANK";
+  /** Required when using `merge_commit_message`.  The default value for a merge commit title.  - `PR_TITLE` - default to the pull request's title. - `MERGE_MESSAGE` - default to the classic title for a merge message (e.g., Merge pull request #123 from branch-name). */
+  merge_commit_title?: "PR_TITLE" | "MERGE_MESSAGE";
+  /** The default value for a merge commit message.  - `PR_TITLE` - default to the pull request's title. - `PR_BODY` - default to the pull request's body. - `BLANK` - default to a blank commit message. */
+  merge_commit_message?: "PR_BODY" | "PR_TITLE" | "BLANK";
+  /** Whether to archive this repository. `false` will unarchive a previously archived repository. */
+  archived?: boolean;
+  /** Either `true` to allow private forks, or `false` to prevent private forks. */
+  allow_forking?: boolean;
+  /** Either `true` to require contributors to sign off on web-based commits, or `false` to not require contributors to sign off on web-based commits. */
+  web_commit_signoff_required?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<FullRepository>
+```
 
-- Client input type: `{ org: string; ruleset_id: number }`
-- Client transport options: None
+<sub>`PATCH /repos/{owner}/{repo}` · `repos/update`</sub>
 
-**Outputs**
+## `github.repos.listActivities`
 
-- Client return type: `{ id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...`
-- OpenAPI response codes: `200`, `404`, `500`
+List repository activities — [API reference](https://docs.github.com/rest/repos/repos#list-repository-activities)
 
 ```ts
-import github from "@utdk/github";
-
-type ReposGetOrgRulesetInput = Parameters<typeof github.repos.getOrgRuleset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetOrgRulesetOutput = Awaited<ReturnType<typeof github.repos.getOrgRuleset>>;
-
-const input: ReposGetOrgRulesetInput = {} as { org: string; ruleset_id: number };
-const result: ReposGetOrgRulesetOutput = await github.repos.getOrgRuleset(input);
-
-// Result shape (from schema): { id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...
+github.repos.listActivities(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The direction to sort the results by. */
+  direction?: "asc" | "desc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** The Git reference for the activities you want to list.  The `ref` for a branch can be formatted either as `refs/heads/BRANCH_NAME` or `BRANCH_NAME`, where `BRANCH_NAME` is the name of your branch. */
+  ref?: string;
+  /** The GitHub username to use to filter by the actor who performed the activity. */
+  actor?: string;
+  /** The time period to filter by.  For example, `day` will filter for activity that occurred in the past 24 hours, and `week` will filter for activity that occurred in the past 7 days (168 hours). */
+  time_period?: "day" | "week" | "month" | "quarter" | "year";
+  /** The activity type to filter by.  For example, you can choose to filter by "force_push", to see all force pushes to the repository. */
+  activity_type?: "push" | "force_push" | "branch_creation" | "branch_deletion" | "pr_merge" | "merge_queue_merge";
+}): Promise<(Activity)[]>
 ```
-
-### `github.repos.updateOrgRuleset`
 
-- **HTTP**: `PUT /orgs/{org}/rulesets/{ruleset_id}`
-- **What it does**: Update an organization repository ruleset
-- **OpenAPI operationId**: `repos/update-org-ruleset`
-- **Path params**: `ruleset_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`GET /repos/{owner}/{repo}/activity` · `repos/list-activities`</sub>
 
-**Inputs**
+## `github.repos.createAttestation`
 
-- Client input type: `{ name?: string; target?: "branch" | "tag" | "push" | "repository"; enforcement?: "disabled" | "active" | "evaluate"; bypass_actors?: ({ actor_id?: number | null; actor_type: "Integration" | "OrganizationAdmin" | "RepositoryRole" | "Team" | "DeployKey" | "User"; bypass_mode?: "always" | "pull_request" | "exempt" })[]; conditions?: { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_name: { include?: (string)[]; exclude?: (string)[]; protected?: boolean } } | { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_id: { repository_ids?: (number)[] } } | { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_property: { include?: ({ name: string; property_values: (string)[]; source?: "custom" | "system" })[]; exclude?: ({ name: string; property_values: (string)[]; source?: "custom" | "system" })[] } }; rules?: ({ type: "creation" } | { type: "update"; parameters?: { update_allows_fetch_and_merge: boolean } } | { type: "deletion" } | { type: "required_linear_history" } | { type: "required_deployments"; parameters?: { required_deployment_environments: (string)[] } } | { type: "required_signatures" } | { type: "pull_request"; parameters?: { allowed_merge_methods?: ("merge" | "squash" | "rebase")[]; dismiss_stale_reviews_on_push: boolean; require_code_owner_review: boolean; require_last_push_approval: boolean; required_approving_review_count: number; required_review_thread_resolution: boolean; required_reviewers?: ({ file_patterns: (string)[]; minimum_approvals: number; reviewer: { id: number; type: "Team" } })[] } } | { type: "required_status_checks"; parameters?: { do_not_enforce_on_create?: boolean; required_status_checks: ({ context: string; integration_id?: number })[]; strict_required_status_checks_policy: boolean } } | { type: "non_fast_forward" } | { type: "commit_message_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "commit_author_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "committer_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "branch_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "tag_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "file_path_restriction"; parameters?: { restricted_file_paths: (string)[] } } | { type: "max_file_path_length"; parameters?: { max_file_path_length: number } } | { type: "file_extension_restriction"; parameters?: { restricted_file_extensions: (string)[] } } | { type: "max_file_size"; parameters?: { max_file_size: number } } | { type: "workflows"; parameters?: { do_not_enforce_on_create?: boolean; workflows: ({ path: string; ref?: string; repository_id: number; sha?: string })[] } } | { type: "code_scanning"; parameters?: { code_scanning_tools: ({ alerts_threshold: "none" | "errors" | "errors_and_warnings" | "all"; security_alerts_threshold: "none" | "critical" | "high_or_higher" | "medium_or_higher" | "all"; tool: string })[] } } | { type: "copilot_code_review"; parameters?: { review_draft_pull_requests?: boolean; review_on_push?: boolean } })[]; org: string; ruleset_id: number }`
-- Client transport options: None
+Create an attestation — [API reference](https://docs.github.com/rest/repos/attestations#create-an-attestation)
 
-**Outputs**
-
-- Client return type: `{ id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...`
-- OpenAPI response codes: `200`, `404`, `422`, `500`
-
 ```ts
-import github from "@utdk/github";
-
-type ReposUpdateOrgRulesetInput = Parameters<typeof github.repos.updateOrgRuleset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateOrgRulesetOutput = Awaited<ReturnType<typeof github.repos.updateOrgRuleset>>;
-
-const input: ReposUpdateOrgRulesetInput = {} as { name?: string; target?: "branch" | "tag" | "push" | "repository"; enforcement?: "disabled" | "active" | "evaluate"; bypass_actors?: ({ actor_id?: number | null; actor_type: "Integration" | "OrganizationAdmin" | "RepositoryRole" | "Team" | "DeployKey" | "User"; bypass_mode?: "always" | "pull_request" | "exempt" })[]; conditions?: { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_name: { include?: (string)[]; exclude?: (string)[]; protected?: boolean } } | { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_id: { repository_ids?: (number)[] } } | { ref_name?: { include?: (string)[]; exclude?: (string)[] } } & { repository_property: { include?: ({ name: string; property_values: (string)[]; source?: "custom" | "system" })[]; exclude?: ({ name: string; property_values: (string)[]; source?: "custom" | "system" })[] } }; rules?: ({ type: "creation" } | { type: "update"; parameters?: { update_allows_fetch_and_merge: boolean } } | { type: "deletion" } | { type: "required_linear_history" } | { type: "required_deployments"; parameters?: { required_deployment_environments: (string)[] } } | { type: "required_signatures" } | { type: "pull_request"; parameters?: { allowed_merge_methods?: ("merge" | "squash" | "rebase")[]; dismiss_stale_reviews_on_push: boolean; require_code_owner_review: boolean; require_last_push_approval: boolean; required_approving_review_count: number; required_review_thread_resolution: boolean; required_reviewers?: ({ file_patterns: (string)[]; minimum_approvals: number; reviewer: { id: number; type: "Team" } })[] } } | { type: "required_status_checks"; parameters?: { do_not_enforce_on_create?: boolean; required_status_checks: ({ context: string; integration_id?: number })[]; strict_required_status_checks_policy: boolean } } | { type: "non_fast_forward" } | { type: "commit_message_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "commit_author_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "committer_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "branch_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "tag_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "file_path_restriction"; parameters?: { restricted_file_paths: (string)[] } } | { type: "max_file_path_length"; parameters?: { max_file_path_length: number } } | { type: "file_extension_restriction"; parameters?: { restricted_file_extensions: (string)[] } } | { type: "max_file_size"; parameters?: { max_file_size: number } } | { type: "workflows"; parameters?: { do_not_enforce_on_create?: boolean; workflows: ({ path: string; ref?: string; repository_id: number; sha?: string })[] } } | { type: "code_scanning"; parameters?: { code_scanning_tools: ({ alerts_threshold: "none" | "errors" | "errors_and_warnings" | "all"; security_alerts_threshold: "none" | "critical" | "high_or_higher" | "medium_or_higher" | "all"; tool: string })[] } } | { type: "copilot_code_review"; parameters?: { review_draft_pull_requests?: boolean; review_on_push?: boolean } })[]; org: string; ruleset_id: number };
-const result: ReposUpdateOrgRulesetOutput = await github.repos.updateOrgRuleset(input);
-
-// Result shape (from schema): { id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...
+github.repos.createAttestation(input: {
+  /** The attestation's Sigstore Bundle. Refer to the [Sigstore Bundle Specification](https://github.com/sigstore/protobuf-specs/blob/main/protos/sigstore_bundle.proto) for more information. */
+  bundle: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } };
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<{ id?: number }>
 ```
-
-### `github.repos.getOrgRuleSuites`
-
-- **HTTP**: `GET /orgs/{org}/rulesets/rule-suites`
-- **What it does**: List organization rule suites
-- **OpenAPI operationId**: `repos/get-org-rule-suites`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
 
-**Inputs**
+<sub>`POST /repos/{owner}/{repo}/attestations` · `repos/create-attestation`</sub>
 
-- Client input type: `{ org: string; ref?: string; repository_name?: string; time_period?: "hour" | "day" | "week" | "month"; actor_name?: string; rule_suite_result?: "pass" | "fail" | "bypass" | "all"; evaluate_status?: "all" | "active" | "evaluate"; per_page?: number; page?: number }`
-- Client transport options: None
+## `github.repos.listAttestations`
 
-**Outputs**
+List attestations — [API reference](https://docs.github.com/rest/repos/attestations#list-attestations)
 
-- Client return type: `({ id?: number; actor_id?: number; actor_name?: string; before_sha?: string; after_sha?: string; ref?: string; repository_id?: number; repository_name?: string; pushed_at?: string; result?: "pass" | "fail" | "bypass"; e...`
-- OpenAPI response codes: `200`, `404`, `500`
-
 ```ts
-import github from "@utdk/github";
-
-type ReposGetOrgRuleSuitesInput = Parameters<typeof github.repos.getOrgRuleSuites> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetOrgRuleSuitesOutput = Awaited<ReturnType<typeof github.repos.getOrgRuleSuites>>;
-
-const input: ReposGetOrgRuleSuitesInput = {} as { org: string; ref?: string; repository_name?: string; time_period?: "hour" | "day" | "week" | "month"; actor_name?: string; rule_suite_result?: "pass" | "fail" | "bypass" | "all"; evaluate_status?: "all" | "active" | "evaluate"; per_page?: number; page?: number };
-const result: ReposGetOrgRuleSuitesOutput = await github.repos.getOrgRuleSuites(input);
-
-// Result shape (from schema): ({ id?: number; actor_id?: number; actor_name?: string; before_sha?: string; after_sha?: string; ref?: string; repository_id?: number; repository_name?: string; pushed_at?: string; result?: "pass" | "fail" | "bypass"; e...
+github.repos.listAttestations(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The parameter should be set to the attestation's subject's SHA256 digest, in the form `sha256:HEX_DIGEST`. */
+  subject_digest: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** Optional filter for fetching attestations with a given predicate type. This option accepts `provenance`, `sbom`, `release`, or freeform text for custom predicate types. */
+  predicate_type?: string;
+}): Promise<{ attestations?: ({ bundle?: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; repository_id?: number; bundle_url?: string; initiator?: string })[] }>
 ```
-
-### `github.repos.getOrgRuleSuite`
-
-- **HTTP**: `GET /orgs/{org}/rulesets/rule-suites/{rule_suite_id}`
-- **What it does**: Get an organization rule suite
-- **OpenAPI operationId**: `repos/get-org-rule-suite`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ org: string; rule_suite_id: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/attestations/{subject_digest}` · `repos/list-attestations`</sub>
 
-**Outputs**
+## `github.repos.listAutolinks`
 
-- Client return type: `{ id?: number; actor_id?: number | null; actor_name?: string | null; before_sha?: string; after_sha?: string; ref?: string; repository_id?: number; repository_name?: string; pushed_at?: string; result?: "pass" | "fail" ...`
-- OpenAPI response codes: `200`, `404`, `500`
+Get all autolinks of a repository — [API reference](https://docs.github.com/rest/repos/autolinks#get-all-autolinks-of-a-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type ReposGetOrgRuleSuiteInput = Parameters<typeof github.repos.getOrgRuleSuite> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetOrgRuleSuiteOutput = Awaited<ReturnType<typeof github.repos.getOrgRuleSuite>>;
-
-const input: ReposGetOrgRuleSuiteInput = {} as { org: string; rule_suite_id: number };
-const result: ReposGetOrgRuleSuiteOutput = await github.repos.getOrgRuleSuite(input);
-
-// Result shape (from schema): { id?: number; actor_id?: number | null; actor_name?: string | null; before_sha?: string; after_sha?: string; ref?: string; repository_id?: number; repository_name?: string; pushed_at?: string; result?: "pass" | "fail" ...
+github.repos.listAutolinks(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(Autolink)[]>
 ```
 
-### `github.repos.delete`
+<sub>`GET /repos/{owner}/{repo}/autolinks` · `repos/list-autolinks`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}`
-- **What it does**: Delete a repository
-- **OpenAPI operationId**: `repos/delete`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `307`, `403`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.createAutolink`
 
-**Inputs**
+Create an autolink reference for a repository — [API reference](https://docs.github.com/rest/repos/autolinks#create-an-autolink-reference-for-a-repository)
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `307`, `403`, `404`, `409`
-
 ```ts
-import github from "@utdk/github";
-
-type ReposDeleteInput = Parameters<typeof github.repos.delete> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteOutput = Awaited<ReturnType<typeof github.repos.delete>>;
-
-const input: ReposDeleteInput = {} as { owner: string; repo: string };
-const result: ReposDeleteOutput = await github.repos.delete(input);
-
-// Result shape (from schema): unknown
+github.repos.createAutolink(input: {
+  /** This prefix appended by certain characters will generate a link any time it is found in an issue, pull request, or commit. */
+  key_prefix: string;
+  /** The URL must contain `<num>` for the reference number. `<num>` matches different characters depending on the value of `is_alphanumeric`. */
+  url_template: string;
+  /** Whether this autolink reference matches alphanumeric characters. If true, the `<num>` parameter of the `url_template` matches alphanumeric characters `A-Z` (case insensitive), `0-9`, and `-`. If false, this autolink reference only matches numeric characters. */
+  is_alphanumeric?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Autolink>
 ```
-
-### `github.repos.get`
 
-- **HTTP**: `GET /repos/{owner}/{repo}`
-- **What it does**: Get a repository
-- **OpenAPI operationId**: `repos/get`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `301`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`POST /repos/{owner}/{repo}/autolinks` · `repos/create-autolink`</sub>
 
-**Inputs**
+## `github.repos.deleteAutolink`
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+Delete an autolink reference from a repository — [API reference](https://docs.github.com/rest/repos/autolinks#delete-an-autolink-reference-from-a-repository)
 
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: stri...`
-- OpenAPI response codes: `200`, `301`, `403`, `404`
-
 ```ts
-import github from "@utdk/github";
-
-type ReposGetInput = Parameters<typeof github.repos.get> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetOutput = Awaited<ReturnType<typeof github.repos.get>>;
-
-const input: ReposGetInput = {} as { owner: string; repo: string };
-const result: ReposGetOutput = await github.repos.get(input);
-
-// Result shape (from schema): { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: stri...
+github.repos.deleteAutolink(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the autolink. */
+  autolink_id: number;
+}): Promise<BasicError>
 ```
-
-### `github.repos.update`
-
-- **HTTP**: `PATCH /repos/{owner}/{repo}`
-- **What it does**: Update a repository
-- **OpenAPI operationId**: `repos/update`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `307`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
 
-**Inputs**
+<sub>`DELETE /repos/{owner}/{repo}/autolinks/{autolink_id}` · `repos/delete-autolink`</sub>
 
-- Client input type: `{ name?: string; description?: string; homepage?: string; private?: boolean; visibility?: "public" | "private"; security_and_analysis?: { advanced_security?: { status?: string }; code_security?: { status?: string }; secret_scanning?: { status?: string }; secret_scanning_push_protection?: { status?: string }; secret_scanning_ai_detection?: { status?: string }; secret_scanning_non_provider_patterns?: { status?: string }; secret_scanning_delegated_alert_dismissal?: { status?: string }; secret_scanning_delegated_bypass?: { status?: string }; secret_scanning_delegated_bypass_options?: { reviewers?: ({ reviewer_id: number; reviewer_type: "TEAM" | "ROLE"; mode?: "ALWAYS" | "EXEMPT" })[] } } | null; has_issues?: boolean; has_projects?: boolean; has_wiki?: boolean; is_template?: boolean; default_branch?: string; allow_squash_merge?: boolean; allow_merge_commit?: boolean; allow_rebase_merge?: boolean; allow_auto_merge?: boolean; delete_branch_on_merge?: boolean; allow_update_branch?: boolean; use_squash_pr_title_as_default?: boolean; squash_merge_commit_title?: "PR_TITLE" | "COMMIT_OR_PR_TITLE"; squash_merge_commit_message?: "PR_BODY" | "COMMIT_MESSAGES" | "BLANK"; merge_commit_title?: "PR_TITLE" | "MERGE_MESSAGE"; merge_commit_message?: "PR_BODY" | "PR_TITLE" | "BLANK"; archived?: boolean; allow_forking?: boolean; web_commit_signoff_required?: boolean; owner: string; repo: string }`
-- Client transport options: None
+## `github.repos.getAutolink`
 
-**Outputs**
+Get an autolink reference of a repository — [API reference](https://docs.github.com/rest/repos/autolinks#get-an-autolink-reference-of-a-repository)
 
-- Client return type: `{ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: stri...`
-- OpenAPI response codes: `200`, `307`, `403`, `404`, `422`
-
 ```ts
-import github from "@utdk/github";
-
-type ReposUpdateInput = Parameters<typeof github.repos.update> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateOutput = Awaited<ReturnType<typeof github.repos.update>>;
-
-const input: ReposUpdateInput = {} as { name?: string; description?: string; homepage?: string; private?: boolean; visibility?: "public" | "private"; security_and_analysis?: { advanced_security?: { status?: string }; code_security?: { status?: string }; secret_scanning?: { status?: string }; secret_scanning_push_protection?: { status?: string }; secret_scanning_ai_detection?: { status?: string }; secret_scanning_non_provider_patterns?: { status?: string }; secret_scanning_delegated_alert_dismissal?: { status?: string }; secret_scanning_delegated_bypass?: { status?: string }; secret_scanning_delegated_bypass_options?: { reviewers?: ({ reviewer_id: number; reviewer_type: "TEAM" | "ROLE"; mode?: "ALWAYS" | "EXEMPT" })[] } } | null; has_issues?: boolean; has_projects?: boolean; has_wiki?: boolean; is_template?: boolean; default_branch?: string; allow_squash_merge?: boolean; allow_merge_commit?: boolean; allow_rebase_merge?: boolean; allow_auto_merge?: boolean; delete_branch_on_merge?: boolean; allow_update_branch?: boolean; use_squash_pr_title_as_default?: boolean; squash_merge_commit_title?: "PR_TITLE" | "COMMIT_OR_PR_TITLE"; squash_merge_commit_message?: "PR_BODY" | "COMMIT_MESSAGES" | "BLANK"; merge_commit_title?: "PR_TITLE" | "MERGE_MESSAGE"; merge_commit_message?: "PR_BODY" | "PR_TITLE" | "BLANK"; archived?: boolean; allow_forking?: boolean; web_commit_signoff_required?: boolean; owner: string; repo: string };
-const result: ReposUpdateOutput = await github.repos.update(input);
-
-// Result shape (from schema): { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: stri...
+github.repos.getAutolink(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the autolink. */
+  autolink_id: number;
+}): Promise<Autolink>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/autolinks/{autolink_id}` · `repos/get-autolink`</sub>
 
-### `github.repos.listActivities`
+## `github.repos.disableAutomatedSecurityFixes`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/activity`
-- **What it does**: List repository activities
-- **OpenAPI operationId**: `repos/list-activities`
-- **Path params**: None
-- **Query params**: `ref`, `actor`, `time_period`, `activity_type`
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Disable Dependabot security updates — [API reference](https://docs.github.com/rest/repos/repos#disable-dependabot-security-updates)
 
-**Inputs**
+```ts
+github.repos.disableAutomatedSecurityFixes(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string; direction?: "asc" | "desc"; per_page?: number; before?: string; after?: string; ref?: string; actor?: string; time_period?: "day" | "week" | "month" | "quarter" | "year"; activity_type?: "push" | "force_push" | "branch_creation" | "branch_deletion" | "pr_merge" | "merge_queue_merge" }`
-- Client transport options: None
+<sub>`DELETE /repos/{owner}/{repo}/automated-security-fixes` · `repos/disable-automated-security-fixes`</sub>
 
-**Outputs**
+## `github.repos.checkAutomatedSecurityFixes`
 
-- Client return type: `({ id: number; node_id: string; before: string; after: string; ref: string; timestamp: string; activity_type: "push" | "force_push" | "branch_deletion" | "branch_creation" | "pr_merge" | "merge_queue_merge"; actor: { na...`
-- OpenAPI response codes: `200`, `422`
+Check if Dependabot security updates are enabled for a repository — [API reference](https://docs.github.com/rest/repos/repos#check-if-dependabot-security-updates-are-enabled-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.repos.checkAutomatedSecurityFixes(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<CheckAutomatedSecurityFixes>
+```
 
-type ReposListActivitiesInput = Parameters<typeof github.repos.listActivities> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListActivitiesOutput = Awaited<ReturnType<typeof github.repos.listActivities>>;
+<sub>`GET /repos/{owner}/{repo}/automated-security-fixes` · `repos/check-automated-security-fixes`</sub>
 
-const input: ReposListActivitiesInput = {} as { owner: string; repo: string; direction?: "asc" | "desc"; per_page?: number; before?: string; after?: string; ref?: string; actor?: string; time_period?: "day" | "week" | "month" | "quarter" | "year"; activity_type?: "push" | "force_push" | "branch_creation" | "branch_deletion" | "pr_merge" | "merge_queue_merge" };
-const result: ReposListActivitiesOutput = await github.repos.listActivities(input);
+## `github.repos.enableAutomatedSecurityFixes`
 
-// Result shape (from schema): ({ id: number; node_id: string; before: string; after: string; ref: string; timestamp: string; activity_type: "push" | "force_push" | "branch_deletion" | "branch_creation" | "pr_merge" | "merge_queue_merge"; actor: { na...
+Enable Dependabot security updates — [API reference](https://docs.github.com/rest/repos/repos#enable-dependabot-security-updates)
+
+```ts
+github.repos.enableAutomatedSecurityFixes(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<unknown>
 ```
 
-### `github.repos.createAttestation`
+<sub>`PUT /repos/{owner}/{repo}/automated-security-fixes` · `repos/enable-automated-security-fixes`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/attestations`
-- **What it does**: Create an attestation
-- **OpenAPI operationId**: `repos/create-attestation`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.listBranches`
 
-**Inputs**
+List branches — [API reference](https://docs.github.com/rest/branches/branches#list-branches)
 
-- Client input type: `{ bundle: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; owner: string; repo: string }`
-- Client transport options: None
+```ts
+github.repos.listBranches(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Setting to `true` returns only branches protected by branch protections or rulesets. When set to `false`, only unprotected branches are returned. Omitting this parameter returns all branches. */
+  protected?: boolean;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(ShortBranch)[]>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/branches` · `repos/list-branches`</sub>
 
-- Client return type: `{ id?: number }`
-- OpenAPI response codes: `201`, `403`, `422`
+## `github.repos.getBranch`
 
+Get a branch — [API reference](https://docs.github.com/rest/branches/branches#get-a-branch)
+
 ```ts
-import github from "@utdk/github";
+github.repos.getBranch(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<BranchWithProtection>
+```
+
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}` · `repos/get-branch`</sub>
 
-type ReposCreateAttestationInput = Parameters<typeof github.repos.createAttestation> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateAttestationOutput = Awaited<ReturnType<typeof github.repos.createAttestation>>;
+## `github.repos.deleteBranchProtection`
 
-const input: ReposCreateAttestationInput = {} as { bundle: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; owner: string; repo: string };
-const result: ReposCreateAttestationOutput = await github.repos.createAttestation(input);
+Delete branch protection — [API reference](https://docs.github.com/rest/branches/branch-protection#delete-branch-protection)
 
-// Result shape (from schema): { id?: number }
+```ts
+github.repos.deleteBranchProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<BasicError>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection` · `repos/delete-branch-protection`</sub>
 
-### `github.repos.listAttestations`
+## `github.repos.getBranchProtection`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/attestations/{subject_digest}`
-- **What it does**: List attestations
-- **OpenAPI operationId**: `repos/list-attestations`
-- **Path params**: `subject_digest`
-- **Query params**: `predicate_type`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get branch protection — [API reference](https://docs.github.com/rest/branches/branch-protection#get-branch-protection)
 
-**Inputs**
+```ts
+github.repos.getBranchProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<BranchProtection>
+```
 
-- Client input type: `{ owner: string; repo: string; subject_digest: string; per_page?: number; before?: string; after?: string; predicate_type?: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}/protection` · `repos/get-branch-protection`</sub>
 
-**Outputs**
+## `github.repos.updateBranchProtection`
 
-- Client return type: `{ attestations?: ({ bundle?: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; repository_id?: number; bundle_url?: string; initiator?: string })[] }`
-- OpenAPI response codes: `200`
+Update branch protection — [API reference](https://docs.github.com/rest/branches/branch-protection#update-branch-protection)
 
 ```ts
-import github from "@utdk/github";
+github.repos.updateBranchProtection(input: {
+  /** Require status checks to pass before merging. Set to `null` to disable. */
+  required_status_checks: { strict: boolean; contexts: (string)[]; checks?: ({ context: string; app_id?: number })[] } | null;
+  /** Enforce all configured restrictions for administrators. Set to `true` to enforce required status checks for repository administrators. Set to `null` to disable. */
+  enforce_admins: boolean | null;
+  /** Require at least one approving review on a pull request, before merging. Set to `null` to disable. */
+  required_pull_request_reviews: { dismissal_restrictions?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] }; dismiss_stale_reviews?: boolean; require_code_owner_reviews?: boolean; required_approving_review_count?: number; require_last_push_approval?: boolean; bypass_pull_request_allowances?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] } } | null;
+  /** Restrict who can push to the protected branch. User, app, and team `restrictions` are only available for organization-owned repositories. Set to `null` to disable. */
+  restrictions: { users: (string)[]; teams: (string)[]; apps?: (string)[] } | null;
+  /** Enforces a linear commit Git history, which prevents anyone from pushing merge commits to a branch. Set to `true` to enforce a linear commit history. Set to `false` to disable a linear commit Git history. Your repository must allow squash merging or rebase merging before you can enable a linear commit history. Default: `false`. For more information, see "[Requiring a linear commit history](https://docs.github.com/github/administering-a-repository/requiring-a-linear-commit-history)" in the GitHub Help documentation. */
+  required_linear_history?: boolean;
+  /** Permits force pushes to the protected branch by anyone with write access to the repository. Set to `true` to allow force pushes. Set to `false` or `null` to block force pushes. Default: `false`. For more information, see "[Enabling force pushes to a protected branch](https://docs.github.com/github/administering-a-repository/enabling-force-pushes-to-a-protected-branch)" in the GitHub Help documentation." */
+  allow_force_pushes?: boolean | null;
+  /** Allows deletion of the protected branch by anyone with write access to the repository. Set to `false` to prevent deletion of the protected branch. Default: `false`. For more information, see "[Enabling force pushes to a protected branch](https://docs.github.com/github/administering-a-repository/enabling-force-pushes-to-a-protected-branch)" in the GitHub Help documentation. */
+  allow_deletions?: boolean;
+  /** If set to `true`, the `restrictions` branch protection settings which limits who can push will also block pushes which create new branches, unless the push is initiated by a user, team, or app which has the ability to push. Set to `true` to restrict new branch creation. Default: `false`. */
+  block_creations?: boolean;
+  /** Requires all conversations on code to be resolved before a pull request can be merged into a branch that matches this rule. Set to `false` to disable. Default: `false`. */
+  required_conversation_resolution?: boolean;
+  /** Whether to set the branch as read-only. If this is true, users will not be able to push to the branch. Default: `false`. */
+  lock_branch?: boolean;
+  /** Whether users can pull changes from upstream when the branch is locked. Set to `true` to allow fork syncing. Set to `false` to prevent fork syncing. Default: `false`. */
+  allow_fork_syncing?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<ProtectedBranch>
+```
 
-type ReposListAttestationsInput = Parameters<typeof github.repos.listAttestations> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListAttestationsOutput = Awaited<ReturnType<typeof github.repos.listAttestations>>;
+<sub>`PUT /repos/{owner}/{repo}/branches/{branch}/protection` · `repos/update-branch-protection`</sub>
 
-const input: ReposListAttestationsInput = {} as { owner: string; repo: string; subject_digest: string; per_page?: number; before?: string; after?: string; predicate_type?: string };
-const result: ReposListAttestationsOutput = await github.repos.listAttestations(input);
+## `github.repos.deleteAdminBranchProtection`
 
-// Result shape (from schema): { attestations?: ({ bundle?: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; repository_id?: number; bundle_url?: string; initiator?: string })[] }
+Delete admin branch protection — [API reference](https://docs.github.com/rest/branches/branch-protection#delete-admin-branch-protection)
+
+```ts
+github.repos.deleteAdminBranchProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<BasicError>
 ```
 
-### `github.repos.listAutolinks`
+<sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins` · `repos/delete-admin-branch-protection`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/autolinks`
-- **What it does**: Get all autolinks of a repository
-- **OpenAPI operationId**: `repos/list-autolinks`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.getAdminBranchProtection`
 
-**Inputs**
+Get admin branch protection — [API reference](https://docs.github.com/rest/branches/branch-protection#get-admin-branch-protection)
+
+```ts
+github.repos.getAdminBranchProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<ProtectedBranchAdminEnforced>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins` · `repos/get-admin-branch-protection`</sub>
 
-**Outputs**
+## `github.repos.setAdminBranchProtection`
 
-- Client return type: `({ id: number; key_prefix: string; url_template: string; is_alphanumeric: boolean; updated_at?: string | null })[]`
-- OpenAPI response codes: `200`
+Set admin branch protection — [API reference](https://docs.github.com/rest/branches/branch-protection#set-admin-branch-protection)
 
 ```ts
-import github from "@utdk/github";
+github.repos.setAdminBranchProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<ProtectedBranchAdminEnforced>
+```
+
+<sub>`POST /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins` · `repos/set-admin-branch-protection`</sub>
 
-type ReposListAutolinksInput = Parameters<typeof github.repos.listAutolinks> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListAutolinksOutput = Awaited<ReturnType<typeof github.repos.listAutolinks>>;
+## `github.repos.deletePullRequestReviewProtection`
 
-const input: ReposListAutolinksInput = {} as { owner: string; repo: string };
-const result: ReposListAutolinksOutput = await github.repos.listAutolinks(input);
+Delete pull request review protection — [API reference](https://docs.github.com/rest/branches/branch-protection#delete-pull-request-review-protection)
 
-// Result shape (from schema): ({ id: number; key_prefix: string; url_template: string; is_alphanumeric: boolean; updated_at?: string | null })[]
+```ts
+github.repos.deletePullRequestReviewProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<BasicError>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews` · `repos/delete-pull-request-review-protection`</sub>
 
-### `github.repos.createAutolink`
+## `github.repos.getPullRequestReviewProtection`
 
-- **HTTP**: `POST /repos/{owner}/{repo}/autolinks`
-- **What it does**: Create an autolink reference for a repository
-- **OpenAPI operationId**: `repos/create-autolink`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get pull request review protection — [API reference](https://docs.github.com/rest/branches/branch-protection#get-pull-request-review-protection)
 
-**Inputs**
+```ts
+github.repos.getPullRequestReviewProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<ProtectedBranchPullRequestReview>
+```
 
-- Client input type: `{ key_prefix: string; url_template: string; is_alphanumeric?: boolean; owner: string; repo: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews` · `repos/get-pull-request-review-protection`</sub>
 
-**Outputs**
+## `github.repos.updatePullRequestReviewProtection`
 
-- Client return type: `{ id: number; key_prefix: string; url_template: string; is_alphanumeric: boolean; updated_at?: string | null }`
-- OpenAPI response codes: `201`, `422`
+Update pull request review protection — [API reference](https://docs.github.com/rest/branches/branch-protection#update-pull-request-review-protection)
 
 ```ts
-import github from "@utdk/github";
+github.repos.updatePullRequestReviewProtection(input: {
+  /** Specify which users, teams, and apps can dismiss pull request reviews. Pass an empty `dismissal_restrictions` object to disable. User and team `dismissal_restrictions` are only available for organization-owned repositories. Omit this parameter for personal repositories. */
+  dismissal_restrictions?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] };
+  /** Set to `true` if you want to automatically dismiss approving reviews when someone pushes a new commit. */
+  dismiss_stale_reviews?: boolean;
+  /** Blocks merging pull requests until [code owners](https://docs.github.com/articles/about-code-owners/) have reviewed. */
+  require_code_owner_reviews?: boolean;
+  /** Specifies the number of reviewers required to approve pull requests. Use a number between 1 and 6 or 0 to not require reviewers. */
+  required_approving_review_count?: number;
+  /** Whether the most recent push must be approved by someone other than the person who pushed it. Default: `false` */
+  require_last_push_approval?: boolean;
+  /** Allow specific users, teams, or apps to bypass pull request requirements. */
+  bypass_pull_request_allowances?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] };
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<ProtectedBranchPullRequestReview>
+```
 
-type ReposCreateAutolinkInput = Parameters<typeof github.repos.createAutolink> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateAutolinkOutput = Awaited<ReturnType<typeof github.repos.createAutolink>>;
+<sub>`PATCH /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews` · `repos/update-pull-request-review-protection`</sub>
 
-const input: ReposCreateAutolinkInput = {} as { key_prefix: string; url_template: string; is_alphanumeric?: boolean; owner: string; repo: string };
-const result: ReposCreateAutolinkOutput = await github.repos.createAutolink(input);
+## `github.repos.deleteCommitSignatureProtection`
 
-// Result shape (from schema): { id: number; key_prefix: string; url_template: string; is_alphanumeric: boolean; updated_at?: string | null }
+Delete commit signature protection — [API reference](https://docs.github.com/rest/branches/branch-protection#delete-commit-signature-protection)
+
+```ts
+github.repos.deleteCommitSignatureProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<BasicError>
 ```
 
-### `github.repos.deleteAutolink`
+<sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures` · `repos/delete-commit-signature-protection`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/autolinks/{autolink_id}`
-- **What it does**: Delete an autolink reference from a repository
-- **OpenAPI operationId**: `repos/delete-autolink`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.getCommitSignatureProtection`
 
-**Inputs**
+Get commit signature protection — [API reference](https://docs.github.com/rest/branches/branch-protection#get-commit-signature-protection)
 
-- Client input type: `{ owner: string; repo: string; autolink_id: number }`
-- Client transport options: None
+```ts
+github.repos.getCommitSignatureProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<ProtectedBranchAdminEnforced>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures` · `repos/get-commit-signature-protection`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+## `github.repos.createCommitSignatureProtection`
 
+Create commit signature protection — [API reference](https://docs.github.com/rest/branches/branch-protection#create-commit-signature-protection)
+
 ```ts
-import github from "@utdk/github";
+github.repos.createCommitSignatureProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<ProtectedBranchAdminEnforced>
+```
+
+<sub>`POST /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures` · `repos/create-commit-signature-protection`</sub>
 
-type ReposDeleteAutolinkInput = Parameters<typeof github.repos.deleteAutolink> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteAutolinkOutput = Awaited<ReturnType<typeof github.repos.deleteAutolink>>;
+## `github.repos.removeStatusCheckProtection`
 
-const input: ReposDeleteAutolinkInput = {} as { owner: string; repo: string; autolink_id: number };
-const result: ReposDeleteAutolinkOutput = await github.repos.deleteAutolink(input);
+Remove status check protection — [API reference](https://docs.github.com/rest/branches/branch-protection#remove-status-check-protection)
 
-// Result shape (from schema): unknown
+```ts
+github.repos.removeStatusCheckProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<unknown>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks` · `repos/remove-status-check-protection`</sub>
 
-### `github.repos.getAutolink`
+## `github.repos.getStatusChecksProtection`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/autolinks/{autolink_id}`
-- **What it does**: Get an autolink reference of a repository
-- **OpenAPI operationId**: `repos/get-autolink`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get status checks protection — [API reference](https://docs.github.com/rest/branches/branch-protection#get-status-checks-protection)
 
-**Inputs**
+```ts
+github.repos.getStatusChecksProtection(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<StatusCheckPolicy>
+```
 
-- Client input type: `{ owner: string; repo: string; autolink_id: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks` · `repos/get-status-checks-protection`</sub>
 
-**Outputs**
+## `github.repos.updateStatusCheckProtection`
 
-- Client return type: `{ id: number; key_prefix: string; url_template: string; is_alphanumeric: boolean; updated_at?: string | null }`
-- OpenAPI response codes: `200`, `404`
+Update status check protection — [API reference](https://docs.github.com/rest/branches/branch-protection#update-status-check-protection)
 
 ```ts
-import github from "@utdk/github";
+github.repos.updateStatusCheckProtection(input: {
+  /** Require branches to be up to date before merging. */
+  strict?: boolean;
+  /** **Closing down notice**: The list of status checks to require in order to merge into this branch. If any of these checks have recently been set by a particular GitHub App, they will be required to come from that app in future for the branch to merge. Use `checks` instead of `contexts` for more fine-grained control. */
+  contexts?: (string)[];
+  /** The list of status checks to require in order to merge into this branch. */
+  checks?: ({ context: string; app_id?: number })[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<StatusCheckPolicy>
+```
 
-type ReposGetAutolinkInput = Parameters<typeof github.repos.getAutolink> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetAutolinkOutput = Awaited<ReturnType<typeof github.repos.getAutolink>>;
+<sub>`PATCH /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks` · `repos/update-status-check-protection`</sub>
 
-const input: ReposGetAutolinkInput = {} as { owner: string; repo: string; autolink_id: number };
-const result: ReposGetAutolinkOutput = await github.repos.getAutolink(input);
+## `github.repos.removeStatusCheckContexts`
 
-// Result shape (from schema): { id: number; key_prefix: string; url_template: string; is_alphanumeric: boolean; updated_at?: string | null }
+Remove status check contexts — [API reference](https://docs.github.com/rest/branches/branch-protection#remove-status-check-contexts)
+
+```ts
+github.repos.removeStatusCheckContexts(input: {
+  body?: { contexts: (string)[] } | (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(string)[]>
 ```
 
-### `github.repos.disableAutomatedSecurityFixes`
+<sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts` · `repos/remove-status-check-contexts`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/automated-security-fixes`
-- **What it does**: Disable Dependabot security updates
-- **OpenAPI operationId**: `repos/disable-automated-security-fixes`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.getAllStatusCheckContexts`
 
-**Inputs**
+Get all status check contexts — [API reference](https://docs.github.com/rest/branches/branch-protection#get-all-status-check-contexts)
+
+```ts
+github.repos.getAllStatusCheckContexts(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(string)[]>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts` · `repos/get-all-status-check-contexts`</sub>
 
-**Outputs**
+## `github.repos.addStatusCheckContexts`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Add status check contexts — [API reference](https://docs.github.com/rest/branches/branch-protection#add-status-check-contexts)
 
 ```ts
-import github from "@utdk/github";
+github.repos.addStatusCheckContexts(input: {
+  body?: { contexts: (string)[] } | (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(string)[]>
+```
+
+<sub>`POST /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts` · `repos/add-status-check-contexts`</sub>
 
-type ReposDisableAutomatedSecurityFixesInput = Parameters<typeof github.repos.disableAutomatedSecurityFixes> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDisableAutomatedSecurityFixesOutput = Awaited<ReturnType<typeof github.repos.disableAutomatedSecurityFixes>>;
+## `github.repos.setStatusCheckContexts`
 
-const input: ReposDisableAutomatedSecurityFixesInput = {} as { owner: string; repo: string };
-const result: ReposDisableAutomatedSecurityFixesOutput = await github.repos.disableAutomatedSecurityFixes(input);
+Set status check contexts — [API reference](https://docs.github.com/rest/branches/branch-protection#set-status-check-contexts)
 
-// Result shape (from schema): unknown
+```ts
+github.repos.setStatusCheckContexts(input: {
+  body?: { contexts: (string)[] } | (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(string)[]>
 ```
+
+<sub>`PUT /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts` · `repos/set-status-check-contexts`</sub>
 
-### `github.repos.checkAutomatedSecurityFixes`
+## `github.repos.deleteAccessRestrictions`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/automated-security-fixes`
-- **What it does**: Check if Dependabot security updates are enabled for a repository
-- **OpenAPI operationId**: `repos/check-automated-security-fixes`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Delete access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#delete-access-restrictions)
 
-**Inputs**
+```ts
+github.repos.deleteAccessRestrictions(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions` · `repos/delete-access-restrictions`</sub>
 
-**Outputs**
+## `github.repos.getAccessRestrictions`
 
-- Client return type: `{ enabled: boolean; paused: boolean }`
-- OpenAPI response codes: `200`, `404`
+Get access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#get-access-restrictions)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getAccessRestrictions(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<BranchRestrictionPolicy>
+```
 
-type ReposCheckAutomatedSecurityFixesInput = Parameters<typeof github.repos.checkAutomatedSecurityFixes> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCheckAutomatedSecurityFixesOutput = Awaited<ReturnType<typeof github.repos.checkAutomatedSecurityFixes>>;
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions` · `repos/get-access-restrictions`</sub>
 
-const input: ReposCheckAutomatedSecurityFixesInput = {} as { owner: string; repo: string };
-const result: ReposCheckAutomatedSecurityFixesOutput = await github.repos.checkAutomatedSecurityFixes(input);
+## `github.repos.removeAppAccessRestrictions`
 
-// Result shape (from schema): { enabled: boolean; paused: boolean }
+Remove app access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#remove-app-access-restrictions)
+
+```ts
+github.repos.removeAppAccessRestrictions(input: {
+  /** The GitHub Apps that have push access to this branch. Use the slugified version of the app name. **Note**: The list of users, apps, and teams in total is limited to 100 items. */
+  apps: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(Integration)[]>
 ```
 
-### `github.repos.enableAutomatedSecurityFixes`
+<sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps` · `repos/remove-app-access-restrictions`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/automated-security-fixes`
-- **What it does**: Enable Dependabot security updates
-- **OpenAPI operationId**: `repos/enable-automated-security-fixes`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.getAppsWithAccessToProtectedBranch`
 
-**Inputs**
+Get apps with access to the protected branch — [API reference](https://docs.github.com/rest/branches/branch-protection#get-apps-with-access-to-the-protected-branch)
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+```ts
+github.repos.getAppsWithAccessToProtectedBranch(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(Integration)[]>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps` · `repos/get-apps-with-access-to-protected-branch`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `github.repos.addAppAccessRestrictions`
 
+Add app access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#add-app-access-restrictions)
+
 ```ts
-import github from "@utdk/github";
+github.repos.addAppAccessRestrictions(input: {
+  /** The GitHub Apps that have push access to this branch. Use the slugified version of the app name. **Note**: The list of users, apps, and teams in total is limited to 100 items. */
+  apps: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(Integration)[]>
+```
+
+<sub>`POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps` · `repos/add-app-access-restrictions`</sub>
 
-type ReposEnableAutomatedSecurityFixesInput = Parameters<typeof github.repos.enableAutomatedSecurityFixes> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposEnableAutomatedSecurityFixesOutput = Awaited<ReturnType<typeof github.repos.enableAutomatedSecurityFixes>>;
+## `github.repos.setAppAccessRestrictions`
 
-const input: ReposEnableAutomatedSecurityFixesInput = {} as { owner: string; repo: string };
-const result: ReposEnableAutomatedSecurityFixesOutput = await github.repos.enableAutomatedSecurityFixes(input);
+Set app access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#set-app-access-restrictions)
 
-// Result shape (from schema): unknown
+```ts
+github.repos.setAppAccessRestrictions(input: {
+  /** The GitHub Apps that have push access to this branch. Use the slugified version of the app name. **Note**: The list of users, apps, and teams in total is limited to 100 items. */
+  apps: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(Integration)[]>
 ```
+
+<sub>`PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps` · `repos/set-app-access-restrictions`</sub>
 
-### `github.repos.listBranches`
+## `github.repos.removeTeamAccessRestrictions`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/branches`
-- **What it does**: List branches
-- **OpenAPI operationId**: `repos/list-branches`
-- **Path params**: None
-- **Query params**: `protected`
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Remove team access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#remove-team-access-restrictions)
 
-**Inputs**
+```ts
+github.repos.removeTeamAccessRestrictions(input: {
+  body?: { teams: (string)[] } | (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(Team)[]>
+```
 
-- Client input type: `{ owner: string; repo: string; protected?: boolean; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams` · `repos/remove-team-access-restrictions`</sub>
 
-**Outputs**
+## `github.repos.getTeamsWithAccessToProtectedBranch`
 
-- Client return type: `({ name: string; commit: { sha: string; url: string }; protected: boolean; protection?: { url?: string; enabled?: boolean; required_status_checks?: { url?: string; enforcement_level?: string; contexts: (string)[]; check...`
-- OpenAPI response codes: `200`, `404`
+Get teams with access to the protected branch — [API reference](https://docs.github.com/rest/branches/branch-protection#get-teams-with-access-to-the-protected-branch)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getTeamsWithAccessToProtectedBranch(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(Team)[]>
+```
 
-type ReposListBranchesInput = Parameters<typeof github.repos.listBranches> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListBranchesOutput = Awaited<ReturnType<typeof github.repos.listBranches>>;
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams` · `repos/get-teams-with-access-to-protected-branch`</sub>
 
-const input: ReposListBranchesInput = {} as { owner: string; repo: string; protected?: boolean; per_page?: number; page?: number };
-const result: ReposListBranchesOutput = await github.repos.listBranches(input);
+## `github.repos.addTeamAccessRestrictions`
 
-// Result shape (from schema): ({ name: string; commit: { sha: string; url: string }; protected: boolean; protection?: { url?: string; enabled?: boolean; required_status_checks?: { url?: string; enforcement_level?: string; contexts: (string)[]; check...
+Add team access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#add-team-access-restrictions)
+
+```ts
+github.repos.addTeamAccessRestrictions(input: {
+  body?: { teams: (string)[] } | (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(Team)[]>
 ```
 
-### `github.repos.getBranch`
+<sub>`POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams` · `repos/add-team-access-restrictions`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}`
-- **What it does**: Get a branch
-- **OpenAPI operationId**: `repos/get-branch`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `301`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.setTeamAccessRestrictions`
 
-**Inputs**
+Set team access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#set-team-access-restrictions)
+
+```ts
+github.repos.setTeamAccessRestrictions(input: {
+  body?: { teams: (string)[] } | (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(Team)[]>
+```
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+<sub>`PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams` · `repos/set-team-access-restrictions`</sub>
 
-**Outputs**
+## `github.repos.removeUserAccessRestrictions`
 
-- Client return type: `{ name: string; commit: { url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: st...`
-- OpenAPI response codes: `200`, `301`, `404`
+Remove user access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#remove-user-access-restrictions)
 
 ```ts
-import github from "@utdk/github";
+github.repos.removeUserAccessRestrictions(input: {
+  /** The username for users */
+  users: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(SimpleUser)[]>
+```
+
+<sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users` · `repos/remove-user-access-restrictions`</sub>
 
-type ReposGetBranchInput = Parameters<typeof github.repos.getBranch> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetBranchOutput = Awaited<ReturnType<typeof github.repos.getBranch>>;
+## `github.repos.getUsersWithAccessToProtectedBranch`
 
-const input: ReposGetBranchInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetBranchOutput = await github.repos.getBranch(input);
+Get users with access to the protected branch — [API reference](https://docs.github.com/rest/branches/branch-protection#get-users-with-access-to-the-protected-branch)
 
-// Result shape (from schema): { name: string; commit: { url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: st...
+```ts
+github.repos.getUsersWithAccessToProtectedBranch(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(SimpleUser)[]>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users` · `repos/get-users-with-access-to-protected-branch`</sub>
 
-### `github.repos.deleteBranchProtection`
+## `github.repos.addUserAccessRestrictions`
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/branches/{branch}/protection`
-- **What it does**: Delete branch protection
-- **OpenAPI operationId**: `repos/delete-branch-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Add user access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#add-user-access-restrictions)
 
-**Inputs**
+```ts
+github.repos.addUserAccessRestrictions(input: {
+  /** The username for users */
+  users: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(SimpleUser)[]>
+```
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+<sub>`POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users` · `repos/add-user-access-restrictions`</sub>
 
-**Outputs**
+## `github.repos.setUserAccessRestrictions`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`
+Set user access restrictions — [API reference](https://docs.github.com/rest/branches/branch-protection#set-user-access-restrictions)
 
 ```ts
-import github from "@utdk/github";
+github.repos.setUserAccessRestrictions(input: {
+  /** The username for users */
+  users: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<(SimpleUser)[]>
+```
 
-type ReposDeleteBranchProtectionInput = Parameters<typeof github.repos.deleteBranchProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteBranchProtectionOutput = Awaited<ReturnType<typeof github.repos.deleteBranchProtection>>;
+<sub>`PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users` · `repos/set-user-access-restrictions`</sub>
 
-const input: ReposDeleteBranchProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposDeleteBranchProtectionOutput = await github.repos.deleteBranchProtection(input);
+## `github.repos.renameBranch`
 
-// Result shape (from schema): unknown
+Rename a branch — [API reference](https://docs.github.com/rest/branches/branches#rename-a-branch)
+
+```ts
+github.repos.renameBranch(input: {
+  /** The new name of the branch. */
+  new_name: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+}): Promise<BranchWithProtection>
 ```
 
-### `github.repos.getBranchProtection`
+<sub>`POST /repos/{owner}/{repo}/branches/{branch}/rename` · `repos/rename-branch`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}/protection`
-- **What it does**: Get branch protection
-- **OpenAPI operationId**: `repos/get-branch-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.codeownersErrors`
 
-**Inputs**
+List CODEOWNERS errors — [API reference](https://docs.github.com/rest/repos/repos#list-codeowners-errors)
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+```ts
+github.repos.codeownersErrors(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** A branch, tag or commit name used to determine which version of the CODEOWNERS file to use. Default: the repository's default branch (e.g. `main`) */
+  ref?: string;
+}): Promise<CodeownersErrors>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/codeowners/errors` · `repos/codeowners-errors`</sub>
 
-- Client return type: `{ url?: string; enabled?: boolean; required_status_checks?: { url?: string; enforcement_level?: string; contexts: (string)[]; checks: ({ context: string; app_id: number | null })[]; contexts_url?: string; strict?: boole...`
-- OpenAPI response codes: `200`, `404`
+## `github.repos.listCollaborators`
 
+List repository collaborators — [API reference](https://docs.github.com/rest/collaborators/collaborators#list-repository-collaborators)
+
 ```ts
-import github from "@utdk/github";
+github.repos.listCollaborators(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Filter collaborators returned by their affiliation. `outside` means all outside collaborators of an organization-owned repository. `direct` means all collaborators with permissions to an organization-owned repository, regardless of organization membership status. `all` means all collaborators the authenticated user can see. */
+  affiliation?: "outside" | "direct" | "all";
+  /** Filter collaborators by the permissions they have on the repository. If not specified, all collaborators will be returned. */
+  permission?: "pull" | "triage" | "push" | "maintain" | "admin";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Collaborator)[]>
+```
+
+<sub>`GET /repos/{owner}/{repo}/collaborators` · `repos/list-collaborators`</sub>
 
-type ReposGetBranchProtectionInput = Parameters<typeof github.repos.getBranchProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetBranchProtectionOutput = Awaited<ReturnType<typeof github.repos.getBranchProtection>>;
+## `github.repos.removeCollaborator`
 
-const input: ReposGetBranchProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetBranchProtectionOutput = await github.repos.getBranchProtection(input);
+Remove a repository collaborator — [API reference](https://docs.github.com/rest/collaborators/collaborators#remove-a-repository-collaborator)
 
-// Result shape (from schema): { url?: string; enabled?: boolean; required_status_checks?: { url?: string; enforcement_level?: string; contexts: (string)[]; checks: ({ context: string; app_id: number | null })[]; contexts_url?: string; strict?: boole...
+```ts
+github.repos.removeCollaborator(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<BasicError>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/collaborators/{username}` · `repos/remove-collaborator`</sub>
 
-### `github.repos.updateBranchProtection`
+## `github.repos.checkCollaborator`
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/branches/{branch}/protection`
-- **What it does**: Update branch protection
-- **OpenAPI operationId**: `repos/update-branch-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Check if a user is a repository collaborator — [API reference](https://docs.github.com/rest/collaborators/collaborators#check-if-a-user-is-a-repository-collaborator)
 
-**Inputs**
+```ts
+github.repos.checkCollaborator(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ required_status_checks: { strict: boolean; contexts: (string)[]; checks?: ({ context: string; app_id?: number })[] } | null; enforce_admins: boolean | null; required_pull_request_reviews: { dismissal_restrictions?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] }; dismiss_stale_reviews?: boolean; require_code_owner_reviews?: boolean; required_approving_review_count?: number; require_last_push_approval?: boolean; bypass_pull_request_allowances?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] } } | null; restrictions: { users: (string)[]; teams: (string)[]; apps?: (string)[] } | null; required_linear_history?: boolean; allow_force_pushes?: boolean | null; allow_deletions?: boolean; block_creations?: boolean; required_conversation_resolution?: boolean; lock_branch?: boolean; allow_fork_syncing?: boolean; owner: string; repo: string; branch: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/collaborators/{username}` · `repos/check-collaborator`</sub>
 
-**Outputs**
+## `github.repos.addCollaborator`
 
-- Client return type: `{ url: string; required_status_checks?: { url: string; strict: boolean; contexts: (string)[]; checks: ({ context: string; app_id: number | null })[]; contexts_url: string }; required_pull_request_reviews?: { url: string...`
-- OpenAPI response codes: `200`, `403`, `404`, `422`
+Add a repository collaborator — [API reference](https://docs.github.com/rest/collaborators/collaborators#add-a-repository-collaborator)
 
 ```ts
-import github from "@utdk/github";
+github.repos.addCollaborator(input: {
+  /** The permission to grant the collaborator. **Only valid on organization-owned repositories.** We accept the following permissions to be set: `pull`, `triage`, `push`, `maintain`, `admin` and you can also specify a custom repository role name, if the owning organization has defined any. */
+  permission?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<RepositoryInvitation>
+```
 
-type ReposUpdateBranchProtectionInput = Parameters<typeof github.repos.updateBranchProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateBranchProtectionOutput = Awaited<ReturnType<typeof github.repos.updateBranchProtection>>;
+<sub>`PUT /repos/{owner}/{repo}/collaborators/{username}` · `repos/add-collaborator`</sub>
 
-const input: ReposUpdateBranchProtectionInput = {} as { required_status_checks: { strict: boolean; contexts: (string)[]; checks?: ({ context: string; app_id?: number })[] } | null; enforce_admins: boolean | null; required_pull_request_reviews: { dismissal_restrictions?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] }; dismiss_stale_reviews?: boolean; require_code_owner_reviews?: boolean; required_approving_review_count?: number; require_last_push_approval?: boolean; bypass_pull_request_allowances?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] } } | null; restrictions: { users: (string)[]; teams: (string)[]; apps?: (string)[] } | null; required_linear_history?: boolean; allow_force_pushes?: boolean | null; allow_deletions?: boolean; block_creations?: boolean; required_conversation_resolution?: boolean; lock_branch?: boolean; allow_fork_syncing?: boolean; owner: string; repo: string; branch: string };
-const result: ReposUpdateBranchProtectionOutput = await github.repos.updateBranchProtection(input);
+## `github.repos.getCollaboratorPermissionLevel`
 
-// Result shape (from schema): { url: string; required_status_checks?: { url: string; strict: boolean; contexts: (string)[]; checks: ({ context: string; app_id: number | null })[]; contexts_url: string }; required_pull_request_reviews?: { url: string...
+Get repository permissions for a user — [API reference](https://docs.github.com/rest/collaborators/collaborators#get-repository-permissions-for-a-user)
+
+```ts
+github.repos.getCollaboratorPermissionLevel(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<RepositoryCollaboratorPermission>
 ```
 
-### `github.repos.deleteAdminBranchProtection`
+<sub>`GET /repos/{owner}/{repo}/collaborators/{username}/permission` · `repos/get-collaborator-permission-level`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins`
-- **What it does**: Delete admin branch protection
-- **OpenAPI operationId**: `repos/delete-admin-branch-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.listCommitCommentsForRepo`
 
-**Inputs**
+List commit comments for a repository — [API reference](https://docs.github.com/rest/commits/comments#list-commit-comments-for-a-repository)
+
+```ts
+github.repos.listCommitCommentsForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(CommitComment)[]>
+```
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/comments` · `repos/list-commit-comments-for-repo`</sub>
 
-**Outputs**
+## `github.repos.deleteCommitComment`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+Delete a commit comment — [API reference](https://docs.github.com/rest/commits/comments#delete-a-commit-comment)
 
 ```ts
-import github from "@utdk/github";
+github.repos.deleteCommitComment(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the comment. */
+  comment_id: number;
+}): Promise<BasicError>
+```
+
+<sub>`DELETE /repos/{owner}/{repo}/comments/{comment_id}` · `repos/delete-commit-comment`</sub>
 
-type ReposDeleteAdminBranchProtectionInput = Parameters<typeof github.repos.deleteAdminBranchProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteAdminBranchProtectionOutput = Awaited<ReturnType<typeof github.repos.deleteAdminBranchProtection>>;
+## `github.repos.getCommitComment`
 
-const input: ReposDeleteAdminBranchProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposDeleteAdminBranchProtectionOutput = await github.repos.deleteAdminBranchProtection(input);
+Get a commit comment — [API reference](https://docs.github.com/rest/commits/comments#get-a-commit-comment)
 
-// Result shape (from schema): unknown
+```ts
+github.repos.getCommitComment(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the comment. */
+  comment_id: number;
+}): Promise<CommitComment>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/comments/{comment_id}` · `repos/get-commit-comment`</sub>
 
-### `github.repos.getAdminBranchProtection`
+## `github.repos.updateCommitComment`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins`
-- **What it does**: Get admin branch protection
-- **OpenAPI operationId**: `repos/get-admin-branch-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Update a commit comment — [API reference](https://docs.github.com/rest/commits/comments#update-a-commit-comment)
 
-**Inputs**
+```ts
+github.repos.updateCommitComment(input: {
+  /** The contents of the comment */
+  body: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the comment. */
+  comment_id: number;
+}): Promise<CommitComment>
+```
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+<sub>`PATCH /repos/{owner}/{repo}/comments/{comment_id}` · `repos/update-commit-comment`</sub>
 
-**Outputs**
+## `github.repos.listCommits`
 
-- Client return type: `{ url: string; enabled: boolean }`
-- OpenAPI response codes: `200`
+List commits — [API reference](https://docs.github.com/rest/commits/commits#list-commits)
 
 ```ts
-import github from "@utdk/github";
+github.repos.listCommits(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** SHA or branch to start listing commits from. Default: the repository’s default branch (usually `main`). */
+  sha?: string;
+  /** Only commits containing this file path will be returned. */
+  path?: string;
+  /** GitHub username or email address to use to filter by commit author. */
+  author?: string;
+  /** GitHub username or email address to use to filter by commit committer. */
+  committer?: string;
+  /** Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. Due to limitations of Git, timestamps must be between 1970-01-01 and 2099-12-31 (inclusive) or unexpected results may be returned. */
+  since?: string;
+  /** Only commits before this date will be returned. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. Due to limitations of Git, timestamps must be between 1970-01-01 and 2099-12-31 (inclusive) or unexpected results may be returned. */
+  until?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Commit)[]>
+```
 
-type ReposGetAdminBranchProtectionInput = Parameters<typeof github.repos.getAdminBranchProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetAdminBranchProtectionOutput = Awaited<ReturnType<typeof github.repos.getAdminBranchProtection>>;
+<sub>`GET /repos/{owner}/{repo}/commits` · `repos/list-commits`</sub>
 
-const input: ReposGetAdminBranchProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetAdminBranchProtectionOutput = await github.repos.getAdminBranchProtection(input);
+## `github.repos.listBranchesForHeadCommit`
 
-// Result shape (from schema): { url: string; enabled: boolean }
+List branches for HEAD commit — [API reference](https://docs.github.com/rest/commits/commits#list-branches-for-head-commit)
+
+```ts
+github.repos.listBranchesForHeadCommit(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The SHA of the commit. */
+  commit_sha: string;
+}): Promise<(BranchShort)[]>
 ```
 
-### `github.repos.setAdminBranchProtection`
+<sub>`GET /repos/{owner}/{repo}/commits/{commit_sha}/branches-where-head` · `repos/list-branches-for-head-commit`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins`
-- **What it does**: Set admin branch protection
-- **OpenAPI operationId**: `repos/set-admin-branch-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.listCommentsForCommit`
 
-**Inputs**
+List commit comments — [API reference](https://docs.github.com/rest/commits/comments#list-commit-comments)
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+```ts
+github.repos.listCommentsForCommit(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The SHA of the commit. */
+  commit_sha: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(CommitComment)[]>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/commits/{commit_sha}/comments` · `repos/list-comments-for-commit`</sub>
 
-- Client return type: `{ url: string; enabled: boolean }`
-- OpenAPI response codes: `200`
+## `github.repos.createCommitComment`
 
+Create a commit comment — [API reference](https://docs.github.com/rest/commits/comments#create-a-commit-comment)
+
 ```ts
-import github from "@utdk/github";
+github.repos.createCommitComment(input: {
+  /** The contents of the comment. */
+  body: string;
+  /** Relative path of the file to comment on. */
+  path?: string;
+  /** Line index in the diff to comment on. */
+  position?: number;
+  /** **Closing down notice**. Use **position** parameter instead. Line number in the file to comment on. */
+  line?: number;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The SHA of the commit. */
+  commit_sha: string;
+}): Promise<CommitComment>
+```
+
+<sub>`POST /repos/{owner}/{repo}/commits/{commit_sha}/comments` · `repos/create-commit-comment`</sub>
 
-type ReposSetAdminBranchProtectionInput = Parameters<typeof github.repos.setAdminBranchProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposSetAdminBranchProtectionOutput = Awaited<ReturnType<typeof github.repos.setAdminBranchProtection>>;
+## `github.repos.listPullRequestsAssociatedWithCommit`
 
-const input: ReposSetAdminBranchProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposSetAdminBranchProtectionOutput = await github.repos.setAdminBranchProtection(input);
+List pull requests associated with a commit — [API reference](https://docs.github.com/rest/commits/commits#list-pull-requests-associated-with-a-commit)
 
-// Result shape (from schema): { url: string; enabled: boolean }
+```ts
+github.repos.listPullRequestsAssociatedWithCommit(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The SHA of the commit. */
+  commit_sha: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(PullRequestSimple)[]>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls` · `repos/list-pull-requests-associated-with-commit`</sub>
 
-### `github.repos.deletePullRequestReviewProtection`
+## `github.repos.getCommit`
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews`
-- **What it does**: Delete pull request review protection
-- **OpenAPI operationId**: `repos/delete-pull-request-review-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get a commit — [API reference](https://docs.github.com/rest/commits/commits#get-a-commit)
 
-**Inputs**
+```ts
+github.repos.getCommit(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The commit reference. Can be a commit SHA, branch name (`heads/BRANCH_NAME`), or tag name (`tags/TAG_NAME`). For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
+  ref: string;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<Commit>
+```
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/commits/{ref}` · `repos/get-commit`</sub>
 
-**Outputs**
+## `github.repos.getCombinedStatusForRef`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+Get the combined status for a specific reference — [API reference](https://docs.github.com/rest/commits/statuses#get-the-combined-status-for-a-specific-reference)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getCombinedStatusForRef(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The commit reference. Can be a commit SHA, branch name (`heads/BRANCH_NAME`), or tag name (`tags/TAG_NAME`). For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
+  ref: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<CombinedCommitStatus>
+```
 
-type ReposDeletePullRequestReviewProtectionInput = Parameters<typeof github.repos.deletePullRequestReviewProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeletePullRequestReviewProtectionOutput = Awaited<ReturnType<typeof github.repos.deletePullRequestReviewProtection>>;
+<sub>`GET /repos/{owner}/{repo}/commits/{ref}/status` · `repos/get-combined-status-for-ref`</sub>
 
-const input: ReposDeletePullRequestReviewProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposDeletePullRequestReviewProtectionOutput = await github.repos.deletePullRequestReviewProtection(input);
+## `github.repos.listCommitStatusesForRef`
 
-// Result shape (from schema): unknown
+List commit statuses for a reference — [API reference](https://docs.github.com/rest/commits/statuses#list-commit-statuses-for-a-reference)
+
+```ts
+github.repos.listCommitStatusesForRef(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The commit reference. Can be a commit SHA, branch name (`heads/BRANCH_NAME`), or tag name (`tags/TAG_NAME`). For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
+  ref: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Status)[]>
 ```
 
-### `github.repos.getPullRequestReviewProtection`
+<sub>`GET /repos/{owner}/{repo}/commits/{ref}/statuses` · `repos/list-commit-statuses-for-ref`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews`
-- **What it does**: Get pull request review protection
-- **OpenAPI operationId**: `repos/get-pull-request-review-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.getCommunityProfileMetrics`
 
-**Inputs**
+Get community profile metrics — [API reference](https://docs.github.com/rest/metrics/community#get-community-profile-metrics)
+
+```ts
+github.repos.getCommunityProfileMetrics(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<CommunityProfile>
+```
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/community/profile` · `repos/get-community-profile-metrics`</sub>
 
-**Outputs**
+## `github.repos.compareCommits`
 
-- Client return type: `{ url?: string; dismissal_restrictions?: { users?: ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: strin...`
-- OpenAPI response codes: `200`
+Compare two commits — [API reference](https://docs.github.com/rest/commits/commits#compare-two-commits)
 
 ```ts
-import github from "@utdk/github";
+github.repos.compareCommits(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The base branch and head branch to compare. This parameter expects the format `BASE...HEAD`. Both must be branch names in `repo`. To compare with a branch that exists in a different repository in the same network as `repo`, the `basehead` parameter expects the format `USERNAME:BASE...USERNAME:HEAD`. */
+  basehead: string;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<CommitComparison>
+```
+
+<sub>`GET /repos/{owner}/{repo}/compare/{basehead}` · `repos/compare-commits`</sub>
 
-type ReposGetPullRequestReviewProtectionInput = Parameters<typeof github.repos.getPullRequestReviewProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetPullRequestReviewProtectionOutput = Awaited<ReturnType<typeof github.repos.getPullRequestReviewProtection>>;
+## `github.repos.deleteFile`
 
-const input: ReposGetPullRequestReviewProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetPullRequestReviewProtectionOutput = await github.repos.getPullRequestReviewProtection(input);
+Delete a file — [API reference](https://docs.github.com/rest/repos/contents#delete-a-file)
 
-// Result shape (from schema): { url?: string; dismissal_restrictions?: { users?: ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: strin...
+```ts
+github.repos.deleteFile(input: {
+  /** The commit message. */
+  message: string;
+  /** The blob SHA of the file being deleted. */
+  sha: string;
+  /** The branch name. Default: the repository’s default branch */
+  branch?: string;
+  /** object containing information about the committer. */
+  committer?: { name?: string; email?: string };
+  /** object containing information about the author. */
+  author?: { name?: string; email?: string };
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** path parameter */
+  path: string;
+}): Promise<FileCommit>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/contents/{path}` · `repos/delete-file`</sub>
 
-### `github.repos.updatePullRequestReviewProtection`
+## `github.repos.getContent`
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews`
-- **What it does**: Update pull request review protection
-- **OpenAPI operationId**: `repos/update-pull-request-review-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get repository content — [API reference](https://docs.github.com/rest/repos/contents#get-repository-content)
 
-**Inputs**
+```ts
+github.repos.getContent(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** path parameter */
+  path: string;
+  /** The name of the commit/branch/tag. Default: the repository’s default branch. */
+  ref?: string;
+}): Promise<ContentDirectory | ContentFile | ContentSymlink | ContentSubmodule>
+```
 
-- Client input type: `{ dismissal_restrictions?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] }; dismiss_stale_reviews?: boolean; require_code_owner_reviews?: boolean; required_approving_review_count?: number; require_last_push_approval?: boolean; bypass_pull_request_allowances?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] }; owner: string; repo: string; branch: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/contents/{path}` · `repos/get-content`</sub>
 
-**Outputs**
+## `github.repos.createOrUpdateFileContents`
 
-- Client return type: `{ url?: string; dismissal_restrictions?: { users?: ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: strin...`
-- OpenAPI response codes: `200`, `422`
+Create or update file contents — [API reference](https://docs.github.com/rest/repos/contents#create-or-update-file-contents)
 
 ```ts
-import github from "@utdk/github";
+github.repos.createOrUpdateFileContents(input: {
+  /** The commit message. */
+  message: string;
+  /** The new file content, using Base64 encoding. */
+  content: string;
+  /** **Required if you are updating a file**. The blob SHA of the file being replaced. */
+  sha?: string;
+  /** The branch name. Default: the repository’s default branch. */
+  branch?: string;
+  /** The person that committed the file. Default: the authenticated user. */
+  committer?: { name: string; email: string; date?: string };
+  /** The author of the file. Default: The `committer` or the authenticated user if you omit `committer`. */
+  author?: { name: string; email: string; date?: string };
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** path parameter */
+  path: string;
+}): Promise<FileCommit>
+```
 
-type ReposUpdatePullRequestReviewProtectionInput = Parameters<typeof github.repos.updatePullRequestReviewProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdatePullRequestReviewProtectionOutput = Awaited<ReturnType<typeof github.repos.updatePullRequestReviewProtection>>;
+<sub>`PUT /repos/{owner}/{repo}/contents/{path}` · `repos/create-or-update-file-contents`</sub>
 
-const input: ReposUpdatePullRequestReviewProtectionInput = {} as { dismissal_restrictions?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] }; dismiss_stale_reviews?: boolean; require_code_owner_reviews?: boolean; required_approving_review_count?: number; require_last_push_approval?: boolean; bypass_pull_request_allowances?: { users?: (string)[]; teams?: (string)[]; apps?: (string)[] }; owner: string; repo: string; branch: string };
-const result: ReposUpdatePullRequestReviewProtectionOutput = await github.repos.updatePullRequestReviewProtection(input);
+## `github.repos.listContributors`
 
-// Result shape (from schema): { url?: string; dismissal_restrictions?: { users?: ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: strin...
+List repository contributors — [API reference](https://docs.github.com/rest/repos/repos#list-repository-contributors)
+
+```ts
+github.repos.listContributors(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Set to `1` or `true` to include anonymous contributors in results. */
+  anon?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Contributor)[]>
 ```
 
-### `github.repos.deleteCommitSignatureProtection`
+<sub>`GET /repos/{owner}/{repo}/contributors` · `repos/list-contributors`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures`
-- **What it does**: Delete commit signature protection
-- **OpenAPI operationId**: `repos/delete-commit-signature-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.listDeployments`
 
-**Inputs**
+List deployments — [API reference](https://docs.github.com/rest/deployments/deployments#list-deployments)
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+```ts
+github.repos.listDeployments(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The SHA recorded at creation time. */
+  sha?: string;
+  /** The name of the ref. This can be a branch, tag, or SHA. */
+  ref?: string;
+  /** The name of the task for the deployment (e.g., `deploy` or `deploy:migrations`). */
+  task?: string;
+  /** The name of the environment that was deployed to (e.g., `staging` or `production`). */
+  environment?: string | null;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Deployment)[]>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/deployments` · `repos/list-deployments`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+## `github.repos.createDeployment`
 
+Create a deployment — [API reference](https://docs.github.com/rest/deployments/deployments#create-a-deployment)
+
 ```ts
-import github from "@utdk/github";
+github.repos.createDeployment(input: {
+  /** The ref to deploy. This can be a branch, tag, or SHA. */
+  ref: string;
+  /** Specifies a task to execute (e.g., `deploy` or `deploy:migrations`). */
+  task?: string;
+  /** Attempts to automatically merge the default branch into the requested ref, if it's behind the default branch. */
+  auto_merge?: boolean;
+  /** The [status](https://docs.github.com/rest/commits/statuses) contexts to verify against commit status checks. If you omit this parameter, GitHub verifies all unique contexts before creating a deployment. To bypass checking entirely, pass an empty array. Defaults to all unique contexts. */
+  required_contexts?: (string)[];
+  payload?: { [key: string]: unknown } | string;
+  /** Name for the target deployment environment (e.g., `production`, `staging`, `qa`). */
+  environment?: string;
+  /** Short description of the deployment. */
+  description?: string | null;
+  /** Specifies if the given environment is specific to the deployment and will no longer exist at some point in the future. Default: `false` */
+  transient_environment?: boolean;
+  /** Specifies if the given environment is one that end-users directly interact with. Default: `true` when `environment` is `production` and `false` otherwise. */
+  production_environment?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Deployment>
+```
+
+<sub>`POST /repos/{owner}/{repo}/deployments` · `repos/create-deployment`</sub>
 
-type ReposDeleteCommitSignatureProtectionInput = Parameters<typeof github.repos.deleteCommitSignatureProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteCommitSignatureProtectionOutput = Awaited<ReturnType<typeof github.repos.deleteCommitSignatureProtection>>;
+## `github.repos.deleteDeployment`
 
-const input: ReposDeleteCommitSignatureProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposDeleteCommitSignatureProtectionOutput = await github.repos.deleteCommitSignatureProtection(input);
+Delete a deployment — [API reference](https://docs.github.com/rest/deployments/deployments#delete-a-deployment)
 
-// Result shape (from schema): unknown
+```ts
+github.repos.deleteDeployment(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** deployment_id parameter */
+  deployment_id: number;
+}): Promise<BasicError>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/deployments/{deployment_id}` · `repos/delete-deployment`</sub>
 
-### `github.repos.getCommitSignatureProtection`
+## `github.repos.getDeployment`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures`
-- **What it does**: Get commit signature protection
-- **OpenAPI operationId**: `repos/get-commit-signature-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get a deployment — [API reference](https://docs.github.com/rest/deployments/deployments#get-a-deployment)
 
-**Inputs**
+```ts
+github.repos.getDeployment(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** deployment_id parameter */
+  deployment_id: number;
+}): Promise<Deployment>
+```
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/deployments/{deployment_id}` · `repos/get-deployment`</sub>
 
-**Outputs**
+## `github.repos.listDeploymentStatuses`
 
-- Client return type: `{ url: string; enabled: boolean }`
-- OpenAPI response codes: `200`, `404`
+List deployment statuses — [API reference](https://docs.github.com/rest/deployments/statuses#list-deployment-statuses)
 
 ```ts
-import github from "@utdk/github";
+github.repos.listDeploymentStatuses(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** deployment_id parameter */
+  deployment_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(DeploymentStatus)[]>
+```
 
-type ReposGetCommitSignatureProtectionInput = Parameters<typeof github.repos.getCommitSignatureProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetCommitSignatureProtectionOutput = Awaited<ReturnType<typeof github.repos.getCommitSignatureProtection>>;
+<sub>`GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses` · `repos/list-deployment-statuses`</sub>
 
-const input: ReposGetCommitSignatureProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetCommitSignatureProtectionOutput = await github.repos.getCommitSignatureProtection(input);
+## `github.repos.createDeploymentStatus`
 
-// Result shape (from schema): { url: string; enabled: boolean }
+Create a deployment status — [API reference](https://docs.github.com/rest/deployments/statuses#create-a-deployment-status)
+
+```ts
+github.repos.createDeploymentStatus(input: {
+  /** The state of the status. When you set a transient deployment to `inactive`, the deployment will be shown as `destroyed` in GitHub. */
+  state: "error" | "failure" | "inactive" | "in_progress" | "queued" | "pending" | "success";
+  /** The target URL to associate with this status. This URL should contain output to keep the user updated while the task is running or serve as historical information for what happened in the deployment.  > [!NOTE] > It's recommended to use the `log_url` parameter, which replaces `target_url`. */
+  target_url?: string;
+  /** The full URL of the deployment's output. This parameter replaces `target_url`. We will continue to accept `target_url` to support legacy uses, but we recommend replacing `target_url` with `log_url`. Setting `log_url` will automatically set `target_url` to the same value. Default: `""` */
+  log_url?: string;
+  /** A short description of the status. The maximum description length is 140 characters. */
+  description?: string;
+  /** Name for the target deployment environment, which can be changed when setting a deploy status. For example, `production`, `staging`, or `qa`. If not defined, the environment of the previous status on the deployment will be used, if it exists. Otherwise, the environment of the deployment will be used. */
+  environment?: string;
+  /** Sets the URL for accessing your environment. Default: `""` */
+  environment_url?: string;
+  /** Adds a new `inactive` status to all prior non-transient, non-production environment deployments with the same repository and `environment` name as the created status's deployment. An `inactive` status is only added to deployments that had a `success` state. Default: `true` */
+  auto_inactive?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** deployment_id parameter */
+  deployment_id: number;
+}): Promise<DeploymentStatus>
 ```
 
-### `github.repos.createCommitSignatureProtection`
+<sub>`POST /repos/{owner}/{repo}/deployments/{deployment_id}/statuses` · `repos/create-deployment-status`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures`
-- **What it does**: Create commit signature protection
-- **OpenAPI operationId**: `repos/create-commit-signature-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.getDeploymentStatus`
 
-**Inputs**
+Get a deployment status — [API reference](https://docs.github.com/rest/deployments/statuses#get-a-deployment-status)
+
+```ts
+github.repos.getDeploymentStatus(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** deployment_id parameter */
+  deployment_id: number;
+  status_id: number;
+}): Promise<DeploymentStatus>
+```
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses/{status_id}` · `repos/get-deployment-status`</sub>
 
-**Outputs**
+## `github.repos.createDispatchEvent`
 
-- Client return type: `{ url: string; enabled: boolean }`
-- OpenAPI response codes: `200`, `404`
+Create a repository dispatch event — [API reference](https://docs.github.com/rest/repos/repos#create-a-repository-dispatch-event)
 
 ```ts
-import github from "@utdk/github";
+github.repos.createDispatchEvent(input: {
+  /** A custom webhook event name. Must be 100 characters or fewer. */
+  event_type: string;
+  /** JSON payload with extra information about the webhook event that your action or workflow may use. The maximum number of top-level properties is 10. The total size of the JSON payload must be less than 64KB. */
+  client_payload?: { [key: string]: unknown };
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
+```
+
+<sub>`POST /repos/{owner}/{repo}/dispatches` · `repos/create-dispatch-event`</sub>
 
-type ReposCreateCommitSignatureProtectionInput = Parameters<typeof github.repos.createCommitSignatureProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateCommitSignatureProtectionOutput = Awaited<ReturnType<typeof github.repos.createCommitSignatureProtection>>;
+## `github.repos.getAllEnvironments`
 
-const input: ReposCreateCommitSignatureProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposCreateCommitSignatureProtectionOutput = await github.repos.createCommitSignatureProtection(input);
+List environments — [API reference](https://docs.github.com/rest/deployments/environments#list-environments)
 
-// Result shape (from schema): { url: string; enabled: boolean }
+```ts
+github.repos.getAllEnvironments(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count?: number; environments?: (Environment)[] }>
 ```
 
-### `github.repos.removeStatusCheckProtection`
+<sub>`GET /repos/{owner}/{repo}/environments` · `repos/get-all-environments`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks`
-- **What it does**: Remove status check protection
-- **OpenAPI operationId**: `repos/remove-status-check-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.deleteAnEnvironment`
 
-**Inputs**
+Delete an environment — [API reference](https://docs.github.com/rest/deployments/environments#delete-an-environment)
 
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
+```ts
+github.repos.deleteAnEnvironment(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+}): Promise<unknown>
+```
 
-**Outputs**
+<sub>`DELETE /repos/{owner}/{repo}/environments/{environment_name}` · `repos/delete-an-environment`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `github.repos.getEnvironment`
 
-```ts
-import github from "@utdk/github";
+Get an environment — [API reference](https://docs.github.com/rest/deployments/environments#get-an-environment)
 
-type ReposRemoveStatusCheckProtectionInput = Parameters<typeof github.repos.removeStatusCheckProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposRemoveStatusCheckProtectionOutput = Awaited<ReturnType<typeof github.repos.removeStatusCheckProtection>>;
-
-const input: ReposRemoveStatusCheckProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposRemoveStatusCheckProtectionOutput = await github.repos.removeStatusCheckProtection(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getStatusChecksProtection`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks`
-- **What it does**: Get status checks protection
-- **OpenAPI operationId**: `repos/get-status-checks-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; strict: boolean; contexts: (string)[]; checks: ({ context: string; app_id: number | null })[]; contexts_url: string }`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetStatusChecksProtectionInput = Parameters<typeof github.repos.getStatusChecksProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetStatusChecksProtectionOutput = Awaited<ReturnType<typeof github.repos.getStatusChecksProtection>>;
-
-const input: ReposGetStatusChecksProtectionInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetStatusChecksProtectionOutput = await github.repos.getStatusChecksProtection(input);
-
-// Result shape (from schema): { url: string; strict: boolean; contexts: (string)[]; checks: ({ context: string; app_id: number | null })[]; contexts_url: string }
-```
-
-### `github.repos.updateStatusCheckProtection`
-
-- **HTTP**: `PATCH /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks`
-- **What it does**: Update status check protection
-- **OpenAPI operationId**: `repos/update-status-check-protection`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ strict?: boolean; contexts?: (string)[]; checks?: ({ context: string; app_id?: number })[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; strict: boolean; contexts: (string)[]; checks: ({ context: string; app_id: number | null })[]; contexts_url: string }`
-- OpenAPI response codes: `200`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposUpdateStatusCheckProtectionInput = Parameters<typeof github.repos.updateStatusCheckProtection> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateStatusCheckProtectionOutput = Awaited<ReturnType<typeof github.repos.updateStatusCheckProtection>>;
-
-const input: ReposUpdateStatusCheckProtectionInput = {} as { strict?: boolean; contexts?: (string)[]; checks?: ({ context: string; app_id?: number })[]; owner: string; repo: string; branch: string };
-const result: ReposUpdateStatusCheckProtectionOutput = await github.repos.updateStatusCheckProtection(input);
-
-// Result shape (from schema): { url: string; strict: boolean; contexts: (string)[]; checks: ({ context: string; app_id: number | null })[]; contexts_url: string }
-```
-
-### `github.repos.removeStatusCheckContexts`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts`
-- **What it does**: Remove status check contexts
-- **OpenAPI operationId**: `repos/remove-status-check-contexts`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body?: { contexts: (string)[] } | (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `(string)[]`
-- OpenAPI response codes: `200`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposRemoveStatusCheckContextsInput = Parameters<typeof github.repos.removeStatusCheckContexts> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposRemoveStatusCheckContextsOutput = Awaited<ReturnType<typeof github.repos.removeStatusCheckContexts>>;
-
-const input: ReposRemoveStatusCheckContextsInput = {} as { body?: { contexts: (string)[] } | (string)[]; owner: string; repo: string; branch: string };
-const result: ReposRemoveStatusCheckContextsOutput = await github.repos.removeStatusCheckContexts(input);
-
-// Result shape (from schema): (string)[]
-```
-
-### `github.repos.getAllStatusCheckContexts`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts`
-- **What it does**: Get all status check contexts
-- **OpenAPI operationId**: `repos/get-all-status-check-contexts`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `(string)[]`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetAllStatusCheckContextsInput = Parameters<typeof github.repos.getAllStatusCheckContexts> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetAllStatusCheckContextsOutput = Awaited<ReturnType<typeof github.repos.getAllStatusCheckContexts>>;
-
-const input: ReposGetAllStatusCheckContextsInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetAllStatusCheckContextsOutput = await github.repos.getAllStatusCheckContexts(input);
-
-// Result shape (from schema): (string)[]
-```
-
-### `github.repos.addStatusCheckContexts`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts`
-- **What it does**: Add status check contexts
-- **OpenAPI operationId**: `repos/add-status-check-contexts`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body?: { contexts: (string)[] } | (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `(string)[]`
-- OpenAPI response codes: `200`, `403`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposAddStatusCheckContextsInput = Parameters<typeof github.repos.addStatusCheckContexts> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposAddStatusCheckContextsOutput = Awaited<ReturnType<typeof github.repos.addStatusCheckContexts>>;
-
-const input: ReposAddStatusCheckContextsInput = {} as { body?: { contexts: (string)[] } | (string)[]; owner: string; repo: string; branch: string };
-const result: ReposAddStatusCheckContextsOutput = await github.repos.addStatusCheckContexts(input);
-
-// Result shape (from schema): (string)[]
-```
-
-### `github.repos.setStatusCheckContexts`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks/contexts`
-- **What it does**: Set status check contexts
-- **OpenAPI operationId**: `repos/set-status-check-contexts`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body?: { contexts: (string)[] } | (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `(string)[]`
-- OpenAPI response codes: `200`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposSetStatusCheckContextsInput = Parameters<typeof github.repos.setStatusCheckContexts> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposSetStatusCheckContextsOutput = Awaited<ReturnType<typeof github.repos.setStatusCheckContexts>>;
-
-const input: ReposSetStatusCheckContextsInput = {} as { body?: { contexts: (string)[] } | (string)[]; owner: string; repo: string; branch: string };
-const result: ReposSetStatusCheckContextsOutput = await github.repos.setStatusCheckContexts(input);
-
-// Result shape (from schema): (string)[]
-```
-
-### `github.repos.deleteAccessRestrictions`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions`
-- **What it does**: Delete access restrictions
-- **OpenAPI operationId**: `repos/delete-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteAccessRestrictionsInput = Parameters<typeof github.repos.deleteAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.deleteAccessRestrictions>>;
-
-const input: ReposDeleteAccessRestrictionsInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposDeleteAccessRestrictionsOutput = await github.repos.deleteAccessRestrictions(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getAccessRestrictions`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions`
-- **What it does**: Get access restrictions
-- **OpenAPI operationId**: `repos/get-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; users_url: string; teams_url: string; apps_url: string; users: ({ login?: string; id?: number; node_id?: string; avatar_url?: string; gravatar_id?: string; url?: string; html_url?: string; followers_url?:...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetAccessRestrictionsInput = Parameters<typeof github.repos.getAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.getAccessRestrictions>>;
-
-const input: ReposGetAccessRestrictionsInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetAccessRestrictionsOutput = await github.repos.getAccessRestrictions(input);
-
-// Result shape (from schema): { url: string; users_url: string; teams_url: string; apps_url: string; users: ({ login?: string; id?: number; node_id?: string; avatar_url?: string; gravatar_id?: string; url?: string; html_url?: string; followers_url?:...
-```
-
-### `github.repos.removeAppAccessRestrictions`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps`
-- **What it does**: Remove app access restrictions
-- **OpenAPI operationId**: `repos/remove-app-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ apps: (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; slug?: string; node_id: string; client_id?: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposRemoveAppAccessRestrictionsInput = Parameters<typeof github.repos.removeAppAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposRemoveAppAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.removeAppAccessRestrictions>>;
-
-const input: ReposRemoveAppAccessRestrictionsInput = {} as { apps: (string)[]; owner: string; repo: string; branch: string };
-const result: ReposRemoveAppAccessRestrictionsOutput = await github.repos.removeAppAccessRestrictions(input);
-
-// Result shape (from schema): ({ id: number; slug?: string; node_id: string; client_id?: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...
-```
-
-### `github.repos.getAppsWithAccessToProtectedBranch`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps`
-- **What it does**: Get apps with access to the protected branch
-- **OpenAPI operationId**: `repos/get-apps-with-access-to-protected-branch`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; slug?: string; node_id: string; client_id?: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetAppsWithAccessToProtectedBranchInput = Parameters<typeof github.repos.getAppsWithAccessToProtectedBranch> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetAppsWithAccessToProtectedBranchOutput = Awaited<ReturnType<typeof github.repos.getAppsWithAccessToProtectedBranch>>;
-
-const input: ReposGetAppsWithAccessToProtectedBranchInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetAppsWithAccessToProtectedBranchOutput = await github.repos.getAppsWithAccessToProtectedBranch(input);
-
-// Result shape (from schema): ({ id: number; slug?: string; node_id: string; client_id?: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...
-```
-
-### `github.repos.addAppAccessRestrictions`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps`
-- **What it does**: Add app access restrictions
-- **OpenAPI operationId**: `repos/add-app-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ apps: (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; slug?: string; node_id: string; client_id?: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposAddAppAccessRestrictionsInput = Parameters<typeof github.repos.addAppAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposAddAppAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.addAppAccessRestrictions>>;
-
-const input: ReposAddAppAccessRestrictionsInput = {} as { apps: (string)[]; owner: string; repo: string; branch: string };
-const result: ReposAddAppAccessRestrictionsOutput = await github.repos.addAppAccessRestrictions(input);
-
-// Result shape (from schema): ({ id: number; slug?: string; node_id: string; client_id?: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...
-```
-
-### `github.repos.setAppAccessRestrictions`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/apps`
-- **What it does**: Set app access restrictions
-- **OpenAPI operationId**: `repos/set-app-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ apps: (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; slug?: string; node_id: string; client_id?: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposSetAppAccessRestrictionsInput = Parameters<typeof github.repos.setAppAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposSetAppAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.setAppAccessRestrictions>>;
-
-const input: ReposSetAppAccessRestrictionsInput = {} as { apps: (string)[]; owner: string; repo: string; branch: string };
-const result: ReposSetAppAccessRestrictionsOutput = await github.repos.setAppAccessRestrictions(input);
-
-// Result shape (from schema): ({ id: number; slug?: string; node_id: string; client_id?: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...
-```
-
-### `github.repos.removeTeamAccessRestrictions`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams`
-- **What it does**: Remove team access restrictions
-- **OpenAPI operationId**: `repos/remove-team-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body?: { teams: (string)[] } | (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; name: string; slug: string; description: string | null; privacy?: string; notification_setting?: string; permission: string; permissions?: { pull: boolean; triage: boolean; push: boolean;...`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposRemoveTeamAccessRestrictionsInput = Parameters<typeof github.repos.removeTeamAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposRemoveTeamAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.removeTeamAccessRestrictions>>;
-
-const input: ReposRemoveTeamAccessRestrictionsInput = {} as { body?: { teams: (string)[] } | (string)[]; owner: string; repo: string; branch: string };
-const result: ReposRemoveTeamAccessRestrictionsOutput = await github.repos.removeTeamAccessRestrictions(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; name: string; slug: string; description: string | null; privacy?: string; notification_setting?: string; permission: string; permissions?: { pull: boolean; triage: boolean; push: boolean;...
-```
-
-### `github.repos.getTeamsWithAccessToProtectedBranch`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams`
-- **What it does**: Get teams with access to the protected branch
-- **OpenAPI operationId**: `repos/get-teams-with-access-to-protected-branch`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; name: string; slug: string; description: string | null; privacy?: string; notification_setting?: string; permission: string; permissions?: { pull: boolean; triage: boolean; push: boolean;...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetTeamsWithAccessToProtectedBranchInput = Parameters<typeof github.repos.getTeamsWithAccessToProtectedBranch> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetTeamsWithAccessToProtectedBranchOutput = Awaited<ReturnType<typeof github.repos.getTeamsWithAccessToProtectedBranch>>;
-
-const input: ReposGetTeamsWithAccessToProtectedBranchInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetTeamsWithAccessToProtectedBranchOutput = await github.repos.getTeamsWithAccessToProtectedBranch(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; name: string; slug: string; description: string | null; privacy?: string; notification_setting?: string; permission: string; permissions?: { pull: boolean; triage: boolean; push: boolean;...
-```
-
-### `github.repos.addTeamAccessRestrictions`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams`
-- **What it does**: Add team access restrictions
-- **OpenAPI operationId**: `repos/add-team-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body?: { teams: (string)[] } | (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; name: string; slug: string; description: string | null; privacy?: string; notification_setting?: string; permission: string; permissions?: { pull: boolean; triage: boolean; push: boolean;...`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposAddTeamAccessRestrictionsInput = Parameters<typeof github.repos.addTeamAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposAddTeamAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.addTeamAccessRestrictions>>;
-
-const input: ReposAddTeamAccessRestrictionsInput = {} as { body?: { teams: (string)[] } | (string)[]; owner: string; repo: string; branch: string };
-const result: ReposAddTeamAccessRestrictionsOutput = await github.repos.addTeamAccessRestrictions(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; name: string; slug: string; description: string | null; privacy?: string; notification_setting?: string; permission: string; permissions?: { pull: boolean; triage: boolean; push: boolean;...
-```
-
-### `github.repos.setTeamAccessRestrictions`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/teams`
-- **What it does**: Set team access restrictions
-- **OpenAPI operationId**: `repos/set-team-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body?: { teams: (string)[] } | (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; name: string; slug: string; description: string | null; privacy?: string; notification_setting?: string; permission: string; permissions?: { pull: boolean; triage: boolean; push: boolean;...`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposSetTeamAccessRestrictionsInput = Parameters<typeof github.repos.setTeamAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposSetTeamAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.setTeamAccessRestrictions>>;
-
-const input: ReposSetTeamAccessRestrictionsInput = {} as { body?: { teams: (string)[] } | (string)[]; owner: string; repo: string; branch: string };
-const result: ReposSetTeamAccessRestrictionsOutput = await github.repos.setTeamAccessRestrictions(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; name: string; slug: string; description: string | null; privacy?: string; notification_setting?: string; permission: string; permissions?: { pull: boolean; triage: boolean; push: boolean;...
-```
-
-### `github.repos.removeUserAccessRestrictions`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users`
-- **What it does**: Remove user access restrictions
-- **OpenAPI operationId**: `repos/remove-user-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ users: (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposRemoveUserAccessRestrictionsInput = Parameters<typeof github.repos.removeUserAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposRemoveUserAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.removeUserAccessRestrictions>>;
-
-const input: ReposRemoveUserAccessRestrictionsInput = {} as { users: (string)[]; owner: string; repo: string; branch: string };
-const result: ReposRemoveUserAccessRestrictionsOutput = await github.repos.removeUserAccessRestrictions(input);
-
-// Result shape (from schema): ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
-```
-
-### `github.repos.getUsersWithAccessToProtectedBranch`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users`
-- **What it does**: Get users with access to the protected branch
-- **OpenAPI operationId**: `repos/get-users-with-access-to-protected-branch`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetUsersWithAccessToProtectedBranchInput = Parameters<typeof github.repos.getUsersWithAccessToProtectedBranch> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetUsersWithAccessToProtectedBranchOutput = Awaited<ReturnType<typeof github.repos.getUsersWithAccessToProtectedBranch>>;
-
-const input: ReposGetUsersWithAccessToProtectedBranchInput = {} as { owner: string; repo: string; branch: string };
-const result: ReposGetUsersWithAccessToProtectedBranchOutput = await github.repos.getUsersWithAccessToProtectedBranch(input);
-
-// Result shape (from schema): ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
-```
-
-### `github.repos.addUserAccessRestrictions`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users`
-- **What it does**: Add user access restrictions
-- **OpenAPI operationId**: `repos/add-user-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ users: (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposAddUserAccessRestrictionsInput = Parameters<typeof github.repos.addUserAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposAddUserAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.addUserAccessRestrictions>>;
-
-const input: ReposAddUserAccessRestrictionsInput = {} as { users: (string)[]; owner: string; repo: string; branch: string };
-const result: ReposAddUserAccessRestrictionsOutput = await github.repos.addUserAccessRestrictions(input);
-
-// Result shape (from schema): ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
-```
-
-### `github.repos.setUserAccessRestrictions`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/branches/{branch}/protection/restrictions/users`
-- **What it does**: Set user access restrictions
-- **OpenAPI operationId**: `repos/set-user-access-restrictions`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ users: (string)[]; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposSetUserAccessRestrictionsInput = Parameters<typeof github.repos.setUserAccessRestrictions> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposSetUserAccessRestrictionsOutput = Awaited<ReturnType<typeof github.repos.setUserAccessRestrictions>>;
-
-const input: ReposSetUserAccessRestrictionsInput = {} as { users: (string)[]; owner: string; repo: string; branch: string };
-const result: ReposSetUserAccessRestrictionsOutput = await github.repos.setUserAccessRestrictions(input);
-
-// Result shape (from schema): ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
-```
-
-### `github.repos.renameBranch`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/branches/{branch}/rename`
-- **What it does**: Rename a branch
-- **OpenAPI operationId**: `repos/rename-branch`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ new_name: string; owner: string; repo: string; branch: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ name: string; commit: { url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: st...`
-- OpenAPI response codes: `201`, `403`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposRenameBranchInput = Parameters<typeof github.repos.renameBranch> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposRenameBranchOutput = Awaited<ReturnType<typeof github.repos.renameBranch>>;
-
-const input: ReposRenameBranchInput = {} as { new_name: string; owner: string; repo: string; branch: string };
-const result: ReposRenameBranchOutput = await github.repos.renameBranch(input);
-
-// Result shape (from schema): { name: string; commit: { url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: st...
-```
-
-### `github.repos.codeownersErrors`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/codeowners/errors`
-- **What it does**: List CODEOWNERS errors
-- **OpenAPI operationId**: `repos/codeowners-errors`
-- **Path params**: None
-- **Query params**: `ref`
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ errors: ({ line: number; column: number; source?: string; kind: string; suggestion?: string | null; message: string; path: string })[] }`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCodeownersErrorsInput = Parameters<typeof github.repos.codeownersErrors> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCodeownersErrorsOutput = Awaited<ReturnType<typeof github.repos.codeownersErrors>>;
-
-const input: ReposCodeownersErrorsInput = {} as { owner: string; repo: string; ref?: string };
-const result: ReposCodeownersErrorsOutput = await github.repos.codeownersErrors(input);
-
-// Result shape (from schema): { errors: ({ line: number; column: number; source?: string; kind: string; suggestion?: string | null; message: string; path: string })[] }
-```
-
-### `github.repos.listCollaborators`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/collaborators`
-- **What it does**: List repository collaborators
-- **OpenAPI operationId**: `repos/list-collaborators`
-- **Path params**: None
-- **Query params**: `affiliation`, `permission`
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; affiliation?: "outside" | "direct" | "all"; permission?: "pull" | "triage" | "push" | "maintain" | "admin"; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ login: string; id: number; email?: string | null; name?: string | null; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListCollaboratorsInput = Parameters<typeof github.repos.listCollaborators> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListCollaboratorsOutput = Awaited<ReturnType<typeof github.repos.listCollaborators>>;
-
-const input: ReposListCollaboratorsInput = {} as { owner: string; repo: string; affiliation?: "outside" | "direct" | "all"; permission?: "pull" | "triage" | "push" | "maintain" | "admin"; per_page?: number; page?: number };
-const result: ReposListCollaboratorsOutput = await github.repos.listCollaborators(input);
-
-// Result shape (from schema): ({ login: string; id: number; email?: string | null; name?: string | null; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
-```
-
-### `github.repos.removeCollaborator`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/collaborators/{username}`
-- **What it does**: Remove a repository collaborator
-- **OpenAPI operationId**: `repos/remove-collaborator`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposRemoveCollaboratorInput = Parameters<typeof github.repos.removeCollaborator> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposRemoveCollaboratorOutput = Awaited<ReturnType<typeof github.repos.removeCollaborator>>;
-
-const input: ReposRemoveCollaboratorInput = {} as { owner: string; repo: string; username: string };
-const result: ReposRemoveCollaboratorOutput = await github.repos.removeCollaborator(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.checkCollaborator`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/collaborators/{username}`
-- **What it does**: Check if a user is a repository collaborator
-- **OpenAPI operationId**: `repos/check-collaborator`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCheckCollaboratorInput = Parameters<typeof github.repos.checkCollaborator> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCheckCollaboratorOutput = Awaited<ReturnType<typeof github.repos.checkCollaborator>>;
-
-const input: ReposCheckCollaboratorInput = {} as { owner: string; repo: string; username: string };
-const result: ReposCheckCollaboratorOutput = await github.repos.checkCollaborator(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.addCollaborator`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/collaborators/{username}`
-- **What it does**: Add a repository collaborator
-- **OpenAPI operationId**: `repos/add-collaborator`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `204`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ permission?: string; owner: string; repo: string; username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; repository: { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id...`
-- OpenAPI response codes: `201`, `204`, `403`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposAddCollaboratorInput = Parameters<typeof github.repos.addCollaborator> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposAddCollaboratorOutput = Awaited<ReturnType<typeof github.repos.addCollaborator>>;
-
-const input: ReposAddCollaboratorInput = {} as { permission?: string; owner: string; repo: string; username: string };
-const result: ReposAddCollaboratorOutput = await github.repos.addCollaborator(input);
-
-// Result shape (from schema): { id: number; repository: { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id...
-```
-
-### `github.repos.getCollaboratorPermissionLevel`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/collaborators/{username}/permission`
-- **What it does**: Get repository permissions for a user
-- **OpenAPI operationId**: `repos/get-collaborator-permission-level`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ permission: string; role_name: string; user: { login: string; id: number; email?: string | null; name?: string | null; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; fo...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetCollaboratorPermissionLevelInput = Parameters<typeof github.repos.getCollaboratorPermissionLevel> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetCollaboratorPermissionLevelOutput = Awaited<ReturnType<typeof github.repos.getCollaboratorPermissionLevel>>;
-
-const input: ReposGetCollaboratorPermissionLevelInput = {} as { owner: string; repo: string; username: string };
-const result: ReposGetCollaboratorPermissionLevelOutput = await github.repos.getCollaboratorPermissionLevel(input);
-
-// Result shape (from schema): { permission: string; role_name: string; user: { login: string; id: number; email?: string | null; name?: string | null; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; fo...
-```
-
-### `github.repos.listCommitCommentsForRepo`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/comments`
-- **What it does**: List commit comments for a repository
-- **OpenAPI operationId**: `repos/list-commit-comments-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ html_url: string; url: string; id: number; node_id: string; body: string; path: string | null; position: number | null; line: number | null; commit_id: string; user: { name?: string | null; email?: string | null; log...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListCommitCommentsForRepoInput = Parameters<typeof github.repos.listCommitCommentsForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListCommitCommentsForRepoOutput = Awaited<ReturnType<typeof github.repos.listCommitCommentsForRepo>>;
-
-const input: ReposListCommitCommentsForRepoInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ReposListCommitCommentsForRepoOutput = await github.repos.listCommitCommentsForRepo(input);
-
-// Result shape (from schema): ({ html_url: string; url: string; id: number; node_id: string; body: string; path: string | null; position: number | null; line: number | null; commit_id: string; user: { name?: string | null; email?: string | null; log...
-```
-
-### `github.repos.deleteCommitComment`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/comments/{comment_id}`
-- **What it does**: Delete a commit comment
-- **OpenAPI operationId**: `repos/delete-commit-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; comment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteCommitCommentInput = Parameters<typeof github.repos.deleteCommitComment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteCommitCommentOutput = Awaited<ReturnType<typeof github.repos.deleteCommitComment>>;
-
-const input: ReposDeleteCommitCommentInput = {} as { owner: string; repo: string; comment_id: number };
-const result: ReposDeleteCommitCommentOutput = await github.repos.deleteCommitComment(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getCommitComment`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/comments/{comment_id}`
-- **What it does**: Get a commit comment
-- **OpenAPI operationId**: `repos/get-commit-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; comment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ html_url: string; url: string; id: number; node_id: string; body: string; path: string | null; position: number | null; line: number | null; commit_id: string; user: { name?: string | null; email?: string | null; logi...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetCommitCommentInput = Parameters<typeof github.repos.getCommitComment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetCommitCommentOutput = Awaited<ReturnType<typeof github.repos.getCommitComment>>;
-
-const input: ReposGetCommitCommentInput = {} as { owner: string; repo: string; comment_id: number };
-const result: ReposGetCommitCommentOutput = await github.repos.getCommitComment(input);
-
-// Result shape (from schema): { html_url: string; url: string; id: number; node_id: string; body: string; path: string | null; position: number | null; line: number | null; commit_id: string; user: { name?: string | null; email?: string | null; logi...
-```
-
-### `github.repos.updateCommitComment`
-
-- **HTTP**: `PATCH /repos/{owner}/{repo}/comments/{comment_id}`
-- **What it does**: Update a commit comment
-- **OpenAPI operationId**: `repos/update-commit-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body: string; owner: string; repo: string; comment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ html_url: string; url: string; id: number; node_id: string; body: string; path: string | null; position: number | null; line: number | null; commit_id: string; user: { name?: string | null; email?: string | null; logi...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposUpdateCommitCommentInput = Parameters<typeof github.repos.updateCommitComment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateCommitCommentOutput = Awaited<ReturnType<typeof github.repos.updateCommitComment>>;
-
-const input: ReposUpdateCommitCommentInput = {} as { body: string; owner: string; repo: string; comment_id: number };
-const result: ReposUpdateCommitCommentOutput = await github.repos.updateCommitComment(input);
-
-// Result shape (from schema): { html_url: string; url: string; id: number; node_id: string; body: string; path: string | null; position: number | null; line: number | null; commit_id: string; user: { name?: string | null; email?: string | null; logi...
-```
-
-### `github.repos.listCommits`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/commits`
-- **What it does**: List commits
-- **OpenAPI operationId**: `repos/list-commits`
-- **Path params**: None
-- **Query params**: `sha`, `path`, `author`, `committer`, `since`, `until`
-- **Response codes**: `200`, `400`, `404`, `409`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; sha?: string; path?: string; author?: string; committer?: string; since?: string; until?: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: string; email?: string; d...`
-- OpenAPI response codes: `200`, `400`, `404`, `409`, `500`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListCommitsInput = Parameters<typeof github.repos.listCommits> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListCommitsOutput = Awaited<ReturnType<typeof github.repos.listCommits>>;
-
-const input: ReposListCommitsInput = {} as { owner: string; repo: string; sha?: string; path?: string; author?: string; committer?: string; since?: string; until?: string; per_page?: number; page?: number };
-const result: ReposListCommitsOutput = await github.repos.listCommits(input);
-
-// Result shape (from schema): ({ url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: string; email?: string; d...
-```
-
-### `github.repos.listBranchesForHeadCommit`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/commits/{commit_sha}/branches-where-head`
-- **What it does**: List branches for HEAD commit
-- **OpenAPI operationId**: `repos/list-branches-for-head-commit`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; commit_sha: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name: string; commit: { sha: string; url: string }; protected: boolean })[]`
-- OpenAPI response codes: `200`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListBranchesForHeadCommitInput = Parameters<typeof github.repos.listBranchesForHeadCommit> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListBranchesForHeadCommitOutput = Awaited<ReturnType<typeof github.repos.listBranchesForHeadCommit>>;
-
-const input: ReposListBranchesForHeadCommitInput = {} as { owner: string; repo: string; commit_sha: string };
-const result: ReposListBranchesForHeadCommitOutput = await github.repos.listBranchesForHeadCommit(input);
-
-// Result shape (from schema): ({ name: string; commit: { sha: string; url: string }; protected: boolean })[]
-```
-
-### `github.repos.listCommentsForCommit`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/commits/{commit_sha}/comments`
-- **What it does**: List commit comments
-- **OpenAPI operationId**: `repos/list-comments-for-commit`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; commit_sha: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ html_url: string; url: string; id: number; node_id: string; body: string; path: string | null; position: number | null; line: number | null; commit_id: string; user: { name?: string | null; email?: string | null; log...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListCommentsForCommitInput = Parameters<typeof github.repos.listCommentsForCommit> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListCommentsForCommitOutput = Awaited<ReturnType<typeof github.repos.listCommentsForCommit>>;
-
-const input: ReposListCommentsForCommitInput = {} as { owner: string; repo: string; commit_sha: string; per_page?: number; page?: number };
-const result: ReposListCommentsForCommitOutput = await github.repos.listCommentsForCommit(input);
-
-// Result shape (from schema): ({ html_url: string; url: string; id: number; node_id: string; body: string; path: string | null; position: number | null; line: number | null; commit_id: string; user: { name?: string | null; email?: string | null; log...
-```
-
-### `github.repos.createCommitComment`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/commits/{commit_sha}/comments`
-- **What it does**: Create a commit comment
-- **OpenAPI operationId**: `repos/create-commit-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body: string; path?: string; position?: number; line?: number; owner: string; repo: string; commit_sha: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ html_url: string; url: string; id: number; node_id: string; body: string; path: string | null; position: number | null; line: number | null; commit_id: string; user: { name?: string | null; email?: string | null; logi...`
-- OpenAPI response codes: `201`, `403`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateCommitCommentInput = Parameters<typeof github.repos.createCommitComment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateCommitCommentOutput = Awaited<ReturnType<typeof github.repos.createCommitComment>>;
-
-const input: ReposCreateCommitCommentInput = {} as { body: string; path?: string; position?: number; line?: number; owner: string; repo: string; commit_sha: string };
-const result: ReposCreateCommitCommentOutput = await github.repos.createCommitComment(input);
-
-// Result shape (from schema): { html_url: string; url: string; id: number; node_id: string; body: string; path: string | null; position: number | null; line: number | null; commit_id: string; user: { name?: string | null; email?: string | null; logi...
-```
-
-### `github.repos.listPullRequestsAssociatedWithCommit`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/commits/{commit_sha}/pulls`
-- **What it does**: List pull requests associated with a commit
-- **OpenAPI operationId**: `repos/list-pull-requests-associated-with-commit`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; commit_sha: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; ...`
-- OpenAPI response codes: `200`, `409`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListPullRequestsAssociatedWithCommitInput = Parameters<typeof github.repos.listPullRequestsAssociatedWithCommit> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListPullRequestsAssociatedWithCommitOutput = Awaited<ReturnType<typeof github.repos.listPullRequestsAssociatedWithCommit>>;
-
-const input: ReposListPullRequestsAssociatedWithCommitInput = {} as { owner: string; repo: string; commit_sha: string; per_page?: number; page?: number };
-const result: ReposListPullRequestsAssociatedWithCommitOutput = await github.repos.listPullRequestsAssociatedWithCommit(input);
-
-// Result shape (from schema): ({ url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; ...
-```
-
-### `github.repos.getCommit`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/commits/{ref}`
-- **What it does**: Get a commit
-- **OpenAPI operationId**: `repos/get-commit`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `409`, `422`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref: string; page?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: string; email?: string; da...`
-- OpenAPI response codes: `200`, `404`, `409`, `422`, `500`, `503`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetCommitInput = Parameters<typeof github.repos.getCommit> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetCommitOutput = Awaited<ReturnType<typeof github.repos.getCommit>>;
-
-const input: ReposGetCommitInput = {} as { owner: string; repo: string; ref: string; page?: number; per_page?: number };
-const result: ReposGetCommitOutput = await github.repos.getCommit(input);
-
-// Result shape (from schema): { url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: string; email?: string; da...
-```
-
-### `github.repos.getCombinedStatusForRef`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/commits/{ref}/status`
-- **What it does**: Get the combined status for a specific reference
-- **OpenAPI operationId**: `repos/get-combined-status-for-ref`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ state: string; statuses: ({ description: string | null; id: number; node_id: string; state: string; context: string; target_url: string | null; required?: boolean | null; avatar_url: string | null; url: string; create...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetCombinedStatusForRefInput = Parameters<typeof github.repos.getCombinedStatusForRef> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetCombinedStatusForRefOutput = Awaited<ReturnType<typeof github.repos.getCombinedStatusForRef>>;
-
-const input: ReposGetCombinedStatusForRefInput = {} as { owner: string; repo: string; ref: string; per_page?: number; page?: number };
-const result: ReposGetCombinedStatusForRefOutput = await github.repos.getCombinedStatusForRef(input);
-
-// Result shape (from schema): { state: string; statuses: ({ description: string | null; id: number; node_id: string; state: string; context: string; target_url: string | null; required?: boolean | null; avatar_url: string | null; url: string; create...
-```
-
-### `github.repos.listCommitStatusesForRef`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/commits/{ref}/statuses`
-- **What it does**: List commit statuses for a reference
-- **OpenAPI operationId**: `repos/list-commit-statuses-for-ref`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `301`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; avatar_url: string | null; id: number; node_id: string; state: string; description: string | null; target_url: string | null; context: string; created_at: string; updated_at: string; creator: { name?: st...`
-- OpenAPI response codes: `200`, `301`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListCommitStatusesForRefInput = Parameters<typeof github.repos.listCommitStatusesForRef> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListCommitStatusesForRefOutput = Awaited<ReturnType<typeof github.repos.listCommitStatusesForRef>>;
-
-const input: ReposListCommitStatusesForRefInput = {} as { owner: string; repo: string; ref: string; per_page?: number; page?: number };
-const result: ReposListCommitStatusesForRefOutput = await github.repos.listCommitStatusesForRef(input);
-
-// Result shape (from schema): ({ url: string; avatar_url: string | null; id: number; node_id: string; state: string; description: string | null; target_url: string | null; context: string; created_at: string; updated_at: string; creator: { name?: st...
-```
-
-### `github.repos.getCommunityProfileMetrics`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/community/profile`
-- **What it does**: Get community profile metrics
-- **OpenAPI operationId**: `repos/get-community-profile-metrics`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ health_percentage: number; description: string | null; documentation: string | null; files: { code_of_conduct: { url: string; key: string; name: string; html_url: string | null } | null; code_of_conduct_file: { url: s...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetCommunityProfileMetricsInput = Parameters<typeof github.repos.getCommunityProfileMetrics> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetCommunityProfileMetricsOutput = Awaited<ReturnType<typeof github.repos.getCommunityProfileMetrics>>;
-
-const input: ReposGetCommunityProfileMetricsInput = {} as { owner: string; repo: string };
-const result: ReposGetCommunityProfileMetricsOutput = await github.repos.getCommunityProfileMetrics(input);
-
-// Result shape (from schema): { health_percentage: number; description: string | null; documentation: string | null; files: { code_of_conduct: { url: string; key: string; name: string; html_url: string | null } | null; code_of_conduct_file: { url: s...
-```
-
-### `github.repos.compareCommits`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/compare/{basehead}`
-- **What it does**: Compare two commits
-- **OpenAPI operationId**: `repos/compare-commits`
-- **Path params**: `basehead`
-- **Query params**: None
-- **Response codes**: `200`, `404`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; basehead: string; page?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; html_url: string; permalink_url: string; diff_url: string; patch_url: string; base_commit: { url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; autho...`
-- OpenAPI response codes: `200`, `404`, `500`, `503`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCompareCommitsInput = Parameters<typeof github.repos.compareCommits> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCompareCommitsOutput = Awaited<ReturnType<typeof github.repos.compareCommits>>;
-
-const input: ReposCompareCommitsInput = {} as { owner: string; repo: string; basehead: string; page?: number; per_page?: number };
-const result: ReposCompareCommitsOutput = await github.repos.compareCommits(input);
-
-// Result shape (from schema): { url: string; html_url: string; permalink_url: string; diff_url: string; patch_url: string; base_commit: { url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; autho...
-```
-
-### `github.repos.deleteFile`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/contents/{path}`
-- **What it does**: Delete a file
-- **OpenAPI operationId**: `repos/delete-file`
-- **Path params**: `path`
-- **Query params**: None
-- **Response codes**: `200`, `404`, `409`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ message: string; sha: string; branch?: string; committer?: { name?: string; email?: string }; author?: { name?: string; email?: string }; owner: string; repo: string; path: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ content: { name?: string; path?: string; sha?: string; size?: number; url?: string; html_url?: string; git_url?: string; download_url?: string; type?: string; _links?: { self?: string; git?: string; html?: string } } ...`
-- OpenAPI response codes: `200`, `404`, `409`, `422`, `503`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteFileInput = Parameters<typeof github.repos.deleteFile> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteFileOutput = Awaited<ReturnType<typeof github.repos.deleteFile>>;
-
-const input: ReposDeleteFileInput = {} as { message: string; sha: string; branch?: string; committer?: { name?: string; email?: string }; author?: { name?: string; email?: string }; owner: string; repo: string; path: string };
-const result: ReposDeleteFileOutput = await github.repos.deleteFile(input);
-
-// Result shape (from schema): { content: { name?: string; path?: string; sha?: string; size?: number; url?: string; html_url?: string; git_url?: string; download_url?: string; type?: string; _links?: { self?: string; git?: string; html?: string } } ...
-```
-
-### `github.repos.getContent`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/contents/{path}`
-- **What it does**: Get repository content
-- **OpenAPI operationId**: `repos/get-content`
-- **Path params**: `path`
-- **Query params**: `ref`
-- **Response codes**: `200`, `302`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; path: string; ref?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `200`, `302`, `304`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetContentInput = Parameters<typeof github.repos.getContent> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetContentOutput = Awaited<ReturnType<typeof github.repos.getContent>>;
-
-const input: ReposGetContentInput = {} as { owner: string; repo: string; path: string; ref?: string };
-const result: ReposGetContentOutput = await github.repos.getContent(input);
-
-// Result shape (from schema): { [key: string]: unknown }
-```
-
-### `github.repos.createOrUpdateFileContents`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/contents/{path}`
-- **What it does**: Create or update file contents
-- **OpenAPI operationId**: `repos/create-or-update-file-contents`
-- **Path params**: `path`
-- **Query params**: None
-- **Response codes**: `200`, `201`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ message: string; content: string; sha?: string; branch?: string; committer?: { name: string; email: string; date?: string }; author?: { name: string; email: string; date?: string }; owner: string; repo: string; path: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ content: { name?: string; path?: string; sha?: string; size?: number; url?: string; html_url?: string; git_url?: string; download_url?: string; type?: string; _links?: { self?: string; git?: string; html?: string } } ...`
-- OpenAPI response codes: `200`, `201`, `404`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateOrUpdateFileContentsInput = Parameters<typeof github.repos.createOrUpdateFileContents> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateOrUpdateFileContentsOutput = Awaited<ReturnType<typeof github.repos.createOrUpdateFileContents>>;
-
-const input: ReposCreateOrUpdateFileContentsInput = {} as { message: string; content: string; sha?: string; branch?: string; committer?: { name: string; email: string; date?: string }; author?: { name: string; email: string; date?: string }; owner: string; repo: string; path: string };
-const result: ReposCreateOrUpdateFileContentsOutput = await github.repos.createOrUpdateFileContents(input);
-
-// Result shape (from schema): { content: { name?: string; path?: string; sha?: string; size?: number; url?: string; html_url?: string; git_url?: string; download_url?: string; type?: string; _links?: { self?: string; git?: string; html?: string } } ...
-```
-
-### `github.repos.listContributors`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/contributors`
-- **What it does**: List repository contributors
-- **OpenAPI operationId**: `repos/list-contributors`
-- **Path params**: None
-- **Query params**: `anon`
-- **Response codes**: `200`, `204`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; anon?: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ login?: string; id?: number; node_id?: string; avatar_url?: string; gravatar_id?: string | null; url?: string; html_url?: string; followers_url?: string; following_url?: string; gists_url?: string; starred_url?: stri...`
-- OpenAPI response codes: `200`, `204`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListContributorsInput = Parameters<typeof github.repos.listContributors> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListContributorsOutput = Awaited<ReturnType<typeof github.repos.listContributors>>;
-
-const input: ReposListContributorsInput = {} as { owner: string; repo: string; anon?: string; per_page?: number; page?: number };
-const result: ReposListContributorsOutput = await github.repos.listContributors(input);
-
-// Result shape (from schema): ({ login?: string; id?: number; node_id?: string; avatar_url?: string; gravatar_id?: string | null; url?: string; html_url?: string; followers_url?: string; following_url?: string; gists_url?: string; starred_url?: stri...
-```
-
-### `github.repos.listDeployments`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/deployments`
-- **What it does**: List deployments
-- **OpenAPI operationId**: `repos/list-deployments`
-- **Path params**: None
-- **Query params**: `sha`, `ref`, `task`, `environment`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; sha?: string; ref?: string; task?: string; environment?: string | null; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; id: number; node_id: string; sha: string; ref: string; task: string; payload: { [key: string]: unknown } | string; original_environment?: string; environment: string; description: string | null; creator:...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListDeploymentsInput = Parameters<typeof github.repos.listDeployments> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListDeploymentsOutput = Awaited<ReturnType<typeof github.repos.listDeployments>>;
-
-const input: ReposListDeploymentsInput = {} as { owner: string; repo: string; sha?: string; ref?: string; task?: string; environment?: string | null; per_page?: number; page?: number };
-const result: ReposListDeploymentsOutput = await github.repos.listDeployments(input);
-
-// Result shape (from schema): ({ url: string; id: number; node_id: string; sha: string; ref: string; task: string; payload: { [key: string]: unknown } | string; original_environment?: string; environment: string; description: string | null; creator:...
-```
-
-### `github.repos.createDeployment`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/deployments`
-- **What it does**: Create a deployment
-- **OpenAPI operationId**: `repos/create-deployment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `202`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ ref: string; task?: string; auto_merge?: boolean; required_contexts?: (string)[]; payload?: { [key: string]: unknown } | string; environment?: string; description?: string | null; transient_environment?: boolean; production_environment?: boolean; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; id: number; node_id: string; sha: string; ref: string; task: string; payload: { [key: string]: unknown } | string; original_environment?: string; environment: string; description: string | null; creator: ...`
-- OpenAPI response codes: `201`, `202`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateDeploymentInput = Parameters<typeof github.repos.createDeployment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateDeploymentOutput = Awaited<ReturnType<typeof github.repos.createDeployment>>;
-
-const input: ReposCreateDeploymentInput = {} as { ref: string; task?: string; auto_merge?: boolean; required_contexts?: (string)[]; payload?: { [key: string]: unknown } | string; environment?: string; description?: string | null; transient_environment?: boolean; production_environment?: boolean; owner: string; repo: string };
-const result: ReposCreateDeploymentOutput = await github.repos.createDeployment(input);
-
-// Result shape (from schema): { url: string; id: number; node_id: string; sha: string; ref: string; task: string; payload: { [key: string]: unknown } | string; original_environment?: string; environment: string; description: string | null; creator: ...
-```
-
-### `github.repos.deleteDeployment`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/deployments/{deployment_id}`
-- **What it does**: Delete a deployment
-- **OpenAPI operationId**: `repos/delete-deployment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; deployment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteDeploymentInput = Parameters<typeof github.repos.deleteDeployment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteDeploymentOutput = Awaited<ReturnType<typeof github.repos.deleteDeployment>>;
-
-const input: ReposDeleteDeploymentInput = {} as { owner: string; repo: string; deployment_id: number };
-const result: ReposDeleteDeploymentOutput = await github.repos.deleteDeployment(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getDeployment`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/deployments/{deployment_id}`
-- **What it does**: Get a deployment
-- **OpenAPI operationId**: `repos/get-deployment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; deployment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; id: number; node_id: string; sha: string; ref: string; task: string; payload: { [key: string]: unknown } | string; original_environment?: string; environment: string; description: string | null; creator: ...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetDeploymentInput = Parameters<typeof github.repos.getDeployment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetDeploymentOutput = Awaited<ReturnType<typeof github.repos.getDeployment>>;
-
-const input: ReposGetDeploymentInput = {} as { owner: string; repo: string; deployment_id: number };
-const result: ReposGetDeploymentOutput = await github.repos.getDeployment(input);
-
-// Result shape (from schema): { url: string; id: number; node_id: string; sha: string; ref: string; task: string; payload: { [key: string]: unknown } | string; original_environment?: string; environment: string; description: string | null; creator: ...
-```
-
-### `github.repos.listDeploymentStatuses`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses`
-- **What it does**: List deployment statuses
-- **OpenAPI operationId**: `repos/list-deployment-statuses`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; deployment_id: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; id: number; node_id: string; state: "error" | "failure" | "inactive" | "pending" | "success" | "queued" | "in_progress"; creator: { name?: string | null; email?: string | null; login: string; id: number;...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListDeploymentStatusesInput = Parameters<typeof github.repos.listDeploymentStatuses> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListDeploymentStatusesOutput = Awaited<ReturnType<typeof github.repos.listDeploymentStatuses>>;
-
-const input: ReposListDeploymentStatusesInput = {} as { owner: string; repo: string; deployment_id: number; per_page?: number; page?: number };
-const result: ReposListDeploymentStatusesOutput = await github.repos.listDeploymentStatuses(input);
-
-// Result shape (from schema): ({ url: string; id: number; node_id: string; state: "error" | "failure" | "inactive" | "pending" | "success" | "queued" | "in_progress"; creator: { name?: string | null; email?: string | null; login: string; id: number;...
-```
-
-### `github.repos.createDeploymentStatus`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/deployments/{deployment_id}/statuses`
-- **What it does**: Create a deployment status
-- **OpenAPI operationId**: `repos/create-deployment-status`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ state: "error" | "failure" | "inactive" | "in_progress" | "queued" | "pending" | "success"; target_url?: string; log_url?: string; description?: string; environment?: string; environment_url?: string; auto_inactive?: boolean; owner: string; repo: string; deployment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; id: number; node_id: string; state: "error" | "failure" | "inactive" | "pending" | "success" | "queued" | "in_progress"; creator: { name?: string | null; email?: string | null; login: string; id: number; ...`
-- OpenAPI response codes: `201`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateDeploymentStatusInput = Parameters<typeof github.repos.createDeploymentStatus> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateDeploymentStatusOutput = Awaited<ReturnType<typeof github.repos.createDeploymentStatus>>;
-
-const input: ReposCreateDeploymentStatusInput = {} as { state: "error" | "failure" | "inactive" | "in_progress" | "queued" | "pending" | "success"; target_url?: string; log_url?: string; description?: string; environment?: string; environment_url?: string; auto_inactive?: boolean; owner: string; repo: string; deployment_id: number };
-const result: ReposCreateDeploymentStatusOutput = await github.repos.createDeploymentStatus(input);
-
-// Result shape (from schema): { url: string; id: number; node_id: string; state: "error" | "failure" | "inactive" | "pending" | "success" | "queued" | "in_progress"; creator: { name?: string | null; email?: string | null; login: string; id: number; ...
-```
-
-### `github.repos.getDeploymentStatus`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/deployments/{deployment_id}/statuses/{status_id}`
-- **What it does**: Get a deployment status
-- **OpenAPI operationId**: `repos/get-deployment-status`
-- **Path params**: `status_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; deployment_id: number; status_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; id: number; node_id: string; state: "error" | "failure" | "inactive" | "pending" | "success" | "queued" | "in_progress"; creator: { name?: string | null; email?: string | null; login: string; id: number; ...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetDeploymentStatusInput = Parameters<typeof github.repos.getDeploymentStatus> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetDeploymentStatusOutput = Awaited<ReturnType<typeof github.repos.getDeploymentStatus>>;
-
-const input: ReposGetDeploymentStatusInput = {} as { owner: string; repo: string; deployment_id: number; status_id: number };
-const result: ReposGetDeploymentStatusOutput = await github.repos.getDeploymentStatus(input);
-
-// Result shape (from schema): { url: string; id: number; node_id: string; state: "error" | "failure" | "inactive" | "pending" | "success" | "queued" | "in_progress"; creator: { name?: string | null; email?: string | null; login: string; id: number; ...
-```
-
-### `github.repos.createDispatchEvent`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/dispatches`
-- **What it does**: Create a repository dispatch event
-- **OpenAPI operationId**: `repos/create-dispatch-event`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ event_type: string; client_payload?: { [key: string]: unknown }; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateDispatchEventInput = Parameters<typeof github.repos.createDispatchEvent> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateDispatchEventOutput = Awaited<ReturnType<typeof github.repos.createDispatchEvent>>;
-
-const input: ReposCreateDispatchEventInput = {} as { event_type: string; client_payload?: { [key: string]: unknown }; owner: string; repo: string };
-const result: ReposCreateDispatchEventOutput = await github.repos.createDispatchEvent(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getAllEnvironments`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/environments`
-- **What it does**: List environments
-- **OpenAPI operationId**: `repos/get-all-environments`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count?: number; environments?: ({ id: number; node_id: string; name: string; url: string; html_url: string; created_at: string; updated_at: string; protection_rules?: ({ id: number; node_id: string; type: string...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetAllEnvironmentsInput = Parameters<typeof github.repos.getAllEnvironments> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetAllEnvironmentsOutput = Awaited<ReturnType<typeof github.repos.getAllEnvironments>>;
-
-const input: ReposGetAllEnvironmentsInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ReposGetAllEnvironmentsOutput = await github.repos.getAllEnvironments(input);
-
-// Result shape (from schema): { total_count?: number; environments?: ({ id: number; node_id: string; name: string; url: string; html_url: string; created_at: string; updated_at: string; protection_rules?: ({ id: number; node_id: string; type: string...
-```
-
-### `github.repos.deleteAnEnvironment`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/environments/{environment_name}`
-- **What it does**: Delete an environment
-- **OpenAPI operationId**: `repos/delete-an-environment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; environment_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteAnEnvironmentInput = Parameters<typeof github.repos.deleteAnEnvironment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteAnEnvironmentOutput = Awaited<ReturnType<typeof github.repos.deleteAnEnvironment>>;
-
-const input: ReposDeleteAnEnvironmentInput = {} as { owner: string; repo: string; environment_name: string };
-const result: ReposDeleteAnEnvironmentOutput = await github.repos.deleteAnEnvironment(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getEnvironment`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}`
-- **What it does**: Get an environment
-- **OpenAPI operationId**: `repos/get-environment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; environment_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; name: string; url: string; html_url: string; created_at: string; updated_at: string; protection_rules?: ({ id: number; node_id: string; type: string; wait_timer?: number } | { id: number; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetEnvironmentInput = Parameters<typeof github.repos.getEnvironment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetEnvironmentOutput = Awaited<ReturnType<typeof github.repos.getEnvironment>>;
-
-const input: ReposGetEnvironmentInput = {} as { owner: string; repo: string; environment_name: string };
-const result: ReposGetEnvironmentOutput = await github.repos.getEnvironment(input);
-
-// Result shape (from schema): { id: number; node_id: string; name: string; url: string; html_url: string; created_at: string; updated_at: string; protection_rules?: ({ id: number; node_id: string; type: string; wait_timer?: number } | { id: number; ...
-```
-
-### `github.repos.createOrUpdateEnvironment`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/environments/{environment_name}`
-- **What it does**: Create or update an environment
-- **OpenAPI operationId**: `repos/create-or-update-environment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ wait_timer?: number; prevent_self_review?: boolean; reviewers?: ({ type?: "User" | "Team"; id?: number })[] | null; deployment_branch_policy?: { protected_branches: boolean; custom_branch_policies: boolean } | null; owner: string; repo: string; environment_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; name: string; url: string; html_url: string; created_at: string; updated_at: string; protection_rules?: ({ id: number; node_id: string; type: string; wait_timer?: number } | { id: number; ...`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateOrUpdateEnvironmentInput = Parameters<typeof github.repos.createOrUpdateEnvironment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateOrUpdateEnvironmentOutput = Awaited<ReturnType<typeof github.repos.createOrUpdateEnvironment>>;
-
-const input: ReposCreateOrUpdateEnvironmentInput = {} as { wait_timer?: number; prevent_self_review?: boolean; reviewers?: ({ type?: "User" | "Team"; id?: number })[] | null; deployment_branch_policy?: { protected_branches: boolean; custom_branch_policies: boolean } | null; owner: string; repo: string; environment_name: string };
-const result: ReposCreateOrUpdateEnvironmentOutput = await github.repos.createOrUpdateEnvironment(input);
-
-// Result shape (from schema): { id: number; node_id: string; name: string; url: string; html_url: string; created_at: string; updated_at: string; protection_rules?: ({ id: number; node_id: string; type: string; wait_timer?: number } | { id: number; ...
-```
-
-### `github.repos.getAllDeploymentProtectionRules`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules`
-- **What it does**: Get all deployment protection rules for an environment
-- **OpenAPI operationId**: `repos/get-all-deployment-protection-rules`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ environment_name: string; repo: string; owner: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count?: number; custom_deployment_protection_rules?: ({ id: number; node_id: string; enabled: boolean; app: { id: number; slug: string; integration_url: string; node_id: string } })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetAllDeploymentProtectionRulesInput = Parameters<typeof github.repos.getAllDeploymentProtectionRules> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetAllDeploymentProtectionRulesOutput = Awaited<ReturnType<typeof github.repos.getAllDeploymentProtectionRules>>;
-
-const input: ReposGetAllDeploymentProtectionRulesInput = {} as { environment_name: string; repo: string; owner: string };
-const result: ReposGetAllDeploymentProtectionRulesOutput = await github.repos.getAllDeploymentProtectionRules(input);
-
-// Result shape (from schema): { total_count?: number; custom_deployment_protection_rules?: ({ id: number; node_id: string; enabled: boolean; app: { id: number; slug: string; integration_url: string; node_id: string } })[] }
-```
-
-### `github.repos.createDeploymentProtectionRule`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules`
-- **What it does**: Create a custom deployment protection rule on an environment
-- **OpenAPI operationId**: `repos/create-deployment-protection-rule`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ integration_id?: number; environment_name: string; repo: string; owner: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; enabled: boolean; app: { id: number; slug: string; integration_url: string; node_id: string } }`
-- OpenAPI response codes: `201`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateDeploymentProtectionRuleInput = Parameters<typeof github.repos.createDeploymentProtectionRule> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateDeploymentProtectionRuleOutput = Awaited<ReturnType<typeof github.repos.createDeploymentProtectionRule>>;
-
-const input: ReposCreateDeploymentProtectionRuleInput = {} as { integration_id?: number; environment_name: string; repo: string; owner: string };
-const result: ReposCreateDeploymentProtectionRuleOutput = await github.repos.createDeploymentProtectionRule(input);
-
-// Result shape (from schema): { id: number; node_id: string; enabled: boolean; app: { id: number; slug: string; integration_url: string; node_id: string } }
-```
-
-### `github.repos.disableDeploymentProtectionRule`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}`
-- **What it does**: Disable a custom protection rule for an environment
-- **OpenAPI operationId**: `repos/disable-deployment-protection-rule`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ environment_name: string; repo: string; owner: string; protection_rule_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDisableDeploymentProtectionRuleInput = Parameters<typeof github.repos.disableDeploymentProtectionRule> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDisableDeploymentProtectionRuleOutput = Awaited<ReturnType<typeof github.repos.disableDeploymentProtectionRule>>;
-
-const input: ReposDisableDeploymentProtectionRuleInput = {} as { environment_name: string; repo: string; owner: string; protection_rule_id: number };
-const result: ReposDisableDeploymentProtectionRuleOutput = await github.repos.disableDeploymentProtectionRule(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getCustomDeploymentProtectionRule`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}`
-- **What it does**: Get a custom deployment protection rule
-- **OpenAPI operationId**: `repos/get-custom-deployment-protection-rule`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; environment_name: string; protection_rule_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; enabled: boolean; app: { id: number; slug: string; integration_url: string; node_id: string } }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetCustomDeploymentProtectionRuleInput = Parameters<typeof github.repos.getCustomDeploymentProtectionRule> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetCustomDeploymentProtectionRuleOutput = Awaited<ReturnType<typeof github.repos.getCustomDeploymentProtectionRule>>;
-
-const input: ReposGetCustomDeploymentProtectionRuleInput = {} as { owner: string; repo: string; environment_name: string; protection_rule_id: number };
-const result: ReposGetCustomDeploymentProtectionRuleOutput = await github.repos.getCustomDeploymentProtectionRule(input);
-
-// Result shape (from schema): { id: number; node_id: string; enabled: boolean; app: { id: number; slug: string; integration_url: string; node_id: string } }
-```
-
-### `github.repos.listCustomDeploymentRuleIntegrations`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/apps`
-- **What it does**: List custom deployment rule integrations available for an environment
-- **OpenAPI operationId**: `repos/list-custom-deployment-rule-integrations`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ environment_name: string; repo: string; owner: string; page?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count?: number; available_custom_deployment_protection_rule_integrations?: ({ id: number; slug: string; integration_url: string; node_id: string })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListCustomDeploymentRuleIntegrationsInput = Parameters<typeof github.repos.listCustomDeploymentRuleIntegrations> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListCustomDeploymentRuleIntegrationsOutput = Awaited<ReturnType<typeof github.repos.listCustomDeploymentRuleIntegrations>>;
-
-const input: ReposListCustomDeploymentRuleIntegrationsInput = {} as { environment_name: string; repo: string; owner: string; page?: number; per_page?: number };
-const result: ReposListCustomDeploymentRuleIntegrationsOutput = await github.repos.listCustomDeploymentRuleIntegrations(input);
-
-// Result shape (from schema): { total_count?: number; available_custom_deployment_protection_rule_integrations?: ({ id: number; slug: string; integration_url: string; node_id: string })[] }
-```
-
-### `github.repos.listDeploymentBranchPolicies`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies`
-- **What it does**: List deployment branch policies
-- **OpenAPI operationId**: `repos/list-deployment-branch-policies`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; environment_name: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; branch_policies: ({ id?: number; node_id?: string; name?: string; type?: "branch" | "tag" })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListDeploymentBranchPoliciesInput = Parameters<typeof github.repos.listDeploymentBranchPolicies> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListDeploymentBranchPoliciesOutput = Awaited<ReturnType<typeof github.repos.listDeploymentBranchPolicies>>;
-
-const input: ReposListDeploymentBranchPoliciesInput = {} as { owner: string; repo: string; environment_name: string; per_page?: number; page?: number };
-const result: ReposListDeploymentBranchPoliciesOutput = await github.repos.listDeploymentBranchPolicies(input);
-
-// Result shape (from schema): { total_count: number; branch_policies: ({ id?: number; node_id?: string; name?: string; type?: "branch" | "tag" })[] }
-```
-
-### `github.repos.createDeploymentBranchPolicy`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies`
-- **What it does**: Create a deployment branch policy
-- **OpenAPI operationId**: `repos/create-deployment-branch-policy`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `303`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name: string; type?: "branch" | "tag"; owner: string; repo: string; environment_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id?: number; node_id?: string; name?: string; type?: "branch" | "tag" }`
-- OpenAPI response codes: `200`, `303`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateDeploymentBranchPolicyInput = Parameters<typeof github.repos.createDeploymentBranchPolicy> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateDeploymentBranchPolicyOutput = Awaited<ReturnType<typeof github.repos.createDeploymentBranchPolicy>>;
-
-const input: ReposCreateDeploymentBranchPolicyInput = {} as { name: string; type?: "branch" | "tag"; owner: string; repo: string; environment_name: string };
-const result: ReposCreateDeploymentBranchPolicyOutput = await github.repos.createDeploymentBranchPolicy(input);
-
-// Result shape (from schema): { id?: number; node_id?: string; name?: string; type?: "branch" | "tag" }
-```
-
-### `github.repos.deleteDeploymentBranchPolicy`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}`
-- **What it does**: Delete a deployment branch policy
-- **OpenAPI operationId**: `repos/delete-deployment-branch-policy`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; environment_name: string; branch_policy_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteDeploymentBranchPolicyInput = Parameters<typeof github.repos.deleteDeploymentBranchPolicy> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteDeploymentBranchPolicyOutput = Awaited<ReturnType<typeof github.repos.deleteDeploymentBranchPolicy>>;
-
-const input: ReposDeleteDeploymentBranchPolicyInput = {} as { owner: string; repo: string; environment_name: string; branch_policy_id: number };
-const result: ReposDeleteDeploymentBranchPolicyOutput = await github.repos.deleteDeploymentBranchPolicy(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getDeploymentBranchPolicy`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}`
-- **What it does**: Get a deployment branch policy
-- **OpenAPI operationId**: `repos/get-deployment-branch-policy`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; environment_name: string; branch_policy_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id?: number; node_id?: string; name?: string; type?: "branch" | "tag" }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetDeploymentBranchPolicyInput = Parameters<typeof github.repos.getDeploymentBranchPolicy> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetDeploymentBranchPolicyOutput = Awaited<ReturnType<typeof github.repos.getDeploymentBranchPolicy>>;
-
-const input: ReposGetDeploymentBranchPolicyInput = {} as { owner: string; repo: string; environment_name: string; branch_policy_id: number };
-const result: ReposGetDeploymentBranchPolicyOutput = await github.repos.getDeploymentBranchPolicy(input);
-
-// Result shape (from schema): { id?: number; node_id?: string; name?: string; type?: "branch" | "tag" }
-```
-
-### `github.repos.updateDeploymentBranchPolicy`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}`
-- **What it does**: Update a deployment branch policy
-- **OpenAPI operationId**: `repos/update-deployment-branch-policy`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name: string; owner: string; repo: string; environment_name: string; branch_policy_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id?: number; node_id?: string; name?: string; type?: "branch" | "tag" }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposUpdateDeploymentBranchPolicyInput = Parameters<typeof github.repos.updateDeploymentBranchPolicy> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateDeploymentBranchPolicyOutput = Awaited<ReturnType<typeof github.repos.updateDeploymentBranchPolicy>>;
-
-const input: ReposUpdateDeploymentBranchPolicyInput = {} as { name: string; owner: string; repo: string; environment_name: string; branch_policy_id: number };
-const result: ReposUpdateDeploymentBranchPolicyOutput = await github.repos.updateDeploymentBranchPolicy(input);
-
-// Result shape (from schema): { id?: number; node_id?: string; name?: string; type?: "branch" | "tag" }
-```
-
-### `github.repos.listForks`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/forks`
-- **What it does**: List forks
-- **OpenAPI operationId**: `repos/list-forks`
-- **Path params**: None
-- **Query params**: `sort`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; sort?: "newest" | "oldest" | "stargazers" | "watchers"; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...`
-- OpenAPI response codes: `200`, `400`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListForksInput = Parameters<typeof github.repos.listForks> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListForksOutput = Awaited<ReturnType<typeof github.repos.listForks>>;
-
-const input: ReposListForksInput = {} as { owner: string; repo: string; sort?: "newest" | "oldest" | "stargazers" | "watchers"; per_page?: number; page?: number };
-const result: ReposListForksOutput = await github.repos.listForks(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...
-```
-
-### `github.repos.createFork`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/forks`
-- **What it does**: Create a fork
-- **OpenAPI operationId**: `repos/create-fork`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `400`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ organization?: string; name?: string; default_branch_only?: boolean; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `400`, `403`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateForkInput = Parameters<typeof github.repos.createFork> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateForkOutput = Awaited<ReturnType<typeof github.repos.createFork>>;
-
-const input: ReposCreateForkInput = {} as { organization?: string; name?: string; default_branch_only?: boolean; owner: string; repo: string };
-const result: ReposCreateForkOutput = await github.repos.createFork(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getHashAlgorithm`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/hash-algorithm`
-- **What it does**: Get the hash algorithm for a repository
-- **OpenAPI operationId**: `repos/get-hash-algorithm`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ hash_algorithm: "sha1" | "sha256" }`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetHashAlgorithmInput = Parameters<typeof github.repos.getHashAlgorithm> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetHashAlgorithmOutput = Awaited<ReturnType<typeof github.repos.getHashAlgorithm>>;
-
-const input: ReposGetHashAlgorithmInput = {} as { owner: string; repo: string };
-const result: ReposGetHashAlgorithmOutput = await github.repos.getHashAlgorithm(input);
-
-// Result shape (from schema): { hash_algorithm: "sha1" | "sha256" }
-```
-
-### `github.repos.listWebhooks`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/hooks`
-- **What it does**: List repository webhooks
-- **OpenAPI operationId**: `repos/list-webhooks`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ type: string; id: number; name: string; active: boolean; events: (string)[]; config: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; updated_at: string; created_at: string; u...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListWebhooksInput = Parameters<typeof github.repos.listWebhooks> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListWebhooksOutput = Awaited<ReturnType<typeof github.repos.listWebhooks>>;
-
-const input: ReposListWebhooksInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ReposListWebhooksOutput = await github.repos.listWebhooks(input);
-
-// Result shape (from schema): ({ type: string; id: number; name: string; active: boolean; events: (string)[]; config: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; updated_at: string; created_at: string; u...
-```
-
-### `github.repos.createWebhook`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/hooks`
-- **What it does**: Create a repository webhook
-- **OpenAPI operationId**: `repos/create-webhook`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name?: string; config?: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; events?: (string)[]; active?: boolean; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ type: string; id: number; name: string; active: boolean; events: (string)[]; config: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; updated_at: string; created_at: string; ur...`
-- OpenAPI response codes: `201`, `403`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateWebhookInput = Parameters<typeof github.repos.createWebhook> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateWebhookOutput = Awaited<ReturnType<typeof github.repos.createWebhook>>;
-
-const input: ReposCreateWebhookInput = {} as { name?: string; config?: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; events?: (string)[]; active?: boolean; owner: string; repo: string };
-const result: ReposCreateWebhookOutput = await github.repos.createWebhook(input);
-
-// Result shape (from schema): { type: string; id: number; name: string; active: boolean; events: (string)[]; config: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; updated_at: string; created_at: string; ur...
-```
-
-### `github.repos.deleteWebhook`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/hooks/{hook_id}`
-- **What it does**: Delete a repository webhook
-- **OpenAPI operationId**: `repos/delete-webhook`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; hook_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteWebhookInput = Parameters<typeof github.repos.deleteWebhook> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteWebhookOutput = Awaited<ReturnType<typeof github.repos.deleteWebhook>>;
-
-const input: ReposDeleteWebhookInput = {} as { owner: string; repo: string; hook_id: number };
-const result: ReposDeleteWebhookOutput = await github.repos.deleteWebhook(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getWebhook`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/hooks/{hook_id}`
-- **What it does**: Get a repository webhook
-- **OpenAPI operationId**: `repos/get-webhook`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; hook_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ type: string; id: number; name: string; active: boolean; events: (string)[]; config: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; updated_at: string; created_at: string; ur...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetWebhookInput = Parameters<typeof github.repos.getWebhook> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetWebhookOutput = Awaited<ReturnType<typeof github.repos.getWebhook>>;
-
-const input: ReposGetWebhookInput = {} as { owner: string; repo: string; hook_id: number };
-const result: ReposGetWebhookOutput = await github.repos.getWebhook(input);
-
-// Result shape (from schema): { type: string; id: number; name: string; active: boolean; events: (string)[]; config: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; updated_at: string; created_at: string; ur...
-```
-
-### `github.repos.updateWebhook`
-
-- **HTTP**: `PATCH /repos/{owner}/{repo}/hooks/{hook_id}`
-- **What it does**: Update a repository webhook
-- **OpenAPI operationId**: `repos/update-webhook`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ config?: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; events?: (string)[]; add_events?: (string)[]; remove_events?: (string)[]; active?: boolean; owner: string; repo: string; hook_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ type: string; id: number; name: string; active: boolean; events: (string)[]; config: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; updated_at: string; created_at: string; ur...`
-- OpenAPI response codes: `200`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposUpdateWebhookInput = Parameters<typeof github.repos.updateWebhook> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateWebhookOutput = Awaited<ReturnType<typeof github.repos.updateWebhook>>;
-
-const input: ReposUpdateWebhookInput = {} as { config?: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; events?: (string)[]; add_events?: (string)[]; remove_events?: (string)[]; active?: boolean; owner: string; repo: string; hook_id: number };
-const result: ReposUpdateWebhookOutput = await github.repos.updateWebhook(input);
-
-// Result shape (from schema): { type: string; id: number; name: string; active: boolean; events: (string)[]; config: { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }; updated_at: string; created_at: string; ur...
-```
-
-### `github.repos.getWebhookConfigForRepo`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/hooks/{hook_id}/config`
-- **What it does**: Get a webhook configuration for a repository
-- **OpenAPI operationId**: `repos/get-webhook-config-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; hook_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetWebhookConfigForRepoInput = Parameters<typeof github.repos.getWebhookConfigForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetWebhookConfigForRepoOutput = Awaited<ReturnType<typeof github.repos.getWebhookConfigForRepo>>;
-
-const input: ReposGetWebhookConfigForRepoInput = {} as { owner: string; repo: string; hook_id: number };
-const result: ReposGetWebhookConfigForRepoOutput = await github.repos.getWebhookConfigForRepo(input);
-
-// Result shape (from schema): { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }
-```
-
-### `github.repos.updateWebhookConfigForRepo`
-
-- **HTTP**: `PATCH /repos/{owner}/{repo}/hooks/{hook_id}/config`
-- **What it does**: Update a webhook configuration for a repository
-- **OpenAPI operationId**: `repos/update-webhook-config-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number; owner: string; repo: string; hook_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposUpdateWebhookConfigForRepoInput = Parameters<typeof github.repos.updateWebhookConfigForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateWebhookConfigForRepoOutput = Awaited<ReturnType<typeof github.repos.updateWebhookConfigForRepo>>;
-
-const input: ReposUpdateWebhookConfigForRepoInput = {} as { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number; owner: string; repo: string; hook_id: number };
-const result: ReposUpdateWebhookConfigForRepoOutput = await github.repos.updateWebhookConfigForRepo(input);
-
-// Result shape (from schema): { url?: string; content_type?: string; secret?: string; insecure_ssl?: string | number }
-```
-
-### `github.repos.listWebhookDeliveries`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries`
-- **What it does**: List deliveries for a repository webhook
-- **OpenAPI operationId**: `repos/list-webhook-deliveries`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; hook_id: number; per_page?: number; cursor?: string; status?: "success" | "failure" }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; guid: string; delivered_at: string; redelivery: boolean; duration: number; status: string; status_code: number; event: string; action: string | null; installation_id: number | null; repository_id: number ...`
-- OpenAPI response codes: `200`, `400`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListWebhookDeliveriesInput = Parameters<typeof github.repos.listWebhookDeliveries> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListWebhookDeliveriesOutput = Awaited<ReturnType<typeof github.repos.listWebhookDeliveries>>;
-
-const input: ReposListWebhookDeliveriesInput = {} as { owner: string; repo: string; hook_id: number; per_page?: number; cursor?: string; status?: "success" | "failure" };
-const result: ReposListWebhookDeliveriesOutput = await github.repos.listWebhookDeliveries(input);
-
-// Result shape (from schema): ({ id: number; guid: string; delivered_at: string; redelivery: boolean; duration: number; status: string; status_code: number; event: string; action: string | null; installation_id: number | null; repository_id: number ...
-```
-
-### `github.repos.getWebhookDelivery`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}`
-- **What it does**: Get a delivery for a repository webhook
-- **OpenAPI operationId**: `repos/get-webhook-delivery`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; hook_id: number; delivery_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; guid: string; delivered_at: string; redelivery: boolean; duration: number; status: string; status_code: number; event: string; action: string | null; installation_id: number | null; repository_id: number |...`
-- OpenAPI response codes: `200`, `400`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetWebhookDeliveryInput = Parameters<typeof github.repos.getWebhookDelivery> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetWebhookDeliveryOutput = Awaited<ReturnType<typeof github.repos.getWebhookDelivery>>;
-
-const input: ReposGetWebhookDeliveryInput = {} as { owner: string; repo: string; hook_id: number; delivery_id: number };
-const result: ReposGetWebhookDeliveryOutput = await github.repos.getWebhookDelivery(input);
-
-// Result shape (from schema): { id: number; guid: string; delivered_at: string; redelivery: boolean; duration: number; status: string; status_code: number; event: string; action: string | null; installation_id: number | null; repository_id: number |...
-```
-
-### `github.repos.redeliverWebhookDelivery`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}/attempts`
-- **What it does**: Redeliver a delivery for a repository webhook
-- **OpenAPI operationId**: `repos/redeliver-webhook-delivery`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `400`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; hook_id: number; delivery_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `400`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposRedeliverWebhookDeliveryInput = Parameters<typeof github.repos.redeliverWebhookDelivery> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposRedeliverWebhookDeliveryOutput = Awaited<ReturnType<typeof github.repos.redeliverWebhookDelivery>>;
-
-const input: ReposRedeliverWebhookDeliveryInput = {} as { owner: string; repo: string; hook_id: number; delivery_id: number };
-const result: ReposRedeliverWebhookDeliveryOutput = await github.repos.redeliverWebhookDelivery(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.pingWebhook`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/hooks/{hook_id}/pings`
-- **What it does**: Ping a repository webhook
-- **OpenAPI operationId**: `repos/ping-webhook`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; hook_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposPingWebhookInput = Parameters<typeof github.repos.pingWebhook> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposPingWebhookOutput = Awaited<ReturnType<typeof github.repos.pingWebhook>>;
-
-const input: ReposPingWebhookInput = {} as { owner: string; repo: string; hook_id: number };
-const result: ReposPingWebhookOutput = await github.repos.pingWebhook(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.testPushWebhook`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/hooks/{hook_id}/tests`
-- **What it does**: Test the push repository webhook
-- **OpenAPI operationId**: `repos/test-push-webhook`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; hook_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposTestPushWebhookInput = Parameters<typeof github.repos.testPushWebhook> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposTestPushWebhookOutput = Awaited<ReturnType<typeof github.repos.testPushWebhook>>;
-
-const input: ReposTestPushWebhookInput = {} as { owner: string; repo: string; hook_id: number };
-const result: ReposTestPushWebhookOutput = await github.repos.testPushWebhook(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.disableImmutableReleases`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/immutable-releases`
-- **What it does**: Disable immutable releases
-- **OpenAPI operationId**: `repos/disable-immutable-releases`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDisableImmutableReleasesInput = Parameters<typeof github.repos.disableImmutableReleases> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDisableImmutableReleasesOutput = Awaited<ReturnType<typeof github.repos.disableImmutableReleases>>;
-
-const input: ReposDisableImmutableReleasesInput = {} as { owner: string; repo: string };
-const result: ReposDisableImmutableReleasesOutput = await github.repos.disableImmutableReleases(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.checkImmutableReleases`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/immutable-releases`
-- **What it does**: Check if immutable releases are enabled for a repository
-- **OpenAPI operationId**: `repos/check-immutable-releases`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ enabled: boolean; enforced_by_owner: boolean }`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCheckImmutableReleasesInput = Parameters<typeof github.repos.checkImmutableReleases> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCheckImmutableReleasesOutput = Awaited<ReturnType<typeof github.repos.checkImmutableReleases>>;
-
-const input: ReposCheckImmutableReleasesInput = {} as { owner: string; repo: string };
-const result: ReposCheckImmutableReleasesOutput = await github.repos.checkImmutableReleases(input);
-
-// Result shape (from schema): { enabled: boolean; enforced_by_owner: boolean }
-```
-
-### `github.repos.enableImmutableReleases`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/immutable-releases`
-- **What it does**: Enable immutable releases
-- **OpenAPI operationId**: `repos/enable-immutable-releases`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`
-
-```ts
-import github from "@utdk/github";
-
-type ReposEnableImmutableReleasesInput = Parameters<typeof github.repos.enableImmutableReleases> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposEnableImmutableReleasesOutput = Awaited<ReturnType<typeof github.repos.enableImmutableReleases>>;
-
-const input: ReposEnableImmutableReleasesInput = {} as { owner: string; repo: string };
-const result: ReposEnableImmutableReleasesOutput = await github.repos.enableImmutableReleases(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.listInvitations`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/invitations`
-- **What it does**: List repository invitations
-- **OpenAPI operationId**: `repos/list-invitations`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; repository: { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_i...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListInvitationsInput = Parameters<typeof github.repos.listInvitations> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListInvitationsOutput = Awaited<ReturnType<typeof github.repos.listInvitations>>;
-
-const input: ReposListInvitationsInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ReposListInvitationsOutput = await github.repos.listInvitations(input);
-
-// Result shape (from schema): ({ id: number; repository: { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_i...
-```
-
-### `github.repos.deleteInvitation`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/invitations/{invitation_id}`
-- **What it does**: Delete a repository invitation
-- **OpenAPI operationId**: `repos/delete-invitation`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; invitation_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteInvitationInput = Parameters<typeof github.repos.deleteInvitation> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteInvitationOutput = Awaited<ReturnType<typeof github.repos.deleteInvitation>>;
-
-const input: ReposDeleteInvitationInput = {} as { owner: string; repo: string; invitation_id: number };
-const result: ReposDeleteInvitationOutput = await github.repos.deleteInvitation(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.updateInvitation`
-
-- **HTTP**: `PATCH /repos/{owner}/{repo}/invitations/{invitation_id}`
-- **What it does**: Update a repository invitation
-- **OpenAPI operationId**: `repos/update-invitation`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ permissions?: "read" | "write" | "maintain" | "triage" | "admin"; owner: string; repo: string; invitation_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; repository: { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposUpdateInvitationInput = Parameters<typeof github.repos.updateInvitation> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateInvitationOutput = Awaited<ReturnType<typeof github.repos.updateInvitation>>;
-
-const input: ReposUpdateInvitationInput = {} as { permissions?: "read" | "write" | "maintain" | "triage" | "admin"; owner: string; repo: string; invitation_id: number };
-const result: ReposUpdateInvitationOutput = await github.repos.updateInvitation(input);
-
-// Result shape (from schema): { id: number; repository: { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id...
-```
-
-### `github.repos.listDeployKeys`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/keys`
-- **What it does**: List deploy keys
-- **OpenAPI operationId**: `repos/list-deploy-keys`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; key: string; url: string; title: string; verified: boolean; created_at: string; read_only: boolean; added_by?: string | null; last_used?: string | null; enabled?: boolean })[]`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListDeployKeysInput = Parameters<typeof github.repos.listDeployKeys> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListDeployKeysOutput = Awaited<ReturnType<typeof github.repos.listDeployKeys>>;
-
-const input: ReposListDeployKeysInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ReposListDeployKeysOutput = await github.repos.listDeployKeys(input);
-
-// Result shape (from schema): ({ id: number; key: string; url: string; title: string; verified: boolean; created_at: string; read_only: boolean; added_by?: string | null; last_used?: string | null; enabled?: boolean })[]
-```
-
-### `github.repos.createDeployKey`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/keys`
-- **What it does**: Create a deploy key
-- **OpenAPI operationId**: `repos/create-deploy-key`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ title?: string; key: string; read_only?: boolean; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; key: string; url: string; title: string; verified: boolean; created_at: string; read_only: boolean; added_by?: string | null; last_used?: string | null; enabled?: boolean }`
-- OpenAPI response codes: `201`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateDeployKeyInput = Parameters<typeof github.repos.createDeployKey> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateDeployKeyOutput = Awaited<ReturnType<typeof github.repos.createDeployKey>>;
-
-const input: ReposCreateDeployKeyInput = {} as { title?: string; key: string; read_only?: boolean; owner: string; repo: string };
-const result: ReposCreateDeployKeyOutput = await github.repos.createDeployKey(input);
-
-// Result shape (from schema): { id: number; key: string; url: string; title: string; verified: boolean; created_at: string; read_only: boolean; added_by?: string | null; last_used?: string | null; enabled?: boolean }
-```
-
-### `github.repos.deleteDeployKey`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/keys/{key_id}`
-- **What it does**: Delete a deploy key
-- **OpenAPI operationId**: `repos/delete-deploy-key`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; key_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteDeployKeyInput = Parameters<typeof github.repos.deleteDeployKey> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteDeployKeyOutput = Awaited<ReturnType<typeof github.repos.deleteDeployKey>>;
-
-const input: ReposDeleteDeployKeyInput = {} as { owner: string; repo: string; key_id: number };
-const result: ReposDeleteDeployKeyOutput = await github.repos.deleteDeployKey(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getDeployKey`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/keys/{key_id}`
-- **What it does**: Get a deploy key
-- **OpenAPI operationId**: `repos/get-deploy-key`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; key_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; key: string; url: string; title: string; verified: boolean; created_at: string; read_only: boolean; added_by?: string | null; last_used?: string | null; enabled?: boolean }`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetDeployKeyInput = Parameters<typeof github.repos.getDeployKey> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetDeployKeyOutput = Awaited<ReturnType<typeof github.repos.getDeployKey>>;
-
-const input: ReposGetDeployKeyInput = {} as { owner: string; repo: string; key_id: number };
-const result: ReposGetDeployKeyOutput = await github.repos.getDeployKey(input);
-
-// Result shape (from schema): { id: number; key: string; url: string; title: string; verified: boolean; created_at: string; read_only: boolean; added_by?: string | null; last_used?: string | null; enabled?: boolean }
-```
-
-### `github.repos.listLanguages`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/languages`
-- **What it does**: List repository languages
-- **OpenAPI operationId**: `repos/list-languages`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListLanguagesInput = Parameters<typeof github.repos.listLanguages> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListLanguagesOutput = Awaited<ReturnType<typeof github.repos.listLanguages>>;
-
-const input: ReposListLanguagesInput = {} as { owner: string; repo: string };
-const result: ReposListLanguagesOutput = await github.repos.listLanguages(input);
-
-// Result shape (from schema): { [key: string]: unknown }
-```
-
-### `github.repos.mergeUpstream`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/merge-upstream`
-- **What it does**: Sync a fork branch with the upstream repository
-- **OpenAPI operationId**: `repos/merge-upstream`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ branch: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ message?: string; merge_type?: "merge" | "fast-forward" | "none"; base_branch?: string }`
-- OpenAPI response codes: `200`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposMergeUpstreamInput = Parameters<typeof github.repos.mergeUpstream> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposMergeUpstreamOutput = Awaited<ReturnType<typeof github.repos.mergeUpstream>>;
-
-const input: ReposMergeUpstreamInput = {} as { branch: string; owner: string; repo: string };
-const result: ReposMergeUpstreamOutput = await github.repos.mergeUpstream(input);
-
-// Result shape (from schema): { message?: string; merge_type?: "merge" | "fast-forward" | "none"; base_branch?: string }
-```
-
-### `github.repos.merge`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/merges`
-- **What it does**: Merge a branch
-- **OpenAPI operationId**: `repos/merge`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `204`, `403`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ base: string; head: string; commit_message?: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: string; email?: string; da...`
-- OpenAPI response codes: `201`, `204`, `403`, `404`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposMergeInput = Parameters<typeof github.repos.merge> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposMergeOutput = Awaited<ReturnType<typeof github.repos.merge>>;
-
-const input: ReposMergeInput = {} as { base: string; head: string; commit_message?: string; owner: string; repo: string };
-const result: ReposMergeOutput = await github.repos.merge(input);
-
-// Result shape (from schema): { url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: string; email?: string; da...
-```
-
-### `github.repos.deletePagesSite`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/pages`
-- **What it does**: Delete a GitHub Pages site
-- **OpenAPI operationId**: `repos/delete-pages-site`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeletePagesSiteInput = Parameters<typeof github.repos.deletePagesSite> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeletePagesSiteOutput = Awaited<ReturnType<typeof github.repos.deletePagesSite>>;
-
-const input: ReposDeletePagesSiteInput = {} as { owner: string; repo: string };
-const result: ReposDeletePagesSiteOutput = await github.repos.deletePagesSite(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getPages`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/pages`
-- **What it does**: Get a GitHub Pages site
-- **OpenAPI operationId**: `repos/get-pages`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; status: "built" | "building" | "errored" | null; cname: string | null; protected_domain_state?: "pending" | "verified" | "unverified" | null; pending_domain_unverified_at?: string | null; custom_404: bool...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetPagesInput = Parameters<typeof github.repos.getPages> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetPagesOutput = Awaited<ReturnType<typeof github.repos.getPages>>;
-
-const input: ReposGetPagesInput = {} as { owner: string; repo: string };
-const result: ReposGetPagesOutput = await github.repos.getPages(input);
-
-// Result shape (from schema): { url: string; status: "built" | "building" | "errored" | null; cname: string | null; protected_domain_state?: "pending" | "verified" | "unverified" | null; pending_domain_unverified_at?: string | null; custom_404: bool...
-```
-
-### `github.repos.createPagesSite`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/pages`
-- **What it does**: Create a GitHub Pages site
-- **OpenAPI operationId**: `repos/create-pages-site`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body: unknown | unknown | null; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; status: "built" | "building" | "errored" | null; cname: string | null; protected_domain_state?: "pending" | "verified" | "unverified" | null; pending_domain_unverified_at?: string | null; custom_404: bool...`
-- OpenAPI response codes: `201`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreatePagesSiteInput = Parameters<typeof github.repos.createPagesSite> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreatePagesSiteOutput = Awaited<ReturnType<typeof github.repos.createPagesSite>>;
-
-const input: ReposCreatePagesSiteInput = {} as { body: unknown | unknown | null; owner: string; repo: string };
-const result: ReposCreatePagesSiteOutput = await github.repos.createPagesSite(input);
-
-// Result shape (from schema): { url: string; status: "built" | "building" | "errored" | null; cname: string | null; protected_domain_state?: "pending" | "verified" | "unverified" | null; pending_domain_unverified_at?: string | null; custom_404: bool...
-```
-
-### `github.repos.updateInformationAboutPagesSite`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/pages`
-- **What it does**: Update information about a GitHub Pages site
-- **OpenAPI operationId**: `repos/update-information-about-pages-site`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `400`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body: unknown | unknown | unknown | unknown | unknown; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `400`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposUpdateInformationAboutPagesSiteInput = Parameters<typeof github.repos.updateInformationAboutPagesSite> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateInformationAboutPagesSiteOutput = Awaited<ReturnType<typeof github.repos.updateInformationAboutPagesSite>>;
-
-const input: ReposUpdateInformationAboutPagesSiteInput = {} as { body: unknown | unknown | unknown | unknown | unknown; owner: string; repo: string };
-const result: ReposUpdateInformationAboutPagesSiteOutput = await github.repos.updateInformationAboutPagesSite(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.listPagesBuilds`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/pages/builds`
-- **What it does**: List GitHub Pages builds
-- **OpenAPI operationId**: `repos/list-pages-builds`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; status: string; error: { message: string | null }; pusher: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: ...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListPagesBuildsInput = Parameters<typeof github.repos.listPagesBuilds> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListPagesBuildsOutput = Awaited<ReturnType<typeof github.repos.listPagesBuilds>>;
-
-const input: ReposListPagesBuildsInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ReposListPagesBuildsOutput = await github.repos.listPagesBuilds(input);
-
-// Result shape (from schema): ({ url: string; status: string; error: { message: string | null }; pusher: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: ...
-```
-
-### `github.repos.requestPagesBuild`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/pages/builds`
-- **What it does**: Request a GitHub Pages build
-- **OpenAPI operationId**: `repos/request-pages-build`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; status: string }`
-- OpenAPI response codes: `201`
-
-```ts
-import github from "@utdk/github";
-
-type ReposRequestPagesBuildInput = Parameters<typeof github.repos.requestPagesBuild> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposRequestPagesBuildOutput = Awaited<ReturnType<typeof github.repos.requestPagesBuild>>;
-
-const input: ReposRequestPagesBuildInput = {} as { owner: string; repo: string };
-const result: ReposRequestPagesBuildOutput = await github.repos.requestPagesBuild(input);
-
-// Result shape (from schema): { url: string; status: string }
-```
-
-### `github.repos.getPagesBuild`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/pages/builds/{build_id}`
-- **What it does**: Get GitHub Pages build
-- **OpenAPI operationId**: `repos/get-pages-build`
-- **Path params**: `build_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; build_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; status: string; error: { message: string | null }; pusher: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetPagesBuildInput = Parameters<typeof github.repos.getPagesBuild> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetPagesBuildOutput = Awaited<ReturnType<typeof github.repos.getPagesBuild>>;
-
-const input: ReposGetPagesBuildInput = {} as { owner: string; repo: string; build_id: number };
-const result: ReposGetPagesBuildOutput = await github.repos.getPagesBuild(input);
-
-// Result shape (from schema): { url: string; status: string; error: { message: string | null }; pusher: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...
-```
-
-### `github.repos.getLatestPagesBuild`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/pages/builds/latest`
-- **What it does**: Get latest Pages build
-- **OpenAPI operationId**: `repos/get-latest-pages-build`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; status: string; error: { message: string | null }; pusher: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetLatestPagesBuildInput = Parameters<typeof github.repos.getLatestPagesBuild> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetLatestPagesBuildOutput = Awaited<ReturnType<typeof github.repos.getLatestPagesBuild>>;
-
-const input: ReposGetLatestPagesBuildInput = {} as { owner: string; repo: string };
-const result: ReposGetLatestPagesBuildOutput = await github.repos.getLatestPagesBuild(input);
-
-// Result shape (from schema): { url: string; status: string; error: { message: string | null }; pusher: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: s...
-```
-
-### `github.repos.createPagesDeployment`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/pages/deployments`
-- **What it does**: Create a GitHub Pages deployment
-- **OpenAPI operationId**: `repos/create-pages-deployment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ artifact_id?: number; artifact_url?: string; environment?: string; pages_build_version: string; oidc_token: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number | string; status_url: string; page_url: string; preview_url?: string }`
-- OpenAPI response codes: `200`, `400`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreatePagesDeploymentInput = Parameters<typeof github.repos.createPagesDeployment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreatePagesDeploymentOutput = Awaited<ReturnType<typeof github.repos.createPagesDeployment>>;
-
-const input: ReposCreatePagesDeploymentInput = {} as { artifact_id?: number; artifact_url?: string; environment?: string; pages_build_version: string; oidc_token: string; owner: string; repo: string };
-const result: ReposCreatePagesDeploymentOutput = await github.repos.createPagesDeployment(input);
-
-// Result shape (from schema): { id: number | string; status_url: string; page_url: string; preview_url?: string }
-```
-
-### `github.repos.getPagesDeployment`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}`
-- **What it does**: Get the status of a GitHub Pages deployment
-- **OpenAPI operationId**: `repos/get-pages-deployment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pages_deployment_id: number | string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ status?: "deployment_in_progress" | "syncing_files" | "finished_file_sync" | "updating_pages" | "purging_cdn" | "deployment_cancelled" | "deployment_failed" | "deployment_content_failed" | "deployment_attempt_error" |...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetPagesDeploymentInput = Parameters<typeof github.repos.getPagesDeployment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetPagesDeploymentOutput = Awaited<ReturnType<typeof github.repos.getPagesDeployment>>;
-
-const input: ReposGetPagesDeploymentInput = {} as { owner: string; repo: string; pages_deployment_id: number | string };
-const result: ReposGetPagesDeploymentOutput = await github.repos.getPagesDeployment(input);
-
-// Result shape (from schema): { status?: "deployment_in_progress" | "syncing_files" | "finished_file_sync" | "updating_pages" | "purging_cdn" | "deployment_cancelled" | "deployment_failed" | "deployment_content_failed" | "deployment_attempt_error" |...
-```
-
-### `github.repos.cancelPagesDeployment`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel`
-- **What it does**: Cancel a GitHub Pages deployment
-- **OpenAPI operationId**: `repos/cancel-pages-deployment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pages_deployment_id: number | string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCancelPagesDeploymentInput = Parameters<typeof github.repos.cancelPagesDeployment> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCancelPagesDeploymentOutput = Awaited<ReturnType<typeof github.repos.cancelPagesDeployment>>;
-
-const input: ReposCancelPagesDeploymentInput = {} as { owner: string; repo: string; pages_deployment_id: number | string };
-const result: ReposCancelPagesDeploymentOutput = await github.repos.cancelPagesDeployment(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getPagesHealthCheck`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/pages/health`
-- **What it does**: Get a DNS health check for GitHub Pages
-- **OpenAPI operationId**: `repos/get-pages-health-check`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `202`, `400`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ domain?: { host?: string; uri?: string; nameservers?: string; dns_resolves?: boolean; is_proxied?: boolean | null; is_cloudflare_ip?: boolean | null; is_fastly_ip?: boolean | null; is_old_ip_address?: boolean | null; ...`
-- OpenAPI response codes: `200`, `202`, `400`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetPagesHealthCheckInput = Parameters<typeof github.repos.getPagesHealthCheck> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetPagesHealthCheckOutput = Awaited<ReturnType<typeof github.repos.getPagesHealthCheck>>;
-
-const input: ReposGetPagesHealthCheckInput = {} as { owner: string; repo: string };
-const result: ReposGetPagesHealthCheckOutput = await github.repos.getPagesHealthCheck(input);
-
-// Result shape (from schema): { domain?: { host?: string; uri?: string; nameservers?: string; dns_resolves?: boolean; is_proxied?: boolean | null; is_cloudflare_ip?: boolean | null; is_fastly_ip?: boolean | null; is_old_ip_address?: boolean | null; ...
-```
-
-### `github.repos.disablePrivateVulnerabilityReporting`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/private-vulnerability-reporting`
-- **What it does**: Disable private vulnerability reporting for a repository
-- **OpenAPI operationId**: `repos/disable-private-vulnerability-reporting`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDisablePrivateVulnerabilityReportingInput = Parameters<typeof github.repos.disablePrivateVulnerabilityReporting> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDisablePrivateVulnerabilityReportingOutput = Awaited<ReturnType<typeof github.repos.disablePrivateVulnerabilityReporting>>;
-
-const input: ReposDisablePrivateVulnerabilityReportingInput = {} as { owner: string; repo: string };
-const result: ReposDisablePrivateVulnerabilityReportingOutput = await github.repos.disablePrivateVulnerabilityReporting(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.checkPrivateVulnerabilityReporting`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/private-vulnerability-reporting`
-- **What it does**: Check if private vulnerability reporting is enabled for a repository
-- **OpenAPI operationId**: `repos/check-private-vulnerability-reporting`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ enabled: boolean }`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCheckPrivateVulnerabilityReportingInput = Parameters<typeof github.repos.checkPrivateVulnerabilityReporting> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCheckPrivateVulnerabilityReportingOutput = Awaited<ReturnType<typeof github.repos.checkPrivateVulnerabilityReporting>>;
-
-const input: ReposCheckPrivateVulnerabilityReportingInput = {} as { owner: string; repo: string };
-const result: ReposCheckPrivateVulnerabilityReportingOutput = await github.repos.checkPrivateVulnerabilityReporting(input);
-
-// Result shape (from schema): { enabled: boolean }
-```
-
-### `github.repos.enablePrivateVulnerabilityReporting`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/private-vulnerability-reporting`
-- **What it does**: Enable private vulnerability reporting for a repository
-- **OpenAPI operationId**: `repos/enable-private-vulnerability-reporting`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposEnablePrivateVulnerabilityReportingInput = Parameters<typeof github.repos.enablePrivateVulnerabilityReporting> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposEnablePrivateVulnerabilityReportingOutput = Awaited<ReturnType<typeof github.repos.enablePrivateVulnerabilityReporting>>;
-
-const input: ReposEnablePrivateVulnerabilityReportingInput = {} as { owner: string; repo: string };
-const result: ReposEnablePrivateVulnerabilityReportingOutput = await github.repos.enablePrivateVulnerabilityReporting(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.customPropertiesForReposGetRepositoryValues`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/properties/values`
-- **What it does**: Get all custom property values for a repository
-- **OpenAPI operationId**: `repos/custom-properties-for-repos-get-repository-values`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ property_name: string; value: string | (string)[] | null })[]`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCustomPropertiesForReposGetRepositoryValuesInput = Parameters<typeof github.repos.customPropertiesForReposGetRepositoryValues> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCustomPropertiesForReposGetRepositoryValuesOutput = Awaited<ReturnType<typeof github.repos.customPropertiesForReposGetRepositoryValues>>;
-
-const input: ReposCustomPropertiesForReposGetRepositoryValuesInput = {} as { owner: string; repo: string };
-const result: ReposCustomPropertiesForReposGetRepositoryValuesOutput = await github.repos.customPropertiesForReposGetRepositoryValues(input);
-
-// Result shape (from schema): ({ property_name: string; value: string | (string)[] | null })[]
-```
-
-### `github.repos.customPropertiesForReposCreateOrUpdateRepositoryValues`
-
-- **HTTP**: `PATCH /repos/{owner}/{repo}/properties/values`
-- **What it does**: Create or update custom property values for a repository
-- **OpenAPI operationId**: `repos/custom-properties-for-repos-create-or-update-repository-values`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ properties: ({ property_name: string; value: string | (string)[] | null })[]; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCustomPropertiesForReposCreateOrUpdateRepositoryValuesInput = Parameters<typeof github.repos.customPropertiesForReposCreateOrUpdateRepositoryValues> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCustomPropertiesForReposCreateOrUpdateRepositoryValuesOutput = Awaited<ReturnType<typeof github.repos.customPropertiesForReposCreateOrUpdateRepositoryValues>>;
-
-const input: ReposCustomPropertiesForReposCreateOrUpdateRepositoryValuesInput = {} as { properties: ({ property_name: string; value: string | (string)[] | null })[]; owner: string; repo: string };
-const result: ReposCustomPropertiesForReposCreateOrUpdateRepositoryValuesOutput = await github.repos.customPropertiesForReposCreateOrUpdateRepositoryValues(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getReadme`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/readme`
-- **What it does**: Get a repository README
-- **OpenAPI operationId**: `repos/get-readme`
-- **Path params**: None
-- **Query params**: `ref`
-- **Response codes**: `200`, `304`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ type: "file"; encoding: string; size: number; name: string; path: string; content: string; sha: string; url: string; git_url: string | null; html_url: string | null; download_url: string | null; _links: { git: string ...`
-- OpenAPI response codes: `200`, `304`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetReadmeInput = Parameters<typeof github.repos.getReadme> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetReadmeOutput = Awaited<ReturnType<typeof github.repos.getReadme>>;
-
-const input: ReposGetReadmeInput = {} as { owner: string; repo: string; ref?: string };
-const result: ReposGetReadmeOutput = await github.repos.getReadme(input);
-
-// Result shape (from schema): { type: "file"; encoding: string; size: number; name: string; path: string; content: string; sha: string; url: string; git_url: string | null; html_url: string | null; download_url: string | null; _links: { git: string ...
-```
-
-### `github.repos.getReadmeInDirectory`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/readme/{dir}`
-- **What it does**: Get a repository README for a directory
-- **OpenAPI operationId**: `repos/get-readme-in-directory`
-- **Path params**: `dir`
-- **Query params**: `ref`
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; dir: string; ref?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ type: "file"; encoding: string; size: number; name: string; path: string; content: string; sha: string; url: string; git_url: string | null; html_url: string | null; download_url: string | null; _links: { git: string ...`
-- OpenAPI response codes: `200`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetReadmeInDirectoryInput = Parameters<typeof github.repos.getReadmeInDirectory> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetReadmeInDirectoryOutput = Awaited<ReturnType<typeof github.repos.getReadmeInDirectory>>;
-
-const input: ReposGetReadmeInDirectoryInput = {} as { owner: string; repo: string; dir: string; ref?: string };
-const result: ReposGetReadmeInDirectoryOutput = await github.repos.getReadmeInDirectory(input);
-
-// Result shape (from schema): { type: "file"; encoding: string; size: number; name: string; path: string; content: string; sha: string; url: string; git_url: string | null; html_url: string | null; download_url: string | null; _links: { git: string ...
-```
-
-### `github.repos.listReleases`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/releases`
-- **What it does**: List releases
-- **OpenAPI operationId**: `repos/list-releases`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | n...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListReleasesInput = Parameters<typeof github.repos.listReleases> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListReleasesOutput = Awaited<ReturnType<typeof github.repos.listReleases>>;
-
-const input: ReposListReleasesInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ReposListReleasesOutput = await github.repos.listReleases(input);
-
-// Result shape (from schema): ({ url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | n...
-```
-
-### `github.repos.createRelease`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/releases`
-- **What it does**: Create a release
-- **OpenAPI operationId**: `repos/create-release`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ tag_name: string; target_commitish?: string; name?: string; body?: string; draft?: boolean; prerelease?: boolean; discussion_category_name?: string; generate_release_notes?: boolean; make_latest?: "true" | "false" | "legacy"; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | nu...`
-- OpenAPI response codes: `201`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposCreateReleaseInput = Parameters<typeof github.repos.createRelease> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateReleaseOutput = Awaited<ReturnType<typeof github.repos.createRelease>>;
-
-const input: ReposCreateReleaseInput = {} as { tag_name: string; target_commitish?: string; name?: string; body?: string; draft?: boolean; prerelease?: boolean; discussion_category_name?: string; generate_release_notes?: boolean; make_latest?: "true" | "false" | "legacy"; owner: string; repo: string };
-const result: ReposCreateReleaseOutput = await github.repos.createRelease(input);
-
-// Result shape (from schema): { url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | nu...
-```
-
-### `github.repos.deleteRelease`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/releases/{release_id}`
-- **What it does**: Delete a release
-- **OpenAPI operationId**: `repos/delete-release`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; release_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteReleaseInput = Parameters<typeof github.repos.deleteRelease> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteReleaseOutput = Awaited<ReturnType<typeof github.repos.deleteRelease>>;
-
-const input: ReposDeleteReleaseInput = {} as { owner: string; repo: string; release_id: number };
-const result: ReposDeleteReleaseOutput = await github.repos.deleteRelease(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getRelease`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/releases/{release_id}`
-- **What it does**: Get a release
-- **OpenAPI operationId**: `repos/get-release`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `401`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; release_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | nu...`
-- OpenAPI response codes: `200`, `401`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetReleaseInput = Parameters<typeof github.repos.getRelease> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetReleaseOutput = Awaited<ReturnType<typeof github.repos.getRelease>>;
-
-const input: ReposGetReleaseInput = {} as { owner: string; repo: string; release_id: number };
-const result: ReposGetReleaseOutput = await github.repos.getRelease(input);
-
-// Result shape (from schema): { url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | nu...
-```
-
-### `github.repos.updateRelease`
-
-- **HTTP**: `PATCH /repos/{owner}/{repo}/releases/{release_id}`
-- **What it does**: Update a release
-- **OpenAPI operationId**: `repos/update-release`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ tag_name?: string; target_commitish?: string; name?: string; body?: string; draft?: boolean; prerelease?: boolean; make_latest?: "true" | "false" | "legacy"; discussion_category_name?: string; owner: string; repo: string; release_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | nu...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposUpdateReleaseInput = Parameters<typeof github.repos.updateRelease> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateReleaseOutput = Awaited<ReturnType<typeof github.repos.updateRelease>>;
-
-const input: ReposUpdateReleaseInput = {} as { tag_name?: string; target_commitish?: string; name?: string; body?: string; draft?: boolean; prerelease?: boolean; make_latest?: "true" | "false" | "legacy"; discussion_category_name?: string; owner: string; repo: string; release_id: number };
-const result: ReposUpdateReleaseOutput = await github.repos.updateRelease(input);
-
-// Result shape (from schema): { url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | nu...
-```
-
-### `github.repos.listReleaseAssets`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/releases/{release_id}/assets`
-- **What it does**: List release assets
-- **OpenAPI operationId**: `repos/list-release-assets`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; release_id: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; browser_download_url: string; id: number; node_id: string; name: string; label: string | null; state: "uploaded" | "open"; content_type: string; size: number; digest: string | null; download_count: numbe...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposListReleaseAssetsInput = Parameters<typeof github.repos.listReleaseAssets> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListReleaseAssetsOutput = Awaited<ReturnType<typeof github.repos.listReleaseAssets>>;
-
-const input: ReposListReleaseAssetsInput = {} as { owner: string; repo: string; release_id: number; per_page?: number; page?: number };
-const result: ReposListReleaseAssetsOutput = await github.repos.listReleaseAssets(input);
-
-// Result shape (from schema): ({ url: string; browser_download_url: string; id: number; node_id: string; name: string; label: string | null; state: "uploaded" | "open"; content_type: string; size: number; digest: string | null; download_count: numbe...
-```
-
-### `github.repos.uploadReleaseAsset`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/releases/{release_id}/assets`
-- **What it does**: Upload a release asset
-- **OpenAPI operationId**: `repos/upload-release-asset`
-- **Path params**: None
-- **Query params**: `name`, `label`
-- **Response codes**: `201`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body?: string; owner: string; repo: string; release_id: number; name: string; label?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; browser_download_url: string; id: number; node_id: string; name: string; label: string | null; state: "uploaded" | "open"; content_type: string; size: number; digest: string | null; download_count: number...`
-- OpenAPI response codes: `201`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ReposUploadReleaseAssetInput = Parameters<typeof github.repos.uploadReleaseAsset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUploadReleaseAssetOutput = Awaited<ReturnType<typeof github.repos.uploadReleaseAsset>>;
-
-const input: ReposUploadReleaseAssetInput = {} as { body?: string; owner: string; repo: string; release_id: number; name: string; label?: string };
-const result: ReposUploadReleaseAssetOutput = await github.repos.uploadReleaseAsset(input);
-
-// Result shape (from schema): { url: string; browser_download_url: string; id: number; node_id: string; name: string; label: string | null; state: "uploaded" | "open"; content_type: string; size: number; digest: string | null; download_count: number...
-```
-
-### `github.repos.deleteReleaseAsset`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/releases/assets/{asset_id}`
-- **What it does**: Delete a release asset
-- **OpenAPI operationId**: `repos/delete-release-asset`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; asset_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposDeleteReleaseAssetInput = Parameters<typeof github.repos.deleteReleaseAsset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteReleaseAssetOutput = Awaited<ReturnType<typeof github.repos.deleteReleaseAsset>>;
-
-const input: ReposDeleteReleaseAssetInput = {} as { owner: string; repo: string; asset_id: number };
-const result: ReposDeleteReleaseAssetOutput = await github.repos.deleteReleaseAsset(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.repos.getReleaseAsset`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/releases/assets/{asset_id}`
-- **What it does**: Get a release asset
-- **OpenAPI operationId**: `repos/get-release-asset`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `302`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; asset_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; browser_download_url: string; id: number; node_id: string; name: string; label: string | null; state: "uploaded" | "open"; content_type: string; size: number; digest: string | null; download_count: number...`
-- OpenAPI response codes: `200`, `302`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetReleaseAssetInput = Parameters<typeof github.repos.getReleaseAsset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetReleaseAssetOutput = Awaited<ReturnType<typeof github.repos.getReleaseAsset>>;
-
-const input: ReposGetReleaseAssetInput = {} as { owner: string; repo: string; asset_id: number };
-const result: ReposGetReleaseAssetOutput = await github.repos.getReleaseAsset(input);
-
-// Result shape (from schema): { url: string; browser_download_url: string; id: number; node_id: string; name: string; label: string | null; state: "uploaded" | "open"; content_type: string; size: number; digest: string | null; download_count: number...
-```
-
-### `github.repos.updateReleaseAsset`
-
-- **HTTP**: `PATCH /repos/{owner}/{repo}/releases/assets/{asset_id}`
-- **What it does**: Update a release asset
-- **OpenAPI operationId**: `repos/update-release-asset`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name?: string; label?: string; state?: string; owner: string; repo: string; asset_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; browser_download_url: string; id: number; node_id: string; name: string; label: string | null; state: "uploaded" | "open"; content_type: string; size: number; digest: string | null; download_count: number...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposUpdateReleaseAssetInput = Parameters<typeof github.repos.updateReleaseAsset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateReleaseAssetOutput = Awaited<ReturnType<typeof github.repos.updateReleaseAsset>>;
-
-const input: ReposUpdateReleaseAssetInput = {} as { name?: string; label?: string; state?: string; owner: string; repo: string; asset_id: number };
-const result: ReposUpdateReleaseAssetOutput = await github.repos.updateReleaseAsset(input);
-
-// Result shape (from schema): { url: string; browser_download_url: string; id: number; node_id: string; name: string; label: string | null; state: "uploaded" | "open"; content_type: string; size: number; digest: string | null; download_count: number...
-```
-
-### `github.repos.generateReleaseNotes`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/releases/generate-notes`
-- **What it does**: Generate release notes content for a release
-- **OpenAPI operationId**: `repos/generate-release-notes`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ tag_name: string; target_commitish?: string; previous_tag_name?: string; configuration_file_path?: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ name: string; body: string }`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGenerateReleaseNotesInput = Parameters<typeof github.repos.generateReleaseNotes> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGenerateReleaseNotesOutput = Awaited<ReturnType<typeof github.repos.generateReleaseNotes>>;
-
-const input: ReposGenerateReleaseNotesInput = {} as { tag_name: string; target_commitish?: string; previous_tag_name?: string; configuration_file_path?: string; owner: string; repo: string };
-const result: ReposGenerateReleaseNotesOutput = await github.repos.generateReleaseNotes(input);
-
-// Result shape (from schema): { name: string; body: string }
-```
-
-### `github.repos.getLatestRelease`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/releases/latest`
-- **What it does**: Get the latest release
-- **OpenAPI operationId**: `repos/get-latest-release`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | nu...`
-- OpenAPI response codes: `200`, `404`
-
 ```ts
-import github from "@utdk/github";
-
-type ReposGetLatestReleaseInput = Parameters<typeof github.repos.getLatestRelease> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetLatestReleaseOutput = Awaited<ReturnType<typeof github.repos.getLatestRelease>>;
-
-const input: ReposGetLatestReleaseInput = {} as { owner: string; repo: string };
-const result: ReposGetLatestReleaseOutput = await github.repos.getLatestRelease(input);
-
-// Result shape (from schema): { url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | nu...
-```
-
-### `github.repos.getReleaseByTag`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/releases/tags/{tag}`
-- **What it does**: Get a release by tag name
-- **OpenAPI operationId**: `repos/get-release-by-tag`
-- **Path params**: `tag`
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; tag: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | nu...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetReleaseByTagInput = Parameters<typeof github.repos.getReleaseByTag> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetReleaseByTagOutput = Awaited<ReturnType<typeof github.repos.getReleaseByTag>>;
-
-const input: ReposGetReleaseByTagInput = {} as { owner: string; repo: string; tag: string };
-const result: ReposGetReleaseByTagOutput = await github.repos.getReleaseByTag(input);
-
-// Result shape (from schema): { url: string; html_url: string; assets_url: string; upload_url: string; tarball_url: string | null; zipball_url: string | null; id: number; node_id: string; tag_name: string; target_commitish: string; name: string | nu...
-```
-
-### `github.repos.getBranchRules`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/rules/branches/{branch}`
-- **What it does**: Get rules for a branch
-- **OpenAPI operationId**: `repos/get-branch-rules`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; branch: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ type: "creation" } & { ruleset_source_type?: "Repository" | "Organization"; ruleset_source?: string; ruleset_id?: number } | { type: "update"; parameters?: { update_allows_fetch_and_merge: boolean } } & { ruleset_sou...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ReposGetBranchRulesInput = Parameters<typeof github.repos.getBranchRules> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetBranchRulesOutput = Awaited<ReturnType<typeof github.repos.getBranchRules>>;
-
-const input: ReposGetBranchRulesInput = {} as { owner: string; repo: string; branch: string; per_page?: number; page?: number };
-const result: ReposGetBranchRulesOutput = await github.repos.getBranchRules(input);
-
-// Result shape (from schema): ({ type: "creation" } & { ruleset_source_type?: "Repository" | "Organization"; ruleset_source?: string; ruleset_id?: number } | { type: "update"; parameters?: { update_allows_fetch_and_merge: boolean } } & { ruleset_sou...
+github.repos.getEnvironment(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+}): Promise<Environment>
 ```
-
-### `github.repos.getRepoRulesets`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/rulesets`
-- **What it does**: Get all repository rulesets
-- **OpenAPI operationId**: `repos/get-repo-rulesets`
-- **Path params**: None
-- **Query params**: `includes_parents`
-- **Response codes**: `200`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number; includes_parents?: boolean; targets?: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}` · `repos/get-environment`</sub>
 
-**Outputs**
+## `github.repos.createOrUpdateEnvironment`
 
-- Client return type: `({ id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?...`
-- OpenAPI response codes: `200`, `404`, `500`
+Create or update an environment — [API reference](https://docs.github.com/rest/deployments/environments#create-or-update-an-environment)
 
 ```ts
-import github from "@utdk/github";
+github.repos.createOrUpdateEnvironment(input: {
+  wait_timer?: WaitTimer;
+  prevent_self_review?: PreventSelfReview;
+  /** The people or teams that may review jobs that reference the environment. You can list up to six users or teams as reviewers. The reviewers must have at least read access to the repository. Only one of the required reviewers needs to approve the job for it to proceed. */
+  reviewers?: ({ type?: DeploymentReviewerType; id?: number })[] | null;
+  deployment_branch_policy?: DeploymentBranchPolicySettings;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+}): Promise<Environment>
+```
 
-type ReposGetRepoRulesetsInput = Parameters<typeof github.repos.getRepoRulesets> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetRepoRulesetsOutput = Awaited<ReturnType<typeof github.repos.getRepoRulesets>>;
+<sub>`PUT /repos/{owner}/{repo}/environments/{environment_name}` · `repos/create-or-update-environment`</sub>
 
-const input: ReposGetRepoRulesetsInput = {} as { owner: string; repo: string; per_page?: number; page?: number; includes_parents?: boolean; targets?: string };
-const result: ReposGetRepoRulesetsOutput = await github.repos.getRepoRulesets(input);
+## `github.repos.getAllDeploymentProtectionRules`
 
-// Result shape (from schema): ({ id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?...
+Get all deployment protection rules for an environment — [API reference](https://docs.github.com/rest/deployments/protection-rules#get-all-deployment-protection-rules-for-an-environment)
+
+```ts
+github.repos.getAllDeploymentProtectionRules(input: {
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+}): Promise<{ total_count?: number; custom_deployment_protection_rules?: (DeploymentProtectionRule)[] }>
 ```
 
-### `github.repos.createRepoRuleset`
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules` · `repos/get-all-deployment-protection-rules`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/rulesets`
-- **What it does**: Create a repository ruleset
-- **OpenAPI operationId**: `repos/create-repo-ruleset`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `404`, `422`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.createDeploymentProtectionRule`
 
-**Inputs**
+Create a custom deployment protection rule on an environment — [API reference](https://docs.github.com/rest/deployments/protection-rules#create-a-custom-deployment-protection-rule-on-an-environment)
 
-- Client input type: `{ name: string; target?: "branch" | "tag" | "push"; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?: ({ actor_id?: number | null; actor_type: "Integration" | "OrganizationAdmin" | "RepositoryRole" | "Team" | "DeployKey" | "User"; bypass_mode?: "always" | "pull_request" | "exempt" })[]; conditions?: { ref_name?: { include?: (string)[]; exclude?: (string)[] } }; rules?: ({ type: "creation" } | { type: "update"; parameters?: { update_allows_fetch_and_merge: boolean } } | { type: "deletion" } | { type: "required_linear_history" } | { type: "merge_queue"; parameters?: { check_response_timeout_minutes: number; grouping_strategy: "ALLGREEN" | "HEADGREEN"; max_entries_to_build: number; max_entries_to_merge: number; merge_method: "MERGE" | "SQUASH" | "REBASE"; min_entries_to_merge: number; min_entries_to_merge_wait_minutes: number } } | { type: "required_deployments"; parameters?: { required_deployment_environments: (string)[] } } | { type: "required_signatures" } | { type: "pull_request"; parameters?: { allowed_merge_methods?: ("merge" | "squash" | "rebase")[]; dismiss_stale_reviews_on_push: boolean; require_code_owner_review: boolean; require_last_push_approval: boolean; required_approving_review_count: number; required_review_thread_resolution: boolean; required_reviewers?: ({ file_patterns: (string)[]; minimum_approvals: number; reviewer: { id: number; type: "Team" } })[] } } | { type: "required_status_checks"; parameters?: { do_not_enforce_on_create?: boolean; required_status_checks: ({ context: string; integration_id?: number })[]; strict_required_status_checks_policy: boolean } } | { type: "non_fast_forward" } | { type: "commit_message_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "commit_author_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "committer_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "branch_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "tag_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "workflows"; parameters?: { do_not_enforce_on_create?: boolean; workflows: ({ path: string; ref?: string; repository_id: number; sha?: string })[] } } | { type: "code_scanning"; parameters?: { code_scanning_tools: ({ alerts_threshold: "none" | "errors" | "errors_and_warnings" | "all"; security_alerts_threshold: "none" | "critical" | "high_or_higher" | "medium_or_higher" | "all"; tool: string })[] } } | { type: "copilot_code_review"; parameters?: { review_draft_pull_requests?: boolean; review_on_push?: boolean } } | { type: "file_path_restriction"; parameters?: { restricted_file_paths: (string)[] } } | { type: "max_file_path_length"; parameters?: { max_file_path_length: number } } | { type: "file_extension_restriction"; parameters?: { restricted_file_extensions: (string)[] } } | { type: "max_file_size"; parameters?: { max_file_size: number } })[]; owner: string; repo: string }`
-- Client transport options: None
+```ts
+github.repos.createDeploymentProtectionRule(input: {
+  /** The ID of the custom app that will be enabled on the environment. */
+  integration_id?: number;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+}): Promise<DeploymentProtectionRule>
+```
 
-**Outputs**
+<sub>`POST /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules` · `repos/create-deployment-protection-rule`</sub>
 
-- Client return type: `{ id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...`
-- OpenAPI response codes: `201`, `404`, `422`, `500`
+## `github.repos.disableDeploymentProtectionRule`
 
+Disable a custom protection rule for an environment — [API reference](https://docs.github.com/rest/deployments/protection-rules#disable-a-custom-protection-rule-for-an-environment)
+
 ```ts
-import github from "@utdk/github";
+github.repos.disableDeploymentProtectionRule(input: {
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The unique identifier of the protection rule. */
+  protection_rule_id: number;
+}): Promise<unknown>
+```
+
+<sub>`DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}` · `repos/disable-deployment-protection-rule`</sub>
 
-type ReposCreateRepoRulesetInput = Parameters<typeof github.repos.createRepoRuleset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateRepoRulesetOutput = Awaited<ReturnType<typeof github.repos.createRepoRuleset>>;
+## `github.repos.getCustomDeploymentProtectionRule`
 
-const input: ReposCreateRepoRulesetInput = {} as { name: string; target?: "branch" | "tag" | "push"; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?: ({ actor_id?: number | null; actor_type: "Integration" | "OrganizationAdmin" | "RepositoryRole" | "Team" | "DeployKey" | "User"; bypass_mode?: "always" | "pull_request" | "exempt" })[]; conditions?: { ref_name?: { include?: (string)[]; exclude?: (string)[] } }; rules?: ({ type: "creation" } | { type: "update"; parameters?: { update_allows_fetch_and_merge: boolean } } | { type: "deletion" } | { type: "required_linear_history" } | { type: "merge_queue"; parameters?: { check_response_timeout_minutes: number; grouping_strategy: "ALLGREEN" | "HEADGREEN"; max_entries_to_build: number; max_entries_to_merge: number; merge_method: "MERGE" | "SQUASH" | "REBASE"; min_entries_to_merge: number; min_entries_to_merge_wait_minutes: number } } | { type: "required_deployments"; parameters?: { required_deployment_environments: (string)[] } } | { type: "required_signatures" } | { type: "pull_request"; parameters?: { allowed_merge_methods?: ("merge" | "squash" | "rebase")[]; dismiss_stale_reviews_on_push: boolean; require_code_owner_review: boolean; require_last_push_approval: boolean; required_approving_review_count: number; required_review_thread_resolution: boolean; required_reviewers?: ({ file_patterns: (string)[]; minimum_approvals: number; reviewer: { id: number; type: "Team" } })[] } } | { type: "required_status_checks"; parameters?: { do_not_enforce_on_create?: boolean; required_status_checks: ({ context: string; integration_id?: number })[]; strict_required_status_checks_policy: boolean } } | { type: "non_fast_forward" } | { type: "commit_message_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "commit_author_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "committer_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "branch_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "tag_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "workflows"; parameters?: { do_not_enforce_on_create?: boolean; workflows: ({ path: string; ref?: string; repository_id: number; sha?: string })[] } } | { type: "code_scanning"; parameters?: { code_scanning_tools: ({ alerts_threshold: "none" | "errors" | "errors_and_warnings" | "all"; security_alerts_threshold: "none" | "critical" | "high_or_higher" | "medium_or_higher" | "all"; tool: string })[] } } | { type: "copilot_code_review"; parameters?: { review_draft_pull_requests?: boolean; review_on_push?: boolean } } | { type: "file_path_restriction"; parameters?: { restricted_file_paths: (string)[] } } | { type: "max_file_path_length"; parameters?: { max_file_path_length: number } } | { type: "file_extension_restriction"; parameters?: { restricted_file_extensions: (string)[] } } | { type: "max_file_size"; parameters?: { max_file_size: number } })[]; owner: string; repo: string };
-const result: ReposCreateRepoRulesetOutput = await github.repos.createRepoRuleset(input);
+Get a custom deployment protection rule — [API reference](https://docs.github.com/rest/deployments/protection-rules#get-a-custom-deployment-protection-rule)
 
-// Result shape (from schema): { id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...
+```ts
+github.repos.getCustomDeploymentProtectionRule(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The unique identifier of the protection rule. */
+  protection_rule_id: number;
+}): Promise<DeploymentProtectionRule>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}` · `repos/get-custom-deployment-protection-rule`</sub>
 
-### `github.repos.deleteRepoRuleset`
+## `github.repos.listCustomDeploymentRuleIntegrations`
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/rulesets/{ruleset_id}`
-- **What it does**: Delete a repository ruleset
-- **OpenAPI operationId**: `repos/delete-repo-ruleset`
-- **Path params**: `ruleset_id`
-- **Query params**: None
-- **Response codes**: `204`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+List custom deployment rule integrations available for an environment — [API reference](https://docs.github.com/rest/deployments/protection-rules#list-custom-deployment-rule-integrations-available-for-an-environment)
 
-**Inputs**
+```ts
+github.repos.listCustomDeploymentRuleIntegrations(input: {
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<{ total_count?: number; available_custom_deployment_protection_rule_integrations?: (CustomDeploymentRuleApp)[] }>
+```
 
-- Client input type: `{ owner: string; repo: string; ruleset_id: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/apps` · `repos/list-custom-deployment-rule-integrations`</sub>
 
-**Outputs**
+## `github.repos.listDeploymentBranchPolicies`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `500`
+List deployment branch policies — [API reference](https://docs.github.com/rest/deployments/branch-policies#list-deployment-branch-policies)
 
 ```ts
-import github from "@utdk/github";
+github.repos.listDeploymentBranchPolicies(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; branch_policies: (DeploymentBranchPolicy)[] }>
+```
 
-type ReposDeleteRepoRulesetInput = Parameters<typeof github.repos.deleteRepoRuleset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeleteRepoRulesetOutput = Awaited<ReturnType<typeof github.repos.deleteRepoRuleset>>;
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies` · `repos/list-deployment-branch-policies`</sub>
 
-const input: ReposDeleteRepoRulesetInput = {} as { owner: string; repo: string; ruleset_id: number };
-const result: ReposDeleteRepoRulesetOutput = await github.repos.deleteRepoRuleset(input);
+## `github.repos.createDeploymentBranchPolicy`
 
-// Result shape (from schema): unknown
+Create a deployment branch policy — [API reference](https://docs.github.com/rest/deployments/branch-policies#create-a-deployment-branch-policy)
+
+```ts
+github.repos.createDeploymentBranchPolicy(input: {
+  /** The name pattern that branches or tags must match in order to deploy to the environment.  Wildcard characters will not match `/`. For example, to match branches that begin with `release/` and contain an additional single slash, use `release/*\/*`. For more information about pattern matching syntax, see the [Ruby File.fnmatch documentation](https://ruby-doc.org/core-2.5.1/File.html#method-c-fnmatch). */
+  name: string;
+  /** Whether this rule targets a branch or tag */
+  type?: "branch" | "tag";
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+}): Promise<DeploymentBranchPolicy>
 ```
 
-### `github.repos.getRepoRuleset`
+<sub>`POST /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies` · `repos/create-deployment-branch-policy`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/rulesets/{ruleset_id}`
-- **What it does**: Get a repository ruleset
-- **OpenAPI operationId**: `repos/get-repo-ruleset`
-- **Path params**: `ruleset_id`
-- **Query params**: `includes_parents`
-- **Response codes**: `200`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.deleteDeploymentBranchPolicy`
 
-**Inputs**
+Delete a deployment branch policy — [API reference](https://docs.github.com/rest/deployments/branch-policies#delete-a-deployment-branch-policy)
+
+```ts
+github.repos.deleteDeploymentBranchPolicy(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The unique identifier of the branch policy. */
+  branch_policy_id: number;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string; ruleset_id: number; includes_parents?: boolean }`
-- Client transport options: None
+<sub>`DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}` · `repos/delete-deployment-branch-policy`</sub>
 
-**Outputs**
+## `github.repos.getDeploymentBranchPolicy`
 
-- Client return type: `{ id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...`
-- OpenAPI response codes: `200`, `404`, `500`
+Get a deployment branch policy — [API reference](https://docs.github.com/rest/deployments/branch-policies#get-a-deployment-branch-policy)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getDeploymentBranchPolicy(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The unique identifier of the branch policy. */
+  branch_policy_id: number;
+}): Promise<DeploymentBranchPolicy>
+```
+
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}` · `repos/get-deployment-branch-policy`</sub>
 
-type ReposGetRepoRulesetInput = Parameters<typeof github.repos.getRepoRuleset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetRepoRulesetOutput = Awaited<ReturnType<typeof github.repos.getRepoRuleset>>;
+## `github.repos.updateDeploymentBranchPolicy`
 
-const input: ReposGetRepoRulesetInput = {} as { owner: string; repo: string; ruleset_id: number; includes_parents?: boolean };
-const result: ReposGetRepoRulesetOutput = await github.repos.getRepoRuleset(input);
+Update a deployment branch policy — [API reference](https://docs.github.com/rest/deployments/branch-policies#update-a-deployment-branch-policy)
 
-// Result shape (from schema): { id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...
+```ts
+github.repos.updateDeploymentBranchPolicy(input: {
+  /** The name pattern that branches must match in order to deploy to the environment.  Wildcard characters will not match `/`. For example, to match branches that begin with `release/` and contain an additional single slash, use `release/*\/*`. For more information about pattern matching syntax, see the [Ruby File.fnmatch documentation](https://ruby-doc.org/core-2.5.1/File.html#method-c-fnmatch). */
+  name: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The unique identifier of the branch policy. */
+  branch_policy_id: number;
+}): Promise<DeploymentBranchPolicy>
 ```
+
+<sub>`PUT /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}` · `repos/update-deployment-branch-policy`</sub>
 
-### `github.repos.updateRepoRuleset`
+## `github.repos.listForks`
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}`
-- **What it does**: Update a repository ruleset
-- **OpenAPI operationId**: `repos/update-repo-ruleset`
-- **Path params**: `ruleset_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+List forks — [API reference](https://docs.github.com/rest/repos/forks#list-forks)
 
-**Inputs**
+```ts
+github.repos.listForks(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The sort order. `stargazers` will sort by star count. */
+  sort?: "newest" | "oldest" | "stargazers" | "watchers";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(MinimalRepository)[]>
+```
 
-- Client input type: `{ name?: string; target?: "branch" | "tag" | "push"; enforcement?: "disabled" | "active" | "evaluate"; bypass_actors?: ({ actor_id?: number | null; actor_type: "Integration" | "OrganizationAdmin" | "RepositoryRole" | "Team" | "DeployKey" | "User"; bypass_mode?: "always" | "pull_request" | "exempt" })[]; conditions?: { ref_name?: { include?: (string)[]; exclude?: (string)[] } }; rules?: ({ type: "creation" } | { type: "update"; parameters?: { update_allows_fetch_and_merge: boolean } } | { type: "deletion" } | { type: "required_linear_history" } | { type: "merge_queue"; parameters?: { check_response_timeout_minutes: number; grouping_strategy: "ALLGREEN" | "HEADGREEN"; max_entries_to_build: number; max_entries_to_merge: number; merge_method: "MERGE" | "SQUASH" | "REBASE"; min_entries_to_merge: number; min_entries_to_merge_wait_minutes: number } } | { type: "required_deployments"; parameters?: { required_deployment_environments: (string)[] } } | { type: "required_signatures" } | { type: "pull_request"; parameters?: { allowed_merge_methods?: ("merge" | "squash" | "rebase")[]; dismiss_stale_reviews_on_push: boolean; require_code_owner_review: boolean; require_last_push_approval: boolean; required_approving_review_count: number; required_review_thread_resolution: boolean; required_reviewers?: ({ file_patterns: (string)[]; minimum_approvals: number; reviewer: { id: number; type: "Team" } })[] } } | { type: "required_status_checks"; parameters?: { do_not_enforce_on_create?: boolean; required_status_checks: ({ context: string; integration_id?: number })[]; strict_required_status_checks_policy: boolean } } | { type: "non_fast_forward" } | { type: "commit_message_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "commit_author_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "committer_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "branch_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "tag_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "workflows"; parameters?: { do_not_enforce_on_create?: boolean; workflows: ({ path: string; ref?: string; repository_id: number; sha?: string })[] } } | { type: "code_scanning"; parameters?: { code_scanning_tools: ({ alerts_threshold: "none" | "errors" | "errors_and_warnings" | "all"; security_alerts_threshold: "none" | "critical" | "high_or_higher" | "medium_or_higher" | "all"; tool: string })[] } } | { type: "copilot_code_review"; parameters?: { review_draft_pull_requests?: boolean; review_on_push?: boolean } } | { type: "file_path_restriction"; parameters?: { restricted_file_paths: (string)[] } } | { type: "max_file_path_length"; parameters?: { max_file_path_length: number } } | { type: "file_extension_restriction"; parameters?: { restricted_file_extensions: (string)[] } } | { type: "max_file_size"; parameters?: { max_file_size: number } })[]; owner: string; repo: string; ruleset_id: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/forks` · `repos/list-forks`</sub>
 
-**Outputs**
+## `github.repos.createFork`
 
-- Client return type: `{ id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...`
-- OpenAPI response codes: `200`, `404`, `422`, `500`
+Create a fork — [API reference](https://docs.github.com/rest/repos/forks#create-a-fork)
 
 ```ts
-import github from "@utdk/github";
+github.repos.createFork(input: {
+  /** Optional parameter to specify the organization name if forking into an organization. */
+  organization?: string;
+  /** When forking from an existing repository, a new name for the fork. */
+  name?: string;
+  /** When forking from an existing repository, fork with only the default branch. */
+  default_branch_only?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<FullRepository>
+```
 
-type ReposUpdateRepoRulesetInput = Parameters<typeof github.repos.updateRepoRuleset> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposUpdateRepoRulesetOutput = Awaited<ReturnType<typeof github.repos.updateRepoRuleset>>;
+<sub>`POST /repos/{owner}/{repo}/forks` · `repos/create-fork`</sub>
 
-const input: ReposUpdateRepoRulesetInput = {} as { name?: string; target?: "branch" | "tag" | "push"; enforcement?: "disabled" | "active" | "evaluate"; bypass_actors?: ({ actor_id?: number | null; actor_type: "Integration" | "OrganizationAdmin" | "RepositoryRole" | "Team" | "DeployKey" | "User"; bypass_mode?: "always" | "pull_request" | "exempt" })[]; conditions?: { ref_name?: { include?: (string)[]; exclude?: (string)[] } }; rules?: ({ type: "creation" } | { type: "update"; parameters?: { update_allows_fetch_and_merge: boolean } } | { type: "deletion" } | { type: "required_linear_history" } | { type: "merge_queue"; parameters?: { check_response_timeout_minutes: number; grouping_strategy: "ALLGREEN" | "HEADGREEN"; max_entries_to_build: number; max_entries_to_merge: number; merge_method: "MERGE" | "SQUASH" | "REBASE"; min_entries_to_merge: number; min_entries_to_merge_wait_minutes: number } } | { type: "required_deployments"; parameters?: { required_deployment_environments: (string)[] } } | { type: "required_signatures" } | { type: "pull_request"; parameters?: { allowed_merge_methods?: ("merge" | "squash" | "rebase")[]; dismiss_stale_reviews_on_push: boolean; require_code_owner_review: boolean; require_last_push_approval: boolean; required_approving_review_count: number; required_review_thread_resolution: boolean; required_reviewers?: ({ file_patterns: (string)[]; minimum_approvals: number; reviewer: { id: number; type: "Team" } })[] } } | { type: "required_status_checks"; parameters?: { do_not_enforce_on_create?: boolean; required_status_checks: ({ context: string; integration_id?: number })[]; strict_required_status_checks_policy: boolean } } | { type: "non_fast_forward" } | { type: "commit_message_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "commit_author_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "committer_email_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "branch_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "tag_name_pattern"; parameters?: { name?: string; negate?: boolean; operator: "starts_with" | "ends_with" | "contains" | "regex"; pattern: string } } | { type: "workflows"; parameters?: { do_not_enforce_on_create?: boolean; workflows: ({ path: string; ref?: string; repository_id: number; sha?: string })[] } } | { type: "code_scanning"; parameters?: { code_scanning_tools: ({ alerts_threshold: "none" | "errors" | "errors_and_warnings" | "all"; security_alerts_threshold: "none" | "critical" | "high_or_higher" | "medium_or_higher" | "all"; tool: string })[] } } | { type: "copilot_code_review"; parameters?: { review_draft_pull_requests?: boolean; review_on_push?: boolean } } | { type: "file_path_restriction"; parameters?: { restricted_file_paths: (string)[] } } | { type: "max_file_path_length"; parameters?: { max_file_path_length: number } } | { type: "file_extension_restriction"; parameters?: { restricted_file_extensions: (string)[] } } | { type: "max_file_size"; parameters?: { max_file_size: number } })[]; owner: string; repo: string; ruleset_id: number };
-const result: ReposUpdateRepoRulesetOutput = await github.repos.updateRepoRuleset(input);
+## `github.repos.getHashAlgorithm`
 
-// Result shape (from schema): { id: number; name: string; target?: "branch" | "tag" | "push" | "repository"; source_type?: "Repository" | "Organization" | "Enterprise"; source: string; enforcement: "disabled" | "active" | "evaluate"; bypass_actors?:...
+Get the hash algorithm for a repository — [API reference](https://docs.github.com/rest/repos/repos#get-the-hash-algorithm-for-a-repository)
+
+```ts
+github.repos.getHashAlgorithm(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<RepositoryHashAlgorithm>
 ```
 
-### `github.repos.getRepoRulesetHistory`
+<sub>`GET /repos/{owner}/{repo}/hash-algorithm` · `repos/get-hash-algorithm`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/rulesets/{ruleset_id}/history`
-- **What it does**: Get repository ruleset history
-- **OpenAPI operationId**: `repos/get-repo-ruleset-history`
-- **Path params**: `ruleset_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.listWebhooks`
 
-**Inputs**
+List repository webhooks — [API reference](https://docs.github.com/rest/repos/webhooks#list-repository-webhooks)
 
-- Client input type: `{ owner: string; repo: string; ruleset_id: number; per_page?: number; page?: number }`
-- Client transport options: None
+```ts
+github.repos.listWebhooks(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Hook)[]>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/hooks` · `repos/list-webhooks`</sub>
 
-- Client return type: `({ version_id: number; actor: { id?: number; type?: string }; updated_at: string })[]`
-- OpenAPI response codes: `200`, `404`, `500`
+## `github.repos.createWebhook`
 
+Create a repository webhook — [API reference](https://docs.github.com/rest/repos/webhooks#create-a-repository-webhook)
+
 ```ts
-import github from "@utdk/github";
+github.repos.createWebhook(input: {
+  /** Use `web` to create a webhook. Default: `web`. This parameter only accepts the value `web`. */
+  name?: string;
+  /** Key/value pairs to provide settings for this webhook. */
+  config?: { url?: WebhookConfigUrl; content_type?: WebhookConfigContentType; secret?: WebhookConfigSecret; insecure_ssl?: WebhookConfigInsecureSsl };
+  /** Determines what [events](https://docs.github.com/webhooks/event-payloads) the hook is triggered for. */
+  events?: (string)[];
+  /** Determines if notifications are sent when the webhook is triggered. Set to `true` to send notifications. */
+  active?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Hook>
+```
+
+<sub>`POST /repos/{owner}/{repo}/hooks` · `repos/create-webhook`</sub>
 
-type ReposGetRepoRulesetHistoryInput = Parameters<typeof github.repos.getRepoRulesetHistory> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetRepoRulesetHistoryOutput = Awaited<ReturnType<typeof github.repos.getRepoRulesetHistory>>;
+## `github.repos.deleteWebhook`
 
-const input: ReposGetRepoRulesetHistoryInput = {} as { owner: string; repo: string; ruleset_id: number; per_page?: number; page?: number };
-const result: ReposGetRepoRulesetHistoryOutput = await github.repos.getRepoRulesetHistory(input);
+Delete a repository webhook — [API reference](https://docs.github.com/rest/repos/webhooks#delete-a-repository-webhook)
 
-// Result shape (from schema): ({ version_id: number; actor: { id?: number; type?: string }; updated_at: string })[]
+```ts
+github.repos.deleteWebhook(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
+  hook_id: number;
+}): Promise<BasicError>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/hooks/{hook_id}` · `repos/delete-webhook`</sub>
 
-### `github.repos.getRepoRulesetVersion`
+## `github.repos.getWebhook`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/rulesets/{ruleset_id}/history/{version_id}`
-- **What it does**: Get repository ruleset version
-- **OpenAPI operationId**: `repos/get-repo-ruleset-version`
-- **Path params**: `ruleset_id`, `version_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get a repository webhook — [API reference](https://docs.github.com/rest/repos/webhooks#get-a-repository-webhook)
 
-**Inputs**
+```ts
+github.repos.getWebhook(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
+  hook_id: number;
+}): Promise<Hook>
+```
 
-- Client input type: `{ owner: string; repo: string; ruleset_id: number; version_id: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/hooks/{hook_id}` · `repos/get-webhook`</sub>
 
-**Outputs**
+## `github.repos.updateWebhook`
 
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `200`, `404`, `500`
+Update a repository webhook — [API reference](https://docs.github.com/rest/repos/webhooks#update-a-repository-webhook)
 
 ```ts
-import github from "@utdk/github";
+github.repos.updateWebhook(input: {
+  config?: WebhookConfig;
+  /** Determines what [events](https://docs.github.com/webhooks/event-payloads) the hook is triggered for. This replaces the entire array of events. */
+  events?: (string)[];
+  /** Determines a list of events to be added to the list of events that the Hook triggers for. */
+  add_events?: (string)[];
+  /** Determines a list of events to be removed from the list of events that the Hook triggers for. */
+  remove_events?: (string)[];
+  /** Determines if notifications are sent when the webhook is triggered. Set to `true` to send notifications. */
+  active?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
+  hook_id: number;
+}): Promise<Hook>
+```
 
-type ReposGetRepoRulesetVersionInput = Parameters<typeof github.repos.getRepoRulesetVersion> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetRepoRulesetVersionOutput = Awaited<ReturnType<typeof github.repos.getRepoRulesetVersion>>;
+<sub>`PATCH /repos/{owner}/{repo}/hooks/{hook_id}` · `repos/update-webhook`</sub>
 
-const input: ReposGetRepoRulesetVersionInput = {} as { owner: string; repo: string; ruleset_id: number; version_id: number };
-const result: ReposGetRepoRulesetVersionOutput = await github.repos.getRepoRulesetVersion(input);
+## `github.repos.getWebhookConfigForRepo`
 
-// Result shape (from schema): { [key: string]: unknown }
+Get a webhook configuration for a repository — [API reference](https://docs.github.com/rest/repos/webhooks#get-a-webhook-configuration-for-a-repository)
+
+```ts
+github.repos.getWebhookConfigForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
+  hook_id: number;
+}): Promise<WebhookConfig>
 ```
 
-### `github.repos.getRepoRuleSuites`
+<sub>`GET /repos/{owner}/{repo}/hooks/{hook_id}/config` · `repos/get-webhook-config-for-repo`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/rulesets/rule-suites`
-- **What it does**: List repository rule suites
-- **OpenAPI operationId**: `repos/get-repo-rule-suites`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.updateWebhookConfigForRepo`
 
-**Inputs**
+Update a webhook configuration for a repository — [API reference](https://docs.github.com/rest/repos/webhooks#update-a-webhook-configuration-for-a-repository)
+
+```ts
+github.repos.updateWebhookConfigForRepo(input: {
+  url?: WebhookConfigUrl;
+  content_type?: WebhookConfigContentType;
+  secret?: WebhookConfigSecret;
+  insecure_ssl?: WebhookConfigInsecureSsl;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
+  hook_id: number;
+}): Promise<WebhookConfig>
+```
 
-- Client input type: `{ owner: string; repo: string; ref?: string; time_period?: "hour" | "day" | "week" | "month"; actor_name?: string; rule_suite_result?: "pass" | "fail" | "bypass" | "all"; evaluate_status?: "all" | "active" | "evaluate"; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`PATCH /repos/{owner}/{repo}/hooks/{hook_id}/config` · `repos/update-webhook-config-for-repo`</sub>
 
-**Outputs**
+## `github.repos.listWebhookDeliveries`
 
-- Client return type: `({ id?: number; actor_id?: number; actor_name?: string; before_sha?: string; after_sha?: string; ref?: string; repository_id?: number; repository_name?: string; pushed_at?: string; result?: "pass" | "fail" | "bypass"; e...`
-- OpenAPI response codes: `200`, `404`, `500`
+List deliveries for a repository webhook — [API reference](https://docs.github.com/rest/repos/webhooks#list-deliveries-for-a-repository-webhook)
 
 ```ts
-import github from "@utdk/github";
+github.repos.listWebhookDeliveries(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
+  hook_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** Used for pagination: the starting delivery from which the page of deliveries is fetched. Refer to the `link` header for the next and previous page cursors. */
+  cursor?: string;
+  /** Returns webhook deliveries filtered by delivery outcome classification based on `status_code` range. A `status` of `success` returns deliveries with a `status_code` in the 200-399 range (inclusive). A `status` of `failure` returns deliveries with a `status_code` in the 400-599 range (inclusive). */
+  status?: "success" | "failure";
+}): Promise<(HookDeliveryItem)[]>
+```
+
+<sub>`GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries` · `repos/list-webhook-deliveries`</sub>
 
-type ReposGetRepoRuleSuitesInput = Parameters<typeof github.repos.getRepoRuleSuites> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetRepoRuleSuitesOutput = Awaited<ReturnType<typeof github.repos.getRepoRuleSuites>>;
+## `github.repos.getWebhookDelivery`
 
-const input: ReposGetRepoRuleSuitesInput = {} as { owner: string; repo: string; ref?: string; time_period?: "hour" | "day" | "week" | "month"; actor_name?: string; rule_suite_result?: "pass" | "fail" | "bypass" | "all"; evaluate_status?: "all" | "active" | "evaluate"; per_page?: number; page?: number };
-const result: ReposGetRepoRuleSuitesOutput = await github.repos.getRepoRuleSuites(input);
+Get a delivery for a repository webhook — [API reference](https://docs.github.com/rest/repos/webhooks#get-a-delivery-for-a-repository-webhook)
 
-// Result shape (from schema): ({ id?: number; actor_id?: number; actor_name?: string; before_sha?: string; after_sha?: string; ref?: string; repository_id?: number; repository_name?: string; pushed_at?: string; result?: "pass" | "fail" | "bypass"; e...
+```ts
+github.repos.getWebhookDelivery(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
+  hook_id: number;
+  delivery_id: number;
+}): Promise<HookDelivery>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}` · `repos/get-webhook-delivery`</sub>
 
-### `github.repos.getRepoRuleSuite`
+## `github.repos.redeliverWebhookDelivery`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/rulesets/rule-suites/{rule_suite_id}`
-- **What it does**: Get a repository rule suite
-- **OpenAPI operationId**: `repos/get-repo-rule-suite`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Redeliver a delivery for a repository webhook — [API reference](https://docs.github.com/rest/repos/webhooks#redeliver-a-delivery-for-a-repository-webhook)
 
-**Inputs**
+```ts
+github.repos.redeliverWebhookDelivery(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
+  hook_id: number;
+  delivery_id: number;
+}): Promise<{ [key: string]: unknown }>
+```
 
-- Client input type: `{ owner: string; repo: string; rule_suite_id: number }`
-- Client transport options: None
+<sub>`POST /repos/{owner}/{repo}/hooks/{hook_id}/deliveries/{delivery_id}/attempts` · `repos/redeliver-webhook-delivery`</sub>
 
-**Outputs**
+## `github.repos.pingWebhook`
 
-- Client return type: `{ id?: number; actor_id?: number | null; actor_name?: string | null; before_sha?: string; after_sha?: string; ref?: string; repository_id?: number; repository_name?: string; pushed_at?: string; result?: "pass" | "fail" ...`
-- OpenAPI response codes: `200`, `404`, `500`
+Ping a repository webhook — [API reference](https://docs.github.com/rest/repos/webhooks#ping-a-repository-webhook)
 
 ```ts
-import github from "@utdk/github";
+github.repos.pingWebhook(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
+  hook_id: number;
+}): Promise<BasicError>
+```
 
-type ReposGetRepoRuleSuiteInput = Parameters<typeof github.repos.getRepoRuleSuite> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetRepoRuleSuiteOutput = Awaited<ReturnType<typeof github.repos.getRepoRuleSuite>>;
+<sub>`POST /repos/{owner}/{repo}/hooks/{hook_id}/pings` · `repos/ping-webhook`</sub>
 
-const input: ReposGetRepoRuleSuiteInput = {} as { owner: string; repo: string; rule_suite_id: number };
-const result: ReposGetRepoRuleSuiteOutput = await github.repos.getRepoRuleSuite(input);
+## `github.repos.testPushWebhook`
 
-// Result shape (from schema): { id?: number; actor_id?: number | null; actor_name?: string | null; before_sha?: string; after_sha?: string; ref?: string; repository_id?: number; repository_name?: string; pushed_at?: string; result?: "pass" | "fail" ...
+Test the push repository webhook — [API reference](https://docs.github.com/rest/repos/webhooks#test-the-push-repository-webhook)
+
+```ts
+github.repos.testPushWebhook(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
+  hook_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.repos.getCodeFrequencyStats`
+<sub>`POST /repos/{owner}/{repo}/hooks/{hook_id}/tests` · `repos/test-push-webhook`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/stats/code_frequency`
-- **What it does**: Get the weekly commit activity
-- **OpenAPI operationId**: `repos/get-code-frequency-stats`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `202`, `204`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.disableImmutableReleases`
 
-**Inputs**
+Disable immutable releases — [API reference](https://docs.github.com/rest/repos/repos#disable-immutable-releases)
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+```ts
+github.repos.disableImmutableReleases(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
+```
 
-**Outputs**
+<sub>`DELETE /repos/{owner}/{repo}/immutable-releases` · `repos/disable-immutable-releases`</sub>
 
-- Client return type: `((number)[])[]`
-- OpenAPI response codes: `200`, `202`, `204`, `422`
+## `github.repos.checkImmutableReleases`
 
+Check if immutable releases are enabled for a repository — [API reference](https://docs.github.com/rest/repos/repos#check-if-immutable-releases-are-enabled-for-a-repository)
+
 ```ts
-import github from "@utdk/github";
+github.repos.checkImmutableReleases(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<CheckImmutableReleases>
+```
+
+<sub>`GET /repos/{owner}/{repo}/immutable-releases` · `repos/check-immutable-releases`</sub>
 
-type ReposGetCodeFrequencyStatsInput = Parameters<typeof github.repos.getCodeFrequencyStats> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetCodeFrequencyStatsOutput = Awaited<ReturnType<typeof github.repos.getCodeFrequencyStats>>;
+## `github.repos.enableImmutableReleases`
 
-const input: ReposGetCodeFrequencyStatsInput = {} as { owner: string; repo: string };
-const result: ReposGetCodeFrequencyStatsOutput = await github.repos.getCodeFrequencyStats(input);
+Enable immutable releases — [API reference](https://docs.github.com/rest/repos/repos#enable-immutable-releases)
 
-// Result shape (from schema): ((number)[])[]
+```ts
+github.repos.enableImmutableReleases(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
 ```
+
+<sub>`PUT /repos/{owner}/{repo}/immutable-releases` · `repos/enable-immutable-releases`</sub>
 
-### `github.repos.getCommitActivityStats`
+## `github.repos.listInvitations`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/stats/commit_activity`
-- **What it does**: Get the last year of commit activity
-- **OpenAPI operationId**: `repos/get-commit-activity-stats`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `202`, `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+List repository invitations — [API reference](https://docs.github.com/rest/collaborators/invitations#list-repository-invitations)
 
-**Inputs**
+```ts
+github.repos.listInvitations(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(RepositoryInvitation)[]>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/invitations` · `repos/list-invitations`</sub>
 
-**Outputs**
+## `github.repos.deleteInvitation`
 
-- Client return type: `({ days: (number)[]; total: number; week: number })[]`
-- OpenAPI response codes: `200`, `202`, `204`
+Delete a repository invitation — [API reference](https://docs.github.com/rest/collaborators/invitations#delete-a-repository-invitation)
 
 ```ts
-import github from "@utdk/github";
+github.repos.deleteInvitation(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the invitation. */
+  invitation_id: number;
+}): Promise<unknown>
+```
 
-type ReposGetCommitActivityStatsInput = Parameters<typeof github.repos.getCommitActivityStats> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetCommitActivityStatsOutput = Awaited<ReturnType<typeof github.repos.getCommitActivityStats>>;
+<sub>`DELETE /repos/{owner}/{repo}/invitations/{invitation_id}` · `repos/delete-invitation`</sub>
 
-const input: ReposGetCommitActivityStatsInput = {} as { owner: string; repo: string };
-const result: ReposGetCommitActivityStatsOutput = await github.repos.getCommitActivityStats(input);
+## `github.repos.updateInvitation`
 
-// Result shape (from schema): ({ days: (number)[]; total: number; week: number })[]
+Update a repository invitation — [API reference](https://docs.github.com/rest/collaborators/invitations#update-a-repository-invitation)
+
+```ts
+github.repos.updateInvitation(input: {
+  /** The permissions that the associated user will have on the repository. Valid values are `read`, `write`, `maintain`, `triage`, and `admin`. */
+  permissions?: "read" | "write" | "maintain" | "triage" | "admin";
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the invitation. */
+  invitation_id: number;
+}): Promise<RepositoryInvitation>
 ```
 
-### `github.repos.getContributorsStats`
+<sub>`PATCH /repos/{owner}/{repo}/invitations/{invitation_id}` · `repos/update-invitation`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/stats/contributors`
-- **What it does**: Get all contributor commit activity
-- **OpenAPI operationId**: `repos/get-contributors-stats`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `202`, `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.listIssueTypes`
 
-**Inputs**
+List issue types for a repository — [API reference](https://docs.github.com/rest/repos/issue-types#list-issue-types-for-a-repository)
+
+```ts
+github.repos.listIssueTypes(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(IssueType)[]>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/issue-types` · `repos/list-issue-types`</sub>
 
-**Outputs**
+## `github.repos.listDeployKeys`
 
-- Client return type: `({ author: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: ...`
-- OpenAPI response codes: `200`, `202`, `204`
+List deploy keys — [API reference](https://docs.github.com/rest/deploy-keys/deploy-keys#list-deploy-keys)
 
 ```ts
-import github from "@utdk/github";
+github.repos.listDeployKeys(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(DeployKey)[]>
+```
+
+<sub>`GET /repos/{owner}/{repo}/keys` · `repos/list-deploy-keys`</sub>
 
-type ReposGetContributorsStatsInput = Parameters<typeof github.repos.getContributorsStats> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetContributorsStatsOutput = Awaited<ReturnType<typeof github.repos.getContributorsStats>>;
+## `github.repos.createDeployKey`
 
-const input: ReposGetContributorsStatsInput = {} as { owner: string; repo: string };
-const result: ReposGetContributorsStatsOutput = await github.repos.getContributorsStats(input);
+Create a deploy key — [API reference](https://docs.github.com/rest/deploy-keys/deploy-keys#create-a-deploy-key)
 
-// Result shape (from schema): ({ author: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: ...
+```ts
+github.repos.createDeployKey(input: {
+  /** A name for the key. */
+  title?: string;
+  /** The contents of the key. */
+  key: string;
+  /** If `true`, the key will only be able to read repository contents. Otherwise, the key will be able to read and write.      Deploy keys with write access can perform the same actions as an organization member with admin access, or a collaborator on a personal repository. For more information, see "[Repository permission levels for an organization](https://docs.github.com/articles/repository-permission-levels-for-an-organization/)" and "[Permission levels for a user account repository](https://docs.github.com/articles/permission-levels-for-a-user-account-repository/)." */
+  read_only?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<DeployKey>
 ```
+
+<sub>`POST /repos/{owner}/{repo}/keys` · `repos/create-deploy-key`</sub>
 
-### `github.repos.getParticipationStats`
+## `github.repos.deleteDeployKey`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/stats/participation`
-- **What it does**: Get the weekly commit count
-- **OpenAPI operationId**: `repos/get-participation-stats`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Delete a deploy key — [API reference](https://docs.github.com/rest/deploy-keys/deploy-keys#delete-a-deploy-key)
 
-**Inputs**
+```ts
+github.repos.deleteDeployKey(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the key. */
+  key_id: number;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`DELETE /repos/{owner}/{repo}/keys/{key_id}` · `repos/delete-deploy-key`</sub>
 
-**Outputs**
+## `github.repos.getDeployKey`
 
-- Client return type: `{ all: (number)[]; owner: (number)[] }`
-- OpenAPI response codes: `200`, `404`
+Get a deploy key — [API reference](https://docs.github.com/rest/deploy-keys/deploy-keys#get-a-deploy-key)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getDeployKey(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the key. */
+  key_id: number;
+}): Promise<DeployKey>
+```
 
-type ReposGetParticipationStatsInput = Parameters<typeof github.repos.getParticipationStats> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetParticipationStatsOutput = Awaited<ReturnType<typeof github.repos.getParticipationStats>>;
+<sub>`GET /repos/{owner}/{repo}/keys/{key_id}` · `repos/get-deploy-key`</sub>
 
-const input: ReposGetParticipationStatsInput = {} as { owner: string; repo: string };
-const result: ReposGetParticipationStatsOutput = await github.repos.getParticipationStats(input);
+## `github.repos.listLanguages`
 
-// Result shape (from schema): { all: (number)[]; owner: (number)[] }
+List repository languages — [API reference](https://docs.github.com/rest/repos/repos#list-repository-languages)
+
+```ts
+github.repos.listLanguages(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Language>
 ```
 
-### `github.repos.getPunchCardStats`
+<sub>`GET /repos/{owner}/{repo}/languages` · `repos/list-languages`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/stats/punch_card`
-- **What it does**: Get the hourly commit count for each day
-- **OpenAPI operationId**: `repos/get-punch-card-stats`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.mergeUpstream`
 
-**Inputs**
+Sync a fork branch with the upstream repository — [API reference](https://docs.github.com/rest/branches/branches#sync-a-fork-branch-with-the-upstream-repository)
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+```ts
+github.repos.mergeUpstream(input: {
+  /** The name of the branch which should be updated to match upstream. */
+  branch: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<MergedUpstream>
+```
 
-**Outputs**
+<sub>`POST /repos/{owner}/{repo}/merge-upstream` · `repos/merge-upstream`</sub>
 
-- Client return type: `((number)[])[]`
-- OpenAPI response codes: `200`, `204`
+## `github.repos.merge`
 
+Merge a branch — [API reference](https://docs.github.com/rest/branches/branches#merge-a-branch)
+
 ```ts
-import github from "@utdk/github";
+github.repos.merge(input: {
+  /** The name of the base branch that the head will be merged into. */
+  base: string;
+  /** The head to merge. This can be a branch name or a commit SHA1. */
+  head: string;
+  /** Commit message to use for the merge commit. If omitted, a default message will be used. */
+  commit_message?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Commit>
+```
+
+<sub>`POST /repos/{owner}/{repo}/merges` · `repos/merge`</sub>
 
-type ReposGetPunchCardStatsInput = Parameters<typeof github.repos.getPunchCardStats> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetPunchCardStatsOutput = Awaited<ReturnType<typeof github.repos.getPunchCardStats>>;
+## `github.repos.deletePagesSite`
 
-const input: ReposGetPunchCardStatsInput = {} as { owner: string; repo: string };
-const result: ReposGetPunchCardStatsOutput = await github.repos.getPunchCardStats(input);
+Delete a GitHub Pages site — [API reference](https://docs.github.com/rest/pages/pages#delete-a-apiname-pages-site)
 
-// Result shape (from schema): ((number)[])[]
+```ts
+github.repos.deletePagesSite(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/pages` · `repos/delete-pages-site`</sub>
 
-### `github.repos.createCommitStatus`
+## `github.repos.getPages`
 
-- **HTTP**: `POST /repos/{owner}/{repo}/statuses/{sha}`
-- **What it does**: Create a commit status
-- **OpenAPI operationId**: `repos/create-commit-status`
-- **Path params**: `sha`
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get a GitHub Pages site — [API reference](https://docs.github.com/rest/pages/pages#get-a-apiname-pages-site)
 
-**Inputs**
+```ts
+github.repos.getPages(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Page>
+```
 
-- Client input type: `{ state: "error" | "failure" | "pending" | "success"; target_url?: string | null; description?: string | null; context?: string; owner: string; repo: string; sha: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/pages` · `repos/get-pages`</sub>
 
-**Outputs**
+## `github.repos.createPagesSite`
 
-- Client return type: `{ url: string; avatar_url: string | null; id: number; node_id: string; state: string; description: string | null; target_url: string | null; context: string; created_at: string; updated_at: string; creator: { name?: str...`
-- OpenAPI response codes: `201`
+Create a GitHub Pages site — [API reference](https://docs.github.com/rest/pages/pages#create-a-apiname-pages-site)
 
 ```ts
-import github from "@utdk/github";
+github.repos.createPagesSite(input: {
+  /** The source branch and directory used to publish your Pages site. */
+  body: unknown | unknown | null;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Page>
+```
 
-type ReposCreateCommitStatusInput = Parameters<typeof github.repos.createCommitStatus> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateCommitStatusOutput = Awaited<ReturnType<typeof github.repos.createCommitStatus>>;
+<sub>`POST /repos/{owner}/{repo}/pages` · `repos/create-pages-site`</sub>
 
-const input: ReposCreateCommitStatusInput = {} as { state: "error" | "failure" | "pending" | "success"; target_url?: string | null; description?: string | null; context?: string; owner: string; repo: string; sha: string };
-const result: ReposCreateCommitStatusOutput = await github.repos.createCommitStatus(input);
+## `github.repos.updateInformationAboutPagesSite`
 
-// Result shape (from schema): { url: string; avatar_url: string | null; id: number; node_id: string; state: string; description: string | null; target_url: string | null; context: string; created_at: string; updated_at: string; creator: { name?: str...
+Update information about a GitHub Pages site — [API reference](https://docs.github.com/rest/pages/pages#update-information-about-a-apiname-pages-site)
+
+```ts
+github.repos.updateInformationAboutPagesSite(input: {
+  body: unknown | unknown | unknown | unknown | unknown;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
 ```
 
-### `github.repos.listTags`
+<sub>`PUT /repos/{owner}/{repo}/pages` · `repos/update-information-about-pages-site`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/tags`
-- **What it does**: List repository tags
-- **OpenAPI operationId**: `repos/list-tags`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.listPagesBuilds`
 
-**Inputs**
+List GitHub Pages builds — [API reference](https://docs.github.com/rest/pages/pages#list-apiname-pages-builds)
+
+```ts
+github.repos.listPagesBuilds(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(PageBuild)[]>
+```
 
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/pages/builds` · `repos/list-pages-builds`</sub>
 
-**Outputs**
+## `github.repos.requestPagesBuild`
 
-- Client return type: `({ name: string; commit: { sha: string; url: string }; zipball_url: string; tarball_url: string; node_id: string })[]`
-- OpenAPI response codes: `200`
+Request a GitHub Pages build — [API reference](https://docs.github.com/rest/pages/pages#request-a-apiname-pages-build)
 
 ```ts
-import github from "@utdk/github";
+github.repos.requestPagesBuild(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<PageBuildStatus>
+```
+
+<sub>`POST /repos/{owner}/{repo}/pages/builds` · `repos/request-pages-build`</sub>
 
-type ReposListTagsInput = Parameters<typeof github.repos.listTags> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListTagsOutput = Awaited<ReturnType<typeof github.repos.listTags>>;
+## `github.repos.getPagesBuild`
 
-const input: ReposListTagsInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ReposListTagsOutput = await github.repos.listTags(input);
+Get GitHub Pages build — [API reference](https://docs.github.com/rest/pages/pages#get-apiname-pages-build)
 
-// Result shape (from schema): ({ name: string; commit: { sha: string; url: string }; zipball_url: string; tarball_url: string; node_id: string })[]
+```ts
+github.repos.getPagesBuild(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  build_id: number;
+}): Promise<PageBuild>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/pages/builds/{build_id}` · `repos/get-pages-build`</sub>
 
-### `github.repos.downloadTarballArchive`
+## `github.repos.getLatestPagesBuild`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/tarball/{ref}`
-- **What it does**: Download a repository archive (tar)
-- **OpenAPI operationId**: `repos/download-tarball-archive`
-- **Path params**: `ref`
-- **Query params**: None
-- **Response codes**: `302`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get latest Pages build — [API reference](https://docs.github.com/rest/pages/pages#get-latest-pages-build)
 
-**Inputs**
+```ts
+github.repos.getLatestPagesBuild(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<PageBuild>
+```
 
-- Client input type: `{ owner: string; repo: string; ref: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/pages/builds/latest` · `repos/get-latest-pages-build`</sub>
 
-**Outputs**
+## `github.repos.createPagesDeployment`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `302`
+Create a GitHub Pages deployment — [API reference](https://docs.github.com/rest/pages/pages#create-a-github-pages-deployment)
 
 ```ts
-import github from "@utdk/github";
+github.repos.createPagesDeployment(input: {
+  /** The ID of an artifact that contains the .zip or .tar of static assets to deploy. The artifact belongs to the repository. Either `artifact_id` or `artifact_url` are required. */
+  artifact_id?: number;
+  /** The URL of an artifact that contains the .zip or .tar of static assets to deploy. The artifact belongs to the repository. Either `artifact_id` or `artifact_url` are required. */
+  artifact_url?: string;
+  /** The target environment for this GitHub Pages deployment. */
+  environment?: string;
+  /** A unique string that represents the version of the build for this deployment. */
+  pages_build_version: string;
+  /** The OIDC token issued by GitHub Actions certifying the origin of the deployment. */
+  oidc_token: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<PageDeployment>
+```
 
-type ReposDownloadTarballArchiveInput = Parameters<typeof github.repos.downloadTarballArchive> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDownloadTarballArchiveOutput = Awaited<ReturnType<typeof github.repos.downloadTarballArchive>>;
+<sub>`POST /repos/{owner}/{repo}/pages/deployments` · `repos/create-pages-deployment`</sub>
 
-const input: ReposDownloadTarballArchiveInput = {} as { owner: string; repo: string; ref: string };
-const result: ReposDownloadTarballArchiveOutput = await github.repos.downloadTarballArchive(input);
+## `github.repos.getPagesDeployment`
 
-// Result shape (from schema): unknown
+Get the status of a GitHub Pages deployment — [API reference](https://docs.github.com/rest/pages/pages#get-the-status-of-a-github-pages-deployment)
+
+```ts
+github.repos.getPagesDeployment(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the Pages deployment. You can also give the commit SHA of the deployment. */
+  pages_deployment_id: number | string;
+}): Promise<PagesDeploymentStatus>
 ```
 
-### `github.repos.listTeams`
+<sub>`GET /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}` · `repos/get-pages-deployment`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/teams`
-- **What it does**: List repository teams
-- **OpenAPI operationId**: `repos/list-teams`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.cancelPagesDeployment`
 
-**Inputs**
+Cancel a GitHub Pages deployment — [API reference](https://docs.github.com/rest/pages/pages#cancel-a-github-pages-deployment)
 
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
+```ts
+github.repos.cancelPagesDeployment(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the Pages deployment. You can also give the commit SHA of the deployment. */
+  pages_deployment_id: number | string;
+}): Promise<BasicError>
+```
 
-**Outputs**
+<sub>`POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel` · `repos/cancel-pages-deployment`</sub>
 
-- Client return type: `({ id: number; node_id: string; name: string; slug: string; description: string | null; privacy?: string; notification_setting?: string; permission: string; permissions?: { pull: boolean; triage: boolean; push: boolean;...`
-- OpenAPI response codes: `200`, `404`
+## `github.repos.getPagesHealthCheck`
 
+Get a DNS health check for GitHub Pages — [API reference](https://docs.github.com/rest/pages/pages#get-a-dns-health-check-for-github-pages)
+
 ```ts
-import github from "@utdk/github";
+github.repos.getPagesHealthCheck(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<PagesHealthCheck>
+```
+
+<sub>`GET /repos/{owner}/{repo}/pages/health` · `repos/get-pages-health-check`</sub>
 
-type ReposListTeamsInput = Parameters<typeof github.repos.listTeams> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListTeamsOutput = Awaited<ReturnType<typeof github.repos.listTeams>>;
+## `github.repos.disablePrivateVulnerabilityReporting`
 
-const input: ReposListTeamsInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ReposListTeamsOutput = await github.repos.listTeams(input);
+Disable private vulnerability reporting for a repository — [API reference](https://docs.github.com/rest/repos/repos#disable-private-vulnerability-reporting-for-a-repository)
 
-// Result shape (from schema): ({ id: number; node_id: string; name: string; slug: string; description: string | null; privacy?: string; notification_setting?: string; permission: string; permissions?: { pull: boolean; triage: boolean; push: boolean;...
+```ts
+github.repos.disablePrivateVulnerabilityReporting(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/private-vulnerability-reporting` · `repos/disable-private-vulnerability-reporting`</sub>
 
-### `github.repos.getAllTopics`
+## `github.repos.checkPrivateVulnerabilityReporting`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/topics`
-- **What it does**: Get all repository topics
-- **OpenAPI operationId**: `repos/get-all-topics`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Check if private vulnerability reporting is enabled for a repository — [API reference](https://docs.github.com/rest/repos/repos#check-if-private-vulnerability-reporting-is-enabled-for-a-repository)
 
-**Inputs**
+```ts
+github.repos.checkPrivateVulnerabilityReporting(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<{ enabled: boolean }>
+```
 
-- Client input type: `{ owner: string; repo: string; page?: number; per_page?: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/private-vulnerability-reporting` · `repos/check-private-vulnerability-reporting`</sub>
 
-**Outputs**
+## `github.repos.enablePrivateVulnerabilityReporting`
 
-- Client return type: `{ names: (string)[] }`
-- OpenAPI response codes: `200`, `404`
+Enable private vulnerability reporting for a repository — [API reference](https://docs.github.com/rest/repos/repos#enable-private-vulnerability-reporting-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.repos.enablePrivateVulnerabilityReporting(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
+```
 
-type ReposGetAllTopicsInput = Parameters<typeof github.repos.getAllTopics> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetAllTopicsOutput = Awaited<ReturnType<typeof github.repos.getAllTopics>>;
+<sub>`PUT /repos/{owner}/{repo}/private-vulnerability-reporting` · `repos/enable-private-vulnerability-reporting`</sub>
 
-const input: ReposGetAllTopicsInput = {} as { owner: string; repo: string; page?: number; per_page?: number };
-const result: ReposGetAllTopicsOutput = await github.repos.getAllTopics(input);
+## `github.repos.customPropertiesForReposGetRepositoryValues`
 
-// Result shape (from schema): { names: (string)[] }
+Get all custom property values for a repository — [API reference](https://docs.github.com/rest/repos/custom-properties#get-all-custom-property-values-for-a-repository)
+
+```ts
+github.repos.customPropertiesForReposGetRepositoryValues(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(CustomPropertyValue)[]>
 ```
 
-### `github.repos.replaceAllTopics`
+<sub>`GET /repos/{owner}/{repo}/properties/values` · `repos/custom-properties-for-repos-get-repository-values`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/topics`
-- **What it does**: Replace all repository topics
-- **OpenAPI operationId**: `repos/replace-all-topics`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.customPropertiesForReposCreateOrUpdateRepositoryValues`
 
-**Inputs**
+Create or update custom property values for a repository — [API reference](https://docs.github.com/rest/repos/custom-properties#create-or-update-custom-property-values-for-a-repository)
+
+```ts
+github.repos.customPropertiesForReposCreateOrUpdateRepositoryValues(input: {
+  /** A list of custom property names and associated values to apply to the repositories. */
+  properties: (CustomPropertyValue)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
+```
 
-- Client input type: `{ names: (string)[]; owner: string; repo: string }`
-- Client transport options: None
+<sub>`PATCH /repos/{owner}/{repo}/properties/values` · `repos/custom-properties-for-repos-create-or-update-repository-values`</sub>
 
-**Outputs**
+## `github.repos.getReadme`
 
-- Client return type: `{ names: (string)[] }`
-- OpenAPI response codes: `200`, `404`, `422`
+Get a repository README — [API reference](https://docs.github.com/rest/repos/contents#get-a-repository-readme)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getReadme(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the commit/branch/tag. Default: the repository’s default branch. */
+  ref?: string;
+}): Promise<ContentFile>
+```
+
+<sub>`GET /repos/{owner}/{repo}/readme` · `repos/get-readme`</sub>
 
-type ReposReplaceAllTopicsInput = Parameters<typeof github.repos.replaceAllTopics> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposReplaceAllTopicsOutput = Awaited<ReturnType<typeof github.repos.replaceAllTopics>>;
+## `github.repos.getReadmeInDirectory`
 
-const input: ReposReplaceAllTopicsInput = {} as { names: (string)[]; owner: string; repo: string };
-const result: ReposReplaceAllTopicsOutput = await github.repos.replaceAllTopics(input);
+Get a repository README for a directory — [API reference](https://docs.github.com/rest/repos/contents#get-a-repository-readme-for-a-directory)
 
-// Result shape (from schema): { names: (string)[] }
+```ts
+github.repos.getReadmeInDirectory(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The alternate path to look for a README file */
+  dir: string;
+  /** The name of the commit/branch/tag. Default: the repository’s default branch. */
+  ref?: string;
+}): Promise<ContentFile>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/readme/{dir}` · `repos/get-readme-in-directory`</sub>
 
-### `github.repos.getClones`
+## `github.repos.listReleases`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/traffic/clones`
-- **What it does**: Get repository clones
-- **OpenAPI operationId**: `repos/get-clones`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+List releases — [API reference](https://docs.github.com/rest/releases/releases#list-releases)
 
-**Inputs**
+```ts
+github.repos.listReleases(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Release)[]>
+```
 
-- Client input type: `{ owner: string; repo: string; per?: "day" | "week" }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/releases` · `repos/list-releases`</sub>
 
-**Outputs**
+## `github.repos.createRelease`
 
-- Client return type: `{ count: number; uniques: number; clones: ({ timestamp: string; uniques: number; count: number })[] }`
-- OpenAPI response codes: `200`, `403`
+Create a release — [API reference](https://docs.github.com/rest/releases/releases#create-a-release)
 
 ```ts
-import github from "@utdk/github";
+github.repos.createRelease(input: {
+  /** The name of the tag. */
+  tag_name: string;
+  /** Specifies the commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Unused if the Git tag already exists. Default: the repository's default branch. */
+  target_commitish?: string;
+  /** The name of the release. */
+  name?: string;
+  /** Text describing the contents of the tag. */
+  body?: string;
+  /** `true` to create a draft (unpublished) release, `false` to create a published one. */
+  draft?: boolean;
+  /** `true` to identify the release as a prerelease. `false` to identify the release as a full release. */
+  prerelease?: boolean;
+  /** If specified, a discussion of the specified category is created and linked to the release. The value must be a category that already exists in the repository. For more information, see "[Managing categories for discussions in your repository](https://docs.github.com/discussions/managing-discussions-for-your-community/managing-categories-for-discussions-in-your-repository)." */
+  discussion_category_name?: string;
+  /** Whether to automatically generate the name and body for this release. If `name` is specified, the specified name will be used; otherwise, a name will be automatically generated. If `body` is specified, the body will be pre-pended to the automatically generated notes. */
+  generate_release_notes?: boolean;
+  /** Specifies whether this release should be set as the latest release for the repository. Drafts and prereleases cannot be set as latest. Defaults to `true` for newly published releases. `legacy` specifies that the latest release should be determined based on the release creation date and higher semantic version. */
+  make_latest?: "true" | "false" | "legacy";
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Release>
+```
 
-type ReposGetClonesInput = Parameters<typeof github.repos.getClones> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetClonesOutput = Awaited<ReturnType<typeof github.repos.getClones>>;
+<sub>`POST /repos/{owner}/{repo}/releases` · `repos/create-release`</sub>
 
-const input: ReposGetClonesInput = {} as { owner: string; repo: string; per?: "day" | "week" };
-const result: ReposGetClonesOutput = await github.repos.getClones(input);
+## `github.repos.deleteRelease`
 
-// Result shape (from schema): { count: number; uniques: number; clones: ({ timestamp: string; uniques: number; count: number })[] }
+Delete a release — [API reference](https://docs.github.com/rest/releases/releases#delete-a-release)
+
+```ts
+github.repos.deleteRelease(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the release. */
+  release_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.repos.getTopPaths`
+<sub>`DELETE /repos/{owner}/{repo}/releases/{release_id}` · `repos/delete-release`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/traffic/popular/paths`
-- **What it does**: Get top referral paths
-- **OpenAPI operationId**: `repos/get-top-paths`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.getRelease`
 
-**Inputs**
+Get a release — [API reference](https://docs.github.com/rest/releases/releases#get-a-release)
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+```ts
+github.repos.getRelease(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the release. */
+  release_id: number;
+}): Promise<Release>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/releases/{release_id}` · `repos/get-release`</sub>
 
-- Client return type: `({ path: string; title: string; count: number; uniques: number })[]`
-- OpenAPI response codes: `200`, `403`
+## `github.repos.updateRelease`
 
+Update a release — [API reference](https://docs.github.com/rest/releases/releases#update-a-release)
+
 ```ts
-import github from "@utdk/github";
+github.repos.updateRelease(input: {
+  /** The name of the tag. */
+  tag_name?: string;
+  /** Specifies the commitish value that determines where the Git tag is created from. Can be any branch or commit SHA. Unused if the Git tag already exists. Default: the repository's default branch. */
+  target_commitish?: string;
+  /** The name of the release. */
+  name?: string;
+  /** Text describing the contents of the tag. */
+  body?: string;
+  /** `true` makes the release a draft, and `false` publishes the release. */
+  draft?: boolean;
+  /** `true` to identify the release as a prerelease, `false` to identify the release as a full release. */
+  prerelease?: boolean;
+  /** Specifies whether this release should be set as the latest release for the repository. Drafts and prereleases cannot be set as latest. Defaults to `true` for newly published releases. `legacy` specifies that the latest release should be determined based on the release creation date and higher semantic version. */
+  make_latest?: "true" | "false" | "legacy";
+  /** If specified, a discussion of the specified category is created and linked to the release. The value must be a category that already exists in the repository. If there is already a discussion linked to the release, this parameter is ignored. For more information, see "[Managing categories for discussions in your repository](https://docs.github.com/discussions/managing-discussions-for-your-community/managing-categories-for-discussions-in-your-repository)." */
+  discussion_category_name?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the release. */
+  release_id: number;
+}): Promise<Release>
+```
+
+<sub>`PATCH /repos/{owner}/{repo}/releases/{release_id}` · `repos/update-release`</sub>
 
-type ReposGetTopPathsInput = Parameters<typeof github.repos.getTopPaths> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetTopPathsOutput = Awaited<ReturnType<typeof github.repos.getTopPaths>>;
+## `github.repos.listReleaseAssets`
 
-const input: ReposGetTopPathsInput = {} as { owner: string; repo: string };
-const result: ReposGetTopPathsOutput = await github.repos.getTopPaths(input);
+List release assets — [API reference](https://docs.github.com/rest/releases/assets#list-release-assets)
 
-// Result shape (from schema): ({ path: string; title: string; count: number; uniques: number })[]
+```ts
+github.repos.listReleaseAssets(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the release. */
+  release_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(ReleaseAsset)[]>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/releases/{release_id}/assets` · `repos/list-release-assets`</sub>
 
-### `github.repos.getTopReferrers`
+## `github.repos.uploadReleaseAsset`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/traffic/popular/referrers`
-- **What it does**: Get top referral sources
-- **OpenAPI operationId**: `repos/get-top-referrers`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Upload a release asset — [API reference](https://docs.github.com/rest/releases/assets#upload-a-release-asset)
 
-**Inputs**
+```ts
+github.repos.uploadReleaseAsset(input: {
+  /** The raw file data */
+  body?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the release. */
+  release_id: number;
+  name: string;
+  label?: string;
+}): Promise<ReleaseAsset>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`POST /repos/{owner}/{repo}/releases/{release_id}/assets` · `repos/upload-release-asset`</sub>
 
-**Outputs**
+## `github.repos.deleteReleaseAsset`
 
-- Client return type: `({ referrer: string; count: number; uniques: number })[]`
-- OpenAPI response codes: `200`, `403`
+Delete a release asset — [API reference](https://docs.github.com/rest/releases/assets#delete-a-release-asset)
 
 ```ts
-import github from "@utdk/github";
+github.repos.deleteReleaseAsset(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the asset. */
+  asset_id: number;
+}): Promise<BasicError>
+```
 
-type ReposGetTopReferrersInput = Parameters<typeof github.repos.getTopReferrers> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetTopReferrersOutput = Awaited<ReturnType<typeof github.repos.getTopReferrers>>;
+<sub>`DELETE /repos/{owner}/{repo}/releases/assets/{asset_id}` · `repos/delete-release-asset`</sub>
 
-const input: ReposGetTopReferrersInput = {} as { owner: string; repo: string };
-const result: ReposGetTopReferrersOutput = await github.repos.getTopReferrers(input);
+## `github.repos.getReleaseAsset`
 
-// Result shape (from schema): ({ referrer: string; count: number; uniques: number })[]
+Get a release asset — [API reference](https://docs.github.com/rest/releases/assets#get-a-release-asset)
+
+```ts
+github.repos.getReleaseAsset(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the asset. */
+  asset_id: number;
+}): Promise<ReleaseAsset>
 ```
 
-### `github.repos.getViews`
+<sub>`GET /repos/{owner}/{repo}/releases/assets/{asset_id}` · `repos/get-release-asset`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/traffic/views`
-- **What it does**: Get page views
-- **OpenAPI operationId**: `repos/get-views`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.updateReleaseAsset`
 
-**Inputs**
+Update a release asset — [API reference](https://docs.github.com/rest/releases/assets#update-a-release-asset)
+
+```ts
+github.repos.updateReleaseAsset(input: {
+  /** The file name of the asset. */
+  name?: string;
+  /** An alternate short description of the asset. Used in place of the filename. */
+  label?: string;
+  state?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the asset. */
+  asset_id: number;
+}): Promise<ReleaseAsset>
+```
 
-- Client input type: `{ owner: string; repo: string; per?: "day" | "week" }`
-- Client transport options: None
+<sub>`PATCH /repos/{owner}/{repo}/releases/assets/{asset_id}` · `repos/update-release-asset`</sub>
 
-**Outputs**
+## `github.repos.generateReleaseNotes`
 
-- Client return type: `{ count: number; uniques: number; views: ({ timestamp: string; uniques: number; count: number })[] }`
-- OpenAPI response codes: `200`, `403`
+Generate release notes content for a release — [API reference](https://docs.github.com/rest/releases/releases#generate-release-notes-content-for-a-release)
 
 ```ts
-import github from "@utdk/github";
+github.repos.generateReleaseNotes(input: {
+  /** The tag name for the release. This can be an existing tag or a new one. */
+  tag_name: string;
+  /** Specifies the commitish value that will be the target for the release's tag. Required if the supplied tag_name does not reference an existing tag. Ignored if the tag_name already exists. */
+  target_commitish?: string;
+  /** The name of the previous tag to use as the starting point for the release notes. Use to manually specify the range for the set of changes considered as part this release. */
+  previous_tag_name?: string;
+  /** Specifies a path to a file in the repository containing configuration settings used for generating the release notes. If unspecified, the configuration file located in the repository at '.github/release.yml' or '.github/release.yaml' will be used. If that is not present, the default configuration will be used. */
+  configuration_file_path?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ReleaseNotesContent>
+```
+
+<sub>`POST /repos/{owner}/{repo}/releases/generate-notes` · `repos/generate-release-notes`</sub>
 
-type ReposGetViewsInput = Parameters<typeof github.repos.getViews> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposGetViewsOutput = Awaited<ReturnType<typeof github.repos.getViews>>;
+## `github.repos.getLatestRelease`
 
-const input: ReposGetViewsInput = {} as { owner: string; repo: string; per?: "day" | "week" };
-const result: ReposGetViewsOutput = await github.repos.getViews(input);
+Get the latest release — [API reference](https://docs.github.com/rest/releases/releases#get-the-latest-release)
 
-// Result shape (from schema): { count: number; uniques: number; views: ({ timestamp: string; uniques: number; count: number })[] }
+```ts
+github.repos.getLatestRelease(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Release>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/releases/latest` · `repos/get-latest-release`</sub>
 
-### `github.repos.transfer`
+## `github.repos.getReleaseByTag`
 
-- **HTTP**: `POST /repos/{owner}/{repo}/transfer`
-- **What it does**: Transfer a repository
-- **OpenAPI operationId**: `repos/transfer`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get a release by tag name — [API reference](https://docs.github.com/rest/releases/releases#get-a-release-by-tag-name)
 
-**Inputs**
+```ts
+github.repos.getReleaseByTag(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** tag parameter */
+  tag: string;
+}): Promise<Release>
+```
 
-- Client input type: `{ new_owner: string; new_name?: string; team_ids?: (number)[]; owner: string; repo: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/releases/tags/{tag}` · `repos/get-release-by-tag`</sub>
 
-**Outputs**
+## `github.repos.getBranchRules`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `202`
+Get rules for a branch — [API reference](https://docs.github.com/rest/repos/rules#get-rules-for-a-branch)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getBranchRules(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
+  branch: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(RepositoryRuleDetailed)[]>
+```
 
-type ReposTransferInput = Parameters<typeof github.repos.transfer> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposTransferOutput = Awaited<ReturnType<typeof github.repos.transfer>>;
+<sub>`GET /repos/{owner}/{repo}/rules/branches/{branch}` · `repos/get-branch-rules`</sub>
 
-const input: ReposTransferInput = {} as { new_owner: string; new_name?: string; team_ids?: (number)[]; owner: string; repo: string };
-const result: ReposTransferOutput = await github.repos.transfer(input);
+## `github.repos.getRepoRulesets`
 
-// Result shape (from schema): unknown
+Get all repository rulesets — [API reference](https://docs.github.com/rest/repos/rules#get-all-repository-rulesets)
+
+```ts
+github.repos.getRepoRulesets(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** Include rulesets configured at higher levels that apply to this repository */
+  includes_parents?: boolean;
+  /** A comma-separated list of rule targets to filter by. If provided, only rulesets that apply to the specified targets will be returned. For example, `branch,tag,push`.  */
+  targets?: string;
+}): Promise<(RepositoryRuleset)[]>
 ```
 
-### `github.repos.disableVulnerabilityAlerts`
+<sub>`GET /repos/{owner}/{repo}/rulesets` · `repos/get-repo-rulesets`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/vulnerability-alerts`
-- **What it does**: Disable vulnerability alerts
-- **OpenAPI operationId**: `repos/disable-vulnerability-alerts`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.createRepoRuleset`
 
-**Inputs**
+Create a repository ruleset — [API reference](https://docs.github.com/rest/repos/rules#create-a-repository-ruleset)
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+```ts
+github.repos.createRepoRuleset(input: {
+  /** The name of the ruleset. */
+  name: string;
+  /** The target of the ruleset */
+  target?: "branch" | "tag" | "push";
+  enforcement: RepositoryRuleEnforcement;
+  /** The actors that can bypass the rules in this ruleset */
+  bypass_actors?: (RepositoryRulesetBypassActor)[];
+  conditions?: RepositoryRulesetConditions;
+  /** An array of rules within the ruleset. */
+  rules?: (RepositoryRule)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<RepositoryRuleset>
+```
 
-**Outputs**
+<sub>`POST /repos/{owner}/{repo}/rulesets` · `repos/create-repo-ruleset`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `github.repos.deleteRepoRuleset`
 
+Delete a repository ruleset — [API reference](https://docs.github.com/rest/repos/rules#delete-a-repository-ruleset)
+
 ```ts
-import github from "@utdk/github";
+github.repos.deleteRepoRuleset(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the ruleset. */
+  ruleset_id: number;
+}): Promise<BasicError>
+```
+
+<sub>`DELETE /repos/{owner}/{repo}/rulesets/{ruleset_id}` · `repos/delete-repo-ruleset`</sub>
 
-type ReposDisableVulnerabilityAlertsInput = Parameters<typeof github.repos.disableVulnerabilityAlerts> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDisableVulnerabilityAlertsOutput = Awaited<ReturnType<typeof github.repos.disableVulnerabilityAlerts>>;
+## `github.repos.getRepoRuleset`
 
-const input: ReposDisableVulnerabilityAlertsInput = {} as { owner: string; repo: string };
-const result: ReposDisableVulnerabilityAlertsOutput = await github.repos.disableVulnerabilityAlerts(input);
+Get a repository ruleset — [API reference](https://docs.github.com/rest/repos/rules#get-a-repository-ruleset)
 
-// Result shape (from schema): unknown
+```ts
+github.repos.getRepoRuleset(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the ruleset. */
+  ruleset_id: number;
+  /** Include rulesets configured at higher levels that apply to this repository */
+  includes_parents?: boolean;
+}): Promise<RepositoryRuleset>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/rulesets/{ruleset_id}` · `repos/get-repo-ruleset`</sub>
 
-### `github.repos.checkVulnerabilityAlerts`
+## `github.repos.updateRepoRuleset`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/vulnerability-alerts`
-- **What it does**: Check if vulnerability alerts are enabled for a repository
-- **OpenAPI operationId**: `repos/check-vulnerability-alerts`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Update a repository ruleset — [API reference](https://docs.github.com/rest/repos/rules#update-a-repository-ruleset)
 
-**Inputs**
+```ts
+github.repos.updateRepoRuleset(input: {
+  /** The name of the ruleset. */
+  name?: string;
+  /** The target of the ruleset */
+  target?: "branch" | "tag" | "push";
+  enforcement?: RepositoryRuleEnforcement;
+  /** The actors that can bypass the rules in this ruleset */
+  bypass_actors?: (RepositoryRulesetBypassActor)[];
+  conditions?: RepositoryRulesetConditions;
+  /** An array of rules within the ruleset. */
+  rules?: (RepositoryRule)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the ruleset. */
+  ruleset_id: number;
+}): Promise<RepositoryRuleset>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`PUT /repos/{owner}/{repo}/rulesets/{ruleset_id}` · `repos/update-repo-ruleset`</sub>
 
-**Outputs**
+## `github.repos.getRepoRulesetHistory`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+Get repository ruleset history — [API reference](https://docs.github.com/rest/repos/rules#get-repository-ruleset-history)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getRepoRulesetHistory(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the ruleset. */
+  ruleset_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(RulesetVersion)[]>
+```
 
-type ReposCheckVulnerabilityAlertsInput = Parameters<typeof github.repos.checkVulnerabilityAlerts> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCheckVulnerabilityAlertsOutput = Awaited<ReturnType<typeof github.repos.checkVulnerabilityAlerts>>;
+<sub>`GET /repos/{owner}/{repo}/rulesets/{ruleset_id}/history` · `repos/get-repo-ruleset-history`</sub>
 
-const input: ReposCheckVulnerabilityAlertsInput = {} as { owner: string; repo: string };
-const result: ReposCheckVulnerabilityAlertsOutput = await github.repos.checkVulnerabilityAlerts(input);
+## `github.repos.getRepoRulesetVersion`
 
-// Result shape (from schema): unknown
+Get repository ruleset version — [API reference](https://docs.github.com/rest/repos/rules#get-repository-ruleset-version)
+
+```ts
+github.repos.getRepoRulesetVersion(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the ruleset. */
+  ruleset_id: number;
+  /** The ID of the version */
+  version_id: number;
+}): Promise<RulesetVersionWithState>
 ```
 
-### `github.repos.enableVulnerabilityAlerts`
+<sub>`GET /repos/{owner}/{repo}/rulesets/{ruleset_id}/history/{version_id}` · `repos/get-repo-ruleset-version`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/vulnerability-alerts`
-- **What it does**: Enable vulnerability alerts
-- **OpenAPI operationId**: `repos/enable-vulnerability-alerts`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.getRepoRuleSuites`
 
-**Inputs**
+List repository rule suites — [API reference](https://docs.github.com/rest/repos/rule-suites#list-repository-rule-suites)
+
+```ts
+github.repos.getRepoRuleSuites(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the ref. Cannot contain wildcard characters. Optionally prefix with `refs/heads/` to limit to branches or `refs/tags/` to limit to tags. Omit the prefix to search across all refs. When specified, only rule evaluations triggered for this ref will be returned. */
+  ref?: string;
+  /** The time period to filter by.  For example, `day` will filter for rule suites that occurred in the past 24 hours, and `week` will filter for rule suites that occurred in the past 7 days (168 hours). */
+  time_period?: "hour" | "day" | "week" | "month";
+  /** The handle for the GitHub user account to filter on. When specified, only rule evaluations triggered by this actor will be returned. */
+  actor_name?: string;
+  /** The rule suite results to filter on. When specified, only suites with this result will be returned. */
+  rule_suite_result?: "pass" | "fail" | "bypass" | "all";
+  /** The evaluate status to filter on. When specified, only rule suites resulting from rulesets with the specified evaluate status will be returned.   - `all` - all rule suites will be returned.   - `active` - only rule suites resulting from rulesets in active (non-evaluate) mode will be returned.   - `evaluate` - only rule suites resulting from rulesets in evaluate mode will be returned. */
+  evaluate_status?: "all" | "active" | "evaluate";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<RuleSuites>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/rulesets/rule-suites` · `repos/get-repo-rule-suites`</sub>
 
-**Outputs**
+## `github.repos.getRepoRuleSuite`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Get a repository rule suite — [API reference](https://docs.github.com/rest/repos/rule-suites#get-a-repository-rule-suite)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getRepoRuleSuite(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the rule suite result. To get this ID, you can use [GET /repos/{owner}/{repo}/rulesets/rule-suites](https://docs.github.com/rest/repos/rule-suites#list-repository-rule-suites) for repositories and [GET /orgs/{org}/rulesets/rule-suites](https://docs.github.com/rest/orgs/rule-suites#list-organization-rule-suites) for organizations. */
+  rule_suite_id: number;
+}): Promise<RuleSuite>
+```
+
+<sub>`GET /repos/{owner}/{repo}/rulesets/rule-suites/{rule_suite_id}` · `repos/get-repo-rule-suite`</sub>
 
-type ReposEnableVulnerabilityAlertsInput = Parameters<typeof github.repos.enableVulnerabilityAlerts> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposEnableVulnerabilityAlertsOutput = Awaited<ReturnType<typeof github.repos.enableVulnerabilityAlerts>>;
+## `github.repos.getCodeFrequencyStats`
 
-const input: ReposEnableVulnerabilityAlertsInput = {} as { owner: string; repo: string };
-const result: ReposEnableVulnerabilityAlertsOutput = await github.repos.enableVulnerabilityAlerts(input);
+Get the weekly commit activity — [API reference](https://docs.github.com/rest/metrics/statistics#get-the-weekly-commit-activity)
 
-// Result shape (from schema): unknown
+```ts
+github.repos.getCodeFrequencyStats(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(CodeFrequencyStat)[]>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/stats/code_frequency` · `repos/get-code-frequency-stats`</sub>
 
-### `github.repos.downloadZipballArchive`
+## `github.repos.getCommitActivityStats`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/zipball/{ref}`
-- **What it does**: Download a repository archive (zip)
-- **OpenAPI operationId**: `repos/download-zipball-archive`
-- **Path params**: `ref`
-- **Query params**: None
-- **Response codes**: `302`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get the last year of commit activity — [API reference](https://docs.github.com/rest/metrics/statistics#get-the-last-year-of-commit-activity)
 
-**Inputs**
+```ts
+github.repos.getCommitActivityStats(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(CommitActivity)[]>
+```
 
-- Client input type: `{ owner: string; repo: string; ref: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/stats/commit_activity` · `repos/get-commit-activity-stats`</sub>
 
-**Outputs**
+## `github.repos.getContributorsStats`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `302`
+Get all contributor commit activity — [API reference](https://docs.github.com/rest/metrics/statistics#get-all-contributor-commit-activity)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getContributorsStats(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(ContributorActivity)[]>
+```
 
-type ReposDownloadZipballArchiveInput = Parameters<typeof github.repos.downloadZipballArchive> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDownloadZipballArchiveOutput = Awaited<ReturnType<typeof github.repos.downloadZipballArchive>>;
+<sub>`GET /repos/{owner}/{repo}/stats/contributors` · `repos/get-contributors-stats`</sub>
 
-const input: ReposDownloadZipballArchiveInput = {} as { owner: string; repo: string; ref: string };
-const result: ReposDownloadZipballArchiveOutput = await github.repos.downloadZipballArchive(input);
+## `github.repos.getParticipationStats`
 
-// Result shape (from schema): unknown
+Get the weekly commit count — [API reference](https://docs.github.com/rest/metrics/statistics#get-the-weekly-commit-count)
+
+```ts
+github.repos.getParticipationStats(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ParticipationStats>
 ```
 
-### `github.repos.createUsingTemplate`
+<sub>`GET /repos/{owner}/{repo}/stats/participation` · `repos/get-participation-stats`</sub>
 
-- **HTTP**: `POST /repos/{template_owner}/{template_repo}/generate`
-- **What it does**: Create a repository using a template
-- **OpenAPI operationId**: `repos/create-using-template`
-- **Path params**: `template_owner`, `template_repo`
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.getPunchCardStats`
 
-**Inputs**
+Get the hourly commit count for each day — [API reference](https://docs.github.com/rest/metrics/statistics#get-the-hourly-commit-count-for-each-day)
 
-- Client input type: `{ owner?: string; name: string; description?: string; include_all_branches?: boolean; private?: boolean; template_owner: string; template_repo: string }`
-- Client transport options: None
+```ts
+github.repos.getPunchCardStats(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(CodeFrequencyStat)[]>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/stats/punch_card` · `repos/get-punch-card-stats`</sub>
 
-- Client return type: `{ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: stri...`
-- OpenAPI response codes: `201`
+## `github.repos.createCommitStatus`
 
+Create a commit status — [API reference](https://docs.github.com/rest/commits/statuses#create-a-commit-status)
+
 ```ts
-import github from "@utdk/github";
+github.repos.createCommitStatus(input: {
+  /** The state of the status. */
+  state: "error" | "failure" | "pending" | "success";
+  /** The target URL to associate with this status. This URL will be linked from the GitHub UI to allow users to easily see the source of the status.   For example, if your continuous integration system is posting build status, you would want to provide the deep link for the build output for this specific SHA:   `http://ci.example.com/user/repo/build/sha` */
+  target_url?: string | null;
+  /** A short description of the status. */
+  description?: string | null;
+  /** A string label to differentiate this status from the status of other systems. This field is case-insensitive. */
+  context?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  sha: string;
+}): Promise<Status>
+```
+
+<sub>`POST /repos/{owner}/{repo}/statuses/{sha}` · `repos/create-commit-status`</sub>
 
-type ReposCreateUsingTemplateInput = Parameters<typeof github.repos.createUsingTemplate> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateUsingTemplateOutput = Awaited<ReturnType<typeof github.repos.createUsingTemplate>>;
+## `github.repos.listTags`
 
-const input: ReposCreateUsingTemplateInput = {} as { owner?: string; name: string; description?: string; include_all_branches?: boolean; private?: boolean; template_owner: string; template_repo: string };
-const result: ReposCreateUsingTemplateOutput = await github.repos.createUsingTemplate(input);
+List repository tags — [API reference](https://docs.github.com/rest/repos/repos#list-repository-tags)
 
-// Result shape (from schema): { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: stri...
+```ts
+github.repos.listTags(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Tag)[]>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/tags` · `repos/list-tags`</sub>
 
-### `github.repos.listPublic`
+## `github.repos.downloadTarballArchive`
 
-- **HTTP**: `GET /repositories`
-- **What it does**: List public repositories
-- **OpenAPI operationId**: `repos/list-public`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Download a repository archive (tar) — [API reference](https://docs.github.com/rest/repos/contents#download-a-repository-archive-tar)
 
-**Inputs**
+```ts
+github.repos.downloadTarballArchive(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  ref: string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ since?: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/tarball/{ref}` · `repos/download-tarball-archive`</sub>
 
-**Outputs**
+## `github.repos.listTeams`
 
-- Client return type: `({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...`
-- OpenAPI response codes: `200`, `304`, `422`
+List repository teams — [API reference](https://docs.github.com/rest/repos/repos#list-repository-teams)
 
 ```ts
-import github from "@utdk/github";
+github.repos.listTeams(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Team)[]>
+```
 
-type ReposListPublicInput = Parameters<typeof github.repos.listPublic> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListPublicOutput = Awaited<ReturnType<typeof github.repos.listPublic>>;
+<sub>`GET /repos/{owner}/{repo}/teams` · `repos/list-teams`</sub>
 
-const input: ReposListPublicInput = {} as { since?: number };
-const result: ReposListPublicOutput = await github.repos.listPublic(input);
+## `github.repos.getAllTopics`
 
-// Result shape (from schema): ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...
+Get all repository topics — [API reference](https://docs.github.com/rest/repos/repos#get-all-repository-topics)
+
+```ts
+github.repos.getAllTopics(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<Topic>
 ```
 
-### `github.repos.listForAuthenticatedUser`
+<sub>`GET /repos/{owner}/{repo}/topics` · `repos/get-all-topics`</sub>
 
-- **HTTP**: `GET /user/repos`
-- **What it does**: List repositories for the authenticated user
-- **OpenAPI operationId**: `repos/list-for-authenticated-user`
-- **Path params**: None
-- **Query params**: `visibility`, `affiliation`, `type`, `sort`, `direction`
-- **Response codes**: `200`, `304`, `401`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.replaceAllTopics`
 
-**Inputs**
+Replace all repository topics — [API reference](https://docs.github.com/rest/repos/repos#replace-all-repository-topics)
+
+```ts
+github.repos.replaceAllTopics(input: {
+  /** An array of topics to add to the repository. Pass one or more topics to _replace_ the set of existing topics. Send an empty array (`[]`) to clear all topics from the repository. **Note:** Topic `names` will be saved as lowercase. */
+  names: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Topic>
+```
 
-- Client input type: `{ visibility?: "all" | "public" | "private"; affiliation?: string; type?: "all" | "owner" | "public" | "private" | "member"; sort?: "created" | "updated" | "pushed" | "full_name"; direction?: "asc" | "desc"; per_page?: number; page?: number; since?: string; before?: string }`
-- Client transport options: None
+<sub>`PUT /repos/{owner}/{repo}/topics` · `repos/replace-all-topics`</sub>
 
-**Outputs**
+## `github.repos.getClones`
 
-- Client return type: `({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; spdx_id: string | null; node_id: string; html_url?: string } | null; forks: number; permissions?...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `422`
+Get repository clones — [API reference](https://docs.github.com/rest/metrics/traffic#get-repository-clones)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getClones(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The time frame to display results for. */
+  per?: "day" | "week";
+}): Promise<CloneTraffic>
+```
+
+<sub>`GET /repos/{owner}/{repo}/traffic/clones` · `repos/get-clones`</sub>
 
-type ReposListForAuthenticatedUserInput = Parameters<typeof github.repos.listForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.repos.listForAuthenticatedUser>>;
+## `github.repos.getTopPaths`
 
-const input: ReposListForAuthenticatedUserInput = {} as { visibility?: "all" | "public" | "private"; affiliation?: string; type?: "all" | "owner" | "public" | "private" | "member"; sort?: "created" | "updated" | "pushed" | "full_name"; direction?: "asc" | "desc"; per_page?: number; page?: number; since?: string; before?: string };
-const result: ReposListForAuthenticatedUserOutput = await github.repos.listForAuthenticatedUser(input);
+Get top referral paths — [API reference](https://docs.github.com/rest/metrics/traffic#get-top-referral-paths)
 
-// Result shape (from schema): ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; spdx_id: string | null; node_id: string; html_url?: string } | null; forks: number; permissions?...
+```ts
+github.repos.getTopPaths(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(ContentTraffic)[]>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/traffic/popular/paths` · `repos/get-top-paths`</sub>
 
-### `github.repos.createForAuthenticatedUser`
+## `github.repos.getTopReferrers`
 
-- **HTTP**: `POST /user/repos`
-- **What it does**: Create a repository for the authenticated user
-- **OpenAPI operationId**: `repos/create-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `400`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get top referral sources — [API reference](https://docs.github.com/rest/metrics/traffic#get-top-referral-sources)
 
-**Inputs**
+```ts
+github.repos.getTopReferrers(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(ReferrerTraffic)[]>
+```
 
-- Client input type: `{ name: string; description?: string; homepage?: string; private?: boolean; has_issues?: boolean; has_projects?: boolean; has_wiki?: boolean; has_discussions?: boolean; team_id?: number; auto_init?: boolean; gitignore_template?: string; license_template?: string; allow_squash_merge?: boolean; allow_merge_commit?: boolean; allow_rebase_merge?: boolean; allow_auto_merge?: boolean; delete_branch_on_merge?: boolean; squash_merge_commit_title?: "PR_TITLE" | "COMMIT_OR_PR_TITLE"; squash_merge_commit_message?: "PR_BODY" | "COMMIT_MESSAGES" | "BLANK"; merge_commit_title?: "PR_TITLE" | "MERGE_MESSAGE"; merge_commit_message?: "PR_BODY" | "PR_TITLE" | "BLANK"; has_downloads?: boolean; is_template?: boolean }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/traffic/popular/referrers` · `repos/get-top-referrers`</sub>
 
-**Outputs**
+## `github.repos.getViews`
 
-- Client return type: `{ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: stri...`
-- OpenAPI response codes: `201`, `304`, `400`, `401`, `403`, `404`, `422`
+Get page views — [API reference](https://docs.github.com/rest/metrics/traffic#get-page-views)
 
 ```ts
-import github from "@utdk/github";
+github.repos.getViews(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The time frame to display results for. */
+  per?: "day" | "week";
+}): Promise<ViewTraffic>
+```
 
-type ReposCreateForAuthenticatedUserInput = Parameters<typeof github.repos.createForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposCreateForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.repos.createForAuthenticatedUser>>;
+<sub>`GET /repos/{owner}/{repo}/traffic/views` · `repos/get-views`</sub>
 
-const input: ReposCreateForAuthenticatedUserInput = {} as { name: string; description?: string; homepage?: string; private?: boolean; has_issues?: boolean; has_projects?: boolean; has_wiki?: boolean; has_discussions?: boolean; team_id?: number; auto_init?: boolean; gitignore_template?: string; license_template?: string; allow_squash_merge?: boolean; allow_merge_commit?: boolean; allow_rebase_merge?: boolean; allow_auto_merge?: boolean; delete_branch_on_merge?: boolean; squash_merge_commit_title?: "PR_TITLE" | "COMMIT_OR_PR_TITLE"; squash_merge_commit_message?: "PR_BODY" | "COMMIT_MESSAGES" | "BLANK"; merge_commit_title?: "PR_TITLE" | "MERGE_MESSAGE"; merge_commit_message?: "PR_BODY" | "PR_TITLE" | "BLANK"; has_downloads?: boolean; is_template?: boolean };
-const result: ReposCreateForAuthenticatedUserOutput = await github.repos.createForAuthenticatedUser(input);
+## `github.repos.transfer`
 
-// Result shape (from schema): { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: stri...
+Transfer a repository — [API reference](https://docs.github.com/rest/repos/repos#transfer-a-repository)
+
+```ts
+github.repos.transfer(input: {
+  /** The username or organization name the repository will be transferred to. */
+  new_owner: string;
+  /** The new name to be given to the repository. */
+  new_name?: string;
+  /** ID of the team or teams to add to the repository. Teams can only be added to organization-owned repositories. */
+  team_ids?: (number)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<MinimalRepository>
 ```
 
-### `github.repos.listInvitationsForAuthenticatedUser`
+<sub>`POST /repos/{owner}/{repo}/transfer` · `repos/transfer`</sub>
 
-- **HTTP**: `GET /user/repository_invitations`
-- **What it does**: List repository invitations for the authenticated user
-- **OpenAPI operationId**: `repos/list-invitations-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.disableVulnerabilityAlerts`
 
-**Inputs**
+Disable vulnerability alerts — [API reference](https://docs.github.com/rest/repos/repos#disable-vulnerability-alerts)
 
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
+```ts
+github.repos.disableVulnerabilityAlerts(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<unknown>
+```
 
-**Outputs**
+<sub>`DELETE /repos/{owner}/{repo}/vulnerability-alerts` · `repos/disable-vulnerability-alerts`</sub>
 
-- Client return type: `({ id: number; repository: { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_i...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+## `github.repos.checkVulnerabilityAlerts`
 
+Check if vulnerability alerts are enabled for a repository — [API reference](https://docs.github.com/rest/repos/repos#check-if-vulnerability-alerts-are-enabled-for-a-repository)
+
 ```ts
-import github from "@utdk/github";
+github.repos.checkVulnerabilityAlerts(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<unknown>
+```
+
+<sub>`GET /repos/{owner}/{repo}/vulnerability-alerts` · `repos/check-vulnerability-alerts`</sub>
 
-type ReposListInvitationsForAuthenticatedUserInput = Parameters<typeof github.repos.listInvitationsForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListInvitationsForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.repos.listInvitationsForAuthenticatedUser>>;
+## `github.repos.enableVulnerabilityAlerts`
 
-const input: ReposListInvitationsForAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: ReposListInvitationsForAuthenticatedUserOutput = await github.repos.listInvitationsForAuthenticatedUser(input);
+Enable vulnerability alerts — [API reference](https://docs.github.com/rest/repos/repos#enable-vulnerability-alerts)
 
-// Result shape (from schema): ({ id: number; repository: { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_i...
+```ts
+github.repos.enableVulnerabilityAlerts(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<unknown>
 ```
+
+<sub>`PUT /repos/{owner}/{repo}/vulnerability-alerts` · `repos/enable-vulnerability-alerts`</sub>
 
-### `github.repos.declineInvitationForAuthenticatedUser`
+## `github.repos.downloadZipballArchive`
 
-- **HTTP**: `DELETE /user/repository_invitations/{invitation_id}`
-- **What it does**: Decline a repository invitation
-- **OpenAPI operationId**: `repos/decline-invitation-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `403`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Download a repository archive (zip) — [API reference](https://docs.github.com/rest/repos/contents#download-a-repository-archive-zip)
 
-**Inputs**
+```ts
+github.repos.downloadZipballArchive(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  ref: string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ invitation_id: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/zipball/{ref}` · `repos/download-zipball-archive`</sub>
 
-**Outputs**
+## `github.repos.createUsingTemplate`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `403`, `404`, `409`
+Create a repository using a template — [API reference](https://docs.github.com/rest/repos/repos#create-a-repository-using-a-template)
 
 ```ts
-import github from "@utdk/github";
+github.repos.createUsingTemplate(input: {
+  /** The organization or person who will own the new repository. To create a new repository in an organization, the authenticated user must be a member of the specified organization. */
+  owner?: string;
+  /** The name of the new repository. */
+  name: string;
+  /** A short description of the new repository. */
+  description?: string;
+  /** Set to `true` to include the directory structure and files from all branches in the template repository, and not just the default branch. Default: `false`. */
+  include_all_branches?: boolean;
+  /** Either `true` to create a new private repository or `false` to create a new public one. */
+  private?: boolean;
+  /** The account owner of the template repository. The name is not case sensitive. */
+  template_owner: string;
+  /** The name of the template repository without the `.git` extension. The name is not case sensitive. */
+  template_repo: string;
+}): Promise<FullRepository>
+```
 
-type ReposDeclineInvitationForAuthenticatedUserInput = Parameters<typeof github.repos.declineInvitationForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposDeclineInvitationForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.repos.declineInvitationForAuthenticatedUser>>;
+<sub>`POST /repos/{template_owner}/{template_repo}/generate` · `repos/create-using-template`</sub>
 
-const input: ReposDeclineInvitationForAuthenticatedUserInput = {} as { invitation_id: number };
-const result: ReposDeclineInvitationForAuthenticatedUserOutput = await github.repos.declineInvitationForAuthenticatedUser(input);
+## `github.repos.listPublic`
 
-// Result shape (from schema): unknown
+List public repositories — [API reference](https://docs.github.com/rest/repos/repos#list-public-repositories)
+
+```ts
+github.repos.listPublic(input: {
+  /** A repository ID. Only return repositories with an ID greater than this ID. */
+  since?: number;
+}): Promise<(MinimalRepository)[]>
 ```
 
-### `github.repos.acceptInvitationForAuthenticatedUser`
+<sub>`GET /repositories` · `repos/list-public`</sub>
 
-- **HTTP**: `PATCH /user/repository_invitations/{invitation_id}`
-- **What it does**: Accept a repository invitation
-- **OpenAPI operationId**: `repos/accept-invitation-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `403`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.repos.listForAuthenticatedUser`
 
-**Inputs**
+List repositories for the authenticated user — [API reference](https://docs.github.com/rest/repos/repos#list-repositories-for-the-authenticated-user)
+
+```ts
+github.repos.listForAuthenticatedUser(input: {
+  /** Limit results to repositories with the specified visibility. */
+  visibility?: "all" | "public" | "private";
+  /** Comma-separated list of values. Can include:    * `owner`: Repositories that are owned by the authenticated user.    * `collaborator`: Repositories that the user has been added to as a collaborator.    * `organization_member`: Repositories that the user has access to through being a member of an organization. This includes every repository on every team that the user is on. */
+  affiliation?: string;
+  /** Limit results to repositories of the specified type. Will cause a `422` error if used in the same request as **visibility** or **affiliation**. */
+  type?: "all" | "owner" | "public" | "private" | "member";
+  /** The property to sort the results by. */
+  sort?: "created" | "updated" | "pushed" | "full_name";
+  /** The order to sort by. Default: `asc` when using `full_name`, otherwise `desc`. */
+  direction?: "asc" | "desc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** Only show repositories updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. */
+  since?: string;
+  /** Only show repositories updated before the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. */
+  before?: string;
+}): Promise<(Repository)[]>
+```
 
-- Client input type: `{ invitation_id: number }`
-- Client transport options: None
+<sub>`GET /user/repos` · `repos/list-for-authenticated-user`</sub>
 
-**Outputs**
+## `github.repos.createForAuthenticatedUser`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `403`, `404`, `409`
+Create a repository for the authenticated user — [API reference](https://docs.github.com/rest/repos/repos#create-a-repository-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
+github.repos.createForAuthenticatedUser(input: {
+  /** The name of the repository. */
+  name: string;
+  /** A short description of the repository. */
+  description?: string;
+  /** A URL with more information about the repository. */
+  homepage?: string;
+  /** Whether the repository is private. */
+  private?: boolean;
+  /** Whether issues are enabled. */
+  has_issues?: boolean;
+  /** Whether projects are enabled. */
+  has_projects?: boolean;
+  /** Whether the wiki is enabled. */
+  has_wiki?: boolean;
+  /** Whether discussions are enabled. */
+  has_discussions?: boolean;
+  /** The id of the team that will be granted access to this repository. This is only valid when creating a repository in an organization. */
+  team_id?: number;
+  /** Whether the repository is initialized with a minimal README. */
+  auto_init?: boolean;
+  /** The desired language or platform to apply to the .gitignore. */
+  gitignore_template?: string;
+  /** The license keyword of the open source license for this repository. */
+  license_template?: string;
+  /** Whether to allow squash merges for pull requests. */
+  allow_squash_merge?: boolean;
+  /** Whether to allow merge commits for pull requests. */
+  allow_merge_commit?: boolean;
+  /** Whether to allow rebase merges for pull requests. */
+  allow_rebase_merge?: boolean;
+  /** Whether to allow Auto-merge to be used on pull requests. */
+  allow_auto_merge?: boolean;
+  /** Whether to delete head branches when pull requests are merged */
+  delete_branch_on_merge?: boolean;
+  /** Required when using `squash_merge_commit_message`.  The default value for a squash merge commit title:  - `PR_TITLE` - default to the pull request's title. - `COMMIT_OR_PR_TITLE` - default to the commit's title (if only one commit) or the pull request's title (when more than one commit). */
+  squash_merge_commit_title?: "PR_TITLE" | "COMMIT_OR_PR_TITLE";
+  /** The default value for a squash merge commit message:  - `PR_BODY` - default to the pull request's body. - `COMMIT_MESSAGES` - default to the branch's commit messages. - `BLANK` - default to a blank commit message. */
+  squash_merge_commit_message?: "PR_BODY" | "COMMIT_MESSAGES" | "BLANK";
+  /** Required when using `merge_commit_message`.  The default value for a merge commit title.  - `PR_TITLE` - default to the pull request's title. - `MERGE_MESSAGE` - default to the classic title for a merge message (e.g., Merge pull request #123 from branch-name). */
+  merge_commit_title?: "PR_TITLE" | "MERGE_MESSAGE";
+  /** The default value for a merge commit message.  - `PR_TITLE` - default to the pull request's title. - `PR_BODY` - default to the pull request's body. - `BLANK` - default to a blank commit message. */
+  merge_commit_message?: "PR_BODY" | "PR_TITLE" | "BLANK";
+  /** Whether downloads are enabled. */
+  has_downloads?: boolean;
+  /** Whether this repository acts as a template that can be used to generate new repositories. */
+  is_template?: boolean;
+}): Promise<FullRepository>
+```
+
+<sub>`POST /user/repos` · `repos/create-for-authenticated-user`</sub>
 
-type ReposAcceptInvitationForAuthenticatedUserInput = Parameters<typeof github.repos.acceptInvitationForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposAcceptInvitationForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.repos.acceptInvitationForAuthenticatedUser>>;
+## `github.repos.listInvitationsForAuthenticatedUser`
 
-const input: ReposAcceptInvitationForAuthenticatedUserInput = {} as { invitation_id: number };
-const result: ReposAcceptInvitationForAuthenticatedUserOutput = await github.repos.acceptInvitationForAuthenticatedUser(input);
+List repository invitations for the authenticated user — [API reference](https://docs.github.com/rest/collaborators/invitations#list-repository-invitations-for-the-authenticated-user)
 
-// Result shape (from schema): unknown
+```ts
+github.repos.listInvitationsForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(RepositoryInvitation)[]>
 ```
+
+<sub>`GET /user/repository_invitations` · `repos/list-invitations-for-authenticated-user`</sub>
 
-### `github.repos.listForUser`
+## `github.repos.declineInvitationForAuthenticatedUser`
 
-- **HTTP**: `GET /users/{username}/repos`
-- **What it does**: List repositories for a user
-- **OpenAPI operationId**: `repos/list-for-user`
-- **Path params**: None
-- **Query params**: `type`, `sort`, `direction`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Decline a repository invitation — [API reference](https://docs.github.com/rest/collaborators/invitations#decline-a-repository-invitation)
 
-**Inputs**
+```ts
+github.repos.declineInvitationForAuthenticatedUser(input: {
+  /** The unique identifier of the invitation. */
+  invitation_id: number;
+}): Promise<BasicError>
+```
 
-- Client input type: `{ username: string; type?: "all" | "owner" | "member"; sort?: "created" | "updated" | "pushed" | "full_name"; direction?: "asc" | "desc"; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`DELETE /user/repository_invitations/{invitation_id}` · `repos/decline-invitation-for-authenticated-user`</sub>
 
-**Outputs**
+## `github.repos.acceptInvitationForAuthenticatedUser`
 
-- Client return type: `({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...`
-- OpenAPI response codes: `200`
+Accept a repository invitation — [API reference](https://docs.github.com/rest/collaborators/invitations#accept-a-repository-invitation)
 
 ```ts
-import github from "@utdk/github";
+github.repos.acceptInvitationForAuthenticatedUser(input: {
+  /** The unique identifier of the invitation. */
+  invitation_id: number;
+}): Promise<BasicError>
+```
 
-type ReposListForUserInput = Parameters<typeof github.repos.listForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type ReposListForUserOutput = Awaited<ReturnType<typeof github.repos.listForUser>>;
+<sub>`PATCH /user/repository_invitations/{invitation_id}` · `repos/accept-invitation-for-authenticated-user`</sub>
 
-const input: ReposListForUserInput = {} as { username: string; type?: "all" | "owner" | "member"; sort?: "created" | "updated" | "pushed" | "full_name"; direction?: "asc" | "desc"; per_page?: number; page?: number };
-const result: ReposListForUserOutput = await github.repos.listForUser(input);
+## `github.repos.listForUser`
 
-// Result shape (from schema): ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...
+List repositories for a user — [API reference](https://docs.github.com/rest/repos/repos#list-repositories-for-a-user)
+
+```ts
+github.repos.listForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** Limit results to repositories of the specified type. */
+  type?: "all" | "owner" | "member";
+  /** The property to sort the results by. */
+  sort?: "created" | "updated" | "pushed" | "full_name";
+  /** The order to sort by. Default: `asc` when using `full_name`, otherwise `desc`. */
+  direction?: "asc" | "desc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(MinimalRepository)[]>
 ```
+
+<sub>`GET /users/{username}/repos` · `repos/list-for-user`</sub>
 
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

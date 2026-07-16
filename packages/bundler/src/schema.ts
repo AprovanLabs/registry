@@ -1,4 +1,5 @@
 type SchemaLike = {
+  $ref?: string;
   additionalProperties?: boolean | SchemaLike;
   allOf?: SchemaLike[];
   anyOf?: SchemaLike[];
@@ -10,6 +11,17 @@ type SchemaLike = {
   properties?: Record<string, SchemaLike>;
   required?: string[];
   type?: string | string[];
+};
+
+/**
+ * Controls how `$ref` nodes are rendered. With `refTypeName`, refs render as
+ * named types (`Repository`) instead of being inlined — the caller is
+ * responsible for emitting the named type declarations. `resolveRef` is the
+ * fallback for refs without a name (they get dereferenced and inlined).
+ */
+export type SchemaRenderContext = {
+  refTypeName?: (ref: string) => string | undefined;
+  resolveRef?: (ref: string) => unknown;
 };
 
 export function quotePropertyName(name: string): string {
@@ -40,10 +52,34 @@ function withNullable(type: string, schema: SchemaLike): string {
   return schema.nullable ? `${type} | null` : type;
 }
 
-export function schemaToTypeScriptType(rawSchema: unknown): string {
+export function schemaToTypeScriptType(
+  rawSchema: unknown,
+  context?: SchemaRenderContext,
+  seenRefs: Set<string> = new Set(),
+): string {
   const schema = rawSchema as SchemaLike | undefined;
 
   if (!schema || typeof schema !== "object") {
+    return "unknown";
+  }
+
+  if (schema.$ref) {
+    const named = context?.refTypeName?.(schema.$ref);
+
+    if (named) {
+      return named;
+    }
+
+    if (context?.resolveRef && !seenRefs.has(schema.$ref)) {
+      const target = context.resolveRef(schema.$ref);
+
+      if (target && typeof target === "object") {
+        const nextSeen = new Set(seenRefs);
+        nextSeen.add(schema.$ref);
+        return schemaToTypeScriptType(target, context, nextSeen);
+      }
+    }
+
     return "unknown";
   }
 
@@ -59,19 +95,19 @@ export function schemaToTypeScriptType(rawSchema: unknown): string {
   }
 
   if (Array.isArray(schema.allOf) && schema.allOf.length > 0) {
-    return withNullable(schema.allOf.map((item) => schemaToTypeScriptType(item)).join(" & "), schema);
+    return withNullable(schema.allOf.map((item) => schemaToTypeScriptType(item, context, seenRefs)).join(" & "), schema);
   }
 
   if (Array.isArray(schema.oneOf) && schema.oneOf.length > 0) {
-    return withNullable(schema.oneOf.map((item) => schemaToTypeScriptType(item)).join(" | "), schema);
+    return withNullable(schema.oneOf.map((item) => schemaToTypeScriptType(item, context, seenRefs)).join(" | "), schema);
   }
 
   if (Array.isArray(schema.anyOf) && schema.anyOf.length > 0) {
-    return withNullable(schema.anyOf.map((item) => schemaToTypeScriptType(item)).join(" | "), schema);
+    return withNullable(schema.anyOf.map((item) => schemaToTypeScriptType(item, context, seenRefs)).join(" | "), schema);
   }
 
   if (schema.properties && !schema.type) {
-    return withNullable(schemaToTypeScriptType({ ...schema, type: "object" }), schema);
+    return withNullable(schemaToTypeScriptType({ ...schema, type: "object" }, context, seenRefs), schema);
   }
 
   switch (schema.type) {
@@ -80,11 +116,11 @@ export function schemaToTypeScriptType(rawSchema: unknown): string {
       const required = new Set(schema.required ?? []);
       const propertyEntries = Object.entries(properties).map(([key, value]) => {
         const optionalMarker = required.has(key) ? "" : "?";
-        return `${quotePropertyName(key)}${optionalMarker}: ${schemaToTypeScriptType(value)}`;
+        return `${quotePropertyName(key)}${optionalMarker}: ${schemaToTypeScriptType(value, context, seenRefs)}`;
       });
       const additionalProperties =
         schema.additionalProperties && typeof schema.additionalProperties === "object"
-          ? `[key: string]: ${schemaToTypeScriptType(schema.additionalProperties)} | undefined`
+          ? `[key: string]: ${schemaToTypeScriptType(schema.additionalProperties, context, seenRefs)} | undefined`
           : schema.additionalProperties === true
             ? "[key: string]: unknown"
             : undefined;
@@ -97,8 +133,8 @@ export function schemaToTypeScriptType(rawSchema: unknown): string {
       }
 
       const itemType = Array.isArray(schema.items)
-        ? schema.items.map((item) => schemaToTypeScriptType(item as SchemaLike)).join(" | ")
-        : schemaToTypeScriptType(schema.items as SchemaLike);
+        ? schema.items.map((item) => schemaToTypeScriptType(item as SchemaLike, context, seenRefs)).join(" | ")
+        : schemaToTypeScriptType(schema.items as SchemaLike, context, seenRefs);
 
       return withNullable(`(${itemType})[]`, schema);
     }
@@ -120,7 +156,11 @@ export function escapeComment(text: string): string {
   return text.replace(/\*\//g, "*\\/").replace(/\n/g, " ");
 }
 
-export function schemaToObjectContent(rawSchema: unknown, indent = "    "): string {
+export function schemaToObjectContent(
+  rawSchema: unknown,
+  indent = "    ",
+  context?: SchemaRenderContext,
+): string {
   const schema = rawSchema as SchemaLike | undefined;
 
   if (!schema || typeof schema !== "object" || (schema.type !== "object" && !schema.properties)) {
@@ -139,11 +179,11 @@ export function schemaToObjectContent(rawSchema: unknown, indent = "    "): stri
       lines.push(`${indent}/** ${escapeComment(description)} */`);
     }
 
-    lines.push(`${indent}${quotePropertyName(propName)}${optionalMarker}: ${schemaToTypeScriptType(propSchema)};`);
+    lines.push(`${indent}${quotePropertyName(propName)}${optionalMarker}: ${schemaToTypeScriptType(propSchema, context)};`);
   }
 
   if (schema.additionalProperties && typeof schema.additionalProperties === "object") {
-    lines.push(`${indent}[key: string]: ${schemaToTypeScriptType(schema.additionalProperties)} | undefined;`);
+    lines.push(`${indent}[key: string]: ${schemaToTypeScriptType(schema.additionalProperties, context)} | undefined;`);
   } else if (schema.additionalProperties === true || lines.length === 0) {
     lines.push(`${indent}[key: string]: unknown;`);
   }

@@ -1,6 +1,6 @@
 {
   "provider": "github",
-  "generatedAt": "2026-06-08T02:17:20.539Z",
+  "generatedAt": "2026-07-16T07:04:21.987Z",
   "noveltyScore": 4,
   "npmPackages": [
     {
@@ -29,7 +29,7 @@
     },
     {
       "name": "@openally/github.sdk",
-      "version": "1.1.1",
+      "version": "1.2.0",
       "description": "Opiniated Node.js Github SDK",
       "category": "community-sdk"
     },
@@ -40,9 +40,9 @@
       "category": "community-sdk"
     },
     {
-      "name": "@types/github-username-regex",
-      "version": "1.0.2",
-      "description": "TypeScript definitions for github-username-regex",
+      "name": "@types/github-url-from-git",
+      "version": "1.5.3",
+      "description": "TypeScript definitions for github-url-from-git",
       "category": "types"
     },
     {
@@ -52,14 +52,14 @@
       "category": "types"
     },
     {
-      "name": "@types/github-url-from-git",
-      "version": "1.5.3",
-      "description": "TypeScript definitions for github-url-from-git",
+      "name": "@types/github-username-regex",
+      "version": "1.0.2",
+      "description": "TypeScript definitions for github-username-regex",
       "category": "types"
     },
     {
       "name": "undici-types",
-      "version": "8.4.0",
+      "version": "8.7.0",
       "description": "A stand-alone types package for Undici",
       "category": "other"
     },
@@ -70,9 +70,9 @@
       "category": "mcp-server"
     },
     {
-      "name": "@global-packages/runbook-mcp",
-      "version": "1.0.1",
-      "description": "Universal AI-powered Incident Runbook Automation MCP Server — GitHub, Azure DevOps, Confluence, Notion, Filesystem",
+      "name": "@bitofacoder/omni-mcp-server",
+      "version": "1.1.1",
+      "description": "All-in-one MCP server: GitHub, local Git, Slack, web fetch, persistent memory, and filesystem tools in a single config entry. Agent Mode is opt-in.",
       "category": "mcp-server"
     },
     {
@@ -82,15 +82,15 @@
       "category": "mcp-server"
     },
     {
-      "name": "@canvas-mcp/server",
-      "version": "0.1.9",
-      "description": "[![npm version](https://img.shields.io/npm/v/%40canvas-mcp%2Fserver)](https://www.npmjs.com/package/@canvas-mcp/server)\r [![npm downloads](https://img.shields.io/npm/dm/%40canvas-mcp%2Fserver)](https://www.npmjs.com/package/@canvas-mcp/server)\r [![GitHub ",
+      "name": "mcp-server-github-gist",
+      "version": "1.0.2",
+      "description": "MCP server to create, read, update, list, and search GitHub Gists from your IDE",
       "category": "mcp-server"
     },
     {
-      "name": "@iflow-mcp/server-github",
-      "version": "0.6.2",
-      "description": "MCP server for using the GitHub API",
+      "name": "mcp-server-github-actions",
+      "version": "1.0.1",
+      "description": "MCP server for GitHub Actions — view workflow runs, read logs, re-run failed jobs, and manage CI/CD from your IDE",
       "category": "mcp-server"
     },
     {

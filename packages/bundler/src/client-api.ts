@@ -26,6 +26,11 @@ export type ClientToolDefinition = {
   hasInput: boolean;
   hasOptions: boolean;
   inputSchema?: OpenAPIV3.SchemaObject;
+  /**
+   * Input object schema with property `$ref`s preserved, for rendering
+   * signatures that reference named component types instead of inlining.
+   */
+  rawInputSchema?: OpenAPIV3.SchemaObject;
   inputType: string;
   optionsOptional: boolean;
   optionsType: string;
@@ -40,11 +45,15 @@ type ParameterDefinition = {
   name: string;
   required: boolean;
   schema: OpenAPIV3.SchemaObject;
+  /** Original parameter schema with `$ref`s preserved. */
+  rawSchema?: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
 };
 
 type RequestDefinition = {
   bodyRequired: boolean;
   bodySchema?: OpenAPIV3.SchemaObject;
+  /** Original request body content schema with `$ref`s preserved. */
+  rawBodySchema?: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
   parameters: ParameterDefinition[];
 };
 
@@ -164,20 +173,117 @@ function getOperationContext(
   };
 }
 
-function getPreferredContentSchema(
-  document: OpenAPIV3.Document,
+function getPreferredContentEntry(
   content: Record<string, OpenAPIV3.MediaTypeObject> | undefined,
-): OpenAPIV3.SchemaObject | undefined {
+): OpenAPIV3.MediaTypeObject | undefined {
   if (!content) {
     return undefined;
   }
 
-  const contentEntry =
+  return (
     content["application/json"] ??
     Object.entries(content).find(([contentType]) => contentType.includes("json"))?.[1] ??
-    Object.values(content)[0];
+    Object.values(content)[0]
+  );
+}
 
-  return resolveSchema(document, contentEntry?.schema);
+function getPreferredContentSchema(
+  document: OpenAPIV3.Document,
+  content: Record<string, OpenAPIV3.MediaTypeObject> | undefined,
+): OpenAPIV3.SchemaObject | undefined {
+  return resolveSchema(document, getPreferredContentEntry(content)?.schema);
+}
+
+/**
+ * Follow top-level `$ref` chains without touching nested schemas, so property
+ * and item refs stay intact for named-type rendering.
+ */
+function shallowResolveSchema(
+  document: OpenAPIV3.Document,
+  schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject | undefined,
+): OpenAPIV3.SchemaObject | undefined {
+  const seen = new Set<string>();
+  let current = schema;
+
+  while (current && isReferenceObject(current)) {
+    if (seen.has(current.$ref)) {
+      return undefined;
+    }
+
+    seen.add(current.$ref);
+    const target = getRefTarget(document, current.$ref);
+
+    if (!target || typeof target !== "object") {
+      return undefined;
+    }
+
+    current = target as OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
+  }
+
+  return current;
+}
+
+/**
+ * Like `flattenObjectSchema`, but only resolves the top level (and `allOf`
+ * member top levels) — property schemas keep their `$ref`s.
+ */
+function flattenRawObjectSchema(
+  document: OpenAPIV3.Document,
+  rawSchema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject | undefined,
+): {
+  additionalProperties?: AdditionalProperties;
+  properties: Record<string, OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject>;
+  required: string[];
+} | undefined {
+  const schema = shallowResolveSchema(document, rawSchema);
+
+  if (!schema || typeof schema !== "object") {
+    return undefined;
+  }
+
+  const isObjectLike = schema.type === "object" || Boolean(schema.properties) || Boolean(schema.allOf);
+
+  if (!isObjectLike || schema.anyOf || schema.oneOf) {
+    return undefined;
+  }
+
+  const properties: Record<string, OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject> = {};
+  const required = new Set<string>(Array.isArray(schema.required) ? schema.required : []);
+  let additionalProperties = schema.additionalProperties;
+
+  if (schema.properties) {
+    Object.assign(properties, schema.properties);
+  }
+
+  for (const item of schema.allOf ?? []) {
+    const flattenedItem = flattenRawObjectSchema(document, item);
+
+    if (!flattenedItem) {
+      return undefined;
+    }
+
+    Object.assign(properties, flattenedItem.properties);
+
+    for (const key of flattenedItem.required) {
+      required.add(key);
+    }
+
+    if (flattenedItem.additionalProperties !== undefined) {
+      if (additionalProperties !== undefined) {
+        return undefined;
+      }
+
+      additionalProperties = flattenedItem.additionalProperties;
+    }
+  }
+
+  return Object.keys(properties).length > 0
+    ? {
+        ...(additionalProperties !== undefined ? { additionalProperties } : {}),
+        properties,
+        required: [...required],
+      }
+    : undefined;
 }
 
 function resolveParameter(
@@ -313,15 +419,18 @@ function buildRequestDefinition(document: OpenAPIV3.Document, tool: Tool): Reque
       name: parameter.name,
       required: parameter.in === "path" ? true : Boolean(parameter.required),
       schema,
+      rawSchema: parameter.schema ?? getPreferredContentEntry(parameter.content)?.schema,
     });
   }
 
   const requestBody = resolveRequestBody(document, operation?.requestBody);
   const bodySchema = getPreferredContentSchema(document, requestBody?.content);
+  const rawBodySchema = getPreferredContentEntry(requestBody?.content)?.schema;
 
   return {
     bodyRequired: Boolean(requestBody?.required),
     bodySchema,
+    ...(rawBodySchema !== undefined ? { rawBodySchema } : {}),
     parameters: [...parameterMap.values()],
   };
 }
@@ -391,9 +500,10 @@ function flattenObjectSchema(
     : undefined;
 }
 
-function buildInputSchema(request: RequestDefinition): {
+function buildInputSchema(document: OpenAPIV3.Document, request: RequestDefinition): {
   hasInput: boolean;
   schema: OpenAPIV3.SchemaObject;
+  rawSchema: OpenAPIV3.SchemaObject;
   runtimeMetadata: ToolRuntimeMetadata;
 } {
   const flattenedBodySchema = flattenObjectSchema(request.bodySchema);
@@ -415,16 +525,24 @@ function buildInputSchema(request: RequestDefinition): {
     .map((parameter) => parameter.name);
   const hiddenTransportKeys = new Set([...pathConflictKeys, ...queryConflictKeys]);
   const properties: Record<string, OpenAPIV3.SchemaObject> = {};
+  const rawProperties: Record<string, OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject> = {};
   const required = new Set<string>();
 
   if (bodyPropertySchemas) {
     Object.assign(properties, bodyPropertySchemas);
+
+    const rawBodyProperties = flattenRawObjectSchema(document, request.rawBodySchema)?.properties;
+
+    for (const key of bodyPropertyKeys) {
+      rawProperties[key] = rawBodyProperties?.[key] ?? bodyPropertySchemas[key]!;
+    }
 
     for (const key of flattenedBodySchema?.required ?? []) {
       required.add(key);
     }
   } else if (request.bodySchema) {
     properties.body = request.bodySchema;
+    rawProperties.body = request.rawBodySchema ?? request.bodySchema;
 
     if (request.bodyRequired) {
       required.add("body");
@@ -440,6 +558,12 @@ function buildInputSchema(request: RequestDefinition): {
       ? { ...parameter.schema, description: parameter.description }
       : parameter.schema;
 
+    const rawParameterSchema = parameter.rawSchema ?? parameter.schema;
+    rawProperties[parameter.name] =
+      parameter.description && !isReferenceObject(rawParameterSchema)
+        ? { ...rawParameterSchema, description: parameter.description }
+        : rawParameterSchema;
+
     if (parameter.required) {
       required.add(parameter.name);
     }
@@ -448,6 +572,11 @@ function buildInputSchema(request: RequestDefinition): {
   return {
     hasInput: Object.keys(properties).length > 0,
     schema: toObjectSchema(properties, [...required], bodyPropertySchemas ? bodyAdditionalProperties : undefined),
+    rawSchema: toObjectSchema(
+      rawProperties as Record<string, OpenAPIV3.SchemaObject>,
+      [...required],
+      bodyPropertySchemas ? bodyAdditionalProperties : undefined,
+    ),
     runtimeMetadata: {
       accessPath: [],
       bodyAllowsAdditionalProperties: Boolean(bodyPropertySchemas && bodyAdditionalProperties),
@@ -549,7 +678,7 @@ export function buildClientToolMap(
     tools.map((tool) => {
       const rawToolName = stripProviderToolName(tool.name, provider);
       const request = buildRequestDefinition(document, tool);
-      const { hasInput, schema: inputSchema, runtimeMetadata } = buildInputSchema(request);
+      const { hasInput, schema: inputSchema, rawSchema: rawInputSchema, runtimeMetadata } = buildInputSchema(document, request);
       const { schema: optionsSchema, optional: optionsOptional, hasOptions } = buildOptionsSchema(request, runtimeMetadata);
       const accessPath = createUniqueAccessPath(rawToolName, usedPaths);
       const parameterDescriptions = collectParameterDescriptions(document, tool);
@@ -563,6 +692,7 @@ export function buildClientToolMap(
           hasInput,
           hasOptions,
           inputSchema: hasInput ? inputSchema : undefined,
+          rawInputSchema: hasInput ? rawInputSchema : undefined,
           inputType: schemaToTypeScriptType(inputSchema),
           optionsOptional,
           optionsType: schemaToTypeScriptType(optionsSchema),

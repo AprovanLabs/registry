@@ -1,249 +1,161 @@
 # Search
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.search.code`
-
-- **HTTP**: `GET /search/code`
-- **What it does**: Search code
-- **OpenAPI operationId**: `search/code`
-- **Path params**: None
-- **Query params**: `q`, `sort`, `order`
-- **Response codes**: `200`, `304`, `403`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ q: string; sort?: "indexed"; order?: "desc" | "asc"; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; incomplete_results: boolean; items: ({ name: string; path: string; sha: string; url: string; git_url: string; html_url: string; repository: { id: number; node_id: string; name: string; full_name: ...`
-- OpenAPI response codes: `200`, `304`, `403`, `422`, `503`
+7 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type SearchCodeInput = Parameters<typeof github.search.code> extends [infer T, ...unknown[]] ? T : undefined;
-type SearchCodeOutput = Awaited<ReturnType<typeof github.search.code>>;
-
-const input: SearchCodeInput = {} as { q: string; sort?: "indexed"; order?: "desc" | "asc"; per_page?: number; page?: number };
-const result: SearchCodeOutput = await github.search.code(input);
-
-// Result shape (from schema): { total_count: number; incomplete_results: boolean; items: ({ name: string; path: string; sha: string; url: string; git_url: string; html_url: string; repository: { id: number; node_id: string; name: string; full_name: ...
 ```
 
-### `github.search.commits`
+## `github.search.code`
 
-- **HTTP**: `GET /search/commits`
-- **What it does**: Search commits
-- **OpenAPI operationId**: `search/commits`
-- **Path params**: None
-- **Query params**: `q`, `sort`
-- **Response codes**: `200`, `304`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ q: string; sort?: "author-date" | "committer-date"; order?: "desc" | "asc"; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; incomplete_results: boolean; items: ({ url: string; sha: string; html_url: string; comments_url: string; commit: { author: { name: string; email: string; date: string }; committer: { name?: string...`
-- OpenAPI response codes: `200`, `304`
+Search code — [API reference](https://docs.github.com/rest/search/search#search-code)
 
 ```ts
-import github from "@utdk/github";
-
-type SearchCommitsInput = Parameters<typeof github.search.commits> extends [infer T, ...unknown[]] ? T : undefined;
-type SearchCommitsOutput = Awaited<ReturnType<typeof github.search.commits>>;
-
-const input: SearchCommitsInput = {} as { q: string; sort?: "author-date" | "committer-date"; order?: "desc" | "asc"; per_page?: number; page?: number };
-const result: SearchCommitsOutput = await github.search.commits(input);
-
-// Result shape (from schema): { total_count: number; incomplete_results: boolean; items: ({ url: string; sha: string; html_url: string; comments_url: string; commit: { author: { name: string; email: string; date: string }; committer: { name?: string...
+github.search.code(input: {
+  /** The query contains one or more search keywords and qualifiers. Qualifiers allow you to limit your search to specific areas of GitHub. The REST API supports the same qualifiers as the web interface for GitHub. To learn more about the format of the query, see [Constructing a search query](https://docs.github.com/rest/search/search#constructing-a-search-query). See "[Searching code](https://docs.github.com/search-github/searching-on-github/searching-code)" for a detailed list of qualifiers. */
+  q: string;
+  /** **This field is closing down.** Sorts the results of your query. Can only be `indexed`, which indicates how recently a file has been indexed by the GitHub search infrastructure. Default: [best match](https://docs.github.com/rest/search/search#ranking-search-results) */
+  sort?: "indexed";
+  /** **This field is closing down.** Determines whether the first search result returned is the highest number of matches (`desc`) or lowest number of matches (`asc`). This parameter is ignored unless you provide `sort`.  */
+  order?: "desc" | "asc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; incomplete_results: boolean; items: (CodeSearchResultItem)[] }>
 ```
 
-### `github.search.issuesAndPullRequests`
+<sub>`GET /search/code` · `search/code`</sub>
 
-- **HTTP**: `GET /search/issues`
-- **What it does**: Search issues and pull requests
-- **OpenAPI operationId**: `search/issues-and-pull-requests`
-- **Path params**: None
-- **Query params**: `q`, `sort`
-- **Response codes**: `200`, `304`, `401`, `403`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.search.commits`
 
-**Inputs**
-
-- Client input type: `{ q: string; sort?: "comments" | "reactions" | "reactions-+1" | "reactions--1" | "reactions-smile" | "reactions-thinking_face" | "reactions-heart" | "reactions-tada" | "interactions" | "created" | "updated"; order?: "desc" | "asc"; per_page?: number; page?: number; advanced_search?: string; search_type?: "semantic" | "hybrid" }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; incomplete_results: boolean; items: ({ url: string; repository_url: string; labels_url: string; comments_url: string; events_url: string; html_url: string; id: number; node_id: string; number: num...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `422`, `503`
+Search commits — [API reference](https://docs.github.com/rest/search/search#search-commits)
 
 ```ts
-import github from "@utdk/github";
-
-type SearchIssuesAndPullRequestsInput = Parameters<typeof github.search.issuesAndPullRequests> extends [infer T, ...unknown[]] ? T : undefined;
-type SearchIssuesAndPullRequestsOutput = Awaited<ReturnType<typeof github.search.issuesAndPullRequests>>;
-
-const input: SearchIssuesAndPullRequestsInput = {} as { q: string; sort?: "comments" | "reactions" | "reactions-+1" | "reactions--1" | "reactions-smile" | "reactions-thinking_face" | "reactions-heart" | "reactions-tada" | "interactions" | "created" | "updated"; order?: "desc" | "asc"; per_page?: number; page?: number; advanced_search?: string; search_type?: "semantic" | "hybrid" };
-const result: SearchIssuesAndPullRequestsOutput = await github.search.issuesAndPullRequests(input);
-
-// Result shape (from schema): { total_count: number; incomplete_results: boolean; items: ({ url: string; repository_url: string; labels_url: string; comments_url: string; events_url: string; html_url: string; id: number; node_id: string; number: num...
+github.search.commits(input: {
+  /** The query contains one or more search keywords and qualifiers. Qualifiers allow you to limit your search to specific areas of GitHub. The REST API supports the same qualifiers as the web interface for GitHub. To learn more about the format of the query, see [Constructing a search query](https://docs.github.com/rest/search/search#constructing-a-search-query). See "[Searching commits](https://docs.github.com/search-github/searching-on-github/searching-commits)" for a detailed list of qualifiers. */
+  q: string;
+  /** Sorts the results of your query by `author-date` or `committer-date`. Default: [best match](https://docs.github.com/rest/search/search#ranking-search-results) */
+  sort?: "author-date" | "committer-date";
+  /** Determines whether the first search result returned is the highest number of matches (`desc`) or lowest number of matches (`asc`). This parameter is ignored unless you provide `sort`. */
+  order?: "desc" | "asc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; incomplete_results: boolean; items: (CommitSearchResultItem)[] }>
 ```
 
-### `github.search.labels`
+<sub>`GET /search/commits` · `search/commits`</sub>
 
-- **HTTP**: `GET /search/labels`
-- **What it does**: Search labels
-- **OpenAPI operationId**: `search/labels`
-- **Path params**: None
-- **Query params**: `repository_id`, `q`, `sort`
-- **Response codes**: `200`, `304`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.search.issuesAndPullRequests`
 
-**Inputs**
-
-- Client input type: `{ repository_id: number; q: string; sort?: "created" | "updated"; order?: "desc" | "asc"; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; incomplete_results: boolean; items: ({ id: number; node_id: string; url: string; name: string; color: string; default: boolean; description: string | null; score: number; text_matches?: ({ object_...`
-- OpenAPI response codes: `200`, `304`, `403`, `404`, `422`
+Search issues and pull requests — [API reference](https://docs.github.com/rest/search/search#search-issues-and-pull-requests)
 
 ```ts
-import github from "@utdk/github";
-
-type SearchLabelsInput = Parameters<typeof github.search.labels> extends [infer T, ...unknown[]] ? T : undefined;
-type SearchLabelsOutput = Awaited<ReturnType<typeof github.search.labels>>;
-
-const input: SearchLabelsInput = {} as { repository_id: number; q: string; sort?: "created" | "updated"; order?: "desc" | "asc"; per_page?: number; page?: number };
-const result: SearchLabelsOutput = await github.search.labels(input);
-
-// Result shape (from schema): { total_count: number; incomplete_results: boolean; items: ({ id: number; node_id: string; url: string; name: string; color: string; default: boolean; description: string | null; score: number; text_matches?: ({ object_...
+github.search.issuesAndPullRequests(input: {
+  /** The query contains one or more search keywords and qualifiers. Qualifiers allow you to limit your search to specific areas of GitHub. The REST API supports the same qualifiers as the web interface for GitHub. To learn more about the format of the query, see [Constructing a search query](https://docs.github.com/rest/search/search#constructing-a-search-query). See "[Searching issues and pull requests](https://docs.github.com/search-github/searching-on-github/searching-issues-and-pull-requests)" for a detailed list of qualifiers. */
+  q: string;
+  /** Sorts the results of your query by the number of `comments`, `reactions`, `reactions-+1`, `reactions--1`, `reactions-smile`, `reactions-thinking_face`, `reactions-heart`, `reactions-tada`, or `interactions`. You can also sort results by how recently the items were `created` or `updated`, Default: [best match](https://docs.github.com/rest/search/search#ranking-search-results) */
+  sort?: "comments" | "reactions" | "reactions-+1" | "reactions--1" | "reactions-smile" | "reactions-thinking_face" | "reactions-heart" | "reactions-tada" | "interactions" | "created" | "updated";
+  /** Determines whether the first search result returned is the highest number of matches (`desc`) or lowest number of matches (`asc`). This parameter is ignored unless you provide `sort`. */
+  order?: "desc" | "asc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** Set to `true` to use advanced search. Example: `http://api.github.com/search/issues?q={query}&advanced_search=true` */
+  advanced_search?: string;
+  /** The type of search to perform on issues. When not specified, the default is lexical search.  - `semantic` — performs a pure semantic (vector) search using embedding-based understanding. - `hybrid` — combines semantic search with lexical search for best results.  Semantic and hybrid search require authentication and are rate limited to 10 requests per minute. Only applies to issue searches (`/search/issues`). */
+  search_type?: "semantic" | "hybrid";
+}): Promise<{ total_count: number; incomplete_results: boolean; items: (IssueSearchResultItem)[]; search_type: "lexical" | "semantic" | "hybrid"; lexical_fallback_reason?: ("no_text_terms" | "quoted_text" | "non_issue_target" | "or_boolean_not_supported" | "no_accessible_repos" | "server_error" | "only_non_semantic_fields_requested" | "service_unavailable")[] }>
 ```
 
-### `github.search.repos`
+<sub>`GET /search/issues` · `search/issues-and-pull-requests`</sub>
 
-- **HTTP**: `GET /search/repositories`
-- **What it does**: Search repositories
-- **OpenAPI operationId**: `search/repos`
-- **Path params**: None
-- **Query params**: `q`, `sort`
-- **Response codes**: `200`, `304`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.search.labels`
 
-**Inputs**
-
-- Client input type: `{ q: string; sort?: "stars" | "forks" | "help-wanted-issues" | "updated"; order?: "desc" | "asc"; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; incomplete_results: boolean; items: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: strin...`
-- OpenAPI response codes: `200`, `304`, `422`, `503`
+Search labels — [API reference](https://docs.github.com/rest/search/search#search-labels)
 
 ```ts
-import github from "@utdk/github";
-
-type SearchReposInput = Parameters<typeof github.search.repos> extends [infer T, ...unknown[]] ? T : undefined;
-type SearchReposOutput = Awaited<ReturnType<typeof github.search.repos>>;
-
-const input: SearchReposInput = {} as { q: string; sort?: "stars" | "forks" | "help-wanted-issues" | "updated"; order?: "desc" | "asc"; per_page?: number; page?: number };
-const result: SearchReposOutput = await github.search.repos(input);
-
-// Result shape (from schema): { total_count: number; incomplete_results: boolean; items: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: strin...
+github.search.labels(input: {
+  /** The id of the repository. */
+  repository_id: number;
+  /** The search keywords. This endpoint does not accept qualifiers in the query. To learn more about the format of the query, see [Constructing a search query](https://docs.github.com/rest/search/search#constructing-a-search-query). */
+  q: string;
+  /** Sorts the results of your query by when the label was `created` or `updated`. Default: [best match](https://docs.github.com/rest/search/search#ranking-search-results) */
+  sort?: "created" | "updated";
+  /** Determines whether the first search result returned is the highest number of matches (`desc`) or lowest number of matches (`asc`). This parameter is ignored unless you provide `sort`. */
+  order?: "desc" | "asc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; incomplete_results: boolean; items: (LabelSearchResultItem)[] }>
 ```
 
-### `github.search.topics`
+<sub>`GET /search/labels` · `search/labels`</sub>
 
-- **HTTP**: `GET /search/topics`
-- **What it does**: Search topics
-- **OpenAPI operationId**: `search/topics`
-- **Path params**: None
-- **Query params**: `q`
-- **Response codes**: `200`, `304`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.search.repos`
 
-**Inputs**
-
-- Client input type: `{ q: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; incomplete_results: boolean; items: ({ name: string; display_name: string | null; short_description: string | null; description: string | null; created_by: string | null; released: string | null; ...`
-- OpenAPI response codes: `200`, `304`
+Search repositories — [API reference](https://docs.github.com/rest/search/search#search-repositories)
 
 ```ts
-import github from "@utdk/github";
-
-type SearchTopicsInput = Parameters<typeof github.search.topics> extends [infer T, ...unknown[]] ? T : undefined;
-type SearchTopicsOutput = Awaited<ReturnType<typeof github.search.topics>>;
-
-const input: SearchTopicsInput = {} as { q: string; per_page?: number; page?: number };
-const result: SearchTopicsOutput = await github.search.topics(input);
-
-// Result shape (from schema): { total_count: number; incomplete_results: boolean; items: ({ name: string; display_name: string | null; short_description: string | null; description: string | null; created_by: string | null; released: string | null; ...
+github.search.repos(input: {
+  /** The query contains one or more search keywords and qualifiers. Qualifiers allow you to limit your search to specific areas of GitHub. The REST API supports the same qualifiers as the web interface for GitHub. To learn more about the format of the query, see [Constructing a search query](https://docs.github.com/rest/search/search#constructing-a-search-query). See "[Searching for repositories](https://docs.github.com/articles/searching-for-repositories/)" for a detailed list of qualifiers. */
+  q: string;
+  /** Sorts the results of your query by number of `stars`, `forks`, or `help-wanted-issues` or how recently the items were `updated`. Default: [best match](https://docs.github.com/rest/search/search#ranking-search-results) */
+  sort?: "stars" | "forks" | "help-wanted-issues" | "updated";
+  /** Determines whether the first search result returned is the highest number of matches (`desc`) or lowest number of matches (`asc`). This parameter is ignored unless you provide `sort`. */
+  order?: "desc" | "asc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; incomplete_results: boolean; items: (RepoSearchResultItem)[] }>
 ```
 
-### `github.search.users`
+<sub>`GET /search/repositories` · `search/repos`</sub>
 
-- **HTTP**: `GET /search/users`
-- **What it does**: Search users
-- **OpenAPI operationId**: `search/users`
-- **Path params**: None
-- **Query params**: `q`, `sort`
-- **Response codes**: `200`, `304`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.search.topics`
 
-**Inputs**
-
-- Client input type: `{ q: string; sort?: "followers" | "repositories" | "joined"; order?: "desc" | "asc"; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; incomplete_results: boolean; items: ({ login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; subscriptio...`
-- OpenAPI response codes: `200`, `304`, `422`, `503`
+Search topics — [API reference](https://docs.github.com/rest/search/search#search-topics)
 
 ```ts
-import github from "@utdk/github";
-
-type SearchUsersInput = Parameters<typeof github.search.users> extends [infer T, ...unknown[]] ? T : undefined;
-type SearchUsersOutput = Awaited<ReturnType<typeof github.search.users>>;
-
-const input: SearchUsersInput = {} as { q: string; sort?: "followers" | "repositories" | "joined"; order?: "desc" | "asc"; per_page?: number; page?: number };
-const result: SearchUsersOutput = await github.search.users(input);
-
-// Result shape (from schema): { total_count: number; incomplete_results: boolean; items: ({ login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; subscriptio...
+github.search.topics(input: {
+  /** The query contains one or more search keywords and qualifiers. Qualifiers allow you to limit your search to specific areas of GitHub. The REST API supports the same qualifiers as the web interface for GitHub. To learn more about the format of the query, see [Constructing a search query](https://docs.github.com/rest/search/search#constructing-a-search-query). */
+  q: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; incomplete_results: boolean; items: (TopicSearchResultItem)[] }>
 ```
 
+<sub>`GET /search/topics` · `search/topics`</sub>
+
+## `github.search.users`
+
+Search users — [API reference](https://docs.github.com/rest/search/search#search-users)
+
+```ts
+github.search.users(input: {
+  /** The query contains one or more search keywords and qualifiers. Qualifiers allow you to limit your search to specific areas of GitHub. The REST API supports the same qualifiers as the web interface for GitHub. To learn more about the format of the query, see [Constructing a search query](https://docs.github.com/rest/search/search#constructing-a-search-query). See "[Searching users](https://docs.github.com/search-github/searching-on-github/searching-users)" for a detailed list of qualifiers. */
+  q: string;
+  /** Sorts the results of your query by number of `followers` or `repositories`, or when the person `joined` GitHub. Default: [best match](https://docs.github.com/rest/search/search#ranking-search-results) */
+  sort?: "followers" | "repositories" | "joined";
+  /** Determines whether the first search result returned is the highest number of matches (`desc`) or lowest number of matches (`asc`). This parameter is ignored unless you provide `sort`. */
+  order?: "desc" | "asc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; incomplete_results: boolean; items: (UserSearchResultItem)[] }>
+```
+
+<sub>`GET /search/users` · `search/users`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

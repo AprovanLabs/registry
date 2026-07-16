@@ -743,7 +743,7 @@ export const toolMetadata = {
     ],
     "queryConflictKeys": [],
     "queryParameterKeys": [],
-    "description": "Get an assignment",
+    "description": "Closing down - Get an assignment",
     "parameterDescriptions": {
       "assignment_id": "The unique identifier of the classroom assignment."
     }
@@ -769,7 +769,7 @@ export const toolMetadata = {
       "page",
       "per_page"
     ],
-    "description": "List accepted assignments for an assignment",
+    "description": "Closing down - List accepted assignments for an assignment",
     "parameterDescriptions": {
       "assignment_id": "The unique identifier of the classroom assignment.",
       "page": "The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
@@ -794,7 +794,7 @@ export const toolMetadata = {
     ],
     "queryConflictKeys": [],
     "queryParameterKeys": [],
-    "description": "Get assignment grades",
+    "description": "Closing down - Get assignment grades",
     "parameterDescriptions": {
       "assignment_id": "The unique identifier of the classroom assignment."
     }
@@ -818,7 +818,7 @@ export const toolMetadata = {
       "page",
       "per_page"
     ],
-    "description": "List classrooms",
+    "description": "Closing down - List classrooms",
     "parameterDescriptions": {
       "page": "The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
       "per_page": "The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""
@@ -842,7 +842,7 @@ export const toolMetadata = {
     ],
     "queryConflictKeys": [],
     "queryParameterKeys": [],
-    "description": "Get a classroom",
+    "description": "Closing down - Get a classroom",
     "parameterDescriptions": {
       "classroom_id": "The unique identifier of the classroom."
     }
@@ -868,7 +868,7 @@ export const toolMetadata = {
       "page",
       "per_page"
     ],
-    "description": "List assignments for a classroom",
+    "description": "Closing down - List assignments for a classroom",
     "parameterDescriptions": {
       "classroom_id": "The unique identifier of the classroom.",
       "page": "The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
@@ -3546,8 +3546,8 @@ export const toolMetadata = {
     "parameterDescriptions": {
       "org": "The organization name. The name is not case sensitive.",
       "page": "The page number of the results to fetch.",
-      "per_page": "The number of results per page (max 10).",
-      "scope": "Filter budgets by scope type.",
+      "per_page": "The number of results per page (max 100).",
+      "scope": "Filter budgets by scope type.\n\n- `organization`: Budgets scoped to the organization.\n- `repository`: Budgets scoped to a repository.\n- `multi_user_customer`: Universal budgets that apply to all users in the organization.\n- `user`: Budgets scoped to an individual user.",
       "user": "Filter consumed amount details for budgets by the specified user login."
     }
   },
@@ -3565,7 +3565,8 @@ export const toolMetadata = {
       "budget_scope",
       "budget_entity_name",
       "budget_type",
-      "budget_product_sku"
+      "budget_product_sku",
+      "user"
     ],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -3621,7 +3622,8 @@ export const toolMetadata = {
       "budget_scope",
       "budget_entity_name",
       "budget_type",
-      "budget_product_sku"
+      "budget_product_sku",
+      "user"
     ],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -8693,38 +8695,6 @@ export const toolMetadata = {
       "org": "The organization name. The name is not case sensitive."
     }
   },
-  "copilot/copilot-metrics-for-organization": {
-    "accessPath": [
-      "copilot",
-      "copilotMetricsForOrganization"
-    ],
-    "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
-    "contentType": "application/json",
-    "headerParameterKeys": [],
-    "method": "GET",
-    "routeTemplate": "/orgs/{org}/copilot/metrics",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [
-      "org"
-    ],
-    "queryConflictKeys": [],
-    "queryParameterKeys": [
-      "since",
-      "until",
-      "page",
-      "per_page"
-    ],
-    "description": "Get Copilot metrics for an organization",
-    "parameterDescriptions": {
-      "org": "The organization name. The name is not case sensitive.",
-      "since": "Show usage metrics since this date. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format (`YYYY-MM-DDTHH:MM:SSZ`). Maximum value is 100 days ago.",
-      "until": "Show usage metrics until this date. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format (`YYYY-MM-DDTHH:MM:SSZ`) and should not preceed the `since` date if it is passed.",
-      "page": "The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
-      "per_page": "The number of days of metrics to display per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""
-    }
-  },
   "copilot/copilot-organization-one-day-usage-metrics": {
     "accessPath": [
       "copilot",
@@ -12964,7 +12934,9 @@ export const toolMetadata = {
       "is_publicly_leaked",
       "is_multi_repo",
       "hide_secret",
-      "is_bypassed"
+      "is_bypassed",
+      "included_metadata",
+      "owner_email_hash"
     ],
     "description": "List secret scanning alerts for an organization",
     "parameterDescriptions": {
@@ -12986,7 +12958,121 @@ export const toolMetadata = {
       "is_publicly_leaked": "A boolean value representing whether or not to filter alerts by the publicly-leaked tag being present.",
       "is_multi_repo": "A boolean value representing whether or not to filter alerts by the multi-repo tag being present.",
       "hide_secret": "A boolean value representing whether or not to hide literal secrets in the results.",
-      "is_bypassed": "A boolean value (`true` or `false`) indicating whether to filter alerts by their push protection bypass status. When set to `true`, only alerts that were created because a push protection rule was bypassed will be returned. When set to `false`, only alerts that were not caused by a push protection bypass will be returned."
+      "is_bypassed": "A boolean value (`true` or `false`) indicating whether to filter alerts by their push protection bypass status. When set to `true`, only alerts that were created because a push protection rule was bypassed will be returned. When set to `false`, only alerts that were not caused by a push protection bypass will be returned.",
+      "included_metadata": "A comma-separated list of metadata fields to filter alerts by. Only alerts that have all of the\nspecified metadata fields attached will be returned. Possible values are: `owner-email`, `owner-id`,\n`owner-name`, `secret-id`, `secret-name`, `secret-issued-date`, `secret-expiration-date`, `organization-name`,\n`organization-id`, `last-used-date`, and `has-organization-access`.",
+      "owner_email_hash": "Filters alerts to only those whose attached `owner_email` metadata field matches the\nprovided value. The value must be the lowercase hex-encoded SHA-256 hash of the email\naddress to match (for example, the SHA-256 of `user@example.com`). Only alerts that\nhave an `owner_email` metadata value whose SHA-256 hash equals this parameter are\nreturned."
+    }
+  },
+  "secret-scanning/list-org-custom-patterns": {
+    "accessPath": [
+      "secretScanning",
+      "listOrgCustomPatterns"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/orgs/{org}/secret-scanning/custom-patterns",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "org"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [
+      "state",
+      "push_protection",
+      "sort",
+      "direction",
+      "page",
+      "per_page"
+    ],
+    "description": "List organization custom patterns",
+    "parameterDescriptions": {
+      "org": "The organization name. The name is not case sensitive.",
+      "state": "Filter custom patterns by state. When absent, returns patterns in all states.",
+      "push_protection": "Filter custom patterns by whether push protection is enabled. When absent, returns patterns regardless of push protection status.",
+      "sort": "The property to sort the results by.",
+      "direction": "The direction to sort the results by.",
+      "page": "The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
+      "per_page": "The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""
+    }
+  },
+  "secret-scanning/bulk-create-org-custom-patterns": {
+    "accessPath": [
+      "secretScanning",
+      "bulkCreateOrgCustomPatterns"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "patterns"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "POST",
+    "routeTemplate": "/orgs/{org}/secret-scanning/custom-patterns",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "org"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Bulk create organization custom patterns",
+    "parameterDescriptions": {
+      "org": "The organization name. The name is not case sensitive."
+    }
+  },
+  "secret-scanning/bulk-delete-org-custom-patterns": {
+    "accessPath": [
+      "secretScanning",
+      "bulkDeleteOrgCustomPatterns"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "patterns",
+      "post_delete_action"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "DELETE",
+    "routeTemplate": "/orgs/{org}/secret-scanning/custom-patterns",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "org"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Bulk delete organization custom patterns",
+    "parameterDescriptions": {
+      "org": "The organization name. The name is not case sensitive."
+    }
+  },
+  "secret-scanning/update-org-custom-pattern": {
+    "accessPath": [
+      "secretScanning",
+      "updateOrgCustomPattern"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "raw",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "PATCH",
+    "routeTemplate": "/orgs/{org}/secret-scanning/custom-patterns/{pattern_id}",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "org",
+      "pattern_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Update an organization custom pattern",
+    "parameterDescriptions": {
+      "org": "The organization name. The name is not case sensitive.",
+      "pattern_id": "The ID of the custom pattern."
     }
   },
   "secret-scanning/list-org-pattern-configs": {
@@ -13461,40 +13547,6 @@ export const toolMetadata = {
     "parameterDescriptions": {
       "org": "The organization name. The name is not case sensitive.",
       "network_settings_id": "Unique identifier of the hosted compute network settings."
-    }
-  },
-  "copilot/copilot-metrics-for-team": {
-    "accessPath": [
-      "copilot",
-      "copilotMetricsForTeam"
-    ],
-    "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
-    "contentType": "application/json",
-    "headerParameterKeys": [],
-    "method": "GET",
-    "routeTemplate": "/orgs/{org}/team/{team_slug}/copilot/metrics",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [
-      "org",
-      "team_slug"
-    ],
-    "queryConflictKeys": [],
-    "queryParameterKeys": [
-      "since",
-      "until",
-      "page",
-      "per_page"
-    ],
-    "description": "Get Copilot metrics for a team",
-    "parameterDescriptions": {
-      "org": "The organization name. The name is not case sensitive.",
-      "team_slug": "The slug of the team name.",
-      "since": "Show usage metrics since this date. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format (`YYYY-MM-DDTHH:MM:SSZ`). Maximum value is 100 days ago.",
-      "until": "Show usage metrics until this date. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format (`YYYY-MM-DDTHH:MM:SSZ`) and should not preceed the `since` date if it is passed.",
-      "page": "The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
-      "per_page": "The number of days of metrics to display per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""
     }
   },
   "teams/list": {
@@ -14024,6 +14076,8 @@ export const toolMetadata = {
       "has_issues",
       "has_projects",
       "has_wiki",
+      "has_pull_requests",
+      "pull_request_creation_policy",
       "is_template",
       "default_branch",
       "allow_squash_merge",
@@ -18502,6 +18556,69 @@ export const toolMetadata = {
       "owner": "The account owner of the repository. The name is not case sensitive.",
       "repo": "The name of the repository without the `.git` extension. The name is not case sensitive.",
       "check_suite_id": "The unique identifier of the check suite."
+    }
+  },
+  "code-quality/list-findings-for-repo": {
+    "accessPath": [
+      "codeQuality",
+      "listFindingsForRepo"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/repos/{owner}/{repo}/code-quality/findings",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [
+      "per_page",
+      "direction",
+      "before",
+      "after",
+      "state"
+    ],
+    "description": "List code quality findings for a repository",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive.",
+      "per_page": "The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
+      "direction": "The direction to sort the results by.",
+      "before": "A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
+      "after": "A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
+      "state": "If specified, only code quality findings with this state will be returned."
+    }
+  },
+  "code-quality/get-finding": {
+    "accessPath": [
+      "codeQuality",
+      "getFinding"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/repos/{owner}/{repo}/code-quality/findings/{finding_number}",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo",
+      "finding_number"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Get a code quality finding",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive.",
+      "finding_number": "The number that identifies a finding."
     }
   },
   "code-quality/get-setup": {
@@ -23024,6 +23141,138 @@ export const toolMetadata = {
       "repo": "The name of the repository without the `.git` extension. The name is not case sensitive."
     }
   },
+  "interactions/get-pull-request-bypass-list-for-repo": {
+    "accessPath": [
+      "interactions",
+      "getPullRequestBypassListForRepo"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/repos/{owner}/{repo}/interaction-limits/pulls/bypass-list",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Get pull request creation cap bypass list for a repository",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive."
+    }
+  },
+  "interactions/set-pull-request-bypass-list-for-repo": {
+    "accessPath": [
+      "interactions",
+      "setPullRequestBypassListForRepo"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "users"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "PUT",
+    "routeTemplate": "/repos/{owner}/{repo}/interaction-limits/pulls/bypass-list",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Add users to the pull request creation cap bypass list for a repository",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive."
+    }
+  },
+  "interactions/remove-pull-request-bypass-list-for-repo": {
+    "accessPath": [
+      "interactions",
+      "removePullRequestBypassListForRepo"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "users"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "DELETE",
+    "routeTemplate": "/repos/{owner}/{repo}/interaction-limits/pulls/bypass-list",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Remove users from the pull request creation cap bypass list for a repository",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive."
+    }
+  },
+  "interactions/get-pull-request-creation-cap-for-repo": {
+    "accessPath": [
+      "interactions",
+      "getPullRequestCreationCapForRepo"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/repos/{owner}/{repo}/interaction-limits/pulls/creation-cap",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Get pull request creation cap for a repository",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive."
+    }
+  },
+  "interactions/update-pull-request-creation-cap-for-repo": {
+    "accessPath": [
+      "interactions",
+      "updatePullRequestCreationCapForRepo"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "enabled",
+      "max_open_pull_requests"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "PATCH",
+    "routeTemplate": "/repos/{owner}/{repo}/interaction-limits/pulls/creation-cap",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Update pull request creation cap for a repository",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive."
+    }
+  },
   "repos/list-invitations": {
     "accessPath": [
       "repos",
@@ -23108,6 +23357,31 @@ export const toolMetadata = {
       "owner": "The account owner of the repository. The name is not case sensitive.",
       "repo": "The name of the repository without the `.git` extension. The name is not case sensitive.",
       "invitation_id": "The unique identifier of the invitation."
+    }
+  },
+  "repos/list-issue-types": {
+    "accessPath": [
+      "repos",
+      "listIssueTypes"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/repos/{owner}/{repo}/issue-types",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "List issue types for a repository",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive."
     }
   },
   "issues/list-for-repo": {
@@ -23557,6 +23831,7 @@ export const toolMetadata = {
       "assignee",
       "state",
       "state_reason",
+      "duplicate_issue_id",
       "milestone",
       "labels",
       "assignees",
@@ -27392,7 +27667,9 @@ export const toolMetadata = {
       "is_publicly_leaked",
       "is_multi_repo",
       "hide_secret",
-      "is_bypassed"
+      "is_bypassed",
+      "included_metadata",
+      "owner_email_hash"
     ],
     "description": "List secret scanning alerts for a repository",
     "parameterDescriptions": {
@@ -27415,7 +27692,9 @@ export const toolMetadata = {
       "is_publicly_leaked": "A boolean value representing whether or not to filter alerts by the publicly-leaked tag being present.",
       "is_multi_repo": "A boolean value representing whether or not to filter alerts by the multi-repo tag being present.",
       "hide_secret": "A boolean value representing whether or not to hide literal secrets in the results.",
-      "is_bypassed": "A boolean value (`true` or `false`) indicating whether to filter alerts by their push protection bypass status. When set to `true`, only alerts that were created because a push protection rule was bypassed will be returned. When set to `false`, only alerts that were not caused by a push protection bypass will be returned."
+      "is_bypassed": "A boolean value (`true` or `false`) indicating whether to filter alerts by their push protection bypass status. When set to `true`, only alerts that were created because a push protection rule was bypassed will be returned. When set to `false`, only alerts that were not caused by a push protection bypass will be returned.",
+      "included_metadata": "A comma-separated list of metadata fields to filter alerts by. Only alerts that have all of the\nspecified metadata fields attached will be returned. Possible values are: `owner-email`, `owner-id`,\n`owner-name`, `secret-id`, `secret-name`, `secret-issued-date`, `secret-expiration-date`, `organization-name`,\n`organization-id`, `last-used-date`, and `has-organization-access`.",
+      "owner_email_hash": "Filters alerts to only those whose attached `owner_email` metadata field matches the\nprovided value. The value must be the lowercase hex-encoded SHA-256 hash of the email\naddress to match (for example, the SHA-256 of `user@example.com`). Only alerts that\nhave an `owner_email` metadata value whose SHA-256 hash equals this parameter are\nreturned."
     }
   },
   "secret-scanning/get-alert": {
@@ -27505,6 +27784,126 @@ export const toolMetadata = {
       "alert_number": "The number that identifies an alert. You can find this at the end of the URL for a code scanning alert within GitHub, and in the `number` field in the response from the `GET /repos/{owner}/{repo}/code-scanning/alerts` operation.",
       "page": "The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
       "per_page": "The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""
+    }
+  },
+  "secret-scanning/list-repo-custom-patterns": {
+    "accessPath": [
+      "secretScanning",
+      "listRepoCustomPatterns"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/repos/{owner}/{repo}/secret-scanning/custom-patterns",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [
+      "state",
+      "push_protection",
+      "sort",
+      "direction",
+      "page",
+      "per_page"
+    ],
+    "description": "List repository custom patterns",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive.",
+      "state": "Filter custom patterns by state. When absent, returns patterns in all states.",
+      "push_protection": "Filter custom patterns by whether push protection is enabled. When absent, returns patterns regardless of push protection status.",
+      "sort": "The property to sort the results by.",
+      "direction": "The direction to sort the results by.",
+      "page": "The page number of the results to fetch. For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\"",
+      "per_page": "The number of results per page (max 100). For more information, see \"[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api).\""
+    }
+  },
+  "secret-scanning/bulk-create-repo-custom-patterns": {
+    "accessPath": [
+      "secretScanning",
+      "bulkCreateRepoCustomPatterns"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "patterns"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "POST",
+    "routeTemplate": "/repos/{owner}/{repo}/secret-scanning/custom-patterns",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Bulk create repository custom patterns",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive."
+    }
+  },
+  "secret-scanning/bulk-delete-repo-custom-patterns": {
+    "accessPath": [
+      "secretScanning",
+      "bulkDeleteRepoCustomPatterns"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "patterns",
+      "post_delete_action"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "DELETE",
+    "routeTemplate": "/repos/{owner}/{repo}/secret-scanning/custom-patterns",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Bulk delete repository custom patterns",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive."
+    }
+  },
+  "secret-scanning/update-repo-custom-pattern": {
+    "accessPath": [
+      "secretScanning",
+      "updateRepoCustomPattern"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "raw",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "PATCH",
+    "routeTemplate": "/repos/{owner}/{repo}/secret-scanning/custom-patterns/{pattern_id}",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "owner",
+      "repo",
+      "pattern_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Update a repository custom pattern",
+    "parameterDescriptions": {
+      "owner": "The account owner of the repository. The name is not case sensitive.",
+      "repo": "The name of the repository without the `.git` extension. The name is not case sensitive.",
+      "pattern_id": "The ID of the custom pattern."
     }
   },
   "secret-scanning/create-push-protection-bypass": {

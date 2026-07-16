@@ -103,7 +103,37 @@ type UtdkManifest = {
       termsOfService?: string;
       icon?: string;
     };
+    provenance?: RegistryProvenance;
+    branding?: RegistryBranding;
   };
+};
+
+/** Chain of ownership — always the upstream vendor, never an aggregator. */
+export type RegistryProvenance = {
+  source?: string;
+  originDomain?: string;
+  originSpecUrl?: string;
+  service?: string;
+  retrievedAt?: string;
+};
+
+export type RegistryBranding = {
+  logo?: string;
+  site?: string;
+};
+
+/** LLM-generated auth intelligence (bundler auth phase → auth.json). */
+export type RegistryAuthIntel = {
+  summary: string;
+  methods: ProviderAuthMethod[];
+  apiKeyHeader: string | null;
+  setupSteps: Array<{ title: string; detail: string }>;
+  oauth: {
+    authorizationUrl: string | null;
+    tokenUrl: string | null;
+    appRegistrationUrl: string | null;
+    scopes: Array<{ name: string; description: string }>;
+  } | null;
 };
 
 export type RegistryDocPage = {
@@ -255,6 +285,9 @@ export type RegistryEntry = {
   scorecardDomain: number | null;
   scorecardInfrastructure: string | null;
   auth: ProviderAuthInfo;
+  authIntel: RegistryAuthIntel | null;
+  provenance: RegistryProvenance | null;
+  branding: RegistryBranding | null;
   operations: RegistryOperation[];
   parentProviderPath: string | null;
   parentPackageName: string | null;
@@ -450,6 +483,9 @@ async function buildRegistryEntry(
   const provenance = await readJson<ProvenanceJson>(
     path.join(absolutePath, "provenance.json"),
   );
+  const authIntelFile = await readJson<{ auth?: RegistryAuthIntel }>(
+    path.join(absolutePath, "auth.json"),
+  );
   const readmeMarkdown = await readText(path.join(absolutePath, "README.md"));
   const docs = await loadDocs(path.join(absolutePath, "docs"));
 
@@ -513,6 +549,9 @@ async function buildRegistryEntry(
     scorecardDomain,
     scorecardInfrastructure,
     auth: extractProviderAuth(openApiDocument),
+    authIntel: authIntelFile?.auth ?? null,
+    provenance: manifest?.utdk?.provenance ?? null,
+    branding: manifest?.utdk?.branding ?? null,
     operations,
     parentProviderPath,
     parentPackageName: null,

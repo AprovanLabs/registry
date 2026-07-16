@@ -11,6 +11,44 @@ export type RegistryProvider = {
   content_type?: string;
   /** Ingest source for provenance tracking. Defaults to "manual". */
   ingestSource?: string;
+  metadata?: RegistryProviderMetadata;
+  provenance?: RegistryProviderProvenance;
+  branding?: RegistryProviderBranding;
+};
+
+export type RegistryProviderMetadata = {
+  description?: string;
+  category?: string;
+  last_updated?: string;
+  maintainer?: string;
+  documentation_url?: string;
+  version?: string;
+  openapi_version?: string;
+};
+
+/**
+ * Chain of ownership for a provider. Links must point at the upstream vendor
+ * (origin spec + domain), never at an aggregator we happened to ingest through
+ * (the aggregator is recorded separately as `source`).
+ */
+export type RegistryProviderProvenance = {
+  /** Ingest script/source that produced this entry (e.g. "apis-guru", "manual"). */
+  source: string;
+  /** Vendor domain that owns the API (e.g. "github.com"). */
+  originDomain?: string;
+  /** The vendor's original OpenAPI spec URL, as published by them. */
+  originSpecUrl?: string;
+  /** Sub-service under the origin domain (e.g. "api.github.com"). */
+  service?: string;
+  /** ISO timestamp of when this entry was ingested/refreshed. */
+  retrievedAt?: string;
+};
+
+export type RegistryProviderBranding = {
+  /** Provider logo URL. */
+  logo?: string;
+  /** Vendor website (marketing/home), preferred link target for the provider. */
+  site?: string;
 };
 
 export type RegistryProviderAuthOption = Record<string, unknown>;

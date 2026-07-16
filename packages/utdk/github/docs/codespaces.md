@@ -1,1642 +1,824 @@
 # Codespaces
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.codespaces.listInOrganization`
-
-- **HTTP**: `GET /orgs/{org}/codespaces`
-- **What it does**: List codespaces for the organization
-- **OpenAPI operationId**: `codespaces/list-in-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; codespaces: ({ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: stri...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`, `500`
+48 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type CodespacesListInOrganizationInput = Parameters<typeof github.codespaces.listInOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesListInOrganizationOutput = Awaited<ReturnType<typeof github.codespaces.listInOrganization>>;
-
-const input: CodespacesListInOrganizationInput = {} as { org: string; per_page?: number; page?: number };
-const result: CodespacesListInOrganizationOutput = await github.codespaces.listInOrganization(input);
-
-// Result shape (from schema): { total_count: number; codespaces: ({ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: stri...
 ```
 
-### `github.codespaces.setCodespacesAccess`
+## `github.codespaces.listInOrganization`
 
-- **HTTP**: `PUT /orgs/{org}/codespaces/access`
-- **What it does**: Manage access control for organization codespaces
-- **OpenAPI operationId**: `codespaces/set-codespaces-access`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `400`, `404`, `422`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ visibility: "disabled" | "selected_members" | "all_members" | "all_members_and_outside_collaborators"; selected_usernames?: (string)[]; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `400`, `404`, `422`, `500`
+List codespaces for the organization — [API reference](https://docs.github.com/rest/codespaces/organizations#list-codespaces-for-the-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesSetCodespacesAccessInput = Parameters<typeof github.codespaces.setCodespacesAccess> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesSetCodespacesAccessOutput = Awaited<ReturnType<typeof github.codespaces.setCodespacesAccess>>;
-
-const input: CodespacesSetCodespacesAccessInput = {} as { visibility: "disabled" | "selected_members" | "all_members" | "all_members_and_outside_collaborators"; selected_usernames?: (string)[]; org: string };
-const result: CodespacesSetCodespacesAccessOutput = await github.codespaces.setCodespacesAccess(input);
-
-// Result shape (from schema): unknown
+github.codespaces.listInOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; codespaces: (Codespace)[] }>
 ```
 
-### `github.codespaces.deleteCodespacesAccessUsers`
+<sub>`GET /orgs/{org}/codespaces` · `codespaces/list-in-organization`</sub>
 
-- **HTTP**: `DELETE /orgs/{org}/codespaces/access/selected_users`
-- **What it does**: Remove users from Codespaces access for an organization
-- **OpenAPI operationId**: `codespaces/delete-codespaces-access-users`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `400`, `404`, `422`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.setCodespacesAccess`
 
-**Inputs**
-
-- Client input type: `{ selected_usernames: (string)[]; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `400`, `404`, `422`, `500`
+Manage access control for organization codespaces — [API reference](https://docs.github.com/rest/codespaces/organizations#manage-access-control-for-organization-codespaces)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesDeleteCodespacesAccessUsersInput = Parameters<typeof github.codespaces.deleteCodespacesAccessUsers> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesDeleteCodespacesAccessUsersOutput = Awaited<ReturnType<typeof github.codespaces.deleteCodespacesAccessUsers>>;
-
-const input: CodespacesDeleteCodespacesAccessUsersInput = {} as { selected_usernames: (string)[]; org: string };
-const result: CodespacesDeleteCodespacesAccessUsersOutput = await github.codespaces.deleteCodespacesAccessUsers(input);
-
-// Result shape (from schema): unknown
+github.codespaces.setCodespacesAccess(input: {
+  /** Which users can access codespaces in the organization. `disabled` means that no users can access codespaces in the organization. */
+  visibility: "disabled" | "selected_members" | "all_members" | "all_members_and_outside_collaborators";
+  /** The usernames of the organization members who should have access to codespaces in the organization. Required when `visibility` is `selected_members`. The provided list of usernames will replace any existing value. */
+  selected_usernames?: (string)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
 ```
 
-### `github.codespaces.setCodespacesAccessUsers`
+<sub>`PUT /orgs/{org}/codespaces/access` · `codespaces/set-codespaces-access`</sub>
 
-- **HTTP**: `POST /orgs/{org}/codespaces/access/selected_users`
-- **What it does**: Add users to Codespaces access for an organization
-- **OpenAPI operationId**: `codespaces/set-codespaces-access-users`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `400`, `404`, `422`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.deleteCodespacesAccessUsers`
 
-**Inputs**
-
-- Client input type: `{ selected_usernames: (string)[]; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `400`, `404`, `422`, `500`
+Remove users from Codespaces access for an organization — [API reference](https://docs.github.com/rest/codespaces/organizations#remove-users-from-codespaces-access-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesSetCodespacesAccessUsersInput = Parameters<typeof github.codespaces.setCodespacesAccessUsers> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesSetCodespacesAccessUsersOutput = Awaited<ReturnType<typeof github.codespaces.setCodespacesAccessUsers>>;
-
-const input: CodespacesSetCodespacesAccessUsersInput = {} as { selected_usernames: (string)[]; org: string };
-const result: CodespacesSetCodespacesAccessUsersOutput = await github.codespaces.setCodespacesAccessUsers(input);
-
-// Result shape (from schema): unknown
+github.codespaces.deleteCodespacesAccessUsers(input: {
+  /** The usernames of the organization members and outside collaborators whose codespaces should not be billed to the organization. */
+  selected_usernames: (string)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
 ```
 
-### `github.codespaces.listOrgSecrets`
+<sub>`DELETE /orgs/{org}/codespaces/access/selected_users` · `codespaces/delete-codespaces-access-users`</sub>
 
-- **HTTP**: `GET /orgs/{org}/codespaces/secrets`
-- **What it does**: List organization secrets
-- **OpenAPI operationId**: `codespaces/list-org-secrets`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.setCodespacesAccessUsers`
 
-**Inputs**
-
-- Client input type: `{ org: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; secrets: ({ name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string })[] }`
-- OpenAPI response codes: `200`
+Add users to Codespaces access for an organization — [API reference](https://docs.github.com/rest/codespaces/organizations#add-users-to-codespaces-access-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesListOrgSecretsInput = Parameters<typeof github.codespaces.listOrgSecrets> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesListOrgSecretsOutput = Awaited<ReturnType<typeof github.codespaces.listOrgSecrets>>;
-
-const input: CodespacesListOrgSecretsInput = {} as { org: string; per_page?: number; page?: number };
-const result: CodespacesListOrgSecretsOutput = await github.codespaces.listOrgSecrets(input);
-
-// Result shape (from schema): { total_count: number; secrets: ({ name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string })[] }
+github.codespaces.setCodespacesAccessUsers(input: {
+  /** The usernames of the organization members and outside collaborators whose codespaces should be billed to the organization. */
+  selected_usernames: (string)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
 ```
 
-### `github.codespaces.deleteOrgSecret`
+<sub>`POST /orgs/{org}/codespaces/access/selected_users` · `codespaces/set-codespaces-access-users`</sub>
 
-- **HTTP**: `DELETE /orgs/{org}/codespaces/secrets/{secret_name}`
-- **What it does**: Delete an organization secret
-- **OpenAPI operationId**: `codespaces/delete-org-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.listOrgSecrets`
 
-**Inputs**
-
-- Client input type: `{ org: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+List organization secrets — [API reference](https://docs.github.com/rest/codespaces/organization-secrets#list-organization-secrets)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesDeleteOrgSecretInput = Parameters<typeof github.codespaces.deleteOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesDeleteOrgSecretOutput = Awaited<ReturnType<typeof github.codespaces.deleteOrgSecret>>;
-
-const input: CodespacesDeleteOrgSecretInput = {} as { org: string; secret_name: string };
-const result: CodespacesDeleteOrgSecretOutput = await github.codespaces.deleteOrgSecret(input);
-
-// Result shape (from schema): unknown
+github.codespaces.listOrgSecrets(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; secrets: (CodespacesOrgSecret)[] }>
 ```
 
-### `github.codespaces.getOrgSecret`
+<sub>`GET /orgs/{org}/codespaces/secrets` · `codespaces/list-org-secrets`</sub>
 
-- **HTTP**: `GET /orgs/{org}/codespaces/secrets/{secret_name}`
-- **What it does**: Get an organization secret
-- **OpenAPI operationId**: `codespaces/get-org-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.deleteOrgSecret`
 
-**Inputs**
-
-- Client input type: `{ org: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string }`
-- OpenAPI response codes: `200`
+Delete an organization secret — [API reference](https://docs.github.com/rest/codespaces/organization-secrets#delete-an-organization-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesGetOrgSecretInput = Parameters<typeof github.codespaces.getOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesGetOrgSecretOutput = Awaited<ReturnType<typeof github.codespaces.getOrgSecret>>;
-
-const input: CodespacesGetOrgSecretInput = {} as { org: string; secret_name: string };
-const result: CodespacesGetOrgSecretOutput = await github.codespaces.getOrgSecret(input);
-
-// Result shape (from schema): { name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string }
+github.codespaces.deleteOrgSecret(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<BasicError>
 ```
 
-### `github.codespaces.createOrUpdateOrgSecret`
+<sub>`DELETE /orgs/{org}/codespaces/secrets/{secret_name}` · `codespaces/delete-org-secret`</sub>
 
-- **HTTP**: `PUT /orgs/{org}/codespaces/secrets/{secret_name}`
-- **What it does**: Create or update an organization secret
-- **OpenAPI operationId**: `codespaces/create-or-update-org-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `204`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.getOrgSecret`
 
-**Inputs**
-
-- Client input type: `{ encrypted_value?: string; key_id?: string; visibility: "all" | "private" | "selected"; selected_repository_ids?: (number)[]; org: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`, `204`, `404`, `422`
+Get an organization secret — [API reference](https://docs.github.com/rest/codespaces/organization-secrets#get-an-organization-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesCreateOrUpdateOrgSecretInput = Parameters<typeof github.codespaces.createOrUpdateOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesCreateOrUpdateOrgSecretOutput = Awaited<ReturnType<typeof github.codespaces.createOrUpdateOrgSecret>>;
-
-const input: CodespacesCreateOrUpdateOrgSecretInput = {} as { encrypted_value?: string; key_id?: string; visibility: "all" | "private" | "selected"; selected_repository_ids?: (number)[]; org: string; secret_name: string };
-const result: CodespacesCreateOrUpdateOrgSecretOutput = await github.codespaces.createOrUpdateOrgSecret(input);
-
-// Result shape (from schema): { [key: string]: unknown }
+github.codespaces.getOrgSecret(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<CodespacesOrgSecret>
 ```
 
-### `github.codespaces.listSelectedReposForOrgSecret`
+<sub>`GET /orgs/{org}/codespaces/secrets/{secret_name}` · `codespaces/get-org-secret`</sub>
 
-- **HTTP**: `GET /orgs/{org}/codespaces/secrets/{secret_name}/repositories`
-- **What it does**: List selected repositories for an organization secret
-- **OpenAPI operationId**: `codespaces/list-selected-repos-for-org-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.createOrUpdateOrgSecret`
 
-**Inputs**
-
-- Client input type: `{ org: string; secret_name: string; page?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string;...`
-- OpenAPI response codes: `200`, `404`
+Create or update an organization secret — [API reference](https://docs.github.com/rest/codespaces/organization-secrets#create-or-update-an-organization-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesListSelectedReposForOrgSecretInput = Parameters<typeof github.codespaces.listSelectedReposForOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesListSelectedReposForOrgSecretOutput = Awaited<ReturnType<typeof github.codespaces.listSelectedReposForOrgSecret>>;
-
-const input: CodespacesListSelectedReposForOrgSecretInput = {} as { org: string; secret_name: string; page?: number; per_page?: number };
-const result: CodespacesListSelectedReposForOrgSecretOutput = await github.codespaces.listSelectedReposForOrgSecret(input);
-
-// Result shape (from schema): { total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string;...
+github.codespaces.createOrUpdateOrgSecret(input: {
+  /** The value for your secret, encrypted with [LibSodium](https://libsodium.gitbook.io/doc/bindings_for_other_languages) using the public key retrieved from the [Get an organization public key](https://docs.github.com/rest/codespaces/organization-secrets#get-an-organization-public-key) endpoint. */
+  encrypted_value?: string;
+  /** The ID of the key you used to encrypt the secret. */
+  key_id?: string;
+  /** Which type of organization repositories have access to the organization secret. `selected` means only the repositories specified by `selected_repository_ids` can access the secret. */
+  visibility: "all" | "private" | "selected";
+  /** An array of repository IDs that can access the organization secret. You can only provide a list of repository IDs when the `visibility` is set to `selected`. You can manage the list of selected repositories using the [List selected repositories for an organization secret](https://docs.github.com/rest/codespaces/organization-secrets#list-selected-repositories-for-an-organization-secret), [Set selected repositories for an organization secret](https://docs.github.com/rest/codespaces/organization-secrets#set-selected-repositories-for-an-organization-secret), and [Remove selected repository from an organization secret](https://docs.github.com/rest/codespaces/organization-secrets#remove-selected-repository-from-an-organization-secret) endpoints. */
+  selected_repository_ids?: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<EmptyObject>
 ```
 
-### `github.codespaces.setSelectedReposForOrgSecret`
+<sub>`PUT /orgs/{org}/codespaces/secrets/{secret_name}` · `codespaces/create-or-update-org-secret`</sub>
 
-- **HTTP**: `PUT /orgs/{org}/codespaces/secrets/{secret_name}/repositories`
-- **What it does**: Set selected repositories for an organization secret
-- **OpenAPI operationId**: `codespaces/set-selected-repos-for-org-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.listSelectedReposForOrgSecret`
 
-**Inputs**
-
-- Client input type: `{ selected_repository_ids: (number)[]; org: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `409`
+List selected repositories for an organization secret — [API reference](https://docs.github.com/rest/codespaces/organization-secrets#list-selected-repositories-for-an-organization-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesSetSelectedReposForOrgSecretInput = Parameters<typeof github.codespaces.setSelectedReposForOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesSetSelectedReposForOrgSecretOutput = Awaited<ReturnType<typeof github.codespaces.setSelectedReposForOrgSecret>>;
-
-const input: CodespacesSetSelectedReposForOrgSecretInput = {} as { selected_repository_ids: (number)[]; org: string; secret_name: string };
-const result: CodespacesSetSelectedReposForOrgSecretOutput = await github.codespaces.setSelectedReposForOrgSecret(input);
-
-// Result shape (from schema): unknown
+github.codespaces.listSelectedReposForOrgSecret(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<{ total_count: number; repositories: (MinimalRepository)[] }>
 ```
 
-### `github.codespaces.removeSelectedRepoFromOrgSecret`
+<sub>`GET /orgs/{org}/codespaces/secrets/{secret_name}/repositories` · `codespaces/list-selected-repos-for-org-secret`</sub>
 
-- **HTTP**: `DELETE /orgs/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}`
-- **What it does**: Remove selected repository from an organization secret
-- **OpenAPI operationId**: `codespaces/remove-selected-repo-from-org-secret`
-- **Path params**: `repository_id`
-- **Query params**: None
-- **Response codes**: `204`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.setSelectedReposForOrgSecret`
 
-**Inputs**
-
-- Client input type: `{ org: string; secret_name: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `409`, `422`
+Set selected repositories for an organization secret — [API reference](https://docs.github.com/rest/codespaces/organization-secrets#set-selected-repositories-for-an-organization-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesRemoveSelectedRepoFromOrgSecretInput = Parameters<typeof github.codespaces.removeSelectedRepoFromOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesRemoveSelectedRepoFromOrgSecretOutput = Awaited<ReturnType<typeof github.codespaces.removeSelectedRepoFromOrgSecret>>;
-
-const input: CodespacesRemoveSelectedRepoFromOrgSecretInput = {} as { org: string; secret_name: string; repository_id: number };
-const result: CodespacesRemoveSelectedRepoFromOrgSecretOutput = await github.codespaces.removeSelectedRepoFromOrgSecret(input);
-
-// Result shape (from schema): unknown
+github.codespaces.setSelectedReposForOrgSecret(input: {
+  /** An array of repository ids that can access the organization secret. You can only provide a list of repository ids when the `visibility` is set to `selected`. You can add and remove individual repositories using the [Set selected repositories for an organization secret](https://docs.github.com/rest/codespaces/organization-secrets#set-selected-repositories-for-an-organization-secret) and [Remove selected repository from an organization secret](https://docs.github.com/rest/codespaces/organization-secrets#remove-selected-repository-from-an-organization-secret) endpoints. */
+  selected_repository_ids: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<BasicError>
 ```
 
-### `github.codespaces.addSelectedRepoToOrgSecret`
+<sub>`PUT /orgs/{org}/codespaces/secrets/{secret_name}/repositories` · `codespaces/set-selected-repos-for-org-secret`</sub>
 
-- **HTTP**: `PUT /orgs/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}`
-- **What it does**: Add selected repository to an organization secret
-- **OpenAPI operationId**: `codespaces/add-selected-repo-to-org-secret`
-- **Path params**: `repository_id`
-- **Query params**: None
-- **Response codes**: `204`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.removeSelectedRepoFromOrgSecret`
 
-**Inputs**
-
-- Client input type: `{ org: string; secret_name: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `409`, `422`
+Remove selected repository from an organization secret — [API reference](https://docs.github.com/rest/codespaces/organization-secrets#remove-selected-repository-from-an-organization-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesAddSelectedRepoToOrgSecretInput = Parameters<typeof github.codespaces.addSelectedRepoToOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesAddSelectedRepoToOrgSecretOutput = Awaited<ReturnType<typeof github.codespaces.addSelectedRepoToOrgSecret>>;
-
-const input: CodespacesAddSelectedRepoToOrgSecretInput = {} as { org: string; secret_name: string; repository_id: number };
-const result: CodespacesAddSelectedRepoToOrgSecretOutput = await github.codespaces.addSelectedRepoToOrgSecret(input);
-
-// Result shape (from schema): unknown
+github.codespaces.removeSelectedRepoFromOrgSecret(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+  repository_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.codespaces.getOrgPublicKey`
+<sub>`DELETE /orgs/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}` · `codespaces/remove-selected-repo-from-org-secret`</sub>
 
-- **HTTP**: `GET /orgs/{org}/codespaces/secrets/public-key`
-- **What it does**: Get an organization public key
-- **OpenAPI operationId**: `codespaces/get-org-public-key`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.addSelectedRepoToOrgSecret`
 
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ key_id: string; key: string; id?: number; url?: string; title?: string; created_at?: string }`
-- OpenAPI response codes: `200`
+Add selected repository to an organization secret — [API reference](https://docs.github.com/rest/codespaces/organization-secrets#add-selected-repository-to-an-organization-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesGetOrgPublicKeyInput = Parameters<typeof github.codespaces.getOrgPublicKey> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesGetOrgPublicKeyOutput = Awaited<ReturnType<typeof github.codespaces.getOrgPublicKey>>;
-
-const input: CodespacesGetOrgPublicKeyInput = {} as { org: string };
-const result: CodespacesGetOrgPublicKeyOutput = await github.codespaces.getOrgPublicKey(input);
-
-// Result shape (from schema): { key_id: string; key: string; id?: number; url?: string; title?: string; created_at?: string }
+github.codespaces.addSelectedRepoToOrgSecret(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+  repository_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.codespaces.getCodespacesForUserInOrg`
+<sub>`PUT /orgs/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}` · `codespaces/add-selected-repo-to-org-secret`</sub>
 
-- **HTTP**: `GET /orgs/{org}/members/{username}/codespaces`
-- **What it does**: List codespaces for a user in organization
-- **OpenAPI operationId**: `codespaces/get-codespaces-for-user-in-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.getOrgPublicKey`
 
-**Inputs**
-
-- Client input type: `{ org: string; username: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; codespaces: ({ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: stri...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`, `500`
+Get an organization public key — [API reference](https://docs.github.com/rest/codespaces/organization-secrets#get-an-organization-public-key)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesGetCodespacesForUserInOrgInput = Parameters<typeof github.codespaces.getCodespacesForUserInOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesGetCodespacesForUserInOrgOutput = Awaited<ReturnType<typeof github.codespaces.getCodespacesForUserInOrg>>;
-
-const input: CodespacesGetCodespacesForUserInOrgInput = {} as { org: string; username: string; per_page?: number; page?: number };
-const result: CodespacesGetCodespacesForUserInOrgOutput = await github.codespaces.getCodespacesForUserInOrg(input);
-
-// Result shape (from schema): { total_count: number; codespaces: ({ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: stri...
+github.codespaces.getOrgPublicKey(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<CodespacesPublicKey>
 ```
 
-### `github.codespaces.deleteFromOrganization`
+<sub>`GET /orgs/{org}/codespaces/secrets/public-key` · `codespaces/get-org-public-key`</sub>
 
-- **HTTP**: `DELETE /orgs/{org}/members/{username}/codespaces/{codespace_name}`
-- **What it does**: Delete a codespace from the organization
-- **OpenAPI operationId**: `codespaces/delete-from-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `304`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.getCodespacesForUserInOrg`
 
-**Inputs**
-
-- Client input type: `{ org: string; username: string; codespace_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `304`, `401`, `403`, `404`, `500`
+List codespaces for a user in organization — [API reference](https://docs.github.com/rest/codespaces/organizations#list-codespaces-for-a-user-in-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesDeleteFromOrganizationInput = Parameters<typeof github.codespaces.deleteFromOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesDeleteFromOrganizationOutput = Awaited<ReturnType<typeof github.codespaces.deleteFromOrganization>>;
-
-const input: CodespacesDeleteFromOrganizationInput = {} as { org: string; username: string; codespace_name: string };
-const result: CodespacesDeleteFromOrganizationOutput = await github.codespaces.deleteFromOrganization(input);
-
-// Result shape (from schema): unknown
+github.codespaces.getCodespacesForUserInOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; codespaces: (Codespace)[] }>
 ```
 
-### `github.codespaces.stopInOrganization`
+<sub>`GET /orgs/{org}/members/{username}/codespaces` · `codespaces/get-codespaces-for-user-in-org`</sub>
 
-- **HTTP**: `POST /orgs/{org}/members/{username}/codespaces/{codespace_name}/stop`
-- **What it does**: Stop a codespace for an organization user
-- **OpenAPI operationId**: `codespaces/stop-in-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.deleteFromOrganization`
 
-**Inputs**
-
-- Client input type: `{ org: string; username: string; codespace_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`, `500`
+Delete a codespace from the organization — [API reference](https://docs.github.com/rest/codespaces/organizations#delete-a-codespace-from-the-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesStopInOrganizationInput = Parameters<typeof github.codespaces.stopInOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesStopInOrganizationOutput = Awaited<ReturnType<typeof github.codespaces.stopInOrganization>>;
-
-const input: CodespacesStopInOrganizationInput = {} as { org: string; username: string; codespace_name: string };
-const result: CodespacesStopInOrganizationOutput = await github.codespaces.stopInOrganization(input);
-
-// Result shape (from schema): { id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...
+github.codespaces.deleteFromOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The name of the codespace. */
+  codespace_name: string;
+}): Promise<{ [key: string]: unknown }>
 ```
 
-### `github.codespaces.listInRepositoryForAuthenticatedUser`
+<sub>`DELETE /orgs/{org}/members/{username}/codespaces/{codespace_name}` · `codespaces/delete-from-organization`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/codespaces`
-- **What it does**: List codespaces in a repository for the authenticated user
-- **OpenAPI operationId**: `codespaces/list-in-repository-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.stopInOrganization`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; codespaces: ({ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: stri...`
-- OpenAPI response codes: `200`, `401`, `403`, `404`, `500`
+Stop a codespace for an organization user — [API reference](https://docs.github.com/rest/codespaces/organizations#stop-a-codespace-for-an-organization-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesListInRepositoryForAuthenticatedUserInput = Parameters<typeof github.codespaces.listInRepositoryForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesListInRepositoryForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.listInRepositoryForAuthenticatedUser>>;
-
-const input: CodespacesListInRepositoryForAuthenticatedUserInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: CodespacesListInRepositoryForAuthenticatedUserOutput = await github.codespaces.listInRepositoryForAuthenticatedUser(input);
-
-// Result shape (from schema): { total_count: number; codespaces: ({ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: stri...
+github.codespaces.stopInOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The name of the codespace. */
+  codespace_name: string;
+}): Promise<Codespace>
 ```
 
-### `github.codespaces.createWithRepoForAuthenticatedUser`
+<sub>`POST /orgs/{org}/members/{username}/codespaces/{codespace_name}/stop` · `codespaces/stop-in-organization`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/codespaces`
-- **What it does**: Create a codespace in a repository
-- **OpenAPI operationId**: `codespaces/create-with-repo-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `202`, `400`, `401`, `403`, `404`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.listInRepositoryForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ ref?: string; location?: string; geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest"; client_ip?: string; machine?: string; devcontainer_path?: string; multi_repo_permissions_opt_out?: boolean; working_directory?: string; idle_timeout_minutes?: number; display_name?: string; retention_period_minutes?: number; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...`
-- OpenAPI response codes: `201`, `202`, `400`, `401`, `403`, `404`, `503`
+List codespaces in a repository for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#list-codespaces-in-a-repository-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesCreateWithRepoForAuthenticatedUserInput = Parameters<typeof github.codespaces.createWithRepoForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesCreateWithRepoForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.createWithRepoForAuthenticatedUser>>;
-
-const input: CodespacesCreateWithRepoForAuthenticatedUserInput = {} as { ref?: string; location?: string; geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest"; client_ip?: string; machine?: string; devcontainer_path?: string; multi_repo_permissions_opt_out?: boolean; working_directory?: string; idle_timeout_minutes?: number; display_name?: string; retention_period_minutes?: number; owner: string; repo: string };
-const result: CodespacesCreateWithRepoForAuthenticatedUserOutput = await github.codespaces.createWithRepoForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...
+github.codespaces.listInRepositoryForAuthenticatedUser(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; codespaces: (Codespace)[] }>
 ```
 
-### `github.codespaces.listDevcontainersInRepositoryForAuthenticatedUser`
+<sub>`GET /repos/{owner}/{repo}/codespaces` · `codespaces/list-in-repository-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/codespaces/devcontainers`
-- **What it does**: List devcontainer configurations in a repository for the authenticated user
-- **OpenAPI operationId**: `codespaces/list-devcontainers-in-repository-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.createWithRepoForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; devcontainers: ({ path: string; name?: string; display_name?: string })[] }`
-- OpenAPI response codes: `200`, `400`, `401`, `403`, `404`, `500`
+Create a codespace in a repository — [API reference](https://docs.github.com/rest/codespaces/codespaces#create-a-codespace-in-a-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesListDevcontainersInRepositoryForAuthenticatedUserInput = Parameters<typeof github.codespaces.listDevcontainersInRepositoryForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesListDevcontainersInRepositoryForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.listDevcontainersInRepositoryForAuthenticatedUser>>;
-
-const input: CodespacesListDevcontainersInRepositoryForAuthenticatedUserInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: CodespacesListDevcontainersInRepositoryForAuthenticatedUserOutput = await github.codespaces.listDevcontainersInRepositoryForAuthenticatedUser(input);
-
-// Result shape (from schema): { total_count: number; devcontainers: ({ path: string; name?: string; display_name?: string })[] }
+github.codespaces.createWithRepoForAuthenticatedUser(input: {
+  /** Git ref (typically a branch name) for this codespace */
+  ref?: string;
+  /** The requested location for a new codespace. Best efforts are made to respect this upon creation. Assigned by IP if not provided. */
+  location?: string;
+  /** The geographic area for this codespace. If not specified, the value is assigned by IP. This property replaces `location`, which is closing down. */
+  geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest";
+  /** IP for location auto-detection when proxying a request */
+  client_ip?: string;
+  /** Machine type to use for this codespace */
+  machine?: string;
+  /** Path to devcontainer.json config to use for this codespace */
+  devcontainer_path?: string;
+  /** Whether to authorize requested permissions from devcontainer.json */
+  multi_repo_permissions_opt_out?: boolean;
+  /** Working directory for this codespace */
+  working_directory?: string;
+  /** Time in minutes before codespace stops from inactivity */
+  idle_timeout_minutes?: number;
+  /** Display name for this codespace */
+  display_name?: string;
+  /** Duration in minutes after codespace has gone idle in which it will be deleted. Must be integer minutes between 0 and 43200 (30 days). */
+  retention_period_minutes?: number;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Codespace>
 ```
 
-### `github.codespaces.repoMachinesForAuthenticatedUser`
+<sub>`POST /repos/{owner}/{repo}/codespaces` · `codespaces/create-with-repo-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/codespaces/machines`
-- **What it does**: List available machine types for a repository
-- **OpenAPI operationId**: `codespaces/repo-machines-for-authenticated-user`
-- **Path params**: None
-- **Query params**: `location`, `client_ip`, `ref`
-- **Response codes**: `200`, `304`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.listDevcontainersInRepositoryForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; location?: string; client_ip?: string; ref?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; machines: ({ name: string; display_name: string; operating_system: string; storage_in_bytes: number; memory_in_bytes: number; cpus: number; prebuild_availability: "none" | "ready" | "in_progress" ...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`, `500`
+List devcontainer configurations in a repository for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#list-devcontainer-configurations-in-a-repository-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesRepoMachinesForAuthenticatedUserInput = Parameters<typeof github.codespaces.repoMachinesForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesRepoMachinesForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.repoMachinesForAuthenticatedUser>>;
-
-const input: CodespacesRepoMachinesForAuthenticatedUserInput = {} as { owner: string; repo: string; location?: string; client_ip?: string; ref?: string };
-const result: CodespacesRepoMachinesForAuthenticatedUserOutput = await github.codespaces.repoMachinesForAuthenticatedUser(input);
-
-// Result shape (from schema): { total_count: number; machines: ({ name: string; display_name: string; operating_system: string; storage_in_bytes: number; memory_in_bytes: number; cpus: number; prebuild_availability: "none" | "ready" | "in_progress" ...
+github.codespaces.listDevcontainersInRepositoryForAuthenticatedUser(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; devcontainers: ({ path: string; name?: string; display_name?: string })[] }>
 ```
 
-### `github.codespaces.preFlightWithRepoForAuthenticatedUser`
+<sub>`GET /repos/{owner}/{repo}/codespaces/devcontainers` · `codespaces/list-devcontainers-in-repository-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/codespaces/new`
-- **What it does**: Get default attributes for a codespace
-- **OpenAPI operationId**: `codespaces/pre-flight-with-repo-for-authenticated-user`
-- **Path params**: None
-- **Query params**: `ref`, `client_ip`
-- **Response codes**: `200`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.repoMachinesForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref?: string; client_ip?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ billable_owner?: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; followi...`
-- OpenAPI response codes: `200`, `401`, `403`, `404`
+List available machine types for a repository — [API reference](https://docs.github.com/rest/codespaces/machines#list-available-machine-types-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesPreFlightWithRepoForAuthenticatedUserInput = Parameters<typeof github.codespaces.preFlightWithRepoForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesPreFlightWithRepoForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.preFlightWithRepoForAuthenticatedUser>>;
-
-const input: CodespacesPreFlightWithRepoForAuthenticatedUserInput = {} as { owner: string; repo: string; ref?: string; client_ip?: string };
-const result: CodespacesPreFlightWithRepoForAuthenticatedUserOutput = await github.codespaces.preFlightWithRepoForAuthenticatedUser(input);
-
-// Result shape (from schema): { billable_owner?: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; followi...
+github.codespaces.repoMachinesForAuthenticatedUser(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The location to check for available machines. Assigned by IP if not provided. */
+  location?: string;
+  /** IP for location auto-detection when proxying a request */
+  client_ip?: string;
+  /** The branch or commit to check for prebuild availability and devcontainer restrictions. */
+  ref?: string;
+}): Promise<{ total_count: number; machines: (CodespaceMachine)[] }>
 ```
 
-### `github.codespaces.checkPermissionsForDevcontainer`
+<sub>`GET /repos/{owner}/{repo}/codespaces/machines` · `codespaces/repo-machines-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/codespaces/permissions_check`
-- **What it does**: Check if permissions defined by a devcontainer have been accepted by the authenticated user
-- **OpenAPI operationId**: `codespaces/check-permissions-for-devcontainer`
-- **Path params**: None
-- **Query params**: `ref`, `devcontainer_path`
-- **Response codes**: `200`, `401`, `403`, `404`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.preFlightWithRepoForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref: string; devcontainer_path: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ accepted: boolean }`
-- OpenAPI response codes: `200`, `401`, `403`, `404`, `422`, `503`
+Get default attributes for a codespace — [API reference](https://docs.github.com/rest/codespaces/codespaces#get-default-attributes-for-a-codespace)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesCheckPermissionsForDevcontainerInput = Parameters<typeof github.codespaces.checkPermissionsForDevcontainer> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesCheckPermissionsForDevcontainerOutput = Awaited<ReturnType<typeof github.codespaces.checkPermissionsForDevcontainer>>;
-
-const input: CodespacesCheckPermissionsForDevcontainerInput = {} as { owner: string; repo: string; ref: string; devcontainer_path: string };
-const result: CodespacesCheckPermissionsForDevcontainerOutput = await github.codespaces.checkPermissionsForDevcontainer(input);
-
-// Result shape (from schema): { accepted: boolean }
+github.codespaces.preFlightWithRepoForAuthenticatedUser(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The branch or commit to check for a default devcontainer path. If not specified, the default branch will be checked. */
+  ref?: string;
+  /** An alternative IP for default location auto-detection, such as when proxying a request. */
+  client_ip?: string;
+}): Promise<{ billable_owner?: SimpleUser; defaults?: { location: string; devcontainer_path: string | null } }>
 ```
 
-### `github.codespaces.listRepoSecrets`
+<sub>`GET /repos/{owner}/{repo}/codespaces/new` · `codespaces/pre-flight-with-repo-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/codespaces/secrets`
-- **What it does**: List repository secrets
-- **OpenAPI operationId**: `codespaces/list-repo-secrets`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.checkPermissionsForDevcontainer`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; secrets: ({ name: string; created_at: string; updated_at: string })[] }`
-- OpenAPI response codes: `200`
+Check if permissions defined by a devcontainer have been accepted by the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#check-if-permissions-defined-by-a-devcontainer-have-been-accepted-by-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesListRepoSecretsInput = Parameters<typeof github.codespaces.listRepoSecrets> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesListRepoSecretsOutput = Awaited<ReturnType<typeof github.codespaces.listRepoSecrets>>;
-
-const input: CodespacesListRepoSecretsInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: CodespacesListRepoSecretsOutput = await github.codespaces.listRepoSecrets(input);
-
-// Result shape (from schema): { total_count: number; secrets: ({ name: string; created_at: string; updated_at: string })[] }
+github.codespaces.checkPermissionsForDevcontainer(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The git reference that points to the location of the devcontainer configuration to use for the permission check. The value of `ref` will typically be a branch name (`heads/BRANCH_NAME`). For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
+  ref: string;
+  /** Path to the devcontainer.json configuration to use for the permission check. */
+  devcontainer_path: string;
+}): Promise<CodespacesPermissionsCheckForDevcontainer>
 ```
 
-### `github.codespaces.deleteRepoSecret`
+<sub>`GET /repos/{owner}/{repo}/codespaces/permissions_check` · `codespaces/check-permissions-for-devcontainer`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/codespaces/secrets/{secret_name}`
-- **What it does**: Delete a repository secret
-- **OpenAPI operationId**: `codespaces/delete-repo-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.listRepoSecrets`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+List repository secrets — [API reference](https://docs.github.com/rest/codespaces/repository-secrets#list-repository-secrets)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesDeleteRepoSecretInput = Parameters<typeof github.codespaces.deleteRepoSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesDeleteRepoSecretOutput = Awaited<ReturnType<typeof github.codespaces.deleteRepoSecret>>;
-
-const input: CodespacesDeleteRepoSecretInput = {} as { owner: string; repo: string; secret_name: string };
-const result: CodespacesDeleteRepoSecretOutput = await github.codespaces.deleteRepoSecret(input);
-
-// Result shape (from schema): unknown
+github.codespaces.listRepoSecrets(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; secrets: (RepoCodespacesSecret)[] }>
 ```
 
-### `github.codespaces.getRepoSecret`
+<sub>`GET /repos/{owner}/{repo}/codespaces/secrets` · `codespaces/list-repo-secrets`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/codespaces/secrets/{secret_name}`
-- **What it does**: Get a repository secret
-- **OpenAPI operationId**: `codespaces/get-repo-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.deleteRepoSecret`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ name: string; created_at: string; updated_at: string }`
-- OpenAPI response codes: `200`
+Delete a repository secret — [API reference](https://docs.github.com/rest/codespaces/repository-secrets#delete-a-repository-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesGetRepoSecretInput = Parameters<typeof github.codespaces.getRepoSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesGetRepoSecretOutput = Awaited<ReturnType<typeof github.codespaces.getRepoSecret>>;
-
-const input: CodespacesGetRepoSecretInput = {} as { owner: string; repo: string; secret_name: string };
-const result: CodespacesGetRepoSecretOutput = await github.codespaces.getRepoSecret(input);
-
-// Result shape (from schema): { name: string; created_at: string; updated_at: string }
+github.codespaces.deleteRepoSecret(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<unknown>
 ```
 
-### `github.codespaces.createOrUpdateRepoSecret`
+<sub>`DELETE /repos/{owner}/{repo}/codespaces/secrets/{secret_name}` · `codespaces/delete-repo-secret`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/codespaces/secrets/{secret_name}`
-- **What it does**: Create or update a repository secret
-- **OpenAPI operationId**: `codespaces/create-or-update-repo-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.getRepoSecret`
 
-**Inputs**
-
-- Client input type: `{ encrypted_value?: string; key_id?: string; owner: string; repo: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`, `204`
+Get a repository secret — [API reference](https://docs.github.com/rest/codespaces/repository-secrets#get-a-repository-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesCreateOrUpdateRepoSecretInput = Parameters<typeof github.codespaces.createOrUpdateRepoSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesCreateOrUpdateRepoSecretOutput = Awaited<ReturnType<typeof github.codespaces.createOrUpdateRepoSecret>>;
-
-const input: CodespacesCreateOrUpdateRepoSecretInput = {} as { encrypted_value?: string; key_id?: string; owner: string; repo: string; secret_name: string };
-const result: CodespacesCreateOrUpdateRepoSecretOutput = await github.codespaces.createOrUpdateRepoSecret(input);
-
-// Result shape (from schema): { [key: string]: unknown }
+github.codespaces.getRepoSecret(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<RepoCodespacesSecret>
 ```
 
-### `github.codespaces.getRepoPublicKey`
+<sub>`GET /repos/{owner}/{repo}/codespaces/secrets/{secret_name}` · `codespaces/get-repo-secret`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/codespaces/secrets/public-key`
-- **What it does**: Get a repository public key
-- **OpenAPI operationId**: `codespaces/get-repo-public-key`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.createOrUpdateRepoSecret`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ key_id: string; key: string; id?: number; url?: string; title?: string; created_at?: string }`
-- OpenAPI response codes: `200`
+Create or update a repository secret — [API reference](https://docs.github.com/rest/codespaces/repository-secrets#create-or-update-a-repository-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesGetRepoPublicKeyInput = Parameters<typeof github.codespaces.getRepoPublicKey> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesGetRepoPublicKeyOutput = Awaited<ReturnType<typeof github.codespaces.getRepoPublicKey>>;
-
-const input: CodespacesGetRepoPublicKeyInput = {} as { owner: string; repo: string };
-const result: CodespacesGetRepoPublicKeyOutput = await github.codespaces.getRepoPublicKey(input);
-
-// Result shape (from schema): { key_id: string; key: string; id?: number; url?: string; title?: string; created_at?: string }
+github.codespaces.createOrUpdateRepoSecret(input: {
+  /** Value for your secret, encrypted with [LibSodium](https://libsodium.gitbook.io/doc/bindings_for_other_languages) using the public key retrieved from the [Get a repository public key](https://docs.github.com/rest/codespaces/repository-secrets#get-a-repository-public-key) endpoint. */
+  encrypted_value?: string;
+  /** ID of the key you used to encrypt the secret. */
+  key_id?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<EmptyObject>
 ```
 
-### `github.codespaces.createWithPrForAuthenticatedUser`
+<sub>`PUT /repos/{owner}/{repo}/codespaces/secrets/{secret_name}` · `codespaces/create-or-update-repo-secret`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/pulls/{pull_number}/codespaces`
-- **What it does**: Create a codespace from a pull request
-- **OpenAPI operationId**: `codespaces/create-with-pr-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `202`, `401`, `403`, `404`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.getRepoPublicKey`
 
-**Inputs**
-
-- Client input type: `{ location?: string; geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest"; client_ip?: string; machine?: string; devcontainer_path?: string; multi_repo_permissions_opt_out?: boolean; working_directory?: string; idle_timeout_minutes?: number; display_name?: string; retention_period_minutes?: number; owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...`
-- OpenAPI response codes: `201`, `202`, `401`, `403`, `404`, `503`
+Get a repository public key — [API reference](https://docs.github.com/rest/codespaces/repository-secrets#get-a-repository-public-key)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesCreateWithPrForAuthenticatedUserInput = Parameters<typeof github.codespaces.createWithPrForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesCreateWithPrForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.createWithPrForAuthenticatedUser>>;
-
-const input: CodespacesCreateWithPrForAuthenticatedUserInput = {} as { location?: string; geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest"; client_ip?: string; machine?: string; devcontainer_path?: string; multi_repo_permissions_opt_out?: boolean; working_directory?: string; idle_timeout_minutes?: number; display_name?: string; retention_period_minutes?: number; owner: string; repo: string; pull_number: number };
-const result: CodespacesCreateWithPrForAuthenticatedUserOutput = await github.codespaces.createWithPrForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...
+github.codespaces.getRepoPublicKey(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<CodespacesPublicKey>
 ```
 
-### `github.codespaces.listForAuthenticatedUser`
+<sub>`GET /repos/{owner}/{repo}/codespaces/secrets/public-key` · `codespaces/get-repo-public-key`</sub>
 
-- **HTTP**: `GET /user/codespaces`
-- **What it does**: List codespaces for the authenticated user
-- **OpenAPI operationId**: `codespaces/list-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.createWithPrForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number; repository_id?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; codespaces: ({ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: stri...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`, `500`
+Create a codespace from a pull request — [API reference](https://docs.github.com/rest/codespaces/codespaces#create-a-codespace-from-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesListForAuthenticatedUserInput = Parameters<typeof github.codespaces.listForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesListForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.listForAuthenticatedUser>>;
-
-const input: CodespacesListForAuthenticatedUserInput = {} as { per_page?: number; page?: number; repository_id?: number };
-const result: CodespacesListForAuthenticatedUserOutput = await github.codespaces.listForAuthenticatedUser(input);
-
-// Result shape (from schema): { total_count: number; codespaces: ({ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: stri...
+github.codespaces.createWithPrForAuthenticatedUser(input: {
+  /** The requested location for a new codespace. Best efforts are made to respect this upon creation. Assigned by IP if not provided. */
+  location?: string;
+  /** The geographic area for this codespace. If not specified, the value is assigned by IP. This property replaces `location`, which is closing down. */
+  geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest";
+  /** IP for location auto-detection when proxying a request */
+  client_ip?: string;
+  /** Machine type to use for this codespace */
+  machine?: string;
+  /** Path to devcontainer.json config to use for this codespace */
+  devcontainer_path?: string;
+  /** Whether to authorize requested permissions from devcontainer.json */
+  multi_repo_permissions_opt_out?: boolean;
+  /** Working directory for this codespace */
+  working_directory?: string;
+  /** Time in minutes before codespace stops from inactivity */
+  idle_timeout_minutes?: number;
+  /** Display name for this codespace */
+  display_name?: string;
+  /** Duration in minutes after codespace has gone idle in which it will be deleted. Must be integer minutes between 0 and 43200 (30 days). */
+  retention_period_minutes?: number;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<Codespace>
 ```
 
-### `github.codespaces.createForAuthenticatedUser`
+<sub>`POST /repos/{owner}/{repo}/pulls/{pull_number}/codespaces` · `codespaces/create-with-pr-for-authenticated-user`</sub>
 
-- **HTTP**: `POST /user/codespaces`
-- **What it does**: Create a codespace for the authenticated user
-- **OpenAPI operationId**: `codespaces/create-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `202`, `401`, `403`, `404`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.listForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ body: { repository_id: number; ref?: string; location?: string; geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest"; client_ip?: string; machine?: string; devcontainer_path?: string; multi_repo_permissions_opt_out?: boolean; working_directory?: string; idle_timeout_minutes?: number; display_name?: string; retention_period_minutes?: number } | { pull_request: { pull_request_number: number; repository_id: number }; location?: string; geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest"; machine?: string; devcontainer_path?: string; working_directory?: string; idle_timeout_minutes?: number } }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...`
-- OpenAPI response codes: `201`, `202`, `401`, `403`, `404`, `503`
+List codespaces for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#list-codespaces-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesCreateForAuthenticatedUserInput = Parameters<typeof github.codespaces.createForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesCreateForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.createForAuthenticatedUser>>;
-
-const input: CodespacesCreateForAuthenticatedUserInput = {} as { body: { repository_id: number; ref?: string; location?: string; geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest"; client_ip?: string; machine?: string; devcontainer_path?: string; multi_repo_permissions_opt_out?: boolean; working_directory?: string; idle_timeout_minutes?: number; display_name?: string; retention_period_minutes?: number } | { pull_request: { pull_request_number: number; repository_id: number }; location?: string; geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest"; machine?: string; devcontainer_path?: string; working_directory?: string; idle_timeout_minutes?: number } };
-const result: CodespacesCreateForAuthenticatedUserOutput = await github.codespaces.createForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...
+github.codespaces.listForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** ID of the Repository to filter on */
+  repository_id?: number;
+}): Promise<{ total_count: number; codespaces: (Codespace)[] }>
 ```
 
-### `github.codespaces.deleteForAuthenticatedUser`
+<sub>`GET /user/codespaces` · `codespaces/list-for-authenticated-user`</sub>
 
-- **HTTP**: `DELETE /user/codespaces/{codespace_name}`
-- **What it does**: Delete a codespace for the authenticated user
-- **OpenAPI operationId**: `codespaces/delete-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `304`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.createForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ codespace_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `304`, `401`, `403`, `404`, `500`
+Create a codespace for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#create-a-codespace-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesDeleteForAuthenticatedUserInput = Parameters<typeof github.codespaces.deleteForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesDeleteForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.deleteForAuthenticatedUser>>;
-
-const input: CodespacesDeleteForAuthenticatedUserInput = {} as { codespace_name: string };
-const result: CodespacesDeleteForAuthenticatedUserOutput = await github.codespaces.deleteForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.codespaces.createForAuthenticatedUser(input: {
+  body: { repository_id: number; ref?: string; location?: string; geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest"; client_ip?: string; machine?: string; devcontainer_path?: string; multi_repo_permissions_opt_out?: boolean; working_directory?: string; idle_timeout_minutes?: number; display_name?: string; retention_period_minutes?: number } | { pull_request: { pull_request_number: number; repository_id: number }; location?: string; geo?: "EuropeWest" | "SoutheastAsia" | "UsEast" | "UsWest"; machine?: string; devcontainer_path?: string; working_directory?: string; idle_timeout_minutes?: number };
+}): Promise<Codespace>
 ```
 
-### `github.codespaces.getForAuthenticatedUser`
+<sub>`POST /user/codespaces` · `codespaces/create-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/codespaces/{codespace_name}`
-- **What it does**: Get a codespace for the authenticated user
-- **OpenAPI operationId**: `codespaces/get-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.deleteForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ codespace_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`, `500`
+Delete a codespace for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#delete-a-codespace-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesGetForAuthenticatedUserInput = Parameters<typeof github.codespaces.getForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesGetForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.getForAuthenticatedUser>>;
-
-const input: CodespacesGetForAuthenticatedUserInput = {} as { codespace_name: string };
-const result: CodespacesGetForAuthenticatedUserOutput = await github.codespaces.getForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...
+github.codespaces.deleteForAuthenticatedUser(input: {
+  /** The name of the codespace. */
+  codespace_name: string;
+}): Promise<{ [key: string]: unknown }>
 ```
 
-### `github.codespaces.updateForAuthenticatedUser`
+<sub>`DELETE /user/codespaces/{codespace_name}` · `codespaces/delete-for-authenticated-user`</sub>
 
-- **HTTP**: `PATCH /user/codespaces/{codespace_name}`
-- **What it does**: Update a codespace for the authenticated user
-- **OpenAPI operationId**: `codespaces/update-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.getForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ machine?: string; display_name?: string; recent_folders?: (string)[]; codespace_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...`
-- OpenAPI response codes: `200`, `401`, `403`, `404`
+Get a codespace for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#get-a-codespace-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesUpdateForAuthenticatedUserInput = Parameters<typeof github.codespaces.updateForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesUpdateForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.updateForAuthenticatedUser>>;
-
-const input: CodespacesUpdateForAuthenticatedUserInput = {} as { machine?: string; display_name?: string; recent_folders?: (string)[]; codespace_name: string };
-const result: CodespacesUpdateForAuthenticatedUserOutput = await github.codespaces.updateForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...
+github.codespaces.getForAuthenticatedUser(input: {
+  /** The name of the codespace. */
+  codespace_name: string;
+}): Promise<Codespace>
 ```
 
-### `github.codespaces.exportForAuthenticatedUser`
+<sub>`GET /user/codespaces/{codespace_name}` · `codespaces/get-for-authenticated-user`</sub>
 
-- **HTTP**: `POST /user/codespaces/{codespace_name}/exports`
-- **What it does**: Export a codespace for the authenticated user
-- **OpenAPI operationId**: `codespaces/export-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `401`, `403`, `404`, `422`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.updateForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ codespace_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `401`, `403`, `404`, `422`, `500`
+Update a codespace for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#update-a-codespace-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesExportForAuthenticatedUserInput = Parameters<typeof github.codespaces.exportForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesExportForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.exportForAuthenticatedUser>>;
-
-const input: CodespacesExportForAuthenticatedUserInput = {} as { codespace_name: string };
-const result: CodespacesExportForAuthenticatedUserOutput = await github.codespaces.exportForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.codespaces.updateForAuthenticatedUser(input: {
+  /** A valid machine to transition this codespace to. */
+  machine?: string;
+  /** Display name for this codespace */
+  display_name?: string;
+  /** Recently opened folders inside the codespace. It is currently used by the clients to determine the folder path to load the codespace in. */
+  recent_folders?: (string)[];
+  /** The name of the codespace. */
+  codespace_name: string;
+}): Promise<Codespace>
 ```
 
-### `github.codespaces.getExportDetailsForAuthenticatedUser`
+<sub>`PATCH /user/codespaces/{codespace_name}` · `codespaces/update-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/codespaces/{codespace_name}/exports/{export_id}`
-- **What it does**: Get details about a codespace export
-- **OpenAPI operationId**: `codespaces/get-export-details-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.exportForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ codespace_name: string; export_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ state?: string | null; completed_at?: string | null; branch?: string | null; sha?: string | null; id?: string; export_url?: string; html_url?: string | null }`
-- OpenAPI response codes: `200`, `404`
+Export a codespace for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#export-a-codespace-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesGetExportDetailsForAuthenticatedUserInput = Parameters<typeof github.codespaces.getExportDetailsForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesGetExportDetailsForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.getExportDetailsForAuthenticatedUser>>;
-
-const input: CodespacesGetExportDetailsForAuthenticatedUserInput = {} as { codespace_name: string; export_id: string };
-const result: CodespacesGetExportDetailsForAuthenticatedUserOutput = await github.codespaces.getExportDetailsForAuthenticatedUser(input);
-
-// Result shape (from schema): { state?: string | null; completed_at?: string | null; branch?: string | null; sha?: string | null; id?: string; export_url?: string; html_url?: string | null }
+github.codespaces.exportForAuthenticatedUser(input: {
+  /** The name of the codespace. */
+  codespace_name: string;
+}): Promise<CodespaceExportDetails>
 ```
 
-### `github.codespaces.codespaceMachinesForAuthenticatedUser`
+<sub>`POST /user/codespaces/{codespace_name}/exports` · `codespaces/export-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/codespaces/{codespace_name}/machines`
-- **What it does**: List machine types for a codespace
-- **OpenAPI operationId**: `codespaces/codespace-machines-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.getExportDetailsForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ codespace_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; machines: ({ name: string; display_name: string; operating_system: string; storage_in_bytes: number; memory_in_bytes: number; cpus: number; prebuild_availability: "none" | "ready" | "in_progress" ...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`, `500`
+Get details about a codespace export — [API reference](https://docs.github.com/rest/codespaces/codespaces#get-details-about-a-codespace-export)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesCodespaceMachinesForAuthenticatedUserInput = Parameters<typeof github.codespaces.codespaceMachinesForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesCodespaceMachinesForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.codespaceMachinesForAuthenticatedUser>>;
-
-const input: CodespacesCodespaceMachinesForAuthenticatedUserInput = {} as { codespace_name: string };
-const result: CodespacesCodespaceMachinesForAuthenticatedUserOutput = await github.codespaces.codespaceMachinesForAuthenticatedUser(input);
-
-// Result shape (from schema): { total_count: number; machines: ({ name: string; display_name: string; operating_system: string; storage_in_bytes: number; memory_in_bytes: number; cpus: number; prebuild_availability: "none" | "ready" | "in_progress" ...
+github.codespaces.getExportDetailsForAuthenticatedUser(input: {
+  /** The name of the codespace. */
+  codespace_name: string;
+  /** The ID of the export operation, or `latest`. Currently only `latest` is currently supported. */
+  export_id: string;
+}): Promise<CodespaceExportDetails>
 ```
 
-### `github.codespaces.publishForAuthenticatedUser`
+<sub>`GET /user/codespaces/{codespace_name}/exports/{export_id}` · `codespaces/get-export-details-for-authenticated-user`</sub>
 
-- **HTTP**: `POST /user/codespaces/{codespace_name}/publish`
-- **What it does**: Create a repository from an unpublished codespace
-- **OpenAPI operationId**: `codespaces/publish-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.codespaceMachinesForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ name?: string; private?: boolean; codespace_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...`
-- OpenAPI response codes: `201`, `401`, `403`, `404`, `422`
+List machine types for a codespace — [API reference](https://docs.github.com/rest/codespaces/machines#list-machine-types-for-a-codespace)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesPublishForAuthenticatedUserInput = Parameters<typeof github.codespaces.publishForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesPublishForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.publishForAuthenticatedUser>>;
-
-const input: CodespacesPublishForAuthenticatedUserInput = {} as { name?: string; private?: boolean; codespace_name: string };
-const result: CodespacesPublishForAuthenticatedUserOutput = await github.codespaces.publishForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...
+github.codespaces.codespaceMachinesForAuthenticatedUser(input: {
+  /** The name of the codespace. */
+  codespace_name: string;
+}): Promise<{ total_count: number; machines: (CodespaceMachine)[] }>
 ```
 
-### `github.codespaces.startForAuthenticatedUser`
+<sub>`GET /user/codespaces/{codespace_name}/machines` · `codespaces/codespace-machines-for-authenticated-user`</sub>
 
-- **HTTP**: `POST /user/codespaces/{codespace_name}/start`
-- **What it does**: Start a codespace for the authenticated user
-- **OpenAPI operationId**: `codespaces/start-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `400`, `401`, `402`, `403`, `404`, `409`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.publishForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ codespace_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...`
-- OpenAPI response codes: `200`, `304`, `400`, `401`, `402`, `403`, `404`, `409`, `500`
+Create a repository from an unpublished codespace — [API reference](https://docs.github.com/rest/codespaces/codespaces#create-a-repository-from-an-unpublished-codespace)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesStartForAuthenticatedUserInput = Parameters<typeof github.codespaces.startForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesStartForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.startForAuthenticatedUser>>;
-
-const input: CodespacesStartForAuthenticatedUserInput = {} as { codespace_name: string };
-const result: CodespacesStartForAuthenticatedUserOutput = await github.codespaces.startForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...
+github.codespaces.publishForAuthenticatedUser(input: {
+  /** A name for the new repository. */
+  name?: string;
+  /** Whether the new repository should be private. */
+  private?: boolean;
+  /** The name of the codespace. */
+  codespace_name: string;
+}): Promise<CodespaceWithFullRepository>
 ```
 
-### `github.codespaces.stopForAuthenticatedUser`
+<sub>`POST /user/codespaces/{codespace_name}/publish` · `codespaces/publish-for-authenticated-user`</sub>
 
-- **HTTP**: `POST /user/codespaces/{codespace_name}/stop`
-- **What it does**: Stop a codespace for the authenticated user
-- **OpenAPI operationId**: `codespaces/stop-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.startForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ codespace_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...`
-- OpenAPI response codes: `200`, `401`, `403`, `404`, `500`
+Start a codespace for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#start-a-codespace-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesStopForAuthenticatedUserInput = Parameters<typeof github.codespaces.stopForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesStopForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.stopForAuthenticatedUser>>;
-
-const input: CodespacesStopForAuthenticatedUserInput = {} as { codespace_name: string };
-const result: CodespacesStopForAuthenticatedUserOutput = await github.codespaces.stopForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; name: string; display_name?: string | null; environment_id: string | null; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id:...
+github.codespaces.startForAuthenticatedUser(input: {
+  /** The name of the codespace. */
+  codespace_name: string;
+}): Promise<Codespace>
 ```
 
-### `github.codespaces.listSecretsForAuthenticatedUser`
+<sub>`POST /user/codespaces/{codespace_name}/start` · `codespaces/start-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/codespaces/secrets`
-- **What it does**: List secrets for the authenticated user
-- **OpenAPI operationId**: `codespaces/list-secrets-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.stopForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; secrets: ({ name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url: string })[] }`
-- OpenAPI response codes: `200`
+Stop a codespace for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/codespaces#stop-a-codespace-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesListSecretsForAuthenticatedUserInput = Parameters<typeof github.codespaces.listSecretsForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesListSecretsForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.listSecretsForAuthenticatedUser>>;
-
-const input: CodespacesListSecretsForAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: CodespacesListSecretsForAuthenticatedUserOutput = await github.codespaces.listSecretsForAuthenticatedUser(input);
-
-// Result shape (from schema): { total_count: number; secrets: ({ name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url: string })[] }
+github.codespaces.stopForAuthenticatedUser(input: {
+  /** The name of the codespace. */
+  codespace_name: string;
+}): Promise<Codespace>
 ```
 
-### `github.codespaces.deleteSecretForAuthenticatedUser`
+<sub>`POST /user/codespaces/{codespace_name}/stop` · `codespaces/stop-for-authenticated-user`</sub>
 
-- **HTTP**: `DELETE /user/codespaces/secrets/{secret_name}`
-- **What it does**: Delete a secret for the authenticated user
-- **OpenAPI operationId**: `codespaces/delete-secret-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.listSecretsForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+List secrets for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/secrets#list-secrets-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesDeleteSecretForAuthenticatedUserInput = Parameters<typeof github.codespaces.deleteSecretForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesDeleteSecretForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.deleteSecretForAuthenticatedUser>>;
-
-const input: CodespacesDeleteSecretForAuthenticatedUserInput = {} as { secret_name: string };
-const result: CodespacesDeleteSecretForAuthenticatedUserOutput = await github.codespaces.deleteSecretForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.codespaces.listSecretsForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; secrets: (CodespacesSecret)[] }>
 ```
 
-### `github.codespaces.getSecretForAuthenticatedUser`
+<sub>`GET /user/codespaces/secrets` · `codespaces/list-secrets-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/codespaces/secrets/{secret_name}`
-- **What it does**: Get a secret for the authenticated user
-- **OpenAPI operationId**: `codespaces/get-secret-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.deleteSecretForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url: string }`
-- OpenAPI response codes: `200`
+Delete a secret for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/secrets#delete-a-secret-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesGetSecretForAuthenticatedUserInput = Parameters<typeof github.codespaces.getSecretForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesGetSecretForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.getSecretForAuthenticatedUser>>;
-
-const input: CodespacesGetSecretForAuthenticatedUserInput = {} as { secret_name: string };
-const result: CodespacesGetSecretForAuthenticatedUserOutput = await github.codespaces.getSecretForAuthenticatedUser(input);
-
-// Result shape (from schema): { name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url: string }
+github.codespaces.deleteSecretForAuthenticatedUser(input: {
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<unknown>
 ```
 
-### `github.codespaces.createOrUpdateSecretForAuthenticatedUser`
+<sub>`DELETE /user/codespaces/secrets/{secret_name}` · `codespaces/delete-secret-for-authenticated-user`</sub>
 
-- **HTTP**: `PUT /user/codespaces/secrets/{secret_name}`
-- **What it does**: Create or update a secret for the authenticated user
-- **OpenAPI operationId**: `codespaces/create-or-update-secret-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `204`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.getSecretForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ encrypted_value?: string; key_id: string; selected_repository_ids?: (number | string)[]; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`, `204`, `404`, `422`
+Get a secret for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/secrets#get-a-secret-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesCreateOrUpdateSecretForAuthenticatedUserInput = Parameters<typeof github.codespaces.createOrUpdateSecretForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesCreateOrUpdateSecretForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.createOrUpdateSecretForAuthenticatedUser>>;
-
-const input: CodespacesCreateOrUpdateSecretForAuthenticatedUserInput = {} as { encrypted_value?: string; key_id: string; selected_repository_ids?: (number | string)[]; secret_name: string };
-const result: CodespacesCreateOrUpdateSecretForAuthenticatedUserOutput = await github.codespaces.createOrUpdateSecretForAuthenticatedUser(input);
-
-// Result shape (from schema): { [key: string]: unknown }
+github.codespaces.getSecretForAuthenticatedUser(input: {
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<CodespacesSecret>
 ```
 
-### `github.codespaces.listRepositoriesForSecretForAuthenticatedUser`
+<sub>`GET /user/codespaces/secrets/{secret_name}` · `codespaces/get-secret-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/codespaces/secrets/{secret_name}/repositories`
-- **What it does**: List selected repositories for a user secret
-- **OpenAPI operationId**: `codespaces/list-repositories-for-secret-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.createOrUpdateSecretForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string;...`
-- OpenAPI response codes: `200`, `401`, `403`, `404`, `500`
+Create or update a secret for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/secrets#create-or-update-a-secret-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesListRepositoriesForSecretForAuthenticatedUserInput = Parameters<typeof github.codespaces.listRepositoriesForSecretForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesListRepositoriesForSecretForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.listRepositoriesForSecretForAuthenticatedUser>>;
-
-const input: CodespacesListRepositoriesForSecretForAuthenticatedUserInput = {} as { secret_name: string };
-const result: CodespacesListRepositoriesForSecretForAuthenticatedUserOutput = await github.codespaces.listRepositoriesForSecretForAuthenticatedUser(input);
-
-// Result shape (from schema): { total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string;...
+github.codespaces.createOrUpdateSecretForAuthenticatedUser(input: {
+  /** Value for your secret, encrypted with [LibSodium](https://libsodium.gitbook.io/doc/bindings_for_other_languages) using the public key retrieved from the [Get the public key for the authenticated user](https://docs.github.com/rest/codespaces/secrets#get-public-key-for-the-authenticated-user) endpoint. */
+  encrypted_value?: string;
+  /** ID of the key you used to encrypt the secret. */
+  key_id: string;
+  /** An array of repository ids that can access the user secret. You can manage the list of selected repositories using the [List selected repositories for a user secret](https://docs.github.com/rest/codespaces/secrets#list-selected-repositories-for-a-user-secret), [Set selected repositories for a user secret](https://docs.github.com/rest/codespaces/secrets#set-selected-repositories-for-a-user-secret), and [Remove a selected repository from a user secret](https://docs.github.com/rest/codespaces/secrets#remove-a-selected-repository-from-a-user-secret) endpoints. */
+  selected_repository_ids?: (number | string)[];
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<EmptyObject>
 ```
 
-### `github.codespaces.setRepositoriesForSecretForAuthenticatedUser`
+<sub>`PUT /user/codespaces/secrets/{secret_name}` · `codespaces/create-or-update-secret-for-authenticated-user`</sub>
 
-- **HTTP**: `PUT /user/codespaces/secrets/{secret_name}/repositories`
-- **What it does**: Set selected repositories for a user secret
-- **OpenAPI operationId**: `codespaces/set-repositories-for-secret-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.listRepositoriesForSecretForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ selected_repository_ids: (number)[]; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `401`, `403`, `404`, `500`
+List selected repositories for a user secret — [API reference](https://docs.github.com/rest/codespaces/secrets#list-selected-repositories-for-a-user-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesSetRepositoriesForSecretForAuthenticatedUserInput = Parameters<typeof github.codespaces.setRepositoriesForSecretForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesSetRepositoriesForSecretForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.setRepositoriesForSecretForAuthenticatedUser>>;
-
-const input: CodespacesSetRepositoriesForSecretForAuthenticatedUserInput = {} as { selected_repository_ids: (number)[]; secret_name: string };
-const result: CodespacesSetRepositoriesForSecretForAuthenticatedUserOutput = await github.codespaces.setRepositoriesForSecretForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.codespaces.listRepositoriesForSecretForAuthenticatedUser(input: {
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<{ total_count: number; repositories: (MinimalRepository)[] }>
 ```
 
-### `github.codespaces.removeRepositoryForSecretForAuthenticatedUser`
+<sub>`GET /user/codespaces/secrets/{secret_name}/repositories` · `codespaces/list-repositories-for-secret-for-authenticated-user`</sub>
 
-- **HTTP**: `DELETE /user/codespaces/secrets/{secret_name}/repositories/{repository_id}`
-- **What it does**: Remove a selected repository from a user secret
-- **OpenAPI operationId**: `codespaces/remove-repository-for-secret-for-authenticated-user`
-- **Path params**: `repository_id`
-- **Query params**: None
-- **Response codes**: `204`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.setRepositoriesForSecretForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ secret_name: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `401`, `403`, `404`, `500`
+Set selected repositories for a user secret — [API reference](https://docs.github.com/rest/codespaces/secrets#set-selected-repositories-for-a-user-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesRemoveRepositoryForSecretForAuthenticatedUserInput = Parameters<typeof github.codespaces.removeRepositoryForSecretForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesRemoveRepositoryForSecretForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.removeRepositoryForSecretForAuthenticatedUser>>;
-
-const input: CodespacesRemoveRepositoryForSecretForAuthenticatedUserInput = {} as { secret_name: string; repository_id: number };
-const result: CodespacesRemoveRepositoryForSecretForAuthenticatedUserOutput = await github.codespaces.removeRepositoryForSecretForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.codespaces.setRepositoriesForSecretForAuthenticatedUser(input: {
+  /** An array of repository ids for which a codespace can access the secret. You can manage the list of selected repositories using the [List selected repositories for a user secret](https://docs.github.com/rest/codespaces/secrets#list-selected-repositories-for-a-user-secret), [Add a selected repository to a user secret](https://docs.github.com/rest/codespaces/secrets#add-a-selected-repository-to-a-user-secret), and [Remove a selected repository from a user secret](https://docs.github.com/rest/codespaces/secrets#remove-a-selected-repository-from-a-user-secret) endpoints. */
+  selected_repository_ids: (number)[];
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<BasicError>
 ```
 
-### `github.codespaces.addRepositoryForSecretForAuthenticatedUser`
+<sub>`PUT /user/codespaces/secrets/{secret_name}/repositories` · `codespaces/set-repositories-for-secret-for-authenticated-user`</sub>
 
-- **HTTP**: `PUT /user/codespaces/secrets/{secret_name}/repositories/{repository_id}`
-- **What it does**: Add a selected repository to a user secret
-- **OpenAPI operationId**: `codespaces/add-repository-for-secret-for-authenticated-user`
-- **Path params**: `repository_id`
-- **Query params**: None
-- **Response codes**: `204`, `401`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.removeRepositoryForSecretForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ secret_name: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `401`, `403`, `404`, `500`
+Remove a selected repository from a user secret — [API reference](https://docs.github.com/rest/codespaces/secrets#remove-a-selected-repository-from-a-user-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesAddRepositoryForSecretForAuthenticatedUserInput = Parameters<typeof github.codespaces.addRepositoryForSecretForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesAddRepositoryForSecretForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.addRepositoryForSecretForAuthenticatedUser>>;
-
-const input: CodespacesAddRepositoryForSecretForAuthenticatedUserInput = {} as { secret_name: string; repository_id: number };
-const result: CodespacesAddRepositoryForSecretForAuthenticatedUserOutput = await github.codespaces.addRepositoryForSecretForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.codespaces.removeRepositoryForSecretForAuthenticatedUser(input: {
+  /** The name of the secret. */
+  secret_name: string;
+  repository_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.codespaces.getPublicKeyForAuthenticatedUser`
+<sub>`DELETE /user/codespaces/secrets/{secret_name}/repositories/{repository_id}` · `codespaces/remove-repository-for-secret-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/codespaces/secrets/public-key`
-- **What it does**: Get public key for the authenticated user
-- **OpenAPI operationId**: `codespaces/get-public-key-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codespaces.addRepositoryForSecretForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ key_id: string; key: string }`
-- OpenAPI response codes: `200`
+Add a selected repository to a user secret — [API reference](https://docs.github.com/rest/codespaces/secrets#add-a-selected-repository-to-a-user-secret)
 
 ```ts
-import github from "@utdk/github";
-
-type CodespacesGetPublicKeyForAuthenticatedUserInput = Parameters<typeof github.codespaces.getPublicKeyForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type CodespacesGetPublicKeyForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.codespaces.getPublicKeyForAuthenticatedUser>>;
-
-const result: CodespacesGetPublicKeyForAuthenticatedUserOutput = await github.codespaces.getPublicKeyForAuthenticatedUser();
-
-// Result shape (from schema): { key_id: string; key: string }
+github.codespaces.addRepositoryForSecretForAuthenticatedUser(input: {
+  /** The name of the secret. */
+  secret_name: string;
+  repository_id: number;
+}): Promise<BasicError>
 ```
 
+<sub>`PUT /user/codespaces/secrets/{secret_name}/repositories/{repository_id}` · `codespaces/add-repository-for-secret-for-authenticated-user`</sub>
+
+## `github.codespaces.getPublicKeyForAuthenticatedUser`
+
+Get public key for the authenticated user — [API reference](https://docs.github.com/rest/codespaces/secrets#get-public-key-for-the-authenticated-user)
+
+```ts
+github.codespaces.getPublicKeyForAuthenticatedUser(): Promise<CodespacesUserPublicKey>
+```
+
+<sub>`GET /user/codespaces/secrets/public-key` · `codespaces/get-public-key-for-authenticated-user`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

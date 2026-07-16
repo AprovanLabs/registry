@@ -91,7 +91,7 @@ describe("docs CLI integration flow", () => {
       utdk?: { docs?: { manifestPath?: string; promptHash?: string } };
     };
 
-    expect(readme).toContain("## Capability guides");
+    expect(readme).toContain("## Operations");
     expect(packageJson.utdk?.docs?.manifestPath).toContain("manifest.json");
     expect(packageJson.utdk?.docs?.promptHash).toMatch(/^[a-f0-9]{64}$/);
   });
@@ -111,7 +111,7 @@ describe("docs CLI integration flow", () => {
     expect(augmentResult.staleReason).toBe("docs-cache-missing");
 
     const readme = await readFile(augmentResult.readmePath, "utf8");
-    expect(readme).toContain("## Capability guides");
+    expect(readme).toContain("## Operations");
   });
 
   it("blocks non-stale overwrite unless overwrite-docs is provided", async () => {

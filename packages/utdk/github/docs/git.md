@@ -1,453 +1,261 @@
 # Git
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.git.createBlob`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/git/blobs`
-- **What it does**: Create a blob
-- **OpenAPI operationId**: `git/create-blob`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ content: string; encoding?: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; sha: string }`
-- OpenAPI response codes: `201`, `403`, `404`, `409`, `422`
+13 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type GitCreateBlobInput = Parameters<typeof github.git.createBlob> extends [infer T, ...unknown[]] ? T : undefined;
-type GitCreateBlobOutput = Awaited<ReturnType<typeof github.git.createBlob>>;
-
-const input: GitCreateBlobInput = {} as { content: string; encoding?: string; owner: string; repo: string };
-const result: GitCreateBlobOutput = await github.git.createBlob(input);
-
-// Result shape (from schema): { url: string; sha: string }
 ```
 
-### `github.git.getBlob`
+## `github.git.createBlob`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/git/blobs/{file_sha}`
-- **What it does**: Get a blob
-- **OpenAPI operationId**: `git/get-blob`
-- **Path params**: `file_sha`
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; file_sha: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ content: string; encoding: string; url: string; sha: string; size: number | null; node_id: string; highlighted_content?: string }`
-- OpenAPI response codes: `200`, `403`, `404`, `409`, `422`
+Create a blob — [API reference](https://docs.github.com/rest/git/blobs#create-a-blob)
 
 ```ts
-import github from "@utdk/github";
-
-type GitGetBlobInput = Parameters<typeof github.git.getBlob> extends [infer T, ...unknown[]] ? T : undefined;
-type GitGetBlobOutput = Awaited<ReturnType<typeof github.git.getBlob>>;
-
-const input: GitGetBlobInput = {} as { owner: string; repo: string; file_sha: string };
-const result: GitGetBlobOutput = await github.git.getBlob(input);
-
-// Result shape (from schema): { content: string; encoding: string; url: string; sha: string; size: number | null; node_id: string; highlighted_content?: string }
+github.git.createBlob(input: {
+  /** The new blob's content. */
+  content: string;
+  /** The encoding used for `content`. Currently, `"utf-8"` and `"base64"` are supported. */
+  encoding?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ShortBlob>
 ```
 
-### `github.git.createCommit`
+<sub>`POST /repos/{owner}/{repo}/git/blobs` · `git/create-blob`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/git/commits`
-- **What it does**: Create a commit
-- **OpenAPI operationId**: `git/create-commit`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.getBlob`
 
-**Inputs**
-
-- Client input type: `{ message: string; tree: string; parents?: (string)[]; author?: { name: string; email: string; date?: string }; committer?: { name?: string; email?: string; date?: string }; signature?: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ sha: string; node_id: string; url: string; author: { date: string; email: string; name: string }; committer: { date: string; email: string; name: string }; message: string; tree: { sha: string; url: string }; parents:...`
-- OpenAPI response codes: `201`, `404`, `409`, `422`
+Get a blob — [API reference](https://docs.github.com/rest/git/blobs#get-a-blob)
 
 ```ts
-import github from "@utdk/github";
-
-type GitCreateCommitInput = Parameters<typeof github.git.createCommit> extends [infer T, ...unknown[]] ? T : undefined;
-type GitCreateCommitOutput = Awaited<ReturnType<typeof github.git.createCommit>>;
-
-const input: GitCreateCommitInput = {} as { message: string; tree: string; parents?: (string)[]; author?: { name: string; email: string; date?: string }; committer?: { name?: string; email?: string; date?: string }; signature?: string; owner: string; repo: string };
-const result: GitCreateCommitOutput = await github.git.createCommit(input);
-
-// Result shape (from schema): { sha: string; node_id: string; url: string; author: { date: string; email: string; name: string }; committer: { date: string; email: string; name: string }; message: string; tree: { sha: string; url: string }; parents:...
+github.git.getBlob(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  file_sha: string;
+}): Promise<Blob>
 ```
 
-### `github.git.getCommit`
+<sub>`GET /repos/{owner}/{repo}/git/blobs/{file_sha}` · `git/get-blob`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/git/commits/{commit_sha}`
-- **What it does**: Get a commit object
-- **OpenAPI operationId**: `git/get-commit`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.createCommit`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; commit_sha: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ sha: string; node_id: string; url: string; author: { date: string; email: string; name: string }; committer: { date: string; email: string; name: string }; message: string; tree: { sha: string; url: string }; parents:...`
-- OpenAPI response codes: `200`, `404`, `409`
+Create a commit — [API reference](https://docs.github.com/rest/git/commits#create-a-commit)
 
 ```ts
-import github from "@utdk/github";
-
-type GitGetCommitInput = Parameters<typeof github.git.getCommit> extends [infer T, ...unknown[]] ? T : undefined;
-type GitGetCommitOutput = Awaited<ReturnType<typeof github.git.getCommit>>;
-
-const input: GitGetCommitInput = {} as { owner: string; repo: string; commit_sha: string };
-const result: GitGetCommitOutput = await github.git.getCommit(input);
-
-// Result shape (from schema): { sha: string; node_id: string; url: string; author: { date: string; email: string; name: string }; committer: { date: string; email: string; name: string }; message: string; tree: { sha: string; url: string }; parents:...
+github.git.createCommit(input: {
+  /** The commit message */
+  message: string;
+  /** The SHA of the tree object this commit points to */
+  tree: string;
+  /** The full SHAs of the commits that were the parents of this commit. If omitted or empty, the commit will be written as a root commit. For a single parent, an array of one SHA should be provided; for a merge commit, an array of more than one should be provided. */
+  parents?: (string)[];
+  /** Information about the author of the commit. By default, the `author` will be the authenticated user and the current date. See the `author` and `committer` object below for details. */
+  author?: { name: string; email: string; date?: string };
+  /** Information about the person who is making the commit. By default, `committer` will use the information set in `author`. See the `author` and `committer` object below for details. */
+  committer?: { name?: string; email?: string; date?: string };
+  /** The [PGP signature](https://en.wikipedia.org/wiki/Pretty_Good_Privacy) of the commit. GitHub adds the signature to the `gpgsig` header of the created commit. For a commit signature to be verifiable by Git or GitHub, it must be an ASCII-armored detached PGP signature over the string commit as it would be written to the object database. To pass a `signature` parameter, you need to first manually create a valid PGP signature, which can be complicated. You may find it easier to [use the command line](https://git-scm.com/book/id/v2/Git-Tools-Signing-Your-Work) to create signed commits. */
+  signature?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<GitCommit>
 ```
 
-### `github.git.listMatchingRefs`
+<sub>`POST /repos/{owner}/{repo}/git/commits` · `git/create-commit`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/git/matching-refs/{ref}`
-- **What it does**: List matching references
-- **OpenAPI operationId**: `git/list-matching-refs`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.getCommit`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ ref: string; node_id: string; url: string; object: { type: string; sha: string; url: string } })[]`
-- OpenAPI response codes: `200`, `409`
+Get a commit object — [API reference](https://docs.github.com/rest/git/commits#get-a-commit-object)
 
 ```ts
-import github from "@utdk/github";
-
-type GitListMatchingRefsInput = Parameters<typeof github.git.listMatchingRefs> extends [infer T, ...unknown[]] ? T : undefined;
-type GitListMatchingRefsOutput = Awaited<ReturnType<typeof github.git.listMatchingRefs>>;
-
-const input: GitListMatchingRefsInput = {} as { owner: string; repo: string; ref: string };
-const result: GitListMatchingRefsOutput = await github.git.listMatchingRefs(input);
-
-// Result shape (from schema): ({ ref: string; node_id: string; url: string; object: { type: string; sha: string; url: string } })[]
+github.git.getCommit(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The SHA of the commit. */
+  commit_sha: string;
+}): Promise<GitCommit>
 ```
 
-### `github.git.getRef`
+<sub>`GET /repos/{owner}/{repo}/git/commits/{commit_sha}` · `git/get-commit`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/git/ref/{ref}`
-- **What it does**: Get a reference
-- **OpenAPI operationId**: `git/get-ref`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.listMatchingRefs`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ ref: string; node_id: string; url: string; object: { type: string; sha: string; url: string } }`
-- OpenAPI response codes: `200`, `404`, `409`
+List matching references — [API reference](https://docs.github.com/rest/git/refs#list-matching-references)
 
 ```ts
-import github from "@utdk/github";
-
-type GitGetRefInput = Parameters<typeof github.git.getRef> extends [infer T, ...unknown[]] ? T : undefined;
-type GitGetRefOutput = Awaited<ReturnType<typeof github.git.getRef>>;
-
-const input: GitGetRefInput = {} as { owner: string; repo: string; ref: string };
-const result: GitGetRefOutput = await github.git.getRef(input);
-
-// Result shape (from schema): { ref: string; node_id: string; url: string; object: { type: string; sha: string; url: string } }
+github.git.listMatchingRefs(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The Git reference. For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
+  ref: string;
+}): Promise<(GitRef)[]>
 ```
 
-### `github.git.createRef`
+<sub>`GET /repos/{owner}/{repo}/git/matching-refs/{ref}` · `git/list-matching-refs`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/git/refs`
-- **What it does**: Create a reference
-- **OpenAPI operationId**: `git/create-ref`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.getRef`
 
-**Inputs**
-
-- Client input type: `{ ref: string; sha: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ ref: string; node_id: string; url: string; object: { type: string; sha: string; url: string } }`
-- OpenAPI response codes: `201`, `409`, `422`
+Get a reference — [API reference](https://docs.github.com/rest/git/refs#get-a-reference)
 
 ```ts
-import github from "@utdk/github";
-
-type GitCreateRefInput = Parameters<typeof github.git.createRef> extends [infer T, ...unknown[]] ? T : undefined;
-type GitCreateRefOutput = Awaited<ReturnType<typeof github.git.createRef>>;
-
-const input: GitCreateRefInput = {} as { ref: string; sha: string; owner: string; repo: string };
-const result: GitCreateRefOutput = await github.git.createRef(input);
-
-// Result shape (from schema): { ref: string; node_id: string; url: string; object: { type: string; sha: string; url: string } }
+github.git.getRef(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The Git reference. For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
+  ref: string;
+}): Promise<GitRef>
 ```
 
-### `github.git.deleteRef`
+<sub>`GET /repos/{owner}/{repo}/git/ref/{ref}` · `git/get-ref`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/git/refs/{ref}`
-- **What it does**: Delete a reference
-- **OpenAPI operationId**: `git/delete-ref`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.createRef`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`, `422`
+Create a reference — [API reference](https://docs.github.com/rest/git/refs#create-a-reference)
 
 ```ts
-import github from "@utdk/github";
-
-type GitDeleteRefInput = Parameters<typeof github.git.deleteRef> extends [infer T, ...unknown[]] ? T : undefined;
-type GitDeleteRefOutput = Awaited<ReturnType<typeof github.git.deleteRef>>;
-
-const input: GitDeleteRefInput = {} as { owner: string; repo: string; ref: string };
-const result: GitDeleteRefOutput = await github.git.deleteRef(input);
-
-// Result shape (from schema): unknown
+github.git.createRef(input: {
+  /** The name of the fully qualified reference (ie: `refs/heads/master`). If it doesn't start with 'refs' and have at least two slashes, it will be rejected. */
+  ref: string;
+  /** The SHA1 value for this reference. */
+  sha: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<GitRef>
 ```
 
-### `github.git.updateRef`
+<sub>`POST /repos/{owner}/{repo}/git/refs` · `git/create-ref`</sub>
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/git/refs/{ref}`
-- **What it does**: Update a reference
-- **OpenAPI operationId**: `git/update-ref`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.deleteRef`
 
-**Inputs**
-
-- Client input type: `{ sha: string; force?: boolean; owner: string; repo: string; ref: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ ref: string; node_id: string; url: string; object: { type: string; sha: string; url: string } }`
-- OpenAPI response codes: `200`, `409`, `422`
+Delete a reference — [API reference](https://docs.github.com/rest/git/refs#delete-a-reference)
 
 ```ts
-import github from "@utdk/github";
-
-type GitUpdateRefInput = Parameters<typeof github.git.updateRef> extends [infer T, ...unknown[]] ? T : undefined;
-type GitUpdateRefOutput = Awaited<ReturnType<typeof github.git.updateRef>>;
-
-const input: GitUpdateRefInput = {} as { sha: string; force?: boolean; owner: string; repo: string; ref: string };
-const result: GitUpdateRefOutput = await github.git.updateRef(input);
-
-// Result shape (from schema): { ref: string; node_id: string; url: string; object: { type: string; sha: string; url: string } }
+github.git.deleteRef(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The Git reference. For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
+  ref: string;
+}): Promise<BasicError>
 ```
 
-### `github.git.createTag`
+<sub>`DELETE /repos/{owner}/{repo}/git/refs/{ref}` · `git/delete-ref`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/git/tags`
-- **What it does**: Create a tag object
-- **OpenAPI operationId**: `git/create-tag`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.updateRef`
 
-**Inputs**
-
-- Client input type: `{ tag: string; message: string; object: string; type: "commit" | "tree" | "blob"; tagger?: { name: string; email: string; date?: string }; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ node_id: string; tag: string; sha: string; url: string; message: string; tagger: { date: string; email: string; name: string }; object: { sha: string; type: string; url: string }; verification?: { verified: boolean; r...`
-- OpenAPI response codes: `201`, `409`, `422`
+Update a reference — [API reference](https://docs.github.com/rest/git/refs#update-a-reference)
 
 ```ts
-import github from "@utdk/github";
-
-type GitCreateTagInput = Parameters<typeof github.git.createTag> extends [infer T, ...unknown[]] ? T : undefined;
-type GitCreateTagOutput = Awaited<ReturnType<typeof github.git.createTag>>;
-
-const input: GitCreateTagInput = {} as { tag: string; message: string; object: string; type: "commit" | "tree" | "blob"; tagger?: { name: string; email: string; date?: string }; owner: string; repo: string };
-const result: GitCreateTagOutput = await github.git.createTag(input);
-
-// Result shape (from schema): { node_id: string; tag: string; sha: string; url: string; message: string; tagger: { date: string; email: string; name: string }; object: { sha: string; type: string; url: string }; verification?: { verified: boolean; r...
+github.git.updateRef(input: {
+  /** The SHA1 value to set this reference to */
+  sha: string;
+  /** Indicates whether to force the update or to make sure the update is a fast-forward update. Leaving this out or setting it to `false` will make sure you're not overwriting work. */
+  force?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The Git reference. For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
+  ref: string;
+}): Promise<GitRef>
 ```
 
-### `github.git.getTag`
+<sub>`PATCH /repos/{owner}/{repo}/git/refs/{ref}` · `git/update-ref`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/git/tags/{tag_sha}`
-- **What it does**: Get a tag
-- **OpenAPI operationId**: `git/get-tag`
-- **Path params**: `tag_sha`
-- **Query params**: None
-- **Response codes**: `200`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.createTag`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; tag_sha: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ node_id: string; tag: string; sha: string; url: string; message: string; tagger: { date: string; email: string; name: string }; object: { sha: string; type: string; url: string }; verification?: { verified: boolean; r...`
-- OpenAPI response codes: `200`, `404`, `409`
+Create a tag object — [API reference](https://docs.github.com/rest/git/tags#create-a-tag-object)
 
 ```ts
-import github from "@utdk/github";
-
-type GitGetTagInput = Parameters<typeof github.git.getTag> extends [infer T, ...unknown[]] ? T : undefined;
-type GitGetTagOutput = Awaited<ReturnType<typeof github.git.getTag>>;
-
-const input: GitGetTagInput = {} as { owner: string; repo: string; tag_sha: string };
-const result: GitGetTagOutput = await github.git.getTag(input);
-
-// Result shape (from schema): { node_id: string; tag: string; sha: string; url: string; message: string; tagger: { date: string; email: string; name: string }; object: { sha: string; type: string; url: string }; verification?: { verified: boolean; r...
+github.git.createTag(input: {
+  /** The tag's name. This is typically a version (e.g., "v0.0.1"). */
+  tag: string;
+  /** The tag message. */
+  message: string;
+  /** The SHA of the git object this is tagging. */
+  object: string;
+  /** The type of the object we're tagging. Normally this is a `commit` but it can also be a `tree` or a `blob`. */
+  type: "commit" | "tree" | "blob";
+  /** An object with information about the individual creating the tag. */
+  tagger?: { name: string; email: string; date?: string };
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<GitTag>
 ```
 
-### `github.git.createTree`
+<sub>`POST /repos/{owner}/{repo}/git/tags` · `git/create-tag`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/git/trees`
-- **What it does**: Create a tree
-- **OpenAPI operationId**: `git/create-tree`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.getTag`
 
-**Inputs**
-
-- Client input type: `{ tree: ({ path?: string; mode?: "100644" | "100755" | "040000" | "160000" | "120000"; type?: "blob" | "tree" | "commit"; sha?: string | null; content?: string })[]; base_tree?: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ sha: string; url?: string; truncated: boolean; tree: ({ path: string; mode: string; type: string; sha: string; size?: number; url?: string })[] }`
-- OpenAPI response codes: `201`, `403`, `404`, `409`, `422`
+Get a tag — [API reference](https://docs.github.com/rest/git/tags#get-a-tag)
 
 ```ts
-import github from "@utdk/github";
-
-type GitCreateTreeInput = Parameters<typeof github.git.createTree> extends [infer T, ...unknown[]] ? T : undefined;
-type GitCreateTreeOutput = Awaited<ReturnType<typeof github.git.createTree>>;
-
-const input: GitCreateTreeInput = {} as { tree: ({ path?: string; mode?: "100644" | "100755" | "040000" | "160000" | "120000"; type?: "blob" | "tree" | "commit"; sha?: string | null; content?: string })[]; base_tree?: string; owner: string; repo: string };
-const result: GitCreateTreeOutput = await github.git.createTree(input);
-
-// Result shape (from schema): { sha: string; url?: string; truncated: boolean; tree: ({ path: string; mode: string; type: string; sha: string; size?: number; url?: string })[] }
+github.git.getTag(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  tag_sha: string;
+}): Promise<GitTag>
 ```
 
-### `github.git.getTree`
+<sub>`GET /repos/{owner}/{repo}/git/tags/{tag_sha}` · `git/get-tag`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/git/trees/{tree_sha}`
-- **What it does**: Get a tree
-- **OpenAPI operationId**: `git/get-tree`
-- **Path params**: `tree_sha`
-- **Query params**: `recursive`
-- **Response codes**: `200`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.git.createTree`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; tree_sha: string; recursive?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ sha: string; url?: string; truncated: boolean; tree: ({ path: string; mode: string; type: string; sha: string; size?: number; url?: string })[] }`
-- OpenAPI response codes: `200`, `404`, `409`, `422`
+Create a tree — [API reference](https://docs.github.com/rest/git/trees#create-a-tree)
 
 ```ts
-import github from "@utdk/github";
-
-type GitGetTreeInput = Parameters<typeof github.git.getTree> extends [infer T, ...unknown[]] ? T : undefined;
-type GitGetTreeOutput = Awaited<ReturnType<typeof github.git.getTree>>;
-
-const input: GitGetTreeInput = {} as { owner: string; repo: string; tree_sha: string; recursive?: string };
-const result: GitGetTreeOutput = await github.git.getTree(input);
-
-// Result shape (from schema): { sha: string; url?: string; truncated: boolean; tree: ({ path: string; mode: string; type: string; sha: string; size?: number; url?: string })[] }
+github.git.createTree(input: {
+  /** Objects (of `path`, `mode`, `type`, and `sha`) specifying a tree structure. */
+  tree: ({ path?: string; mode?: "100644" | "100755" | "040000" | "160000" | "120000"; type?: "blob" | "tree" | "commit"; sha?: string | null; content?: string })[];
+  /** The SHA1 of an existing Git tree object which will be used as the base for the new tree. If provided, a new Git tree object will be created from entries in the Git tree object pointed to by `base_tree` and entries defined in the `tree` parameter. Entries defined in the `tree` parameter will overwrite items from `base_tree` with the same `path`. If you're creating new changes on a branch, then normally you'd set `base_tree` to the SHA1 of the Git tree object of the current latest commit on the branch you're working on. If not provided, GitHub will create a new Git tree object from only the entries defined in the `tree` parameter. If you create a new commit pointing to such a tree, then all files which were a part of the parent commit's tree and were not defined in the `tree` parameter will be listed as deleted by the new commit. */
+  base_tree?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<GitTree>
 ```
 
+<sub>`POST /repos/{owner}/{repo}/git/trees` · `git/create-tree`</sub>
+
+## `github.git.getTree`
+
+Get a tree — [API reference](https://docs.github.com/rest/git/trees#get-a-tree)
+
+```ts
+github.git.getTree(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The SHA1 value or ref (branch or tag) name of the tree. */
+  tree_sha: string;
+  /** Setting this parameter to any value returns the objects or subtrees referenced by the tree specified in `:tree_sha`. For example, setting `recursive` to any of the following will enable returning objects or subtrees: `0`, `1`, `"true"`, and `"false"`. Omit this parameter to prevent recursively returning objects or subtrees. */
+  recursive?: string;
+}): Promise<GitTree>
+```
+
+<sub>`GET /repos/{owner}/{repo}/git/trees/{tree_sha}` · `git/get-tree`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

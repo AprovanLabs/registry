@@ -1,6 +1,6 @@
 {
   "name": "@utdk/github",
-  "version": "1.1.4-20260608.2",
+  "version": "1.1.4-20260716.3",
   "type": "module",
   "description": "Generated UTDK provider client for GitHub v3 REST API. GitHub's v3 REST API.",
   "homepage": "https://docs.github.com/rest/",
@@ -13,8 +13,8 @@
   "license": "MIT",
   "utdk": {
     "provider": "github",
-    "generation": 2,
-    "generatedAt": "2026-06-08T02:17:19.824Z",
+    "generation": 3,
+    "generatedAt": "2026-07-16T07:09:41.024Z",
     "auth": {
       "schemes": [],
       "operationOverrides": {}
@@ -26,12 +26,12 @@
       "termsOfService": "https://docs.github.com/articles/github-terms-of-service"
     },
     "docs": {
-      "manifestPath": "/Users/jsampson/Documents/JacobSampson/registry/.registry/github/manifest.json",
-      "indexPath": "/Users/jsampson/Documents/JacobSampson/registry/.registry/github/index.md",
-      "docsPath": "/Users/jsampson/Documents/JacobSampson/registry/packages/utdk/github/docs",
-      "generatedAt": "2026-06-08T02:17:19.815Z",
-      "sourceCount": 4,
-      "openApiHash": "3736868a9b938a6d39d506948190b54333425248a5dd0836fcddf67c54132c95",
+      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/github/manifest.json",
+      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/github/index.md",
+      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/github/docs",
+      "generatedAt": "2026-07-16T07:09:41.015Z",
+      "sourceCount": 0,
+      "openApiHash": null,
       "promptHash": "8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8"
     }
   }

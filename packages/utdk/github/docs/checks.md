@@ -1,419 +1,249 @@
 # Checks
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.checks.create`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/check-runs`
-- **What it does**: Create a check run
-- **OpenAPI operationId**: `checks/create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ body: { status: "completed"; [key: string]: unknown } | { status?: "queued" | "in_progress"; [key: string]: unknown }; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; head_sha: string; node_id: string; external_id: string | null; url: string; html_url: string | null; details_url: string | null; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "...`
-- OpenAPI response codes: `201`
+12 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type ChecksCreateInput = Parameters<typeof github.checks.create> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksCreateOutput = Awaited<ReturnType<typeof github.checks.create>>;
-
-const input: ChecksCreateInput = {} as { body: { status: "completed"; [key: string]: unknown } | { status?: "queued" | "in_progress"; [key: string]: unknown }; owner: string; repo: string };
-const result: ChecksCreateOutput = await github.checks.create(input);
-
-// Result shape (from schema): { id: number; head_sha: string; node_id: string; external_id: string | null; url: string; html_url: string | null; details_url: string | null; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "...
 ```
 
-### `github.checks.get`
+## `github.checks.create`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/check-runs/{check_run_id}`
-- **What it does**: Get a check run
-- **OpenAPI operationId**: `checks/get`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; check_run_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; head_sha: string; node_id: string; external_id: string | null; url: string; html_url: string | null; details_url: string | null; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "...`
-- OpenAPI response codes: `200`
+Create a check run — [API reference](https://docs.github.com/rest/checks/runs#create-a-check-run)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksGetInput = Parameters<typeof github.checks.get> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksGetOutput = Awaited<ReturnType<typeof github.checks.get>>;
-
-const input: ChecksGetInput = {} as { owner: string; repo: string; check_run_id: number };
-const result: ChecksGetOutput = await github.checks.get(input);
-
-// Result shape (from schema): { id: number; head_sha: string; node_id: string; external_id: string | null; url: string; html_url: string | null; details_url: string | null; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "...
+github.checks.create(input: {
+  body: { status: "completed"; [key: string]: unknown } | { status?: "queued" | "in_progress"; [key: string]: unknown };
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<CheckRun>
 ```
 
-### `github.checks.update`
+<sub>`POST /repos/{owner}/{repo}/check-runs` · `checks/create`</sub>
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}`
-- **What it does**: Update a check run
-- **OpenAPI operationId**: `checks/update`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.checks.get`
 
-**Inputs**
-
-- Client input type: `{ body: { status?: "completed"; [key: string]: unknown } | { status?: "queued" | "in_progress"; [key: string]: unknown }; owner: string; repo: string; check_run_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; head_sha: string; node_id: string; external_id: string | null; url: string; html_url: string | null; details_url: string | null; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "...`
-- OpenAPI response codes: `200`
+Get a check run — [API reference](https://docs.github.com/rest/checks/runs#get-a-check-run)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksUpdateInput = Parameters<typeof github.checks.update> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksUpdateOutput = Awaited<ReturnType<typeof github.checks.update>>;
-
-const input: ChecksUpdateInput = {} as { body: { status?: "completed"; [key: string]: unknown } | { status?: "queued" | "in_progress"; [key: string]: unknown }; owner: string; repo: string; check_run_id: number };
-const result: ChecksUpdateOutput = await github.checks.update(input);
-
-// Result shape (from schema): { id: number; head_sha: string; node_id: string; external_id: string | null; url: string; html_url: string | null; details_url: string | null; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "...
+github.checks.get(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the check run. */
+  check_run_id: number;
+}): Promise<CheckRun>
 ```
 
-### `github.checks.listAnnotations`
+<sub>`GET /repos/{owner}/{repo}/check-runs/{check_run_id}` · `checks/get`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/check-runs/{check_run_id}/annotations`
-- **What it does**: List check run annotations
-- **OpenAPI operationId**: `checks/list-annotations`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.checks.update`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; check_run_id: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ path: string; start_line: number; end_line: number; start_column: number | null; end_column: number | null; annotation_level: string | null; title: string | null; message: string | null; raw_details: string | null; b...`
-- OpenAPI response codes: `200`
+Update a check run — [API reference](https://docs.github.com/rest/checks/runs#update-a-check-run)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksListAnnotationsInput = Parameters<typeof github.checks.listAnnotations> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksListAnnotationsOutput = Awaited<ReturnType<typeof github.checks.listAnnotations>>;
-
-const input: ChecksListAnnotationsInput = {} as { owner: string; repo: string; check_run_id: number; per_page?: number; page?: number };
-const result: ChecksListAnnotationsOutput = await github.checks.listAnnotations(input);
-
-// Result shape (from schema): ({ path: string; start_line: number; end_line: number; start_column: number | null; end_column: number | null; annotation_level: string | null; title: string | null; message: string | null; raw_details: string | null; b...
+github.checks.update(input: {
+  body: { status?: "completed"; [key: string]: unknown } | { status?: "queued" | "in_progress"; [key: string]: unknown };
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the check run. */
+  check_run_id: number;
+}): Promise<CheckRun>
 ```
 
-### `github.checks.rerequestRun`
+<sub>`PATCH /repos/{owner}/{repo}/check-runs/{check_run_id}` · `checks/update`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/check-runs/{check_run_id}/rerequest`
-- **What it does**: Rerequest a check run
-- **OpenAPI operationId**: `checks/rerequest-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.checks.listAnnotations`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; check_run_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`, `403`, `404`, `422`
+List check run annotations — [API reference](https://docs.github.com/rest/checks/runs#list-check-run-annotations)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksRerequestRunInput = Parameters<typeof github.checks.rerequestRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksRerequestRunOutput = Awaited<ReturnType<typeof github.checks.rerequestRun>>;
-
-const input: ChecksRerequestRunInput = {} as { owner: string; repo: string; check_run_id: number };
-const result: ChecksRerequestRunOutput = await github.checks.rerequestRun(input);
-
-// Result shape (from schema): { [key: string]: unknown }
+github.checks.listAnnotations(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the check run. */
+  check_run_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(CheckAnnotation)[]>
 ```
 
-### `github.checks.createSuite`
+<sub>`GET /repos/{owner}/{repo}/check-runs/{check_run_id}/annotations` · `checks/list-annotations`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/check-suites`
-- **What it does**: Create a check suite
-- **OpenAPI operationId**: `checks/create-suite`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.checks.rerequestRun`
 
-**Inputs**
-
-- Client input type: `{ head_sha: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; head_branch: string | null; head_sha: string; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "pending" | null; conclusion: "success" | "failure" | "neutral" | "...`
-- OpenAPI response codes: `200`, `201`
+Rerequest a check run — [API reference](https://docs.github.com/rest/checks/runs#rerequest-a-check-run)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksCreateSuiteInput = Parameters<typeof github.checks.createSuite> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksCreateSuiteOutput = Awaited<ReturnType<typeof github.checks.createSuite>>;
-
-const input: ChecksCreateSuiteInput = {} as { head_sha: string; owner: string; repo: string };
-const result: ChecksCreateSuiteOutput = await github.checks.createSuite(input);
-
-// Result shape (from schema): { id: number; node_id: string; head_branch: string | null; head_sha: string; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "pending" | null; conclusion: "success" | "failure" | "neutral" | "...
+github.checks.rerequestRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the check run. */
+  check_run_id: number;
+}): Promise<EmptyObject>
 ```
 
-### `github.checks.getSuite`
+<sub>`POST /repos/{owner}/{repo}/check-runs/{check_run_id}/rerequest` · `checks/rerequest-run`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/check-suites/{check_suite_id}`
-- **What it does**: Get a check suite
-- **OpenAPI operationId**: `checks/get-suite`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.checks.createSuite`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; check_suite_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; head_branch: string | null; head_sha: string; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "pending" | null; conclusion: "success" | "failure" | "neutral" | "...`
-- OpenAPI response codes: `200`
+Create a check suite — [API reference](https://docs.github.com/rest/checks/suites#create-a-check-suite)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksGetSuiteInput = Parameters<typeof github.checks.getSuite> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksGetSuiteOutput = Awaited<ReturnType<typeof github.checks.getSuite>>;
-
-const input: ChecksGetSuiteInput = {} as { owner: string; repo: string; check_suite_id: number };
-const result: ChecksGetSuiteOutput = await github.checks.getSuite(input);
-
-// Result shape (from schema): { id: number; node_id: string; head_branch: string | null; head_sha: string; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "pending" | null; conclusion: "success" | "failure" | "neutral" | "...
+github.checks.createSuite(input: {
+  /** The sha of the head commit. */
+  head_sha: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<CheckSuite>
 ```
 
-### `github.checks.listForSuite`
+<sub>`POST /repos/{owner}/{repo}/check-suites` · `checks/create-suite`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/check-suites/{check_suite_id}/check-runs`
-- **What it does**: List check runs in a check suite
-- **OpenAPI operationId**: `checks/list-for-suite`
-- **Path params**: None
-- **Query params**: `filter`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.checks.getSuite`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; check_suite_id: number; check_name?: string; status?: "queued" | "in_progress" | "completed"; filter?: "latest" | "all"; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; check_runs: ({ id: number; head_sha: string; node_id: string; external_id: string | null; url: string; html_url: string | null; details_url: string | null; status: "queued" | "in_progress" | "comp...`
-- OpenAPI response codes: `200`
+Get a check suite — [API reference](https://docs.github.com/rest/checks/suites#get-a-check-suite)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksListForSuiteInput = Parameters<typeof github.checks.listForSuite> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksListForSuiteOutput = Awaited<ReturnType<typeof github.checks.listForSuite>>;
-
-const input: ChecksListForSuiteInput = {} as { owner: string; repo: string; check_suite_id: number; check_name?: string; status?: "queued" | "in_progress" | "completed"; filter?: "latest" | "all"; per_page?: number; page?: number };
-const result: ChecksListForSuiteOutput = await github.checks.listForSuite(input);
-
-// Result shape (from schema): { total_count: number; check_runs: ({ id: number; head_sha: string; node_id: string; external_id: string | null; url: string; html_url: string | null; details_url: string | null; status: "queued" | "in_progress" | "comp...
+github.checks.getSuite(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the check suite. */
+  check_suite_id: number;
+}): Promise<CheckSuite>
 ```
 
-### `github.checks.rerequestSuite`
+<sub>`GET /repos/{owner}/{repo}/check-suites/{check_suite_id}` · `checks/get-suite`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/check-suites/{check_suite_id}/rerequest`
-- **What it does**: Rerequest a check suite
-- **OpenAPI operationId**: `checks/rerequest-suite`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.checks.listForSuite`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; check_suite_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`
+List check runs in a check suite — [API reference](https://docs.github.com/rest/checks/runs#list-check-runs-in-a-check-suite)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksRerequestSuiteInput = Parameters<typeof github.checks.rerequestSuite> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksRerequestSuiteOutput = Awaited<ReturnType<typeof github.checks.rerequestSuite>>;
-
-const input: ChecksRerequestSuiteInput = {} as { owner: string; repo: string; check_suite_id: number };
-const result: ChecksRerequestSuiteOutput = await github.checks.rerequestSuite(input);
-
-// Result shape (from schema): { [key: string]: unknown }
+github.checks.listForSuite(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the check suite. */
+  check_suite_id: number;
+  /** Returns check runs with the specified `name`. */
+  check_name?: string;
+  /** Returns check runs with the specified `status`. */
+  status?: "queued" | "in_progress" | "completed";
+  /** Filters check runs by their `completed_at` timestamp. `latest` returns the most recent check runs. */
+  filter?: "latest" | "all";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; check_runs: (CheckRun)[] }>
 ```
 
-### `github.checks.setSuitesPreferences`
+<sub>`GET /repos/{owner}/{repo}/check-suites/{check_suite_id}/check-runs` · `checks/list-for-suite`</sub>
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/check-suites/preferences`
-- **What it does**: Update repository preferences for check suites
-- **OpenAPI operationId**: `checks/set-suites-preferences`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.checks.rerequestSuite`
 
-**Inputs**
-
-- Client input type: `{ auto_trigger_checks?: ({ app_id: number; setting: boolean })[]; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ preferences: { auto_trigger_checks?: ({ app_id: number; setting: boolean })[] }; repository: { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login:...`
-- OpenAPI response codes: `200`
+Rerequest a check suite — [API reference](https://docs.github.com/rest/checks/suites#rerequest-a-check-suite)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksSetSuitesPreferencesInput = Parameters<typeof github.checks.setSuitesPreferences> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksSetSuitesPreferencesOutput = Awaited<ReturnType<typeof github.checks.setSuitesPreferences>>;
-
-const input: ChecksSetSuitesPreferencesInput = {} as { auto_trigger_checks?: ({ app_id: number; setting: boolean })[]; owner: string; repo: string };
-const result: ChecksSetSuitesPreferencesOutput = await github.checks.setSuitesPreferences(input);
-
-// Result shape (from schema): { preferences: { auto_trigger_checks?: ({ app_id: number; setting: boolean })[] }; repository: { id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login:...
+github.checks.rerequestSuite(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the check suite. */
+  check_suite_id: number;
+}): Promise<EmptyObject>
 ```
 
-### `github.checks.listForRef`
+<sub>`POST /repos/{owner}/{repo}/check-suites/{check_suite_id}/rerequest` · `checks/rerequest-suite`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/commits/{ref}/check-runs`
-- **What it does**: List check runs for a Git reference
-- **OpenAPI operationId**: `checks/list-for-ref`
-- **Path params**: None
-- **Query params**: `filter`, `app_id`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.checks.setSuitesPreferences`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref: string; check_name?: string; status?: "queued" | "in_progress" | "completed"; filter?: "latest" | "all"; per_page?: number; page?: number; app_id?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; check_runs: ({ id: number; head_sha: string; node_id: string; external_id: string | null; url: string; html_url: string | null; details_url: string | null; status: "queued" | "in_progress" | "comp...`
-- OpenAPI response codes: `200`
+Update repository preferences for check suites — [API reference](https://docs.github.com/rest/checks/suites#update-repository-preferences-for-check-suites)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksListForRefInput = Parameters<typeof github.checks.listForRef> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksListForRefOutput = Awaited<ReturnType<typeof github.checks.listForRef>>;
-
-const input: ChecksListForRefInput = {} as { owner: string; repo: string; ref: string; check_name?: string; status?: "queued" | "in_progress" | "completed"; filter?: "latest" | "all"; per_page?: number; page?: number; app_id?: number };
-const result: ChecksListForRefOutput = await github.checks.listForRef(input);
-
-// Result shape (from schema): { total_count: number; check_runs: ({ id: number; head_sha: string; node_id: string; external_id: string | null; url: string; html_url: string | null; details_url: string | null; status: "queued" | "in_progress" | "comp...
+github.checks.setSuitesPreferences(input: {
+  /** Enables or disables automatic creation of CheckSuite events upon pushes to the repository. Enabled by default. */
+  auto_trigger_checks?: ({ app_id: number; setting: boolean })[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<CheckSuitePreference>
 ```
 
-### `github.checks.listSuitesForRef`
+<sub>`PATCH /repos/{owner}/{repo}/check-suites/preferences` · `checks/set-suites-preferences`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/commits/{ref}/check-suites`
-- **What it does**: List check suites for a Git reference
-- **OpenAPI operationId**: `checks/list-suites-for-ref`
-- **Path params**: None
-- **Query params**: `app_id`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.checks.listForRef`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ref: string; app_id?: number; check_name?: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; check_suites: ({ id: number; node_id: string; head_branch: string | null; head_sha: string; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "pending" | null; conclusion:...`
-- OpenAPI response codes: `200`
+List check runs for a Git reference — [API reference](https://docs.github.com/rest/checks/runs#list-check-runs-for-a-git-reference)
 
 ```ts
-import github from "@utdk/github";
-
-type ChecksListSuitesForRefInput = Parameters<typeof github.checks.listSuitesForRef> extends [infer T, ...unknown[]] ? T : undefined;
-type ChecksListSuitesForRefOutput = Awaited<ReturnType<typeof github.checks.listSuitesForRef>>;
-
-const input: ChecksListSuitesForRefInput = {} as { owner: string; repo: string; ref: string; app_id?: number; check_name?: string; per_page?: number; page?: number };
-const result: ChecksListSuitesForRefOutput = await github.checks.listSuitesForRef(input);
-
-// Result shape (from schema): { total_count: number; check_suites: ({ id: number; node_id: string; head_branch: string | null; head_sha: string; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "pending" | null; conclusion:...
+github.checks.listForRef(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The commit reference. Can be a commit SHA, branch name (`heads/BRANCH_NAME`), or tag name (`tags/TAG_NAME`). For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
+  ref: string;
+  /** Returns check runs with the specified `name`. */
+  check_name?: string;
+  /** Returns check runs with the specified `status`. */
+  status?: "queued" | "in_progress" | "completed";
+  /** Filters check runs by their `completed_at` timestamp. `latest` returns the most recent check runs. */
+  filter?: "latest" | "all";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  app_id?: number;
+}): Promise<{ total_count: number; check_runs: (CheckRun)[] }>
 ```
 
+<sub>`GET /repos/{owner}/{repo}/commits/{ref}/check-runs` · `checks/list-for-ref`</sub>
+
+## `github.checks.listSuitesForRef`
+
+List check suites for a Git reference — [API reference](https://docs.github.com/rest/checks/suites#list-check-suites-for-a-git-reference)
+
+```ts
+github.checks.listSuitesForRef(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The commit reference. Can be a commit SHA, branch name (`heads/BRANCH_NAME`), or tag name (`tags/TAG_NAME`). For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
+  ref: string;
+  /** Filters check suites by GitHub App `id`. */
+  app_id?: number;
+  /** Returns check runs with the specified `name`. */
+  check_name?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; check_suites: (CheckSuite)[] }>
+```
+
+<sub>`GET /repos/{owner}/{repo}/commits/{ref}/check-suites` · `checks/list-suites-for-ref`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

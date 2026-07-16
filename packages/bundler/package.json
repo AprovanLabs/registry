@@ -13,6 +13,7 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.111.0",
     "@utcp/http": "^1.1.1",
     "@utcp/sdk": "^1.1.0",
     "openapi-types": "^12.1.3",

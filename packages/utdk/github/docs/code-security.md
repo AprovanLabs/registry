@@ -1,691 +1,528 @@
 # Code Security
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.codeSecurity.getConfigurationsForEnterprise`
-
-- **HTTP**: `GET /enterprises/{enterprise}/code-security/configurations`
-- **What it does**: Get code security configurations for an enterprise
-- **OpenAPI operationId**: `code-security/get-configurations-for-enterprise`
-- **Path params**: None
-- **Query params**: `per_page`
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ enterprise: string; per_page?: number; before?: string; after?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enable...`
-- OpenAPI response codes: `200`, `403`, `404`
+20 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type CodeSecurityGetConfigurationsForEnterpriseInput = Parameters<typeof github.codeSecurity.getConfigurationsForEnterprise> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityGetConfigurationsForEnterpriseOutput = Awaited<ReturnType<typeof github.codeSecurity.getConfigurationsForEnterprise>>;
-
-const input: CodeSecurityGetConfigurationsForEnterpriseInput = {} as { enterprise: string; per_page?: number; before?: string; after?: string };
-const result: CodeSecurityGetConfigurationsForEnterpriseOutput = await github.codeSecurity.getConfigurationsForEnterprise(input);
-
-// Result shape (from schema): ({ id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enable...
 ```
 
-### `github.codeSecurity.createConfigurationForEnterprise`
+## `github.codeSecurity.getConfigurationsForEnterprise`
 
-- **HTTP**: `POST /enterprises/{enterprise}/code-security/configurations`
-- **What it does**: Create a code security configuration for an enterprise
-- **OpenAPI operationId**: `code-security/create-configuration-for-enterprise`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `400`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name: string; description: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; code_security?: "enabled" | "disabled" | "not_set"; dependency_graph?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean }; dependabot_alerts?: "enabled" | "disabled" | "not_set"; dependabot_security_updates?: "enabled" | "disabled" | "not_set"; code_scanning_options?: { allow_advanced?: boolean | null } | null; code_scanning_default_setup?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup_options?: { runner_type?: "standard" | "labeled" | "not_set"; runner_label?: string | null } | null; code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_protection?: "enabled" | "disabled" | "not_set"; secret_scanning?: "enabled" | "disabled" | "not_set"; secret_scanning_push_protection?: "enabled" | "disabled" | "not_set"; secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set"; secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set"; secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set"; private_vulnerability_reporting?: "enabled" | "disabled" | "not_set"; enforcement?: "enforced" | "unenforced"; enterprise: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...`
-- OpenAPI response codes: `201`, `400`, `403`, `404`
+Get code security configurations for an enterprise — [API reference](https://docs.github.com/rest/code-security/configurations#get-code-security-configurations-for-an-enterprise)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityCreateConfigurationForEnterpriseInput = Parameters<typeof github.codeSecurity.createConfigurationForEnterprise> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityCreateConfigurationForEnterpriseOutput = Awaited<ReturnType<typeof github.codeSecurity.createConfigurationForEnterprise>>;
-
-const input: CodeSecurityCreateConfigurationForEnterpriseInput = {} as { name: string; description: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; code_security?: "enabled" | "disabled" | "not_set"; dependency_graph?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean }; dependabot_alerts?: "enabled" | "disabled" | "not_set"; dependabot_security_updates?: "enabled" | "disabled" | "not_set"; code_scanning_options?: { allow_advanced?: boolean | null } | null; code_scanning_default_setup?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup_options?: { runner_type?: "standard" | "labeled" | "not_set"; runner_label?: string | null } | null; code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_protection?: "enabled" | "disabled" | "not_set"; secret_scanning?: "enabled" | "disabled" | "not_set"; secret_scanning_push_protection?: "enabled" | "disabled" | "not_set"; secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set"; secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set"; secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set"; private_vulnerability_reporting?: "enabled" | "disabled" | "not_set"; enforcement?: "enforced" | "unenforced"; enterprise: string };
-const result: CodeSecurityCreateConfigurationForEnterpriseOutput = await github.codeSecurity.createConfigurationForEnterprise(input);
-
-// Result shape (from schema): { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...
+github.codeSecurity.getConfigurationsForEnterprise(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+}): Promise<(CodeSecurityConfiguration)[]>
 ```
 
-### `github.codeSecurity.deleteConfigurationForEnterprise`
+<sub>`GET /enterprises/{enterprise}/code-security/configurations` · `code-security/get-configurations-for-enterprise`</sub>
 
-- **HTTP**: `DELETE /enterprises/{enterprise}/code-security/configurations/{configuration_id}`
-- **What it does**: Delete a code security configuration for an enterprise
-- **OpenAPI operationId**: `code-security/delete-configuration-for-enterprise`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `400`, `403`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.createConfigurationForEnterprise`
 
-**Inputs**
-
-- Client input type: `{ enterprise: string; configuration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `400`, `403`, `404`, `409`
+Create a code security configuration for an enterprise — [API reference](https://docs.github.com/rest/code-security/configurations#create-a-code-security-configuration-for-an-enterprise)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityDeleteConfigurationForEnterpriseInput = Parameters<typeof github.codeSecurity.deleteConfigurationForEnterprise> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityDeleteConfigurationForEnterpriseOutput = Awaited<ReturnType<typeof github.codeSecurity.deleteConfigurationForEnterprise>>;
-
-const input: CodeSecurityDeleteConfigurationForEnterpriseInput = {} as { enterprise: string; configuration_id: number };
-const result: CodeSecurityDeleteConfigurationForEnterpriseOutput = await github.codeSecurity.deleteConfigurationForEnterprise(input);
-
-// Result shape (from schema): unknown
+github.codeSecurity.createConfigurationForEnterprise(input: {
+  /** The name of the code security configuration. Must be unique within the enterprise. */
+  name: string;
+  /** A description of the code security configuration */
+  description?: string;
+  /** The enablement status of GitHub Advanced Security features. `enabled` will enable both Code Security and Secret Protection features.  > [!WARNING] > `code_security` and `secret_protection` are deprecated values for this field. Prefer the individual `code_security` and `secret_protection` fields to set the status of these features.  */
+  advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection";
+  /** The enablement status of GitHub Code Security features. */
+  code_security?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Dependency Graph */
+  dependency_graph?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Automatic dependency submission */
+  dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set";
+  /** Feature options for Automatic dependency submission */
+  dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean };
+  /** The enablement status of Dependabot alerts */
+  dependabot_alerts?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Dependabot security updates */
+  dependabot_security_updates?: "enabled" | "disabled" | "not_set";
+  code_scanning_options?: CodeScanningOptions;
+  /** The enablement status of code scanning default setup */
+  code_scanning_default_setup?: "enabled" | "disabled" | "not_set";
+  code_scanning_default_setup_options?: CodeScanningDefaultSetupOptions;
+  /** The enablement status of code scanning delegated alert dismissal */
+  code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of GitHub Secret Protection features. */
+  secret_protection?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning */
+  secret_scanning?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning push protection */
+  secret_scanning_push_protection?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning validity checks */
+  secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning non provider patterns */
+  secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Copilot secret scanning */
+  secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning delegated alert dismissal */
+  secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning extended metadata */
+  secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of private vulnerability reporting */
+  private_vulnerability_reporting?: "enabled" | "disabled" | "not_set";
+  /** The enforcement status for a security configuration */
+  enforcement?: "enforced" | "unenforced";
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+}): Promise<CodeSecurityConfiguration>
 ```
 
-### `github.codeSecurity.getSingleConfigurationForEnterprise`
+<sub>`POST /enterprises/{enterprise}/code-security/configurations` · `code-security/create-configuration-for-enterprise`</sub>
 
-- **HTTP**: `GET /enterprises/{enterprise}/code-security/configurations/{configuration_id}`
-- **What it does**: Retrieve a code security configuration of an enterprise
-- **OpenAPI operationId**: `code-security/get-single-configuration-for-enterprise`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.deleteConfigurationForEnterprise`
 
-**Inputs**
-
-- Client input type: `{ enterprise: string; configuration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...`
-- OpenAPI response codes: `200`, `304`, `403`, `404`
+Delete a code security configuration for an enterprise — [API reference](https://docs.github.com/rest/code-security/configurations#delete-a-code-security-configuration-for-an-enterprise)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityGetSingleConfigurationForEnterpriseInput = Parameters<typeof github.codeSecurity.getSingleConfigurationForEnterprise> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityGetSingleConfigurationForEnterpriseOutput = Awaited<ReturnType<typeof github.codeSecurity.getSingleConfigurationForEnterprise>>;
-
-const input: CodeSecurityGetSingleConfigurationForEnterpriseInput = {} as { enterprise: string; configuration_id: number };
-const result: CodeSecurityGetSingleConfigurationForEnterpriseOutput = await github.codeSecurity.getSingleConfigurationForEnterprise(input);
-
-// Result shape (from schema): { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...
+github.codeSecurity.deleteConfigurationForEnterprise(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.codeSecurity.updateEnterpriseConfiguration`
+<sub>`DELETE /enterprises/{enterprise}/code-security/configurations/{configuration_id}` · `code-security/delete-configuration-for-enterprise`</sub>
 
-- **HTTP**: `PATCH /enterprises/{enterprise}/code-security/configurations/{configuration_id}`
-- **What it does**: Update a custom code security configuration for an enterprise
-- **OpenAPI operationId**: `code-security/update-enterprise-configuration`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.getSingleConfigurationForEnterprise`
 
-**Inputs**
-
-- Client input type: `{ name?: string; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; code_security?: "enabled" | "disabled" | "not_set"; dependency_graph?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean }; dependabot_alerts?: "enabled" | "disabled" | "not_set"; dependabot_security_updates?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup_options?: { runner_type?: "standard" | "labeled" | "not_set"; runner_label?: string | null } | null; code_scanning_options?: { allow_advanced?: boolean | null } | null; code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_protection?: "enabled" | "disabled" | "not_set"; secret_scanning?: "enabled" | "disabled" | "not_set"; secret_scanning_push_protection?: "enabled" | "disabled" | "not_set"; secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set"; secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set"; secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set"; private_vulnerability_reporting?: "enabled" | "disabled" | "not_set"; enforcement?: "enforced" | "unenforced"; enterprise: string; configuration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...`
-- OpenAPI response codes: `200`, `304`, `403`, `404`, `409`
+Retrieve a code security configuration of an enterprise — [API reference](https://docs.github.com/rest/code-security/configurations#retrieve-a-code-security-configuration-of-an-enterprise)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityUpdateEnterpriseConfigurationInput = Parameters<typeof github.codeSecurity.updateEnterpriseConfiguration> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityUpdateEnterpriseConfigurationOutput = Awaited<ReturnType<typeof github.codeSecurity.updateEnterpriseConfiguration>>;
-
-const input: CodeSecurityUpdateEnterpriseConfigurationInput = {} as { name?: string; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; code_security?: "enabled" | "disabled" | "not_set"; dependency_graph?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean }; dependabot_alerts?: "enabled" | "disabled" | "not_set"; dependabot_security_updates?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup_options?: { runner_type?: "standard" | "labeled" | "not_set"; runner_label?: string | null } | null; code_scanning_options?: { allow_advanced?: boolean | null } | null; code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_protection?: "enabled" | "disabled" | "not_set"; secret_scanning?: "enabled" | "disabled" | "not_set"; secret_scanning_push_protection?: "enabled" | "disabled" | "not_set"; secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set"; secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set"; secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set"; private_vulnerability_reporting?: "enabled" | "disabled" | "not_set"; enforcement?: "enforced" | "unenforced"; enterprise: string; configuration_id: number };
-const result: CodeSecurityUpdateEnterpriseConfigurationOutput = await github.codeSecurity.updateEnterpriseConfiguration(input);
-
-// Result shape (from schema): { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...
+github.codeSecurity.getSingleConfigurationForEnterprise(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+}): Promise<CodeSecurityConfiguration>
 ```
 
-### `github.codeSecurity.attachEnterpriseConfiguration`
+<sub>`GET /enterprises/{enterprise}/code-security/configurations/{configuration_id}` · `code-security/get-single-configuration-for-enterprise`</sub>
 
-- **HTTP**: `POST /enterprises/{enterprise}/code-security/configurations/{configuration_id}/attach`
-- **What it does**: Attach an enterprise configuration to repositories
-- **OpenAPI operationId**: `code-security/attach-enterprise-configuration`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `403`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.updateEnterpriseConfiguration`
 
-**Inputs**
-
-- Client input type: `{ scope: "all" | "all_without_configurations"; enterprise: string; configuration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `403`, `404`, `409`
+Update a custom code security configuration for an enterprise — [API reference](https://docs.github.com/rest/code-security/configurations#update-a-custom-code-security-configuration-for-an-enterprise)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityAttachEnterpriseConfigurationInput = Parameters<typeof github.codeSecurity.attachEnterpriseConfiguration> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityAttachEnterpriseConfigurationOutput = Awaited<ReturnType<typeof github.codeSecurity.attachEnterpriseConfiguration>>;
-
-const input: CodeSecurityAttachEnterpriseConfigurationInput = {} as { scope: "all" | "all_without_configurations"; enterprise: string; configuration_id: number };
-const result: CodeSecurityAttachEnterpriseConfigurationOutput = await github.codeSecurity.attachEnterpriseConfiguration(input);
-
-// Result shape (from schema): unknown
+github.codeSecurity.updateEnterpriseConfiguration(input: {
+  /** The name of the code security configuration. Must be unique across the enterprise. */
+  name?: string;
+  /** A description of the code security configuration */
+  description?: string;
+  /** The enablement status of GitHub Advanced Security features. `enabled` will enable both Code Security and Secret Protection features.  > [!WARNING] > `code_security` and `secret_protection` are deprecated values for this field. Prefer the individual `code_security` and `secret_protection` fields to set the status of these features.  */
+  advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection";
+  /** The enablement status of GitHub Code Security features. */
+  code_security?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Dependency Graph */
+  dependency_graph?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Automatic dependency submission */
+  dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set";
+  /** Feature options for Automatic dependency submission */
+  dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean };
+  /** The enablement status of Dependabot alerts */
+  dependabot_alerts?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Dependabot security updates */
+  dependabot_security_updates?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of code scanning default setup */
+  code_scanning_default_setup?: "enabled" | "disabled" | "not_set";
+  code_scanning_default_setup_options?: CodeScanningDefaultSetupOptions;
+  code_scanning_options?: CodeScanningOptions;
+  /** The enablement status of code scanning delegated alert dismissal */
+  code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of GitHub Secret Protection features. */
+  secret_protection?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning */
+  secret_scanning?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning push protection */
+  secret_scanning_push_protection?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning validity checks */
+  secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning non-provider patterns */
+  secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Copilot secret scanning */
+  secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning delegated alert dismissal */
+  secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning extended metadata */
+  secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of private vulnerability reporting */
+  private_vulnerability_reporting?: "enabled" | "disabled" | "not_set";
+  /** The enforcement status for a security configuration */
+  enforcement?: "enforced" | "unenforced";
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+}): Promise<CodeSecurityConfiguration>
 ```
 
-### `github.codeSecurity.setConfigurationAsDefaultForEnterprise`
+<sub>`PATCH /enterprises/{enterprise}/code-security/configurations/{configuration_id}` · `code-security/update-enterprise-configuration`</sub>
 
-- **HTTP**: `PUT /enterprises/{enterprise}/code-security/configurations/{configuration_id}/defaults`
-- **What it does**: Set a code security configuration as a default for an enterprise
-- **OpenAPI operationId**: `code-security/set-configuration-as-default-for-enterprise`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.attachEnterpriseConfiguration`
 
-**Inputs**
-
-- Client input type: `{ default_for_new_repos?: "all" | "none" | "private_and_internal" | "public"; enterprise: string; configuration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ default_for_new_repos?: "all" | "none" | "private_and_internal" | "public"; configuration?: { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security...`
-- OpenAPI response codes: `200`, `403`, `404`
+Attach an enterprise configuration to repositories — [API reference](https://docs.github.com/rest/code-security/configurations#attach-an-enterprise-configuration-to-repositories)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecuritySetConfigurationAsDefaultForEnterpriseInput = Parameters<typeof github.codeSecurity.setConfigurationAsDefaultForEnterprise> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecuritySetConfigurationAsDefaultForEnterpriseOutput = Awaited<ReturnType<typeof github.codeSecurity.setConfigurationAsDefaultForEnterprise>>;
-
-const input: CodeSecuritySetConfigurationAsDefaultForEnterpriseInput = {} as { default_for_new_repos?: "all" | "none" | "private_and_internal" | "public"; enterprise: string; configuration_id: number };
-const result: CodeSecuritySetConfigurationAsDefaultForEnterpriseOutput = await github.codeSecurity.setConfigurationAsDefaultForEnterprise(input);
-
-// Result shape (from schema): { default_for_new_repos?: "all" | "none" | "private_and_internal" | "public"; configuration?: { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security...
+github.codeSecurity.attachEnterpriseConfiguration(input: {
+  /** The type of repositories to attach the configuration to. */
+  scope: "all" | "all_without_configurations";
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+}): Promise<{ [key: string]: unknown }>
 ```
 
-### `github.codeSecurity.getRepositoriesForEnterpriseConfiguration`
+<sub>`POST /enterprises/{enterprise}/code-security/configurations/{configuration_id}/attach` · `code-security/attach-enterprise-configuration`</sub>
 
-- **HTTP**: `GET /enterprises/{enterprise}/code-security/configurations/{configuration_id}/repositories`
-- **What it does**: Get repositories associated with an enterprise code security configuration
-- **OpenAPI operationId**: `code-security/get-repositories-for-enterprise-configuration`
-- **Path params**: None
-- **Query params**: `per_page`, `status`
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.setConfigurationAsDefaultForEnterprise`
 
-**Inputs**
-
-- Client input type: `{ enterprise: string; configuration_id: number; per_page?: number; before?: string; after?: string; status?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ status?: "attached" | "attaching" | "detached" | "removed" | "enforced" | "failed" | "updating" | "removed_by_enterprise"; repository?: { id: number; node_id: string; name: string; full_name: string; owner: { name?: ...`
-- OpenAPI response codes: `200`, `403`, `404`
+Set a code security configuration as a default for an enterprise — [API reference](https://docs.github.com/rest/code-security/configurations#set-a-code-security-configuration-as-a-default-for-an-enterprise)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityGetRepositoriesForEnterpriseConfigurationInput = Parameters<typeof github.codeSecurity.getRepositoriesForEnterpriseConfiguration> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityGetRepositoriesForEnterpriseConfigurationOutput = Awaited<ReturnType<typeof github.codeSecurity.getRepositoriesForEnterpriseConfiguration>>;
-
-const input: CodeSecurityGetRepositoriesForEnterpriseConfigurationInput = {} as { enterprise: string; configuration_id: number; per_page?: number; before?: string; after?: string; status?: string };
-const result: CodeSecurityGetRepositoriesForEnterpriseConfigurationOutput = await github.codeSecurity.getRepositoriesForEnterpriseConfiguration(input);
-
-// Result shape (from schema): ({ status?: "attached" | "attaching" | "detached" | "removed" | "enforced" | "failed" | "updating" | "removed_by_enterprise"; repository?: { id: number; node_id: string; name: string; full_name: string; owner: { name?: ...
+github.codeSecurity.setConfigurationAsDefaultForEnterprise(input: {
+  /** Specify which types of repository this security configuration should be applied to by default. */
+  default_for_new_repos?: "all" | "none" | "private_and_internal" | "public";
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+}): Promise<{ default_for_new_repos?: "all" | "none" | "private_and_internal" | "public"; configuration?: CodeSecurityConfiguration }>
 ```
 
-### `github.codeSecurity.getDefaultConfigurationsForEnterprise`
+<sub>`PUT /enterprises/{enterprise}/code-security/configurations/{configuration_id}/defaults` · `code-security/set-configuration-as-default-for-enterprise`</sub>
 
-- **HTTP**: `GET /enterprises/{enterprise}/code-security/configurations/defaults`
-- **What it does**: Get default code security configurations for an enterprise
-- **OpenAPI operationId**: `code-security/get-default-configurations-for-enterprise`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.getRepositoriesForEnterpriseConfiguration`
 
-**Inputs**
-
-- Client input type: `{ enterprise: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ default_for_new_repos?: "public" | "private_and_internal" | "all"; configuration?: { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enab...`
-- OpenAPI response codes: `200`
+Get repositories associated with an enterprise code security configuration — [API reference](https://docs.github.com/rest/code-security/configurations#get-repositories-associated-with-an-enterprise-code-security-configuration)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityGetDefaultConfigurationsForEnterpriseInput = Parameters<typeof github.codeSecurity.getDefaultConfigurationsForEnterprise> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityGetDefaultConfigurationsForEnterpriseOutput = Awaited<ReturnType<typeof github.codeSecurity.getDefaultConfigurationsForEnterprise>>;
-
-const input: CodeSecurityGetDefaultConfigurationsForEnterpriseInput = {} as { enterprise: string };
-const result: CodeSecurityGetDefaultConfigurationsForEnterpriseOutput = await github.codeSecurity.getDefaultConfigurationsForEnterprise(input);
-
-// Result shape (from schema): ({ default_for_new_repos?: "public" | "private_and_internal" | "all"; configuration?: { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enab...
+github.codeSecurity.getRepositoriesForEnterpriseConfiguration(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** A comma-separated list of statuses. If specified, only repositories with these attachment statuses will be returned.  Can be: `all`, `attached`, `attaching`, `removed`, `enforced`, `failed`, `updating`, `removed_by_enterprise` */
+  status?: string;
+}): Promise<(CodeSecurityConfigurationRepositories)[]>
 ```
 
-### `github.codeSecurity.getConfigurationsForOrg`
+<sub>`GET /enterprises/{enterprise}/code-security/configurations/{configuration_id}/repositories` · `code-security/get-repositories-for-enterprise-configuration`</sub>
 
-- **HTTP**: `GET /orgs/{org}/code-security/configurations`
-- **What it does**: Get code security configurations for an organization
-- **OpenAPI operationId**: `code-security/get-configurations-for-org`
-- **Path params**: None
-- **Query params**: `target_type`, `per_page`
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.getDefaultConfigurationsForEnterprise`
 
-**Inputs**
-
-- Client input type: `{ org: string; target_type?: "global" | "all"; per_page?: number; before?: string; after?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enable...`
-- OpenAPI response codes: `200`, `403`, `404`
+Get default code security configurations for an enterprise — [API reference](https://docs.github.com/rest/code-security/configurations#get-default-code-security-configurations-for-an-enterprise)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityGetConfigurationsForOrgInput = Parameters<typeof github.codeSecurity.getConfigurationsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityGetConfigurationsForOrgOutput = Awaited<ReturnType<typeof github.codeSecurity.getConfigurationsForOrg>>;
-
-const input: CodeSecurityGetConfigurationsForOrgInput = {} as { org: string; target_type?: "global" | "all"; per_page?: number; before?: string; after?: string };
-const result: CodeSecurityGetConfigurationsForOrgOutput = await github.codeSecurity.getConfigurationsForOrg(input);
-
-// Result shape (from schema): ({ id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enable...
+github.codeSecurity.getDefaultConfigurationsForEnterprise(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+}): Promise<CodeSecurityDefaultConfigurations>
 ```
 
-### `github.codeSecurity.createConfiguration`
+<sub>`GET /enterprises/{enterprise}/code-security/configurations/defaults` · `code-security/get-default-configurations-for-enterprise`</sub>
 
-- **HTTP**: `POST /orgs/{org}/code-security/configurations`
-- **What it does**: Create a code security configuration
-- **OpenAPI operationId**: `code-security/create-configuration`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.getConfigurationsForOrg`
 
-**Inputs**
-
-- Client input type: `{ name: string; description: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; code_security?: "enabled" | "disabled" | "not_set"; dependency_graph?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean }; dependabot_alerts?: "enabled" | "disabled" | "not_set"; dependabot_security_updates?: "enabled" | "disabled" | "not_set"; dependabot_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; code_scanning_options?: { allow_advanced?: boolean | null } | null; code_scanning_default_setup?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup_options?: { runner_type?: "standard" | "labeled" | "not_set"; runner_label?: string | null } | null; code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_protection?: "enabled" | "disabled" | "not_set"; secret_scanning?: "enabled" | "disabled" | "not_set"; secret_scanning_push_protection?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_bypass?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_bypass_options?: { reviewers?: ({ reviewer_id: number; reviewer_type: "TEAM" | "ROLE"; mode?: "ALWAYS" | "EXEMPT" })[] }; secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set"; secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set"; secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set"; private_vulnerability_reporting?: "enabled" | "disabled" | "not_set"; enforcement?: "enforced" | "unenforced"; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...`
-- OpenAPI response codes: `201`
+Get code security configurations for an organization — [API reference](https://docs.github.com/rest/code-security/configurations#get-code-security-configurations-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityCreateConfigurationInput = Parameters<typeof github.codeSecurity.createConfiguration> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityCreateConfigurationOutput = Awaited<ReturnType<typeof github.codeSecurity.createConfiguration>>;
-
-const input: CodeSecurityCreateConfigurationInput = {} as { name: string; description: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; code_security?: "enabled" | "disabled" | "not_set"; dependency_graph?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean }; dependabot_alerts?: "enabled" | "disabled" | "not_set"; dependabot_security_updates?: "enabled" | "disabled" | "not_set"; dependabot_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; code_scanning_options?: { allow_advanced?: boolean | null } | null; code_scanning_default_setup?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup_options?: { runner_type?: "standard" | "labeled" | "not_set"; runner_label?: string | null } | null; code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_protection?: "enabled" | "disabled" | "not_set"; secret_scanning?: "enabled" | "disabled" | "not_set"; secret_scanning_push_protection?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_bypass?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_bypass_options?: { reviewers?: ({ reviewer_id: number; reviewer_type: "TEAM" | "ROLE"; mode?: "ALWAYS" | "EXEMPT" })[] }; secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set"; secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set"; secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set"; private_vulnerability_reporting?: "enabled" | "disabled" | "not_set"; enforcement?: "enforced" | "unenforced"; org: string };
-const result: CodeSecurityCreateConfigurationOutput = await github.codeSecurity.createConfiguration(input);
-
-// Result shape (from schema): { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...
+github.codeSecurity.getConfigurationsForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The target type of the code security configuration */
+  target_type?: "global" | "all";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+}): Promise<(CodeSecurityConfiguration)[]>
 ```
 
-### `github.codeSecurity.deleteConfiguration`
+<sub>`GET /orgs/{org}/code-security/configurations` · `code-security/get-configurations-for-org`</sub>
 
-- **HTTP**: `DELETE /orgs/{org}/code-security/configurations/{configuration_id}`
-- **What it does**: Delete a code security configuration
-- **OpenAPI operationId**: `code-security/delete-configuration`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `400`, `403`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.createConfiguration`
 
-**Inputs**
-
-- Client input type: `{ org: string; configuration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `400`, `403`, `404`, `409`
+Create a code security configuration — [API reference](https://docs.github.com/rest/code-security/configurations#create-a-code-security-configuration)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityDeleteConfigurationInput = Parameters<typeof github.codeSecurity.deleteConfiguration> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityDeleteConfigurationOutput = Awaited<ReturnType<typeof github.codeSecurity.deleteConfiguration>>;
-
-const input: CodeSecurityDeleteConfigurationInput = {} as { org: string; configuration_id: number };
-const result: CodeSecurityDeleteConfigurationOutput = await github.codeSecurity.deleteConfiguration(input);
-
-// Result shape (from schema): unknown
+github.codeSecurity.createConfiguration(input: {
+  /** The name of the code security configuration. Must be unique within the organization. */
+  name: string;
+  /** A description of the code security configuration */
+  description?: string;
+  /** The enablement status of GitHub Advanced Security features. `enabled` will enable both Code Security and Secret Protection features.  > [!WARNING] > `code_security` and `secret_protection` are deprecated values for this field. Prefer the individual `code_security` and `secret_protection` fields to set the status of these features.  */
+  advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection";
+  /** The enablement status of GitHub Code Security features. */
+  code_security?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Dependency Graph */
+  dependency_graph?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Automatic dependency submission */
+  dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set";
+  /** Feature options for Automatic dependency submission */
+  dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean };
+  /** The enablement status of Dependabot alerts */
+  dependabot_alerts?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Dependabot security updates */
+  dependabot_security_updates?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Dependabot delegated alert dismissal. Requires Dependabot alerts to be enabled. */
+  dependabot_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set";
+  code_scanning_options?: CodeScanningOptions;
+  /** The enablement status of code scanning default setup */
+  code_scanning_default_setup?: "enabled" | "disabled" | "not_set";
+  code_scanning_default_setup_options?: CodeScanningDefaultSetupOptions;
+  /** The enablement status of code scanning delegated alert dismissal */
+  code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of GitHub Secret Protection features. */
+  secret_protection?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning */
+  secret_scanning?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning push protection */
+  secret_scanning_push_protection?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning delegated bypass */
+  secret_scanning_delegated_bypass?: "enabled" | "disabled" | "not_set";
+  /** Feature options for secret scanning delegated bypass */
+  secret_scanning_delegated_bypass_options?: { reviewers?: ({ reviewer_id: number; reviewer_type: "TEAM" | "ROLE"; mode?: "ALWAYS" | "EXEMPT" })[] };
+  /** The enablement status of secret scanning validity checks */
+  secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning non provider patterns */
+  secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Copilot secret scanning */
+  secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning delegated alert dismissal */
+  secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning extended metadata */
+  secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of private vulnerability reporting */
+  private_vulnerability_reporting?: "enabled" | "disabled" | "not_set";
+  /** The enforcement status for a security configuration */
+  enforcement?: "enforced" | "unenforced";
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<CodeSecurityConfiguration>
 ```
 
-### `github.codeSecurity.getConfiguration`
+<sub>`POST /orgs/{org}/code-security/configurations` · `code-security/create-configuration`</sub>
 
-- **HTTP**: `GET /orgs/{org}/code-security/configurations/{configuration_id}`
-- **What it does**: Get a code security configuration
-- **OpenAPI operationId**: `code-security/get-configuration`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.deleteConfiguration`
 
-**Inputs**
-
-- Client input type: `{ org: string; configuration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...`
-- OpenAPI response codes: `200`, `304`, `403`, `404`
+Delete a code security configuration — [API reference](https://docs.github.com/rest/code-security/configurations#delete-a-code-security-configuration)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityGetConfigurationInput = Parameters<typeof github.codeSecurity.getConfiguration> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityGetConfigurationOutput = Awaited<ReturnType<typeof github.codeSecurity.getConfiguration>>;
-
-const input: CodeSecurityGetConfigurationInput = {} as { org: string; configuration_id: number };
-const result: CodeSecurityGetConfigurationOutput = await github.codeSecurity.getConfiguration(input);
-
-// Result shape (from schema): { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...
+github.codeSecurity.deleteConfiguration(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.codeSecurity.updateConfiguration`
+<sub>`DELETE /orgs/{org}/code-security/configurations/{configuration_id}` · `code-security/delete-configuration`</sub>
 
-- **HTTP**: `PATCH /orgs/{org}/code-security/configurations/{configuration_id}`
-- **What it does**: Update a code security configuration
-- **OpenAPI operationId**: `code-security/update-configuration`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.getConfiguration`
 
-**Inputs**
-
-- Client input type: `{ name?: string; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; code_security?: "enabled" | "disabled" | "not_set"; dependency_graph?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean }; dependabot_alerts?: "enabled" | "disabled" | "not_set"; dependabot_security_updates?: "enabled" | "disabled" | "not_set"; dependabot_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup_options?: { runner_type?: "standard" | "labeled" | "not_set"; runner_label?: string | null } | null; code_scanning_options?: { allow_advanced?: boolean | null } | null; code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_protection?: "enabled" | "disabled" | "not_set"; secret_scanning?: "enabled" | "disabled" | "not_set"; secret_scanning_push_protection?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_bypass?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_bypass_options?: { reviewers?: ({ reviewer_id: number; reviewer_type: "TEAM" | "ROLE"; mode?: "ALWAYS" | "EXEMPT" })[] }; secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set"; secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set"; secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set"; private_vulnerability_reporting?: "enabled" | "disabled" | "not_set"; enforcement?: "enforced" | "unenforced"; org: string; configuration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...`
-- OpenAPI response codes: `200`, `204`
+Get a code security configuration — [API reference](https://docs.github.com/rest/code-security/configurations#get-a-code-security-configuration)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityUpdateConfigurationInput = Parameters<typeof github.codeSecurity.updateConfiguration> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityUpdateConfigurationOutput = Awaited<ReturnType<typeof github.codeSecurity.updateConfiguration>>;
-
-const input: CodeSecurityUpdateConfigurationInput = {} as { name?: string; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; code_security?: "enabled" | "disabled" | "not_set"; dependency_graph?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set"; dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean }; dependabot_alerts?: "enabled" | "disabled" | "not_set"; dependabot_security_updates?: "enabled" | "disabled" | "not_set"; dependabot_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup?: "enabled" | "disabled" | "not_set"; code_scanning_default_setup_options?: { runner_type?: "standard" | "labeled" | "not_set"; runner_label?: string | null } | null; code_scanning_options?: { allow_advanced?: boolean | null } | null; code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_protection?: "enabled" | "disabled" | "not_set"; secret_scanning?: "enabled" | "disabled" | "not_set"; secret_scanning_push_protection?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_bypass?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_bypass_options?: { reviewers?: ({ reviewer_id: number; reviewer_type: "TEAM" | "ROLE"; mode?: "ALWAYS" | "EXEMPT" })[] }; secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set"; secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set"; secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set"; secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set"; secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set"; private_vulnerability_reporting?: "enabled" | "disabled" | "not_set"; enforcement?: "enforced" | "unenforced"; org: string; configuration_id: number };
-const result: CodeSecurityUpdateConfigurationOutput = await github.codeSecurity.updateConfiguration(input);
-
-// Result shape (from schema): { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection"; dependency_graph?: "enabled...
+github.codeSecurity.getConfiguration(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+}): Promise<CodeSecurityConfiguration>
 ```
 
-### `github.codeSecurity.attachConfiguration`
+<sub>`GET /orgs/{org}/code-security/configurations/{configuration_id}` · `code-security/get-configuration`</sub>
 
-- **HTTP**: `POST /orgs/{org}/code-security/configurations/{configuration_id}/attach`
-- **What it does**: Attach a configuration to repositories
-- **OpenAPI operationId**: `code-security/attach-configuration`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.updateConfiguration`
 
-**Inputs**
-
-- Client input type: `{ scope: "all" | "all_without_configurations" | "public" | "private_or_internal" | "selected"; selected_repository_ids?: (number)[]; org: string; configuration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`
+Update a code security configuration — [API reference](https://docs.github.com/rest/code-security/configurations#update-a-code-security-configuration)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityAttachConfigurationInput = Parameters<typeof github.codeSecurity.attachConfiguration> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityAttachConfigurationOutput = Awaited<ReturnType<typeof github.codeSecurity.attachConfiguration>>;
-
-const input: CodeSecurityAttachConfigurationInput = {} as { scope: "all" | "all_without_configurations" | "public" | "private_or_internal" | "selected"; selected_repository_ids?: (number)[]; org: string; configuration_id: number };
-const result: CodeSecurityAttachConfigurationOutput = await github.codeSecurity.attachConfiguration(input);
-
-// Result shape (from schema): unknown
+github.codeSecurity.updateConfiguration(input: {
+  /** The name of the code security configuration. Must be unique within the organization. */
+  name?: string;
+  /** A description of the code security configuration */
+  description?: string;
+  /** The enablement status of GitHub Advanced Security features. `enabled` will enable both Code Security and Secret Protection features.  > [!WARNING] > `code_security` and `secret_protection` are deprecated values for this field. Prefer the individual `code_security` and `secret_protection` fields to set the status of these features.  */
+  advanced_security?: "enabled" | "disabled" | "code_security" | "secret_protection";
+  /** The enablement status of GitHub Code Security features. */
+  code_security?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Dependency Graph */
+  dependency_graph?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Automatic dependency submission */
+  dependency_graph_autosubmit_action?: "enabled" | "disabled" | "not_set";
+  /** Feature options for Automatic dependency submission */
+  dependency_graph_autosubmit_action_options?: { labeled_runners?: boolean };
+  /** The enablement status of Dependabot alerts */
+  dependabot_alerts?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Dependabot security updates */
+  dependabot_security_updates?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Dependabot delegated alert dismissal. Requires Dependabot alerts to be enabled. */
+  dependabot_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of code scanning default setup */
+  code_scanning_default_setup?: "enabled" | "disabled" | "not_set";
+  code_scanning_default_setup_options?: CodeScanningDefaultSetupOptions;
+  code_scanning_options?: CodeScanningOptions;
+  /** The enablement status of code scanning delegated alert dismissal */
+  code_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of GitHub Secret Protection features. */
+  secret_protection?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning */
+  secret_scanning?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning push protection */
+  secret_scanning_push_protection?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning delegated bypass */
+  secret_scanning_delegated_bypass?: "enabled" | "disabled" | "not_set";
+  /** Feature options for secret scanning delegated bypass */
+  secret_scanning_delegated_bypass_options?: { reviewers?: ({ reviewer_id: number; reviewer_type: "TEAM" | "ROLE"; mode?: "ALWAYS" | "EXEMPT" })[] };
+  /** The enablement status of secret scanning validity checks */
+  secret_scanning_validity_checks?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning non-provider patterns */
+  secret_scanning_non_provider_patterns?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of Copilot secret scanning */
+  secret_scanning_generic_secrets?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning delegated alert dismissal */
+  secret_scanning_delegated_alert_dismissal?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of secret scanning extended metadata */
+  secret_scanning_extended_metadata?: "enabled" | "disabled" | "not_set";
+  /** The enablement status of private vulnerability reporting */
+  private_vulnerability_reporting?: "enabled" | "disabled" | "not_set";
+  /** The enforcement status for a security configuration */
+  enforcement?: "enforced" | "unenforced";
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+}): Promise<CodeSecurityConfiguration>
 ```
 
-### `github.codeSecurity.setConfigurationAsDefault`
+<sub>`PATCH /orgs/{org}/code-security/configurations/{configuration_id}` · `code-security/update-configuration`</sub>
 
-- **HTTP**: `PUT /orgs/{org}/code-security/configurations/{configuration_id}/defaults`
-- **What it does**: Set a code security configuration as a default for an organization
-- **OpenAPI operationId**: `code-security/set-configuration-as-default`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.attachConfiguration`
 
-**Inputs**
-
-- Client input type: `{ default_for_new_repos?: "all" | "none" | "private_and_internal" | "public"; org: string; configuration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ default_for_new_repos?: "all" | "none" | "private_and_internal" | "public"; configuration?: { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security...`
-- OpenAPI response codes: `200`, `403`, `404`
+Attach a configuration to repositories — [API reference](https://docs.github.com/rest/code-security/configurations#attach-a-configuration-to-repositories)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecuritySetConfigurationAsDefaultInput = Parameters<typeof github.codeSecurity.setConfigurationAsDefault> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecuritySetConfigurationAsDefaultOutput = Awaited<ReturnType<typeof github.codeSecurity.setConfigurationAsDefault>>;
-
-const input: CodeSecuritySetConfigurationAsDefaultInput = {} as { default_for_new_repos?: "all" | "none" | "private_and_internal" | "public"; org: string; configuration_id: number };
-const result: CodeSecuritySetConfigurationAsDefaultOutput = await github.codeSecurity.setConfigurationAsDefault(input);
-
-// Result shape (from schema): { default_for_new_repos?: "all" | "none" | "private_and_internal" | "public"; configuration?: { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security...
+github.codeSecurity.attachConfiguration(input: {
+  /** The type of repositories to attach the configuration to. `selected` means the configuration will be attached to only the repositories specified by `selected_repository_ids` */
+  scope: "all" | "all_without_configurations" | "public" | "private_or_internal" | "selected";
+  /** An array of repository IDs to attach the configuration to. You can only provide a list of repository ids when the `scope` is set to `selected`. */
+  selected_repository_ids?: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+}): Promise<{ [key: string]: unknown }>
 ```
 
-### `github.codeSecurity.getRepositoriesForConfiguration`
+<sub>`POST /orgs/{org}/code-security/configurations/{configuration_id}/attach` · `code-security/attach-configuration`</sub>
 
-- **HTTP**: `GET /orgs/{org}/code-security/configurations/{configuration_id}/repositories`
-- **What it does**: Get repositories associated with a code security configuration
-- **OpenAPI operationId**: `code-security/get-repositories-for-configuration`
-- **Path params**: None
-- **Query params**: `per_page`, `status`
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.setConfigurationAsDefault`
 
-**Inputs**
-
-- Client input type: `{ org: string; configuration_id: number; per_page?: number; before?: string; after?: string; status?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ status?: "attached" | "attaching" | "detached" | "removed" | "enforced" | "failed" | "updating" | "removed_by_enterprise"; repository?: { id: number; node_id: string; name: string; full_name: string; owner: { name?: ...`
-- OpenAPI response codes: `200`, `403`, `404`
+Set a code security configuration as a default for an organization — [API reference](https://docs.github.com/rest/code-security/configurations#set-a-code-security-configuration-as-a-default-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityGetRepositoriesForConfigurationInput = Parameters<typeof github.codeSecurity.getRepositoriesForConfiguration> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityGetRepositoriesForConfigurationOutput = Awaited<ReturnType<typeof github.codeSecurity.getRepositoriesForConfiguration>>;
-
-const input: CodeSecurityGetRepositoriesForConfigurationInput = {} as { org: string; configuration_id: number; per_page?: number; before?: string; after?: string; status?: string };
-const result: CodeSecurityGetRepositoriesForConfigurationOutput = await github.codeSecurity.getRepositoriesForConfiguration(input);
-
-// Result shape (from schema): ({ status?: "attached" | "attaching" | "detached" | "removed" | "enforced" | "failed" | "updating" | "removed_by_enterprise"; repository?: { id: number; node_id: string; name: string; full_name: string; owner: { name?: ...
+github.codeSecurity.setConfigurationAsDefault(input: {
+  /** Specify which types of repository this security configuration should be applied to by default. */
+  default_for_new_repos?: "all" | "none" | "private_and_internal" | "public";
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+}): Promise<{ default_for_new_repos?: "all" | "none" | "private_and_internal" | "public"; configuration?: CodeSecurityConfiguration }>
 ```
 
-### `github.codeSecurity.getDefaultConfigurations`
+<sub>`PUT /orgs/{org}/code-security/configurations/{configuration_id}/defaults` · `code-security/set-configuration-as-default`</sub>
 
-- **HTTP**: `GET /orgs/{org}/code-security/configurations/defaults`
-- **What it does**: Get default code security configurations
-- **OpenAPI operationId**: `code-security/get-default-configurations`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.getRepositoriesForConfiguration`
 
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ default_for_new_repos?: "public" | "private_and_internal" | "all"; configuration?: { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enab...`
-- OpenAPI response codes: `200`, `304`, `403`, `404`
+Get repositories associated with a code security configuration — [API reference](https://docs.github.com/rest/code-security/configurations#get-repositories-associated-with-a-code-security-configuration)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityGetDefaultConfigurationsInput = Parameters<typeof github.codeSecurity.getDefaultConfigurations> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityGetDefaultConfigurationsOutput = Awaited<ReturnType<typeof github.codeSecurity.getDefaultConfigurations>>;
-
-const input: CodeSecurityGetDefaultConfigurationsInput = {} as { org: string };
-const result: CodeSecurityGetDefaultConfigurationsOutput = await github.codeSecurity.getDefaultConfigurations(input);
-
-// Result shape (from schema): ({ default_for_new_repos?: "public" | "private_and_internal" | "all"; configuration?: { id?: number; name?: string; target_type?: "global" | "organization" | "enterprise"; description?: string; advanced_security?: "enab...
+github.codeSecurity.getRepositoriesForConfiguration(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the code security configuration. */
+  configuration_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** A comma-separated list of statuses. If specified, only repositories with these attachment statuses will be returned.  Can be: `all`, `attached`, `attaching`, `detached`, `removed`, `enforced`, `failed`, `updating`, `removed_by_enterprise` */
+  status?: string;
+}): Promise<(CodeSecurityConfigurationRepositories)[]>
 ```
 
-### `github.codeSecurity.detachConfiguration`
+<sub>`GET /orgs/{org}/code-security/configurations/{configuration_id}/repositories` · `code-security/get-repositories-for-configuration`</sub>
 
-- **HTTP**: `DELETE /orgs/{org}/code-security/configurations/detach`
-- **What it does**: Detach configurations from repositories
-- **OpenAPI operationId**: `code-security/detach-configuration`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `400`, `403`, `404`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.getDefaultConfigurations`
 
-**Inputs**
-
-- Client input type: `{ selected_repository_ids: (number)[]; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `400`, `403`, `404`, `409`
+Get default code security configurations — [API reference](https://docs.github.com/rest/code-security/configurations#get-default-code-security-configurations)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityDetachConfigurationInput = Parameters<typeof github.codeSecurity.detachConfiguration> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityDetachConfigurationOutput = Awaited<ReturnType<typeof github.codeSecurity.detachConfiguration>>;
-
-const input: CodeSecurityDetachConfigurationInput = {} as { selected_repository_ids: (number)[]; org: string };
-const result: CodeSecurityDetachConfigurationOutput = await github.codeSecurity.detachConfiguration(input);
-
-// Result shape (from schema): unknown
+github.codeSecurity.getDefaultConfigurations(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<CodeSecurityDefaultConfigurations>
 ```
 
-### `github.codeSecurity.getConfigurationForRepository`
+<sub>`GET /orgs/{org}/code-security/configurations/defaults` · `code-security/get-default-configurations`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/code-security-configuration`
-- **What it does**: Get the code security configuration associated with a repository
-- **OpenAPI operationId**: `code-security/get-configuration-for-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `204`, `304`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.codeSecurity.detachConfiguration`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ status?: "attached" | "attaching" | "detached" | "removed" | "enforced" | "failed" | "updating" | "removed_by_enterprise"; configuration?: { id?: number; name?: string; target_type?: "global" | "organization" | "enter...`
-- OpenAPI response codes: `200`, `204`, `304`, `403`, `404`
+Detach configurations from repositories — [API reference](https://docs.github.com/rest/code-security/configurations#detach-configurations-from-repositories)
 
 ```ts
-import github from "@utdk/github";
-
-type CodeSecurityGetConfigurationForRepositoryInput = Parameters<typeof github.codeSecurity.getConfigurationForRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type CodeSecurityGetConfigurationForRepositoryOutput = Awaited<ReturnType<typeof github.codeSecurity.getConfigurationForRepository>>;
-
-const input: CodeSecurityGetConfigurationForRepositoryInput = {} as { owner: string; repo: string };
-const result: CodeSecurityGetConfigurationForRepositoryOutput = await github.codeSecurity.getConfigurationForRepository(input);
-
-// Result shape (from schema): { status?: "attached" | "attaching" | "detached" | "removed" | "enforced" | "failed" | "updating" | "removed_by_enterprise"; configuration?: { id?: number; name?: string; target_type?: "global" | "organization" | "enter...
+github.codeSecurity.detachConfiguration(input: {
+  /** An array of repository IDs to detach from configurations. Up to 250 IDs can be provided. */
+  selected_repository_ids: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
 ```
 
+<sub>`DELETE /orgs/{org}/code-security/configurations/detach` · `code-security/detach-configuration`</sub>
+
+## `github.codeSecurity.getConfigurationForRepository`
+
+Get the code security configuration associated with a repository — [API reference](https://docs.github.com/rest/code-security/configurations#get-the-code-security-configuration-associated-with-a-repository)
+
+```ts
+github.codeSecurity.getConfigurationForRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<CodeSecurityConfigurationForRepository>
+```
+
+<sub>`GET /repos/{owner}/{repo}/code-security-configuration` · `code-security/get-configuration-for-repository`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

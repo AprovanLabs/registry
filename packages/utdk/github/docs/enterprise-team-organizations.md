@@ -1,215 +1,116 @@
 # Enterprise Team Organizations
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.enterpriseTeamOrganizations.getAssignments`
-
-- **HTTP**: `GET /enterprises/{enterprise}/teams/{enterprise-team}/organizations`
-- **What it does**: Get organization assignments
-- **OpenAPI operationId**: `enterprise-team-organizations/get-assignments`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ enterprise: string; "enterprise-team": string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ login: string; id: number; node_id: string; url: string; repos_url: string; events_url: string; hooks_url: string; issues_url: string; members_url: string; public_members_url: string; avatar_url: string; description:...`
-- OpenAPI response codes: `200`
+6 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type EnterpriseTeamOrganizationsGetAssignmentsInput = Parameters<typeof github.enterpriseTeamOrganizations.getAssignments> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamOrganizationsGetAssignmentsOutput = Awaited<ReturnType<typeof github.enterpriseTeamOrganizations.getAssignments>>;
-
-const input: EnterpriseTeamOrganizationsGetAssignmentsInput = {} as { enterprise: string; "enterprise-team": string; per_page?: number; page?: number };
-const result: EnterpriseTeamOrganizationsGetAssignmentsOutput = await github.enterpriseTeamOrganizations.getAssignments(input);
-
-// Result shape (from schema): ({ login: string; id: number; node_id: string; url: string; repos_url: string; events_url: string; hooks_url: string; issues_url: string; members_url: string; public_members_url: string; avatar_url: string; description:...
 ```
 
-### `github.enterpriseTeamOrganizations.delete`
+## `github.enterpriseTeamOrganizations.getAssignments`
 
-- **HTTP**: `DELETE /enterprises/{enterprise}/teams/{enterprise-team}/organizations/{org}`
-- **What it does**: Delete an organization assignment
-- **OpenAPI operationId**: `enterprise-team-organizations/delete`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ enterprise: string; "enterprise-team": string; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Get organization assignments — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-team-organizations#get-organization-assignments)
 
 ```ts
-import github from "@utdk/github";
-
-type EnterpriseTeamOrganizationsDeleteInput = Parameters<typeof github.enterpriseTeamOrganizations.delete> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamOrganizationsDeleteOutput = Awaited<ReturnType<typeof github.enterpriseTeamOrganizations.delete>>;
-
-const input: EnterpriseTeamOrganizationsDeleteInput = {} as { enterprise: string; "enterprise-team": string; org: string };
-const result: EnterpriseTeamOrganizationsDeleteOutput = await github.enterpriseTeamOrganizations.delete(input);
-
-// Result shape (from schema): unknown
+github.enterpriseTeamOrganizations.getAssignments(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The slug version of the enterprise team name. You can also substitute this value with the enterprise team id. */
+  "enterprise-team": string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(OrganizationSimple)[]>
 ```
 
-### `github.enterpriseTeamOrganizations.getAssignment`
+<sub>`GET /enterprises/{enterprise}/teams/{enterprise-team}/organizations` · `enterprise-team-organizations/get-assignments`</sub>
 
-- **HTTP**: `GET /enterprises/{enterprise}/teams/{enterprise-team}/organizations/{org}`
-- **What it does**: Get organization assignment
-- **OpenAPI operationId**: `enterprise-team-organizations/get-assignment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.enterpriseTeamOrganizations.delete`
 
-**Inputs**
-
-- Client input type: `{ enterprise: string; "enterprise-team": string; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ login: string; id: number; node_id: string; url: string; repos_url: string; events_url: string; hooks_url: string; issues_url: string; members_url: string; public_members_url: string; avatar_url: string; description: ...`
-- OpenAPI response codes: `200`, `404`
+Delete an organization assignment — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-team-organizations#delete-an-organization-assignment)
 
 ```ts
-import github from "@utdk/github";
-
-type EnterpriseTeamOrganizationsGetAssignmentInput = Parameters<typeof github.enterpriseTeamOrganizations.getAssignment> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamOrganizationsGetAssignmentOutput = Awaited<ReturnType<typeof github.enterpriseTeamOrganizations.getAssignment>>;
-
-const input: EnterpriseTeamOrganizationsGetAssignmentInput = {} as { enterprise: string; "enterprise-team": string; org: string };
-const result: EnterpriseTeamOrganizationsGetAssignmentOutput = await github.enterpriseTeamOrganizations.getAssignment(input);
-
-// Result shape (from schema): { login: string; id: number; node_id: string; url: string; repos_url: string; events_url: string; hooks_url: string; issues_url: string; members_url: string; public_members_url: string; avatar_url: string; description: ...
+github.enterpriseTeamOrganizations.delete(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The slug version of the enterprise team name. You can also substitute this value with the enterprise team id. */
+  "enterprise-team": string;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<unknown>
 ```
 
-### `github.enterpriseTeamOrganizations.add`
+<sub>`DELETE /enterprises/{enterprise}/teams/{enterprise-team}/organizations/{org}` · `enterprise-team-organizations/delete`</sub>
 
-- **HTTP**: `PUT /enterprises/{enterprise}/teams/{enterprise-team}/organizations/{org}`
-- **What it does**: Add an organization assignment
-- **OpenAPI operationId**: `enterprise-team-organizations/add`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.enterpriseTeamOrganizations.getAssignment`
 
-**Inputs**
-
-- Client input type: `{ enterprise: string; "enterprise-team": string; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ login: string; id: number; node_id: string; url: string; repos_url: string; events_url: string; hooks_url: string; issues_url: string; members_url: string; public_members_url: string; avatar_url: string; description: ...`
-- OpenAPI response codes: `201`
+Get organization assignment — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-team-organizations#get-organization-assignment)
 
 ```ts
-import github from "@utdk/github";
-
-type EnterpriseTeamOrganizationsAddInput = Parameters<typeof github.enterpriseTeamOrganizations.add> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamOrganizationsAddOutput = Awaited<ReturnType<typeof github.enterpriseTeamOrganizations.add>>;
-
-const input: EnterpriseTeamOrganizationsAddInput = {} as { enterprise: string; "enterprise-team": string; org: string };
-const result: EnterpriseTeamOrganizationsAddOutput = await github.enterpriseTeamOrganizations.add(input);
-
-// Result shape (from schema): { login: string; id: number; node_id: string; url: string; repos_url: string; events_url: string; hooks_url: string; issues_url: string; members_url: string; public_members_url: string; avatar_url: string; description: ...
+github.enterpriseTeamOrganizations.getAssignment(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The slug version of the enterprise team name. You can also substitute this value with the enterprise team id. */
+  "enterprise-team": string;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<OrganizationSimple>
 ```
 
-### `github.enterpriseTeamOrganizations.bulkAdd`
+<sub>`GET /enterprises/{enterprise}/teams/{enterprise-team}/organizations/{org}` · `enterprise-team-organizations/get-assignment`</sub>
 
-- **HTTP**: `POST /enterprises/{enterprise}/teams/{enterprise-team}/organizations/add`
-- **What it does**: Add organization assignments
-- **OpenAPI operationId**: `enterprise-team-organizations/bulk-add`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.enterpriseTeamOrganizations.add`
 
-**Inputs**
-
-- Client input type: `{ organization_slugs: (string)[]; enterprise: string; "enterprise-team": string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ login: string; id: number; node_id: string; url: string; repos_url: string; events_url: string; hooks_url: string; issues_url: string; members_url: string; public_members_url: string; avatar_url: string; description:...`
-- OpenAPI response codes: `200`
+Add an organization assignment — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-team-organizations#add-an-organization-assignment)
 
 ```ts
-import github from "@utdk/github";
-
-type EnterpriseTeamOrganizationsBulkAddInput = Parameters<typeof github.enterpriseTeamOrganizations.bulkAdd> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamOrganizationsBulkAddOutput = Awaited<ReturnType<typeof github.enterpriseTeamOrganizations.bulkAdd>>;
-
-const input: EnterpriseTeamOrganizationsBulkAddInput = {} as { organization_slugs: (string)[]; enterprise: string; "enterprise-team": string };
-const result: EnterpriseTeamOrganizationsBulkAddOutput = await github.enterpriseTeamOrganizations.bulkAdd(input);
-
-// Result shape (from schema): ({ login: string; id: number; node_id: string; url: string; repos_url: string; events_url: string; hooks_url: string; issues_url: string; members_url: string; public_members_url: string; avatar_url: string; description:...
+github.enterpriseTeamOrganizations.add(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The slug version of the enterprise team name. You can also substitute this value with the enterprise team id. */
+  "enterprise-team": string;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<OrganizationSimple>
 ```
 
-### `github.enterpriseTeamOrganizations.bulkRemove`
+<sub>`PUT /enterprises/{enterprise}/teams/{enterprise-team}/organizations/{org}` · `enterprise-team-organizations/add`</sub>
 
-- **HTTP**: `POST /enterprises/{enterprise}/teams/{enterprise-team}/organizations/remove`
-- **What it does**: Remove organization assignments
-- **OpenAPI operationId**: `enterprise-team-organizations/bulk-remove`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.enterpriseTeamOrganizations.bulkAdd`
 
-**Inputs**
-
-- Client input type: `{ organization_slugs: (string)[]; enterprise: string; "enterprise-team": string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Add organization assignments — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-team-organizations#add-organization-assignments)
 
 ```ts
-import github from "@utdk/github";
-
-type EnterpriseTeamOrganizationsBulkRemoveInput = Parameters<typeof github.enterpriseTeamOrganizations.bulkRemove> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamOrganizationsBulkRemoveOutput = Awaited<ReturnType<typeof github.enterpriseTeamOrganizations.bulkRemove>>;
-
-const input: EnterpriseTeamOrganizationsBulkRemoveInput = {} as { organization_slugs: (string)[]; enterprise: string; "enterprise-team": string };
-const result: EnterpriseTeamOrganizationsBulkRemoveOutput = await github.enterpriseTeamOrganizations.bulkRemove(input);
-
-// Result shape (from schema): unknown
+github.enterpriseTeamOrganizations.bulkAdd(input: {
+  /** Organization slug to assign the team to. */
+  organization_slugs: (string)[];
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The slug version of the enterprise team name. You can also substitute this value with the enterprise team id. */
+  "enterprise-team": string;
+}): Promise<(OrganizationSimple)[]>
 ```
 
+<sub>`POST /enterprises/{enterprise}/teams/{enterprise-team}/organizations/add` · `enterprise-team-organizations/bulk-add`</sub>
+
+## `github.enterpriseTeamOrganizations.bulkRemove`
+
+Remove organization assignments — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-team-organizations#remove-organization-assignments)
+
+```ts
+github.enterpriseTeamOrganizations.bulkRemove(input: {
+  /** Organization slug to unassign the team from. */
+  organization_slugs: (string)[];
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The slug version of the enterprise team name. You can also substitute this value with the enterprise team id. */
+  "enterprise-team": string;
+}): Promise<unknown>
+```
+
+<sub>`POST /enterprises/{enterprise}/teams/{enterprise-team}/organizations/remove` · `enterprise-team-organizations/bulk-remove`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

@@ -1,181 +1,111 @@
 # Enterprise Teams
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.enterpriseTeams.list`
-
-- **HTTP**: `GET /enterprises/{enterprise}/teams`
-- **What it does**: List enterprise teams
-- **OpenAPI operationId**: `enterprise-teams/list`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ enterprise: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; name: string; description?: string; slug: string; url: string; sync_to_organizations?: string; organization_selection_type?: string; group_id: string | null; group_name?: string | null; html_url: string; ...`
-- OpenAPI response codes: `200`, `403`
+5 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type EnterpriseTeamsListInput = Parameters<typeof github.enterpriseTeams.list> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamsListOutput = Awaited<ReturnType<typeof github.enterpriseTeams.list>>;
-
-const input: EnterpriseTeamsListInput = {} as { enterprise: string; per_page?: number; page?: number };
-const result: EnterpriseTeamsListOutput = await github.enterpriseTeams.list(input);
-
-// Result shape (from schema): ({ id: number; name: string; description?: string; slug: string; url: string; sync_to_organizations?: string; organization_selection_type?: string; group_id: string | null; group_name?: string | null; html_url: string; ...
 ```
 
-### `github.enterpriseTeams.create`
+## `github.enterpriseTeams.list`
 
-- **HTTP**: `POST /enterprises/{enterprise}/teams`
-- **What it does**: Create an enterprise team
-- **OpenAPI operationId**: `enterprise-teams/create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name: string; description?: string | null; sync_to_organizations?: "all" | "disabled"; organization_selection_type?: "disabled" | "selected" | "all"; group_id?: string | null; notification_setting?: "notifications_enabled" | "notifications_disabled"; enterprise: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string; slug: string; url: string; sync_to_organizations?: string; organization_selection_type?: string; group_id: string | null; group_name?: string | null; html_url: string; m...`
-- OpenAPI response codes: `201`
+List enterprise teams — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-teams#list-enterprise-teams)
 
 ```ts
-import github from "@utdk/github";
-
-type EnterpriseTeamsCreateInput = Parameters<typeof github.enterpriseTeams.create> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamsCreateOutput = Awaited<ReturnType<typeof github.enterpriseTeams.create>>;
-
-const input: EnterpriseTeamsCreateInput = {} as { name: string; description?: string | null; sync_to_organizations?: "all" | "disabled"; organization_selection_type?: "disabled" | "selected" | "all"; group_id?: string | null; notification_setting?: "notifications_enabled" | "notifications_disabled"; enterprise: string };
-const result: EnterpriseTeamsCreateOutput = await github.enterpriseTeams.create(input);
-
-// Result shape (from schema): { id: number; name: string; description?: string; slug: string; url: string; sync_to_organizations?: string; organization_selection_type?: string; group_id: string | null; group_name?: string | null; html_url: string; m...
+github.enterpriseTeams.list(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(EnterpriseTeam)[]>
 ```
 
-### `github.enterpriseTeams.delete`
+<sub>`GET /enterprises/{enterprise}/teams` · `enterprise-teams/list`</sub>
 
-- **HTTP**: `DELETE /enterprises/{enterprise}/teams/{team_slug}`
-- **What it does**: Delete an enterprise team
-- **OpenAPI operationId**: `enterprise-teams/delete`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.enterpriseTeams.create`
 
-**Inputs**
-
-- Client input type: `{ enterprise: string; team_slug: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`
+Create an enterprise team — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-teams#create-an-enterprise-team)
 
 ```ts
-import github from "@utdk/github";
-
-type EnterpriseTeamsDeleteInput = Parameters<typeof github.enterpriseTeams.delete> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamsDeleteOutput = Awaited<ReturnType<typeof github.enterpriseTeams.delete>>;
-
-const input: EnterpriseTeamsDeleteInput = {} as { enterprise: string; team_slug: string };
-const result: EnterpriseTeamsDeleteOutput = await github.enterpriseTeams.delete(input);
-
-// Result shape (from schema): unknown
+github.enterpriseTeams.create(input: {
+  /** The name of the team. */
+  name: string;
+  /** A description of the team. */
+  description?: string | null;
+  /** Retired: this field is no longer supported. Whether the enterprise team should be reflected in each organization. This value cannot be set.  */
+  sync_to_organizations?: "all" | "disabled";
+  /** Specifies which organizations in the enterprise should have access to this team. Can be one of `disabled`, `selected`, or `all`. `disabled`: The team is not assigned to any organizations. This is the default when you create a new team. `selected`: The team is assigned to specific organizations. You can then use the [add organization assignments API](https://docs.github.com/rest/enterprise-teams/enterprise-team-organizations#add-organization-assignments) endpoint. `all`: The team is assigned to all current and future organizations in the enterprise.  */
+  organization_selection_type?: "disabled" | "selected" | "all";
+  /** The ID of the IdP group to assign team membership with. You can get this value from the [REST API endpoints for SCIM](https://docs.github.com/rest/scim#list-provisioned-scim-groups-for-an-enterprise). */
+  group_id?: string | null;
+  /** The notification setting the team is set to. The options are:  * `notifications_enabled` - team members receive notifications when the team is @mentioned. * `notifications_disabled` - no one receives notifications.  Default: `notifications_enabled`  */
+  notification_setting?: "notifications_enabled" | "notifications_disabled";
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+}): Promise<EnterpriseTeam>
 ```
 
-### `github.enterpriseTeams.get`
+<sub>`POST /enterprises/{enterprise}/teams` · `enterprise-teams/create`</sub>
 
-- **HTTP**: `GET /enterprises/{enterprise}/teams/{team_slug}`
-- **What it does**: Get an enterprise team
-- **OpenAPI operationId**: `enterprise-teams/get`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.enterpriseTeams.delete`
 
-**Inputs**
-
-- Client input type: `{ enterprise: string; team_slug: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string; slug: string; url: string; sync_to_organizations?: string; organization_selection_type?: string; group_id: string | null; group_name?: string | null; html_url: string; m...`
-- OpenAPI response codes: `200`, `403`
+Delete an enterprise team — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-teams#delete-an-enterprise-team)
 
 ```ts
-import github from "@utdk/github";
-
-type EnterpriseTeamsGetInput = Parameters<typeof github.enterpriseTeams.get> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamsGetOutput = Awaited<ReturnType<typeof github.enterpriseTeams.get>>;
-
-const input: EnterpriseTeamsGetInput = {} as { enterprise: string; team_slug: string };
-const result: EnterpriseTeamsGetOutput = await github.enterpriseTeams.get(input);
-
-// Result shape (from schema): { id: number; name: string; description?: string; slug: string; url: string; sync_to_organizations?: string; organization_selection_type?: string; group_id: string | null; group_name?: string | null; html_url: string; m...
+github.enterpriseTeams.delete(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The slug of the team name. */
+  team_slug: string;
+}): Promise<BasicError>
 ```
 
-### `github.enterpriseTeams.update`
+<sub>`DELETE /enterprises/{enterprise}/teams/{team_slug}` · `enterprise-teams/delete`</sub>
 
-- **HTTP**: `PATCH /enterprises/{enterprise}/teams/{team_slug}`
-- **What it does**: Update an enterprise team
-- **OpenAPI operationId**: `enterprise-teams/update`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.enterpriseTeams.get`
 
-**Inputs**
-
-- Client input type: `{ name?: string | null; description?: string | null; sync_to_organizations?: "all" | "disabled"; organization_selection_type?: "disabled" | "selected" | "all"; group_id?: string | null; notification_setting?: "notifications_enabled" | "notifications_disabled"; enterprise: string; team_slug: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string; slug: string; url: string; sync_to_organizations?: string; organization_selection_type?: string; group_id: string | null; group_name?: string | null; html_url: string; m...`
-- OpenAPI response codes: `200`, `403`
+Get an enterprise team — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-teams#get-an-enterprise-team)
 
 ```ts
-import github from "@utdk/github";
-
-type EnterpriseTeamsUpdateInput = Parameters<typeof github.enterpriseTeams.update> extends [infer T, ...unknown[]] ? T : undefined;
-type EnterpriseTeamsUpdateOutput = Awaited<ReturnType<typeof github.enterpriseTeams.update>>;
-
-const input: EnterpriseTeamsUpdateInput = {} as { name?: string | null; description?: string | null; sync_to_organizations?: "all" | "disabled"; organization_selection_type?: "disabled" | "selected" | "all"; group_id?: string | null; notification_setting?: "notifications_enabled" | "notifications_disabled"; enterprise: string; team_slug: string };
-const result: EnterpriseTeamsUpdateOutput = await github.enterpriseTeams.update(input);
-
-// Result shape (from schema): { id: number; name: string; description?: string; slug: string; url: string; sync_to_organizations?: string; organization_selection_type?: string; group_id: string | null; group_name?: string | null; html_url: string; m...
+github.enterpriseTeams.get(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The slug of the team name. */
+  team_slug: string;
+}): Promise<EnterpriseTeam>
 ```
 
+<sub>`GET /enterprises/{enterprise}/teams/{team_slug}` · `enterprise-teams/get`</sub>
+
+## `github.enterpriseTeams.update`
+
+Update an enterprise team — [API reference](https://docs.github.com/rest/enterprise-teams/enterprise-teams#update-an-enterprise-team)
+
+```ts
+github.enterpriseTeams.update(input: {
+  /** A new name for the team. */
+  name?: string | null;
+  /** A new description for the team. */
+  description?: string | null;
+  /** Retired: this field is no longer supported. Whether the enterprise team should be reflected in each organization. This value cannot be changed.  */
+  sync_to_organizations?: "all" | "disabled";
+  /** Specifies which organizations in the enterprise should have access to this team. Can be one of `disabled`, `selected`, or `all`. `disabled`: The team is not assigned to any organizations. This is the default when you create a new team. `selected`: The team is assigned to specific organizations. You can then use the [add organization assignments API](https://docs.github.com/rest/enterprise-teams/enterprise-team-organizations#add-organization-assignments). `all`: The team is assigned to all current and future organizations in the enterprise.  */
+  organization_selection_type?: "disabled" | "selected" | "all";
+  /** The ID of the IdP group to assign team membership with. The new IdP group will replace the existing one, or replace existing direct members if the team isn't currently linked to an IdP group. */
+  group_id?: string | null;
+  /** The notification setting the team is set to. The options are:  * `notifications_enabled` - team members receive notifications when the team is @mentioned. * `notifications_disabled` - no one receives notifications.  */
+  notification_setting?: "notifications_enabled" | "notifications_disabled";
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The slug of the team name. */
+  team_slug: string;
+}): Promise<EnterpriseTeam>
+```
+
+<sub>`PATCH /enterprises/{enterprise}/teams/{team_slug}` · `enterprise-teams/update`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

@@ -7,7 +7,7 @@ import {
   splitProviderName,
   stripProviderToolName,
 } from "./provider.js";
-import { escapeComment, quotePropertyName, schemaToObjectContent, schemaToTypeScriptType } from "./schema.js";
+import { escapeComment, quotePropertyName, schemaToObjectContent, schemaToTypeScriptType, type SchemaRenderContext } from "./schema.js";
 import type { ClientToolDefinition, ToolRuntimeMetadata } from "./client-api.js";
 import type { ProviderPackageDocsMetadata } from "./docs/types.js";
 import type { RegistryProvider } from "./provider.js";
@@ -17,7 +17,135 @@ import type { OpenAPIV3 } from "openapi-types";
 type PublicToolTypes = {
   inputType: string;
   outputType: string;
+  rawResponseSchema?: unknown;
+  docsUrl?: string;
 };
+
+/**
+ * Named-type registry for a provider: every `components.schemas` entry gets a
+ * stable exported TypeScript name so operation signatures can reference
+ * `Repository` instead of inlining a wall of properties. Editor hover then
+ * reveals the shape on demand.
+ */
+export type ProviderSchemaTypes = {
+  /** `$ref` string → exported type name. */
+  refToName: Map<string, string>;
+  schemas: Array<{ key: string; name: string; schema: unknown }>;
+  resolveRef: (ref: string) => unknown;
+};
+
+const SCHEMA_REF_PREFIX = "#/components/schemas/";
+
+function encodeRefSegment(key: string): string {
+  return key.replace(/~/g, "~0").replace(/\//g, "~1");
+}
+
+export function createProviderSchemaTypes(document: OpenAPIV3.Document): ProviderSchemaTypes | null {
+  const definitions = document.components?.schemas ?? {};
+  const entries = Object.entries(definitions);
+
+  if (entries.length === 0) {
+    return null;
+  }
+
+  const usedNames = new Set<string>();
+  const refToName = new Map<string, string>();
+  const schemas: ProviderSchemaTypes["schemas"] = [];
+
+  for (const [key, schema] of entries) {
+    let name = toPascalCase(key) || "Schema";
+    if (usedNames.has(name)) {
+      let suffix = 2;
+      while (usedNames.has(`${name}${suffix}`)) suffix += 1;
+      name = `${name}${suffix}`;
+    }
+    usedNames.add(name);
+    refToName.set(`${SCHEMA_REF_PREFIX}${encodeRefSegment(key)}`, name);
+    schemas.push({ key, name, schema });
+  }
+
+  return {
+    refToName,
+    schemas,
+    resolveRef: (ref: string) => {
+      if (!ref.startsWith("#/")) {
+        return undefined;
+      }
+
+      return ref
+        .slice(2)
+        .split("/")
+        .reduce<unknown>((current, part) => {
+          if (!current || typeof current !== "object") {
+            return undefined;
+          }
+
+          return (current as Record<string, unknown>)[part.replace(/~1/g, "/").replace(/~0/g, "~")];
+        }, document);
+    },
+  };
+}
+
+/** Wrap the schema types in a render context that records which names get used. */
+function createTrackedContext(
+  schemaTypes: ProviderSchemaTypes | null | undefined,
+  usedNames: Set<string>,
+): SchemaRenderContext | undefined {
+  if (!schemaTypes) {
+    return undefined;
+  }
+
+  return {
+    refTypeName: (ref) => {
+      const name = schemaTypes.refToName.get(ref);
+      if (name) {
+        usedNames.add(name);
+      }
+      return name;
+    },
+    resolveRef: schemaTypes.resolveRef,
+  };
+}
+
+function renderSchemaImport(usedNames: Set<string>, ownNames: Set<string>): string | undefined {
+  const imports = [...usedNames].filter((name) => !ownNames.has(name)).sort();
+
+  if (imports.length === 0) {
+    return undefined;
+  }
+
+  return `import type { ${imports.join(", ")} } from "./schemas.js";`;
+}
+
+export function renderProviderSchemas(schemaTypes: ProviderSchemaTypes): string {
+  const context: SchemaRenderContext = {
+    refTypeName: (ref) => schemaTypes.refToName.get(ref),
+    resolveRef: schemaTypes.resolveRef,
+  };
+
+  const blocks = schemaTypes.schemas.map(({ name, schema }) => {
+    const description =
+      schema && typeof schema === "object"
+        ? getNonEmptyString((schema as Record<string, unknown>).description)
+        : undefined;
+    const schemaRecord = schema as { type?: string; properties?: Record<string, unknown> } | undefined;
+    const isObjectSchema = Boolean(
+      schemaRecord &&
+        (schemaRecord.type === "object" || schemaRecord.properties) &&
+        Object.keys(schemaRecord.properties ?? {}).length > 0,
+    );
+    const body = isObjectSchema
+      ? `{\n${schemaToObjectContent(schema, "  ", context)}\n}`
+      : schemaToTypeScriptType(schema, context);
+
+    return [
+      ...(description ? [`/** ${escapeComment(description)} */`] : []),
+      `export type ${name} = ${body};`,
+    ].join("\n");
+  });
+
+  return `${blocks.join("\n\n")}\n`;
+}
 
 type AuthScheme = {
   id: string;
@@ -64,13 +192,18 @@ function getStructuredAuth(document: OpenAPIV3.Document): {
 type ClientTool = {
   accessPath: string[];
   description: string;
+  docsUrl?: string;
   hasInput: boolean;
   hasOptions: boolean;
   inputSchema?: unknown;
+  /** Ref-preserving variant of `inputSchema` for named-type rendering. */
+  rawInputSchema?: unknown;
   inputType: string;
   optionsOptional: boolean;
   optionsType: string;
   outputSchema?: unknown;
+  /** Ref-preserving response schema for named-type rendering. */
+  rawOutputSchema?: unknown;
   outputType: string;
   tags: string[];
 };
@@ -215,28 +348,77 @@ function toClientTools(
   return tools.map((tool) => {
     const rawToolName = stripProviderToolName(tool.name, provider);
     const generatedMetadata = clientToolMap.get(tool.name);
+    const publicTypes = publicTypeMap.get(tool.name);
     const hasPublicType = publicTypeMap.has(tool.name);
-    const inputType = generatedMetadata?.inputType ?? publicTypeMap.get(tool.name)?.inputType ?? schemaToTypeScriptType(tool.inputs);
+    const inputType = generatedMetadata?.inputType ?? publicTypes?.inputType ?? schemaToTypeScriptType(tool.inputs);
 
     return {
       accessPath: generatedMetadata?.accessPath ?? [sanitizeIdentifier(rawToolName)],
       description: tool.description ?? "",
+      docsUrl: publicTypes?.docsUrl,
       hasInput: generatedMetadata?.hasInput ?? inputType !== "{}",
       hasOptions: generatedMetadata?.hasOptions ?? false,
       inputSchema: generatedMetadata?.inputSchema ?? (hasPublicType ? undefined : tool.inputs),
+      rawInputSchema: generatedMetadata?.rawInputSchema,
       inputType,
       optionsOptional: generatedMetadata?.optionsOptional ?? true,
       optionsType: generatedMetadata?.optionsType ?? "{}",
       outputSchema: hasPublicType ? undefined : tool.outputs,
-      outputType: publicTypeMap.get(tool.name)?.outputType ?? schemaToTypeScriptType(tool.outputs),
+      rawOutputSchema: publicTypes?.rawResponseSchema,
+      outputType: publicTypes?.outputType ?? schemaToTypeScriptType(tool.outputs),
       tags: tool.tags ?? [],
     };
   });
 }
 
+/**
+ * Render one tool as a typed method member (JSDoc + signature). With a schema
+ * render context, signatures reference named component types and the JSDoc is
+ * limited to the operation description plus an optional `@see` docs link.
+ */
+function renderToolMember(tool: ClientTool, depth: number, context?: SchemaRenderContext): string {
+  const indent = "  ".repeat(depth);
+  const propertyIndent = "  ".repeat(depth + 1);
+  const methodName = tool.accessPath[tool.accessPath.length - 1] ?? "call";
+
+  const inputSource = context && tool.rawInputSchema !== undefined ? tool.rawInputSchema : tool.inputSchema;
+  const inputTypeStr =
+    inputSource && isExpandableObjectSchema(inputSource)
+      ? `{\n${schemaToObjectContent(inputSource, propertyIndent, context)}\n${indent}}`
+      : inputSource
+        ? schemaToTypeScriptType(inputSource, context)
+        : tool.inputType;
+
+  const outputSource = context && tool.rawOutputSchema !== undefined ? tool.rawOutputSchema : tool.outputSchema;
+  const outputTypeStr = outputSource !== undefined ? schemaToTypeScriptType(outputSource, context) : tool.outputType;
+
+  const parameters = [
+    tool.hasInput ? `input: ${inputTypeStr}` : undefined,
+    tool.hasOptions ? `options${tool.optionsOptional ? "?" : ""}: ${tool.optionsType}` : undefined,
+  ].filter((parameter): parameter is string => Boolean(parameter));
+
+  const docLines = [
+    ...(tool.description ? [`${indent} * ${escapeComment(tool.description)}`] : []),
+    ...(tool.docsUrl ? [`${indent} * @see ${tool.docsUrl}`] : []),
+  ];
+
+  return [
+    ...(docLines.length > 0 ? [`${indent}/**`, ...docLines, `${indent} */`] : []),
+    `${indent}${quotePropertyName(methodName)}: (${parameters.join(", ")}) => Promise<${outputTypeStr}>;`,
+  ].join("\n");
+}
+
+function isExpandableObjectSchema(schema: unknown): boolean {
+  const s = schema as { type?: string; properties?: Record<string, unknown> } | undefined;
+  if (!s || typeof s !== "object") return false;
+  if (s.type !== "object" && !s.properties) return false;
+  return Object.keys(s.properties ?? {}).length > 0;
+}
+
 function renderProviderTypesFromClientTools(
   provider: Pick<RegistryProvider, "name" | "options">,
   clientTools: ClientTool[],
+  context?: SchemaRenderContext,
 ): string {
   const providerTypeName = toPascalCase(provider.name);
 
@@ -263,18 +445,6 @@ function renderProviderTypesFromClientTools(
     current.tool = tool;
   }
 
-  function isExpandableObjectSchema(schema: unknown): boolean {
-    const s = schema as { type?: string; properties?: Record<string, unknown> } | undefined;
-    if (!s || typeof s !== "object") return false;
-    if (s.type !== "object" && !s.properties) return false;
-    return Object.keys(s.properties ?? {}).length > 0;
-  }
-
-  function renderExpandedType(rawSchema: unknown, propertyIndent: string, closingIndent: string): string {
-    const content = schemaToObjectContent(rawSchema, propertyIndent);
-    return `{\n${content}\n${closingIndent}}`;
-  }
-
   function renderClientTree(node: ClientTreeNode, depth: number): string {
     return [...node.children.entries()]
       .sort(([left], [right]) => left.localeCompare(right))
@@ -282,35 +452,7 @@ function renderProviderTypesFromClientTools(
         const indent = "  ".repeat(depth);
 
         if (child.tool) {
-          const propertyIndent = "  ".repeat(depth + 1);
-
-          const inputTypeStr =
-            child.tool.inputSchema && isExpandableObjectSchema(child.tool.inputSchema)
-              ? renderExpandedType(child.tool.inputSchema, propertyIndent, indent)
-              : child.tool.inputType;
-
-          const outputTypeStr =
-            child.tool.outputSchema && isExpandableObjectSchema(child.tool.outputSchema)
-              ? renderExpandedType(child.tool.outputSchema, propertyIndent, indent)
-              : child.tool.outputType;
-
-          const parameters = [
-            child.tool.hasInput ? `input: ${inputTypeStr}` : undefined,
-            child.tool.hasOptions ? `options${child.tool.optionsOptional ? "?" : ""}: ${child.tool.optionsType}` : undefined,
-          ].filter((parameter): parameter is string => Boolean(parameter));
-          const invocation = [
-            child.tool.hasInput ? "input" : undefined,
-            child.tool.hasOptions ? "options" : undefined,
-          ].filter((argument): argument is string => Boolean(argument));
-
-          return [
-            `${indent}/**`,
-            `${indent} * ${escapeComment(child.tool.description)}`,
-            `${indent} * Tags: ${escapeComment(child.tool.tags.join(", "))}`,
-            `${indent} * Access as: ${provider.name}.${child.tool.accessPath.join(".")}(${invocation.join(", ")})`,
-            `${indent} */`,
-            `${indent}${quotePropertyName(segment)}: (${parameters.join(", ")}) => Promise<${outputTypeStr}>;`,
-          ].join("\n");
+          return renderToolMember(child.tool, depth, context);
         }
 
         return [
@@ -343,9 +485,12 @@ export function renderProviderTypes(
   tools: Tool[],
   publicTypeMap: Map<string, PublicToolTypes>,
   clientToolMap: Map<string, ClientToolDefinition>,
+  schemaTypes?: ProviderSchemaTypes | null,
 ): string {
   const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
-  return renderProviderTypesFromClientTools(provider, clientTools);
+  const usedNames = new Set<string>();
+  const context = createTrackedContext(schemaTypes, usedNames);
+  return renderProviderTypesFromClientTools(provider, clientTools, context);
 }
 
 function groupClientToolsByNamespace(clientTools: ClientTool[]): {
@@ -374,35 +519,22 @@ function toTypeName(groupKey: string): string {
   return toPascalCase(groupKey) + "Operations";
 }
 
+/**
+ * The shared named-types file is always `schemas.ts`; a namespace group that
+ * would collide gets its file suffixed.
+ */
+function groupFileBase(namespace: string): string {
+  return namespace === "schemas" ? "schemas-operations" : namespace;
+}
+
 function renderGroupTypes(
-  provider: Pick<RegistryProvider, "name" | "options">,
   groupKey: string,
   clientTools: ClientTool[],
+  context?: SchemaRenderContext,
 ): string {
   const typeName = toTypeName(groupKey);
 
-  const toolEntries = clientTools
-    .map((tool) => {
-      const methodName = tool.accessPath[tool.accessPath.length - 1] ?? "call";
-      const parameters = [
-        tool.hasInput ? `input: ${tool.inputType}` : undefined,
-        tool.hasOptions ? `options${tool.optionsOptional ? "?" : ""}: ${tool.optionsType}` : undefined,
-      ].filter((p): p is string => Boolean(p));
-      const invocation = [
-        tool.hasInput ? "input" : undefined,
-        tool.hasOptions ? "options" : undefined,
-      ].filter((a): a is string => Boolean(a));
-
-      return [
-        `  /**`,
-        `   * ${escapeComment(tool.description ?? "")}`,
-        `   * Tags: ${escapeComment(tool.tags.join(", "))}`,
-        `   * Access as: ${provider.name}.${tool.accessPath.join(".")}(${invocation.join(", ")})`,
-        `   */`,
-        `  ${quotePropertyName(methodName)}: (${parameters.join(", ")}) => Promise<${tool.outputType}>;`,
-      ].join("\n");
-    })
-    .join("\n\n");
+  const toolEntries = clientTools.map((tool) => renderToolMember(tool, 1, context)).join("\n\n");
 
   return [
     `export type ${typeName} = {`,
@@ -417,6 +549,7 @@ export function renderProviderGroupTypes(
   tools: Tool[],
   publicTypeMap: Map<string, PublicToolTypes>,
   clientToolMap: Map<string, ClientToolDefinition>,
+  schemaTypes?: ProviderSchemaTypes | null,
 ): Map<string, string> {
   const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
   const { namespaced } = groupClientToolsByNamespace(clientTools);
@@ -424,8 +557,18 @@ export function renderProviderGroupTypes(
   const output = new Map<string, string>();
 
   for (const [namespace, groupTools] of namespaced.entries()) {
-    const content = renderGroupTypes(provider, namespace, groupTools);
-    output.set(`${namespace}.ts`, content);
+    const usedNames = new Set<string>();
+    const context = createTrackedContext(schemaTypes, usedNames);
+    const content = renderGroupTypes(namespace, groupTools, context);
+    const importLine = renderSchemaImport(usedNames, new Set());
+    output.set(
+      `${groupFileBase(namespace)}.ts`,
+      importLine ? `${importLine}\n\n${content}` : content,
+    );
+  }
+
+  if (schemaTypes) {
+    output.set("schemas.ts", renderProviderSchemas(schemaTypes));
   }
 
   return output;
@@ -436,19 +579,14 @@ export function renderProviderTypesIndex(
   tools: Tool[],
   publicTypeMap: Map<string, PublicToolTypes>,
   clientToolMap: Map<string, ClientToolDefinition>,
+  schemaTypes?: ProviderSchemaTypes | null,
 ): string {
   const clientTools = toClientTools(provider, tools, publicTypeMap, clientToolMap);
   const { namespaced, toplevel } = groupClientToolsByNamespace(clientTools);
 
   const providerTypeName = toPascalCase(provider.name);
-
-  const imports = [...namespaced.keys()]
-    .sort()
-    .map((namespace) => {
-      const typeName = toTypeName(namespace);
-      return `import type { ${typeName} } from "./${namespace}.js";`;
-    })
-    .join("\n");
+  const usedNames = new Set<string>();
+  const context = createTrackedContext(schemaTypes, usedNames);
 
   const namespacedEntries = [...namespaced.keys()]
     .sort()
@@ -459,35 +597,26 @@ export function renderProviderTypesIndex(
     .join("\n");
 
   const toplevelEntries = toplevel
-    .map((tool) => {
-      const methodName = tool.accessPath[0] ?? "call";
-      const parameters = [
-        tool.hasInput ? `input: ${tool.inputType}` : undefined,
-        tool.hasOptions ? `options${tool.optionsOptional ? "?" : ""}: ${tool.optionsType}` : undefined,
-      ].filter((p): p is string => Boolean(p));
-      const invocation = [
-        tool.hasInput ? "input" : undefined,
-        tool.hasOptions ? "options" : undefined,
-      ].filter((a): a is string => Boolean(a));
-
-      return [
-        `  /**`,
-        `   * ${escapeComment(tool.description ?? "")}`,
-        `   * Tags: ${escapeComment(tool.tags.join(", "))}`,
-        `   * Access as: ${provider.name}.${tool.accessPath.join(".")}(${invocation.join(", ")})`,
-        `   */`,
-        `  ${quotePropertyName(methodName)}: (${parameters.join(", ")}) => Promise<${tool.outputType}>;`,
-      ].join("\n");
-    })
+    .map((tool) => renderToolMember(tool, 1, context))
     .join("\n\n");
+
+  const groupImports = [...namespaced.keys()]
+    .sort()
+    .map((namespace) => {
+      const typeName = toTypeName(namespace);
+      return `import type { ${typeName} } from "./${groupFileBase(namespace)}.js";`;
+    });
+
+  const schemaImport = renderSchemaImport(usedNames, new Set());
+  const imports = [...groupImports, ...(schemaImport ? [schemaImport] : [])].join("\n");
 
   const compositionParts = [namespacedEntries, toplevelEntries].filter(Boolean);
   const composition = compositionParts.join("\n\n");
 
-  const reExports = [...namespaced.keys()]
-    .sort()
-    .map((namespace) => `export * from "./${namespace}.js";`)
-    .join("\n");
+  const reExports = [
+    ...[...namespaced.keys()].sort().map((namespace) => `export * from "./${groupFileBase(namespace)}.js";`),
+    ...(schemaTypes ? [`export * from "./schemas.js";`] : []),
+  ].join("\n");
 
   return [
     imports,
@@ -834,11 +963,12 @@ export function renderProviderPackageJson(
   const packageDescription = title ? `Generated UTDK provider client for ${title}. ${description}` : description;
   const license = getNonEmptyString(openApiDocument.info?.license?.name);
   const homepage =
+    getNonEmptyString(provider.branding?.site) ??
     getNonEmptyString(openApiDocument.externalDocs?.url) ??
     getNonEmptyString(openApiDocument.info?.contact?.url) ??
     provider.url;
   const auth = getStructuredAuth(openApiDocument);
-  const icon = getProviderOpenApiIcon(provider, openApiDocument);
+  const icon = getProviderOpenApiIcon(provider, openApiDocument) ?? getNonEmptyString(provider.branding?.logo);
 
   const packageJson = {
     ...(includePackageName ? { name: `@utdk/${provider.name}` } : { private: true }),
@@ -860,6 +990,10 @@ export function renderProviderPackageJson(
         termsOfService: getNonEmptyString(openApiDocument.info?.termsOfService) ?? null,
         ...(icon ? { icon } : {}),
       },
+      // Chain of ownership: always the upstream vendor, never the aggregator
+      // we happened to fetch through (that's provenance.source).
+      ...(provider.provenance ? { provenance: provider.provenance } : {}),
+      ...(provider.branding ? { branding: provider.branding } : {}),
       ...(options.docsMetadata
         ? {
             docs: {

@@ -1,351 +1,275 @@
 # Security Advisories
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.securityAdvisories.listGlobalAdvisories`
-
-- **HTTP**: `GET /advisories`
-- **What it does**: List global security advisories
-- **OpenAPI operationId**: `security-advisories/list-global-advisories`
-- **Path params**: None
-- **Query params**: `ghsa_id`, `type`, `cve_id`, `ecosystem`, `severity`, `cwes`, `is_withdrawn`, `affects`, `published`, `updated`, `modified`, `epss_percentage`, `epss_percentile`, `per_page`, `sort`
-- **Response codes**: `200`, `422`, `429`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ ghsa_id?: string; type?: "reviewed" | "malware" | "unreviewed"; cve_id?: string; ecosystem?: "rubygems" | "npm" | "pip" | "maven" | "nuget" | "composer" | "go" | "rust" | "erlang" | "actions" | "pub" | "other" | "swift"; severity?: "unknown" | "low" | "medium" | "high" | "critical"; cwes?: string | (string)[]; is_withdrawn?: boolean; affects?: string | (string)[]; published?: string; updated?: string; modified?: string; epss_percentage?: string; epss_percentile?: string; before?: string; after?: string; direction?: "asc" | "desc"; per_page?: number; sort?: "updated" | "published" | "epss_percentage" | "epss_percentile" }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ ghsa_id: string; cve_id: string | null; url: string; html_url: string; repository_advisory_url: string | null; summary: string; description: string | null; type: "reviewed" | "unreviewed" | "malware"; severity: "crit...`
-- OpenAPI response codes: `200`, `422`, `429`
+10 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type SecurityAdvisoriesListGlobalAdvisoriesInput = Parameters<typeof github.securityAdvisories.listGlobalAdvisories> extends [infer T, ...unknown[]] ? T : undefined;
-type SecurityAdvisoriesListGlobalAdvisoriesOutput = Awaited<ReturnType<typeof github.securityAdvisories.listGlobalAdvisories>>;
-
-const input: SecurityAdvisoriesListGlobalAdvisoriesInput = {} as { ghsa_id?: string; type?: "reviewed" | "malware" | "unreviewed"; cve_id?: string; ecosystem?: "rubygems" | "npm" | "pip" | "maven" | "nuget" | "composer" | "go" | "rust" | "erlang" | "actions" | "pub" | "other" | "swift"; severity?: "unknown" | "low" | "medium" | "high" | "critical"; cwes?: string | (string)[]; is_withdrawn?: boolean; affects?: string | (string)[]; published?: string; updated?: string; modified?: string; epss_percentage?: string; epss_percentile?: string; before?: string; after?: string; direction?: "asc" | "desc"; per_page?: number; sort?: "updated" | "published" | "epss_percentage" | "epss_percentile" };
-const result: SecurityAdvisoriesListGlobalAdvisoriesOutput = await github.securityAdvisories.listGlobalAdvisories(input);
-
-// Result shape (from schema): ({ ghsa_id: string; cve_id: string | null; url: string; html_url: string; repository_advisory_url: string | null; summary: string; description: string | null; type: "reviewed" | "unreviewed" | "malware"; severity: "crit...
 ```
 
-### `github.securityAdvisories.getGlobalAdvisory`
+## `github.securityAdvisories.listGlobalAdvisories`
 
-- **HTTP**: `GET /advisories/{ghsa_id}`
-- **What it does**: Get a global security advisory
-- **OpenAPI operationId**: `security-advisories/get-global-advisory`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ ghsa_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ ghsa_id: string; cve_id: string | null; url: string; html_url: string; repository_advisory_url: string | null; summary: string; description: string | null; type: "reviewed" | "unreviewed" | "malware"; severity: "criti...`
-- OpenAPI response codes: `200`, `404`
+List global security advisories — [API reference](https://docs.github.com/rest/security-advisories/global-advisories#list-global-security-advisories)
 
 ```ts
-import github from "@utdk/github";
-
-type SecurityAdvisoriesGetGlobalAdvisoryInput = Parameters<typeof github.securityAdvisories.getGlobalAdvisory> extends [infer T, ...unknown[]] ? T : undefined;
-type SecurityAdvisoriesGetGlobalAdvisoryOutput = Awaited<ReturnType<typeof github.securityAdvisories.getGlobalAdvisory>>;
-
-const input: SecurityAdvisoriesGetGlobalAdvisoryInput = {} as { ghsa_id: string };
-const result: SecurityAdvisoriesGetGlobalAdvisoryOutput = await github.securityAdvisories.getGlobalAdvisory(input);
-
-// Result shape (from schema): { ghsa_id: string; cve_id: string | null; url: string; html_url: string; repository_advisory_url: string | null; summary: string; description: string | null; type: "reviewed" | "unreviewed" | "malware"; severity: "criti...
+github.securityAdvisories.listGlobalAdvisories(input: {
+  /** If specified, only advisories with this GHSA (GitHub Security Advisory) identifier will be returned. */
+  ghsa_id?: string;
+  /** If specified, only advisories of this type will be returned. By default, a request with no other parameters defined will only return reviewed advisories that are not malware. */
+  type?: "reviewed" | "malware" | "unreviewed";
+  /** If specified, only advisories with this CVE (Common Vulnerabilities and Exposures) identifier will be returned. */
+  cve_id?: string;
+  ecosystem?: SecurityAdvisoryEcosystems;
+  /** If specified, only advisories with these severities will be returned. */
+  severity?: "unknown" | "low" | "medium" | "high" | "critical";
+  /** If specified, only advisories with these Common Weakness Enumerations (CWEs) will be returned.  Example: `cwes=79,284,22` or `cwes[]=79&cwes[]=284&cwes[]=22` */
+  cwes?: string | (string)[];
+  /** Whether to only return advisories that have been withdrawn. */
+  is_withdrawn?: boolean;
+  /** If specified, only return advisories that affect any of `package` or `package@version`. A maximum of 1000 packages can be specified. If the query parameter causes the URL to exceed the maximum URL length supported by your client, you must specify fewer packages.  Example: `affects=package1,package2@1.0.0,package3@2.0.0` or `affects[]=package1&affects[]=package2@1.0.0` */
+  affects?: string | (string)[];
+  /** If specified, only return advisories that were published on a date or date range.  For more information on the syntax of the date range, see "[Understanding the search syntax](https://docs.github.com/search-github/getting-started-with-searching-on-github/understanding-the-search-syntax#query-for-dates)." */
+  published?: string;
+  /** If specified, only return advisories that were updated on a date or date range.  For more information on the syntax of the date range, see "[Understanding the search syntax](https://docs.github.com/search-github/getting-started-with-searching-on-github/understanding-the-search-syntax#query-for-dates)." */
+  updated?: string;
+  /** If specified, only show advisories that were updated or published on a date or date range.  For more information on the syntax of the date range, see "[Understanding the search syntax](https://docs.github.com/search-github/getting-started-with-searching-on-github/understanding-the-search-syntax#query-for-dates)." */
+  modified?: string;
+  /** If specified, only return advisories that have an EPSS percentage score that matches the provided value. The EPSS percentage represents the likelihood of a CVE being exploited. */
+  epss_percentage?: string;
+  /** If specified, only return advisories that have an EPSS percentile score that matches the provided value. The EPSS percentile represents the relative rank of the CVE's likelihood of being exploited compared to other CVEs. */
+  epss_percentile?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** The direction to sort the results by. */
+  direction?: "asc" | "desc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The property to sort the results by. */
+  sort?: "updated" | "published" | "epss_percentage" | "epss_percentile";
+}): Promise<(GlobalAdvisory)[]>
 ```
 
-### `github.securityAdvisories.listOrgRepositoryAdvisories`
+<sub>`GET /advisories` · `security-advisories/list-global-advisories`</sub>
 
-- **HTTP**: `GET /orgs/{org}/security-advisories`
-- **What it does**: List repository security advisories for an organization
-- **OpenAPI operationId**: `security-advisories/list-org-repository-advisories`
-- **Path params**: None
-- **Query params**: `sort`, `per_page`, `state`
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.securityAdvisories.getGlobalAdvisory`
 
-**Inputs**
-
-- Client input type: `{ org: string; direction?: "asc" | "desc"; sort?: "created" | "updated" | "published"; before?: string; after?: string; per_page?: number; state?: "triage" | "draft" | "published" | "closed" }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: str...`
-- OpenAPI response codes: `200`, `400`, `404`
+Get a global security advisory — [API reference](https://docs.github.com/rest/security-advisories/global-advisories#get-a-global-security-advisory)
 
 ```ts
-import github from "@utdk/github";
-
-type SecurityAdvisoriesListOrgRepositoryAdvisoriesInput = Parameters<typeof github.securityAdvisories.listOrgRepositoryAdvisories> extends [infer T, ...unknown[]] ? T : undefined;
-type SecurityAdvisoriesListOrgRepositoryAdvisoriesOutput = Awaited<ReturnType<typeof github.securityAdvisories.listOrgRepositoryAdvisories>>;
-
-const input: SecurityAdvisoriesListOrgRepositoryAdvisoriesInput = {} as { org: string; direction?: "asc" | "desc"; sort?: "created" | "updated" | "published"; before?: string; after?: string; per_page?: number; state?: "triage" | "draft" | "published" | "closed" };
-const result: SecurityAdvisoriesListOrgRepositoryAdvisoriesOutput = await github.securityAdvisories.listOrgRepositoryAdvisories(input);
-
-// Result shape (from schema): ({ ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: str...
+github.securityAdvisories.getGlobalAdvisory(input: {
+  /** The GHSA (GitHub Security Advisory) identifier of the advisory. */
+  ghsa_id: string;
+}): Promise<GlobalAdvisory>
 ```
 
-### `github.securityAdvisories.listRepositoryAdvisories`
+<sub>`GET /advisories/{ghsa_id}` · `security-advisories/get-global-advisory`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/security-advisories`
-- **What it does**: List repository security advisories
-- **OpenAPI operationId**: `security-advisories/list-repository-advisories`
-- **Path params**: None
-- **Query params**: `sort`, `per_page`, `state`
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.securityAdvisories.listOrgRepositoryAdvisories`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; direction?: "asc" | "desc"; sort?: "created" | "updated" | "published"; before?: string; after?: string; per_page?: number; state?: "triage" | "draft" | "published" | "closed" }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: str...`
-- OpenAPI response codes: `200`, `400`, `404`
+List repository security advisories for an organization — [API reference](https://docs.github.com/rest/security-advisories/repository-advisories#list-repository-security-advisories-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type SecurityAdvisoriesListRepositoryAdvisoriesInput = Parameters<typeof github.securityAdvisories.listRepositoryAdvisories> extends [infer T, ...unknown[]] ? T : undefined;
-type SecurityAdvisoriesListRepositoryAdvisoriesOutput = Awaited<ReturnType<typeof github.securityAdvisories.listRepositoryAdvisories>>;
-
-const input: SecurityAdvisoriesListRepositoryAdvisoriesInput = {} as { owner: string; repo: string; direction?: "asc" | "desc"; sort?: "created" | "updated" | "published"; before?: string; after?: string; per_page?: number; state?: "triage" | "draft" | "published" | "closed" };
-const result: SecurityAdvisoriesListRepositoryAdvisoriesOutput = await github.securityAdvisories.listRepositoryAdvisories(input);
-
-// Result shape (from schema): ({ ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: str...
+github.securityAdvisories.listOrgRepositoryAdvisories(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The direction to sort the results by. */
+  direction?: "asc" | "desc";
+  /** The property to sort the results by. */
+  sort?: "created" | "updated" | "published";
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** The number of advisories to return per page. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** Filter by the state of the repository advisories. Only advisories of this state will be returned. */
+  state?: "triage" | "draft" | "published" | "closed";
+}): Promise<(RepositoryAdvisory)[]>
 ```
 
-### `github.securityAdvisories.createRepositoryAdvisory`
+<sub>`GET /orgs/{org}/security-advisories` · `security-advisories/list-org-repository-advisories`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/security-advisories`
-- **What it does**: Create a repository security advisory
-- **OpenAPI operationId**: `security-advisories/create-repository-advisory`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.securityAdvisories.listRepositoryAdvisories`
 
-**Inputs**
-
-- Client input type: `{ summary: string; description: string; cve_id?: string | null; vulnerabilities: ({ package: { ecosystem: "rubygems" | "npm" | "pip" | "maven" | "nuget" | "composer" | "go" | "rust" | "erlang" | "actions" | "pub" | "other" | "swift"; name?: string | null }; vulnerable_version_range?: string | null; patched_versions?: string | null; vulnerable_functions?: (string)[] | null })[]; cwe_ids?: (string)[] | null; credits?: ({ login: string; type: "analyst" | "finder" | "reporter" | "coordinator" | "remediation_developer" | "remediation_reviewer" | "remediation_verifier" | "tool" | "sponsor" | "other" })[] | null; severity?: "critical" | "high" | "medium" | "low" | null; cvss_vector_string?: string | null; start_private_fork?: boolean; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: stri...`
-- OpenAPI response codes: `201`, `403`, `404`, `422`
+List repository security advisories — [API reference](https://docs.github.com/rest/security-advisories/repository-advisories#list-repository-security-advisories)
 
 ```ts
-import github from "@utdk/github";
-
-type SecurityAdvisoriesCreateRepositoryAdvisoryInput = Parameters<typeof github.securityAdvisories.createRepositoryAdvisory> extends [infer T, ...unknown[]] ? T : undefined;
-type SecurityAdvisoriesCreateRepositoryAdvisoryOutput = Awaited<ReturnType<typeof github.securityAdvisories.createRepositoryAdvisory>>;
-
-const input: SecurityAdvisoriesCreateRepositoryAdvisoryInput = {} as { summary: string; description: string; cve_id?: string | null; vulnerabilities: ({ package: { ecosystem: "rubygems" | "npm" | "pip" | "maven" | "nuget" | "composer" | "go" | "rust" | "erlang" | "actions" | "pub" | "other" | "swift"; name?: string | null }; vulnerable_version_range?: string | null; patched_versions?: string | null; vulnerable_functions?: (string)[] | null })[]; cwe_ids?: (string)[] | null; credits?: ({ login: string; type: "analyst" | "finder" | "reporter" | "coordinator" | "remediation_developer" | "remediation_reviewer" | "remediation_verifier" | "tool" | "sponsor" | "other" })[] | null; severity?: "critical" | "high" | "medium" | "low" | null; cvss_vector_string?: string | null; start_private_fork?: boolean; owner: string; repo: string };
-const result: SecurityAdvisoriesCreateRepositoryAdvisoryOutput = await github.securityAdvisories.createRepositoryAdvisory(input);
-
-// Result shape (from schema): { ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: stri...
+github.securityAdvisories.listRepositoryAdvisories(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The direction to sort the results by. */
+  direction?: "asc" | "desc";
+  /** The property to sort the results by. */
+  sort?: "created" | "updated" | "published";
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** The number of advisories to return per page. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** Filter by state of the repository advisories. Only advisories of this state will be returned. */
+  state?: "triage" | "draft" | "published" | "closed";
+}): Promise<(RepositoryAdvisory)[]>
 ```
 
-### `github.securityAdvisories.getRepositoryAdvisory`
+<sub>`GET /repos/{owner}/{repo}/security-advisories` · `security-advisories/list-repository-advisories`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/security-advisories/{ghsa_id}`
-- **What it does**: Get a repository security advisory
-- **OpenAPI operationId**: `security-advisories/get-repository-advisory`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.securityAdvisories.createRepositoryAdvisory`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ghsa_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: stri...`
-- OpenAPI response codes: `200`, `403`, `404`
+Create a repository security advisory — [API reference](https://docs.github.com/rest/security-advisories/repository-advisories#create-a-repository-security-advisory)
 
 ```ts
-import github from "@utdk/github";
-
-type SecurityAdvisoriesGetRepositoryAdvisoryInput = Parameters<typeof github.securityAdvisories.getRepositoryAdvisory> extends [infer T, ...unknown[]] ? T : undefined;
-type SecurityAdvisoriesGetRepositoryAdvisoryOutput = Awaited<ReturnType<typeof github.securityAdvisories.getRepositoryAdvisory>>;
-
-const input: SecurityAdvisoriesGetRepositoryAdvisoryInput = {} as { owner: string; repo: string; ghsa_id: string };
-const result: SecurityAdvisoriesGetRepositoryAdvisoryOutput = await github.securityAdvisories.getRepositoryAdvisory(input);
-
-// Result shape (from schema): { ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: stri...
+github.securityAdvisories.createRepositoryAdvisory(input: {
+  /** A short summary of the advisory. */
+  summary: string;
+  /** A detailed description of what the advisory impacts. */
+  description: string;
+  /** The Common Vulnerabilities and Exposures (CVE) ID. */
+  cve_id?: string | null;
+  /** A product affected by the vulnerability detailed in a repository security advisory. */
+  vulnerabilities: ({ package: { ecosystem: SecurityAdvisoryEcosystems; name?: string | null }; vulnerable_version_range?: string | null; patched_versions?: string | null; vulnerable_functions?: (string)[] | null })[];
+  /** A list of Common Weakness Enumeration (CWE) IDs. */
+  cwe_ids?: (string)[] | null;
+  /** A list of users receiving credit for their participation in the security advisory. */
+  credits?: ({ login: string; type: SecurityAdvisoryCreditTypes })[] | null;
+  /** The severity of the advisory. You must choose between setting this field or `cvss_vector_string`. */
+  severity?: "critical" | "high" | "medium" | "low" | null;
+  /** The CVSS vector that calculates the severity of the advisory. You must choose between setting this field or `severity`. */
+  cvss_vector_string?: string | null;
+  /** Whether to create a temporary private fork of the repository to collaborate on a fix. */
+  start_private_fork?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<RepositoryAdvisory>
 ```
 
-### `github.securityAdvisories.updateRepositoryAdvisory`
+<sub>`POST /repos/{owner}/{repo}/security-advisories` · `security-advisories/create-repository-advisory`</sub>
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/security-advisories/{ghsa_id}`
-- **What it does**: Update a repository security advisory
-- **OpenAPI operationId**: `security-advisories/update-repository-advisory`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.securityAdvisories.getRepositoryAdvisory`
 
-**Inputs**
-
-- Client input type: `{ summary?: string; description?: string; cve_id?: string | null; vulnerabilities?: ({ package: { ecosystem: "rubygems" | "npm" | "pip" | "maven" | "nuget" | "composer" | "go" | "rust" | "erlang" | "actions" | "pub" | "other" | "swift"; name?: string | null }; vulnerable_version_range?: string | null; patched_versions?: string | null; vulnerable_functions?: (string)[] | null })[]; cwe_ids?: (string)[] | null; credits?: ({ login: string; type: "analyst" | "finder" | "reporter" | "coordinator" | "remediation_developer" | "remediation_reviewer" | "remediation_verifier" | "tool" | "sponsor" | "other" })[] | null; severity?: "critical" | "high" | "medium" | "low" | null; cvss_vector_string?: string | null; state?: "published" | "closed" | "draft"; collaborating_users?: (string)[] | null; collaborating_teams?: (string)[] | null; owner: string; repo: string; ghsa_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: stri...`
-- OpenAPI response codes: `200`, `403`, `404`, `422`
+Get a repository security advisory — [API reference](https://docs.github.com/rest/security-advisories/repository-advisories#get-a-repository-security-advisory)
 
 ```ts
-import github from "@utdk/github";
-
-type SecurityAdvisoriesUpdateRepositoryAdvisoryInput = Parameters<typeof github.securityAdvisories.updateRepositoryAdvisory> extends [infer T, ...unknown[]] ? T : undefined;
-type SecurityAdvisoriesUpdateRepositoryAdvisoryOutput = Awaited<ReturnType<typeof github.securityAdvisories.updateRepositoryAdvisory>>;
-
-const input: SecurityAdvisoriesUpdateRepositoryAdvisoryInput = {} as { summary?: string; description?: string; cve_id?: string | null; vulnerabilities?: ({ package: { ecosystem: "rubygems" | "npm" | "pip" | "maven" | "nuget" | "composer" | "go" | "rust" | "erlang" | "actions" | "pub" | "other" | "swift"; name?: string | null }; vulnerable_version_range?: string | null; patched_versions?: string | null; vulnerable_functions?: (string)[] | null })[]; cwe_ids?: (string)[] | null; credits?: ({ login: string; type: "analyst" | "finder" | "reporter" | "coordinator" | "remediation_developer" | "remediation_reviewer" | "remediation_verifier" | "tool" | "sponsor" | "other" })[] | null; severity?: "critical" | "high" | "medium" | "low" | null; cvss_vector_string?: string | null; state?: "published" | "closed" | "draft"; collaborating_users?: (string)[] | null; collaborating_teams?: (string)[] | null; owner: string; repo: string; ghsa_id: string };
-const result: SecurityAdvisoriesUpdateRepositoryAdvisoryOutput = await github.securityAdvisories.updateRepositoryAdvisory(input);
-
-// Result shape (from schema): { ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: stri...
+github.securityAdvisories.getRepositoryAdvisory(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The GHSA (GitHub Security Advisory) identifier of the advisory. */
+  ghsa_id: string;
+}): Promise<RepositoryAdvisory>
 ```
 
-### `github.securityAdvisories.createRepositoryAdvisoryCveRequest`
+<sub>`GET /repos/{owner}/{repo}/security-advisories/{ghsa_id}` · `security-advisories/get-repository-advisory`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/security-advisories/{ghsa_id}/cve`
-- **What it does**: Request a CVE for a repository security advisory
-- **OpenAPI operationId**: `security-advisories/create-repository-advisory-cve-request`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `400`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.securityAdvisories.updateRepositoryAdvisory`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ghsa_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `400`, `403`, `404`, `422`
+Update a repository security advisory — [API reference](https://docs.github.com/rest/security-advisories/repository-advisories#update-a-repository-security-advisory)
 
 ```ts
-import github from "@utdk/github";
-
-type SecurityAdvisoriesCreateRepositoryAdvisoryCveRequestInput = Parameters<typeof github.securityAdvisories.createRepositoryAdvisoryCveRequest> extends [infer T, ...unknown[]] ? T : undefined;
-type SecurityAdvisoriesCreateRepositoryAdvisoryCveRequestOutput = Awaited<ReturnType<typeof github.securityAdvisories.createRepositoryAdvisoryCveRequest>>;
-
-const input: SecurityAdvisoriesCreateRepositoryAdvisoryCveRequestInput = {} as { owner: string; repo: string; ghsa_id: string };
-const result: SecurityAdvisoriesCreateRepositoryAdvisoryCveRequestOutput = await github.securityAdvisories.createRepositoryAdvisoryCveRequest(input);
-
-// Result shape (from schema): unknown
+github.securityAdvisories.updateRepositoryAdvisory(input: {
+  /** A short summary of the advisory. */
+  summary?: string;
+  /** A detailed description of what the advisory impacts. */
+  description?: string;
+  /** The Common Vulnerabilities and Exposures (CVE) ID. */
+  cve_id?: string | null;
+  /** A product affected by the vulnerability detailed in a repository security advisory. */
+  vulnerabilities?: ({ package: { ecosystem: SecurityAdvisoryEcosystems; name?: string | null }; vulnerable_version_range?: string | null; patched_versions?: string | null; vulnerable_functions?: (string)[] | null })[];
+  /** A list of Common Weakness Enumeration (CWE) IDs. */
+  cwe_ids?: (string)[] | null;
+  /** A list of users receiving credit for their participation in the security advisory. */
+  credits?: ({ login: string; type: SecurityAdvisoryCreditTypes })[] | null;
+  /** The severity of the advisory. You must choose between setting this field or `cvss_vector_string`. */
+  severity?: "critical" | "high" | "medium" | "low" | null;
+  /** The CVSS vector that calculates the severity of the advisory. You must choose between setting this field or `severity`. */
+  cvss_vector_string?: string | null;
+  /** The state of the advisory. */
+  state?: "published" | "closed" | "draft";
+  /** A list of usernames who have been granted write access to the advisory. */
+  collaborating_users?: (string)[] | null;
+  /** A list of team slugs which have been granted write access to the advisory. */
+  collaborating_teams?: (string)[] | null;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The GHSA (GitHub Security Advisory) identifier of the advisory. */
+  ghsa_id: string;
+}): Promise<RepositoryAdvisory>
 ```
 
-### `github.securityAdvisories.createFork`
+<sub>`PATCH /repos/{owner}/{repo}/security-advisories/{ghsa_id}` · `security-advisories/update-repository-advisory`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/security-advisories/{ghsa_id}/forks`
-- **What it does**: Create a temporary private fork
-- **OpenAPI operationId**: `security-advisories/create-fork`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `400`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.securityAdvisories.createRepositoryAdvisoryCveRequest`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; ghsa_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `400`, `403`, `404`, `422`
+Request a CVE for a repository security advisory — [API reference](https://docs.github.com/rest/security-advisories/repository-advisories#request-a-cve-for-a-repository-security-advisory)
 
 ```ts
-import github from "@utdk/github";
-
-type SecurityAdvisoriesCreateForkInput = Parameters<typeof github.securityAdvisories.createFork> extends [infer T, ...unknown[]] ? T : undefined;
-type SecurityAdvisoriesCreateForkOutput = Awaited<ReturnType<typeof github.securityAdvisories.createFork>>;
-
-const input: SecurityAdvisoriesCreateForkInput = {} as { owner: string; repo: string; ghsa_id: string };
-const result: SecurityAdvisoriesCreateForkOutput = await github.securityAdvisories.createFork(input);
-
-// Result shape (from schema): unknown
+github.securityAdvisories.createRepositoryAdvisoryCveRequest(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The GHSA (GitHub Security Advisory) identifier of the advisory. */
+  ghsa_id: string;
+}): Promise<{ [key: string]: unknown }>
 ```
 
-### `github.securityAdvisories.createPrivateVulnerabilityReport`
+<sub>`POST /repos/{owner}/{repo}/security-advisories/{ghsa_id}/cve` · `security-advisories/create-repository-advisory-cve-request`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/security-advisories/reports`
-- **What it does**: Privately report a security vulnerability
-- **OpenAPI operationId**: `security-advisories/create-private-vulnerability-report`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.securityAdvisories.createFork`
 
-**Inputs**
-
-- Client input type: `{ summary: string; description: string; vulnerabilities?: ({ package: { ecosystem: "rubygems" | "npm" | "pip" | "maven" | "nuget" | "composer" | "go" | "rust" | "erlang" | "actions" | "pub" | "other" | "swift"; name?: string | null }; vulnerable_version_range?: string | null; patched_versions?: string | null; vulnerable_functions?: (string)[] | null })[] | null; cwe_ids?: (string)[] | null; severity?: "critical" | "high" | "medium" | "low" | null; cvss_vector_string?: string | null; start_private_fork?: boolean; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: stri...`
-- OpenAPI response codes: `201`, `403`, `404`, `422`
+Create a temporary private fork — [API reference](https://docs.github.com/rest/security-advisories/repository-advisories#create-a-temporary-private-fork)
 
 ```ts
-import github from "@utdk/github";
-
-type SecurityAdvisoriesCreatePrivateVulnerabilityReportInput = Parameters<typeof github.securityAdvisories.createPrivateVulnerabilityReport> extends [infer T, ...unknown[]] ? T : undefined;
-type SecurityAdvisoriesCreatePrivateVulnerabilityReportOutput = Awaited<ReturnType<typeof github.securityAdvisories.createPrivateVulnerabilityReport>>;
-
-const input: SecurityAdvisoriesCreatePrivateVulnerabilityReportInput = {} as { summary: string; description: string; vulnerabilities?: ({ package: { ecosystem: "rubygems" | "npm" | "pip" | "maven" | "nuget" | "composer" | "go" | "rust" | "erlang" | "actions" | "pub" | "other" | "swift"; name?: string | null }; vulnerable_version_range?: string | null; patched_versions?: string | null; vulnerable_functions?: (string)[] | null })[] | null; cwe_ids?: (string)[] | null; severity?: "critical" | "high" | "medium" | "low" | null; cvss_vector_string?: string | null; start_private_fork?: boolean; owner: string; repo: string };
-const result: SecurityAdvisoriesCreatePrivateVulnerabilityReportOutput = await github.securityAdvisories.createPrivateVulnerabilityReport(input);
-
-// Result shape (from schema): { ghsa_id: string; cve_id: string | null; url: string; html_url: string; summary: string; description: string | null; severity: "critical" | "high" | "medium" | "low" | null; author: { name?: string | null; email?: stri...
+github.securityAdvisories.createFork(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The GHSA (GitHub Security Advisory) identifier of the advisory. */
+  ghsa_id: string;
+}): Promise<FullRepository>
 ```
 
+<sub>`POST /repos/{owner}/{repo}/security-advisories/{ghsa_id}/forks` · `security-advisories/create-fork`</sub>
+
+## `github.securityAdvisories.createPrivateVulnerabilityReport`
+
+Privately report a security vulnerability — [API reference](https://docs.github.com/rest/security-advisories/repository-advisories#privately-report-a-security-vulnerability)
+
+```ts
+github.securityAdvisories.createPrivateVulnerabilityReport(input: {
+  /** A short summary of the advisory. */
+  summary: string;
+  /** A detailed description of what the advisory impacts. */
+  description: string;
+  /** An array of products affected by the vulnerability detailed in a repository security advisory. */
+  vulnerabilities?: ({ package: { ecosystem: SecurityAdvisoryEcosystems; name?: string | null }; vulnerable_version_range?: string | null; patched_versions?: string | null; vulnerable_functions?: (string)[] | null })[] | null;
+  /** A list of Common Weakness Enumeration (CWE) IDs. */
+  cwe_ids?: (string)[] | null;
+  /** The severity of the advisory. You must choose between setting this field or `cvss_vector_string`. */
+  severity?: "critical" | "high" | "medium" | "low" | null;
+  /** The CVSS vector that calculates the severity of the advisory. You must choose between setting this field or `severity`. */
+  cvss_vector_string?: string | null;
+  /** Whether to create a temporary private fork of the repository to collaborate on a fix. */
+  start_private_fork?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<RepositoryAdvisory>
+```
+
+<sub>`POST /repos/{owner}/{repo}/security-advisories/reports` · `security-advisories/create-private-vulnerability-report`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

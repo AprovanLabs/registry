@@ -1,6375 +1,3291 @@
 # Actions
 
-Use these operations through the generated client (not direct HTTP calls).
+187 operations · `@utdk/github`
 
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.actions.getActionsCacheRetentionLimitForEnterprise`
-
-- **HTTP**: `GET /enterprises/{enterprise}/actions/cache/retention-limit`
-- **What it does**: Get GitHub Actions cache retention limit for an enterprise
-- **OpenAPI operationId**: `actions/get-actions-cache-retention-limit-for-enterprise`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ enterprise: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ max_cache_retention_days?: number }`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetActionsCacheRetentionLimitForEnterpriseInput = Parameters<typeof github.actions.getActionsCacheRetentionLimitForEnterprise> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetActionsCacheRetentionLimitForEnterpriseOutput = Awaited<ReturnType<typeof github.actions.getActionsCacheRetentionLimitForEnterprise>>;
-
-const input: ActionsGetActionsCacheRetentionLimitForEnterpriseInput = {} as { enterprise: string };
-const result: ActionsGetActionsCacheRetentionLimitForEnterpriseOutput = await github.actions.getActionsCacheRetentionLimitForEnterprise(input);
-
-// Result shape (from schema): { max_cache_retention_days?: number }
-```
-
-### `github.actions.setActionsCacheRetentionLimitForEnterprise`
-
-- **HTTP**: `PUT /enterprises/{enterprise}/actions/cache/retention-limit`
-- **What it does**: Set GitHub Actions cache retention limit for an enterprise
-- **OpenAPI operationId**: `actions/set-actions-cache-retention-limit-for-enterprise`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `400`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ max_cache_retention_days?: number; enterprise: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `400`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetActionsCacheRetentionLimitForEnterpriseInput = Parameters<typeof github.actions.setActionsCacheRetentionLimitForEnterprise> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetActionsCacheRetentionLimitForEnterpriseOutput = Awaited<ReturnType<typeof github.actions.setActionsCacheRetentionLimitForEnterprise>>;
-
-const input: ActionsSetActionsCacheRetentionLimitForEnterpriseInput = {} as { max_cache_retention_days?: number; enterprise: string };
-const result: ActionsSetActionsCacheRetentionLimitForEnterpriseOutput = await github.actions.setActionsCacheRetentionLimitForEnterprise(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getActionsCacheStorageLimitForEnterprise`
-
-- **HTTP**: `GET /enterprises/{enterprise}/actions/cache/storage-limit`
-- **What it does**: Get GitHub Actions cache storage limit for an enterprise
-- **OpenAPI operationId**: `actions/get-actions-cache-storage-limit-for-enterprise`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ enterprise: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ max_cache_size_gb?: number }`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetActionsCacheStorageLimitForEnterpriseInput = Parameters<typeof github.actions.getActionsCacheStorageLimitForEnterprise> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetActionsCacheStorageLimitForEnterpriseOutput = Awaited<ReturnType<typeof github.actions.getActionsCacheStorageLimitForEnterprise>>;
-
-const input: ActionsGetActionsCacheStorageLimitForEnterpriseInput = {} as { enterprise: string };
-const result: ActionsGetActionsCacheStorageLimitForEnterpriseOutput = await github.actions.getActionsCacheStorageLimitForEnterprise(input);
-
-// Result shape (from schema): { max_cache_size_gb?: number }
-```
-
-### `github.actions.setActionsCacheStorageLimitForEnterprise`
-
-- **HTTP**: `PUT /enterprises/{enterprise}/actions/cache/storage-limit`
-- **What it does**: Set GitHub Actions cache storage limit for an enterprise
-- **OpenAPI operationId**: `actions/set-actions-cache-storage-limit-for-enterprise`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `400`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ max_cache_size_gb?: number; enterprise: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `400`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetActionsCacheStorageLimitForEnterpriseInput = Parameters<typeof github.actions.setActionsCacheStorageLimitForEnterprise> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetActionsCacheStorageLimitForEnterpriseOutput = Awaited<ReturnType<typeof github.actions.setActionsCacheStorageLimitForEnterprise>>;
-
-const input: ActionsSetActionsCacheStorageLimitForEnterpriseInput = {} as { max_cache_size_gb?: number; enterprise: string };
-const result: ActionsSetActionsCacheStorageLimitForEnterpriseOutput = await github.actions.setActionsCacheStorageLimitForEnterprise(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getActionsCacheRetentionLimitForOrganization`
-
-- **HTTP**: `GET /organizations/{org}/actions/cache/retention-limit`
-- **What it does**: Get GitHub Actions cache retention limit for an organization
-- **OpenAPI operationId**: `actions/get-actions-cache-retention-limit-for-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ max_cache_retention_days?: number }`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetActionsCacheRetentionLimitForOrganizationInput = Parameters<typeof github.actions.getActionsCacheRetentionLimitForOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetActionsCacheRetentionLimitForOrganizationOutput = Awaited<ReturnType<typeof github.actions.getActionsCacheRetentionLimitForOrganization>>;
-
-const input: ActionsGetActionsCacheRetentionLimitForOrganizationInput = {} as { org: string };
-const result: ActionsGetActionsCacheRetentionLimitForOrganizationOutput = await github.actions.getActionsCacheRetentionLimitForOrganization(input);
-
-// Result shape (from schema): { max_cache_retention_days?: number }
-```
-
-### `github.actions.setActionsCacheRetentionLimitForOrganization`
-
-- **HTTP**: `PUT /organizations/{org}/actions/cache/retention-limit`
-- **What it does**: Set GitHub Actions cache retention limit for an organization
-- **OpenAPI operationId**: `actions/set-actions-cache-retention-limit-for-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `400`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ max_cache_retention_days?: number; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `400`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetActionsCacheRetentionLimitForOrganizationInput = Parameters<typeof github.actions.setActionsCacheRetentionLimitForOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetActionsCacheRetentionLimitForOrganizationOutput = Awaited<ReturnType<typeof github.actions.setActionsCacheRetentionLimitForOrganization>>;
-
-const input: ActionsSetActionsCacheRetentionLimitForOrganizationInput = {} as { max_cache_retention_days?: number; org: string };
-const result: ActionsSetActionsCacheRetentionLimitForOrganizationOutput = await github.actions.setActionsCacheRetentionLimitForOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getActionsCacheStorageLimitForOrganization`
-
-- **HTTP**: `GET /organizations/{org}/actions/cache/storage-limit`
-- **What it does**: Get GitHub Actions cache storage limit for an organization
-- **OpenAPI operationId**: `actions/get-actions-cache-storage-limit-for-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ max_cache_size_gb?: number }`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetActionsCacheStorageLimitForOrganizationInput = Parameters<typeof github.actions.getActionsCacheStorageLimitForOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetActionsCacheStorageLimitForOrganizationOutput = Awaited<ReturnType<typeof github.actions.getActionsCacheStorageLimitForOrganization>>;
-
-const input: ActionsGetActionsCacheStorageLimitForOrganizationInput = {} as { org: string };
-const result: ActionsGetActionsCacheStorageLimitForOrganizationOutput = await github.actions.getActionsCacheStorageLimitForOrganization(input);
-
-// Result shape (from schema): { max_cache_size_gb?: number }
-```
-
-### `github.actions.setActionsCacheStorageLimitForOrganization`
-
-- **HTTP**: `PUT /organizations/{org}/actions/cache/storage-limit`
-- **What it does**: Set GitHub Actions cache storage limit for an organization
-- **OpenAPI operationId**: `actions/set-actions-cache-storage-limit-for-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `400`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ max_cache_size_gb?: number; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `400`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetActionsCacheStorageLimitForOrganizationInput = Parameters<typeof github.actions.setActionsCacheStorageLimitForOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetActionsCacheStorageLimitForOrganizationOutput = Awaited<ReturnType<typeof github.actions.setActionsCacheStorageLimitForOrganization>>;
-
-const input: ActionsSetActionsCacheStorageLimitForOrganizationInput = {} as { max_cache_size_gb?: number; org: string };
-const result: ActionsSetActionsCacheStorageLimitForOrganizationOutput = await github.actions.setActionsCacheStorageLimitForOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getActionsCacheUsageForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/cache/usage`
-- **What it does**: Get GitHub Actions cache usage for an organization
-- **OpenAPI operationId**: `actions/get-actions-cache-usage-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_active_caches_count: number; total_active_caches_size_in_bytes: number }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetActionsCacheUsageForOrgInput = Parameters<typeof github.actions.getActionsCacheUsageForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetActionsCacheUsageForOrgOutput = Awaited<ReturnType<typeof github.actions.getActionsCacheUsageForOrg>>;
-
-const input: ActionsGetActionsCacheUsageForOrgInput = {} as { org: string };
-const result: ActionsGetActionsCacheUsageForOrgOutput = await github.actions.getActionsCacheUsageForOrg(input);
-
-// Result shape (from schema): { total_active_caches_count: number; total_active_caches_size_in_bytes: number }
-```
-
-### `github.actions.getActionsCacheUsageByRepoForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/cache/usage-by-repository`
-- **What it does**: List repositories with GitHub Actions cache usage for an organization
-- **OpenAPI operationId**: `actions/get-actions-cache-usage-by-repo-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; repository_cache_usages: ({ full_name: string; active_caches_size_in_bytes: number; active_caches_count: number })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetActionsCacheUsageByRepoForOrgInput = Parameters<typeof github.actions.getActionsCacheUsageByRepoForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetActionsCacheUsageByRepoForOrgOutput = Awaited<ReturnType<typeof github.actions.getActionsCacheUsageByRepoForOrg>>;
-
-const input: ActionsGetActionsCacheUsageByRepoForOrgInput = {} as { org: string; per_page?: number; page?: number };
-const result: ActionsGetActionsCacheUsageByRepoForOrgOutput = await github.actions.getActionsCacheUsageByRepoForOrg(input);
-
-// Result shape (from schema): { total_count: number; repository_cache_usages: ({ full_name: string; active_caches_size_in_bytes: number; active_caches_count: number })[] }
-```
-
-### `github.actions.listHostedRunnersForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners`
-- **What it does**: List GitHub-hosted runners for an organization
-- **OpenAPI operationId**: `actions/list-hosted-runners-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; runners: ({ id: number; name: string; runner_group_id?: number; image_details: { id: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom"; version?: string } | nu...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListHostedRunnersForOrgInput = Parameters<typeof github.actions.listHostedRunnersForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListHostedRunnersForOrgOutput = Awaited<ReturnType<typeof github.actions.listHostedRunnersForOrg>>;
-
-const input: ActionsListHostedRunnersForOrgInput = {} as { org: string; per_page?: number; page?: number };
-const result: ActionsListHostedRunnersForOrgOutput = await github.actions.listHostedRunnersForOrg(input);
-
-// Result shape (from schema): { total_count: number; runners: ({ id: number; name: string; runner_group_id?: number; image_details: { id: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom"; version?: string } | nu...
-```
-
-### `github.actions.createHostedRunnerForOrg`
-
-- **HTTP**: `POST /orgs/{org}/actions/hosted-runners`
-- **What it does**: Create a GitHub-hosted runner for an organization
-- **OpenAPI operationId**: `actions/create-hosted-runner-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name: string; image: { id?: string; source?: "github" | "partner" | "custom"; version?: string | null }; size: string; runner_group_id: number; maximum_runners?: number; enable_static_ip?: boolean; image_gen?: boolean; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; runner_group_id?: number; image_details: { id: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom"; version?: string } | null; machine_size_details: { id: s...`
-- OpenAPI response codes: `201`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsCreateHostedRunnerForOrgInput = Parameters<typeof github.actions.createHostedRunnerForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateHostedRunnerForOrgOutput = Awaited<ReturnType<typeof github.actions.createHostedRunnerForOrg>>;
-
-const input: ActionsCreateHostedRunnerForOrgInput = {} as { name: string; image: { id?: string; source?: "github" | "partner" | "custom"; version?: string | null }; size: string; runner_group_id: number; maximum_runners?: number; enable_static_ip?: boolean; image_gen?: boolean; org: string };
-const result: ActionsCreateHostedRunnerForOrgOutput = await github.actions.createHostedRunnerForOrg(input);
-
-// Result shape (from schema): { id: number; name: string; runner_group_id?: number; image_details: { id: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom"; version?: string } | null; machine_size_details: { id: s...
-```
-
-### `github.actions.deleteHostedRunnerForOrg`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/hosted-runners/{hosted_runner_id}`
-- **What it does**: Delete a GitHub-hosted runner for an organization
-- **OpenAPI operationId**: `actions/delete-hosted-runner-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; hosted_runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDeleteHostedRunnerForOrgInput = Parameters<typeof github.actions.deleteHostedRunnerForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteHostedRunnerForOrgOutput = Awaited<ReturnType<typeof github.actions.deleteHostedRunnerForOrg>>;
-
-const input: ActionsDeleteHostedRunnerForOrgInput = {} as { org: string; hosted_runner_id: number };
-const result: ActionsDeleteHostedRunnerForOrgOutput = await github.actions.deleteHostedRunnerForOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getHostedRunnerForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners/{hosted_runner_id}`
-- **What it does**: Get a GitHub-hosted runner for an organization
-- **OpenAPI operationId**: `actions/get-hosted-runner-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; hosted_runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; runner_group_id?: number; image_details: { id: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom"; version?: string } | null; machine_size_details: { id: s...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetHostedRunnerForOrgInput = Parameters<typeof github.actions.getHostedRunnerForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetHostedRunnerForOrgOutput = Awaited<ReturnType<typeof github.actions.getHostedRunnerForOrg>>;
-
-const input: ActionsGetHostedRunnerForOrgInput = {} as { org: string; hosted_runner_id: number };
-const result: ActionsGetHostedRunnerForOrgOutput = await github.actions.getHostedRunnerForOrg(input);
-
-// Result shape (from schema): { id: number; name: string; runner_group_id?: number; image_details: { id: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom"; version?: string } | null; machine_size_details: { id: s...
-```
-
-### `github.actions.updateHostedRunnerForOrg`
-
-- **HTTP**: `PATCH /orgs/{org}/actions/hosted-runners/{hosted_runner_id}`
-- **What it does**: Update a GitHub-hosted runner for an organization
-- **OpenAPI operationId**: `actions/update-hosted-runner-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name?: string; runner_group_id?: number; maximum_runners?: number; enable_static_ip?: boolean; size?: string; image_source?: "github" | "partner" | "custom"; image_id?: string; image_version?: string | null; image_gen?: boolean; org: string; hosted_runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; runner_group_id?: number; image_details: { id: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom"; version?: string } | null; machine_size_details: { id: s...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsUpdateHostedRunnerForOrgInput = Parameters<typeof github.actions.updateHostedRunnerForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsUpdateHostedRunnerForOrgOutput = Awaited<ReturnType<typeof github.actions.updateHostedRunnerForOrg>>;
-
-const input: ActionsUpdateHostedRunnerForOrgInput = {} as { name?: string; runner_group_id?: number; maximum_runners?: number; enable_static_ip?: boolean; size?: string; image_source?: "github" | "partner" | "custom"; image_id?: string; image_version?: string | null; image_gen?: boolean; org: string; hosted_runner_id: number };
-const result: ActionsUpdateHostedRunnerForOrgOutput = await github.actions.updateHostedRunnerForOrg(input);
-
-// Result shape (from schema): { id: number; name: string; runner_group_id?: number; image_details: { id: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom"; version?: string } | null; machine_size_details: { id: s...
-```
-
-### `github.actions.listCustomImagesForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners/images/custom`
-- **What it does**: List custom images for an organization
-- **OpenAPI operationId**: `actions/list-custom-images-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; images: ({ id: number; platform: string; total_versions_size: number; name: string; source: string; versions_count: number; latest_version: string; state: string })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListCustomImagesForOrgInput = Parameters<typeof github.actions.listCustomImagesForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListCustomImagesForOrgOutput = Awaited<ReturnType<typeof github.actions.listCustomImagesForOrg>>;
-
-const input: ActionsListCustomImagesForOrgInput = {} as { org: string };
-const result: ActionsListCustomImagesForOrgOutput = await github.actions.listCustomImagesForOrg(input);
-
-// Result shape (from schema): { total_count: number; images: ({ id: number; platform: string; total_versions_size: number; name: string; source: string; versions_count: number; latest_version: string; state: string })[] }
-```
-
-### `github.actions.deleteCustomImageFromOrg`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}`
-- **What it does**: Delete a custom image from the organization
-- **OpenAPI operationId**: `actions/delete-custom-image-from-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; image_definition_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDeleteCustomImageFromOrgInput = Parameters<typeof github.actions.deleteCustomImageFromOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteCustomImageFromOrgOutput = Awaited<ReturnType<typeof github.actions.deleteCustomImageFromOrg>>;
-
-const input: ActionsDeleteCustomImageFromOrgInput = {} as { org: string; image_definition_id: number };
-const result: ActionsDeleteCustomImageFromOrgOutput = await github.actions.deleteCustomImageFromOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getCustomImageForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}`
-- **What it does**: Get a custom image definition for GitHub Actions Hosted Runners
-- **OpenAPI operationId**: `actions/get-custom-image-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; image_definition_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; platform: string; total_versions_size: number; name: string; source: string; versions_count: number; latest_version: string; state: string }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetCustomImageForOrgInput = Parameters<typeof github.actions.getCustomImageForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetCustomImageForOrgOutput = Awaited<ReturnType<typeof github.actions.getCustomImageForOrg>>;
-
-const input: ActionsGetCustomImageForOrgInput = {} as { org: string; image_definition_id: number };
-const result: ActionsGetCustomImageForOrgOutput = await github.actions.getCustomImageForOrg(input);
-
-// Result shape (from schema): { id: number; platform: string; total_versions_size: number; name: string; source: string; versions_count: number; latest_version: string; state: string }
-```
-
-### `github.actions.listCustomImageVersionsForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions`
-- **What it does**: List image versions of a custom image for an organization
-- **OpenAPI operationId**: `actions/list-custom-image-versions-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ image_definition_id: number; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; image_versions: ({ version: string; state: string; size_gb: number; created_on: string; state_details: string })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListCustomImageVersionsForOrgInput = Parameters<typeof github.actions.listCustomImageVersionsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListCustomImageVersionsForOrgOutput = Awaited<ReturnType<typeof github.actions.listCustomImageVersionsForOrg>>;
-
-const input: ActionsListCustomImageVersionsForOrgInput = {} as { image_definition_id: number; org: string };
-const result: ActionsListCustomImageVersionsForOrgOutput = await github.actions.listCustomImageVersionsForOrg(input);
-
-// Result shape (from schema): { total_count: number; image_versions: ({ version: string; state: string; size_gb: number; created_on: string; state_details: string })[] }
-```
-
-### `github.actions.deleteCustomImageVersionFromOrg`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions/{version}`
-- **What it does**: Delete an image version of custom image from the organization
-- **OpenAPI operationId**: `actions/delete-custom-image-version-from-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; image_definition_id: number; version: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDeleteCustomImageVersionFromOrgInput = Parameters<typeof github.actions.deleteCustomImageVersionFromOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteCustomImageVersionFromOrgOutput = Awaited<ReturnType<typeof github.actions.deleteCustomImageVersionFromOrg>>;
-
-const input: ActionsDeleteCustomImageVersionFromOrgInput = {} as { org: string; image_definition_id: number; version: string };
-const result: ActionsDeleteCustomImageVersionFromOrgOutput = await github.actions.deleteCustomImageVersionFromOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getCustomImageVersionForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions/{version}`
-- **What it does**: Get an image version of a custom image for GitHub Actions Hosted Runners
-- **OpenAPI operationId**: `actions/get-custom-image-version-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; image_definition_id: number; version: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ version: string; state: string; size_gb: number; created_on: string; state_details: string }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetCustomImageVersionForOrgInput = Parameters<typeof github.actions.getCustomImageVersionForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetCustomImageVersionForOrgOutput = Awaited<ReturnType<typeof github.actions.getCustomImageVersionForOrg>>;
-
-const input: ActionsGetCustomImageVersionForOrgInput = {} as { org: string; image_definition_id: number; version: string };
-const result: ActionsGetCustomImageVersionForOrgOutput = await github.actions.getCustomImageVersionForOrg(input);
-
-// Result shape (from schema): { version: string; state: string; size_gb: number; created_on: string; state_details: string }
-```
-
-### `github.actions.getHostedRunnersGithubOwnedImagesForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners/images/github-owned`
-- **What it does**: Get GitHub-owned images for GitHub-hosted runners in an organization
-- **OpenAPI operationId**: `actions/get-hosted-runners-github-owned-images-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; images: ({ id: string; platform: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom" })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetHostedRunnersGithubOwnedImagesForOrgInput = Parameters<typeof github.actions.getHostedRunnersGithubOwnedImagesForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetHostedRunnersGithubOwnedImagesForOrgOutput = Awaited<ReturnType<typeof github.actions.getHostedRunnersGithubOwnedImagesForOrg>>;
-
-const input: ActionsGetHostedRunnersGithubOwnedImagesForOrgInput = {} as { org: string };
-const result: ActionsGetHostedRunnersGithubOwnedImagesForOrgOutput = await github.actions.getHostedRunnersGithubOwnedImagesForOrg(input);
-
-// Result shape (from schema): { total_count: number; images: ({ id: string; platform: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom" })[] }
-```
-
-### `github.actions.getHostedRunnersPartnerImagesForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners/images/partner`
-- **What it does**: Get partner images for GitHub-hosted runners in an organization
-- **OpenAPI operationId**: `actions/get-hosted-runners-partner-images-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; images: ({ id: string; platform: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom" })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetHostedRunnersPartnerImagesForOrgInput = Parameters<typeof github.actions.getHostedRunnersPartnerImagesForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetHostedRunnersPartnerImagesForOrgOutput = Awaited<ReturnType<typeof github.actions.getHostedRunnersPartnerImagesForOrg>>;
-
-const input: ActionsGetHostedRunnersPartnerImagesForOrgInput = {} as { org: string };
-const result: ActionsGetHostedRunnersPartnerImagesForOrgOutput = await github.actions.getHostedRunnersPartnerImagesForOrg(input);
-
-// Result shape (from schema): { total_count: number; images: ({ id: string; platform: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom" })[] }
-```
-
-### `github.actions.getHostedRunnersLimitsForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners/limits`
-- **What it does**: Get limits on GitHub-hosted runners for an organization
-- **OpenAPI operationId**: `actions/get-hosted-runners-limits-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ public_ips: { maximum: number; current_usage: number } }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetHostedRunnersLimitsForOrgInput = Parameters<typeof github.actions.getHostedRunnersLimitsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetHostedRunnersLimitsForOrgOutput = Awaited<ReturnType<typeof github.actions.getHostedRunnersLimitsForOrg>>;
-
-const input: ActionsGetHostedRunnersLimitsForOrgInput = {} as { org: string };
-const result: ActionsGetHostedRunnersLimitsForOrgOutput = await github.actions.getHostedRunnersLimitsForOrg(input);
-
-// Result shape (from schema): { public_ips: { maximum: number; current_usage: number } }
-```
-
-### `github.actions.getHostedRunnersMachineSpecsForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners/machine-sizes`
-- **What it does**: Get GitHub-hosted runners machine specs for an organization
-- **OpenAPI operationId**: `actions/get-hosted-runners-machine-specs-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; machine_specs: ({ id: string; cpu_cores: number; memory_gb: number; storage_gb: number })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetHostedRunnersMachineSpecsForOrgInput = Parameters<typeof github.actions.getHostedRunnersMachineSpecsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetHostedRunnersMachineSpecsForOrgOutput = Awaited<ReturnType<typeof github.actions.getHostedRunnersMachineSpecsForOrg>>;
-
-const input: ActionsGetHostedRunnersMachineSpecsForOrgInput = {} as { org: string };
-const result: ActionsGetHostedRunnersMachineSpecsForOrgOutput = await github.actions.getHostedRunnersMachineSpecsForOrg(input);
-
-// Result shape (from schema): { total_count: number; machine_specs: ({ id: string; cpu_cores: number; memory_gb: number; storage_gb: number })[] }
-```
-
-### `github.actions.getHostedRunnersPlatformsForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/hosted-runners/platforms`
-- **What it does**: Get platforms for GitHub-hosted runners in an organization
-- **OpenAPI operationId**: `actions/get-hosted-runners-platforms-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; platforms: (string)[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetHostedRunnersPlatformsForOrgInput = Parameters<typeof github.actions.getHostedRunnersPlatformsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetHostedRunnersPlatformsForOrgOutput = Awaited<ReturnType<typeof github.actions.getHostedRunnersPlatformsForOrg>>;
-
-const input: ActionsGetHostedRunnersPlatformsForOrgInput = {} as { org: string };
-const result: ActionsGetHostedRunnersPlatformsForOrgOutput = await github.actions.getHostedRunnersPlatformsForOrg(input);
-
-// Result shape (from schema): { total_count: number; platforms: (string)[] }
-```
-
-### `github.actions.getGithubActionsPermissionsOrganization`
-
-- **HTTP**: `GET /orgs/{org}/actions/permissions`
-- **What it does**: Get GitHub Actions permissions for an organization
-- **OpenAPI operationId**: `actions/get-github-actions-permissions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ enabled_repositories: "all" | "none" | "selected"; selected_repositories_url?: string; allowed_actions?: "all" | "local_only" | "selected"; selected_actions_url?: string; sha_pinning_required?: boolean }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetGithubActionsPermissionsOrganizationInput = Parameters<typeof github.actions.getGithubActionsPermissionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetGithubActionsPermissionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.getGithubActionsPermissionsOrganization>>;
-
-const input: ActionsGetGithubActionsPermissionsOrganizationInput = {} as { org: string };
-const result: ActionsGetGithubActionsPermissionsOrganizationOutput = await github.actions.getGithubActionsPermissionsOrganization(input);
-
-// Result shape (from schema): { enabled_repositories: "all" | "none" | "selected"; selected_repositories_url?: string; allowed_actions?: "all" | "local_only" | "selected"; selected_actions_url?: string; sha_pinning_required?: boolean }
-```
-
-### `github.actions.setGithubActionsPermissionsOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions`
-- **What it does**: Set GitHub Actions permissions for an organization
-- **OpenAPI operationId**: `actions/set-github-actions-permissions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ enabled_repositories: "all" | "none" | "selected"; allowed_actions?: "all" | "local_only" | "selected"; sha_pinning_required?: boolean; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetGithubActionsPermissionsOrganizationInput = Parameters<typeof github.actions.setGithubActionsPermissionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetGithubActionsPermissionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.setGithubActionsPermissionsOrganization>>;
-
-const input: ActionsSetGithubActionsPermissionsOrganizationInput = {} as { enabled_repositories: "all" | "none" | "selected"; allowed_actions?: "all" | "local_only" | "selected"; sha_pinning_required?: boolean; org: string };
-const result: ActionsSetGithubActionsPermissionsOrganizationOutput = await github.actions.setGithubActionsPermissionsOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getArtifactAndLogRetentionSettingsOrganization`
-
-- **HTTP**: `GET /orgs/{org}/actions/permissions/artifact-and-log-retention`
-- **What it does**: Get artifact and log retention settings for an organization
-- **OpenAPI operationId**: `actions/get-artifact-and-log-retention-settings-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ days: number; maximum_allowed_days: number }`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetArtifactAndLogRetentionSettingsOrganizationInput = Parameters<typeof github.actions.getArtifactAndLogRetentionSettingsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetArtifactAndLogRetentionSettingsOrganizationOutput = Awaited<ReturnType<typeof github.actions.getArtifactAndLogRetentionSettingsOrganization>>;
-
-const input: ActionsGetArtifactAndLogRetentionSettingsOrganizationInput = {} as { org: string };
-const result: ActionsGetArtifactAndLogRetentionSettingsOrganizationOutput = await github.actions.getArtifactAndLogRetentionSettingsOrganization(input);
-
-// Result shape (from schema): { days: number; maximum_allowed_days: number }
-```
-
-### `github.actions.setArtifactAndLogRetentionSettingsOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions/artifact-and-log-retention`
-- **What it does**: Set artifact and log retention settings for an organization
-- **OpenAPI operationId**: `actions/set-artifact-and-log-retention-settings-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ days: number; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`, `404`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetArtifactAndLogRetentionSettingsOrganizationInput = Parameters<typeof github.actions.setArtifactAndLogRetentionSettingsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetArtifactAndLogRetentionSettingsOrganizationOutput = Awaited<ReturnType<typeof github.actions.setArtifactAndLogRetentionSettingsOrganization>>;
-
-const input: ActionsSetArtifactAndLogRetentionSettingsOrganizationInput = {} as { days: number; org: string };
-const result: ActionsSetArtifactAndLogRetentionSettingsOrganizationOutput = await github.actions.setArtifactAndLogRetentionSettingsOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getForkPrContributorApprovalPermissionsOrganization`
-
-- **HTTP**: `GET /orgs/{org}/actions/permissions/fork-pr-contributor-approval`
-- **What it does**: Get fork PR contributor approval permissions for an organization
-- **OpenAPI operationId**: `actions/get-fork-pr-contributor-approval-permissions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors" }`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetForkPrContributorApprovalPermissionsOrganizationInput = Parameters<typeof github.actions.getForkPrContributorApprovalPermissionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetForkPrContributorApprovalPermissionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.getForkPrContributorApprovalPermissionsOrganization>>;
-
-const input: ActionsGetForkPrContributorApprovalPermissionsOrganizationInput = {} as { org: string };
-const result: ActionsGetForkPrContributorApprovalPermissionsOrganizationOutput = await github.actions.getForkPrContributorApprovalPermissionsOrganization(input);
-
-// Result shape (from schema): { approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors" }
-```
-
-### `github.actions.setForkPrContributorApprovalPermissionsOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions/fork-pr-contributor-approval`
-- **What it does**: Set fork PR contributor approval permissions for an organization
-- **OpenAPI operationId**: `actions/set-fork-pr-contributor-approval-permissions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors"; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetForkPrContributorApprovalPermissionsOrganizationInput = Parameters<typeof github.actions.setForkPrContributorApprovalPermissionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetForkPrContributorApprovalPermissionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.setForkPrContributorApprovalPermissionsOrganization>>;
-
-const input: ActionsSetForkPrContributorApprovalPermissionsOrganizationInput = {} as { approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors"; org: string };
-const result: ActionsSetForkPrContributorApprovalPermissionsOrganizationOutput = await github.actions.setForkPrContributorApprovalPermissionsOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getPrivateRepoForkPrWorkflowsSettingsOrganization`
-
-- **HTTP**: `GET /orgs/{org}/actions/permissions/fork-pr-workflows-private-repos`
-- **What it does**: Get private repo fork PR workflow settings for an organization
-- **OpenAPI operationId**: `actions/get-private-repo-fork-pr-workflows-settings-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ run_workflows_from_fork_pull_requests: boolean; send_write_tokens_to_workflows: boolean; send_secrets_and_variables: boolean; require_approval_for_fork_pr_workflows: boolean }`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetPrivateRepoForkPrWorkflowsSettingsOrganizationInput = Parameters<typeof github.actions.getPrivateRepoForkPrWorkflowsSettingsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetPrivateRepoForkPrWorkflowsSettingsOrganizationOutput = Awaited<ReturnType<typeof github.actions.getPrivateRepoForkPrWorkflowsSettingsOrganization>>;
-
-const input: ActionsGetPrivateRepoForkPrWorkflowsSettingsOrganizationInput = {} as { org: string };
-const result: ActionsGetPrivateRepoForkPrWorkflowsSettingsOrganizationOutput = await github.actions.getPrivateRepoForkPrWorkflowsSettingsOrganization(input);
-
-// Result shape (from schema): { run_workflows_from_fork_pull_requests: boolean; send_write_tokens_to_workflows: boolean; send_secrets_and_variables: boolean; require_approval_for_fork_pr_workflows: boolean }
-```
-
-### `github.actions.setPrivateRepoForkPrWorkflowsSettingsOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions/fork-pr-workflows-private-repos`
-- **What it does**: Set private repo fork PR workflow settings for an organization
-- **OpenAPI operationId**: `actions/set-private-repo-fork-pr-workflows-settings-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ run_workflows_from_fork_pull_requests: boolean; send_write_tokens_to_workflows?: boolean; send_secrets_and_variables?: boolean; require_approval_for_fork_pr_workflows?: boolean; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetPrivateRepoForkPrWorkflowsSettingsOrganizationInput = Parameters<typeof github.actions.setPrivateRepoForkPrWorkflowsSettingsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetPrivateRepoForkPrWorkflowsSettingsOrganizationOutput = Awaited<ReturnType<typeof github.actions.setPrivateRepoForkPrWorkflowsSettingsOrganization>>;
-
-const input: ActionsSetPrivateRepoForkPrWorkflowsSettingsOrganizationInput = {} as { run_workflows_from_fork_pull_requests: boolean; send_write_tokens_to_workflows?: boolean; send_secrets_and_variables?: boolean; require_approval_for_fork_pr_workflows?: boolean; org: string };
-const result: ActionsSetPrivateRepoForkPrWorkflowsSettingsOrganizationOutput = await github.actions.setPrivateRepoForkPrWorkflowsSettingsOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.listSelectedRepositoriesEnabledGithubActionsOrganization`
-
-- **HTTP**: `GET /orgs/{org}/actions/permissions/repositories`
-- **What it does**: List selected repositories enabled for GitHub Actions in an organization
-- **OpenAPI operationId**: `actions/list-selected-repositories-enabled-github-actions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; spdx_id: string | null; node_id: string; html_url?: string ...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListSelectedRepositoriesEnabledGithubActionsOrganizationInput = Parameters<typeof github.actions.listSelectedRepositoriesEnabledGithubActionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListSelectedRepositoriesEnabledGithubActionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.listSelectedRepositoriesEnabledGithubActionsOrganization>>;
-
-const input: ActionsListSelectedRepositoriesEnabledGithubActionsOrganizationInput = {} as { org: string; per_page?: number; page?: number };
-const result: ActionsListSelectedRepositoriesEnabledGithubActionsOrganizationOutput = await github.actions.listSelectedRepositoriesEnabledGithubActionsOrganization(input);
-
-// Result shape (from schema): { total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; spdx_id: string | null; node_id: string; html_url?: string ...
-```
-
-### `github.actions.setSelectedRepositoriesEnabledGithubActionsOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions/repositories`
-- **What it does**: Set selected repositories enabled for GitHub Actions in an organization
-- **OpenAPI operationId**: `actions/set-selected-repositories-enabled-github-actions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ selected_repository_ids: (number)[]; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetSelectedRepositoriesEnabledGithubActionsOrganizationInput = Parameters<typeof github.actions.setSelectedRepositoriesEnabledGithubActionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetSelectedRepositoriesEnabledGithubActionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.setSelectedRepositoriesEnabledGithubActionsOrganization>>;
-
-const input: ActionsSetSelectedRepositoriesEnabledGithubActionsOrganizationInput = {} as { selected_repository_ids: (number)[]; org: string };
-const result: ActionsSetSelectedRepositoriesEnabledGithubActionsOrganizationOutput = await github.actions.setSelectedRepositoriesEnabledGithubActionsOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.disableSelectedRepositoryGithubActionsOrganization`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/permissions/repositories/{repository_id}`
-- **What it does**: Disable a selected repository for GitHub Actions in an organization
-- **OpenAPI operationId**: `actions/disable-selected-repository-github-actions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDisableSelectedRepositoryGithubActionsOrganizationInput = Parameters<typeof github.actions.disableSelectedRepositoryGithubActionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDisableSelectedRepositoryGithubActionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.disableSelectedRepositoryGithubActionsOrganization>>;
-
-const input: ActionsDisableSelectedRepositoryGithubActionsOrganizationInput = {} as { org: string; repository_id: number };
-const result: ActionsDisableSelectedRepositoryGithubActionsOrganizationOutput = await github.actions.disableSelectedRepositoryGithubActionsOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.enableSelectedRepositoryGithubActionsOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions/repositories/{repository_id}`
-- **What it does**: Enable a selected repository for GitHub Actions in an organization
-- **OpenAPI operationId**: `actions/enable-selected-repository-github-actions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsEnableSelectedRepositoryGithubActionsOrganizationInput = Parameters<typeof github.actions.enableSelectedRepositoryGithubActionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsEnableSelectedRepositoryGithubActionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.enableSelectedRepositoryGithubActionsOrganization>>;
-
-const input: ActionsEnableSelectedRepositoryGithubActionsOrganizationInput = {} as { org: string; repository_id: number };
-const result: ActionsEnableSelectedRepositoryGithubActionsOrganizationOutput = await github.actions.enableSelectedRepositoryGithubActionsOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getAllowedActionsOrganization`
-
-- **HTTP**: `GET /orgs/{org}/actions/permissions/selected-actions`
-- **What it does**: Get allowed actions and reusable workflows for an organization
-- **OpenAPI operationId**: `actions/get-allowed-actions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ github_owned_allowed?: boolean; verified_allowed?: boolean; patterns_allowed?: (string)[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetAllowedActionsOrganizationInput = Parameters<typeof github.actions.getAllowedActionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetAllowedActionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.getAllowedActionsOrganization>>;
-
-const input: ActionsGetAllowedActionsOrganizationInput = {} as { org: string };
-const result: ActionsGetAllowedActionsOrganizationOutput = await github.actions.getAllowedActionsOrganization(input);
-
-// Result shape (from schema): { github_owned_allowed?: boolean; verified_allowed?: boolean; patterns_allowed?: (string)[] }
-```
-
-### `github.actions.setAllowedActionsOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions/selected-actions`
-- **What it does**: Set allowed actions and reusable workflows for an organization
-- **OpenAPI operationId**: `actions/set-allowed-actions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ github_owned_allowed?: boolean; verified_allowed?: boolean; patterns_allowed?: (string)[]; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetAllowedActionsOrganizationInput = Parameters<typeof github.actions.setAllowedActionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetAllowedActionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.setAllowedActionsOrganization>>;
-
-const input: ActionsSetAllowedActionsOrganizationInput = {} as { github_owned_allowed?: boolean; verified_allowed?: boolean; patterns_allowed?: (string)[]; org: string };
-const result: ActionsSetAllowedActionsOrganizationOutput = await github.actions.setAllowedActionsOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getSelfHostedRunnersPermissionsOrganization`
-
-- **HTTP**: `GET /orgs/{org}/actions/permissions/self-hosted-runners`
-- **What it does**: Get self-hosted runners settings for an organization
-- **OpenAPI operationId**: `actions/get-self-hosted-runners-permissions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ enabled_repositories: "all" | "selected" | "none"; selected_repositories_url?: string }`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetSelfHostedRunnersPermissionsOrganizationInput = Parameters<typeof github.actions.getSelfHostedRunnersPermissionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetSelfHostedRunnersPermissionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.getSelfHostedRunnersPermissionsOrganization>>;
-
-const input: ActionsGetSelfHostedRunnersPermissionsOrganizationInput = {} as { org: string };
-const result: ActionsGetSelfHostedRunnersPermissionsOrganizationOutput = await github.actions.getSelfHostedRunnersPermissionsOrganization(input);
-
-// Result shape (from schema): { enabled_repositories: "all" | "selected" | "none"; selected_repositories_url?: string }
-```
-
-### `github.actions.setSelfHostedRunnersPermissionsOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions/self-hosted-runners`
-- **What it does**: Set self-hosted runners settings for an organization
-- **OpenAPI operationId**: `actions/set-self-hosted-runners-permissions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ enabled_repositories: "all" | "selected" | "none"; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`, `404`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetSelfHostedRunnersPermissionsOrganizationInput = Parameters<typeof github.actions.setSelfHostedRunnersPermissionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetSelfHostedRunnersPermissionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.setSelfHostedRunnersPermissionsOrganization>>;
-
-const input: ActionsSetSelfHostedRunnersPermissionsOrganizationInput = {} as { enabled_repositories: "all" | "selected" | "none"; org: string };
-const result: ActionsSetSelfHostedRunnersPermissionsOrganizationOutput = await github.actions.setSelfHostedRunnersPermissionsOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.listSelectedRepositoriesSelfHostedRunnersOrganization`
-
-- **HTTP**: `GET /orgs/{org}/actions/permissions/self-hosted-runners/repositories`
-- **What it does**: List repositories allowed to use self-hosted runners in an organization
-- **OpenAPI operationId**: `actions/list-selected-repositories-self-hosted-runners-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count?: number; repositories?: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; spdx_id: string | null; node_id: string; html_url?: strin...`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListSelectedRepositoriesSelfHostedRunnersOrganizationInput = Parameters<typeof github.actions.listSelectedRepositoriesSelfHostedRunnersOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListSelectedRepositoriesSelfHostedRunnersOrganizationOutput = Awaited<ReturnType<typeof github.actions.listSelectedRepositoriesSelfHostedRunnersOrganization>>;
-
-const input: ActionsListSelectedRepositoriesSelfHostedRunnersOrganizationInput = {} as { org: string; per_page?: number; page?: number };
-const result: ActionsListSelectedRepositoriesSelfHostedRunnersOrganizationOutput = await github.actions.listSelectedRepositoriesSelfHostedRunnersOrganization(input);
-
-// Result shape (from schema): { total_count?: number; repositories?: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; spdx_id: string | null; node_id: string; html_url?: strin...
-```
-
-### `github.actions.setSelectedRepositoriesSelfHostedRunnersOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions/self-hosted-runners/repositories`
-- **What it does**: Set repositories allowed to use self-hosted runners in an organization
-- **OpenAPI operationId**: `actions/set-selected-repositories-self-hosted-runners-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ selected_repository_ids: (number)[]; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetSelectedRepositoriesSelfHostedRunnersOrganizationInput = Parameters<typeof github.actions.setSelectedRepositoriesSelfHostedRunnersOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetSelectedRepositoriesSelfHostedRunnersOrganizationOutput = Awaited<ReturnType<typeof github.actions.setSelectedRepositoriesSelfHostedRunnersOrganization>>;
-
-const input: ActionsSetSelectedRepositoriesSelfHostedRunnersOrganizationInput = {} as { selected_repository_ids: (number)[]; org: string };
-const result: ActionsSetSelectedRepositoriesSelfHostedRunnersOrganizationOutput = await github.actions.setSelectedRepositoriesSelfHostedRunnersOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.disableSelectedRepositorySelfHostedRunnersOrganization`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/permissions/self-hosted-runners/repositories/{repository_id}`
-- **What it does**: Remove a repository from the list of repositories allowed to use self-hosted runners in an organization
-- **OpenAPI operationId**: `actions/disable-selected-repository-self-hosted-runners-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`, `404`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDisableSelectedRepositorySelfHostedRunnersOrganizationInput = Parameters<typeof github.actions.disableSelectedRepositorySelfHostedRunnersOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDisableSelectedRepositorySelfHostedRunnersOrganizationOutput = Awaited<ReturnType<typeof github.actions.disableSelectedRepositorySelfHostedRunnersOrganization>>;
-
-const input: ActionsDisableSelectedRepositorySelfHostedRunnersOrganizationInput = {} as { org: string; repository_id: number };
-const result: ActionsDisableSelectedRepositorySelfHostedRunnersOrganizationOutput = await github.actions.disableSelectedRepositorySelfHostedRunnersOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.enableSelectedRepositorySelfHostedRunnersOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions/self-hosted-runners/repositories/{repository_id}`
-- **What it does**: Add a repository to the list of repositories allowed to use self-hosted runners in an organization
-- **OpenAPI operationId**: `actions/enable-selected-repository-self-hosted-runners-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`, `404`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsEnableSelectedRepositorySelfHostedRunnersOrganizationInput = Parameters<typeof github.actions.enableSelectedRepositorySelfHostedRunnersOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsEnableSelectedRepositorySelfHostedRunnersOrganizationOutput = Awaited<ReturnType<typeof github.actions.enableSelectedRepositorySelfHostedRunnersOrganization>>;
-
-const input: ActionsEnableSelectedRepositorySelfHostedRunnersOrganizationInput = {} as { org: string; repository_id: number };
-const result: ActionsEnableSelectedRepositorySelfHostedRunnersOrganizationOutput = await github.actions.enableSelectedRepositorySelfHostedRunnersOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getGithubActionsDefaultWorkflowPermissionsOrganization`
-
-- **HTTP**: `GET /orgs/{org}/actions/permissions/workflow`
-- **What it does**: Get default workflow permissions for an organization
-- **OpenAPI operationId**: `actions/get-github-actions-default-workflow-permissions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ default_workflow_permissions: "read" | "write"; can_approve_pull_request_reviews: boolean }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetGithubActionsDefaultWorkflowPermissionsOrganizationInput = Parameters<typeof github.actions.getGithubActionsDefaultWorkflowPermissionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetGithubActionsDefaultWorkflowPermissionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.getGithubActionsDefaultWorkflowPermissionsOrganization>>;
-
-const input: ActionsGetGithubActionsDefaultWorkflowPermissionsOrganizationInput = {} as { org: string };
-const result: ActionsGetGithubActionsDefaultWorkflowPermissionsOrganizationOutput = await github.actions.getGithubActionsDefaultWorkflowPermissionsOrganization(input);
-
-// Result shape (from schema): { default_workflow_permissions: "read" | "write"; can_approve_pull_request_reviews: boolean }
-```
-
-### `github.actions.setGithubActionsDefaultWorkflowPermissionsOrganization`
-
-- **HTTP**: `PUT /orgs/{org}/actions/permissions/workflow`
-- **What it does**: Set default workflow permissions for an organization
-- **OpenAPI operationId**: `actions/set-github-actions-default-workflow-permissions-organization`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ default_workflow_permissions?: "read" | "write"; can_approve_pull_request_reviews?: boolean; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetGithubActionsDefaultWorkflowPermissionsOrganizationInput = Parameters<typeof github.actions.setGithubActionsDefaultWorkflowPermissionsOrganization> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetGithubActionsDefaultWorkflowPermissionsOrganizationOutput = Awaited<ReturnType<typeof github.actions.setGithubActionsDefaultWorkflowPermissionsOrganization>>;
-
-const input: ActionsSetGithubActionsDefaultWorkflowPermissionsOrganizationInput = {} as { default_workflow_permissions?: "read" | "write"; can_approve_pull_request_reviews?: boolean; org: string };
-const result: ActionsSetGithubActionsDefaultWorkflowPermissionsOrganizationOutput = await github.actions.setGithubActionsDefaultWorkflowPermissionsOrganization(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.listSelfHostedRunnerGroupsForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/runner-groups`
-- **What it does**: List self-hosted runner groups for an organization
-- **OpenAPI operationId**: `actions/list-self-hosted-runner-groups-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; per_page?: number; page?: number; visible_to_repository?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; runner_groups: ({ id: number; name: string; visibility: string; default: boolean; selected_repositories_url?: string; runners_url: string; hosted_runners_url?: string; network_configuration_id?: s...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListSelfHostedRunnerGroupsForOrgInput = Parameters<typeof github.actions.listSelfHostedRunnerGroupsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListSelfHostedRunnerGroupsForOrgOutput = Awaited<ReturnType<typeof github.actions.listSelfHostedRunnerGroupsForOrg>>;
-
-const input: ActionsListSelfHostedRunnerGroupsForOrgInput = {} as { org: string; per_page?: number; page?: number; visible_to_repository?: string };
-const result: ActionsListSelfHostedRunnerGroupsForOrgOutput = await github.actions.listSelfHostedRunnerGroupsForOrg(input);
-
-// Result shape (from schema): { total_count: number; runner_groups: ({ id: number; name: string; visibility: string; default: boolean; selected_repositories_url?: string; runners_url: string; hosted_runners_url?: string; network_configuration_id?: s...
-```
-
-### `github.actions.createSelfHostedRunnerGroupForOrg`
-
-- **HTTP**: `POST /orgs/{org}/actions/runner-groups`
-- **What it does**: Create a self-hosted runner group for an organization
-- **OpenAPI operationId**: `actions/create-self-hosted-runner-group-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name: string; visibility?: "selected" | "all" | "private"; selected_repository_ids?: (number)[]; runners?: (number)[]; allows_public_repositories?: boolean; restricted_to_workflows?: boolean; selected_workflows?: (string)[]; network_configuration_id?: string; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; visibility: string; default: boolean; selected_repositories_url?: string; runners_url: string; hosted_runners_url?: string; network_configuration_id?: string; inherited: boolean; inherited_al...`
-- OpenAPI response codes: `201`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsCreateSelfHostedRunnerGroupForOrgInput = Parameters<typeof github.actions.createSelfHostedRunnerGroupForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateSelfHostedRunnerGroupForOrgOutput = Awaited<ReturnType<typeof github.actions.createSelfHostedRunnerGroupForOrg>>;
-
-const input: ActionsCreateSelfHostedRunnerGroupForOrgInput = {} as { name: string; visibility?: "selected" | "all" | "private"; selected_repository_ids?: (number)[]; runners?: (number)[]; allows_public_repositories?: boolean; restricted_to_workflows?: boolean; selected_workflows?: (string)[]; network_configuration_id?: string; org: string };
-const result: ActionsCreateSelfHostedRunnerGroupForOrgOutput = await github.actions.createSelfHostedRunnerGroupForOrg(input);
-
-// Result shape (from schema): { id: number; name: string; visibility: string; default: boolean; selected_repositories_url?: string; runners_url: string; hosted_runners_url?: string; network_configuration_id?: string; inherited: boolean; inherited_al...
-```
-
-### `github.actions.deleteSelfHostedRunnerGroupFromOrg`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}`
-- **What it does**: Delete a self-hosted runner group from an organization
-- **OpenAPI operationId**: `actions/delete-self-hosted-runner-group-from-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_group_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDeleteSelfHostedRunnerGroupFromOrgInput = Parameters<typeof github.actions.deleteSelfHostedRunnerGroupFromOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteSelfHostedRunnerGroupFromOrgOutput = Awaited<ReturnType<typeof github.actions.deleteSelfHostedRunnerGroupFromOrg>>;
-
-const input: ActionsDeleteSelfHostedRunnerGroupFromOrgInput = {} as { org: string; runner_group_id: number };
-const result: ActionsDeleteSelfHostedRunnerGroupFromOrgOutput = await github.actions.deleteSelfHostedRunnerGroupFromOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getSelfHostedRunnerGroupForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/runner-groups/{runner_group_id}`
-- **What it does**: Get a self-hosted runner group for an organization
-- **OpenAPI operationId**: `actions/get-self-hosted-runner-group-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_group_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; visibility: string; default: boolean; selected_repositories_url?: string; runners_url: string; hosted_runners_url?: string; network_configuration_id?: string; inherited: boolean; inherited_al...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetSelfHostedRunnerGroupForOrgInput = Parameters<typeof github.actions.getSelfHostedRunnerGroupForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetSelfHostedRunnerGroupForOrgOutput = Awaited<ReturnType<typeof github.actions.getSelfHostedRunnerGroupForOrg>>;
-
-const input: ActionsGetSelfHostedRunnerGroupForOrgInput = {} as { org: string; runner_group_id: number };
-const result: ActionsGetSelfHostedRunnerGroupForOrgOutput = await github.actions.getSelfHostedRunnerGroupForOrg(input);
-
-// Result shape (from schema): { id: number; name: string; visibility: string; default: boolean; selected_repositories_url?: string; runners_url: string; hosted_runners_url?: string; network_configuration_id?: string; inherited: boolean; inherited_al...
-```
-
-### `github.actions.updateSelfHostedRunnerGroupForOrg`
-
-- **HTTP**: `PATCH /orgs/{org}/actions/runner-groups/{runner_group_id}`
-- **What it does**: Update a self-hosted runner group for an organization
-- **OpenAPI operationId**: `actions/update-self-hosted-runner-group-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name: string; visibility?: "selected" | "all" | "private"; allows_public_repositories?: boolean; restricted_to_workflows?: boolean; selected_workflows?: (string)[]; network_configuration_id?: string | null; org: string; runner_group_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; visibility: string; default: boolean; selected_repositories_url?: string; runners_url: string; hosted_runners_url?: string; network_configuration_id?: string; inherited: boolean; inherited_al...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsUpdateSelfHostedRunnerGroupForOrgInput = Parameters<typeof github.actions.updateSelfHostedRunnerGroupForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsUpdateSelfHostedRunnerGroupForOrgOutput = Awaited<ReturnType<typeof github.actions.updateSelfHostedRunnerGroupForOrg>>;
-
-const input: ActionsUpdateSelfHostedRunnerGroupForOrgInput = {} as { name: string; visibility?: "selected" | "all" | "private"; allows_public_repositories?: boolean; restricted_to_workflows?: boolean; selected_workflows?: (string)[]; network_configuration_id?: string | null; org: string; runner_group_id: number };
-const result: ActionsUpdateSelfHostedRunnerGroupForOrgOutput = await github.actions.updateSelfHostedRunnerGroupForOrg(input);
-
-// Result shape (from schema): { id: number; name: string; visibility: string; default: boolean; selected_repositories_url?: string; runners_url: string; hosted_runners_url?: string; network_configuration_id?: string; inherited: boolean; inherited_al...
-```
-
-### `github.actions.listGithubHostedRunnersInGroupForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/runner-groups/{runner_group_id}/hosted-runners`
-- **What it does**: List GitHub-hosted runners in a group for an organization
-- **OpenAPI operationId**: `actions/list-github-hosted-runners-in-group-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_group_id: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; runners: ({ id: number; name: string; runner_group_id?: number; image_details: { id: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom"; version?: string } | nu...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListGithubHostedRunnersInGroupForOrgInput = Parameters<typeof github.actions.listGithubHostedRunnersInGroupForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListGithubHostedRunnersInGroupForOrgOutput = Awaited<ReturnType<typeof github.actions.listGithubHostedRunnersInGroupForOrg>>;
-
-const input: ActionsListGithubHostedRunnersInGroupForOrgInput = {} as { org: string; runner_group_id: number; per_page?: number; page?: number };
-const result: ActionsListGithubHostedRunnersInGroupForOrgOutput = await github.actions.listGithubHostedRunnersInGroupForOrg(input);
-
-// Result shape (from schema): { total_count: number; runners: ({ id: number; name: string; runner_group_id?: number; image_details: { id: string; size_gb: number; display_name: string; source: "github" | "partner" | "custom"; version?: string } | nu...
-```
-
-### `github.actions.listRepoAccessToSelfHostedRunnerGroupInOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories`
-- **What it does**: List repository access to a self-hosted runner group in an organization
-- **OpenAPI operationId**: `actions/list-repo-access-to-self-hosted-runner-group-in-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_group_id: number; page?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string;...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListRepoAccessToSelfHostedRunnerGroupInOrgInput = Parameters<typeof github.actions.listRepoAccessToSelfHostedRunnerGroupInOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListRepoAccessToSelfHostedRunnerGroupInOrgOutput = Awaited<ReturnType<typeof github.actions.listRepoAccessToSelfHostedRunnerGroupInOrg>>;
-
-const input: ActionsListRepoAccessToSelfHostedRunnerGroupInOrgInput = {} as { org: string; runner_group_id: number; page?: number; per_page?: number };
-const result: ActionsListRepoAccessToSelfHostedRunnerGroupInOrgOutput = await github.actions.listRepoAccessToSelfHostedRunnerGroupInOrg(input);
-
-// Result shape (from schema): { total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string;...
-```
-
-### `github.actions.setRepoAccessToSelfHostedRunnerGroupInOrg`
-
-- **HTTP**: `PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories`
-- **What it does**: Set repository access for a self-hosted runner group in an organization
-- **OpenAPI operationId**: `actions/set-repo-access-to-self-hosted-runner-group-in-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ selected_repository_ids: (number)[]; org: string; runner_group_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetRepoAccessToSelfHostedRunnerGroupInOrgInput = Parameters<typeof github.actions.setRepoAccessToSelfHostedRunnerGroupInOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetRepoAccessToSelfHostedRunnerGroupInOrgOutput = Awaited<ReturnType<typeof github.actions.setRepoAccessToSelfHostedRunnerGroupInOrg>>;
-
-const input: ActionsSetRepoAccessToSelfHostedRunnerGroupInOrgInput = {} as { selected_repository_ids: (number)[]; org: string; runner_group_id: number };
-const result: ActionsSetRepoAccessToSelfHostedRunnerGroupInOrgOutput = await github.actions.setRepoAccessToSelfHostedRunnerGroupInOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.removeRepoAccessToSelfHostedRunnerGroupInOrg`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}`
-- **What it does**: Remove repository access to a self-hosted runner group in an organization
-- **OpenAPI operationId**: `actions/remove-repo-access-to-self-hosted-runner-group-in-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_group_id: number; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsRemoveRepoAccessToSelfHostedRunnerGroupInOrgInput = Parameters<typeof github.actions.removeRepoAccessToSelfHostedRunnerGroupInOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsRemoveRepoAccessToSelfHostedRunnerGroupInOrgOutput = Awaited<ReturnType<typeof github.actions.removeRepoAccessToSelfHostedRunnerGroupInOrg>>;
-
-const input: ActionsRemoveRepoAccessToSelfHostedRunnerGroupInOrgInput = {} as { org: string; runner_group_id: number; repository_id: number };
-const result: ActionsRemoveRepoAccessToSelfHostedRunnerGroupInOrgOutput = await github.actions.removeRepoAccessToSelfHostedRunnerGroupInOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.addRepoAccessToSelfHostedRunnerGroupInOrg`
-
-- **HTTP**: `PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}`
-- **What it does**: Add repository access to a self-hosted runner group in an organization
-- **OpenAPI operationId**: `actions/add-repo-access-to-self-hosted-runner-group-in-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_group_id: number; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsAddRepoAccessToSelfHostedRunnerGroupInOrgInput = Parameters<typeof github.actions.addRepoAccessToSelfHostedRunnerGroupInOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsAddRepoAccessToSelfHostedRunnerGroupInOrgOutput = Awaited<ReturnType<typeof github.actions.addRepoAccessToSelfHostedRunnerGroupInOrg>>;
-
-const input: ActionsAddRepoAccessToSelfHostedRunnerGroupInOrgInput = {} as { org: string; runner_group_id: number; repository_id: number };
-const result: ActionsAddRepoAccessToSelfHostedRunnerGroupInOrgOutput = await github.actions.addRepoAccessToSelfHostedRunnerGroupInOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.listSelfHostedRunnersInGroupForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/runner-groups/{runner_group_id}/runners`
-- **What it does**: List self-hosted runners in a group for an organization
-- **OpenAPI operationId**: `actions/list-self-hosted-runners-in-group-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_group_id: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; runners: ({ id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boo...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListSelfHostedRunnersInGroupForOrgInput = Parameters<typeof github.actions.listSelfHostedRunnersInGroupForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListSelfHostedRunnersInGroupForOrgOutput = Awaited<ReturnType<typeof github.actions.listSelfHostedRunnersInGroupForOrg>>;
-
-const input: ActionsListSelfHostedRunnersInGroupForOrgInput = {} as { org: string; runner_group_id: number; per_page?: number; page?: number };
-const result: ActionsListSelfHostedRunnersInGroupForOrgOutput = await github.actions.listSelfHostedRunnersInGroupForOrg(input);
-
-// Result shape (from schema): { total_count: number; runners: ({ id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boo...
-```
-
-### `github.actions.setSelfHostedRunnersInGroupForOrg`
-
-- **HTTP**: `PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/runners`
-- **What it does**: Set self-hosted runners in a group for an organization
-- **OpenAPI operationId**: `actions/set-self-hosted-runners-in-group-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ runners: (number)[]; org: string; runner_group_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetSelfHostedRunnersInGroupForOrgInput = Parameters<typeof github.actions.setSelfHostedRunnersInGroupForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetSelfHostedRunnersInGroupForOrgOutput = Awaited<ReturnType<typeof github.actions.setSelfHostedRunnersInGroupForOrg>>;
-
-const input: ActionsSetSelfHostedRunnersInGroupForOrgInput = {} as { runners: (number)[]; org: string; runner_group_id: number };
-const result: ActionsSetSelfHostedRunnersInGroupForOrgOutput = await github.actions.setSelfHostedRunnersInGroupForOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.removeSelfHostedRunnerFromGroupForOrg`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}/runners/{runner_id}`
-- **What it does**: Remove a self-hosted runner from a group for an organization
-- **OpenAPI operationId**: `actions/remove-self-hosted-runner-from-group-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_group_id: number; runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsRemoveSelfHostedRunnerFromGroupForOrgInput = Parameters<typeof github.actions.removeSelfHostedRunnerFromGroupForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsRemoveSelfHostedRunnerFromGroupForOrgOutput = Awaited<ReturnType<typeof github.actions.removeSelfHostedRunnerFromGroupForOrg>>;
-
-const input: ActionsRemoveSelfHostedRunnerFromGroupForOrgInput = {} as { org: string; runner_group_id: number; runner_id: number };
-const result: ActionsRemoveSelfHostedRunnerFromGroupForOrgOutput = await github.actions.removeSelfHostedRunnerFromGroupForOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.addSelfHostedRunnerToGroupForOrg`
-
-- **HTTP**: `PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/runners/{runner_id}`
-- **What it does**: Add a self-hosted runner to a group for an organization
-- **OpenAPI operationId**: `actions/add-self-hosted-runner-to-group-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_group_id: number; runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsAddSelfHostedRunnerToGroupForOrgInput = Parameters<typeof github.actions.addSelfHostedRunnerToGroupForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsAddSelfHostedRunnerToGroupForOrgOutput = Awaited<ReturnType<typeof github.actions.addSelfHostedRunnerToGroupForOrg>>;
-
-const input: ActionsAddSelfHostedRunnerToGroupForOrgInput = {} as { org: string; runner_group_id: number; runner_id: number };
-const result: ActionsAddSelfHostedRunnerToGroupForOrgOutput = await github.actions.addSelfHostedRunnerToGroupForOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.listSelfHostedRunnersForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/runners`
-- **What it does**: List self-hosted runners for an organization
-- **OpenAPI operationId**: `actions/list-self-hosted-runners-for-org`
-- **Path params**: None
-- **Query params**: `name`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; name?: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; runners: ({ id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boo...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListSelfHostedRunnersForOrgInput = Parameters<typeof github.actions.listSelfHostedRunnersForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListSelfHostedRunnersForOrgOutput = Awaited<ReturnType<typeof github.actions.listSelfHostedRunnersForOrg>>;
-
-const input: ActionsListSelfHostedRunnersForOrgInput = {} as { org: string; name?: string; per_page?: number; page?: number };
-const result: ActionsListSelfHostedRunnersForOrgOutput = await github.actions.listSelfHostedRunnersForOrg(input);
-
-// Result shape (from schema): { total_count: number; runners: ({ id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boo...
-```
-
-### `github.actions.deleteSelfHostedRunnerFromOrg`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/runners/{runner_id}`
-- **What it does**: Delete a self-hosted runner from an organization
-- **OpenAPI operationId**: `actions/delete-self-hosted-runner-from-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDeleteSelfHostedRunnerFromOrgInput = Parameters<typeof github.actions.deleteSelfHostedRunnerFromOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteSelfHostedRunnerFromOrgOutput = Awaited<ReturnType<typeof github.actions.deleteSelfHostedRunnerFromOrg>>;
-
-const input: ActionsDeleteSelfHostedRunnerFromOrgInput = {} as { org: string; runner_id: number };
-const result: ActionsDeleteSelfHostedRunnerFromOrgOutput = await github.actions.deleteSelfHostedRunnerFromOrg(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getSelfHostedRunnerForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/runners/{runner_id}`
-- **What it does**: Get a self-hosted runner for an organization
-- **OpenAPI operationId**: `actions/get-self-hosted-runner-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boolean; version?: string | null }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetSelfHostedRunnerForOrgInput = Parameters<typeof github.actions.getSelfHostedRunnerForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetSelfHostedRunnerForOrgOutput = Awaited<ReturnType<typeof github.actions.getSelfHostedRunnerForOrg>>;
-
-const input: ActionsGetSelfHostedRunnerForOrgInput = {} as { org: string; runner_id: number };
-const result: ActionsGetSelfHostedRunnerForOrgOutput = await github.actions.getSelfHostedRunnerForOrg(input);
-
-// Result shape (from schema): { id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boolean; version?: string | null }
-```
-
-### `github.actions.removeAllCustomLabelsFromSelfHostedRunnerForOrg`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/runners/{runner_id}/labels`
-- **What it does**: Remove all custom labels from a self-hosted runner for an organization
-- **OpenAPI operationId**: `actions/remove-all-custom-labels-from-self-hosted-runner-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsRemoveAllCustomLabelsFromSelfHostedRunnerForOrgInput = Parameters<typeof github.actions.removeAllCustomLabelsFromSelfHostedRunnerForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsRemoveAllCustomLabelsFromSelfHostedRunnerForOrgOutput = Awaited<ReturnType<typeof github.actions.removeAllCustomLabelsFromSelfHostedRunnerForOrg>>;
-
-const input: ActionsRemoveAllCustomLabelsFromSelfHostedRunnerForOrgInput = {} as { org: string; runner_id: number };
-const result: ActionsRemoveAllCustomLabelsFromSelfHostedRunnerForOrgOutput = await github.actions.removeAllCustomLabelsFromSelfHostedRunnerForOrg(input);
-
-// Result shape (from schema): { total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }
-```
-
-### `github.actions.listLabelsForSelfHostedRunnerForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/runners/{runner_id}/labels`
-- **What it does**: List labels for a self-hosted runner for an organization
-- **OpenAPI operationId**: `actions/list-labels-for-self-hosted-runner-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListLabelsForSelfHostedRunnerForOrgInput = Parameters<typeof github.actions.listLabelsForSelfHostedRunnerForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListLabelsForSelfHostedRunnerForOrgOutput = Awaited<ReturnType<typeof github.actions.listLabelsForSelfHostedRunnerForOrg>>;
-
-const input: ActionsListLabelsForSelfHostedRunnerForOrgInput = {} as { org: string; runner_id: number };
-const result: ActionsListLabelsForSelfHostedRunnerForOrgOutput = await github.actions.listLabelsForSelfHostedRunnerForOrg(input);
-
-// Result shape (from schema): { total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }
-```
-
-### `github.actions.addCustomLabelsToSelfHostedRunnerForOrg`
-
-- **HTTP**: `POST /orgs/{org}/actions/runners/{runner_id}/labels`
-- **What it does**: Add custom labels to a self-hosted runner for an organization
-- **OpenAPI operationId**: `actions/add-custom-labels-to-self-hosted-runner-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ labels: (string)[]; org: string; runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }`
-- OpenAPI response codes: `200`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsAddCustomLabelsToSelfHostedRunnerForOrgInput = Parameters<typeof github.actions.addCustomLabelsToSelfHostedRunnerForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsAddCustomLabelsToSelfHostedRunnerForOrgOutput = Awaited<ReturnType<typeof github.actions.addCustomLabelsToSelfHostedRunnerForOrg>>;
-
-const input: ActionsAddCustomLabelsToSelfHostedRunnerForOrgInput = {} as { labels: (string)[]; org: string; runner_id: number };
-const result: ActionsAddCustomLabelsToSelfHostedRunnerForOrgOutput = await github.actions.addCustomLabelsToSelfHostedRunnerForOrg(input);
-
-// Result shape (from schema): { total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }
-```
-
-### `github.actions.setCustomLabelsForSelfHostedRunnerForOrg`
-
-- **HTTP**: `PUT /orgs/{org}/actions/runners/{runner_id}/labels`
-- **What it does**: Set custom labels for a self-hosted runner for an organization
-- **OpenAPI operationId**: `actions/set-custom-labels-for-self-hosted-runner-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ labels: (string)[]; org: string; runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }`
-- OpenAPI response codes: `200`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetCustomLabelsForSelfHostedRunnerForOrgInput = Parameters<typeof github.actions.setCustomLabelsForSelfHostedRunnerForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetCustomLabelsForSelfHostedRunnerForOrgOutput = Awaited<ReturnType<typeof github.actions.setCustomLabelsForSelfHostedRunnerForOrg>>;
-
-const input: ActionsSetCustomLabelsForSelfHostedRunnerForOrgInput = {} as { labels: (string)[]; org: string; runner_id: number };
-const result: ActionsSetCustomLabelsForSelfHostedRunnerForOrgOutput = await github.actions.setCustomLabelsForSelfHostedRunnerForOrg(input);
-
-// Result shape (from schema): { total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }
-```
-
-### `github.actions.removeCustomLabelFromSelfHostedRunnerForOrg`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/runners/{runner_id}/labels/{name}`
-- **What it does**: Remove a custom label from a self-hosted runner for an organization
-- **OpenAPI operationId**: `actions/remove-custom-label-from-self-hosted-runner-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; runner_id: number; name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }`
-- OpenAPI response codes: `200`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsRemoveCustomLabelFromSelfHostedRunnerForOrgInput = Parameters<typeof github.actions.removeCustomLabelFromSelfHostedRunnerForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsRemoveCustomLabelFromSelfHostedRunnerForOrgOutput = Awaited<ReturnType<typeof github.actions.removeCustomLabelFromSelfHostedRunnerForOrg>>;
-
-const input: ActionsRemoveCustomLabelFromSelfHostedRunnerForOrgInput = {} as { org: string; runner_id: number; name: string };
-const result: ActionsRemoveCustomLabelFromSelfHostedRunnerForOrgOutput = await github.actions.removeCustomLabelFromSelfHostedRunnerForOrg(input);
-
-// Result shape (from schema): { total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }
-```
-
-### `github.actions.listRunnerApplicationsForOrg`
-
-- **HTTP**: `GET /orgs/{org}/actions/runners/downloads`
-- **What it does**: List runner applications for an organization
-- **OpenAPI operationId**: `actions/list-runner-applications-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ os: string; architecture: string; download_url: string; filename: string; temp_download_token?: string; sha256_checksum?: string })[]`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListRunnerApplicationsForOrgInput = Parameters<typeof github.actions.listRunnerApplicationsForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListRunnerApplicationsForOrgOutput = Awaited<ReturnType<typeof github.actions.listRunnerApplicationsForOrg>>;
-
-const input: ActionsListRunnerApplicationsForOrgInput = {} as { org: string };
-const result: ActionsListRunnerApplicationsForOrgOutput = await github.actions.listRunnerApplicationsForOrg(input);
-
-// Result shape (from schema): ({ os: string; architecture: string; download_url: string; filename: string; temp_download_token?: string; sha256_checksum?: string })[]
-```
-
-### `github.actions.generateRunnerJitconfigForOrg`
-
-- **HTTP**: `POST /orgs/{org}/actions/runners/generate-jitconfig`
-- **What it does**: Create configuration for a just-in-time runner for an organization
-- **OpenAPI operationId**: `actions/generate-runner-jitconfig-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name: string; runner_group_id: number; labels: (string)[]; work_folder?: string; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ runner: { id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boolean; version?: string ...`
-- OpenAPI response codes: `201`, `404`, `409`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGenerateRunnerJitconfigForOrgInput = Parameters<typeof github.actions.generateRunnerJitconfigForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGenerateRunnerJitconfigForOrgOutput = Awaited<ReturnType<typeof github.actions.generateRunnerJitconfigForOrg>>;
-
-const input: ActionsGenerateRunnerJitconfigForOrgInput = {} as { name: string; runner_group_id: number; labels: (string)[]; work_folder?: string; org: string };
-const result: ActionsGenerateRunnerJitconfigForOrgOutput = await github.actions.generateRunnerJitconfigForOrg(input);
-
-// Result shape (from schema): { runner: { id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boolean; version?: string ...
-```
-
-### `github.actions.createRegistrationTokenForOrg`
-
-- **HTTP**: `POST /orgs/{org}/actions/runners/registration-token`
-- **What it does**: Create a registration token for an organization
-- **OpenAPI operationId**: `actions/create-registration-token-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ token: string; expires_at: string; permissions?: { [key: string]: unknown }; repositories?: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; sp...`
-- OpenAPI response codes: `201`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsCreateRegistrationTokenForOrgInput = Parameters<typeof github.actions.createRegistrationTokenForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateRegistrationTokenForOrgOutput = Awaited<ReturnType<typeof github.actions.createRegistrationTokenForOrg>>;
-
-const input: ActionsCreateRegistrationTokenForOrgInput = {} as { org: string };
-const result: ActionsCreateRegistrationTokenForOrgOutput = await github.actions.createRegistrationTokenForOrg(input);
-
-// Result shape (from schema): { token: string; expires_at: string; permissions?: { [key: string]: unknown }; repositories?: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; sp...
-```
-
-### `github.actions.createRemoveTokenForOrg`
-
-- **HTTP**: `POST /orgs/{org}/actions/runners/remove-token`
-- **What it does**: Create a remove token for an organization
-- **OpenAPI operationId**: `actions/create-remove-token-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ token: string; expires_at: string; permissions?: { [key: string]: unknown }; repositories?: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; sp...`
-- OpenAPI response codes: `201`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsCreateRemoveTokenForOrgInput = Parameters<typeof github.actions.createRemoveTokenForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateRemoveTokenForOrgOutput = Awaited<ReturnType<typeof github.actions.createRemoveTokenForOrg>>;
-
-const input: ActionsCreateRemoveTokenForOrgInput = {} as { org: string };
-const result: ActionsCreateRemoveTokenForOrgOutput = await github.actions.createRemoveTokenForOrg(input);
-
-// Result shape (from schema): { token: string; expires_at: string; permissions?: { [key: string]: unknown }; repositories?: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; sp...
-```
-
-### `github.actions.listOrgSecrets`
-
-- **HTTP**: `GET /orgs/{org}/actions/secrets`
-- **What it does**: List organization secrets
-- **OpenAPI operationId**: `actions/list-org-secrets`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; secrets: ({ name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListOrgSecretsInput = Parameters<typeof github.actions.listOrgSecrets> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListOrgSecretsOutput = Awaited<ReturnType<typeof github.actions.listOrgSecrets>>;
-
-const input: ActionsListOrgSecretsInput = {} as { org: string; per_page?: number; page?: number };
-const result: ActionsListOrgSecretsOutput = await github.actions.listOrgSecrets(input);
-
-// Result shape (from schema): { total_count: number; secrets: ({ name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string })[] }
-```
-
-### `github.actions.deleteOrgSecret`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/secrets/{secret_name}`
-- **What it does**: Delete an organization secret
-- **OpenAPI operationId**: `actions/delete-org-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDeleteOrgSecretInput = Parameters<typeof github.actions.deleteOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteOrgSecretOutput = Awaited<ReturnType<typeof github.actions.deleteOrgSecret>>;
-
-const input: ActionsDeleteOrgSecretInput = {} as { org: string; secret_name: string };
-const result: ActionsDeleteOrgSecretOutput = await github.actions.deleteOrgSecret(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getOrgSecret`
-
-- **HTTP**: `GET /orgs/{org}/actions/secrets/{secret_name}`
-- **What it does**: Get an organization secret
-- **OpenAPI operationId**: `actions/get-org-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetOrgSecretInput = Parameters<typeof github.actions.getOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetOrgSecretOutput = Awaited<ReturnType<typeof github.actions.getOrgSecret>>;
-
-const input: ActionsGetOrgSecretInput = {} as { org: string; secret_name: string };
-const result: ActionsGetOrgSecretOutput = await github.actions.getOrgSecret(input);
-
-// Result shape (from schema): { name: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string }
-```
-
-### `github.actions.createOrUpdateOrgSecret`
-
-- **HTTP**: `PUT /orgs/{org}/actions/secrets/{secret_name}`
-- **What it does**: Create or update an organization secret
-- **OpenAPI operationId**: `actions/create-or-update-org-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ encrypted_value: string; key_id: string; visibility: "all" | "private" | "selected"; selected_repository_ids?: (number)[]; org: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`, `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsCreateOrUpdateOrgSecretInput = Parameters<typeof github.actions.createOrUpdateOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateOrUpdateOrgSecretOutput = Awaited<ReturnType<typeof github.actions.createOrUpdateOrgSecret>>;
-
-const input: ActionsCreateOrUpdateOrgSecretInput = {} as { encrypted_value: string; key_id: string; visibility: "all" | "private" | "selected"; selected_repository_ids?: (number)[]; org: string; secret_name: string };
-const result: ActionsCreateOrUpdateOrgSecretOutput = await github.actions.createOrUpdateOrgSecret(input);
-
-// Result shape (from schema): { [key: string]: unknown }
-```
-
-### `github.actions.listSelectedReposForOrgSecret`
-
-- **HTTP**: `GET /orgs/{org}/actions/secrets/{secret_name}/repositories`
-- **What it does**: List selected repositories for an organization secret
-- **OpenAPI operationId**: `actions/list-selected-repos-for-org-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; secret_name: string; page?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string;...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListSelectedReposForOrgSecretInput = Parameters<typeof github.actions.listSelectedReposForOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListSelectedReposForOrgSecretOutput = Awaited<ReturnType<typeof github.actions.listSelectedReposForOrgSecret>>;
-
-const input: ActionsListSelectedReposForOrgSecretInput = {} as { org: string; secret_name: string; page?: number; per_page?: number };
-const result: ActionsListSelectedReposForOrgSecretOutput = await github.actions.listSelectedReposForOrgSecret(input);
-
-// Result shape (from schema): { total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string;...
-```
-
-### `github.actions.setSelectedReposForOrgSecret`
-
-- **HTTP**: `PUT /orgs/{org}/actions/secrets/{secret_name}/repositories`
-- **What it does**: Set selected repositories for an organization secret
-- **OpenAPI operationId**: `actions/set-selected-repos-for-org-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ selected_repository_ids: (number)[]; org: string; secret_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetSelectedReposForOrgSecretInput = Parameters<typeof github.actions.setSelectedReposForOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetSelectedReposForOrgSecretOutput = Awaited<ReturnType<typeof github.actions.setSelectedReposForOrgSecret>>;
-
-const input: ActionsSetSelectedReposForOrgSecretInput = {} as { selected_repository_ids: (number)[]; org: string; secret_name: string };
-const result: ActionsSetSelectedReposForOrgSecretOutput = await github.actions.setSelectedReposForOrgSecret(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.removeSelectedRepoFromOrgSecret`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}`
-- **What it does**: Remove selected repository from an organization secret
-- **OpenAPI operationId**: `actions/remove-selected-repo-from-org-secret`
-- **Path params**: `repository_id`
-- **Query params**: None
-- **Response codes**: `204`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; secret_name: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsRemoveSelectedRepoFromOrgSecretInput = Parameters<typeof github.actions.removeSelectedRepoFromOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsRemoveSelectedRepoFromOrgSecretOutput = Awaited<ReturnType<typeof github.actions.removeSelectedRepoFromOrgSecret>>;
-
-const input: ActionsRemoveSelectedRepoFromOrgSecretInput = {} as { org: string; secret_name: string; repository_id: number };
-const result: ActionsRemoveSelectedRepoFromOrgSecretOutput = await github.actions.removeSelectedRepoFromOrgSecret(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.addSelectedRepoToOrgSecret`
-
-- **HTTP**: `PUT /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}`
-- **What it does**: Add selected repository to an organization secret
-- **OpenAPI operationId**: `actions/add-selected-repo-to-org-secret`
-- **Path params**: `repository_id`
-- **Query params**: None
-- **Response codes**: `204`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; secret_name: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsAddSelectedRepoToOrgSecretInput = Parameters<typeof github.actions.addSelectedRepoToOrgSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsAddSelectedRepoToOrgSecretOutput = Awaited<ReturnType<typeof github.actions.addSelectedRepoToOrgSecret>>;
-
-const input: ActionsAddSelectedRepoToOrgSecretInput = {} as { org: string; secret_name: string; repository_id: number };
-const result: ActionsAddSelectedRepoToOrgSecretOutput = await github.actions.addSelectedRepoToOrgSecret(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getOrgPublicKey`
-
-- **HTTP**: `GET /orgs/{org}/actions/secrets/public-key`
-- **What it does**: Get an organization public key
-- **OpenAPI operationId**: `actions/get-org-public-key`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ key_id: string; key: string; id?: number; url?: string; title?: string; created_at?: string }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetOrgPublicKeyInput = Parameters<typeof github.actions.getOrgPublicKey> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetOrgPublicKeyOutput = Awaited<ReturnType<typeof github.actions.getOrgPublicKey>>;
-
-const input: ActionsGetOrgPublicKeyInput = {} as { org: string };
-const result: ActionsGetOrgPublicKeyOutput = await github.actions.getOrgPublicKey(input);
-
-// Result shape (from schema): { key_id: string; key: string; id?: number; url?: string; title?: string; created_at?: string }
-```
-
-### `github.actions.listOrgVariables`
-
-- **HTTP**: `GET /orgs/{org}/actions/variables`
-- **What it does**: List organization variables
-- **OpenAPI operationId**: `actions/list-org-variables`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; variables: ({ name: string; value: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListOrgVariablesInput = Parameters<typeof github.actions.listOrgVariables> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListOrgVariablesOutput = Awaited<ReturnType<typeof github.actions.listOrgVariables>>;
-
-const input: ActionsListOrgVariablesInput = {} as { org: string; per_page?: number; page?: number };
-const result: ActionsListOrgVariablesOutput = await github.actions.listOrgVariables(input);
-
-// Result shape (from schema): { total_count: number; variables: ({ name: string; value: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string })[] }
-```
-
-### `github.actions.createOrgVariable`
-
-- **HTTP**: `POST /orgs/{org}/actions/variables`
-- **What it does**: Create an organization variable
-- **OpenAPI operationId**: `actions/create-org-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name: string; value: string; visibility: "all" | "private" | "selected"; selected_repository_ids?: (number)[]; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsCreateOrgVariableInput = Parameters<typeof github.actions.createOrgVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateOrgVariableOutput = Awaited<ReturnType<typeof github.actions.createOrgVariable>>;
-
-const input: ActionsCreateOrgVariableInput = {} as { name: string; value: string; visibility: "all" | "private" | "selected"; selected_repository_ids?: (number)[]; org: string };
-const result: ActionsCreateOrgVariableOutput = await github.actions.createOrgVariable(input);
-
-// Result shape (from schema): { [key: string]: unknown }
-```
-
-### `github.actions.deleteOrgVariable`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/variables/{name}`
-- **What it does**: Delete an organization variable
-- **OpenAPI operationId**: `actions/delete-org-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDeleteOrgVariableInput = Parameters<typeof github.actions.deleteOrgVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteOrgVariableOutput = Awaited<ReturnType<typeof github.actions.deleteOrgVariable>>;
-
-const input: ActionsDeleteOrgVariableInput = {} as { org: string; name: string };
-const result: ActionsDeleteOrgVariableOutput = await github.actions.deleteOrgVariable(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getOrgVariable`
-
-- **HTTP**: `GET /orgs/{org}/actions/variables/{name}`
-- **What it does**: Get an organization variable
-- **OpenAPI operationId**: `actions/get-org-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ name: string; value: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetOrgVariableInput = Parameters<typeof github.actions.getOrgVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetOrgVariableOutput = Awaited<ReturnType<typeof github.actions.getOrgVariable>>;
-
-const input: ActionsGetOrgVariableInput = {} as { org: string; name: string };
-const result: ActionsGetOrgVariableOutput = await github.actions.getOrgVariable(input);
-
-// Result shape (from schema): { name: string; value: string; created_at: string; updated_at: string; visibility: "all" | "private" | "selected"; selected_repositories_url?: string }
-```
-
-### `github.actions.updateOrgVariable`
-
-- **HTTP**: `PATCH /orgs/{org}/actions/variables/{name}`
-- **What it does**: Update an organization variable
-- **OpenAPI operationId**: `actions/update-org-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: `{ params: { name: string } }`
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name?: string; value?: string; visibility?: "all" | "private" | "selected"; selected_repository_ids?: (number)[]; org: string }`
-- Client transport options: `{ params: { name: string } }`
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsUpdateOrgVariableInput = Parameters<typeof github.actions.updateOrgVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsUpdateOrgVariableOutput = Awaited<ReturnType<typeof github.actions.updateOrgVariable>>;
-type ActionsUpdateOrgVariableOptions = Parameters<typeof github.actions.updateOrgVariable> extends [unknown, infer T, ...unknown[]] ? T : undefined;
-
-const input: ActionsUpdateOrgVariableInput = {} as { name?: string; value?: string; visibility?: "all" | "private" | "selected"; selected_repository_ids?: (number)[]; org: string };
-const options: ActionsUpdateOrgVariableOptions = {} as { params: { name: string } };
-const result: ActionsUpdateOrgVariableOutput = await github.actions.updateOrgVariable(input, options);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.listSelectedReposForOrgVariable`
-
-- **HTTP**: `GET /orgs/{org}/actions/variables/{name}/repositories`
-- **What it does**: List selected repositories for an organization variable
-- **OpenAPI operationId**: `actions/list-selected-repos-for-org-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; name: string; page?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string;...`
-- OpenAPI response codes: `200`, `409`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListSelectedReposForOrgVariableInput = Parameters<typeof github.actions.listSelectedReposForOrgVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListSelectedReposForOrgVariableOutput = Awaited<ReturnType<typeof github.actions.listSelectedReposForOrgVariable>>;
-
-const input: ActionsListSelectedReposForOrgVariableInput = {} as { org: string; name: string; page?: number; per_page?: number };
-const result: ActionsListSelectedReposForOrgVariableOutput = await github.actions.listSelectedReposForOrgVariable(input);
-
-// Result shape (from schema): { total_count: number; repositories: ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string;...
-```
-
-### `github.actions.setSelectedReposForOrgVariable`
-
-- **HTTP**: `PUT /orgs/{org}/actions/variables/{name}/repositories`
-- **What it does**: Set selected repositories for an organization variable
-- **OpenAPI operationId**: `actions/set-selected-repos-for-org-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ selected_repository_ids: (number)[]; org: string; name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetSelectedReposForOrgVariableInput = Parameters<typeof github.actions.setSelectedReposForOrgVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetSelectedReposForOrgVariableOutput = Awaited<ReturnType<typeof github.actions.setSelectedReposForOrgVariable>>;
-
-const input: ActionsSetSelectedReposForOrgVariableInput = {} as { selected_repository_ids: (number)[]; org: string; name: string };
-const result: ActionsSetSelectedReposForOrgVariableOutput = await github.actions.setSelectedReposForOrgVariable(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.removeSelectedRepoFromOrgVariable`
-
-- **HTTP**: `DELETE /orgs/{org}/actions/variables/{name}/repositories/{repository_id}`
-- **What it does**: Remove selected repository from an organization variable
-- **OpenAPI operationId**: `actions/remove-selected-repo-from-org-variable`
-- **Path params**: `repository_id`
-- **Query params**: None
-- **Response codes**: `204`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; name: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsRemoveSelectedRepoFromOrgVariableInput = Parameters<typeof github.actions.removeSelectedRepoFromOrgVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsRemoveSelectedRepoFromOrgVariableOutput = Awaited<ReturnType<typeof github.actions.removeSelectedRepoFromOrgVariable>>;
-
-const input: ActionsRemoveSelectedRepoFromOrgVariableInput = {} as { org: string; name: string; repository_id: number };
-const result: ActionsRemoveSelectedRepoFromOrgVariableOutput = await github.actions.removeSelectedRepoFromOrgVariable(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.addSelectedRepoToOrgVariable`
-
-- **HTTP**: `PUT /orgs/{org}/actions/variables/{name}/repositories/{repository_id}`
-- **What it does**: Add selected repository to an organization variable
-- **OpenAPI operationId**: `actions/add-selected-repo-to-org-variable`
-- **Path params**: `repository_id`
-- **Query params**: None
-- **Response codes**: `204`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; name: string; repository_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsAddSelectedRepoToOrgVariableInput = Parameters<typeof github.actions.addSelectedRepoToOrgVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsAddSelectedRepoToOrgVariableOutput = Awaited<ReturnType<typeof github.actions.addSelectedRepoToOrgVariable>>;
-
-const input: ActionsAddSelectedRepoToOrgVariableInput = {} as { org: string; name: string; repository_id: number };
-const result: ActionsAddSelectedRepoToOrgVariableOutput = await github.actions.addSelectedRepoToOrgVariable(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.listArtifactsForRepo`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/artifacts`
-- **What it does**: List artifacts for a repository
-- **OpenAPI operationId**: `actions/list-artifacts-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number; name?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; artifacts: ({ id: number; node_id: string; name: string; size_in_bytes: number; url: string; archive_download_url: string; expired: boolean; created_at: string | null; expires_at: string | null; u...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListArtifactsForRepoInput = Parameters<typeof github.actions.listArtifactsForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListArtifactsForRepoOutput = Awaited<ReturnType<typeof github.actions.listArtifactsForRepo>>;
-
-const input: ActionsListArtifactsForRepoInput = {} as { owner: string; repo: string; per_page?: number; page?: number; name?: string };
-const result: ActionsListArtifactsForRepoOutput = await github.actions.listArtifactsForRepo(input);
-
-// Result shape (from schema): { total_count: number; artifacts: ({ id: number; node_id: string; name: string; size_in_bytes: number; url: string; archive_download_url: string; expired: boolean; created_at: string | null; expires_at: string | null; u...
-```
-
-### `github.actions.deleteArtifact`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/actions/artifacts/{artifact_id}`
-- **What it does**: Delete an artifact
-- **OpenAPI operationId**: `actions/delete-artifact`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; artifact_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDeleteArtifactInput = Parameters<typeof github.actions.deleteArtifact> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteArtifactOutput = Awaited<ReturnType<typeof github.actions.deleteArtifact>>;
-
-const input: ActionsDeleteArtifactInput = {} as { owner: string; repo: string; artifact_id: number };
-const result: ActionsDeleteArtifactOutput = await github.actions.deleteArtifact(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getArtifact`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}`
-- **What it does**: Get an artifact
-- **OpenAPI operationId**: `actions/get-artifact`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; artifact_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; name: string; size_in_bytes: number; url: string; archive_download_url: string; expired: boolean; created_at: string | null; expires_at: string | null; updated_at: string | null; digest?: ...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetArtifactInput = Parameters<typeof github.actions.getArtifact> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetArtifactOutput = Awaited<ReturnType<typeof github.actions.getArtifact>>;
-
-const input: ActionsGetArtifactInput = {} as { owner: string; repo: string; artifact_id: number };
-const result: ActionsGetArtifactOutput = await github.actions.getArtifact(input);
-
-// Result shape (from schema): { id: number; node_id: string; name: string; size_in_bytes: number; url: string; archive_download_url: string; expired: boolean; created_at: string | null; expires_at: string | null; updated_at: string | null; digest?: ...
-```
-
-### `github.actions.downloadArtifact`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}`
-- **What it does**: Download an artifact
-- **OpenAPI operationId**: `actions/download-artifact`
-- **Path params**: `archive_format`
-- **Query params**: None
-- **Response codes**: `302`, `410`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; artifact_id: number; archive_format: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `302`, `410`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDownloadArtifactInput = Parameters<typeof github.actions.downloadArtifact> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDownloadArtifactOutput = Awaited<ReturnType<typeof github.actions.downloadArtifact>>;
-
-const input: ActionsDownloadArtifactInput = {} as { owner: string; repo: string; artifact_id: number; archive_format: string };
-const result: ActionsDownloadArtifactOutput = await github.actions.downloadArtifact(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getActionsCacheRetentionLimitForRepository`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/cache/retention-limit`
-- **What it does**: Get GitHub Actions cache retention limit for a repository
-- **OpenAPI operationId**: `actions/get-actions-cache-retention-limit-for-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ max_cache_retention_days?: number }`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetActionsCacheRetentionLimitForRepositoryInput = Parameters<typeof github.actions.getActionsCacheRetentionLimitForRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetActionsCacheRetentionLimitForRepositoryOutput = Awaited<ReturnType<typeof github.actions.getActionsCacheRetentionLimitForRepository>>;
-
-const input: ActionsGetActionsCacheRetentionLimitForRepositoryInput = {} as { owner: string; repo: string };
-const result: ActionsGetActionsCacheRetentionLimitForRepositoryOutput = await github.actions.getActionsCacheRetentionLimitForRepository(input);
-
-// Result shape (from schema): { max_cache_retention_days?: number }
-```
-
-### `github.actions.setActionsCacheRetentionLimitForRepository`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/cache/retention-limit`
-- **What it does**: Set GitHub Actions cache retention limit for a repository
-- **OpenAPI operationId**: `actions/set-actions-cache-retention-limit-for-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `400`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ max_cache_retention_days?: number; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `400`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetActionsCacheRetentionLimitForRepositoryInput = Parameters<typeof github.actions.setActionsCacheRetentionLimitForRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetActionsCacheRetentionLimitForRepositoryOutput = Awaited<ReturnType<typeof github.actions.setActionsCacheRetentionLimitForRepository>>;
-
-const input: ActionsSetActionsCacheRetentionLimitForRepositoryInput = {} as { max_cache_retention_days?: number; owner: string; repo: string };
-const result: ActionsSetActionsCacheRetentionLimitForRepositoryOutput = await github.actions.setActionsCacheRetentionLimitForRepository(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getActionsCacheStorageLimitForRepository`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/cache/storage-limit`
-- **What it does**: Get GitHub Actions cache storage limit for a repository
-- **OpenAPI operationId**: `actions/get-actions-cache-storage-limit-for-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ max_cache_size_gb?: number }`
-- OpenAPI response codes: `200`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetActionsCacheStorageLimitForRepositoryInput = Parameters<typeof github.actions.getActionsCacheStorageLimitForRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetActionsCacheStorageLimitForRepositoryOutput = Awaited<ReturnType<typeof github.actions.getActionsCacheStorageLimitForRepository>>;
-
-const input: ActionsGetActionsCacheStorageLimitForRepositoryInput = {} as { owner: string; repo: string };
-const result: ActionsGetActionsCacheStorageLimitForRepositoryOutput = await github.actions.getActionsCacheStorageLimitForRepository(input);
-
-// Result shape (from schema): { max_cache_size_gb?: number }
-```
-
-### `github.actions.setActionsCacheStorageLimitForRepository`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/cache/storage-limit`
-- **What it does**: Set GitHub Actions cache storage limit for a repository
-- **OpenAPI operationId**: `actions/set-actions-cache-storage-limit-for-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `400`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ max_cache_size_gb?: number; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `400`, `403`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetActionsCacheStorageLimitForRepositoryInput = Parameters<typeof github.actions.setActionsCacheStorageLimitForRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetActionsCacheStorageLimitForRepositoryOutput = Awaited<ReturnType<typeof github.actions.setActionsCacheStorageLimitForRepository>>;
-
-const input: ActionsSetActionsCacheStorageLimitForRepositoryInput = {} as { max_cache_size_gb?: number; owner: string; repo: string };
-const result: ActionsSetActionsCacheStorageLimitForRepositoryOutput = await github.actions.setActionsCacheStorageLimitForRepository(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.getActionsCacheUsage`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/cache/usage`
-- **What it does**: Get GitHub Actions cache usage for a repository
-- **OpenAPI operationId**: `actions/get-actions-cache-usage`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ full_name: string; active_caches_size_in_bytes: number; active_caches_count: number }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetActionsCacheUsageInput = Parameters<typeof github.actions.getActionsCacheUsage> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetActionsCacheUsageOutput = Awaited<ReturnType<typeof github.actions.getActionsCacheUsage>>;
-
-const input: ActionsGetActionsCacheUsageInput = {} as { owner: string; repo: string };
-const result: ActionsGetActionsCacheUsageOutput = await github.actions.getActionsCacheUsage(input);
-
-// Result shape (from schema): { full_name: string; active_caches_size_in_bytes: number; active_caches_count: number }
-```
-
-### `github.actions.deleteActionsCacheByKey`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/actions/caches`
-- **What it does**: Delete GitHub Actions caches for a repository (using a cache key)
-- **OpenAPI operationId**: `actions/delete-actions-cache-by-key`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; key: string; ref?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; actions_caches: ({ id?: number; ref?: string; key?: string; version?: string; last_accessed_at?: string; created_at?: string; size_in_bytes?: number })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDeleteActionsCacheByKeyInput = Parameters<typeof github.actions.deleteActionsCacheByKey> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteActionsCacheByKeyOutput = Awaited<ReturnType<typeof github.actions.deleteActionsCacheByKey>>;
-
-const input: ActionsDeleteActionsCacheByKeyInput = {} as { owner: string; repo: string; key: string; ref?: string };
-const result: ActionsDeleteActionsCacheByKeyOutput = await github.actions.deleteActionsCacheByKey(input);
-
-// Result shape (from schema): { total_count: number; actions_caches: ({ id?: number; ref?: string; key?: string; version?: string; last_accessed_at?: string; created_at?: string; size_in_bytes?: number })[] }
-```
-
-### `github.actions.getActionsCacheList`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/caches`
-- **What it does**: List GitHub Actions caches for a repository
-- **OpenAPI operationId**: `actions/get-actions-cache-list`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number; ref?: string; key?: string; sort?: "created_at" | "last_accessed_at" | "size_in_bytes"; direction?: "asc" | "desc" }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; actions_caches: ({ id?: number; ref?: string; key?: string; version?: string; last_accessed_at?: string; created_at?: string; size_in_bytes?: number })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetActionsCacheListInput = Parameters<typeof github.actions.getActionsCacheList> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetActionsCacheListOutput = Awaited<ReturnType<typeof github.actions.getActionsCacheList>>;
-
-const input: ActionsGetActionsCacheListInput = {} as { owner: string; repo: string; per_page?: number; page?: number; ref?: string; key?: string; sort?: "created_at" | "last_accessed_at" | "size_in_bytes"; direction?: "asc" | "desc" };
-const result: ActionsGetActionsCacheListOutput = await github.actions.getActionsCacheList(input);
-
-// Result shape (from schema): { total_count: number; actions_caches: ({ id?: number; ref?: string; key?: string; version?: string; last_accessed_at?: string; created_at?: string; size_in_bytes?: number })[] }
-```
-
-### `github.actions.deleteActionsCacheById`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}`
-- **What it does**: Delete a GitHub Actions cache for a repository (using a cache ID)
-- **OpenAPI operationId**: `actions/delete-actions-cache-by-id`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; cache_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDeleteActionsCacheByIdInput = Parameters<typeof github.actions.deleteActionsCacheById> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteActionsCacheByIdOutput = Awaited<ReturnType<typeof github.actions.deleteActionsCacheById>>;
-
-const input: ActionsDeleteActionsCacheByIdInput = {} as { owner: string; repo: string; cache_id: number };
-const result: ActionsDeleteActionsCacheByIdOutput = await github.actions.deleteActionsCacheById(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.listConcurrencyGroupsForRepository`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/concurrency_groups`
-- **What it does**: List concurrency groups for a repository
-- **OpenAPI operationId**: `actions/list-concurrency-groups-for-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; after?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; concurrency_groups: ({ group_name: string; group_url: string; last_acquired_at: string | null })[] }`
-- OpenAPI response codes: `200`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListConcurrencyGroupsForRepositoryInput = Parameters<typeof github.actions.listConcurrencyGroupsForRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListConcurrencyGroupsForRepositoryOutput = Awaited<ReturnType<typeof github.actions.listConcurrencyGroupsForRepository>>;
-
-const input: ActionsListConcurrencyGroupsForRepositoryInput = {} as { owner: string; repo: string; per_page?: number; after?: string };
-const result: ActionsListConcurrencyGroupsForRepositoryOutput = await github.actions.listConcurrencyGroupsForRepository(input);
-
-// Result shape (from schema): { total_count: number; concurrency_groups: ({ group_name: string; group_url: string; last_acquired_at: string | null })[] }
-```
-
-### `github.actions.getConcurrencyGroupForRepository`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/concurrency_groups/{concurrency_group_name}`
-- **What it does**: Get a concurrency group for a repository
-- **OpenAPI operationId**: `actions/get-concurrency-group-for-repository`
-- **Path params**: None
-- **Query params**: `ahead_of_run`, `ahead_of_job`
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; concurrency_group_name: string; ahead_of_run?: number; ahead_of_job?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ group_name: string; group_url: string; total_count: number; group_members: ({ run_id: number; run_name: string; run_url: string | null; run_html_url: string | null; job_id?: number; job_name?: string; job_url?: string...`
-- OpenAPI response codes: `200`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetConcurrencyGroupForRepositoryInput = Parameters<typeof github.actions.getConcurrencyGroupForRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetConcurrencyGroupForRepositoryOutput = Awaited<ReturnType<typeof github.actions.getConcurrencyGroupForRepository>>;
-
-const input: ActionsGetConcurrencyGroupForRepositoryInput = {} as { owner: string; repo: string; concurrency_group_name: string; ahead_of_run?: number; ahead_of_job?: number };
-const result: ActionsGetConcurrencyGroupForRepositoryOutput = await github.actions.getConcurrencyGroupForRepository(input);
-
-// Result shape (from schema): { group_name: string; group_url: string; total_count: number; group_members: ({ run_id: number; run_name: string; run_url: string | null; run_html_url: string | null; job_id?: number; job_name?: string; job_url?: string...
-```
-
-### `github.actions.getJobForWorkflowRun`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/jobs/{job_id}`
-- **What it does**: Get a job for a workflow run
-- **OpenAPI operationId**: `actions/get-job-for-workflow-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; job_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; run_id: number; run_url: string; run_attempt?: number; node_id: string; head_sha: string; url: string; html_url: string | null; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "p...`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetJobForWorkflowRunInput = Parameters<typeof github.actions.getJobForWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetJobForWorkflowRunOutput = Awaited<ReturnType<typeof github.actions.getJobForWorkflowRun>>;
-
-const input: ActionsGetJobForWorkflowRunInput = {} as { owner: string; repo: string; job_id: number };
-const result: ActionsGetJobForWorkflowRunOutput = await github.actions.getJobForWorkflowRun(input);
-
-// Result shape (from schema): { id: number; run_id: number; run_url: string; run_attempt?: number; node_id: string; head_sha: string; url: string; html_url: string | null; status: "queued" | "in_progress" | "completed" | "waiting" | "requested" | "p...
-```
-
-### `github.actions.downloadJobLogsForWorkflowRun`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs`
-- **What it does**: Download job logs for a workflow run
-- **OpenAPI operationId**: `actions/download-job-logs-for-workflow-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `302`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; job_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `302`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsDownloadJobLogsForWorkflowRunInput = Parameters<typeof github.actions.downloadJobLogsForWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDownloadJobLogsForWorkflowRunOutput = Awaited<ReturnType<typeof github.actions.downloadJobLogsForWorkflowRun>>;
-
-const input: ActionsDownloadJobLogsForWorkflowRunInput = {} as { owner: string; repo: string; job_id: number };
-const result: ActionsDownloadJobLogsForWorkflowRunOutput = await github.actions.downloadJobLogsForWorkflowRun(input);
-
-// Result shape (from schema): unknown
-```
-
-### `github.actions.reRunJobForWorkflowRun`
-
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/jobs/{job_id}/rerun`
-- **What it does**: Re-run a job from a workflow run
-- **OpenAPI operationId**: `actions/re-run-job-for-workflow-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ enable_debug_logging?: boolean; enable_debugger?: boolean; owner: string; repo: string; job_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`, `403`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsReRunJobForWorkflowRunInput = Parameters<typeof github.actions.reRunJobForWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsReRunJobForWorkflowRunOutput = Awaited<ReturnType<typeof github.actions.reRunJobForWorkflowRun>>;
-
-const input: ActionsReRunJobForWorkflowRunInput = {} as { enable_debug_logging?: boolean; enable_debugger?: boolean; owner: string; repo: string; job_id: number };
-const result: ActionsReRunJobForWorkflowRunOutput = await github.actions.reRunJobForWorkflowRun(input);
-
-// Result shape (from schema): { [key: string]: unknown }
-```
-
-### `github.actions.getCustomOidcSubClaimForRepo`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/oidc/customization/sub`
-- **What it does**: Get the customization template for an OIDC subject claim for a repository
-- **OpenAPI operationId**: `actions/get-custom-oidc-sub-claim-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ use_default: boolean; include_claim_keys?: (string)[]; use_immutable_subject?: boolean; sub_claim_prefix?: string }`
-- OpenAPI response codes: `200`, `400`, `404`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsGetCustomOidcSubClaimForRepoInput = Parameters<typeof github.actions.getCustomOidcSubClaimForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetCustomOidcSubClaimForRepoOutput = Awaited<ReturnType<typeof github.actions.getCustomOidcSubClaimForRepo>>;
-
-const input: ActionsGetCustomOidcSubClaimForRepoInput = {} as { owner: string; repo: string };
-const result: ActionsGetCustomOidcSubClaimForRepoOutput = await github.actions.getCustomOidcSubClaimForRepo(input);
-
-// Result shape (from schema): { use_default: boolean; include_claim_keys?: (string)[]; use_immutable_subject?: boolean; sub_claim_prefix?: string }
-```
-
-### `github.actions.setCustomOidcSubClaimForRepo`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/oidc/customization/sub`
-- **What it does**: Set the customization template for an OIDC subject claim for a repository
-- **OpenAPI operationId**: `actions/set-custom-oidc-sub-claim-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `400`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ use_default: boolean; include_claim_keys?: (string)[]; use_immutable_subject?: boolean; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`, `400`, `404`, `422`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsSetCustomOidcSubClaimForRepoInput = Parameters<typeof github.actions.setCustomOidcSubClaimForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetCustomOidcSubClaimForRepoOutput = Awaited<ReturnType<typeof github.actions.setCustomOidcSubClaimForRepo>>;
-
-const input: ActionsSetCustomOidcSubClaimForRepoInput = {} as { use_default: boolean; include_claim_keys?: (string)[]; use_immutable_subject?: boolean; owner: string; repo: string };
-const result: ActionsSetCustomOidcSubClaimForRepoOutput = await github.actions.setCustomOidcSubClaimForRepo(input);
-
-// Result shape (from schema): { [key: string]: unknown }
-```
-
-### `github.actions.listRepoOrganizationSecrets`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/organization-secrets`
-- **What it does**: List repository organization secrets
-- **OpenAPI operationId**: `actions/list-repo-organization-secrets`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; secrets: ({ name: string; created_at: string; updated_at: string })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListRepoOrganizationSecretsInput = Parameters<typeof github.actions.listRepoOrganizationSecrets> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListRepoOrganizationSecretsOutput = Awaited<ReturnType<typeof github.actions.listRepoOrganizationSecrets>>;
-
-const input: ActionsListRepoOrganizationSecretsInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ActionsListRepoOrganizationSecretsOutput = await github.actions.listRepoOrganizationSecrets(input);
-
-// Result shape (from schema): { total_count: number; secrets: ({ name: string; created_at: string; updated_at: string })[] }
-```
-
-### `github.actions.listRepoOrganizationVariables`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/organization-variables`
-- **What it does**: List repository organization variables
-- **OpenAPI operationId**: `actions/list-repo-organization-variables`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ total_count: number; variables: ({ name: string; value: string; created_at: string; updated_at: string })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import github from "@utdk/github";
-
-type ActionsListRepoOrganizationVariablesInput = Parameters<typeof github.actions.listRepoOrganizationVariables> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListRepoOrganizationVariablesOutput = Awaited<ReturnType<typeof github.actions.listRepoOrganizationVariables>>;
-
-const input: ActionsListRepoOrganizationVariablesInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ActionsListRepoOrganizationVariablesOutput = await github.actions.listRepoOrganizationVariables(input);
-
-// Result shape (from schema): { total_count: number; variables: ({ name: string; value: string; created_at: string; updated_at: string })[] }
-```
-
-### `github.actions.getGithubActionsPermissionsRepository`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/permissions`
-- **What it does**: Get GitHub Actions permissions for a repository
-- **OpenAPI operationId**: `actions/get-github-actions-permissions-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ enabled: boolean; allowed_actions?: "all" | "local_only" | "selected"; selected_actions_url?: string; sha_pinning_required?: boolean }`
-- OpenAPI response codes: `200`
-
 ```ts
 import github from "@utdk/github";
-
-type ActionsGetGithubActionsPermissionsRepositoryInput = Parameters<typeof github.actions.getGithubActionsPermissionsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetGithubActionsPermissionsRepositoryOutput = Awaited<ReturnType<typeof github.actions.getGithubActionsPermissionsRepository>>;
-
-const input: ActionsGetGithubActionsPermissionsRepositoryInput = {} as { owner: string; repo: string };
-const result: ActionsGetGithubActionsPermissionsRepositoryOutput = await github.actions.getGithubActionsPermissionsRepository(input);
-
-// Result shape (from schema): { enabled: boolean; allowed_actions?: "all" | "local_only" | "selected"; selected_actions_url?: string; sha_pinning_required?: boolean }
 ```
 
-### `github.actions.setGithubActionsPermissionsRepository`
+## `github.actions.getActionsCacheRetentionLimitForEnterprise`
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/permissions`
-- **What it does**: Set GitHub Actions permissions for a repository
-- **OpenAPI operationId**: `actions/set-github-actions-permissions-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get GitHub Actions cache retention limit for an enterprise — [API reference](https://docs.github.com/rest/actions/cache#get-github-actions-cache-retention-limit-for-an-enterprise)
 
-**Inputs**
+```ts
+github.actions.getActionsCacheRetentionLimitForEnterprise(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+}): Promise<ActionsCacheRetentionLimitForEnterprise>
+```
 
-- Client input type: `{ enabled: boolean; allowed_actions?: "all" | "local_only" | "selected"; sha_pinning_required?: boolean; owner: string; repo: string }`
-- Client transport options: None
+<sub>`GET /enterprises/{enterprise}/actions/cache/retention-limit` · `actions/get-actions-cache-retention-limit-for-enterprise`</sub>
 
-**Outputs**
+## `github.actions.setActionsCacheRetentionLimitForEnterprise`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Set GitHub Actions cache retention limit for an enterprise — [API reference](https://docs.github.com/rest/actions/cache#set-github-actions-cache-retention-limit-for-an-enterprise)
 
 ```ts
-import github from "@utdk/github";
-
-type ActionsSetGithubActionsPermissionsRepositoryInput = Parameters<typeof github.actions.setGithubActionsPermissionsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetGithubActionsPermissionsRepositoryOutput = Awaited<ReturnType<typeof github.actions.setGithubActionsPermissionsRepository>>;
-
-const input: ActionsSetGithubActionsPermissionsRepositoryInput = {} as { enabled: boolean; allowed_actions?: "all" | "local_only" | "selected"; sha_pinning_required?: boolean; owner: string; repo: string };
-const result: ActionsSetGithubActionsPermissionsRepositoryOutput = await github.actions.setGithubActionsPermissionsRepository(input);
-
-// Result shape (from schema): unknown
+github.actions.setActionsCacheRetentionLimitForEnterprise(input: {
+  /** For repositories & organizations in an enterprise, the maximum duration, in days, for which caches in a repository may be retained. */
+  max_cache_retention_days?: number;
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+}): Promise<BasicError>
 ```
-
-### `github.actions.getWorkflowAccessToRepository`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/permissions/access`
-- **What it does**: Get the level of access for workflows outside of the repository
-- **OpenAPI operationId**: `actions/get-workflow-access-to-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`PUT /enterprises/{enterprise}/actions/cache/retention-limit` · `actions/set-actions-cache-retention-limit-for-enterprise`</sub>
 
-**Outputs**
+## `github.actions.getActionsCacheStorageLimitForEnterprise`
 
-- Client return type: `{ access_level: "none" | "user" | "organization" }`
-- OpenAPI response codes: `200`
+Get GitHub Actions cache storage limit for an enterprise — [API reference](https://docs.github.com/rest/actions/cache#get-github-actions-cache-storage-limit-for-an-enterprise)
 
 ```ts
-import github from "@utdk/github";
-
-type ActionsGetWorkflowAccessToRepositoryInput = Parameters<typeof github.actions.getWorkflowAccessToRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetWorkflowAccessToRepositoryOutput = Awaited<ReturnType<typeof github.actions.getWorkflowAccessToRepository>>;
-
-const input: ActionsGetWorkflowAccessToRepositoryInput = {} as { owner: string; repo: string };
-const result: ActionsGetWorkflowAccessToRepositoryOutput = await github.actions.getWorkflowAccessToRepository(input);
-
-// Result shape (from schema): { access_level: "none" | "user" | "organization" }
+github.actions.getActionsCacheStorageLimitForEnterprise(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+}): Promise<ActionsCacheStorageLimitForEnterprise>
 ```
 
-### `github.actions.setWorkflowAccessToRepository`
+<sub>`GET /enterprises/{enterprise}/actions/cache/storage-limit` · `actions/get-actions-cache-storage-limit-for-enterprise`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/permissions/access`
-- **What it does**: Set the level of access for workflows outside of the repository
-- **OpenAPI operationId**: `actions/set-workflow-access-to-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.setActionsCacheStorageLimitForEnterprise`
 
-**Inputs**
+Set GitHub Actions cache storage limit for an enterprise — [API reference](https://docs.github.com/rest/actions/cache#set-github-actions-cache-storage-limit-for-an-enterprise)
 
-- Client input type: `{ access_level: "none" | "user" | "organization"; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsSetWorkflowAccessToRepositoryInput = Parameters<typeof github.actions.setWorkflowAccessToRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetWorkflowAccessToRepositoryOutput = Awaited<ReturnType<typeof github.actions.setWorkflowAccessToRepository>>;
-
-const input: ActionsSetWorkflowAccessToRepositoryInput = {} as { access_level: "none" | "user" | "organization"; owner: string; repo: string };
-const result: ActionsSetWorkflowAccessToRepositoryOutput = await github.actions.setWorkflowAccessToRepository(input);
-
-// Result shape (from schema): unknown
+github.actions.setActionsCacheStorageLimitForEnterprise(input: {
+  /** For repositories & organizations in an enterprise, the maximum size limit for the sum of all caches in a repository, in gigabytes. */
+  max_cache_size_gb?: number;
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+}): Promise<BasicError>
 ```
-
-### `github.actions.getArtifactAndLogRetentionSettingsRepository`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/permissions/artifact-and-log-retention`
-- **What it does**: Get artifact and log retention settings for a repository
-- **OpenAPI operationId**: `actions/get-artifact-and-log-retention-settings-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`PUT /enterprises/{enterprise}/actions/cache/storage-limit` · `actions/set-actions-cache-storage-limit-for-enterprise`</sub>
 
-**Inputs**
+## `github.actions.getActionsCacheRetentionLimitForOrganization`
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+Get GitHub Actions cache retention limit for an organization — [API reference](https://docs.github.com/rest/actions/cache#get-github-actions-cache-retention-limit-for-an-organization)
 
-**Outputs**
-
-- Client return type: `{ days: number; maximum_allowed_days: number }`
-- OpenAPI response codes: `200`, `404`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsGetArtifactAndLogRetentionSettingsRepositoryInput = Parameters<typeof github.actions.getArtifactAndLogRetentionSettingsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetArtifactAndLogRetentionSettingsRepositoryOutput = Awaited<ReturnType<typeof github.actions.getArtifactAndLogRetentionSettingsRepository>>;
-
-const input: ActionsGetArtifactAndLogRetentionSettingsRepositoryInput = {} as { owner: string; repo: string };
-const result: ActionsGetArtifactAndLogRetentionSettingsRepositoryOutput = await github.actions.getArtifactAndLogRetentionSettingsRepository(input);
-
-// Result shape (from schema): { days: number; maximum_allowed_days: number }
+github.actions.getActionsCacheRetentionLimitForOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsCacheRetentionLimitForOrganization>
 ```
-
-### `github.actions.setArtifactAndLogRetentionSettingsRepository`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/permissions/artifact-and-log-retention`
-- **What it does**: Set artifact and log retention settings for a repository
-- **OpenAPI operationId**: `actions/set-artifact-and-log-retention-settings-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
 
-**Inputs**
+<sub>`GET /organizations/{org}/actions/cache/retention-limit` · `actions/get-actions-cache-retention-limit-for-organization`</sub>
 
-- Client input type: `{ days: number; owner: string; repo: string }`
-- Client transport options: None
+## `github.actions.setActionsCacheRetentionLimitForOrganization`
 
-**Outputs**
+Set GitHub Actions cache retention limit for an organization — [API reference](https://docs.github.com/rest/actions/cache#set-github-actions-cache-retention-limit-for-an-organization)
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `422`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsSetArtifactAndLogRetentionSettingsRepositoryInput = Parameters<typeof github.actions.setArtifactAndLogRetentionSettingsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetArtifactAndLogRetentionSettingsRepositoryOutput = Awaited<ReturnType<typeof github.actions.setArtifactAndLogRetentionSettingsRepository>>;
-
-const input: ActionsSetArtifactAndLogRetentionSettingsRepositoryInput = {} as { days: number; owner: string; repo: string };
-const result: ActionsSetArtifactAndLogRetentionSettingsRepositoryOutput = await github.actions.setArtifactAndLogRetentionSettingsRepository(input);
-
-// Result shape (from schema): unknown
+github.actions.setActionsCacheRetentionLimitForOrganization(input: {
+  /** For repositories in this organization, the maximum duration, in days, for which caches in a repository may be retained. */
+  max_cache_retention_days?: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
 ```
-
-### `github.actions.getForkPrContributorApprovalPermissionsRepository`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/permissions/fork-pr-contributor-approval`
-- **What it does**: Get fork PR contributor approval permissions for a repository
-- **OpenAPI operationId**: `actions/get-fork-pr-contributor-approval-permissions-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`PUT /organizations/{org}/actions/cache/retention-limit` · `actions/set-actions-cache-retention-limit-for-organization`</sub>
 
-**Outputs**
+## `github.actions.getActionsCacheStorageLimitForOrganization`
 
-- Client return type: `{ approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors" }`
-- OpenAPI response codes: `200`, `404`
+Get GitHub Actions cache storage limit for an organization — [API reference](https://docs.github.com/rest/actions/cache#get-github-actions-cache-storage-limit-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type ActionsGetForkPrContributorApprovalPermissionsRepositoryInput = Parameters<typeof github.actions.getForkPrContributorApprovalPermissionsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetForkPrContributorApprovalPermissionsRepositoryOutput = Awaited<ReturnType<typeof github.actions.getForkPrContributorApprovalPermissionsRepository>>;
-
-const input: ActionsGetForkPrContributorApprovalPermissionsRepositoryInput = {} as { owner: string; repo: string };
-const result: ActionsGetForkPrContributorApprovalPermissionsRepositoryOutput = await github.actions.getForkPrContributorApprovalPermissionsRepository(input);
-
-// Result shape (from schema): { approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors" }
+github.actions.getActionsCacheStorageLimitForOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsCacheStorageLimitForOrganization>
 ```
 
-### `github.actions.setForkPrContributorApprovalPermissionsRepository`
+<sub>`GET /organizations/{org}/actions/cache/storage-limit` · `actions/get-actions-cache-storage-limit-for-organization`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/permissions/fork-pr-contributor-approval`
-- **What it does**: Set fork PR contributor approval permissions for a repository
-- **OpenAPI operationId**: `actions/set-fork-pr-contributor-approval-permissions-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.setActionsCacheStorageLimitForOrganization`
 
-**Inputs**
+Set GitHub Actions cache storage limit for an organization — [API reference](https://docs.github.com/rest/actions/cache#set-github-actions-cache-storage-limit-for-an-organization)
 
-- Client input type: `{ approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors"; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `422`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsSetForkPrContributorApprovalPermissionsRepositoryInput = Parameters<typeof github.actions.setForkPrContributorApprovalPermissionsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetForkPrContributorApprovalPermissionsRepositoryOutput = Awaited<ReturnType<typeof github.actions.setForkPrContributorApprovalPermissionsRepository>>;
-
-const input: ActionsSetForkPrContributorApprovalPermissionsRepositoryInput = {} as { approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors"; owner: string; repo: string };
-const result: ActionsSetForkPrContributorApprovalPermissionsRepositoryOutput = await github.actions.setForkPrContributorApprovalPermissionsRepository(input);
-
-// Result shape (from schema): unknown
+github.actions.setActionsCacheStorageLimitForOrganization(input: {
+  /** For repositories in the organization, the maximum size limit for the sum of all caches in a repository, in gigabytes. */
+  max_cache_size_gb?: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
 ```
-
-### `github.actions.getPrivateRepoForkPrWorkflowsSettingsRepository`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/permissions/fork-pr-workflows-private-repos`
-- **What it does**: Get private repo fork PR workflow settings for a repository
-- **OpenAPI operationId**: `actions/get-private-repo-fork-pr-workflows-settings-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`PUT /organizations/{org}/actions/cache/storage-limit` · `actions/set-actions-cache-storage-limit-for-organization`</sub>
 
-**Inputs**
+## `github.actions.getActionsCacheUsageForOrg`
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+Get GitHub Actions cache usage for an organization — [API reference](https://docs.github.com/rest/actions/cache#get-github-actions-cache-usage-for-an-organization)
 
-**Outputs**
-
-- Client return type: `{ run_workflows_from_fork_pull_requests: boolean; send_write_tokens_to_workflows: boolean; send_secrets_and_variables: boolean; require_approval_for_fork_pr_workflows: boolean }`
-- OpenAPI response codes: `200`, `403`, `404`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsGetPrivateRepoForkPrWorkflowsSettingsRepositoryInput = Parameters<typeof github.actions.getPrivateRepoForkPrWorkflowsSettingsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetPrivateRepoForkPrWorkflowsSettingsRepositoryOutput = Awaited<ReturnType<typeof github.actions.getPrivateRepoForkPrWorkflowsSettingsRepository>>;
-
-const input: ActionsGetPrivateRepoForkPrWorkflowsSettingsRepositoryInput = {} as { owner: string; repo: string };
-const result: ActionsGetPrivateRepoForkPrWorkflowsSettingsRepositoryOutput = await github.actions.getPrivateRepoForkPrWorkflowsSettingsRepository(input);
-
-// Result shape (from schema): { run_workflows_from_fork_pull_requests: boolean; send_write_tokens_to_workflows: boolean; send_secrets_and_variables: boolean; require_approval_for_fork_pr_workflows: boolean }
+github.actions.getActionsCacheUsageForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsCacheUsageOrgEnterprise>
 ```
-
-### `github.actions.setPrivateRepoForkPrWorkflowsSettingsRepository`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/permissions/fork-pr-workflows-private-repos`
-- **What it does**: Set private repo fork PR workflow settings for a repository
-- **OpenAPI operationId**: `actions/set-private-repo-fork-pr-workflows-settings-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
 
-**Inputs**
+<sub>`GET /orgs/{org}/actions/cache/usage` · `actions/get-actions-cache-usage-for-org`</sub>
 
-- Client input type: `{ run_workflows_from_fork_pull_requests: boolean; send_write_tokens_to_workflows?: boolean; send_secrets_and_variables?: boolean; require_approval_for_fork_pr_workflows?: boolean; owner: string; repo: string }`
-- Client transport options: None
+## `github.actions.getActionsCacheUsageByRepoForOrg`
 
-**Outputs**
+List repositories with GitHub Actions cache usage for an organization — [API reference](https://docs.github.com/rest/actions/cache#list-repositories-with-github-actions-cache-usage-for-an-organization)
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`, `422`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsSetPrivateRepoForkPrWorkflowsSettingsRepositoryInput = Parameters<typeof github.actions.setPrivateRepoForkPrWorkflowsSettingsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetPrivateRepoForkPrWorkflowsSettingsRepositoryOutput = Awaited<ReturnType<typeof github.actions.setPrivateRepoForkPrWorkflowsSettingsRepository>>;
-
-const input: ActionsSetPrivateRepoForkPrWorkflowsSettingsRepositoryInput = {} as { run_workflows_from_fork_pull_requests: boolean; send_write_tokens_to_workflows?: boolean; send_secrets_and_variables?: boolean; require_approval_for_fork_pr_workflows?: boolean; owner: string; repo: string };
-const result: ActionsSetPrivateRepoForkPrWorkflowsSettingsRepositoryOutput = await github.actions.setPrivateRepoForkPrWorkflowsSettingsRepository(input);
-
-// Result shape (from schema): unknown
+github.actions.getActionsCacheUsageByRepoForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; repository_cache_usages: (ActionsCacheUsageByRepository)[] }>
 ```
-
-### `github.actions.getAllowedActionsRepository`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/permissions/selected-actions`
-- **What it does**: Get allowed actions and reusable workflows for a repository
-- **OpenAPI operationId**: `actions/get-allowed-actions-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`GET /orgs/{org}/actions/cache/usage-by-repository` · `actions/get-actions-cache-usage-by-repo-for-org`</sub>
 
-**Outputs**
+## `github.actions.listHostedRunnersForOrg`
 
-- Client return type: `{ github_owned_allowed?: boolean; verified_allowed?: boolean; patterns_allowed?: (string)[] }`
-- OpenAPI response codes: `200`
+List GitHub-hosted runners for an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#list-github-hosted-runners-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type ActionsGetAllowedActionsRepositoryInput = Parameters<typeof github.actions.getAllowedActionsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetAllowedActionsRepositoryOutput = Awaited<ReturnType<typeof github.actions.getAllowedActionsRepository>>;
-
-const input: ActionsGetAllowedActionsRepositoryInput = {} as { owner: string; repo: string };
-const result: ActionsGetAllowedActionsRepositoryOutput = await github.actions.getAllowedActionsRepository(input);
-
-// Result shape (from schema): { github_owned_allowed?: boolean; verified_allowed?: boolean; patterns_allowed?: (string)[] }
+github.actions.listHostedRunnersForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; runners: (ActionsHostedRunner)[] }>
 ```
 
-### `github.actions.setAllowedActionsRepository`
+<sub>`GET /orgs/{org}/actions/hosted-runners` · `actions/list-hosted-runners-for-org`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/permissions/selected-actions`
-- **What it does**: Set allowed actions and reusable workflows for a repository
-- **OpenAPI operationId**: `actions/set-allowed-actions-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.createHostedRunnerForOrg`
 
-**Inputs**
+Create a GitHub-hosted runner for an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#create-a-github-hosted-runner-for-an-organization)
 
-- Client input type: `{ github_owned_allowed?: boolean; verified_allowed?: boolean; patterns_allowed?: (string)[]; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsSetAllowedActionsRepositoryInput = Parameters<typeof github.actions.setAllowedActionsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetAllowedActionsRepositoryOutput = Awaited<ReturnType<typeof github.actions.setAllowedActionsRepository>>;
-
-const input: ActionsSetAllowedActionsRepositoryInput = {} as { github_owned_allowed?: boolean; verified_allowed?: boolean; patterns_allowed?: (string)[]; owner: string; repo: string };
-const result: ActionsSetAllowedActionsRepositoryOutput = await github.actions.setAllowedActionsRepository(input);
-
-// Result shape (from schema): unknown
+github.actions.createHostedRunnerForOrg(input: {
+  /** Name of the runner. Must be between 1 and 64 characters and may only contain upper and lowercase letters a-z, numbers 0-9, '.', '-', and '_'. */
+  name: string;
+  /** The image of runner. To list all available images, use `GET /actions/hosted-runners/images/github-owned` or `GET /actions/hosted-runners/images/partner`. */
+  image: { id?: string; source?: "github" | "partner" | "custom"; version?: string | null };
+  /** The machine size of the runner. To list available sizes, use `GET actions/hosted-runners/machine-sizes` */
+  size: string;
+  /** The existing runner group to add this runner to. */
+  runner_group_id: number;
+  /** The maximum amount of runners to scale up to. Runners will not auto-scale above this number. Use this setting to limit your cost. */
+  maximum_runners?: number;
+  /** Whether this runner should be created with a static public IP. Note limit on account. To list limits on account, use `GET actions/hosted-runners/limits` */
+  enable_static_ip?: boolean;
+  /** Whether this runner should be used to generate custom images. */
+  image_gen?: boolean;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsHostedRunner>
 ```
-
-### `github.actions.getGithubActionsDefaultWorkflowPermissionsRepository`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/permissions/workflow`
-- **What it does**: Get default workflow permissions for a repository
-- **OpenAPI operationId**: `actions/get-github-actions-default-workflow-permissions-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`POST /orgs/{org}/actions/hosted-runners` · `actions/create-hosted-runner-for-org`</sub>
 
-**Inputs**
+## `github.actions.deleteHostedRunnerForOrg`
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+Delete a GitHub-hosted runner for an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#delete-a-github-hosted-runner-for-an-organization)
 
-**Outputs**
-
-- Client return type: `{ default_workflow_permissions: "read" | "write"; can_approve_pull_request_reviews: boolean }`
-- OpenAPI response codes: `200`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsGetGithubActionsDefaultWorkflowPermissionsRepositoryInput = Parameters<typeof github.actions.getGithubActionsDefaultWorkflowPermissionsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetGithubActionsDefaultWorkflowPermissionsRepositoryOutput = Awaited<ReturnType<typeof github.actions.getGithubActionsDefaultWorkflowPermissionsRepository>>;
-
-const input: ActionsGetGithubActionsDefaultWorkflowPermissionsRepositoryInput = {} as { owner: string; repo: string };
-const result: ActionsGetGithubActionsDefaultWorkflowPermissionsRepositoryOutput = await github.actions.getGithubActionsDefaultWorkflowPermissionsRepository(input);
-
-// Result shape (from schema): { default_workflow_permissions: "read" | "write"; can_approve_pull_request_reviews: boolean }
+github.actions.deleteHostedRunnerForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the GitHub-hosted runner. */
+  hosted_runner_id: number;
+}): Promise<ActionsHostedRunner>
 ```
-
-### `github.actions.setGithubActionsDefaultWorkflowPermissionsRepository`
-
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/permissions/workflow`
-- **What it does**: Set default workflow permissions for a repository
-- **OpenAPI operationId**: `actions/set-github-actions-default-workflow-permissions-repository`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
 
-**Inputs**
+<sub>`DELETE /orgs/{org}/actions/hosted-runners/{hosted_runner_id}` · `actions/delete-hosted-runner-for-org`</sub>
 
-- Client input type: `{ default_workflow_permissions?: "read" | "write"; can_approve_pull_request_reviews?: boolean; owner: string; repo: string }`
-- Client transport options: None
+## `github.actions.getHostedRunnerForOrg`
 
-**Outputs**
+Get a GitHub-hosted runner for an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#get-a-github-hosted-runner-for-an-organization)
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsSetGithubActionsDefaultWorkflowPermissionsRepositoryInput = Parameters<typeof github.actions.setGithubActionsDefaultWorkflowPermissionsRepository> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetGithubActionsDefaultWorkflowPermissionsRepositoryOutput = Awaited<ReturnType<typeof github.actions.setGithubActionsDefaultWorkflowPermissionsRepository>>;
-
-const input: ActionsSetGithubActionsDefaultWorkflowPermissionsRepositoryInput = {} as { default_workflow_permissions?: "read" | "write"; can_approve_pull_request_reviews?: boolean; owner: string; repo: string };
-const result: ActionsSetGithubActionsDefaultWorkflowPermissionsRepositoryOutput = await github.actions.setGithubActionsDefaultWorkflowPermissionsRepository(input);
-
-// Result shape (from schema): unknown
+github.actions.getHostedRunnerForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the GitHub-hosted runner. */
+  hosted_runner_id: number;
+}): Promise<ActionsHostedRunner>
 ```
-
-### `github.actions.listSelfHostedRunnersForRepo`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runners`
-- **What it does**: List self-hosted runners for a repository
-- **OpenAPI operationId**: `actions/list-self-hosted-runners-for-repo`
-- **Path params**: None
-- **Query params**: `name`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ owner: string; repo: string; name?: string; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`GET /orgs/{org}/actions/hosted-runners/{hosted_runner_id}` · `actions/get-hosted-runner-for-org`</sub>
 
-**Outputs**
+## `github.actions.updateHostedRunnerForOrg`
 
-- Client return type: `{ total_count: number; runners: ({ id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boo...`
-- OpenAPI response codes: `200`
+Update a GitHub-hosted runner for an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#update-a-github-hosted-runner-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type ActionsListSelfHostedRunnersForRepoInput = Parameters<typeof github.actions.listSelfHostedRunnersForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListSelfHostedRunnersForRepoOutput = Awaited<ReturnType<typeof github.actions.listSelfHostedRunnersForRepo>>;
-
-const input: ActionsListSelfHostedRunnersForRepoInput = {} as { owner: string; repo: string; name?: string; per_page?: number; page?: number };
-const result: ActionsListSelfHostedRunnersForRepoOutput = await github.actions.listSelfHostedRunnersForRepo(input);
-
-// Result shape (from schema): { total_count: number; runners: ({ id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boo...
+github.actions.updateHostedRunnerForOrg(input: {
+  /** Name of the runner. Must be between 1 and 64 characters and may only contain upper and lowercase letters a-z, numbers 0-9, '.', '-', and '_'. */
+  name?: string;
+  /** The existing runner group to add this runner to. */
+  runner_group_id?: number;
+  /** The maximum amount of runners to scale up to. Runners will not auto-scale above this number. Use this setting to limit your cost. */
+  maximum_runners?: number;
+  /** Whether this runner should be updated with a static public IP. Note limit on account. To list limits on account, use `GET actions/hosted-runners/limits` */
+  enable_static_ip?: boolean;
+  /** The machine size of the runner. To list available sizes, use `GET actions/hosted-runners/machine-sizes` */
+  size?: string;
+  /** The source type of the runner image to use. Must match the source of the image specified by `image_id`. Can be one of `github`, `partner`, or `custom`. */
+  image_source?: "github" | "partner" | "custom";
+  /** The unique identifier of the runner image. To list available images, use `GET /actions/hosted-runners/images/github-owned`, `GET /actions/hosted-runners/images/partner`, or `GET /actions/hosted-runners/images/custom`. */
+  image_id?: string;
+  /** The version of the runner image to deploy. This is relevant only for runners using custom images. */
+  image_version?: string | null;
+  /** Whether to enable image generation for this runner pool. When enabled, the runner pool is used to build and publish custom runner images. */
+  image_gen?: boolean;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the GitHub-hosted runner. */
+  hosted_runner_id: number;
+}): Promise<ActionsHostedRunner>
 ```
 
-### `github.actions.deleteSelfHostedRunnerFromRepo`
+<sub>`PATCH /orgs/{org}/actions/hosted-runners/{hosted_runner_id}` · `actions/update-hosted-runner-for-org`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}`
-- **What it does**: Delete a self-hosted runner from a repository
-- **OpenAPI operationId**: `actions/delete-self-hosted-runner-from-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.listCustomImagesForOrg`
 
-**Inputs**
+List custom images for an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#list-custom-images-for-an-organization)
 
-- Client input type: `{ owner: string; repo: string; runner_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `422`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsDeleteSelfHostedRunnerFromRepoInput = Parameters<typeof github.actions.deleteSelfHostedRunnerFromRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteSelfHostedRunnerFromRepoOutput = Awaited<ReturnType<typeof github.actions.deleteSelfHostedRunnerFromRepo>>;
-
-const input: ActionsDeleteSelfHostedRunnerFromRepoInput = {} as { owner: string; repo: string; runner_id: number };
-const result: ActionsDeleteSelfHostedRunnerFromRepoOutput = await github.actions.deleteSelfHostedRunnerFromRepo(input);
-
-// Result shape (from schema): unknown
+github.actions.listCustomImagesForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<{ total_count: number; images: (ActionsHostedRunnerCustomImage)[] }>
 ```
-
-### `github.actions.getSelfHostedRunnerForRepo`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runners/{runner_id}`
-- **What it does**: Get a self-hosted runner for a repository
-- **OpenAPI operationId**: `actions/get-self-hosted-runner-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`GET /orgs/{org}/actions/hosted-runners/images/custom` · `actions/list-custom-images-for-org`</sub>
 
-**Inputs**
+## `github.actions.deleteCustomImageFromOrg`
 
-- Client input type: `{ owner: string; repo: string; runner_id: number }`
-- Client transport options: None
+Delete a custom image from the organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#delete-a-custom-image-from-the-organization)
 
-**Outputs**
-
-- Client return type: `{ id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boolean; version?: string | null }`
-- OpenAPI response codes: `200`
-
 ```ts
-import github from "@utdk/github";
-
-type ActionsGetSelfHostedRunnerForRepoInput = Parameters<typeof github.actions.getSelfHostedRunnerForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetSelfHostedRunnerForRepoOutput = Awaited<ReturnType<typeof github.actions.getSelfHostedRunnerForRepo>>;
-
-const input: ActionsGetSelfHostedRunnerForRepoInput = {} as { owner: string; repo: string; runner_id: number };
-const result: ActionsGetSelfHostedRunnerForRepoOutput = await github.actions.getSelfHostedRunnerForRepo(input);
-
-// Result shape (from schema): { id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boolean; version?: string | null }
+github.actions.deleteCustomImageFromOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Image definition ID of custom image */
+  image_definition_id: number;
+}): Promise<unknown>
 ```
-
-### `github.actions.removeAllCustomLabelsFromSelfHostedRunnerForRepo`
-
-- **HTTP**: `DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}/labels`
-- **What it does**: Remove all custom labels from a self-hosted runner for a repository
-- **OpenAPI operationId**: `actions/remove-all-custom-labels-from-self-hosted-runner-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
 
-**Inputs**
+<sub>`DELETE /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}` · `actions/delete-custom-image-from-org`</sub>
 
-- Client input type: `{ owner: string; repo: string; runner_id: number }`
-- Client transport options: None
+## `github.actions.getCustomImageForOrg`
 
-**Outputs**
+Get a custom image definition for GitHub Actions Hosted Runners — [API reference](https://docs.github.com/rest/actions/hosted-runners#get-a-custom-image-definition-for-github-actions-hosted-runners)
 
-- Client return type: `{ total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }`
-- OpenAPI response codes: `200`, `404`
-
 ```ts
-import github from "@utdk/github";
+github.actions.getCustomImageForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Image definition ID of custom image */
+  image_definition_id: number;
+}): Promise<ActionsHostedRunnerCustomImage>
+```
+
+<sub>`GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}` · `actions/get-custom-image-for-org`</sub>
 
-type ActionsRemoveAllCustomLabelsFromSelfHostedRunnerForRepoInput = Parameters<typeof github.actions.removeAllCustomLabelsFromSelfHostedRunnerForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsRemoveAllCustomLabelsFromSelfHostedRunnerForRepoOutput = Awaited<ReturnType<typeof github.actions.removeAllCustomLabelsFromSelfHostedRunnerForRepo>>;
+## `github.actions.listCustomImageVersionsForOrg`
 
-const input: ActionsRemoveAllCustomLabelsFromSelfHostedRunnerForRepoInput = {} as { owner: string; repo: string; runner_id: number };
-const result: ActionsRemoveAllCustomLabelsFromSelfHostedRunnerForRepoOutput = await github.actions.removeAllCustomLabelsFromSelfHostedRunnerForRepo(input);
+List image versions of a custom image for an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#list-image-versions-of-a-custom-image-for-an-organization)
 
-// Result shape (from schema): { total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }
+```ts
+github.actions.listCustomImageVersionsForOrg(input: {
+  /** Image definition ID of custom image */
+  image_definition_id: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<{ total_count: number; image_versions: (ActionsHostedRunnerCustomImageVersion)[] }>
 ```
+
+<sub>`GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions` · `actions/list-custom-image-versions-for-org`</sub>
 
-### `github.actions.listLabelsForSelfHostedRunnerForRepo`
+## `github.actions.deleteCustomImageVersionFromOrg`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runners/{runner_id}/labels`
-- **What it does**: List labels for a self-hosted runner for a repository
-- **OpenAPI operationId**: `actions/list-labels-for-self-hosted-runner-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Delete an image version of custom image from the organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#delete-an-image-version-of-custom-image-from-the-organization)
 
-**Inputs**
+```ts
+github.actions.deleteCustomImageVersionFromOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Image definition ID of custom image */
+  image_definition_id: number;
+  /** Version of a custom image */
+  version: string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string; runner_id: number }`
-- Client transport options: None
+<sub>`DELETE /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions/{version}` · `actions/delete-custom-image-version-from-org`</sub>
 
-**Outputs**
+## `github.actions.getCustomImageVersionForOrg`
 
-- Client return type: `{ total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }`
-- OpenAPI response codes: `200`, `404`
+Get an image version of a custom image for GitHub Actions Hosted Runners — [API reference](https://docs.github.com/rest/actions/hosted-runners#get-an-image-version-of-a-custom-image-for-github-actions-hosted-runners)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getCustomImageVersionForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Image definition ID of custom image */
+  image_definition_id: number;
+  /** Version of a custom image */
+  version: string;
+}): Promise<ActionsHostedRunnerCustomImageVersion>
+```
 
-type ActionsListLabelsForSelfHostedRunnerForRepoInput = Parameters<typeof github.actions.listLabelsForSelfHostedRunnerForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListLabelsForSelfHostedRunnerForRepoOutput = Awaited<ReturnType<typeof github.actions.listLabelsForSelfHostedRunnerForRepo>>;
+<sub>`GET /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions/{version}` · `actions/get-custom-image-version-for-org`</sub>
 
-const input: ActionsListLabelsForSelfHostedRunnerForRepoInput = {} as { owner: string; repo: string; runner_id: number };
-const result: ActionsListLabelsForSelfHostedRunnerForRepoOutput = await github.actions.listLabelsForSelfHostedRunnerForRepo(input);
+## `github.actions.getHostedRunnersGithubOwnedImagesForOrg`
 
-// Result shape (from schema): { total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }
+Get GitHub-owned images for GitHub-hosted runners in an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#get-github-owned-images-for-github-hosted-runners-in-an-organization)
+
+```ts
+github.actions.getHostedRunnersGithubOwnedImagesForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<{ total_count: number; images: (ActionsHostedRunnerCuratedImage)[] }>
 ```
 
-### `github.actions.addCustomLabelsToSelfHostedRunnerForRepo`
+<sub>`GET /orgs/{org}/actions/hosted-runners/images/github-owned` · `actions/get-hosted-runners-github-owned-images-for-org`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runners/{runner_id}/labels`
-- **What it does**: Add custom labels to a self-hosted runner for a repository
-- **OpenAPI operationId**: `actions/add-custom-labels-to-self-hosted-runner-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getHostedRunnersPartnerImagesForOrg`
 
-**Inputs**
+Get partner images for GitHub-hosted runners in an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#get-partner-images-for-github-hosted-runners-in-an-organization)
 
-- Client input type: `{ labels: (string)[]; owner: string; repo: string; runner_id: number }`
-- Client transport options: None
+```ts
+github.actions.getHostedRunnersPartnerImagesForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<{ total_count: number; images: (ActionsHostedRunnerCuratedImage)[] }>
+```
 
-**Outputs**
+<sub>`GET /orgs/{org}/actions/hosted-runners/images/partner` · `actions/get-hosted-runners-partner-images-for-org`</sub>
 
-- Client return type: `{ total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }`
-- OpenAPI response codes: `200`, `404`, `422`
+## `github.actions.getHostedRunnersLimitsForOrg`
 
+Get limits on GitHub-hosted runners for an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#get-limits-on-github-hosted-runners-for-an-organization)
+
 ```ts
-import github from "@utdk/github";
+github.actions.getHostedRunnersLimitsForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsHostedRunnerLimits>
+```
+
+<sub>`GET /orgs/{org}/actions/hosted-runners/limits` · `actions/get-hosted-runners-limits-for-org`</sub>
 
-type ActionsAddCustomLabelsToSelfHostedRunnerForRepoInput = Parameters<typeof github.actions.addCustomLabelsToSelfHostedRunnerForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsAddCustomLabelsToSelfHostedRunnerForRepoOutput = Awaited<ReturnType<typeof github.actions.addCustomLabelsToSelfHostedRunnerForRepo>>;
+## `github.actions.getHostedRunnersMachineSpecsForOrg`
 
-const input: ActionsAddCustomLabelsToSelfHostedRunnerForRepoInput = {} as { labels: (string)[]; owner: string; repo: string; runner_id: number };
-const result: ActionsAddCustomLabelsToSelfHostedRunnerForRepoOutput = await github.actions.addCustomLabelsToSelfHostedRunnerForRepo(input);
+Get GitHub-hosted runners machine specs for an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#get-github-hosted-runners-machine-specs-for-an-organization)
 
-// Result shape (from schema): { total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }
+```ts
+github.actions.getHostedRunnersMachineSpecsForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<{ total_count: number; machine_specs: (ActionsHostedRunnerMachineSpec)[] }>
 ```
+
+<sub>`GET /orgs/{org}/actions/hosted-runners/machine-sizes` · `actions/get-hosted-runners-machine-specs-for-org`</sub>
 
-### `github.actions.setCustomLabelsForSelfHostedRunnerForRepo`
+## `github.actions.getHostedRunnersPlatformsForOrg`
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/runners/{runner_id}/labels`
-- **What it does**: Set custom labels for a self-hosted runner for a repository
-- **OpenAPI operationId**: `actions/set-custom-labels-for-self-hosted-runner-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get platforms for GitHub-hosted runners in an organization — [API reference](https://docs.github.com/rest/actions/hosted-runners#get-platforms-for-github-hosted-runners-in-an-organization)
 
-**Inputs**
+```ts
+github.actions.getHostedRunnersPlatformsForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<{ total_count: number; platforms: (string)[] }>
+```
 
-- Client input type: `{ labels: (string)[]; owner: string; repo: string; runner_id: number }`
-- Client transport options: None
+<sub>`GET /orgs/{org}/actions/hosted-runners/platforms` · `actions/get-hosted-runners-platforms-for-org`</sub>
 
-**Outputs**
+## `github.actions.getGithubActionsPermissionsOrganization`
 
-- Client return type: `{ total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }`
-- OpenAPI response codes: `200`, `404`, `422`
+Get GitHub Actions permissions for an organization — [API reference](https://docs.github.com/rest/actions/permissions#get-github-actions-permissions-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getGithubActionsPermissionsOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsOrganizationPermissions>
+```
 
-type ActionsSetCustomLabelsForSelfHostedRunnerForRepoInput = Parameters<typeof github.actions.setCustomLabelsForSelfHostedRunnerForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsSetCustomLabelsForSelfHostedRunnerForRepoOutput = Awaited<ReturnType<typeof github.actions.setCustomLabelsForSelfHostedRunnerForRepo>>;
+<sub>`GET /orgs/{org}/actions/permissions` · `actions/get-github-actions-permissions-organization`</sub>
 
-const input: ActionsSetCustomLabelsForSelfHostedRunnerForRepoInput = {} as { labels: (string)[]; owner: string; repo: string; runner_id: number };
-const result: ActionsSetCustomLabelsForSelfHostedRunnerForRepoOutput = await github.actions.setCustomLabelsForSelfHostedRunnerForRepo(input);
+## `github.actions.setGithubActionsPermissionsOrganization`
 
-// Result shape (from schema): { total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }
+Set GitHub Actions permissions for an organization — [API reference](https://docs.github.com/rest/actions/permissions#set-github-actions-permissions-for-an-organization)
+
+```ts
+github.actions.setGithubActionsPermissionsOrganization(input: {
+  enabled_repositories: EnabledRepositories;
+  allowed_actions?: AllowedActions;
+  sha_pinning_required?: ShaPinningRequired;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<unknown>
 ```
 
-### `github.actions.removeCustomLabelFromSelfHostedRunnerForRepo`
+<sub>`PUT /orgs/{org}/actions/permissions` · `actions/set-github-actions-permissions-organization`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}/labels/{name}`
-- **What it does**: Remove a custom label from a self-hosted runner for a repository
-- **OpenAPI operationId**: `actions/remove-custom-label-from-self-hosted-runner-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getArtifactAndLogRetentionSettingsOrganization`
 
-**Inputs**
+Get artifact and log retention settings for an organization — [API reference](https://docs.github.com/rest/actions/permissions#get-artifact-and-log-retention-settings-for-an-organization)
+
+```ts
+github.actions.getArtifactAndLogRetentionSettingsOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsArtifactAndLogRetentionResponse>
+```
 
-- Client input type: `{ owner: string; repo: string; runner_id: number; name: string }`
-- Client transport options: None
+<sub>`GET /orgs/{org}/actions/permissions/artifact-and-log-retention` · `actions/get-artifact-and-log-retention-settings-organization`</sub>
 
-**Outputs**
+## `github.actions.setArtifactAndLogRetentionSettingsOrganization`
 
-- Client return type: `{ total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }`
-- OpenAPI response codes: `200`, `404`, `422`
+Set artifact and log retention settings for an organization — [API reference](https://docs.github.com/rest/actions/permissions#set-artifact-and-log-retention-settings-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.setArtifactAndLogRetentionSettingsOrganization(input: {
+  /** The number of days to retain artifacts and logs */
+  days: number;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
+```
+
+<sub>`PUT /orgs/{org}/actions/permissions/artifact-and-log-retention` · `actions/set-artifact-and-log-retention-settings-organization`</sub>
 
-type ActionsRemoveCustomLabelFromSelfHostedRunnerForRepoInput = Parameters<typeof github.actions.removeCustomLabelFromSelfHostedRunnerForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsRemoveCustomLabelFromSelfHostedRunnerForRepoOutput = Awaited<ReturnType<typeof github.actions.removeCustomLabelFromSelfHostedRunnerForRepo>>;
+## `github.actions.getForkPrContributorApprovalPermissionsOrganization`
 
-const input: ActionsRemoveCustomLabelFromSelfHostedRunnerForRepoInput = {} as { owner: string; repo: string; runner_id: number; name: string };
-const result: ActionsRemoveCustomLabelFromSelfHostedRunnerForRepoOutput = await github.actions.removeCustomLabelFromSelfHostedRunnerForRepo(input);
+Get fork PR contributor approval permissions for an organization — [API reference](https://docs.github.com/rest/actions/permissions#get-fork-pr-contributor-approval-permissions-for-an-organization)
 
-// Result shape (from schema): { total_count: number; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[] }
+```ts
+github.actions.getForkPrContributorApprovalPermissionsOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsForkPrContributorApproval>
 ```
+
+<sub>`GET /orgs/{org}/actions/permissions/fork-pr-contributor-approval` · `actions/get-fork-pr-contributor-approval-permissions-organization`</sub>
 
-### `github.actions.listRunnerApplicationsForRepo`
+## `github.actions.setForkPrContributorApprovalPermissionsOrganization`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runners/downloads`
-- **What it does**: List runner applications for a repository
-- **OpenAPI operationId**: `actions/list-runner-applications-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Set fork PR contributor approval permissions for an organization — [API reference](https://docs.github.com/rest/actions/permissions#set-fork-pr-contributor-approval-permissions-for-an-organization)
 
-**Inputs**
+```ts
+github.actions.setForkPrContributorApprovalPermissionsOrganization(input: {
+  /** The policy that controls when fork PR workflows require approval from a maintainer. */
+  approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors";
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`PUT /orgs/{org}/actions/permissions/fork-pr-contributor-approval` · `actions/set-fork-pr-contributor-approval-permissions-organization`</sub>
 
-**Outputs**
+## `github.actions.getPrivateRepoForkPrWorkflowsSettingsOrganization`
 
-- Client return type: `({ os: string; architecture: string; download_url: string; filename: string; temp_download_token?: string; sha256_checksum?: string })[]`
-- OpenAPI response codes: `200`
+Get private repo fork PR workflow settings for an organization — [API reference](https://docs.github.com/rest/actions/permissions#get-private-repo-fork-pr-workflow-settings-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getPrivateRepoForkPrWorkflowsSettingsOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsForkPrWorkflowsPrivateRepos>
+```
 
-type ActionsListRunnerApplicationsForRepoInput = Parameters<typeof github.actions.listRunnerApplicationsForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListRunnerApplicationsForRepoOutput = Awaited<ReturnType<typeof github.actions.listRunnerApplicationsForRepo>>;
+<sub>`GET /orgs/{org}/actions/permissions/fork-pr-workflows-private-repos` · `actions/get-private-repo-fork-pr-workflows-settings-organization`</sub>
 
-const input: ActionsListRunnerApplicationsForRepoInput = {} as { owner: string; repo: string };
-const result: ActionsListRunnerApplicationsForRepoOutput = await github.actions.listRunnerApplicationsForRepo(input);
+## `github.actions.setPrivateRepoForkPrWorkflowsSettingsOrganization`
 
-// Result shape (from schema): ({ os: string; architecture: string; download_url: string; filename: string; temp_download_token?: string; sha256_checksum?: string })[]
+Set private repo fork PR workflow settings for an organization — [API reference](https://docs.github.com/rest/actions/permissions#set-private-repo-fork-pr-workflow-settings-for-an-organization)
+
+```ts
+github.actions.setPrivateRepoForkPrWorkflowsSettingsOrganization(input: {
+  /** Whether workflows triggered by pull requests from forks are allowed to run on private repositories. */
+  run_workflows_from_fork_pull_requests: boolean;
+  /** Whether GitHub Actions can create pull requests or submit approving pull request reviews from a workflow triggered by a fork pull request. */
+  send_write_tokens_to_workflows?: boolean;
+  /** Whether to make secrets and variables available to workflows triggered by pull requests from forks. */
+  send_secrets_and_variables?: boolean;
+  /** Whether workflows triggered by pull requests from forks require approval from a repository administrator to run. */
+  require_approval_for_fork_pr_workflows?: boolean;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
 ```
 
-### `github.actions.generateRunnerJitconfigForRepo`
+<sub>`PUT /orgs/{org}/actions/permissions/fork-pr-workflows-private-repos` · `actions/set-private-repo-fork-pr-workflows-settings-organization`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runners/generate-jitconfig`
-- **What it does**: Create configuration for a just-in-time runner for a repository
-- **OpenAPI operationId**: `actions/generate-runner-jitconfig-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `404`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.listSelectedRepositoriesEnabledGithubActionsOrganization`
 
-**Inputs**
+List selected repositories enabled for GitHub Actions in an organization — [API reference](https://docs.github.com/rest/actions/permissions#list-selected-repositories-enabled-for-github-actions-in-an-organization)
 
-- Client input type: `{ name: string; runner_group_id: number; labels: (string)[]; work_folder?: string; owner: string; repo: string }`
-- Client transport options: None
+```ts
+github.actions.listSelectedRepositoriesEnabledGithubActionsOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; repositories: (Repository)[] }>
+```
 
-**Outputs**
+<sub>`GET /orgs/{org}/actions/permissions/repositories` · `actions/list-selected-repositories-enabled-github-actions-organization`</sub>
 
-- Client return type: `{ runner: { id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boolean; version?: string ...`
-- OpenAPI response codes: `201`, `404`, `409`, `422`
+## `github.actions.setSelectedRepositoriesEnabledGithubActionsOrganization`
 
+Set selected repositories enabled for GitHub Actions in an organization — [API reference](https://docs.github.com/rest/actions/permissions#set-selected-repositories-enabled-for-github-actions-in-an-organization)
+
 ```ts
-import github from "@utdk/github";
+github.actions.setSelectedRepositoriesEnabledGithubActionsOrganization(input: {
+  /** List of repository IDs to enable for GitHub Actions. */
+  selected_repository_ids: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<unknown>
+```
+
+<sub>`PUT /orgs/{org}/actions/permissions/repositories` · `actions/set-selected-repositories-enabled-github-actions-organization`</sub>
 
-type ActionsGenerateRunnerJitconfigForRepoInput = Parameters<typeof github.actions.generateRunnerJitconfigForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGenerateRunnerJitconfigForRepoOutput = Awaited<ReturnType<typeof github.actions.generateRunnerJitconfigForRepo>>;
+## `github.actions.disableSelectedRepositoryGithubActionsOrganization`
 
-const input: ActionsGenerateRunnerJitconfigForRepoInput = {} as { name: string; runner_group_id: number; labels: (string)[]; work_folder?: string; owner: string; repo: string };
-const result: ActionsGenerateRunnerJitconfigForRepoOutput = await github.actions.generateRunnerJitconfigForRepo(input);
+Disable a selected repository for GitHub Actions in an organization — [API reference](https://docs.github.com/rest/actions/permissions#disable-a-selected-repository-for-github-actions-in-an-organization)
 
-// Result shape (from schema): { runner: { id: number; runner_group_id?: number; name: string; os: string; status: string; busy: boolean; labels: ({ id?: number; name: string; type?: "read-only" | "custom" })[]; ephemeral?: boolean; version?: string ...
+```ts
+github.actions.disableSelectedRepositoryGithubActionsOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the repository. */
+  repository_id: number;
+}): Promise<unknown>
 ```
+
+<sub>`DELETE /orgs/{org}/actions/permissions/repositories/{repository_id}` · `actions/disable-selected-repository-github-actions-organization`</sub>
 
-### `github.actions.createRegistrationTokenForRepo`
+## `github.actions.enableSelectedRepositoryGithubActionsOrganization`
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runners/registration-token`
-- **What it does**: Create a registration token for a repository
-- **OpenAPI operationId**: `actions/create-registration-token-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Enable a selected repository for GitHub Actions in an organization — [API reference](https://docs.github.com/rest/actions/permissions#enable-a-selected-repository-for-github-actions-in-an-organization)
 
-**Inputs**
+```ts
+github.actions.enableSelectedRepositoryGithubActionsOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the repository. */
+  repository_id: number;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`PUT /orgs/{org}/actions/permissions/repositories/{repository_id}` · `actions/enable-selected-repository-github-actions-organization`</sub>
 
-**Outputs**
+## `github.actions.getAllowedActionsOrganization`
 
-- Client return type: `{ token: string; expires_at: string; permissions?: { [key: string]: unknown }; repositories?: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; sp...`
-- OpenAPI response codes: `201`
+Get allowed actions and reusable workflows for an organization — [API reference](https://docs.github.com/rest/actions/permissions#get-allowed-actions-and-reusable-workflows-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getAllowedActionsOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<SelectedActions>
+```
 
-type ActionsCreateRegistrationTokenForRepoInput = Parameters<typeof github.actions.createRegistrationTokenForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateRegistrationTokenForRepoOutput = Awaited<ReturnType<typeof github.actions.createRegistrationTokenForRepo>>;
+<sub>`GET /orgs/{org}/actions/permissions/selected-actions` · `actions/get-allowed-actions-organization`</sub>
 
-const input: ActionsCreateRegistrationTokenForRepoInput = {} as { owner: string; repo: string };
-const result: ActionsCreateRegistrationTokenForRepoOutput = await github.actions.createRegistrationTokenForRepo(input);
+## `github.actions.setAllowedActionsOrganization`
 
-// Result shape (from schema): { token: string; expires_at: string; permissions?: { [key: string]: unknown }; repositories?: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; sp...
+Set allowed actions and reusable workflows for an organization — [API reference](https://docs.github.com/rest/actions/permissions#set-allowed-actions-and-reusable-workflows-for-an-organization)
+
+```ts
+github.actions.setAllowedActionsOrganization(input: {
+  /** Whether GitHub-owned actions are allowed. For example, this includes the actions in the `actions` organization. */
+  github_owned_allowed?: boolean;
+  /** Whether actions from GitHub Marketplace verified creators are allowed. Set to `true` to allow all actions by GitHub Marketplace verified creators. */
+  verified_allowed?: boolean;
+  /** Specifies a list of string-matching patterns to allow specific action(s) and reusable workflow(s). Wildcards, tags, and SHAs are allowed. For example, `monalisa/octocat@*`, `monalisa/octocat@v2`, `monalisa/*`.  > [!NOTE] > The `patterns_allowed` setting only applies to public repositories. */
+  patterns_allowed?: (string)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<unknown>
 ```
 
-### `github.actions.createRemoveTokenForRepo`
+<sub>`PUT /orgs/{org}/actions/permissions/selected-actions` · `actions/set-allowed-actions-organization`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runners/remove-token`
-- **What it does**: Create a remove token for a repository
-- **OpenAPI operationId**: `actions/create-remove-token-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getSelfHostedRunnersPermissionsOrganization`
 
-**Inputs**
+Get self-hosted runners settings for an organization — [API reference](https://docs.github.com/rest/actions/permissions#get-self-hosted-runners-settings-for-an-organization)
+
+```ts
+github.actions.getSelfHostedRunnersPermissionsOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<SelfHostedRunnersSettings>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`GET /orgs/{org}/actions/permissions/self-hosted-runners` · `actions/get-self-hosted-runners-permissions-organization`</sub>
 
-**Outputs**
+## `github.actions.setSelfHostedRunnersPermissionsOrganization`
 
-- Client return type: `{ token: string; expires_at: string; permissions?: { [key: string]: unknown }; repositories?: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; sp...`
-- OpenAPI response codes: `201`
+Set self-hosted runners settings for an organization — [API reference](https://docs.github.com/rest/actions/permissions#set-self-hosted-runners-settings-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.setSelfHostedRunnersPermissionsOrganization(input: {
+  /** The policy that controls whether self-hosted runners can be used in the organization */
+  enabled_repositories: "all" | "selected" | "none";
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
+```
+
+<sub>`PUT /orgs/{org}/actions/permissions/self-hosted-runners` · `actions/set-self-hosted-runners-permissions-organization`</sub>
 
-type ActionsCreateRemoveTokenForRepoInput = Parameters<typeof github.actions.createRemoveTokenForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateRemoveTokenForRepoOutput = Awaited<ReturnType<typeof github.actions.createRemoveTokenForRepo>>;
+## `github.actions.listSelectedRepositoriesSelfHostedRunnersOrganization`
 
-const input: ActionsCreateRemoveTokenForRepoInput = {} as { owner: string; repo: string };
-const result: ActionsCreateRemoveTokenForRepoOutput = await github.actions.createRemoveTokenForRepo(input);
+List repositories allowed to use self-hosted runners in an organization — [API reference](https://docs.github.com/rest/actions/permissions#list-repositories-allowed-to-use-self-hosted-runners-in-an-organization)
 
-// Result shape (from schema): { token: string; expires_at: string; permissions?: { [key: string]: unknown }; repositories?: ({ id: number; node_id: string; name: string; full_name: string; license: { key: string; name: string; url: string | null; sp...
+```ts
+github.actions.listSelectedRepositoriesSelfHostedRunnersOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count?: number; repositories?: (Repository)[] }>
 ```
+
+<sub>`GET /orgs/{org}/actions/permissions/self-hosted-runners/repositories` · `actions/list-selected-repositories-self-hosted-runners-organization`</sub>
 
-### `github.actions.listWorkflowRunsForRepo`
+## `github.actions.setSelectedRepositoriesSelfHostedRunnersOrganization`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs`
-- **What it does**: List workflow runs for a repository
-- **OpenAPI operationId**: `actions/list-workflow-runs-for-repo`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Set repositories allowed to use self-hosted runners in an organization — [API reference](https://docs.github.com/rest/actions/permissions#set-repositories-allowed-to-use-self-hosted-runners-in-an-organization)
 
-**Inputs**
+```ts
+github.actions.setSelectedRepositoriesSelfHostedRunnersOrganization(input: {
+  /** IDs of repositories that can use repository-level self-hosted runners */
+  selected_repository_ids: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<BasicError>
+```
 
-- Client input type: `{ owner: string; repo: string; actor?: string; branch?: string; event?: string; status?: "completed" | "action_required" | "cancelled" | "failure" | "neutral" | "skipped" | "stale" | "success" | "timed_out" | "in_progress" | "queued" | "requested" | "waiting" | "pending"; per_page?: number; page?: number; created?: string; exclude_pull_requests?: boolean; check_suite_id?: number; head_sha?: string }`
-- Client transport options: None
+<sub>`PUT /orgs/{org}/actions/permissions/self-hosted-runners/repositories` · `actions/set-selected-repositories-self-hosted-runners-organization`</sub>
 
-**Outputs**
+## `github.actions.disableSelectedRepositorySelfHostedRunnersOrganization`
 
-- Client return type: `{ total_count: number; workflow_runs: ({ id: number; name?: string | null; node_id: string; check_suite_id?: number; check_suite_node_id?: string; head_branch: string | null; head_sha: string; path: string; run_number: ...`
-- OpenAPI response codes: `200`
+Remove a repository from the list of repositories allowed to use self-hosted runners in an organization — [API reference](https://docs.github.com/rest/actions/permissions#remove-a-repository-from-the-list-of-repositories-allowed-to-use-self-hosted-runners-in-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.disableSelectedRepositorySelfHostedRunnersOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the repository. */
+  repository_id: number;
+}): Promise<BasicError>
+```
 
-type ActionsListWorkflowRunsForRepoInput = Parameters<typeof github.actions.listWorkflowRunsForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListWorkflowRunsForRepoOutput = Awaited<ReturnType<typeof github.actions.listWorkflowRunsForRepo>>;
+<sub>`DELETE /orgs/{org}/actions/permissions/self-hosted-runners/repositories/{repository_id}` · `actions/disable-selected-repository-self-hosted-runners-organization`</sub>
 
-const input: ActionsListWorkflowRunsForRepoInput = {} as { owner: string; repo: string; actor?: string; branch?: string; event?: string; status?: "completed" | "action_required" | "cancelled" | "failure" | "neutral" | "skipped" | "stale" | "success" | "timed_out" | "in_progress" | "queued" | "requested" | "waiting" | "pending"; per_page?: number; page?: number; created?: string; exclude_pull_requests?: boolean; check_suite_id?: number; head_sha?: string };
-const result: ActionsListWorkflowRunsForRepoOutput = await github.actions.listWorkflowRunsForRepo(input);
+## `github.actions.enableSelectedRepositorySelfHostedRunnersOrganization`
 
-// Result shape (from schema): { total_count: number; workflow_runs: ({ id: number; name?: string | null; node_id: string; check_suite_id?: number; check_suite_node_id?: string; head_branch: string | null; head_sha: string; path: string; run_number: ...
+Add a repository to the list of repositories allowed to use self-hosted runners in an organization — [API reference](https://docs.github.com/rest/actions/permissions#add-a-repository-to-the-list-of-repositories-allowed-to-use-self-hosted-runners-in-an-organization)
+
+```ts
+github.actions.enableSelectedRepositorySelfHostedRunnersOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the repository. */
+  repository_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.actions.deleteWorkflowRun`
+<sub>`PUT /orgs/{org}/actions/permissions/self-hosted-runners/repositories/{repository_id}` · `actions/enable-selected-repository-self-hosted-runners-organization`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/actions/runs/{run_id}`
-- **What it does**: Delete a workflow run
-- **OpenAPI operationId**: `actions/delete-workflow-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getGithubActionsDefaultWorkflowPermissionsOrganization`
 
-**Inputs**
+Get default workflow permissions for an organization — [API reference](https://docs.github.com/rest/actions/permissions#get-default-workflow-permissions-for-an-organization)
 
-- Client input type: `{ owner: string; repo: string; run_id: number }`
-- Client transport options: None
+```ts
+github.actions.getGithubActionsDefaultWorkflowPermissionsOrganization(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsGetDefaultWorkflowPermissions>
+```
 
-**Outputs**
+<sub>`GET /orgs/{org}/actions/permissions/workflow` · `actions/get-github-actions-default-workflow-permissions-organization`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `github.actions.setGithubActionsDefaultWorkflowPermissionsOrganization`
 
+Set default workflow permissions for an organization — [API reference](https://docs.github.com/rest/actions/permissions#set-default-workflow-permissions-for-an-organization)
+
 ```ts
-import github from "@utdk/github";
+github.actions.setGithubActionsDefaultWorkflowPermissionsOrganization(input: {
+  default_workflow_permissions?: ActionsDefaultWorkflowPermissions;
+  can_approve_pull_request_reviews?: ActionsCanApprovePullRequestReviews;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<unknown>
+```
+
+<sub>`PUT /orgs/{org}/actions/permissions/workflow` · `actions/set-github-actions-default-workflow-permissions-organization`</sub>
 
-type ActionsDeleteWorkflowRunInput = Parameters<typeof github.actions.deleteWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteWorkflowRunOutput = Awaited<ReturnType<typeof github.actions.deleteWorkflowRun>>;
+## `github.actions.listSelfHostedRunnerGroupsForOrg`
 
-const input: ActionsDeleteWorkflowRunInput = {} as { owner: string; repo: string; run_id: number };
-const result: ActionsDeleteWorkflowRunOutput = await github.actions.deleteWorkflowRun(input);
+List self-hosted runner groups for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#list-self-hosted-runner-groups-for-an-organization)
 
-// Result shape (from schema): unknown
+```ts
+github.actions.listSelfHostedRunnerGroupsForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** Only return runner groups that are allowed to be used by this repository. */
+  visible_to_repository?: string;
+}): Promise<{ total_count: number; runner_groups: (RunnerGroupsOrg)[] }>
 ```
+
+<sub>`GET /orgs/{org}/actions/runner-groups` · `actions/list-self-hosted-runner-groups-for-org`</sub>
 
-### `github.actions.getWorkflowRun`
+## `github.actions.createSelfHostedRunnerGroupForOrg`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}`
-- **What it does**: Get a workflow run
-- **OpenAPI operationId**: `actions/get-workflow-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Create a self-hosted runner group for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#create-a-self-hosted-runner-group-for-an-organization)
 
-**Inputs**
+```ts
+github.actions.createSelfHostedRunnerGroupForOrg(input: {
+  /** Name of the runner group. */
+  name: string;
+  /** Visibility of a runner group. You can select all repositories, select individual repositories, or limit access to private repositories. */
+  visibility?: "selected" | "all" | "private";
+  /** List of repository IDs that can access the runner group. */
+  selected_repository_ids?: (number)[];
+  /** List of runner IDs to add to the runner group. */
+  runners?: (number)[];
+  /** Whether the runner group can be used by `public` repositories. */
+  allows_public_repositories?: boolean;
+  /** If `true`, the runner group will be restricted to running only the workflows specified in the `selected_workflows` array. */
+  restricted_to_workflows?: boolean;
+  /** List of workflows the runner group should be allowed to run. This setting will be ignored unless `restricted_to_workflows` is set to `true`. */
+  selected_workflows?: (string)[];
+  /** The identifier of a hosted compute network configuration. */
+  network_configuration_id?: string;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<RunnerGroupsOrg>
+```
 
-- Client input type: `{ owner: string; repo: string; run_id: number; exclude_pull_requests?: boolean }`
-- Client transport options: None
+<sub>`POST /orgs/{org}/actions/runner-groups` · `actions/create-self-hosted-runner-group-for-org`</sub>
 
-**Outputs**
+## `github.actions.deleteSelfHostedRunnerGroupFromOrg`
 
-- Client return type: `{ id: number; name?: string | null; node_id: string; check_suite_id?: number; check_suite_node_id?: string; head_branch: string | null; head_sha: string; path: string; run_number: number; run_attempt?: number; reference...`
-- OpenAPI response codes: `200`
+Delete a self-hosted runner group from an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#delete-a-self-hosted-runner-group-from-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.deleteSelfHostedRunnerGroupFromOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+}): Promise<unknown>
+```
 
-type ActionsGetWorkflowRunInput = Parameters<typeof github.actions.getWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetWorkflowRunOutput = Awaited<ReturnType<typeof github.actions.getWorkflowRun>>;
+<sub>`DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}` · `actions/delete-self-hosted-runner-group-from-org`</sub>
 
-const input: ActionsGetWorkflowRunInput = {} as { owner: string; repo: string; run_id: number; exclude_pull_requests?: boolean };
-const result: ActionsGetWorkflowRunOutput = await github.actions.getWorkflowRun(input);
+## `github.actions.getSelfHostedRunnerGroupForOrg`
 
-// Result shape (from schema): { id: number; name?: string | null; node_id: string; check_suite_id?: number; check_suite_node_id?: string; head_branch: string | null; head_sha: string; path: string; run_number: number; run_attempt?: number; reference...
+Get a self-hosted runner group for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#get-a-self-hosted-runner-group-for-an-organization)
+
+```ts
+github.actions.getSelfHostedRunnerGroupForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+}): Promise<RunnerGroupsOrg>
 ```
 
-### `github.actions.getReviewsForRun`
+<sub>`GET /orgs/{org}/actions/runner-groups/{runner_group_id}` · `actions/get-self-hosted-runner-group-for-org`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}/approvals`
-- **What it does**: Get the review history for a workflow run
-- **OpenAPI operationId**: `actions/get-reviews-for-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.updateSelfHostedRunnerGroupForOrg`
 
-**Inputs**
+Update a self-hosted runner group for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#update-a-self-hosted-runner-group-for-an-organization)
+
+```ts
+github.actions.updateSelfHostedRunnerGroupForOrg(input: {
+  /** Name of the runner group. */
+  name: string;
+  /** Visibility of a runner group. You can select all repositories, select individual repositories, or all private repositories. */
+  visibility?: "selected" | "all" | "private";
+  /** Whether the runner group can be used by `public` repositories. */
+  allows_public_repositories?: boolean;
+  /** If `true`, the runner group will be restricted to running only the workflows specified in the `selected_workflows` array. */
+  restricted_to_workflows?: boolean;
+  /** List of workflows the runner group should be allowed to run. This setting will be ignored unless `restricted_to_workflows` is set to `true`. */
+  selected_workflows?: (string)[];
+  /** The identifier of a hosted compute network configuration. */
+  network_configuration_id?: string | null;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+}): Promise<RunnerGroupsOrg>
+```
 
-- Client input type: `{ owner: string; repo: string; run_id: number }`
-- Client transport options: None
+<sub>`PATCH /orgs/{org}/actions/runner-groups/{runner_group_id}` · `actions/update-self-hosted-runner-group-for-org`</sub>
 
-**Outputs**
+## `github.actions.listGithubHostedRunnersInGroupForOrg`
 
-- Client return type: `({ environments: ({ id?: number; node_id?: string; name?: string; url?: string; html_url?: string; created_at?: string; updated_at?: string })[]; state: "approved" | "rejected" | "pending"; user: { name?: string | null;...`
-- OpenAPI response codes: `200`
+List GitHub-hosted runners in a group for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#list-github-hosted-runners-in-a-group-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.listGithubHostedRunnersInGroupForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; runners: (ActionsHostedRunner)[] }>
+```
+
+<sub>`GET /orgs/{org}/actions/runner-groups/{runner_group_id}/hosted-runners` · `actions/list-github-hosted-runners-in-group-for-org`</sub>
 
-type ActionsGetReviewsForRunInput = Parameters<typeof github.actions.getReviewsForRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetReviewsForRunOutput = Awaited<ReturnType<typeof github.actions.getReviewsForRun>>;
+## `github.actions.listRepoAccessToSelfHostedRunnerGroupInOrg`
 
-const input: ActionsGetReviewsForRunInput = {} as { owner: string; repo: string; run_id: number };
-const result: ActionsGetReviewsForRunOutput = await github.actions.getReviewsForRun(input);
+List repository access to a self-hosted runner group in an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#list-repository-access-to-a-self-hosted-runner-group-in-an-organization)
 
-// Result shape (from schema): ({ environments: ({ id?: number; node_id?: string; name?: string; url?: string; html_url?: string; created_at?: string; updated_at?: string })[]; state: "approved" | "rejected" | "pending"; user: { name?: string | null;...
+```ts
+github.actions.listRepoAccessToSelfHostedRunnerGroupInOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<{ total_count: number; repositories: (MinimalRepository)[] }>
 ```
+
+<sub>`GET /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories` · `actions/list-repo-access-to-self-hosted-runner-group-in-org`</sub>
 
-### `github.actions.approveWorkflowRun`
+## `github.actions.setRepoAccessToSelfHostedRunnerGroupInOrg`
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runs/{run_id}/approve`
-- **What it does**: Approve a workflow run for a fork pull request
-- **OpenAPI operationId**: `actions/approve-workflow-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Set repository access for a self-hosted runner group in an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#set-repository-access-for-a-self-hosted-runner-group-in-an-organization)
 
-**Inputs**
+```ts
+github.actions.setRepoAccessToSelfHostedRunnerGroupInOrg(input: {
+  /** List of repository IDs that can access the runner group. */
+  selected_repository_ids: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string; run_id: number }`
-- Client transport options: None
+<sub>`PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories` · `actions/set-repo-access-to-self-hosted-runner-group-in-org`</sub>
 
-**Outputs**
+## `github.actions.removeRepoAccessToSelfHostedRunnerGroupInOrg`
 
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`, `403`, `404`
+Remove repository access to a self-hosted runner group in an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#remove-repository-access-to-a-self-hosted-runner-group-in-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.removeRepoAccessToSelfHostedRunnerGroupInOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+  /** The unique identifier of the repository. */
+  repository_id: number;
+}): Promise<unknown>
+```
 
-type ActionsApproveWorkflowRunInput = Parameters<typeof github.actions.approveWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsApproveWorkflowRunOutput = Awaited<ReturnType<typeof github.actions.approveWorkflowRun>>;
+<sub>`DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}` · `actions/remove-repo-access-to-self-hosted-runner-group-in-org`</sub>
 
-const input: ActionsApproveWorkflowRunInput = {} as { owner: string; repo: string; run_id: number };
-const result: ActionsApproveWorkflowRunOutput = await github.actions.approveWorkflowRun(input);
+## `github.actions.addRepoAccessToSelfHostedRunnerGroupInOrg`
 
-// Result shape (from schema): { [key: string]: unknown }
+Add repository access to a self-hosted runner group in an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#add-repository-access-to-a-self-hosted-runner-group-in-an-organization)
+
+```ts
+github.actions.addRepoAccessToSelfHostedRunnerGroupInOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+  /** The unique identifier of the repository. */
+  repository_id: number;
+}): Promise<unknown>
 ```
 
-### `github.actions.listWorkflowRunArtifacts`
+<sub>`PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}` · `actions/add-repo-access-to-self-hosted-runner-group-in-org`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts`
-- **What it does**: List workflow run artifacts
-- **OpenAPI operationId**: `actions/list-workflow-run-artifacts`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.listSelfHostedRunnersInGroupForOrg`
 
-**Inputs**
+List self-hosted runners in a group for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#list-self-hosted-runners-in-a-group-for-an-organization)
 
-- Client input type: `{ owner: string; repo: string; run_id: number; per_page?: number; page?: number; name?: string; direction?: "asc" | "desc" }`
-- Client transport options: None
+```ts
+github.actions.listSelfHostedRunnersInGroupForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; runners: (Runner)[] }>
+```
 
-**Outputs**
+<sub>`GET /orgs/{org}/actions/runner-groups/{runner_group_id}/runners` · `actions/list-self-hosted-runners-in-group-for-org`</sub>
 
-- Client return type: `{ total_count: number; artifacts: ({ id: number; node_id: string; name: string; size_in_bytes: number; url: string; archive_download_url: string; expired: boolean; created_at: string | null; expires_at: string | null; u...`
-- OpenAPI response codes: `200`
+## `github.actions.setSelfHostedRunnersInGroupForOrg`
 
+Set self-hosted runners in a group for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#set-self-hosted-runners-in-a-group-for-an-organization)
+
 ```ts
-import github from "@utdk/github";
+github.actions.setSelfHostedRunnersInGroupForOrg(input: {
+  /** List of runner IDs to add to the runner group. */
+  runners: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+}): Promise<unknown>
+```
+
+<sub>`PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/runners` · `actions/set-self-hosted-runners-in-group-for-org`</sub>
 
-type ActionsListWorkflowRunArtifactsInput = Parameters<typeof github.actions.listWorkflowRunArtifacts> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListWorkflowRunArtifactsOutput = Awaited<ReturnType<typeof github.actions.listWorkflowRunArtifacts>>;
+## `github.actions.removeSelfHostedRunnerFromGroupForOrg`
 
-const input: ActionsListWorkflowRunArtifactsInput = {} as { owner: string; repo: string; run_id: number; per_page?: number; page?: number; name?: string; direction?: "asc" | "desc" };
-const result: ActionsListWorkflowRunArtifactsOutput = await github.actions.listWorkflowRunArtifacts(input);
+Remove a self-hosted runner from a group for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#remove-a-self-hosted-runner-from-a-group-for-an-organization)
 
-// Result shape (from schema): { total_count: number; artifacts: ({ id: number; node_id: string; name: string; size_in_bytes: number; url: string; archive_download_url: string; expired: boolean; created_at: string | null; expires_at: string | null; u...
+```ts
+github.actions.removeSelfHostedRunnerFromGroupForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<unknown>
 ```
+
+<sub>`DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}/runners/{runner_id}` · `actions/remove-self-hosted-runner-from-group-for-org`</sub>
 
-### `github.actions.getWorkflowRunAttempt`
+## `github.actions.addSelfHostedRunnerToGroupForOrg`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}`
-- **What it does**: Get a workflow run attempt
-- **OpenAPI operationId**: `actions/get-workflow-run-attempt`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Add a self-hosted runner to a group for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runner-groups#add-a-self-hosted-runner-to-a-group-for-an-organization)
 
-**Inputs**
+```ts
+github.actions.addSelfHostedRunnerToGroupForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner group. */
+  runner_group_id: number;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string; run_id: number; attempt_number: number; exclude_pull_requests?: boolean }`
-- Client transport options: None
+<sub>`PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/runners/{runner_id}` · `actions/add-self-hosted-runner-to-group-for-org`</sub>
 
-**Outputs**
+## `github.actions.listSelfHostedRunnersForOrg`
 
-- Client return type: `{ id: number; name?: string | null; node_id: string; check_suite_id?: number; check_suite_node_id?: string; head_branch: string | null; head_sha: string; path: string; run_number: number; run_attempt?: number; reference...`
-- OpenAPI response codes: `200`
+List self-hosted runners for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#list-self-hosted-runners-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.listSelfHostedRunnersForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of a self-hosted runner. */
+  name?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; runners: (Runner)[] }>
+```
 
-type ActionsGetWorkflowRunAttemptInput = Parameters<typeof github.actions.getWorkflowRunAttempt> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetWorkflowRunAttemptOutput = Awaited<ReturnType<typeof github.actions.getWorkflowRunAttempt>>;
+<sub>`GET /orgs/{org}/actions/runners` · `actions/list-self-hosted-runners-for-org`</sub>
 
-const input: ActionsGetWorkflowRunAttemptInput = {} as { owner: string; repo: string; run_id: number; attempt_number: number; exclude_pull_requests?: boolean };
-const result: ActionsGetWorkflowRunAttemptOutput = await github.actions.getWorkflowRunAttempt(input);
+## `github.actions.deleteSelfHostedRunnerFromOrg`
 
-// Result shape (from schema): { id: number; name?: string | null; node_id: string; check_suite_id?: number; check_suite_node_id?: string; head_branch: string | null; head_sha: string; path: string; run_number: number; run_attempt?: number; reference...
+Delete a self-hosted runner from an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#delete-a-self-hosted-runner-from-an-organization)
+
+```ts
+github.actions.deleteSelfHostedRunnerFromOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<ValidationErrorSimple>
 ```
 
-### `github.actions.listJobsForWorkflowRunAttempt`
+<sub>`DELETE /orgs/{org}/actions/runners/{runner_id}` · `actions/delete-self-hosted-runner-from-org`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/jobs`
-- **What it does**: List jobs for a workflow run attempt
-- **OpenAPI operationId**: `actions/list-jobs-for-workflow-run-attempt`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getSelfHostedRunnerForOrg`
 
-**Inputs**
+Get a self-hosted runner for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#get-a-self-hosted-runner-for-an-organization)
+
+```ts
+github.actions.getSelfHostedRunnerForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<Runner>
+```
 
-- Client input type: `{ owner: string; repo: string; run_id: number; attempt_number: number; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`GET /orgs/{org}/actions/runners/{runner_id}` · `actions/get-self-hosted-runner-for-org`</sub>
 
-**Outputs**
+## `github.actions.removeAllCustomLabelsFromSelfHostedRunnerForOrg`
 
-- Client return type: `{ total_count: number; jobs: ({ id: number; run_id: number; run_url: string; run_attempt?: number; node_id: string; head_sha: string; url: string; html_url: string | null; status: "queued" | "in_progress" | "completed" ...`
-- OpenAPI response codes: `200`, `404`
+Remove all custom labels from a self-hosted runner for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#remove-all-custom-labels-from-a-self-hosted-runner-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.removeAllCustomLabelsFromSelfHostedRunnerForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<{ total_count: number; labels: (RunnerLabel)[] }>
+```
+
+<sub>`DELETE /orgs/{org}/actions/runners/{runner_id}/labels` · `actions/remove-all-custom-labels-from-self-hosted-runner-for-org`</sub>
 
-type ActionsListJobsForWorkflowRunAttemptInput = Parameters<typeof github.actions.listJobsForWorkflowRunAttempt> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListJobsForWorkflowRunAttemptOutput = Awaited<ReturnType<typeof github.actions.listJobsForWorkflowRunAttempt>>;
+## `github.actions.listLabelsForSelfHostedRunnerForOrg`
 
-const input: ActionsListJobsForWorkflowRunAttemptInput = {} as { owner: string; repo: string; run_id: number; attempt_number: number; per_page?: number; page?: number };
-const result: ActionsListJobsForWorkflowRunAttemptOutput = await github.actions.listJobsForWorkflowRunAttempt(input);
+List labels for a self-hosted runner for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#list-labels-for-a-self-hosted-runner-for-an-organization)
 
-// Result shape (from schema): { total_count: number; jobs: ({ id: number; run_id: number; run_url: string; run_attempt?: number; node_id: string; head_sha: string; url: string; html_url: string | null; status: "queued" | "in_progress" | "completed" ...
+```ts
+github.actions.listLabelsForSelfHostedRunnerForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<{ total_count: number; labels: (RunnerLabel)[] }>
 ```
+
+<sub>`GET /orgs/{org}/actions/runners/{runner_id}/labels` · `actions/list-labels-for-self-hosted-runner-for-org`</sub>
 
-### `github.actions.downloadWorkflowRunAttemptLogs`
+## `github.actions.addCustomLabelsToSelfHostedRunnerForOrg`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/logs`
-- **What it does**: Download workflow run attempt logs
-- **OpenAPI operationId**: `actions/download-workflow-run-attempt-logs`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `302`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Add custom labels to a self-hosted runner for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#add-custom-labels-to-a-self-hosted-runner-for-an-organization)
 
-**Inputs**
+```ts
+github.actions.addCustomLabelsToSelfHostedRunnerForOrg(input: {
+  /** The names of the custom labels to add to the runner. */
+  labels: (string)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<{ total_count: number; labels: (RunnerLabel)[] }>
+```
 
-- Client input type: `{ owner: string; repo: string; run_id: number; attempt_number: number }`
-- Client transport options: None
+<sub>`POST /orgs/{org}/actions/runners/{runner_id}/labels` · `actions/add-custom-labels-to-self-hosted-runner-for-org`</sub>
 
-**Outputs**
+## `github.actions.setCustomLabelsForSelfHostedRunnerForOrg`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `302`
+Set custom labels for a self-hosted runner for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#set-custom-labels-for-a-self-hosted-runner-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
+github.actions.setCustomLabelsForSelfHostedRunnerForOrg(input: {
+  /** The names of the custom labels to set for the runner. You can pass an empty array to remove all custom labels. */
+  labels: (string)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<{ total_count: number; labels: (RunnerLabel)[] }>
+```
 
-type ActionsDownloadWorkflowRunAttemptLogsInput = Parameters<typeof github.actions.downloadWorkflowRunAttemptLogs> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDownloadWorkflowRunAttemptLogsOutput = Awaited<ReturnType<typeof github.actions.downloadWorkflowRunAttemptLogs>>;
+<sub>`PUT /orgs/{org}/actions/runners/{runner_id}/labels` · `actions/set-custom-labels-for-self-hosted-runner-for-org`</sub>
 
-const input: ActionsDownloadWorkflowRunAttemptLogsInput = {} as { owner: string; repo: string; run_id: number; attempt_number: number };
-const result: ActionsDownloadWorkflowRunAttemptLogsOutput = await github.actions.downloadWorkflowRunAttemptLogs(input);
+## `github.actions.removeCustomLabelFromSelfHostedRunnerForOrg`
 
-// Result shape (from schema): unknown
+Remove a custom label from a self-hosted runner for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#remove-a-custom-label-from-a-self-hosted-runner-for-an-organization)
+
+```ts
+github.actions.removeCustomLabelFromSelfHostedRunnerForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+  /** The name of a self-hosted runner's custom label. */
+  name: string;
+}): Promise<{ total_count: number; labels: (RunnerLabel)[] }>
 ```
 
-### `github.actions.cancelWorkflowRun`
+<sub>`DELETE /orgs/{org}/actions/runners/{runner_id}/labels/{name}` · `actions/remove-custom-label-from-self-hosted-runner-for-org`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runs/{run_id}/cancel`
-- **What it does**: Cancel a workflow run
-- **OpenAPI operationId**: `actions/cancel-workflow-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.listRunnerApplicationsForOrg`
 
-**Inputs**
+List runner applications for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#list-runner-applications-for-an-organization)
 
-- Client input type: `{ owner: string; repo: string; run_id: number }`
-- Client transport options: None
+```ts
+github.actions.listRunnerApplicationsForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<(RunnerApplication)[]>
+```
 
-**Outputs**
+<sub>`GET /orgs/{org}/actions/runners/downloads` · `actions/list-runner-applications-for-org`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `409`
+## `github.actions.generateRunnerJitconfigForOrg`
 
+Create configuration for a just-in-time runner for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#create-configuration-for-a-just-in-time-runner-for-an-organization)
+
 ```ts
-import github from "@utdk/github";
+github.actions.generateRunnerJitconfigForOrg(input: {
+  /** The name of the new runner. */
+  name: string;
+  /** The ID of the runner group to register the runner to. */
+  runner_group_id: number;
+  /** The names of the custom labels to add to the runner. **Minimum items**: 1. **Maximum items**: 100. */
+  labels: (string)[];
+  /** The working directory to be used for job execution, relative to the runner install directory. */
+  work_folder?: string;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<{ runner: Runner; encoded_jit_config: string }>
+```
+
+<sub>`POST /orgs/{org}/actions/runners/generate-jitconfig` · `actions/generate-runner-jitconfig-for-org`</sub>
 
-type ActionsCancelWorkflowRunInput = Parameters<typeof github.actions.cancelWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCancelWorkflowRunOutput = Awaited<ReturnType<typeof github.actions.cancelWorkflowRun>>;
+## `github.actions.createRegistrationTokenForOrg`
 
-const input: ActionsCancelWorkflowRunInput = {} as { owner: string; repo: string; run_id: number };
-const result: ActionsCancelWorkflowRunOutput = await github.actions.cancelWorkflowRun(input);
+Create a registration token for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#create-a-registration-token-for-an-organization)
 
-// Result shape (from schema): unknown
+```ts
+github.actions.createRegistrationTokenForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<AuthenticationToken>
 ```
+
+<sub>`POST /orgs/{org}/actions/runners/registration-token` · `actions/create-registration-token-for-org`</sub>
 
-### `github.actions.listConcurrencyGroupsForWorkflowRun`
+## `github.actions.createRemoveTokenForOrg`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}/concurrency_groups`
-- **What it does**: List concurrency groups for a workflow run
-- **OpenAPI operationId**: `actions/list-concurrency-groups-for-workflow-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Create a remove token for an organization — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#create-a-remove-token-for-an-organization)
 
-**Inputs**
+```ts
+github.actions.createRemoveTokenForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<AuthenticationToken>
+```
 
-- Client input type: `{ owner: string; repo: string; run_id: number; per_page?: number; before?: string; after?: string }`
-- Client transport options: None
+<sub>`POST /orgs/{org}/actions/runners/remove-token` · `actions/create-remove-token-for-org`</sub>
 
-**Outputs**
+## `github.actions.listOrgSecrets`
 
-- Client return type: `{ total_count: number; concurrency_groups: ({ group_name: string; group_url: string; group_members: ({ run_id: number; run_name: string; run_url: string | null; run_html_url: string | null; position: number; position_ur...`
-- OpenAPI response codes: `200`, `404`, `422`
+List organization secrets — [API reference](https://docs.github.com/rest/actions/secrets#list-organization-secrets)
 
 ```ts
-import github from "@utdk/github";
+github.actions.listOrgSecrets(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; secrets: (OrganizationActionsSecret)[] }>
+```
 
-type ActionsListConcurrencyGroupsForWorkflowRunInput = Parameters<typeof github.actions.listConcurrencyGroupsForWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListConcurrencyGroupsForWorkflowRunOutput = Awaited<ReturnType<typeof github.actions.listConcurrencyGroupsForWorkflowRun>>;
+<sub>`GET /orgs/{org}/actions/secrets` · `actions/list-org-secrets`</sub>
 
-const input: ActionsListConcurrencyGroupsForWorkflowRunInput = {} as { owner: string; repo: string; run_id: number; per_page?: number; before?: string; after?: string };
-const result: ActionsListConcurrencyGroupsForWorkflowRunOutput = await github.actions.listConcurrencyGroupsForWorkflowRun(input);
+## `github.actions.deleteOrgSecret`
 
-// Result shape (from schema): { total_count: number; concurrency_groups: ({ group_name: string; group_url: string; group_members: ({ run_id: number; run_name: string; run_url: string | null; run_html_url: string | null; position: number; position_ur...
+Delete an organization secret — [API reference](https://docs.github.com/rest/actions/secrets#delete-an-organization-secret)
+
+```ts
+github.actions.deleteOrgSecret(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<unknown>
 ```
 
-### `github.actions.reviewCustomGatesForRun`
+<sub>`DELETE /orgs/{org}/actions/secrets/{secret_name}` · `actions/delete-org-secret`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runs/{run_id}/deployment_protection_rule`
-- **What it does**: Review custom deployment protection rules for a workflow run
-- **OpenAPI operationId**: `actions/review-custom-gates-for-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getOrgSecret`
 
-**Inputs**
+Get an organization secret — [API reference](https://docs.github.com/rest/actions/secrets#get-an-organization-secret)
+
+```ts
+github.actions.getOrgSecret(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<OrganizationActionsSecret>
+```
 
-- Client input type: `{ body: { environment_name: string; comment: string } | { environment_name: string; state: "approved" | "rejected"; comment?: string }; owner: string; repo: string; run_id: number }`
-- Client transport options: None
+<sub>`GET /orgs/{org}/actions/secrets/{secret_name}` · `actions/get-org-secret`</sub>
 
-**Outputs**
+## `github.actions.createOrUpdateOrgSecret`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Create or update an organization secret — [API reference](https://docs.github.com/rest/actions/secrets#create-or-update-an-organization-secret)
 
 ```ts
-import github from "@utdk/github";
+github.actions.createOrUpdateOrgSecret(input: {
+  /** Value for your secret, encrypted with [LibSodium](https://libsodium.gitbook.io/doc/bindings_for_other_languages) using the public key retrieved from the [Get an organization public key](https://docs.github.com/rest/actions/secrets#get-an-organization-public-key) endpoint. */
+  encrypted_value: string;
+  /** ID of the key you used to encrypt the secret. */
+  key_id: string;
+  /** Which type of organization repositories have access to the organization secret. `selected` means only the repositories specified by `selected_repository_ids` can access the secret. */
+  visibility: "all" | "private" | "selected";
+  /** An array of repository ids that can access the organization secret. You can only provide a list of repository ids when the `visibility` is set to `selected`. You can manage the list of selected repositories using the [List selected repositories for an organization secret](https://docs.github.com/rest/actions/secrets#list-selected-repositories-for-an-organization-secret), [Set selected repositories for an organization secret](https://docs.github.com/rest/actions/secrets#set-selected-repositories-for-an-organization-secret), and [Remove selected repository from an organization secret](https://docs.github.com/rest/actions/secrets#remove-selected-repository-from-an-organization-secret) endpoints. */
+  selected_repository_ids?: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<EmptyObject>
+```
 
-type ActionsReviewCustomGatesForRunInput = Parameters<typeof github.actions.reviewCustomGatesForRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsReviewCustomGatesForRunOutput = Awaited<ReturnType<typeof github.actions.reviewCustomGatesForRun>>;
+<sub>`PUT /orgs/{org}/actions/secrets/{secret_name}` · `actions/create-or-update-org-secret`</sub>
 
-const input: ActionsReviewCustomGatesForRunInput = {} as { body: { environment_name: string; comment: string } | { environment_name: string; state: "approved" | "rejected"; comment?: string }; owner: string; repo: string; run_id: number };
-const result: ActionsReviewCustomGatesForRunOutput = await github.actions.reviewCustomGatesForRun(input);
+## `github.actions.listSelectedReposForOrgSecret`
 
-// Result shape (from schema): unknown
+List selected repositories for an organization secret — [API reference](https://docs.github.com/rest/actions/secrets#list-selected-repositories-for-an-organization-secret)
+
+```ts
+github.actions.listSelectedReposForOrgSecret(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<{ total_count: number; repositories: (MinimalRepository)[] }>
 ```
 
-### `github.actions.forceCancelWorkflowRun`
+<sub>`GET /orgs/{org}/actions/secrets/{secret_name}/repositories` · `actions/list-selected-repos-for-org-secret`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runs/{run_id}/force-cancel`
-- **What it does**: Force cancel a workflow run
-- **OpenAPI operationId**: `actions/force-cancel-workflow-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `409`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.setSelectedReposForOrgSecret`
 
-**Inputs**
+Set selected repositories for an organization secret — [API reference](https://docs.github.com/rest/actions/secrets#set-selected-repositories-for-an-organization-secret)
 
-- Client input type: `{ owner: string; repo: string; run_id: number }`
-- Client transport options: None
+```ts
+github.actions.setSelectedReposForOrgSecret(input: {
+  /** An array of repository ids that can access the organization secret. You can only provide a list of repository ids when the `visibility` is set to `selected`. You can add and remove individual repositories using the [Add selected repository to an organization secret](https://docs.github.com/rest/actions/secrets#add-selected-repository-to-an-organization-secret) and [Remove selected repository from an organization secret](https://docs.github.com/rest/actions/secrets#remove-selected-repository-from-an-organization-secret) endpoints. */
+  selected_repository_ids: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<unknown>
+```
 
-**Outputs**
+<sub>`PUT /orgs/{org}/actions/secrets/{secret_name}/repositories` · `actions/set-selected-repos-for-org-secret`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `409`
+## `github.actions.removeSelectedRepoFromOrgSecret`
 
+Remove selected repository from an organization secret — [API reference](https://docs.github.com/rest/actions/secrets#remove-selected-repository-from-an-organization-secret)
+
 ```ts
-import github from "@utdk/github";
+github.actions.removeSelectedRepoFromOrgSecret(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+  repository_id: number;
+}): Promise<unknown>
+```
+
+<sub>`DELETE /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}` · `actions/remove-selected-repo-from-org-secret`</sub>
 
-type ActionsForceCancelWorkflowRunInput = Parameters<typeof github.actions.forceCancelWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsForceCancelWorkflowRunOutput = Awaited<ReturnType<typeof github.actions.forceCancelWorkflowRun>>;
+## `github.actions.addSelectedRepoToOrgSecret`
 
-const input: ActionsForceCancelWorkflowRunInput = {} as { owner: string; repo: string; run_id: number };
-const result: ActionsForceCancelWorkflowRunOutput = await github.actions.forceCancelWorkflowRun(input);
+Add selected repository to an organization secret — [API reference](https://docs.github.com/rest/actions/secrets#add-selected-repository-to-an-organization-secret)
 
-// Result shape (from schema): unknown
+```ts
+github.actions.addSelectedRepoToOrgSecret(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the secret. */
+  secret_name: string;
+  repository_id: number;
+}): Promise<unknown>
 ```
+
+<sub>`PUT /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}` · `actions/add-selected-repo-to-org-secret`</sub>
 
-### `github.actions.listJobsForWorkflowRun`
+## `github.actions.getOrgPublicKey`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs`
-- **What it does**: List jobs for a workflow run
-- **OpenAPI operationId**: `actions/list-jobs-for-workflow-run`
-- **Path params**: None
-- **Query params**: `filter`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get an organization public key — [API reference](https://docs.github.com/rest/actions/secrets#get-an-organization-public-key)
 
-**Inputs**
+```ts
+github.actions.getOrgPublicKey(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<ActionsPublicKey>
+```
 
-- Client input type: `{ owner: string; repo: string; run_id: number; filter?: "latest" | "all"; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`GET /orgs/{org}/actions/secrets/public-key` · `actions/get-org-public-key`</sub>
 
-**Outputs**
+## `github.actions.listOrgVariables`
 
-- Client return type: `{ total_count: number; jobs: ({ id: number; run_id: number; run_url: string; run_attempt?: number; node_id: string; head_sha: string; url: string; html_url: string | null; status: "queued" | "in_progress" | "completed" ...`
-- OpenAPI response codes: `200`
+List organization variables — [API reference](https://docs.github.com/rest/actions/variables#list-organization-variables)
 
 ```ts
-import github from "@utdk/github";
+github.actions.listOrgVariables(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 30). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; variables: (OrganizationActionsVariable)[] }>
+```
 
-type ActionsListJobsForWorkflowRunInput = Parameters<typeof github.actions.listJobsForWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListJobsForWorkflowRunOutput = Awaited<ReturnType<typeof github.actions.listJobsForWorkflowRun>>;
+<sub>`GET /orgs/{org}/actions/variables` · `actions/list-org-variables`</sub>
 
-const input: ActionsListJobsForWorkflowRunInput = {} as { owner: string; repo: string; run_id: number; filter?: "latest" | "all"; per_page?: number; page?: number };
-const result: ActionsListJobsForWorkflowRunOutput = await github.actions.listJobsForWorkflowRun(input);
+## `github.actions.createOrgVariable`
 
-// Result shape (from schema): { total_count: number; jobs: ({ id: number; run_id: number; run_url: string; run_attempt?: number; node_id: string; head_sha: string; url: string; html_url: string | null; status: "queued" | "in_progress" | "completed" ...
+Create an organization variable — [API reference](https://docs.github.com/rest/actions/variables#create-an-organization-variable)
+
+```ts
+github.actions.createOrgVariable(input: {
+  /** The name of the variable. */
+  name: string;
+  /** The value of the variable. */
+  value: string;
+  /** The type of repositories in the organization that can access the variable. `selected` means only the repositories specified by `selected_repository_ids` can access the variable. */
+  visibility: "all" | "private" | "selected";
+  /** An array of repository ids that can access the organization variable. You can only provide a list of repository ids when the `visibility` is set to `selected`. */
+  selected_repository_ids?: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<EmptyObject>
 ```
 
-### `github.actions.deleteWorkflowRunLogs`
+<sub>`POST /orgs/{org}/actions/variables` · `actions/create-org-variable`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/actions/runs/{run_id}/logs`
-- **What it does**: Delete workflow run logs
-- **OpenAPI operationId**: `actions/delete-workflow-run-logs`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `403`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.deleteOrgVariable`
 
-**Inputs**
+Delete an organization variable — [API reference](https://docs.github.com/rest/actions/variables#delete-an-organization-variable)
+
+```ts
+github.actions.deleteOrgVariable(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the variable. */
+  name: string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string; run_id: number }`
-- Client transport options: None
+<sub>`DELETE /orgs/{org}/actions/variables/{name}` · `actions/delete-org-variable`</sub>
 
-**Outputs**
+## `github.actions.getOrgVariable`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`, `500`
+Get an organization variable — [API reference](https://docs.github.com/rest/actions/variables#get-an-organization-variable)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getOrgVariable(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the variable. */
+  name: string;
+}): Promise<OrganizationActionsVariable>
+```
+
+<sub>`GET /orgs/{org}/actions/variables/{name}` · `actions/get-org-variable`</sub>
 
-type ActionsDeleteWorkflowRunLogsInput = Parameters<typeof github.actions.deleteWorkflowRunLogs> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteWorkflowRunLogsOutput = Awaited<ReturnType<typeof github.actions.deleteWorkflowRunLogs>>;
+## `github.actions.updateOrgVariable`
 
-const input: ActionsDeleteWorkflowRunLogsInput = {} as { owner: string; repo: string; run_id: number };
-const result: ActionsDeleteWorkflowRunLogsOutput = await github.actions.deleteWorkflowRunLogs(input);
+Update an organization variable — [API reference](https://docs.github.com/rest/actions/variables#update-an-organization-variable)
 
-// Result shape (from schema): unknown
+```ts
+github.actions.updateOrgVariable(input: {
+  /** The name of the variable. */
+  name?: string;
+  /** The value of the variable. */
+  value?: string;
+  /** The type of repositories in the organization that can access the variable. `selected` means only the repositories specified by `selected_repository_ids` can access the variable. */
+  visibility?: "all" | "private" | "selected";
+  /** An array of repository ids that can access the organization variable. You can only provide a list of repository ids when the `visibility` is set to `selected`. */
+  selected_repository_ids?: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}, options: { params: { name: string } }): Promise<unknown>
 ```
+
+<sub>`PATCH /orgs/{org}/actions/variables/{name}` · `actions/update-org-variable`</sub>
 
-### `github.actions.downloadWorkflowRunLogs`
+## `github.actions.listSelectedReposForOrgVariable`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs`
-- **What it does**: Download workflow run logs
-- **OpenAPI operationId**: `actions/download-workflow-run-logs`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `302`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+List selected repositories for an organization variable — [API reference](https://docs.github.com/rest/actions/variables#list-selected-repositories-for-an-organization-variable)
 
-**Inputs**
+```ts
+github.actions.listSelectedReposForOrgVariable(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the variable. */
+  name: string;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<{ total_count: number; repositories: (MinimalRepository)[] }>
+```
 
-- Client input type: `{ owner: string; repo: string; run_id: number }`
-- Client transport options: None
+<sub>`GET /orgs/{org}/actions/variables/{name}/repositories` · `actions/list-selected-repos-for-org-variable`</sub>
 
-**Outputs**
+## `github.actions.setSelectedReposForOrgVariable`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `302`
+Set selected repositories for an organization variable — [API reference](https://docs.github.com/rest/actions/variables#set-selected-repositories-for-an-organization-variable)
 
 ```ts
-import github from "@utdk/github";
+github.actions.setSelectedReposForOrgVariable(input: {
+  /** The IDs of the repositories that can access the organization variable. */
+  selected_repository_ids: (number)[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the variable. */
+  name: string;
+}): Promise<unknown>
+```
 
-type ActionsDownloadWorkflowRunLogsInput = Parameters<typeof github.actions.downloadWorkflowRunLogs> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDownloadWorkflowRunLogsOutput = Awaited<ReturnType<typeof github.actions.downloadWorkflowRunLogs>>;
+<sub>`PUT /orgs/{org}/actions/variables/{name}/repositories` · `actions/set-selected-repos-for-org-variable`</sub>
 
-const input: ActionsDownloadWorkflowRunLogsInput = {} as { owner: string; repo: string; run_id: number };
-const result: ActionsDownloadWorkflowRunLogsOutput = await github.actions.downloadWorkflowRunLogs(input);
+## `github.actions.removeSelectedRepoFromOrgVariable`
 
-// Result shape (from schema): unknown
+Remove selected repository from an organization variable — [API reference](https://docs.github.com/rest/actions/variables#remove-selected-repository-from-an-organization-variable)
+
+```ts
+github.actions.removeSelectedRepoFromOrgVariable(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the variable. */
+  name: string;
+  repository_id: number;
+}): Promise<unknown>
 ```
 
-### `github.actions.getPendingDeploymentsForRun`
+<sub>`DELETE /orgs/{org}/actions/variables/{name}/repositories/{repository_id}` · `actions/remove-selected-repo-from-org-variable`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments`
-- **What it does**: Get pending deployments for a workflow run
-- **OpenAPI operationId**: `actions/get-pending-deployments-for-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.addSelectedRepoToOrgVariable`
 
-**Inputs**
+Add selected repository to an organization variable — [API reference](https://docs.github.com/rest/actions/variables#add-selected-repository-to-an-organization-variable)
 
-- Client input type: `{ owner: string; repo: string; run_id: number }`
-- Client transport options: None
+```ts
+github.actions.addSelectedRepoToOrgVariable(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The name of the variable. */
+  name: string;
+  repository_id: number;
+}): Promise<unknown>
+```
 
-**Outputs**
+<sub>`PUT /orgs/{org}/actions/variables/{name}/repositories/{repository_id}` · `actions/add-selected-repo-to-org-variable`</sub>
 
-- Client return type: `({ environment: { id?: number; node_id?: string; name?: string; url?: string; html_url?: string }; wait_timer: number; wait_timer_started_at: string | null; current_user_can_approve: boolean; reviewers: ({ type?: "User"...`
-- OpenAPI response codes: `200`
+## `github.actions.listArtifactsForRepo`
 
+List artifacts for a repository — [API reference](https://docs.github.com/rest/actions/artifacts#list-artifacts-for-a-repository)
+
 ```ts
-import github from "@utdk/github";
+github.actions.listArtifactsForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The name field of an artifact. When specified, only artifacts with this name will be returned. */
+  name?: string;
+}): Promise<{ total_count: number; artifacts: (Artifact)[] }>
+```
+
+<sub>`GET /repos/{owner}/{repo}/actions/artifacts` · `actions/list-artifacts-for-repo`</sub>
 
-type ActionsGetPendingDeploymentsForRunInput = Parameters<typeof github.actions.getPendingDeploymentsForRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetPendingDeploymentsForRunOutput = Awaited<ReturnType<typeof github.actions.getPendingDeploymentsForRun>>;
+## `github.actions.deleteArtifact`
 
-const input: ActionsGetPendingDeploymentsForRunInput = {} as { owner: string; repo: string; run_id: number };
-const result: ActionsGetPendingDeploymentsForRunOutput = await github.actions.getPendingDeploymentsForRun(input);
+Delete an artifact — [API reference](https://docs.github.com/rest/actions/artifacts#delete-an-artifact)
 
-// Result shape (from schema): ({ environment: { id?: number; node_id?: string; name?: string; url?: string; html_url?: string }; wait_timer: number; wait_timer_started_at: string | null; current_user_can_approve: boolean; reviewers: ({ type?: "User"...
+```ts
+github.actions.deleteArtifact(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the artifact. */
+  artifact_id: number;
+}): Promise<unknown>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/actions/artifacts/{artifact_id}` · `actions/delete-artifact`</sub>
 
-### `github.actions.reviewPendingDeploymentsForRun`
+## `github.actions.getArtifact`
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments`
-- **What it does**: Review pending deployments for a workflow run
-- **OpenAPI operationId**: `actions/review-pending-deployments-for-run`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get an artifact — [API reference](https://docs.github.com/rest/actions/artifacts#get-an-artifact)
 
-**Inputs**
+```ts
+github.actions.getArtifact(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the artifact. */
+  artifact_id: number;
+}): Promise<Artifact>
+```
 
-- Client input type: `{ environment_ids: (number)[]; state: "approved" | "rejected"; comment: string; owner: string; repo: string; run_id: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}` · `actions/get-artifact`</sub>
 
-**Outputs**
+## `github.actions.downloadArtifact`
 
-- Client return type: `({ url: string; id: number; node_id: string; sha: string; ref: string; task: string; payload: { [key: string]: unknown } | string; original_environment?: string; environment: string; description: string | null; creator:...`
-- OpenAPI response codes: `200`
+Download an artifact — [API reference](https://docs.github.com/rest/actions/artifacts#download-an-artifact)
 
 ```ts
-import github from "@utdk/github";
+github.actions.downloadArtifact(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the artifact. */
+  artifact_id: number;
+  archive_format: string;
+}): Promise<BasicError>
+```
 
-type ActionsReviewPendingDeploymentsForRunInput = Parameters<typeof github.actions.reviewPendingDeploymentsForRun> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsReviewPendingDeploymentsForRunOutput = Awaited<ReturnType<typeof github.actions.reviewPendingDeploymentsForRun>>;
+<sub>`GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}` · `actions/download-artifact`</sub>
 
-const input: ActionsReviewPendingDeploymentsForRunInput = {} as { environment_ids: (number)[]; state: "approved" | "rejected"; comment: string; owner: string; repo: string; run_id: number };
-const result: ActionsReviewPendingDeploymentsForRunOutput = await github.actions.reviewPendingDeploymentsForRun(input);
+## `github.actions.getActionsCacheRetentionLimitForRepository`
 
-// Result shape (from schema): ({ url: string; id: number; node_id: string; sha: string; ref: string; task: string; payload: { [key: string]: unknown } | string; original_environment?: string; environment: string; description: string | null; creator:...
+Get GitHub Actions cache retention limit for a repository — [API reference](https://docs.github.com/rest/actions/cache#get-github-actions-cache-retention-limit-for-a-repository)
+
+```ts
+github.actions.getActionsCacheRetentionLimitForRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ActionsCacheRetentionLimitForRepository>
 ```
 
-### `github.actions.reRunWorkflow`
+<sub>`GET /repos/{owner}/{repo}/actions/cache/retention-limit` · `actions/get-actions-cache-retention-limit-for-repository`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun`
-- **What it does**: Re-run a workflow
-- **OpenAPI operationId**: `actions/re-run-workflow`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.setActionsCacheRetentionLimitForRepository`
 
-**Inputs**
+Set GitHub Actions cache retention limit for a repository — [API reference](https://docs.github.com/rest/actions/cache#set-github-actions-cache-retention-limit-for-a-repository)
+
+```ts
+github.actions.setActionsCacheRetentionLimitForRepository(input: {
+  /** The maximum number of days to keep caches in this repository. */
+  max_cache_retention_days?: number;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
+```
 
-- Client input type: `{ enable_debug_logging?: boolean; owner: string; repo: string; run_id: number }`
-- Client transport options: None
+<sub>`PUT /repos/{owner}/{repo}/actions/cache/retention-limit` · `actions/set-actions-cache-retention-limit-for-repository`</sub>
 
-**Outputs**
+## `github.actions.getActionsCacheStorageLimitForRepository`
 
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`
+Get GitHub Actions cache storage limit for a repository — [API reference](https://docs.github.com/rest/actions/cache#get-github-actions-cache-storage-limit-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getActionsCacheStorageLimitForRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ActionsCacheStorageLimitForRepository>
+```
+
+<sub>`GET /repos/{owner}/{repo}/actions/cache/storage-limit` · `actions/get-actions-cache-storage-limit-for-repository`</sub>
 
-type ActionsReRunWorkflowInput = Parameters<typeof github.actions.reRunWorkflow> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsReRunWorkflowOutput = Awaited<ReturnType<typeof github.actions.reRunWorkflow>>;
+## `github.actions.setActionsCacheStorageLimitForRepository`
 
-const input: ActionsReRunWorkflowInput = {} as { enable_debug_logging?: boolean; owner: string; repo: string; run_id: number };
-const result: ActionsReRunWorkflowOutput = await github.actions.reRunWorkflow(input);
+Set GitHub Actions cache storage limit for a repository — [API reference](https://docs.github.com/rest/actions/cache#set-github-actions-cache-storage-limit-for-a-repository)
 
-// Result shape (from schema): { [key: string]: unknown }
+```ts
+github.actions.setActionsCacheStorageLimitForRepository(input: {
+  /** The maximum total cache size for this repository, in gigabytes. */
+  max_cache_size_gb?: number;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
 ```
+
+<sub>`PUT /repos/{owner}/{repo}/actions/cache/storage-limit` · `actions/set-actions-cache-storage-limit-for-repository`</sub>
 
-### `github.actions.reRunWorkflowFailedJobs`
+## `github.actions.getActionsCacheUsage`
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun-failed-jobs`
-- **What it does**: Re-run failed jobs from a workflow run
-- **OpenAPI operationId**: `actions/re-run-workflow-failed-jobs`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get GitHub Actions cache usage for a repository — [API reference](https://docs.github.com/rest/actions/cache#get-github-actions-cache-usage-for-a-repository)
 
-**Inputs**
+```ts
+github.actions.getActionsCacheUsage(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ActionsCacheUsageByRepository>
+```
 
-- Client input type: `{ enable_debug_logging?: boolean; owner: string; repo: string; run_id: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/actions/cache/usage` · `actions/get-actions-cache-usage`</sub>
 
-**Outputs**
+## `github.actions.deleteActionsCacheByKey`
 
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`
+Delete GitHub Actions caches for a repository (using a cache key) — [API reference](https://docs.github.com/rest/actions/cache#delete-github-actions-caches-for-a-repository-using-a-cache-key)
 
 ```ts
-import github from "@utdk/github";
+github.actions.deleteActionsCacheByKey(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** A key for identifying the cache. */
+  key: string;
+  /** The full Git reference for narrowing down the cache. The `ref` for a branch should be formatted as `refs/heads/<branch name>`. To reference a pull request use `refs/pull/<number>/merge`. */
+  ref?: string;
+}): Promise<ActionsCacheList>
+```
 
-type ActionsReRunWorkflowFailedJobsInput = Parameters<typeof github.actions.reRunWorkflowFailedJobs> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsReRunWorkflowFailedJobsOutput = Awaited<ReturnType<typeof github.actions.reRunWorkflowFailedJobs>>;
+<sub>`DELETE /repos/{owner}/{repo}/actions/caches` · `actions/delete-actions-cache-by-key`</sub>
 
-const input: ActionsReRunWorkflowFailedJobsInput = {} as { enable_debug_logging?: boolean; owner: string; repo: string; run_id: number };
-const result: ActionsReRunWorkflowFailedJobsOutput = await github.actions.reRunWorkflowFailedJobs(input);
+## `github.actions.getActionsCacheList`
 
-// Result shape (from schema): { [key: string]: unknown }
+List GitHub Actions caches for a repository — [API reference](https://docs.github.com/rest/actions/cache#list-github-actions-caches-for-a-repository)
+
+```ts
+github.actions.getActionsCacheList(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The full Git reference for narrowing down the cache. The `ref` for a branch should be formatted as `refs/heads/<branch name>`. To reference a pull request use `refs/pull/<number>/merge`. */
+  ref?: string;
+  /** An explicit key or prefix for identifying the cache */
+  key?: string;
+  /** The property to sort the results by. `created_at` means when the cache was created. `last_accessed_at` means when the cache was last accessed. `size_in_bytes` is the size of the cache in bytes. */
+  sort?: "created_at" | "last_accessed_at" | "size_in_bytes";
+  /** The direction to sort the results by. */
+  direction?: "asc" | "desc";
+}): Promise<ActionsCacheList>
 ```
 
-### `github.actions.getWorkflowRunUsage`
+<sub>`GET /repos/{owner}/{repo}/actions/caches` · `actions/get-actions-cache-list`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/runs/{run_id}/timing`
-- **What it does**: Get workflow run usage
-- **OpenAPI operationId**: `actions/get-workflow-run-usage`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.deleteActionsCacheById`
 
-**Inputs**
+Delete a GitHub Actions cache for a repository (using a cache ID) — [API reference](https://docs.github.com/rest/actions/cache#delete-a-github-actions-cache-for-a-repository-using-a-cache-id)
 
-- Client input type: `{ owner: string; repo: string; run_id: number }`
-- Client transport options: None
+```ts
+github.actions.deleteActionsCacheById(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the GitHub Actions cache. */
+  cache_id: number;
+}): Promise<unknown>
+```
 
-**Outputs**
+<sub>`DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}` · `actions/delete-actions-cache-by-id`</sub>
 
-- Client return type: `{ billable: { UBUNTU?: { total_ms: number; jobs: number; job_runs?: ({ job_id: number; duration_ms: number })[] }; MACOS?: { total_ms: number; jobs: number; job_runs?: ({ job_id: number; duration_ms: number })[] }; WIND...`
-- OpenAPI response codes: `200`
+## `github.actions.listConcurrencyGroupsForRepository`
 
+List concurrency groups for a repository — [API reference](https://docs.github.com/rest/actions/concurrency-groups#list-concurrency-groups-for-a-repository)
+
 ```ts
-import github from "@utdk/github";
+github.actions.listConcurrencyGroupsForRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+}): Promise<ConcurrencyGroupList>
+```
+
+<sub>`GET /repos/{owner}/{repo}/actions/concurrency_groups` · `actions/list-concurrency-groups-for-repository`</sub>
 
-type ActionsGetWorkflowRunUsageInput = Parameters<typeof github.actions.getWorkflowRunUsage> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetWorkflowRunUsageOutput = Awaited<ReturnType<typeof github.actions.getWorkflowRunUsage>>;
+## `github.actions.getConcurrencyGroupForRepository`
 
-const input: ActionsGetWorkflowRunUsageInput = {} as { owner: string; repo: string; run_id: number };
-const result: ActionsGetWorkflowRunUsageOutput = await github.actions.getWorkflowRunUsage(input);
+Get a concurrency group for a repository — [API reference](https://docs.github.com/rest/actions/concurrency-groups#get-a-concurrency-group-for-a-repository)
 
-// Result shape (from schema): { billable: { UBUNTU?: { total_ms: number; jobs: number; job_runs?: ({ job_id: number; duration_ms: number })[] }; MACOS?: { total_ms: number; jobs: number; job_runs?: ({ job_id: number; duration_ms: number })[] }; WIND...
+```ts
+github.actions.getConcurrencyGroupForRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the concurrency group. */
+  concurrency_group_name: string;
+  /** Filter to items ahead of this workflow run ID in the queue, plus the run itself. Matches workflow-level concurrency and reusable-workflow leases held on behalf of the run. Mutually exclusive with `ahead_of_job`. */
+  ahead_of_run?: number;
+  /** Filter to items ahead of this job ID in the queue, plus the job itself. Matches job-level concurrency and reusable-workflow leases on the job's ancestor paths. Mutually exclusive with `ahead_of_run`. */
+  ahead_of_job?: number;
+}): Promise<ConcurrencyGroup>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/concurrency_groups/{concurrency_group_name}` · `actions/get-concurrency-group-for-repository`</sub>
 
-### `github.actions.listRepoSecrets`
+## `github.actions.getJobForWorkflowRun`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/secrets`
-- **What it does**: List repository secrets
-- **OpenAPI operationId**: `actions/list-repo-secrets`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get a job for a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-jobs#get-a-job-for-a-workflow-run)
 
-**Inputs**
+```ts
+github.actions.getJobForWorkflowRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the job. */
+  job_id: number;
+}): Promise<Job>
+```
 
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/actions/jobs/{job_id}` · `actions/get-job-for-workflow-run`</sub>
 
-**Outputs**
+## `github.actions.downloadJobLogsForWorkflowRun`
 
-- Client return type: `{ total_count: number; secrets: ({ name: string; created_at: string; updated_at: string })[] }`
-- OpenAPI response codes: `200`
+Download job logs for a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-jobs#download-job-logs-for-a-workflow-run)
 
 ```ts
-import github from "@utdk/github";
+github.actions.downloadJobLogsForWorkflowRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the job. */
+  job_id: number;
+}): Promise<unknown>
+```
 
-type ActionsListRepoSecretsInput = Parameters<typeof github.actions.listRepoSecrets> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListRepoSecretsOutput = Awaited<ReturnType<typeof github.actions.listRepoSecrets>>;
+<sub>`GET /repos/{owner}/{repo}/actions/jobs/{job_id}/logs` · `actions/download-job-logs-for-workflow-run`</sub>
 
-const input: ActionsListRepoSecretsInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ActionsListRepoSecretsOutput = await github.actions.listRepoSecrets(input);
+## `github.actions.reRunJobForWorkflowRun`
 
-// Result shape (from schema): { total_count: number; secrets: ({ name: string; created_at: string; updated_at: string })[] }
+Re-run a job from a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-runs#re-run-a-job-from-a-workflow-run)
+
+```ts
+github.actions.reRunJobForWorkflowRun(input: {
+  /** Whether to enable debug logging for the re-run. */
+  enable_debug_logging?: boolean;
+  /** Whether to enable the debugger for the re-run of this job. */
+  enable_debugger?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the job. */
+  job_id: number;
+}): Promise<EmptyObject>
 ```
 
-### `github.actions.deleteRepoSecret`
+<sub>`POST /repos/{owner}/{repo}/actions/jobs/{job_id}/rerun` · `actions/re-run-job-for-workflow-run`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/actions/secrets/{secret_name}`
-- **What it does**: Delete a repository secret
-- **OpenAPI operationId**: `actions/delete-repo-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getCustomOidcSubClaimForRepo`
 
-**Inputs**
+Get the customization template for an OIDC subject claim for a repository — [API reference](https://docs.github.com/rest/actions/oidc#get-the-customization-template-for-an-oidc-subject-claim-for-a-repository)
+
+```ts
+github.actions.getCustomOidcSubClaimForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<OidcCustomSubRepo>
+```
 
-- Client input type: `{ owner: string; repo: string; secret_name: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/actions/oidc/customization/sub` · `actions/get-custom-oidc-sub-claim-for-repo`</sub>
 
-**Outputs**
+## `github.actions.setCustomOidcSubClaimForRepo`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Set the customization template for an OIDC subject claim for a repository — [API reference](https://docs.github.com/rest/actions/oidc#set-the-customization-template-for-an-oidc-subject-claim-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.actions.setCustomOidcSubClaimForRepo(input: {
+  /** Whether to use the default template or not. If `true`, the `include_claim_keys` field is ignored. */
+  use_default: boolean;
+  /** Array of unique strings. Each claim key can only contain alphanumeric characters and underscores. */
+  include_claim_keys?: (string)[];
+  /** Whether to opt in to the immutable OIDC subject claim format for this repository. When `true`, OIDC tokens will use a stable, repository-ID-based `sub` claim. */
+  use_immutable_subject?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<EmptyObject>
+```
+
+<sub>`PUT /repos/{owner}/{repo}/actions/oidc/customization/sub` · `actions/set-custom-oidc-sub-claim-for-repo`</sub>
 
-type ActionsDeleteRepoSecretInput = Parameters<typeof github.actions.deleteRepoSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteRepoSecretOutput = Awaited<ReturnType<typeof github.actions.deleteRepoSecret>>;
+## `github.actions.listRepoOrganizationSecrets`
 
-const input: ActionsDeleteRepoSecretInput = {} as { owner: string; repo: string; secret_name: string };
-const result: ActionsDeleteRepoSecretOutput = await github.actions.deleteRepoSecret(input);
+List repository organization secrets — [API reference](https://docs.github.com/rest/actions/secrets#list-repository-organization-secrets)
 
-// Result shape (from schema): unknown
+```ts
+github.actions.listRepoOrganizationSecrets(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; secrets: (ActionsSecret)[] }>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/organization-secrets` · `actions/list-repo-organization-secrets`</sub>
 
-### `github.actions.getRepoSecret`
+## `github.actions.listRepoOrganizationVariables`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/secrets/{secret_name}`
-- **What it does**: Get a repository secret
-- **OpenAPI operationId**: `actions/get-repo-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+List repository organization variables — [API reference](https://docs.github.com/rest/actions/variables#list-repository-organization-variables)
 
-**Inputs**
+```ts
+github.actions.listRepoOrganizationVariables(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 30). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; variables: (ActionsVariable)[] }>
+```
 
-- Client input type: `{ owner: string; repo: string; secret_name: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/actions/organization-variables` · `actions/list-repo-organization-variables`</sub>
 
-**Outputs**
+## `github.actions.getGithubActionsPermissionsRepository`
 
-- Client return type: `{ name: string; created_at: string; updated_at: string }`
-- OpenAPI response codes: `200`
+Get GitHub Actions permissions for a repository — [API reference](https://docs.github.com/rest/actions/permissions#get-github-actions-permissions-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getGithubActionsPermissionsRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ActionsRepositoryPermissions>
+```
 
-type ActionsGetRepoSecretInput = Parameters<typeof github.actions.getRepoSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetRepoSecretOutput = Awaited<ReturnType<typeof github.actions.getRepoSecret>>;
+<sub>`GET /repos/{owner}/{repo}/actions/permissions` · `actions/get-github-actions-permissions-repository`</sub>
 
-const input: ActionsGetRepoSecretInput = {} as { owner: string; repo: string; secret_name: string };
-const result: ActionsGetRepoSecretOutput = await github.actions.getRepoSecret(input);
+## `github.actions.setGithubActionsPermissionsRepository`
 
-// Result shape (from schema): { name: string; created_at: string; updated_at: string }
+Set GitHub Actions permissions for a repository — [API reference](https://docs.github.com/rest/actions/permissions#set-github-actions-permissions-for-a-repository)
+
+```ts
+github.actions.setGithubActionsPermissionsRepository(input: {
+  enabled: ActionsEnabled;
+  allowed_actions?: AllowedActions;
+  sha_pinning_required?: ShaPinningRequired;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<unknown>
 ```
 
-### `github.actions.createOrUpdateRepoSecret`
+<sub>`PUT /repos/{owner}/{repo}/actions/permissions` · `actions/set-github-actions-permissions-repository`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/secrets/{secret_name}`
-- **What it does**: Create or update a repository secret
-- **OpenAPI operationId**: `actions/create-or-update-repo-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getWorkflowAccessToRepository`
 
-**Inputs**
+Get the level of access for workflows outside of the repository — [API reference](https://docs.github.com/rest/actions/permissions#get-the-level-of-access-for-workflows-outside-of-the-repository)
 
-- Client input type: `{ encrypted_value: string; key_id: string; owner: string; repo: string; secret_name: string }`
-- Client transport options: None
+```ts
+github.actions.getWorkflowAccessToRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ActionsWorkflowAccessToRepository>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/actions/permissions/access` · `actions/get-workflow-access-to-repository`</sub>
 
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`, `204`
+## `github.actions.setWorkflowAccessToRepository`
 
+Set the level of access for workflows outside of the repository — [API reference](https://docs.github.com/rest/actions/permissions#set-the-level-of-access-for-workflows-outside-of-the-repository)
+
 ```ts
-import github from "@utdk/github";
+github.actions.setWorkflowAccessToRepository(input: {
+  /** Defines the level of access that workflows outside of the repository have to actions and reusable workflows within the repository.  `none` means the access is only possible from workflows in this repository. `user` level access allows sharing across user owned private repositories only. `organization` level access allows sharing across the organization. */
+  access_level: "none" | "user" | "organization";
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<unknown>
+```
+
+<sub>`PUT /repos/{owner}/{repo}/actions/permissions/access` · `actions/set-workflow-access-to-repository`</sub>
 
-type ActionsCreateOrUpdateRepoSecretInput = Parameters<typeof github.actions.createOrUpdateRepoSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateOrUpdateRepoSecretOutput = Awaited<ReturnType<typeof github.actions.createOrUpdateRepoSecret>>;
+## `github.actions.getArtifactAndLogRetentionSettingsRepository`
 
-const input: ActionsCreateOrUpdateRepoSecretInput = {} as { encrypted_value: string; key_id: string; owner: string; repo: string; secret_name: string };
-const result: ActionsCreateOrUpdateRepoSecretOutput = await github.actions.createOrUpdateRepoSecret(input);
+Get artifact and log retention settings for a repository — [API reference](https://docs.github.com/rest/actions/permissions#get-artifact-and-log-retention-settings-for-a-repository)
 
-// Result shape (from schema): { [key: string]: unknown }
+```ts
+github.actions.getArtifactAndLogRetentionSettingsRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ActionsArtifactAndLogRetentionResponse>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/permissions/artifact-and-log-retention` · `actions/get-artifact-and-log-retention-settings-repository`</sub>
 
-### `github.actions.getRepoPublicKey`
+## `github.actions.setArtifactAndLogRetentionSettingsRepository`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/secrets/public-key`
-- **What it does**: Get a repository public key
-- **OpenAPI operationId**: `actions/get-repo-public-key`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Set artifact and log retention settings for a repository — [API reference](https://docs.github.com/rest/actions/permissions#set-artifact-and-log-retention-settings-for-a-repository)
 
-**Inputs**
+```ts
+github.actions.setArtifactAndLogRetentionSettingsRepository(input: {
+  /** The number of days to retain artifacts and logs */
+  days: number;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
+```
 
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
+<sub>`PUT /repos/{owner}/{repo}/actions/permissions/artifact-and-log-retention` · `actions/set-artifact-and-log-retention-settings-repository`</sub>
 
-**Outputs**
+## `github.actions.getForkPrContributorApprovalPermissionsRepository`
 
-- Client return type: `{ key_id: string; key: string; id?: number; url?: string; title?: string; created_at?: string }`
-- OpenAPI response codes: `200`
+Get fork PR contributor approval permissions for a repository — [API reference](https://docs.github.com/rest/actions/permissions#get-fork-pr-contributor-approval-permissions-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getForkPrContributorApprovalPermissionsRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ActionsForkPrContributorApproval>
+```
 
-type ActionsGetRepoPublicKeyInput = Parameters<typeof github.actions.getRepoPublicKey> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetRepoPublicKeyOutput = Awaited<ReturnType<typeof github.actions.getRepoPublicKey>>;
+<sub>`GET /repos/{owner}/{repo}/actions/permissions/fork-pr-contributor-approval` · `actions/get-fork-pr-contributor-approval-permissions-repository`</sub>
 
-const input: ActionsGetRepoPublicKeyInput = {} as { owner: string; repo: string };
-const result: ActionsGetRepoPublicKeyOutput = await github.actions.getRepoPublicKey(input);
+## `github.actions.setForkPrContributorApprovalPermissionsRepository`
 
-// Result shape (from schema): { key_id: string; key: string; id?: number; url?: string; title?: string; created_at?: string }
+Set fork PR contributor approval permissions for a repository — [API reference](https://docs.github.com/rest/actions/permissions#set-fork-pr-contributor-approval-permissions-for-a-repository)
+
+```ts
+github.actions.setForkPrContributorApprovalPermissionsRepository(input: {
+  /** The policy that controls when fork PR workflows require approval from a maintainer. */
+  approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors";
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
 ```
 
-### `github.actions.listRepoVariables`
+<sub>`PUT /repos/{owner}/{repo}/actions/permissions/fork-pr-contributor-approval` · `actions/set-fork-pr-contributor-approval-permissions-repository`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/variables`
-- **What it does**: List repository variables
-- **OpenAPI operationId**: `actions/list-repo-variables`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getPrivateRepoForkPrWorkflowsSettingsRepository`
 
-**Inputs**
+Get private repo fork PR workflow settings for a repository — [API reference](https://docs.github.com/rest/actions/permissions#get-private-repo-fork-pr-workflow-settings-for-a-repository)
+
+```ts
+github.actions.getPrivateRepoForkPrWorkflowsSettingsRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ActionsForkPrWorkflowsPrivateRepos>
+```
 
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/actions/permissions/fork-pr-workflows-private-repos` · `actions/get-private-repo-fork-pr-workflows-settings-repository`</sub>
 
-**Outputs**
+## `github.actions.setPrivateRepoForkPrWorkflowsSettingsRepository`
 
-- Client return type: `{ total_count: number; variables: ({ name: string; value: string; created_at: string; updated_at: string })[] }`
-- OpenAPI response codes: `200`
+Set private repo fork PR workflow settings for a repository — [API reference](https://docs.github.com/rest/actions/permissions#set-private-repo-fork-pr-workflow-settings-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.actions.setPrivateRepoForkPrWorkflowsSettingsRepository(input: {
+  /** Whether workflows triggered by pull requests from forks are allowed to run on private repositories. */
+  run_workflows_from_fork_pull_requests: boolean;
+  /** Whether GitHub Actions can create pull requests or submit approving pull request reviews from a workflow triggered by a fork pull request. */
+  send_write_tokens_to_workflows?: boolean;
+  /** Whether to make secrets and variables available to workflows triggered by pull requests from forks. */
+  send_secrets_and_variables?: boolean;
+  /** Whether workflows triggered by pull requests from forks require approval from a repository administrator to run. */
+  require_approval_for_fork_pr_workflows?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
+```
+
+<sub>`PUT /repos/{owner}/{repo}/actions/permissions/fork-pr-workflows-private-repos` · `actions/set-private-repo-fork-pr-workflows-settings-repository`</sub>
 
-type ActionsListRepoVariablesInput = Parameters<typeof github.actions.listRepoVariables> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListRepoVariablesOutput = Awaited<ReturnType<typeof github.actions.listRepoVariables>>;
+## `github.actions.getAllowedActionsRepository`
 
-const input: ActionsListRepoVariablesInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ActionsListRepoVariablesOutput = await github.actions.listRepoVariables(input);
+Get allowed actions and reusable workflows for a repository — [API reference](https://docs.github.com/rest/actions/permissions#get-allowed-actions-and-reusable-workflows-for-a-repository)
 
-// Result shape (from schema): { total_count: number; variables: ({ name: string; value: string; created_at: string; updated_at: string })[] }
+```ts
+github.actions.getAllowedActionsRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<SelectedActions>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/permissions/selected-actions` · `actions/get-allowed-actions-repository`</sub>
 
-### `github.actions.createRepoVariable`
+## `github.actions.setAllowedActionsRepository`
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/variables`
-- **What it does**: Create a repository variable
-- **OpenAPI operationId**: `actions/create-repo-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Set allowed actions and reusable workflows for a repository — [API reference](https://docs.github.com/rest/actions/permissions#set-allowed-actions-and-reusable-workflows-for-a-repository)
 
-**Inputs**
+```ts
+github.actions.setAllowedActionsRepository(input: {
+  /** Whether GitHub-owned actions are allowed. For example, this includes the actions in the `actions` organization. */
+  github_owned_allowed?: boolean;
+  /** Whether actions from GitHub Marketplace verified creators are allowed. Set to `true` to allow all actions by GitHub Marketplace verified creators. */
+  verified_allowed?: boolean;
+  /** Specifies a list of string-matching patterns to allow specific action(s) and reusable workflow(s). Wildcards, tags, and SHAs are allowed. For example, `monalisa/octocat@*`, `monalisa/octocat@v2`, `monalisa/*`.  > [!NOTE] > The `patterns_allowed` setting only applies to public repositories. */
+  patterns_allowed?: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ name: string; value: string; owner: string; repo: string }`
-- Client transport options: None
+<sub>`PUT /repos/{owner}/{repo}/actions/permissions/selected-actions` · `actions/set-allowed-actions-repository`</sub>
 
-**Outputs**
+## `github.actions.getGithubActionsDefaultWorkflowPermissionsRepository`
 
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`
+Get default workflow permissions for a repository — [API reference](https://docs.github.com/rest/actions/permissions#get-default-workflow-permissions-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getGithubActionsDefaultWorkflowPermissionsRepository(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ActionsGetDefaultWorkflowPermissions>
+```
 
-type ActionsCreateRepoVariableInput = Parameters<typeof github.actions.createRepoVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateRepoVariableOutput = Awaited<ReturnType<typeof github.actions.createRepoVariable>>;
+<sub>`GET /repos/{owner}/{repo}/actions/permissions/workflow` · `actions/get-github-actions-default-workflow-permissions-repository`</sub>
 
-const input: ActionsCreateRepoVariableInput = {} as { name: string; value: string; owner: string; repo: string };
-const result: ActionsCreateRepoVariableOutput = await github.actions.createRepoVariable(input);
+## `github.actions.setGithubActionsDefaultWorkflowPermissionsRepository`
 
-// Result shape (from schema): { [key: string]: unknown }
+Set default workflow permissions for a repository — [API reference](https://docs.github.com/rest/actions/permissions#set-default-workflow-permissions-for-a-repository)
+
+```ts
+github.actions.setGithubActionsDefaultWorkflowPermissionsRepository(input: {
+  default_workflow_permissions?: ActionsDefaultWorkflowPermissions;
+  can_approve_pull_request_reviews?: ActionsCanApprovePullRequestReviews;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<unknown>
 ```
 
-### `github.actions.deleteRepoVariable`
+<sub>`PUT /repos/{owner}/{repo}/actions/permissions/workflow` · `actions/set-github-actions-default-workflow-permissions-repository`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/actions/variables/{name}`
-- **What it does**: Delete a repository variable
-- **OpenAPI operationId**: `actions/delete-repo-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.listSelfHostedRunnersForRepo`
 
-**Inputs**
+List self-hosted runners for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#list-self-hosted-runners-for-a-repository)
 
-- Client input type: `{ owner: string; repo: string; name: string }`
-- Client transport options: None
+```ts
+github.actions.listSelfHostedRunnersForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of a self-hosted runner. */
+  name?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; runners: (Runner)[] }>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/actions/runners` · `actions/list-self-hosted-runners-for-repo`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `github.actions.deleteSelfHostedRunnerFromRepo`
 
+Delete a self-hosted runner from a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#delete-a-self-hosted-runner-from-a-repository)
+
 ```ts
-import github from "@utdk/github";
+github.actions.deleteSelfHostedRunnerFromRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<ValidationErrorSimple>
+```
+
+<sub>`DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}` · `actions/delete-self-hosted-runner-from-repo`</sub>
 
-type ActionsDeleteRepoVariableInput = Parameters<typeof github.actions.deleteRepoVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteRepoVariableOutput = Awaited<ReturnType<typeof github.actions.deleteRepoVariable>>;
+## `github.actions.getSelfHostedRunnerForRepo`
 
-const input: ActionsDeleteRepoVariableInput = {} as { owner: string; repo: string; name: string };
-const result: ActionsDeleteRepoVariableOutput = await github.actions.deleteRepoVariable(input);
+Get a self-hosted runner for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#get-a-self-hosted-runner-for-a-repository)
 
-// Result shape (from schema): unknown
+```ts
+github.actions.getSelfHostedRunnerForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<Runner>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/runners/{runner_id}` · `actions/get-self-hosted-runner-for-repo`</sub>
 
-### `github.actions.getRepoVariable`
+## `github.actions.removeAllCustomLabelsFromSelfHostedRunnerForRepo`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/variables/{name}`
-- **What it does**: Get a repository variable
-- **OpenAPI operationId**: `actions/get-repo-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Remove all custom labels from a self-hosted runner for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#remove-all-custom-labels-from-a-self-hosted-runner-for-a-repository)
 
-**Inputs**
+```ts
+github.actions.removeAllCustomLabelsFromSelfHostedRunnerForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<{ total_count: number; labels: (RunnerLabel)[] }>
+```
 
-- Client input type: `{ owner: string; repo: string; name: string }`
-- Client transport options: None
+<sub>`DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}/labels` · `actions/remove-all-custom-labels-from-self-hosted-runner-for-repo`</sub>
 
-**Outputs**
+## `github.actions.listLabelsForSelfHostedRunnerForRepo`
 
-- Client return type: `{ name: string; value: string; created_at: string; updated_at: string }`
-- OpenAPI response codes: `200`
+List labels for a self-hosted runner for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#list-labels-for-a-self-hosted-runner-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.actions.listLabelsForSelfHostedRunnerForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<{ total_count: number; labels: (RunnerLabel)[] }>
+```
 
-type ActionsGetRepoVariableInput = Parameters<typeof github.actions.getRepoVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetRepoVariableOutput = Awaited<ReturnType<typeof github.actions.getRepoVariable>>;
+<sub>`GET /repos/{owner}/{repo}/actions/runners/{runner_id}/labels` · `actions/list-labels-for-self-hosted-runner-for-repo`</sub>
 
-const input: ActionsGetRepoVariableInput = {} as { owner: string; repo: string; name: string };
-const result: ActionsGetRepoVariableOutput = await github.actions.getRepoVariable(input);
+## `github.actions.addCustomLabelsToSelfHostedRunnerForRepo`
 
-// Result shape (from schema): { name: string; value: string; created_at: string; updated_at: string }
+Add custom labels to a self-hosted runner for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#add-custom-labels-to-a-self-hosted-runner-for-a-repository)
+
+```ts
+github.actions.addCustomLabelsToSelfHostedRunnerForRepo(input: {
+  /** The names of the custom labels to add to the runner. */
+  labels: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<{ total_count: number; labels: (RunnerLabel)[] }>
 ```
 
-### `github.actions.updateRepoVariable`
+<sub>`POST /repos/{owner}/{repo}/actions/runners/{runner_id}/labels` · `actions/add-custom-labels-to-self-hosted-runner-for-repo`</sub>
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/actions/variables/{name}`
-- **What it does**: Update a repository variable
-- **OpenAPI operationId**: `actions/update-repo-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: `{ params: { name: string } }`
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.setCustomLabelsForSelfHostedRunnerForRepo`
 
-**Inputs**
+Set custom labels for a self-hosted runner for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#set-custom-labels-for-a-self-hosted-runner-for-a-repository)
+
+```ts
+github.actions.setCustomLabelsForSelfHostedRunnerForRepo(input: {
+  /** The names of the custom labels to set for the runner. You can pass an empty array to remove all custom labels. */
+  labels: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+}): Promise<{ total_count: number; labels: (RunnerLabel)[] }>
+```
 
-- Client input type: `{ name?: string; value?: string; owner: string; repo: string }`
-- Client transport options: `{ params: { name: string } }`
+<sub>`PUT /repos/{owner}/{repo}/actions/runners/{runner_id}/labels` · `actions/set-custom-labels-for-self-hosted-runner-for-repo`</sub>
 
-**Outputs**
+## `github.actions.removeCustomLabelFromSelfHostedRunnerForRepo`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Remove a custom label from a self-hosted runner for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#remove-a-custom-label-from-a-self-hosted-runner-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.actions.removeCustomLabelFromSelfHostedRunnerForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Unique identifier of the self-hosted runner. */
+  runner_id: number;
+  /** The name of a self-hosted runner's custom label. */
+  name: string;
+}): Promise<{ total_count: number; labels: (RunnerLabel)[] }>
+```
+
+<sub>`DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}/labels/{name}` · `actions/remove-custom-label-from-self-hosted-runner-for-repo`</sub>
 
-type ActionsUpdateRepoVariableInput = Parameters<typeof github.actions.updateRepoVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsUpdateRepoVariableOutput = Awaited<ReturnType<typeof github.actions.updateRepoVariable>>;
-type ActionsUpdateRepoVariableOptions = Parameters<typeof github.actions.updateRepoVariable> extends [unknown, infer T, ...unknown[]] ? T : undefined;
+## `github.actions.listRunnerApplicationsForRepo`
 
-const input: ActionsUpdateRepoVariableInput = {} as { name?: string; value?: string; owner: string; repo: string };
-const options: ActionsUpdateRepoVariableOptions = {} as { params: { name: string } };
-const result: ActionsUpdateRepoVariableOutput = await github.actions.updateRepoVariable(input, options);
+List runner applications for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#list-runner-applications-for-a-repository)
 
-// Result shape (from schema): unknown
+```ts
+github.actions.listRunnerApplicationsForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(RunnerApplication)[]>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/runners/downloads` · `actions/list-runner-applications-for-repo`</sub>
 
-### `github.actions.listRepoWorkflows`
+## `github.actions.generateRunnerJitconfigForRepo`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/workflows`
-- **What it does**: List repository workflows
-- **OpenAPI operationId**: `actions/list-repo-workflows`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Create configuration for a just-in-time runner for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#create-configuration-for-a-just-in-time-runner-for-a-repository)
 
-**Inputs**
+```ts
+github.actions.generateRunnerJitconfigForRepo(input: {
+  /** The name of the new runner. */
+  name: string;
+  /** The ID of the runner group to register the runner to. */
+  runner_group_id: number;
+  /** The names of the custom labels to add to the runner. **Minimum items**: 1. **Maximum items**: 100. */
+  labels: (string)[];
+  /** The working directory to be used for job execution, relative to the runner install directory. */
+  work_folder?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<{ runner: Runner; encoded_jit_config: string }>
+```
 
-- Client input type: `{ owner: string; repo: string; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`POST /repos/{owner}/{repo}/actions/runners/generate-jitconfig` · `actions/generate-runner-jitconfig-for-repo`</sub>
 
-**Outputs**
+## `github.actions.createRegistrationTokenForRepo`
 
-- Client return type: `{ total_count: number; workflows: ({ id: number; node_id: string; name: string; path: string; state: "active" | "deleted" | "disabled_fork" | "disabled_inactivity" | "disabled_manually"; created_at: string; updated_at: ...`
-- OpenAPI response codes: `200`
+Create a registration token for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#create-a-registration-token-for-a-repository)
 
 ```ts
-import github from "@utdk/github";
+github.actions.createRegistrationTokenForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<AuthenticationToken>
+```
 
-type ActionsListRepoWorkflowsInput = Parameters<typeof github.actions.listRepoWorkflows> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListRepoWorkflowsOutput = Awaited<ReturnType<typeof github.actions.listRepoWorkflows>>;
+<sub>`POST /repos/{owner}/{repo}/actions/runners/registration-token` · `actions/create-registration-token-for-repo`</sub>
 
-const input: ActionsListRepoWorkflowsInput = {} as { owner: string; repo: string; per_page?: number; page?: number };
-const result: ActionsListRepoWorkflowsOutput = await github.actions.listRepoWorkflows(input);
+## `github.actions.createRemoveTokenForRepo`
 
-// Result shape (from schema): { total_count: number; workflows: ({ id: number; node_id: string; name: string; path: string; state: "active" | "deleted" | "disabled_fork" | "disabled_inactivity" | "disabled_manually"; created_at: string; updated_at: ...
+Create a remove token for a repository — [API reference](https://docs.github.com/rest/actions/self-hosted-runners#create-a-remove-token-for-a-repository)
+
+```ts
+github.actions.createRemoveTokenForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<AuthenticationToken>
 ```
 
-### `github.actions.getWorkflow`
+<sub>`POST /repos/{owner}/{repo}/actions/runners/remove-token` · `actions/create-remove-token-for-repo`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}`
-- **What it does**: Get a workflow
-- **OpenAPI operationId**: `actions/get-workflow`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.listWorkflowRunsForRepo`
 
-**Inputs**
+List workflow runs for a repository — [API reference](https://docs.github.com/rest/actions/workflow-runs#list-workflow-runs-for-a-repository)
 
-- Client input type: `{ owner: string; repo: string; workflow_id: number | string }`
-- Client transport options: None
+```ts
+github.actions.listWorkflowRunsForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Returns someone's workflow runs. Use the login for the user who created the `push` associated with the check suite or workflow run. */
+  actor?: string;
+  /** Returns workflow runs associated with a branch. Use the name of the branch of the `push`. */
+  branch?: string;
+  /** Returns workflow run triggered by the event you specify. For example, `push`, `pull_request` or `issue`. For more information, see "[Events that trigger workflows](https://docs.github.com/actions/automating-your-workflow-with-github-actions/events-that-trigger-workflows)." */
+  event?: string;
+  /** Returns workflow runs with the check run `status` or `conclusion` that you specify. For example, a conclusion can be `success` or a status can be `in_progress`. Only GitHub Actions can set a status of `waiting`, `pending`, or `requested`. */
+  status?: "completed" | "action_required" | "cancelled" | "failure" | "neutral" | "skipped" | "stale" | "success" | "timed_out" | "in_progress" | "queued" | "requested" | "waiting" | "pending";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** Returns workflow runs created within the given date-time range. For more information on the syntax, see "[Understanding the search syntax](https://docs.github.com/search-github/getting-started-with-searching-on-github/understanding-the-search-syntax#query-for-dates)." */
+  created?: string;
+  /** If `true` pull requests are omitted from the response (empty array). */
+  exclude_pull_requests?: boolean;
+  /** Returns workflow runs with the `check_suite_id` that you specify. */
+  check_suite_id?: number;
+  /** Only returns workflow runs that are associated with the specified `head_sha`. */
+  head_sha?: string;
+}): Promise<{ total_count: number; workflow_runs: (WorkflowRun)[] }>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/actions/runs` · `actions/list-workflow-runs-for-repo`</sub>
 
-- Client return type: `{ id: number; node_id: string; name: string; path: string; state: "active" | "deleted" | "disabled_fork" | "disabled_inactivity" | "disabled_manually"; created_at: string; updated_at: string; url: string; html_url: stri...`
-- OpenAPI response codes: `200`
+## `github.actions.deleteWorkflowRun`
 
+Delete a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-runs#delete-a-workflow-run)
+
 ```ts
-import github from "@utdk/github";
+github.actions.deleteWorkflowRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<unknown>
+```
+
+<sub>`DELETE /repos/{owner}/{repo}/actions/runs/{run_id}` · `actions/delete-workflow-run`</sub>
 
-type ActionsGetWorkflowInput = Parameters<typeof github.actions.getWorkflow> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetWorkflowOutput = Awaited<ReturnType<typeof github.actions.getWorkflow>>;
+## `github.actions.getWorkflowRun`
 
-const input: ActionsGetWorkflowInput = {} as { owner: string; repo: string; workflow_id: number | string };
-const result: ActionsGetWorkflowOutput = await github.actions.getWorkflow(input);
+Get a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-runs#get-a-workflow-run)
 
-// Result shape (from schema): { id: number; node_id: string; name: string; path: string; state: "active" | "deleted" | "disabled_fork" | "disabled_inactivity" | "disabled_manually"; created_at: string; updated_at: string; url: string; html_url: stri...
+```ts
+github.actions.getWorkflowRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+  /** If `true` pull requests are omitted from the response (empty array). */
+  exclude_pull_requests?: boolean;
+}): Promise<WorkflowRun>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}` · `actions/get-workflow-run`</sub>
 
-### `github.actions.disableWorkflow`
+## `github.actions.getReviewsForRun`
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/disable`
-- **What it does**: Disable a workflow
-- **OpenAPI operationId**: `actions/disable-workflow`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Get the review history for a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-runs#get-the-review-history-for-a-workflow-run)
 
-**Inputs**
+```ts
+github.actions.getReviewsForRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<(EnvironmentApprovals)[]>
+```
 
-- Client input type: `{ owner: string; repo: string; workflow_id: number | string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}/approvals` · `actions/get-reviews-for-run`</sub>
 
-**Outputs**
+## `github.actions.approveWorkflowRun`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Approve a workflow run for a fork pull request — [API reference](https://docs.github.com/rest/actions/workflow-runs#approve-a-workflow-run-for-a-fork-pull-request)
 
 ```ts
-import github from "@utdk/github";
+github.actions.approveWorkflowRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<EmptyObject>
+```
 
-type ActionsDisableWorkflowInput = Parameters<typeof github.actions.disableWorkflow> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDisableWorkflowOutput = Awaited<ReturnType<typeof github.actions.disableWorkflow>>;
+<sub>`POST /repos/{owner}/{repo}/actions/runs/{run_id}/approve` · `actions/approve-workflow-run`</sub>
 
-const input: ActionsDisableWorkflowInput = {} as { owner: string; repo: string; workflow_id: number | string };
-const result: ActionsDisableWorkflowOutput = await github.actions.disableWorkflow(input);
+## `github.actions.listWorkflowRunArtifacts`
 
-// Result shape (from schema): unknown
+List workflow run artifacts — [API reference](https://docs.github.com/rest/actions/artifacts#list-workflow-run-artifacts)
+
+```ts
+github.actions.listWorkflowRunArtifacts(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** The name field of an artifact. When specified, only artifacts with this name will be returned. */
+  name?: string;
+  /** The direction to sort the results by. */
+  direction?: "asc" | "desc";
+}): Promise<{ total_count: number; artifacts: (Artifact)[] }>
 ```
 
-### `github.actions.createWorkflowDispatch`
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}/artifacts` · `actions/list-workflow-run-artifacts`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches`
-- **What it does**: Create a workflow dispatch event
-- **OpenAPI operationId**: `actions/create-workflow-dispatch`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getWorkflowRunAttempt`
 
-**Inputs**
+Get a workflow run attempt — [API reference](https://docs.github.com/rest/actions/workflow-runs#get-a-workflow-run-attempt)
+
+```ts
+github.actions.getWorkflowRunAttempt(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+  /** The attempt number of the workflow run. */
+  attempt_number: number;
+  /** If `true` pull requests are omitted from the response (empty array). */
+  exclude_pull_requests?: boolean;
+}): Promise<WorkflowRun>
+```
 
-- Client input type: `{ ref: string; inputs?: { [key: string]: unknown }; return_run_details?: boolean; owner: string; repo: string; workflow_id: number | string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}` · `actions/get-workflow-run-attempt`</sub>
 
-**Outputs**
+## `github.actions.listJobsForWorkflowRunAttempt`
 
-- Client return type: `{ workflow_run_id: number; run_url: string; html_url: string }`
-- OpenAPI response codes: `200`, `204`
+List jobs for a workflow run attempt — [API reference](https://docs.github.com/rest/actions/workflow-jobs#list-jobs-for-a-workflow-run-attempt)
 
 ```ts
-import github from "@utdk/github";
+github.actions.listJobsForWorkflowRunAttempt(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+  /** The attempt number of the workflow run. */
+  attempt_number: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; jobs: (Job)[] }>
+```
+
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/jobs` · `actions/list-jobs-for-workflow-run-attempt`</sub>
 
-type ActionsCreateWorkflowDispatchInput = Parameters<typeof github.actions.createWorkflowDispatch> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateWorkflowDispatchOutput = Awaited<ReturnType<typeof github.actions.createWorkflowDispatch>>;
+## `github.actions.downloadWorkflowRunAttemptLogs`
 
-const input: ActionsCreateWorkflowDispatchInput = {} as { ref: string; inputs?: { [key: string]: unknown }; return_run_details?: boolean; owner: string; repo: string; workflow_id: number | string };
-const result: ActionsCreateWorkflowDispatchOutput = await github.actions.createWorkflowDispatch(input);
+Download workflow run attempt logs — [API reference](https://docs.github.com/rest/actions/workflow-runs#download-workflow-run-attempt-logs)
 
-// Result shape (from schema): { workflow_run_id: number; run_url: string; html_url: string }
+```ts
+github.actions.downloadWorkflowRunAttemptLogs(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+  /** The attempt number of the workflow run. */
+  attempt_number: number;
+}): Promise<unknown>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}/attempts/{attempt_number}/logs` · `actions/download-workflow-run-attempt-logs`</sub>
 
-### `github.actions.enableWorkflow`
+## `github.actions.cancelWorkflowRun`
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/enable`
-- **What it does**: Enable a workflow
-- **OpenAPI operationId**: `actions/enable-workflow`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Cancel a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-runs#cancel-a-workflow-run)
 
-**Inputs**
+```ts
+github.actions.cancelWorkflowRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<EmptyObject>
+```
 
-- Client input type: `{ owner: string; repo: string; workflow_id: number | string }`
-- Client transport options: None
+<sub>`POST /repos/{owner}/{repo}/actions/runs/{run_id}/cancel` · `actions/cancel-workflow-run`</sub>
 
-**Outputs**
+## `github.actions.listConcurrencyGroupsForWorkflowRun`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+List concurrency groups for a workflow run — [API reference](https://docs.github.com/rest/actions/concurrency-groups#list-concurrency-groups-for-a-workflow-run)
 
 ```ts
-import github from "@utdk/github";
+github.actions.listConcurrencyGroupsForWorkflowRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+}): Promise<ConcurrencyGroupRunList>
+```
 
-type ActionsEnableWorkflowInput = Parameters<typeof github.actions.enableWorkflow> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsEnableWorkflowOutput = Awaited<ReturnType<typeof github.actions.enableWorkflow>>;
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}/concurrency_groups` · `actions/list-concurrency-groups-for-workflow-run`</sub>
 
-const input: ActionsEnableWorkflowInput = {} as { owner: string; repo: string; workflow_id: number | string };
-const result: ActionsEnableWorkflowOutput = await github.actions.enableWorkflow(input);
+## `github.actions.reviewCustomGatesForRun`
 
-// Result shape (from schema): unknown
+Review custom deployment protection rules for a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-runs#review-custom-deployment-protection-rules-for-a-workflow-run)
+
+```ts
+github.actions.reviewCustomGatesForRun(input: {
+  body: ReviewCustomGatesCommentRequired | ReviewCustomGatesStateRequired;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<unknown>
 ```
 
-### `github.actions.listWorkflowRuns`
+<sub>`POST /repos/{owner}/{repo}/actions/runs/{run_id}/deployment_protection_rule` · `actions/review-custom-gates-for-run`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs`
-- **What it does**: List workflow runs for a workflow
-- **OpenAPI operationId**: `actions/list-workflow-runs`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.forceCancelWorkflowRun`
 
-**Inputs**
+Force cancel a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-runs#force-cancel-a-workflow-run)
 
-- Client input type: `{ owner: string; repo: string; workflow_id: number | string; actor?: string; branch?: string; event?: string; status?: "completed" | "action_required" | "cancelled" | "failure" | "neutral" | "skipped" | "stale" | "success" | "timed_out" | "in_progress" | "queued" | "requested" | "waiting" | "pending"; per_page?: number; page?: number; created?: string; exclude_pull_requests?: boolean; check_suite_id?: number; head_sha?: string }`
-- Client transport options: None
+```ts
+github.actions.forceCancelWorkflowRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<EmptyObject>
+```
 
-**Outputs**
+<sub>`POST /repos/{owner}/{repo}/actions/runs/{run_id}/force-cancel` · `actions/force-cancel-workflow-run`</sub>
 
-- Client return type: `{ total_count: number; workflow_runs: ({ id: number; name?: string | null; node_id: string; check_suite_id?: number; check_suite_node_id?: string; head_branch: string | null; head_sha: string; path: string; run_number: ...`
-- OpenAPI response codes: `200`
+## `github.actions.listJobsForWorkflowRun`
 
+List jobs for a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-jobs#list-jobs-for-a-workflow-run)
+
 ```ts
-import github from "@utdk/github";
+github.actions.listJobsForWorkflowRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+  /** Filters jobs by their `completed_at` timestamp. `latest` returns jobs from the most recent execution of the workflow run. `all` returns all jobs for a workflow run, including from old executions of the workflow run. */
+  filter?: "latest" | "all";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; jobs: (Job)[] }>
+```
+
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}/jobs` · `actions/list-jobs-for-workflow-run`</sub>
 
-type ActionsListWorkflowRunsInput = Parameters<typeof github.actions.listWorkflowRuns> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListWorkflowRunsOutput = Awaited<ReturnType<typeof github.actions.listWorkflowRuns>>;
+## `github.actions.deleteWorkflowRunLogs`
 
-const input: ActionsListWorkflowRunsInput = {} as { owner: string; repo: string; workflow_id: number | string; actor?: string; branch?: string; event?: string; status?: "completed" | "action_required" | "cancelled" | "failure" | "neutral" | "skipped" | "stale" | "success" | "timed_out" | "in_progress" | "queued" | "requested" | "waiting" | "pending"; per_page?: number; page?: number; created?: string; exclude_pull_requests?: boolean; check_suite_id?: number; head_sha?: string };
-const result: ActionsListWorkflowRunsOutput = await github.actions.listWorkflowRuns(input);
+Delete workflow run logs — [API reference](https://docs.github.com/rest/actions/workflow-runs#delete-workflow-run-logs)
 
-// Result shape (from schema): { total_count: number; workflow_runs: ({ id: number; name?: string | null; node_id: string; check_suite_id?: number; check_suite_node_id?: string; head_branch: string | null; head_sha: string; path: string; run_number: ...
+```ts
+github.actions.deleteWorkflowRunLogs(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<BasicError>
 ```
+
+<sub>`DELETE /repos/{owner}/{repo}/actions/runs/{run_id}/logs` · `actions/delete-workflow-run-logs`</sub>
 
-### `github.actions.getWorkflowUsage`
+## `github.actions.downloadWorkflowRunLogs`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/timing`
-- **What it does**: Get workflow usage
-- **OpenAPI operationId**: `actions/get-workflow-usage`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Download workflow run logs — [API reference](https://docs.github.com/rest/actions/workflow-runs#download-workflow-run-logs)
 
-**Inputs**
+```ts
+github.actions.downloadWorkflowRunLogs(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string; workflow_id: number | string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}/logs` · `actions/download-workflow-run-logs`</sub>
 
-**Outputs**
+## `github.actions.getPendingDeploymentsForRun`
 
-- Client return type: `{ billable: { UBUNTU?: { total_ms?: number }; MACOS?: { total_ms?: number }; WINDOWS?: { total_ms?: number } } }`
-- OpenAPI response codes: `200`
+Get pending deployments for a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-runs#get-pending-deployments-for-a-workflow-run)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getPendingDeploymentsForRun(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<(PendingDeployment)[]>
+```
 
-type ActionsGetWorkflowUsageInput = Parameters<typeof github.actions.getWorkflowUsage> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetWorkflowUsageOutput = Awaited<ReturnType<typeof github.actions.getWorkflowUsage>>;
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments` · `actions/get-pending-deployments-for-run`</sub>
 
-const input: ActionsGetWorkflowUsageInput = {} as { owner: string; repo: string; workflow_id: number | string };
-const result: ActionsGetWorkflowUsageOutput = await github.actions.getWorkflowUsage(input);
+## `github.actions.reviewPendingDeploymentsForRun`
 
-// Result shape (from schema): { billable: { UBUNTU?: { total_ms?: number }; MACOS?: { total_ms?: number }; WINDOWS?: { total_ms?: number } } }
+Review pending deployments for a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-runs#review-pending-deployments-for-a-workflow-run)
+
+```ts
+github.actions.reviewPendingDeploymentsForRun(input: {
+  /** The list of environment ids to approve or reject */
+  environment_ids: (number)[];
+  /** Whether to approve or reject deployment to the specified environments. */
+  state: "approved" | "rejected";
+  /** A comment to accompany the deployment review */
+  comment: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<(Deployment)[]>
 ```
 
-### `github.actions.listEnvironmentSecrets`
+<sub>`POST /repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments` · `actions/review-pending-deployments-for-run`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}/secrets`
-- **What it does**: List environment secrets
-- **OpenAPI operationId**: `actions/list-environment-secrets`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.reRunWorkflow`
 
-**Inputs**
+Re-run a workflow — [API reference](https://docs.github.com/rest/actions/workflow-runs#re-run-a-workflow)
+
+```ts
+github.actions.reRunWorkflow(input: {
+  /** Whether to enable debug logging for the re-run. */
+  enable_debug_logging?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<EmptyObject>
+```
 
-- Client input type: `{ owner: string; repo: string; environment_name: string; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun` · `actions/re-run-workflow`</sub>
 
-**Outputs**
+## `github.actions.reRunWorkflowFailedJobs`
 
-- Client return type: `{ total_count: number; secrets: ({ name: string; created_at: string; updated_at: string })[] }`
-- OpenAPI response codes: `200`
+Re-run failed jobs from a workflow run — [API reference](https://docs.github.com/rest/actions/workflow-runs#re-run-failed-jobs-from-a-workflow-run)
 
 ```ts
-import github from "@utdk/github";
+github.actions.reRunWorkflowFailedJobs(input: {
+  /** Whether to enable debug logging for the re-run. */
+  enable_debug_logging?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<EmptyObject>
+```
+
+<sub>`POST /repos/{owner}/{repo}/actions/runs/{run_id}/rerun-failed-jobs` · `actions/re-run-workflow-failed-jobs`</sub>
 
-type ActionsListEnvironmentSecretsInput = Parameters<typeof github.actions.listEnvironmentSecrets> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListEnvironmentSecretsOutput = Awaited<ReturnType<typeof github.actions.listEnvironmentSecrets>>;
+## `github.actions.getWorkflowRunUsage`
 
-const input: ActionsListEnvironmentSecretsInput = {} as { owner: string; repo: string; environment_name: string; per_page?: number; page?: number };
-const result: ActionsListEnvironmentSecretsOutput = await github.actions.listEnvironmentSecrets(input);
+Get workflow run usage — [API reference](https://docs.github.com/rest/actions/workflow-runs#get-workflow-run-usage)
 
-// Result shape (from schema): { total_count: number; secrets: ({ name: string; created_at: string; updated_at: string })[] }
+```ts
+github.actions.getWorkflowRunUsage(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the workflow run. */
+  run_id: number;
+}): Promise<WorkflowRunUsage>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/runs/{run_id}/timing` · `actions/get-workflow-run-usage`</sub>
 
-### `github.actions.deleteEnvironmentSecret`
+## `github.actions.listRepoSecrets`
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}`
-- **What it does**: Delete an environment secret
-- **OpenAPI operationId**: `actions/delete-environment-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+List repository secrets — [API reference](https://docs.github.com/rest/actions/secrets#list-repository-secrets)
 
-**Inputs**
+```ts
+github.actions.listRepoSecrets(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; secrets: (ActionsSecret)[] }>
+```
 
-- Client input type: `{ owner: string; repo: string; environment_name: string; secret_name: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/actions/secrets` · `actions/list-repo-secrets`</sub>
 
-**Outputs**
+## `github.actions.deleteRepoSecret`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Delete a repository secret — [API reference](https://docs.github.com/rest/actions/secrets#delete-a-repository-secret)
 
 ```ts
-import github from "@utdk/github";
+github.actions.deleteRepoSecret(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<unknown>
+```
 
-type ActionsDeleteEnvironmentSecretInput = Parameters<typeof github.actions.deleteEnvironmentSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteEnvironmentSecretOutput = Awaited<ReturnType<typeof github.actions.deleteEnvironmentSecret>>;
+<sub>`DELETE /repos/{owner}/{repo}/actions/secrets/{secret_name}` · `actions/delete-repo-secret`</sub>
 
-const input: ActionsDeleteEnvironmentSecretInput = {} as { owner: string; repo: string; environment_name: string; secret_name: string };
-const result: ActionsDeleteEnvironmentSecretOutput = await github.actions.deleteEnvironmentSecret(input);
+## `github.actions.getRepoSecret`
 
-// Result shape (from schema): unknown
+Get a repository secret — [API reference](https://docs.github.com/rest/actions/secrets#get-a-repository-secret)
+
+```ts
+github.actions.getRepoSecret(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<ActionsSecret>
 ```
 
-### `github.actions.getEnvironmentSecret`
+<sub>`GET /repos/{owner}/{repo}/actions/secrets/{secret_name}` · `actions/get-repo-secret`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}`
-- **What it does**: Get an environment secret
-- **OpenAPI operationId**: `actions/get-environment-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.createOrUpdateRepoSecret`
 
-**Inputs**
+Create or update a repository secret — [API reference](https://docs.github.com/rest/actions/secrets#create-or-update-a-repository-secret)
 
-- Client input type: `{ owner: string; repo: string; environment_name: string; secret_name: string }`
-- Client transport options: None
+```ts
+github.actions.createOrUpdateRepoSecret(input: {
+  /** Value for your secret, encrypted with [LibSodium](https://libsodium.gitbook.io/doc/bindings_for_other_languages) using the public key retrieved from the [Get a repository public key](https://docs.github.com/rest/actions/secrets#get-a-repository-public-key) endpoint. */
+  encrypted_value: string;
+  /** ID of the key you used to encrypt the secret. */
+  key_id: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<EmptyObject>
+```
 
-**Outputs**
+<sub>`PUT /repos/{owner}/{repo}/actions/secrets/{secret_name}` · `actions/create-or-update-repo-secret`</sub>
 
-- Client return type: `{ name: string; created_at: string; updated_at: string }`
-- OpenAPI response codes: `200`
+## `github.actions.getRepoPublicKey`
 
+Get a repository public key — [API reference](https://docs.github.com/rest/actions/secrets#get-a-repository-public-key)
+
 ```ts
-import github from "@utdk/github";
+github.actions.getRepoPublicKey(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<ActionsPublicKey>
+```
+
+<sub>`GET /repos/{owner}/{repo}/actions/secrets/public-key` · `actions/get-repo-public-key`</sub>
 
-type ActionsGetEnvironmentSecretInput = Parameters<typeof github.actions.getEnvironmentSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetEnvironmentSecretOutput = Awaited<ReturnType<typeof github.actions.getEnvironmentSecret>>;
+## `github.actions.listRepoVariables`
 
-const input: ActionsGetEnvironmentSecretInput = {} as { owner: string; repo: string; environment_name: string; secret_name: string };
-const result: ActionsGetEnvironmentSecretOutput = await github.actions.getEnvironmentSecret(input);
+List repository variables — [API reference](https://docs.github.com/rest/actions/variables#list-repository-variables)
 
-// Result shape (from schema): { name: string; created_at: string; updated_at: string }
+```ts
+github.actions.listRepoVariables(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 30). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; variables: (ActionsVariable)[] }>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/variables` · `actions/list-repo-variables`</sub>
 
-### `github.actions.createOrUpdateEnvironmentSecret`
+## `github.actions.createRepoVariable`
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}`
-- **What it does**: Create or update an environment secret
-- **OpenAPI operationId**: `actions/create-or-update-environment-secret`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Create a repository variable — [API reference](https://docs.github.com/rest/actions/variables#create-a-repository-variable)
 
-**Inputs**
+```ts
+github.actions.createRepoVariable(input: {
+  /** The name of the variable. */
+  name: string;
+  /** The value of the variable. */
+  value: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<EmptyObject>
+```
 
-- Client input type: `{ encrypted_value: string; key_id: string; owner: string; repo: string; environment_name: string; secret_name: string }`
-- Client transport options: None
+<sub>`POST /repos/{owner}/{repo}/actions/variables` · `actions/create-repo-variable`</sub>
 
-**Outputs**
+## `github.actions.deleteRepoVariable`
 
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`, `204`
+Delete a repository variable — [API reference](https://docs.github.com/rest/actions/variables#delete-a-repository-variable)
 
 ```ts
-import github from "@utdk/github";
+github.actions.deleteRepoVariable(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the variable. */
+  name: string;
+}): Promise<unknown>
+```
 
-type ActionsCreateOrUpdateEnvironmentSecretInput = Parameters<typeof github.actions.createOrUpdateEnvironmentSecret> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateOrUpdateEnvironmentSecretOutput = Awaited<ReturnType<typeof github.actions.createOrUpdateEnvironmentSecret>>;
+<sub>`DELETE /repos/{owner}/{repo}/actions/variables/{name}` · `actions/delete-repo-variable`</sub>
 
-const input: ActionsCreateOrUpdateEnvironmentSecretInput = {} as { encrypted_value: string; key_id: string; owner: string; repo: string; environment_name: string; secret_name: string };
-const result: ActionsCreateOrUpdateEnvironmentSecretOutput = await github.actions.createOrUpdateEnvironmentSecret(input);
+## `github.actions.getRepoVariable`
 
-// Result shape (from schema): { [key: string]: unknown }
+Get a repository variable — [API reference](https://docs.github.com/rest/actions/variables#get-a-repository-variable)
+
+```ts
+github.actions.getRepoVariable(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the variable. */
+  name: string;
+}): Promise<ActionsVariable>
 ```
 
-### `github.actions.getEnvironmentPublicKey`
+<sub>`GET /repos/{owner}/{repo}/actions/variables/{name}` · `actions/get-repo-variable`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}/secrets/public-key`
-- **What it does**: Get an environment public key
-- **OpenAPI operationId**: `actions/get-environment-public-key`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.updateRepoVariable`
 
-**Inputs**
+Update a repository variable — [API reference](https://docs.github.com/rest/actions/variables#update-a-repository-variable)
+
+```ts
+github.actions.updateRepoVariable(input: {
+  /** The name of the variable. */
+  name?: string;
+  /** The value of the variable. */
+  value?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}, options: { params: { name: string } }): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string; environment_name: string }`
-- Client transport options: None
+<sub>`PATCH /repos/{owner}/{repo}/actions/variables/{name}` · `actions/update-repo-variable`</sub>
 
-**Outputs**
+## `github.actions.listRepoWorkflows`
 
-- Client return type: `{ key_id: string; key: string; id?: number; url?: string; title?: string; created_at?: string }`
-- OpenAPI response codes: `200`
+List repository workflows — [API reference](https://docs.github.com/rest/actions/workflows#list-repository-workflows)
 
 ```ts
-import github from "@utdk/github";
+github.actions.listRepoWorkflows(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; workflows: (Workflow)[] }>
+```
+
+<sub>`GET /repos/{owner}/{repo}/actions/workflows` · `actions/list-repo-workflows`</sub>
 
-type ActionsGetEnvironmentPublicKeyInput = Parameters<typeof github.actions.getEnvironmentPublicKey> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetEnvironmentPublicKeyOutput = Awaited<ReturnType<typeof github.actions.getEnvironmentPublicKey>>;
+## `github.actions.getWorkflow`
 
-const input: ActionsGetEnvironmentPublicKeyInput = {} as { owner: string; repo: string; environment_name: string };
-const result: ActionsGetEnvironmentPublicKeyOutput = await github.actions.getEnvironmentPublicKey(input);
+Get a workflow — [API reference](https://docs.github.com/rest/actions/workflows#get-a-workflow)
 
-// Result shape (from schema): { key_id: string; key: string; id?: number; url?: string; title?: string; created_at?: string }
+```ts
+github.actions.getWorkflow(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the workflow. You can also pass the workflow file name as a string. */
+  workflow_id: number | string;
+}): Promise<Workflow>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}` · `actions/get-workflow`</sub>
 
-### `github.actions.listEnvironmentVariables`
+## `github.actions.disableWorkflow`
 
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}/variables`
-- **What it does**: List environment variables
-- **OpenAPI operationId**: `actions/list-environment-variables`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Disable a workflow — [API reference](https://docs.github.com/rest/actions/workflows#disable-a-workflow)
 
-**Inputs**
+```ts
+github.actions.disableWorkflow(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the workflow. You can also pass the workflow file name as a string. */
+  workflow_id: number | string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string; environment_name: string; per_page?: number; page?: number }`
-- Client transport options: None
+<sub>`PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/disable` · `actions/disable-workflow`</sub>
 
-**Outputs**
+## `github.actions.createWorkflowDispatch`
 
-- Client return type: `{ total_count: number; variables: ({ name: string; value: string; created_at: string; updated_at: string })[] }`
-- OpenAPI response codes: `200`
+Create a workflow dispatch event — [API reference](https://docs.github.com/rest/actions/workflows#create-a-workflow-dispatch-event)
 
 ```ts
-import github from "@utdk/github";
+github.actions.createWorkflowDispatch(input: {
+  /** The git reference for the workflow. The reference can be a branch or tag name. */
+  ref: string;
+  /** Input keys and values configured in the workflow file. The maximum number of properties is 25. Any default properties configured in the workflow file will be used when `inputs` are omitted. */
+  inputs?: { [key: string]: unknown };
+  /** Whether the response should include the workflow run ID and URLs. */
+  return_run_details?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the workflow. You can also pass the workflow file name as a string. */
+  workflow_id: number | string;
+}): Promise<WorkflowDispatchResponse>
+```
 
-type ActionsListEnvironmentVariablesInput = Parameters<typeof github.actions.listEnvironmentVariables> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsListEnvironmentVariablesOutput = Awaited<ReturnType<typeof github.actions.listEnvironmentVariables>>;
+<sub>`POST /repos/{owner}/{repo}/actions/workflows/{workflow_id}/dispatches` · `actions/create-workflow-dispatch`</sub>
 
-const input: ActionsListEnvironmentVariablesInput = {} as { owner: string; repo: string; environment_name: string; per_page?: number; page?: number };
-const result: ActionsListEnvironmentVariablesOutput = await github.actions.listEnvironmentVariables(input);
+## `github.actions.enableWorkflow`
 
-// Result shape (from schema): { total_count: number; variables: ({ name: string; value: string; created_at: string; updated_at: string })[] }
+Enable a workflow — [API reference](https://docs.github.com/rest/actions/workflows#enable-a-workflow)
+
+```ts
+github.actions.enableWorkflow(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the workflow. You can also pass the workflow file name as a string. */
+  workflow_id: number | string;
+}): Promise<unknown>
 ```
 
-### `github.actions.createEnvironmentVariable`
+<sub>`PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/enable` · `actions/enable-workflow`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/environments/{environment_name}/variables`
-- **What it does**: Create an environment variable
-- **OpenAPI operationId**: `actions/create-environment-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.listWorkflowRuns`
 
-**Inputs**
+List workflow runs for a workflow — [API reference](https://docs.github.com/rest/actions/workflow-runs#list-workflow-runs-for-a-workflow)
 
-- Client input type: `{ name: string; value: string; owner: string; repo: string; environment_name: string }`
-- Client transport options: None
+```ts
+github.actions.listWorkflowRuns(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the workflow. You can also pass the workflow file name as a string. */
+  workflow_id: number | string;
+  /** Returns someone's workflow runs. Use the login for the user who created the `push` associated with the check suite or workflow run. */
+  actor?: string;
+  /** Returns workflow runs associated with a branch. Use the name of the branch of the `push`. */
+  branch?: string;
+  /** Returns workflow run triggered by the event you specify. For example, `push`, `pull_request` or `issue`. For more information, see "[Events that trigger workflows](https://docs.github.com/actions/automating-your-workflow-with-github-actions/events-that-trigger-workflows)." */
+  event?: string;
+  /** Returns workflow runs with the check run `status` or `conclusion` that you specify. For example, a conclusion can be `success` or a status can be `in_progress`. Only GitHub Actions can set a status of `waiting`, `pending`, or `requested`. */
+  status?: "completed" | "action_required" | "cancelled" | "failure" | "neutral" | "skipped" | "stale" | "success" | "timed_out" | "in_progress" | "queued" | "requested" | "waiting" | "pending";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** Returns workflow runs created within the given date-time range. For more information on the syntax, see "[Understanding the search syntax](https://docs.github.com/search-github/getting-started-with-searching-on-github/understanding-the-search-syntax#query-for-dates)." */
+  created?: string;
+  /** If `true` pull requests are omitted from the response (empty array). */
+  exclude_pull_requests?: boolean;
+  /** Returns workflow runs with the `check_suite_id` that you specify. */
+  check_suite_id?: number;
+  /** Only returns workflow runs that are associated with the specified `head_sha`. */
+  head_sha?: string;
+}): Promise<{ total_count: number; workflow_runs: (WorkflowRun)[] }>
+```
 
-**Outputs**
+<sub>`GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/runs` · `actions/list-workflow-runs`</sub>
 
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `201`
+## `github.actions.getWorkflowUsage`
 
+Get workflow usage — [API reference](https://docs.github.com/rest/actions/workflows#get-workflow-usage)
+
 ```ts
-import github from "@utdk/github";
+github.actions.getWorkflowUsage(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The ID of the workflow. You can also pass the workflow file name as a string. */
+  workflow_id: number | string;
+}): Promise<WorkflowUsage>
+```
+
+<sub>`GET /repos/{owner}/{repo}/actions/workflows/{workflow_id}/timing` · `actions/get-workflow-usage`</sub>
 
-type ActionsCreateEnvironmentVariableInput = Parameters<typeof github.actions.createEnvironmentVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsCreateEnvironmentVariableOutput = Awaited<ReturnType<typeof github.actions.createEnvironmentVariable>>;
+## `github.actions.listEnvironmentSecrets`
 
-const input: ActionsCreateEnvironmentVariableInput = {} as { name: string; value: string; owner: string; repo: string; environment_name: string };
-const result: ActionsCreateEnvironmentVariableOutput = await github.actions.createEnvironmentVariable(input);
+List environment secrets — [API reference](https://docs.github.com/rest/actions/secrets#list-environment-secrets)
 
-// Result shape (from schema): { [key: string]: unknown }
+```ts
+github.actions.listEnvironmentSecrets(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; secrets: (ActionsSecret)[] }>
 ```
+
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}/secrets` · `actions/list-environment-secrets`</sub>
 
-### `github.actions.deleteEnvironmentVariable`
+## `github.actions.deleteEnvironmentSecret`
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}`
-- **What it does**: Delete an environment variable
-- **OpenAPI operationId**: `actions/delete-environment-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Delete an environment secret — [API reference](https://docs.github.com/rest/actions/secrets#delete-an-environment-secret)
 
-**Inputs**
+```ts
+github.actions.deleteEnvironmentSecret(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ owner: string; repo: string; name: string; environment_name: string }`
-- Client transport options: None
+<sub>`DELETE /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}` · `actions/delete-environment-secret`</sub>
 
-**Outputs**
+## `github.actions.getEnvironmentSecret`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Get an environment secret — [API reference](https://docs.github.com/rest/actions/secrets#get-an-environment-secret)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getEnvironmentSecret(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<ActionsSecret>
+```
 
-type ActionsDeleteEnvironmentVariableInput = Parameters<typeof github.actions.deleteEnvironmentVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsDeleteEnvironmentVariableOutput = Awaited<ReturnType<typeof github.actions.deleteEnvironmentVariable>>;
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}` · `actions/get-environment-secret`</sub>
 
-const input: ActionsDeleteEnvironmentVariableInput = {} as { owner: string; repo: string; name: string; environment_name: string };
-const result: ActionsDeleteEnvironmentVariableOutput = await github.actions.deleteEnvironmentVariable(input);
+## `github.actions.createOrUpdateEnvironmentSecret`
 
-// Result shape (from schema): unknown
+Create or update an environment secret — [API reference](https://docs.github.com/rest/actions/secrets#create-or-update-an-environment-secret)
+
+```ts
+github.actions.createOrUpdateEnvironmentSecret(input: {
+  /** Value for your secret, encrypted with [LibSodium](https://libsodium.gitbook.io/doc/bindings_for_other_languages) using the public key retrieved from the [Get an environment public key](https://docs.github.com/rest/actions/secrets#get-an-environment-public-key) endpoint. */
+  encrypted_value: string;
+  /** ID of the key you used to encrypt the secret. */
+  key_id: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The name of the secret. */
+  secret_name: string;
+}): Promise<EmptyObject>
 ```
 
-### `github.actions.getEnvironmentVariable`
+<sub>`PUT /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}` · `actions/create-or-update-environment-secret`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}`
-- **What it does**: Get an environment variable
-- **OpenAPI operationId**: `actions/get-environment-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.actions.getEnvironmentPublicKey`
 
-**Inputs**
+Get an environment public key — [API reference](https://docs.github.com/rest/actions/secrets#get-an-environment-public-key)
+
+```ts
+github.actions.getEnvironmentPublicKey(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+}): Promise<ActionsPublicKey>
+```
 
-- Client input type: `{ owner: string; repo: string; environment_name: string; name: string }`
-- Client transport options: None
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}/secrets/public-key` · `actions/get-environment-public-key`</sub>
 
-**Outputs**
+## `github.actions.listEnvironmentVariables`
 
-- Client return type: `{ name: string; value: string; created_at: string; updated_at: string }`
-- OpenAPI response codes: `200`
+List environment variables — [API reference](https://docs.github.com/rest/actions/variables#list-environment-variables)
 
 ```ts
-import github from "@utdk/github";
+github.actions.listEnvironmentVariables(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The number of results per page (max 30). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<{ total_count: number; variables: (ActionsVariable)[] }>
+```
+
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}/variables` · `actions/list-environment-variables`</sub>
 
-type ActionsGetEnvironmentVariableInput = Parameters<typeof github.actions.getEnvironmentVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsGetEnvironmentVariableOutput = Awaited<ReturnType<typeof github.actions.getEnvironmentVariable>>;
+## `github.actions.createEnvironmentVariable`
 
-const input: ActionsGetEnvironmentVariableInput = {} as { owner: string; repo: string; environment_name: string; name: string };
-const result: ActionsGetEnvironmentVariableOutput = await github.actions.getEnvironmentVariable(input);
+Create an environment variable — [API reference](https://docs.github.com/rest/actions/variables#create-an-environment-variable)
 
-// Result shape (from schema): { name: string; value: string; created_at: string; updated_at: string }
+```ts
+github.actions.createEnvironmentVariable(input: {
+  /** The name of the variable. */
+  name: string;
+  /** The value of the variable. */
+  value: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+}): Promise<EmptyObject>
 ```
+
+<sub>`POST /repos/{owner}/{repo}/environments/{environment_name}/variables` · `actions/create-environment-variable`</sub>
 
-### `github.actions.updateEnvironmentVariable`
+## `github.actions.deleteEnvironmentVariable`
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}`
-- **What it does**: Update an environment variable
-- **OpenAPI operationId**: `actions/update-environment-variable`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: `{ params: { name: string } }`
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+Delete an environment variable — [API reference](https://docs.github.com/rest/actions/variables#delete-an-environment-variable)
 
-**Inputs**
+```ts
+github.actions.deleteEnvironmentVariable(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the variable. */
+  name: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+}): Promise<unknown>
+```
 
-- Client input type: `{ name?: string; value?: string; owner: string; repo: string; environment_name: string }`
-- Client transport options: `{ params: { name: string } }`
+<sub>`DELETE /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}` · `actions/delete-environment-variable`</sub>
 
-**Outputs**
+## `github.actions.getEnvironmentVariable`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Get an environment variable — [API reference](https://docs.github.com/rest/actions/variables#get-an-environment-variable)
 
 ```ts
-import github from "@utdk/github";
+github.actions.getEnvironmentVariable(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+  /** The name of the variable. */
+  name: string;
+}): Promise<ActionsVariable>
+```
 
-type ActionsUpdateEnvironmentVariableInput = Parameters<typeof github.actions.updateEnvironmentVariable> extends [infer T, ...unknown[]] ? T : undefined;
-type ActionsUpdateEnvironmentVariableOutput = Awaited<ReturnType<typeof github.actions.updateEnvironmentVariable>>;
-type ActionsUpdateEnvironmentVariableOptions = Parameters<typeof github.actions.updateEnvironmentVariable> extends [unknown, infer T, ...unknown[]] ? T : undefined;
+<sub>`GET /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}` · `actions/get-environment-variable`</sub>
 
-const input: ActionsUpdateEnvironmentVariableInput = {} as { name?: string; value?: string; owner: string; repo: string; environment_name: string };
-const options: ActionsUpdateEnvironmentVariableOptions = {} as { params: { name: string } };
-const result: ActionsUpdateEnvironmentVariableOutput = await github.actions.updateEnvironmentVariable(input, options);
+## `github.actions.updateEnvironmentVariable`
 
-// Result shape (from schema): unknown
+Update an environment variable — [API reference](https://docs.github.com/rest/actions/variables#update-an-environment-variable)
+
+```ts
+github.actions.updateEnvironmentVariable(input: {
+  /** The name of the variable. */
+  name?: string;
+  /** The value of the variable. */
+  value?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
+  environment_name: string;
+}, options: { params: { name: string } }): Promise<unknown>
 ```
+
+<sub>`PATCH /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}` · `actions/update-environment-variable`</sub>
 
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

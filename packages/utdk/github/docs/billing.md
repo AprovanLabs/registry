@@ -1,453 +1,305 @@
 # Billing
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.billing.getGithubBillingAiCreditUsageReportOrg`
-
-- **HTTP**: `GET /organizations/{org}/settings/billing/ai_credit/usage`
-- **What it does**: Get billing AI credit usage report for an organization
-- **OpenAPI operationId**: `billing/get-github-billing-ai-credit-usage-report-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `404`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; year?: number; month?: number; day?: number; user?: string; model?: string; product?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ timePeriod: { year: number; month?: number; day?: number }; organization: string; user?: string; product?: string; model?: string; usageItems: ({ product: string; sku: string; model: string; unitType: string; pricePer...`
-- OpenAPI response codes: `200`, `400`, `403`, `404`, `500`, `503`
+13 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type BillingGetGithubBillingAiCreditUsageReportOrgInput = Parameters<typeof github.billing.getGithubBillingAiCreditUsageReportOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingGetGithubBillingAiCreditUsageReportOrgOutput = Awaited<ReturnType<typeof github.billing.getGithubBillingAiCreditUsageReportOrg>>;
-
-const input: BillingGetGithubBillingAiCreditUsageReportOrgInput = {} as { org: string; year?: number; month?: number; day?: number; user?: string; model?: string; product?: string };
-const result: BillingGetGithubBillingAiCreditUsageReportOrgOutput = await github.billing.getGithubBillingAiCreditUsageReportOrg(input);
-
-// Result shape (from schema): { timePeriod: { year: number; month?: number; day?: number }; organization: string; user?: string; product?: string; model?: string; usageItems: ({ product: string; sku: string; model: string; unitType: string; pricePer...
 ```
 
-### `github.billing.getAllBudgetsOrg`
+## `github.billing.getGithubBillingAiCreditUsageReportOrg`
 
-- **HTTP**: `GET /organizations/{org}/settings/billing/budgets`
-- **What it does**: Get all budgets for an organization
-- **OpenAPI operationId**: `billing/get-all-budgets-org`
-- **Path params**: None
-- **Query params**: `page`, `per_page`, `scope`, `user`
-- **Response codes**: `200`, `403`, `404`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; page?: number; per_page?: number; scope?: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_customer" | "user"; user?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ budgets: ({ id: string; budget_type: "SkuPricing" | "ProductPricing"; budget_amount: number; prevent_further_usage: boolean; budget_scope: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_cus...`
-- OpenAPI response codes: `200`, `403`, `404`, `500`
+Get billing AI credit usage report for an organization — [API reference](https://docs.github.com/rest/billing/usage#get-billing-ai-credit-usage-report-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingGetAllBudgetsOrgInput = Parameters<typeof github.billing.getAllBudgetsOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingGetAllBudgetsOrgOutput = Awaited<ReturnType<typeof github.billing.getAllBudgetsOrg>>;
-
-const input: BillingGetAllBudgetsOrgInput = {} as { org: string; page?: number; per_page?: number; scope?: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_customer" | "user"; user?: string };
-const result: BillingGetAllBudgetsOrgOutput = await github.billing.getAllBudgetsOrg(input);
-
-// Result shape (from schema): { budgets: ({ id: string; budget_type: "SkuPricing" | "ProductPricing"; budget_amount: number; prevent_further_usage: boolean; budget_scope: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_cus...
+github.billing.getGithubBillingAiCreditUsageReportOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** If specified, only return results for a single year. The value of `year` is an integer with four digits representing a year. For example, `2025`. Default value is the current year. */
+  year?: number;
+  /** If specified, only return results for a single month. The value of `month` is an integer between `1` and `12`. Default value is the current month. If no year is specified the default `year` is used. */
+  month?: number;
+  /** If specified, only return results for a single day. The value of `day` is an integer between `1` and `31`. If no `year` or `month` is specified, the default `year` and `month` are used. */
+  day?: number;
+  /** The user name to query usage for. The name is not case sensitive. */
+  user?: string;
+  /** The model name to query usage for. The name is not case sensitive. */
+  model?: string;
+  /** The product name to query usage for. The name is not case sensitive. */
+  product?: string;
+}): Promise<BillingAiCreditUsageReportOrg>
 ```
 
-### `github.billing.createOrganizationBudget`
+<sub>`GET /organizations/{org}/settings/billing/ai_credit/usage` · `billing/get-github-billing-ai-credit-usage-report-org`</sub>
 
-- **HTTP**: `POST /organizations/{org}/settings/billing/budgets`
-- **What it does**: Create a budget for an organization
-- **OpenAPI operationId**: `billing/create-organization-budget`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `401`, `403`, `404`, `422`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.getAllBudgetsOrg`
 
-**Inputs**
-
-- Client input type: `{ budget_amount?: number; prevent_further_usage?: boolean; budget_alerting?: { will_alert?: boolean; alert_recipients?: (string)[] }; budget_scope?: "organization" | "repository" | "multi_user_customer" | "user"; budget_entity_name?: string; budget_type?: "ProductPricing" | "SkuPricing"; budget_product_sku?: string; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ message: string; budget: { id?: string; budget_scope?: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_customer" | "user"; budget_entity_name?: string; budget_amount?: number; prevent_furthe...`
-- OpenAPI response codes: `200`, `400`, `401`, `403`, `404`, `422`, `500`
+Get all budgets for an organization — [API reference](https://docs.github.com/rest/billing/budgets#get-all-budgets-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingCreateOrganizationBudgetInput = Parameters<typeof github.billing.createOrganizationBudget> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingCreateOrganizationBudgetOutput = Awaited<ReturnType<typeof github.billing.createOrganizationBudget>>;
-
-const input: BillingCreateOrganizationBudgetInput = {} as { budget_amount?: number; prevent_further_usage?: boolean; budget_alerting?: { will_alert?: boolean; alert_recipients?: (string)[] }; budget_scope?: "organization" | "repository" | "multi_user_customer" | "user"; budget_entity_name?: string; budget_type?: "ProductPricing" | "SkuPricing"; budget_product_sku?: string; org: string };
-const result: BillingCreateOrganizationBudgetOutput = await github.billing.createOrganizationBudget(input);
-
-// Result shape (from schema): { message: string; budget: { id?: string; budget_scope?: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_customer" | "user"; budget_entity_name?: string; budget_amount?: number; prevent_furthe...
+github.billing.getAllBudgetsOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The page number of the results to fetch. */
+  page?: number;
+  /** The number of results per page (max 100). */
+  per_page?: number;
+  /** Filter budgets by scope type.  - `organization`: Budgets scoped to the organization. - `repository`: Budgets scoped to a repository. - `multi_user_customer`: Universal budgets that apply to all users in the organization. - `user`: Budgets scoped to an individual user. */
+  scope?: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_customer" | "user";
+  /** Filter consumed amount details for budgets by the specified user login. */
+  user?: string;
+}): Promise<GetAllBudgets>
 ```
 
-### `github.billing.deleteBudgetOrg`
+<sub>`GET /organizations/{org}/settings/billing/budgets` · `billing/get-all-budgets-org`</sub>
 
-- **HTTP**: `DELETE /organizations/{org}/settings/billing/budgets/{budget_id}`
-- **What it does**: Delete a budget for an organization
-- **OpenAPI operationId**: `billing/delete-budget-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `404`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.createOrganizationBudget`
 
-**Inputs**
-
-- Client input type: `{ org: string; budget_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ message: string; id: string }`
-- OpenAPI response codes: `200`, `400`, `403`, `404`, `500`, `503`
+Create a budget for an organization — [API reference](https://docs.github.com/rest/billing/budgets#create-a-budget-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingDeleteBudgetOrgInput = Parameters<typeof github.billing.deleteBudgetOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingDeleteBudgetOrgOutput = Awaited<ReturnType<typeof github.billing.deleteBudgetOrg>>;
-
-const input: BillingDeleteBudgetOrgInput = {} as { org: string; budget_id: string };
-const result: BillingDeleteBudgetOrgOutput = await github.billing.deleteBudgetOrg(input);
-
-// Result shape (from schema): { message: string; id: string }
+github.billing.createOrganizationBudget(input: {
+  /** The budget amount in whole dollars. For license-based products, this represents the number of licenses. */
+  budget_amount?: number;
+  /** Whether to prevent additional spending once the budget is exceeded. For `user` and `multi_user_customer` scopes, this must be `true`. */
+  prevent_further_usage?: boolean;
+  budget_alerting?: { will_alert?: boolean; alert_recipients?: (string)[] };
+  /** The scope of the budget for this organization.  - `organization`: Apply the budget to the organization. - `repository`: Apply the budget to a specific repository in the organization. - `multi_user_customer`: Apply a universal budget to all users in the organization. - `user`: Apply the budget to a single user in the organization.  `user` and `multi_user_customer` scopes are only supported when `budget_product_sku` is `ai_credits` or `premium_requests`. */
+  budget_scope?: "organization" | "repository" | "multi_user_customer" | "user";
+  /** The name of the entity to apply the budget to */
+  budget_entity_name?: string;
+  /** The type of pricing model used by the budget. Determines how `budget_product_sku` is interpreted.  - `BundlePricing`: Covers all AI credit SKUs. Set `budget_product_sku` to `ai_credits`. - `ProductPricing`: Covers all SKUs that belong to a product. Set `budget_product_sku` to a product such as `actions` or `packages`. - `SkuPricing`: Covers a single, specific SKU. Set `budget_product_sku` to a SKU such as `actions_linux`. */
+  budget_type?: "BundlePricing" | "ProductPricing" | "SkuPricing";
+  /** A single product or SKU that will be covered in the budget */
+  budget_product_sku?: string;
+  /** The username of the user for `user` scope budgets. This field is required when `budget_scope` is `user`. */
+  user?: string;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<CreateBudget>
 ```
 
-### `github.billing.getBudgetOrg`
+<sub>`POST /organizations/{org}/settings/billing/budgets` · `billing/create-organization-budget`</sub>
 
-- **HTTP**: `GET /organizations/{org}/settings/billing/budgets/{budget_id}`
-- **What it does**: Get a budget by ID for an organization
-- **OpenAPI operationId**: `billing/get-budget-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `404`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.deleteBudgetOrg`
 
-**Inputs**
-
-- Client input type: `{ org: string; budget_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; budget_scope: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_customer" | "user"; budget_entity_name: string; user?: string; budget_amount: number; prevent_further_usage: boolean...`
-- OpenAPI response codes: `200`, `400`, `403`, `404`, `500`, `503`
+Delete a budget for an organization — [API reference](https://docs.github.com/rest/billing/budgets#delete-a-budget-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingGetBudgetOrgInput = Parameters<typeof github.billing.getBudgetOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingGetBudgetOrgOutput = Awaited<ReturnType<typeof github.billing.getBudgetOrg>>;
-
-const input: BillingGetBudgetOrgInput = {} as { org: string; budget_id: string };
-const result: BillingGetBudgetOrgOutput = await github.billing.getBudgetOrg(input);
-
-// Result shape (from schema): { id: string; budget_scope: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_customer" | "user"; budget_entity_name: string; user?: string; budget_amount: number; prevent_further_usage: boolean...
+github.billing.deleteBudgetOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The ID corresponding to the budget. */
+  budget_id: string;
+}): Promise<DeleteBudget>
 ```
 
-### `github.billing.updateBudgetOrg`
+<sub>`DELETE /organizations/{org}/settings/billing/budgets/{budget_id}` · `billing/delete-budget-org`</sub>
 
-- **HTTP**: `PATCH /organizations/{org}/settings/billing/budgets/{budget_id}`
-- **What it does**: Update a budget for an organization
-- **OpenAPI operationId**: `billing/update-budget-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `401`, `403`, `404`, `422`, `500`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.getBudgetOrg`
 
-**Inputs**
-
-- Client input type: `{ budget_amount?: number; prevent_further_usage?: boolean; budget_alerting?: { will_alert?: boolean; alert_recipients?: (string)[] }; budget_scope?: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_customer" | "user"; budget_entity_name?: string; budget_type?: "ProductPricing" | "SkuPricing"; budget_product_sku?: string; org: string; budget_id: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ message: string; budget: { id?: string; budget_scope?: "enterprise" | "organization" | "repository" | "cost_center"; budget_entity_name?: string; budget_amount?: number; prevent_further_usage?: boolean; budget_product...`
-- OpenAPI response codes: `200`, `400`, `401`, `403`, `404`, `422`, `500`
+Get a budget by ID for an organization — [API reference](https://docs.github.com/rest/billing/budgets#get-a-budget-by-id-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingUpdateBudgetOrgInput = Parameters<typeof github.billing.updateBudgetOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingUpdateBudgetOrgOutput = Awaited<ReturnType<typeof github.billing.updateBudgetOrg>>;
-
-const input: BillingUpdateBudgetOrgInput = {} as { budget_amount?: number; prevent_further_usage?: boolean; budget_alerting?: { will_alert?: boolean; alert_recipients?: (string)[] }; budget_scope?: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_customer" | "user"; budget_entity_name?: string; budget_type?: "ProductPricing" | "SkuPricing"; budget_product_sku?: string; org: string; budget_id: string };
-const result: BillingUpdateBudgetOrgOutput = await github.billing.updateBudgetOrg(input);
-
-// Result shape (from schema): { message: string; budget: { id?: string; budget_scope?: "enterprise" | "organization" | "repository" | "cost_center"; budget_entity_name?: string; budget_amount?: number; prevent_further_usage?: boolean; budget_product...
+github.billing.getBudgetOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The ID corresponding to the budget. */
+  budget_id: string;
+}): Promise<GetBudget>
 ```
 
-### `github.billing.getGithubBillingPremiumRequestUsageReportOrg`
+<sub>`GET /organizations/{org}/settings/billing/budgets/{budget_id}` · `billing/get-budget-org`</sub>
 
-- **HTTP**: `GET /organizations/{org}/settings/billing/premium_request/usage`
-- **What it does**: Get billing premium request usage report for an organization
-- **OpenAPI operationId**: `billing/get-github-billing-premium-request-usage-report-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `404`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.updateBudgetOrg`
 
-**Inputs**
-
-- Client input type: `{ org: string; year?: number; month?: number; day?: number; user?: string; model?: string; product?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ timePeriod: { year: number; month?: number; day?: number }; organization: string; user?: string; product?: string; model?: string; usageItems: ({ product: string; sku: string; model: string; unitType: string; pricePer...`
-- OpenAPI response codes: `200`, `400`, `403`, `404`, `500`, `503`
+Update a budget for an organization — [API reference](https://docs.github.com/rest/billing/budgets#update-a-budget-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingGetGithubBillingPremiumRequestUsageReportOrgInput = Parameters<typeof github.billing.getGithubBillingPremiumRequestUsageReportOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingGetGithubBillingPremiumRequestUsageReportOrgOutput = Awaited<ReturnType<typeof github.billing.getGithubBillingPremiumRequestUsageReportOrg>>;
-
-const input: BillingGetGithubBillingPremiumRequestUsageReportOrgInput = {} as { org: string; year?: number; month?: number; day?: number; user?: string; model?: string; product?: string };
-const result: BillingGetGithubBillingPremiumRequestUsageReportOrgOutput = await github.billing.getGithubBillingPremiumRequestUsageReportOrg(input);
-
-// Result shape (from schema): { timePeriod: { year: number; month?: number; day?: number }; organization: string; user?: string; product?: string; model?: string; usageItems: ({ product: string; sku: string; model: string; unitType: string; pricePer...
+github.billing.updateBudgetOrg(input: {
+  /** The budget amount in whole dollars. For license-based products, this represents the number of licenses. */
+  budget_amount?: number;
+  /** Whether to prevent additional spending once the budget is exceeded. For budgets with `user` or `multi_user_customer` scope, this must remain `true`. */
+  prevent_further_usage?: boolean;
+  budget_alerting?: { will_alert?: boolean; alert_recipients?: (string)[] };
+  /** The scope of the budget for this organization.  - `organization`: Apply the budget to the organization. - `repository`: Apply the budget to a specific repository in the organization. - `multi_user_customer`: Apply a universal budget to all users in the organization. - `user`: Apply the budget to a single user in the organization. */
+  budget_scope?: "enterprise" | "organization" | "repository" | "cost_center" | "multi_user_customer" | "user";
+  /** The name of the entity to apply the budget to */
+  budget_entity_name?: string;
+  /** The type of pricing model used by the budget. Determines how `budget_product_sku` is interpreted.  - `BundlePricing`: Covers all AI credit SKUs. Set `budget_product_sku` to `ai_credits`. - `ProductPricing`: Covers all SKUs that belong to a product. Set `budget_product_sku` to a product such as `actions` or `packages`. - `SkuPricing`: Covers a single, specific SKU. Set `budget_product_sku` to a SKU such as `actions_linux`. */
+  budget_type?: "BundlePricing" | "ProductPricing" | "SkuPricing";
+  /** A single product or SKU that will be covered in the budget */
+  budget_product_sku?: string;
+  /** The username of the user for `user` scope budgets. */
+  user?: string;
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The ID corresponding to the budget. */
+  budget_id: string;
+}): Promise<UpdateBudget>
 ```
 
-### `github.billing.getGithubBillingUsageReportOrg`
+<sub>`PATCH /organizations/{org}/settings/billing/budgets/{budget_id}` · `billing/update-budget-org`</sub>
 
-- **HTTP**: `GET /organizations/{org}/settings/billing/usage`
-- **What it does**: Get billing usage report for an organization
-- **OpenAPI operationId**: `billing/get-github-billing-usage-report-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.getGithubBillingPremiumRequestUsageReportOrg`
 
-**Inputs**
-
-- Client input type: `{ org: string; year?: number; month?: number; day?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ usageItems?: ({ date: string; product: string; sku: string; quantity: number; unitType: string; pricePerUnit: number; grossAmount: number; discountAmount: number; netAmount: number; organizationName: string; repositor...`
-- OpenAPI response codes: `200`, `400`, `403`, `500`, `503`
+Get billing premium request usage report for an organization — [API reference](https://docs.github.com/rest/billing/usage#get-billing-premium-request-usage-report-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingGetGithubBillingUsageReportOrgInput = Parameters<typeof github.billing.getGithubBillingUsageReportOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingGetGithubBillingUsageReportOrgOutput = Awaited<ReturnType<typeof github.billing.getGithubBillingUsageReportOrg>>;
-
-const input: BillingGetGithubBillingUsageReportOrgInput = {} as { org: string; year?: number; month?: number; day?: number };
-const result: BillingGetGithubBillingUsageReportOrgOutput = await github.billing.getGithubBillingUsageReportOrg(input);
-
-// Result shape (from schema): { usageItems?: ({ date: string; product: string; sku: string; quantity: number; unitType: string; pricePerUnit: number; grossAmount: number; discountAmount: number; netAmount: number; organizationName: string; repositor...
+github.billing.getGithubBillingPremiumRequestUsageReportOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** If specified, only return results for a single year. The value of `year` is an integer with four digits representing a year. For example, `2025`. Default value is the current year. */
+  year?: number;
+  /** If specified, only return results for a single month. The value of `month` is an integer between `1` and `12`. Default value is the current month. If no year is specified the default `year` is used. */
+  month?: number;
+  /** If specified, only return results for a single day. The value of `day` is an integer between `1` and `31`. If no `year` or `month` is specified, the default `year` and `month` are used. */
+  day?: number;
+  /** The user name to query usage for. The name is not case sensitive. */
+  user?: string;
+  /** The model name to query usage for. The name is not case sensitive. */
+  model?: string;
+  /** The product name to query usage for. The name is not case sensitive. */
+  product?: string;
+}): Promise<BillingPremiumRequestUsageReportOrg>
 ```
 
-### `github.billing.getGithubBillingUsageSummaryReportOrg`
+<sub>`GET /organizations/{org}/settings/billing/premium_request/usage` · `billing/get-github-billing-premium-request-usage-report-org`</sub>
 
-- **HTTP**: `GET /organizations/{org}/settings/billing/usage/summary`
-- **What it does**: Get billing usage summary for an organization
-- **OpenAPI operationId**: `billing/get-github-billing-usage-summary-report-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.getGithubBillingUsageReportOrg`
 
-**Inputs**
-
-- Client input type: `{ org: string; year?: number; month?: number; day?: number; repository?: string; product?: string; sku?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ timePeriod: { year: number; month?: number; day?: number }; organization: string; repository?: string; product?: string; sku?: string; usageItems: ({ product: string; sku: string; unitType: string; pricePerUnit: numbe...`
-- OpenAPI response codes: `200`, `400`, `403`, `500`, `503`
+Get billing usage report for an organization — [API reference](https://docs.github.com/rest/billing/usage#get-billing-usage-report-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingGetGithubBillingUsageSummaryReportOrgInput = Parameters<typeof github.billing.getGithubBillingUsageSummaryReportOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingGetGithubBillingUsageSummaryReportOrgOutput = Awaited<ReturnType<typeof github.billing.getGithubBillingUsageSummaryReportOrg>>;
-
-const input: BillingGetGithubBillingUsageSummaryReportOrgInput = {} as { org: string; year?: number; month?: number; day?: number; repository?: string; product?: string; sku?: string };
-const result: BillingGetGithubBillingUsageSummaryReportOrgOutput = await github.billing.getGithubBillingUsageSummaryReportOrg(input);
-
-// Result shape (from schema): { timePeriod: { year: number; month?: number; day?: number }; organization: string; repository?: string; product?: string; sku?: string; usageItems: ({ product: string; sku: string; unitType: string; pricePerUnit: numbe...
+github.billing.getGithubBillingUsageReportOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** If specified, only return results for a single year. The value of `year` is an integer with four digits representing a year. For example, `2025`. Default value is the current year. */
+  year?: number;
+  /** If specified, only return results for a single month. The value of `month` is an integer between `1` and `12`. If no year is specified the default `year` is used. */
+  month?: number;
+  /** If specified, only return results for a single day. The value of `day` is an integer between `1` and `31`. If no `year` or `month` is specified, the default `year` and `month` are used. */
+  day?: number;
+}): Promise<BillingUsageReport>
 ```
 
-### `github.billing.getGithubBillingAiCreditUsageReportUser`
+<sub>`GET /organizations/{org}/settings/billing/usage` · `billing/get-github-billing-usage-report-org`</sub>
 
-- **HTTP**: `GET /users/{username}/settings/billing/ai_credit/usage`
-- **What it does**: Get billing AI credit usage report for a user
-- **OpenAPI operationId**: `billing/get-github-billing-ai-credit-usage-report-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `404`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.getGithubBillingUsageSummaryReportOrg`
 
-**Inputs**
-
-- Client input type: `{ username: string; year?: number; month?: number; day?: number; model?: string; product?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ timePeriod: { year: number; month?: number; day?: number }; user: string; product?: string; model?: string; usageItems: ({ product: string; sku: string; model: string; unitType: string; pricePerUnit: number; grossQuan...`
-- OpenAPI response codes: `200`, `400`, `403`, `404`, `500`, `503`
+Get billing usage summary for an organization — [API reference](https://docs.github.com/rest/billing/usage#get-billing-usage-summary-for-an-organization)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingGetGithubBillingAiCreditUsageReportUserInput = Parameters<typeof github.billing.getGithubBillingAiCreditUsageReportUser> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingGetGithubBillingAiCreditUsageReportUserOutput = Awaited<ReturnType<typeof github.billing.getGithubBillingAiCreditUsageReportUser>>;
-
-const input: BillingGetGithubBillingAiCreditUsageReportUserInput = {} as { username: string; year?: number; month?: number; day?: number; model?: string; product?: string };
-const result: BillingGetGithubBillingAiCreditUsageReportUserOutput = await github.billing.getGithubBillingAiCreditUsageReportUser(input);
-
-// Result shape (from schema): { timePeriod: { year: number; month?: number; day?: number }; user: string; product?: string; model?: string; usageItems: ({ product: string; sku: string; model: string; unitType: string; pricePerUnit: number; grossQuan...
+github.billing.getGithubBillingUsageSummaryReportOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** If specified, only return results for a single year. The value of `year` is an integer with four digits representing a year. For example, `2025`. Default value is the current year. */
+  year?: number;
+  /** If specified, only return results for a single month. The value of `month` is an integer between `1` and `12`. Default value is the current month. If no year is specified the default `year` is used. */
+  month?: number;
+  /** If specified, only return results for a single day. The value of `day` is an integer between `1` and `31`. If no `year` or `month` is specified, the default `year` and `month` are used. */
+  day?: number;
+  /** The repository name to query for usage in the format owner/repository. */
+  repository?: string;
+  /** The product name to query usage for. The name is not case sensitive. */
+  product?: string;
+  /** The SKU to query for usage. */
+  sku?: string;
+}): Promise<BillingUsageSummaryReportOrg>
 ```
 
-### `github.billing.getGithubBillingPremiumRequestUsageReportUser`
+<sub>`GET /organizations/{org}/settings/billing/usage/summary` · `billing/get-github-billing-usage-summary-report-org`</sub>
 
-- **HTTP**: `GET /users/{username}/settings/billing/premium_request/usage`
-- **What it does**: Get billing premium request usage report for a user
-- **OpenAPI operationId**: `billing/get-github-billing-premium-request-usage-report-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `404`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.getGithubBillingAiCreditUsageReportUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; year?: number; month?: number; day?: number; model?: string; product?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ timePeriod: { year: number; month?: number; day?: number }; user: string; product?: string; model?: string; usageItems: ({ product: string; sku: string; model: string; unitType: string; pricePerUnit: number; grossQuan...`
-- OpenAPI response codes: `200`, `400`, `403`, `404`, `500`, `503`
+Get billing AI credit usage report for a user — [API reference](https://docs.github.com/rest/billing/usage#get-billing-ai-credit-usage-report-for-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingGetGithubBillingPremiumRequestUsageReportUserInput = Parameters<typeof github.billing.getGithubBillingPremiumRequestUsageReportUser> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingGetGithubBillingPremiumRequestUsageReportUserOutput = Awaited<ReturnType<typeof github.billing.getGithubBillingPremiumRequestUsageReportUser>>;
-
-const input: BillingGetGithubBillingPremiumRequestUsageReportUserInput = {} as { username: string; year?: number; month?: number; day?: number; model?: string; product?: string };
-const result: BillingGetGithubBillingPremiumRequestUsageReportUserOutput = await github.billing.getGithubBillingPremiumRequestUsageReportUser(input);
-
-// Result shape (from schema): { timePeriod: { year: number; month?: number; day?: number }; user: string; product?: string; model?: string; usageItems: ({ product: string; sku: string; model: string; unitType: string; pricePerUnit: number; grossQuan...
+github.billing.getGithubBillingAiCreditUsageReportUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** If specified, only return results for a single year. The value of `year` is an integer with four digits representing a year. For example, `2025`. Default value is the current year. */
+  year?: number;
+  /** If specified, only return results for a single month. The value of `month` is an integer between `1` and `12`. Default value is the current month. If no year is specified the default `year` is used. */
+  month?: number;
+  /** If specified, only return results for a single day. The value of `day` is an integer between `1` and `31`. If no `year` or `month` is specified, the default `year` and `month` are used. */
+  day?: number;
+  /** The model name to query usage for. The name is not case sensitive. */
+  model?: string;
+  /** The product name to query usage for. The name is not case sensitive. */
+  product?: string;
+}): Promise<BillingAiCreditUsageReportUser>
 ```
 
-### `github.billing.getGithubBillingUsageReportUser`
+<sub>`GET /users/{username}/settings/billing/ai_credit/usage` · `billing/get-github-billing-ai-credit-usage-report-user`</sub>
 
-- **HTTP**: `GET /users/{username}/settings/billing/usage`
-- **What it does**: Get billing usage report for a user
-- **OpenAPI operationId**: `billing/get-github-billing-usage-report-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.getGithubBillingPremiumRequestUsageReportUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; year?: number; month?: number; day?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ usageItems?: ({ date: string; product: string; sku: string; quantity: number; unitType: string; pricePerUnit: number; grossAmount: number; discountAmount: number; netAmount: number; repositoryName?: string })[] }`
-- OpenAPI response codes: `200`, `400`, `403`, `500`, `503`
+Get billing premium request usage report for a user — [API reference](https://docs.github.com/rest/billing/usage#get-billing-premium-request-usage-report-for-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingGetGithubBillingUsageReportUserInput = Parameters<typeof github.billing.getGithubBillingUsageReportUser> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingGetGithubBillingUsageReportUserOutput = Awaited<ReturnType<typeof github.billing.getGithubBillingUsageReportUser>>;
-
-const input: BillingGetGithubBillingUsageReportUserInput = {} as { username: string; year?: number; month?: number; day?: number };
-const result: BillingGetGithubBillingUsageReportUserOutput = await github.billing.getGithubBillingUsageReportUser(input);
-
-// Result shape (from schema): { usageItems?: ({ date: string; product: string; sku: string; quantity: number; unitType: string; pricePerUnit: number; grossAmount: number; discountAmount: number; netAmount: number; repositoryName?: string })[] }
+github.billing.getGithubBillingPremiumRequestUsageReportUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** If specified, only return results for a single year. The value of `year` is an integer with four digits representing a year. For example, `2025`. Default value is the current year. */
+  year?: number;
+  /** If specified, only return results for a single month. The value of `month` is an integer between `1` and `12`. Default value is the current month. If no year is specified the default `year` is used. */
+  month?: number;
+  /** If specified, only return results for a single day. The value of `day` is an integer between `1` and `31`. If no `year` or `month` is specified, the default `year` and `month` are used. */
+  day?: number;
+  /** The model name to query usage for. The name is not case sensitive. */
+  model?: string;
+  /** The product name to query usage for. The name is not case sensitive. */
+  product?: string;
+}): Promise<BillingPremiumRequestUsageReportUser>
 ```
 
-### `github.billing.getGithubBillingUsageSummaryReportUser`
+<sub>`GET /users/{username}/settings/billing/premium_request/usage` · `billing/get-github-billing-premium-request-usage-report-user`</sub>
 
-- **HTTP**: `GET /users/{username}/settings/billing/usage/summary`
-- **What it does**: Get billing usage summary for a user
-- **OpenAPI operationId**: `billing/get-github-billing-usage-summary-report-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `404`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.billing.getGithubBillingUsageReportUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; year?: number; month?: number; day?: number; repository?: string; product?: string; sku?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ timePeriod: { year: number; month?: number; day?: number }; user: string; repository?: string; product?: string; sku?: string; usageItems: ({ product: string; sku: string; unitType: string; pricePerUnit: number; gross...`
-- OpenAPI response codes: `200`, `400`, `403`, `404`, `500`, `503`
+Get billing usage report for a user — [API reference](https://docs.github.com/rest/billing/usage#get-billing-usage-report-for-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type BillingGetGithubBillingUsageSummaryReportUserInput = Parameters<typeof github.billing.getGithubBillingUsageSummaryReportUser> extends [infer T, ...unknown[]] ? T : undefined;
-type BillingGetGithubBillingUsageSummaryReportUserOutput = Awaited<ReturnType<typeof github.billing.getGithubBillingUsageSummaryReportUser>>;
-
-const input: BillingGetGithubBillingUsageSummaryReportUserInput = {} as { username: string; year?: number; month?: number; day?: number; repository?: string; product?: string; sku?: string };
-const result: BillingGetGithubBillingUsageSummaryReportUserOutput = await github.billing.getGithubBillingUsageSummaryReportUser(input);
-
-// Result shape (from schema): { timePeriod: { year: number; month?: number; day?: number }; user: string; repository?: string; product?: string; sku?: string; usageItems: ({ product: string; sku: string; unitType: string; pricePerUnit: number; gross...
+github.billing.getGithubBillingUsageReportUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** If specified, only return results for a single year. The value of `year` is an integer with four digits representing a year. For example, `2025`. Default value is the current year. */
+  year?: number;
+  /** If specified, only return results for a single month. The value of `month` is an integer between `1` and `12`. If no year is specified the default `year` is used. */
+  month?: number;
+  /** If specified, only return results for a single day. The value of `day` is an integer between `1` and `31`. If no `year` or `month` is specified, the default `year` and `month` are used. */
+  day?: number;
+}): Promise<BillingUsageReportUser>
 ```
 
+<sub>`GET /users/{username}/settings/billing/usage` · `billing/get-github-billing-usage-report-user`</sub>
+
+## `github.billing.getGithubBillingUsageSummaryReportUser`
+
+Get billing usage summary for a user — [API reference](https://docs.github.com/rest/billing/usage#get-billing-usage-summary-for-a-user)
+
+```ts
+github.billing.getGithubBillingUsageSummaryReportUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** If specified, only return results for a single year. The value of `year` is an integer with four digits representing a year. For example, `2025`. Default value is the current year. */
+  year?: number;
+  /** If specified, only return results for a single month. The value of `month` is an integer between `1` and `12`. Default value is the current month. If no year is specified the default `year` is used. */
+  month?: number;
+  /** If specified, only return results for a single day. The value of `day` is an integer between `1` and `31`. If no `year` or `month` is specified, the default `year` and `month` are used. */
+  day?: number;
+  /** The repository name to query for usage in the format owner/repository. */
+  repository?: string;
+  /** The product name to query usage for. The name is not case sensitive. */
+  product?: string;
+  /** The SKU to query for usage. */
+  sku?: string;
+}): Promise<BillingUsageSummaryReportUser>
+```
+
+<sub>`GET /users/{username}/settings/billing/usage/summary` · `billing/get-github-billing-usage-summary-report-user`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

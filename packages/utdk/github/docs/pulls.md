@@ -1,929 +1,610 @@
 # Pulls
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.pulls.list`
-
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls`
-- **What it does**: List pull requests
-- **OpenAPI operationId**: `pulls/list`
-- **Path params**: None
-- **Query params**: `state`, `head`, `base`, `sort`, `direction`
-- **Response codes**: `200`, `304`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; state?: "open" | "closed" | "all"; head?: string; base?: string; sort?: "created" | "updated" | "popularity" | "long-running"; direction?: "asc" | "desc"; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; ...`
-- OpenAPI response codes: `200`, `304`, `422`
+27 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type PullsListInput = Parameters<typeof github.pulls.list> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsListOutput = Awaited<ReturnType<typeof github.pulls.list>>;
-
-const input: PullsListInput = {} as { owner: string; repo: string; state?: "open" | "closed" | "all"; head?: string; base?: string; sort?: "created" | "updated" | "popularity" | "long-running"; direction?: "asc" | "desc"; per_page?: number; page?: number };
-const result: PullsListOutput = await github.pulls.list(input);
-
-// Result shape (from schema): ({ url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; ...
 ```
 
-### `github.pulls.create`
+## `github.pulls.list`
 
-- **HTTP**: `POST /repos/{owner}/{repo}/pulls`
-- **What it does**: Create a pull request
-- **OpenAPI operationId**: `pulls/create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ title?: string; head: string; head_repo?: string; base: string; body?: string; maintainer_can_modify?: boolean; draft?: boolean; issue?: number; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; s...`
-- OpenAPI response codes: `201`, `403`, `422`
+List pull requests — [API reference](https://docs.github.com/rest/pulls/pulls#list-pull-requests)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsCreateInput = Parameters<typeof github.pulls.create> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsCreateOutput = Awaited<ReturnType<typeof github.pulls.create>>;
-
-const input: PullsCreateInput = {} as { title?: string; head: string; head_repo?: string; base: string; body?: string; maintainer_can_modify?: boolean; draft?: boolean; issue?: number; owner: string; repo: string };
-const result: PullsCreateOutput = await github.pulls.create(input);
-
-// Result shape (from schema): { url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; s...
+github.pulls.list(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Either `open`, `closed`, or `all` to filter by state. */
+  state?: "open" | "closed" | "all";
+  /** Filter pulls by head user or head organization and branch name in the format of `user:ref-name` or `organization:ref-name`. For example: `github:new-script-format` or `octocat:test-branch`. */
+  head?: string;
+  /** Filter pulls by base branch name. Example: `gh-pages`. */
+  base?: string;
+  /** What to sort results by. `popularity` will sort by the number of comments. `long-running` will sort by date created and will limit the results to pull requests that have been open for more than a month and have had activity within the past month. */
+  sort?: "created" | "updated" | "popularity" | "long-running";
+  /** The direction of the sort. Default: `desc` when sort is `created` or sort is not specified, otherwise `asc`. */
+  direction?: "asc" | "desc";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(PullRequestSimple)[]>
 ```
 
-### `github.pulls.get`
+<sub>`GET /repos/{owner}/{repo}/pulls` · `pulls/list`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/{pull_number}`
-- **What it does**: Get a pull request
-- **OpenAPI operationId**: `pulls/get`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `404`, `406`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.create`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; s...`
-- OpenAPI response codes: `200`, `304`, `404`, `406`, `500`, `503`
+Create a pull request — [API reference](https://docs.github.com/rest/pulls/pulls#create-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsGetInput = Parameters<typeof github.pulls.get> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsGetOutput = Awaited<ReturnType<typeof github.pulls.get>>;
-
-const input: PullsGetInput = {} as { owner: string; repo: string; pull_number: number };
-const result: PullsGetOutput = await github.pulls.get(input);
-
-// Result shape (from schema): { url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; s...
+github.pulls.create(input: {
+  /** The title of the new pull request. Required unless `issue` is specified. */
+  title?: string;
+  /** The name of the branch where your changes are implemented. For cross-repository pull requests in the same network, namespace `head` with a user like this: `username:branch`. */
+  head: string;
+  /** The name of the repository where the changes in the pull request were made. This field is required for cross-repository pull requests if both repositories are owned by the same organization. */
+  head_repo?: string;
+  /** The name of the branch you want the changes pulled into. This should be an existing branch on the current repository. You cannot submit a pull request to one repository that requests a merge to a base of another repository. */
+  base: string;
+  /** The contents of the pull request. */
+  body?: string;
+  /** Indicates whether [maintainers can modify](https://docs.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork/) the pull request. */
+  maintainer_can_modify?: boolean;
+  /** Indicates whether the pull request is a draft. See "[Draft Pull Requests](https://docs.github.com/articles/about-pull-requests#draft-pull-requests)" in the GitHub Help documentation to learn more. */
+  draft?: boolean;
+  /** An issue in the repository to convert to a pull request. The issue title, body, and comments will become the title, body, and comments on the new pull request. Required unless `title` is specified. */
+  issue?: number;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<PullRequest>
 ```
 
-### `github.pulls.update`
+<sub>`POST /repos/{owner}/{repo}/pulls` · `pulls/create`</sub>
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/pulls/{pull_number}`
-- **What it does**: Update a pull request
-- **OpenAPI operationId**: `pulls/update`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.get`
 
-**Inputs**
-
-- Client input type: `{ title?: string; body?: string; state?: "open" | "closed"; base?: string; maintainer_can_modify?: boolean; owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; s...`
-- OpenAPI response codes: `200`, `403`, `422`
+Get a pull request — [API reference](https://docs.github.com/rest/pulls/pulls#get-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsUpdateInput = Parameters<typeof github.pulls.update> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsUpdateOutput = Awaited<ReturnType<typeof github.pulls.update>>;
-
-const input: PullsUpdateInput = {} as { title?: string; body?: string; state?: "open" | "closed"; base?: string; maintainer_can_modify?: boolean; owner: string; repo: string; pull_number: number };
-const result: PullsUpdateOutput = await github.pulls.update(input);
-
-// Result shape (from schema): { url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; s...
+github.pulls.get(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<PullRequest>
 ```
 
-### `github.pulls.listReviewComments`
+<sub>`GET /repos/{owner}/{repo}/pulls/{pull_number}` · `pulls/get`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/{pull_number}/comments`
-- **What it does**: List review comments on a pull request
-- **OpenAPI operationId**: `pulls/list-review-comments`
-- **Path params**: None
-- **Query params**: `direction`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.update`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pull_number: number; sort?: "created" | "updated"; direction?: "asc" | "desc"; since?: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply...`
-- OpenAPI response codes: `200`
+Update a pull request — [API reference](https://docs.github.com/rest/pulls/pulls#update-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsListReviewCommentsInput = Parameters<typeof github.pulls.listReviewComments> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsListReviewCommentsOutput = Awaited<ReturnType<typeof github.pulls.listReviewComments>>;
-
-const input: PullsListReviewCommentsInput = {} as { owner: string; repo: string; pull_number: number; sort?: "created" | "updated"; direction?: "asc" | "desc"; since?: string; per_page?: number; page?: number };
-const result: PullsListReviewCommentsOutput = await github.pulls.listReviewComments(input);
-
-// Result shape (from schema): ({ url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply...
+github.pulls.update(input: {
+  /** The title of the pull request. */
+  title?: string;
+  /** The contents of the pull request. */
+  body?: string;
+  /** State of this Pull Request. Either `open` or `closed`. */
+  state?: "open" | "closed";
+  /** The name of the branch you want your changes pulled into. This should be an existing branch on the current repository. You cannot update the base branch on a pull request to point to another repository. */
+  base?: string;
+  /** Indicates whether [maintainers can modify](https://docs.github.com/articles/allowing-changes-to-a-pull-request-branch-created-from-a-fork/) the pull request. */
+  maintainer_can_modify?: boolean;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<PullRequest>
 ```
 
-### `github.pulls.createReviewComment`
+<sub>`PATCH /repos/{owner}/{repo}/pulls/{pull_number}` · `pulls/update`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/pulls/{pull_number}/comments`
-- **What it does**: Create a review comment for a pull request
-- **OpenAPI operationId**: `pulls/create-review-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.listReviewComments`
 
-**Inputs**
-
-- Client input type: `{ body: string; commit_id: string; path: string; position?: number; side?: "LEFT" | "RIGHT"; line?: number; start_line?: number; start_side?: "LEFT" | "RIGHT" | "side"; in_reply_to?: number; subject_type?: "line" | "file"; owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply_...`
-- OpenAPI response codes: `201`, `403`, `422`
+List review comments on a pull request — [API reference](https://docs.github.com/rest/pulls/comments#list-review-comments-on-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsCreateReviewCommentInput = Parameters<typeof github.pulls.createReviewComment> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsCreateReviewCommentOutput = Awaited<ReturnType<typeof github.pulls.createReviewComment>>;
-
-const input: PullsCreateReviewCommentInput = {} as { body: string; commit_id: string; path: string; position?: number; side?: "LEFT" | "RIGHT"; line?: number; start_line?: number; start_side?: "LEFT" | "RIGHT" | "side"; in_reply_to?: number; subject_type?: "line" | "file"; owner: string; repo: string; pull_number: number };
-const result: PullsCreateReviewCommentOutput = await github.pulls.createReviewComment(input);
-
-// Result shape (from schema): { url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply_...
+github.pulls.listReviewComments(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The property to sort the results by. */
+  sort?: "created" | "updated";
+  /** The direction to sort results. Ignored without `sort` parameter. */
+  direction?: "asc" | "desc";
+  /** Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. */
+  since?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(PullRequestReviewComment)[]>
 ```
 
-### `github.pulls.createReplyForReviewComment`
+<sub>`GET /repos/{owner}/{repo}/pulls/{pull_number}/comments` · `pulls/list-review-comments`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies`
-- **What it does**: Create a reply for a review comment
-- **OpenAPI operationId**: `pulls/create-reply-for-review-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.createReviewComment`
 
-**Inputs**
-
-- Client input type: `{ body: string; owner: string; repo: string; pull_number: number; comment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply_...`
-- OpenAPI response codes: `201`, `404`
+Create a review comment for a pull request — [API reference](https://docs.github.com/rest/pulls/comments#create-a-review-comment-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsCreateReplyForReviewCommentInput = Parameters<typeof github.pulls.createReplyForReviewComment> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsCreateReplyForReviewCommentOutput = Awaited<ReturnType<typeof github.pulls.createReplyForReviewComment>>;
-
-const input: PullsCreateReplyForReviewCommentInput = {} as { body: string; owner: string; repo: string; pull_number: number; comment_id: number };
-const result: PullsCreateReplyForReviewCommentOutput = await github.pulls.createReplyForReviewComment(input);
-
-// Result shape (from schema): { url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply_...
+github.pulls.createReviewComment(input: {
+  /** The text of the review comment. */
+  body: string;
+  /** The SHA of the commit needing a comment. Not using the latest commit SHA may render your comment outdated if a subsequent commit modifies the line you specify as the `position`. */
+  commit_id: string;
+  /** The relative path to the file that necessitates a comment. */
+  path: string;
+  /** **This parameter is closing down. Use `line` instead**. The position in the diff where you want to add a review comment. Note this value is not the same as the line number in the file. The position value equals the number of lines down from the first "@@" hunk header in the file you want to add a comment. The line just below the "@@" line is position 1, the next line is position 2, and so on. The position in the diff continues to increase through lines of whitespace and additional hunks until the beginning of a new file. */
+  position?: number;
+  /** In a split diff view, the side of the diff that the pull request's changes appear on. Can be `LEFT` or `RIGHT`. Use `LEFT` for deletions that appear in red. Use `RIGHT` for additions that appear in green or unchanged lines that appear in white and are shown for context. For a multi-line comment, side represents whether the last line of the comment range is a deletion or addition. For more information, see "[Diff view options](https://docs.github.com/articles/about-comparing-branches-in-pull-requests#diff-view-options)" in the GitHub Help documentation. */
+  side?: "LEFT" | "RIGHT";
+  /** **Required unless using `subject_type:file`**. The line of the blob in the pull request diff that the comment applies to. For a multi-line comment, the last line of the range that your comment applies to. */
+  line?: number;
+  /** **Required when using multi-line comments unless using `in_reply_to`**. The `start_line` is the first line in the pull request diff that your multi-line comment applies to. To learn more about multi-line comments, see "[Commenting on a pull request](https://docs.github.com/articles/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request)" in the GitHub Help documentation. */
+  start_line?: number;
+  /** **Required when using multi-line comments unless using `in_reply_to`**. The `start_side` is the starting side of the diff that the comment applies to. Can be `LEFT` or `RIGHT`. To learn more about multi-line comments, see "[Commenting on a pull request](https://docs.github.com/articles/commenting-on-a-pull-request#adding-line-comments-to-a-pull-request)" in the GitHub Help documentation. See `side` in this table for additional context. */
+  start_side?: "LEFT" | "RIGHT" | "side";
+  /** The ID of the review comment to reply to. To find the ID of a review comment with ["List review comments on a pull request"](#list-review-comments-on-a-pull-request). When specified, all parameters other than `body` in the request body are ignored. */
+  in_reply_to?: number;
+  /** The level at which the comment is targeted. */
+  subject_type?: "line" | "file";
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<PullRequestReviewComment>
 ```
 
-### `github.pulls.listCommits`
+<sub>`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments` · `pulls/create-review-comment`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/{pull_number}/commits`
-- **What it does**: List commits on a pull request
-- **OpenAPI operationId**: `pulls/list-commits`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.createReplyForReviewComment`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pull_number: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: string; email?: string; d...`
-- OpenAPI response codes: `200`
+Create a reply for a review comment — [API reference](https://docs.github.com/rest/pulls/comments#create-a-reply-for-a-review-comment)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsListCommitsInput = Parameters<typeof github.pulls.listCommits> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsListCommitsOutput = Awaited<ReturnType<typeof github.pulls.listCommits>>;
-
-const input: PullsListCommitsInput = {} as { owner: string; repo: string; pull_number: number; per_page?: number; page?: number };
-const result: PullsListCommitsOutput = await github.pulls.listCommits(input);
-
-// Result shape (from schema): ({ url: string; sha: string; node_id: string; html_url: string; comments_url: string; commit: { url: string; author: { name?: string; email?: string; date?: string } | null; committer: { name?: string; email?: string; d...
+github.pulls.createReplyForReviewComment(input: {
+  /** The text of the review comment. */
+  body: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The unique identifier of the comment. */
+  comment_id: number;
+}): Promise<PullRequestReviewComment>
 ```
 
-### `github.pulls.listFiles`
+<sub>`POST /repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies` · `pulls/create-reply-for-review-comment`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/{pull_number}/files`
-- **What it does**: List pull requests files
-- **OpenAPI operationId**: `pulls/list-files`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`, `500`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.listCommits`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pull_number: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ sha: string | null; filename: string; status: "added" | "removed" | "modified" | "renamed" | "copied" | "changed" | "unchanged"; additions: number; deletions: number; changes: number; blob_url: string; raw_url: strin...`
-- OpenAPI response codes: `200`, `422`, `500`, `503`
+List commits on a pull request — [API reference](https://docs.github.com/rest/pulls/pulls#list-commits-on-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsListFilesInput = Parameters<typeof github.pulls.listFiles> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsListFilesOutput = Awaited<ReturnType<typeof github.pulls.listFiles>>;
-
-const input: PullsListFilesInput = {} as { owner: string; repo: string; pull_number: number; per_page?: number; page?: number };
-const result: PullsListFilesOutput = await github.pulls.listFiles(input);
-
-// Result shape (from schema): ({ sha: string | null; filename: string; status: "added" | "removed" | "modified" | "renamed" | "copied" | "changed" | "unchanged"; additions: number; deletions: number; changes: number; blob_url: string; raw_url: strin...
+github.pulls.listCommits(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Commit)[]>
 ```
 
-### `github.pulls.checkIfMerged`
+<sub>`GET /repos/{owner}/{repo}/pulls/{pull_number}/commits` · `pulls/list-commits`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/{pull_number}/merge`
-- **What it does**: Check if a pull request has been merged
-- **OpenAPI operationId**: `pulls/check-if-merged`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.listFiles`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+List pull requests files — [API reference](https://docs.github.com/rest/pulls/pulls#list-pull-requests-files)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsCheckIfMergedInput = Parameters<typeof github.pulls.checkIfMerged> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsCheckIfMergedOutput = Awaited<ReturnType<typeof github.pulls.checkIfMerged>>;
-
-const input: PullsCheckIfMergedInput = {} as { owner: string; repo: string; pull_number: number };
-const result: PullsCheckIfMergedOutput = await github.pulls.checkIfMerged(input);
-
-// Result shape (from schema): unknown
+github.pulls.listFiles(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(DiffEntry)[]>
 ```
 
-### `github.pulls.merge`
+<sub>`GET /repos/{owner}/{repo}/pulls/{pull_number}/files` · `pulls/list-files`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge`
-- **What it does**: Merge a pull request
-- **OpenAPI operationId**: `pulls/merge`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`, `405`, `409`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.checkIfMerged`
 
-**Inputs**
-
-- Client input type: `{ commit_title?: string; commit_message?: string; sha?: string; merge_method?: "merge" | "squash" | "rebase"; owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ sha: string; merged: boolean; message: string }`
-- OpenAPI response codes: `200`, `403`, `404`, `405`, `409`, `422`
+Check if a pull request has been merged — [API reference](https://docs.github.com/rest/pulls/pulls#check-if-a-pull-request-has-been-merged)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsMergeInput = Parameters<typeof github.pulls.merge> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsMergeOutput = Awaited<ReturnType<typeof github.pulls.merge>>;
-
-const input: PullsMergeInput = {} as { commit_title?: string; commit_message?: string; sha?: string; merge_method?: "merge" | "squash" | "rebase"; owner: string; repo: string; pull_number: number };
-const result: PullsMergeOutput = await github.pulls.merge(input);
-
-// Result shape (from schema): { sha: string; merged: boolean; message: string }
+github.pulls.checkIfMerged(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<unknown>
 ```
 
-### `github.pulls.removeRequestedReviewers`
+<sub>`GET /repos/{owner}/{repo}/pulls/{pull_number}/merge` · `pulls/check-if-merged`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers`
-- **What it does**: Remove requested reviewers from a pull request
-- **OpenAPI operationId**: `pulls/remove-requested-reviewers`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.merge`
 
-**Inputs**
-
-- Client input type: `{ reviewers: (string)[]; team_reviewers?: (string)[]; owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; s...`
-- OpenAPI response codes: `200`, `422`
+Merge a pull request — [API reference](https://docs.github.com/rest/pulls/pulls#merge-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsRemoveRequestedReviewersInput = Parameters<typeof github.pulls.removeRequestedReviewers> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsRemoveRequestedReviewersOutput = Awaited<ReturnType<typeof github.pulls.removeRequestedReviewers>>;
-
-const input: PullsRemoveRequestedReviewersInput = {} as { reviewers: (string)[]; team_reviewers?: (string)[]; owner: string; repo: string; pull_number: number };
-const result: PullsRemoveRequestedReviewersOutput = await github.pulls.removeRequestedReviewers(input);
-
-// Result shape (from schema): { url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; s...
+github.pulls.merge(input: {
+  /** Title for the automatic commit message. */
+  commit_title?: string;
+  /** Extra detail to append to automatic commit message. */
+  commit_message?: string;
+  /** SHA that pull request head must match to allow merge. */
+  sha?: string;
+  /** The merge method to use. */
+  merge_method?: "merge" | "squash" | "rebase";
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<PullRequestMergeResult>
 ```
 
-### `github.pulls.listRequestedReviewers`
+<sub>`PUT /repos/{owner}/{repo}/pulls/{pull_number}/merge` · `pulls/merge`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers`
-- **What it does**: Get all requested reviewers for a pull request
-- **OpenAPI operationId**: `pulls/list-requested-reviewers`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.removeRequestedReviewers`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ users: ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: s...`
-- OpenAPI response codes: `200`
+Remove requested reviewers from a pull request — [API reference](https://docs.github.com/rest/pulls/review-requests#remove-requested-reviewers-from-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsListRequestedReviewersInput = Parameters<typeof github.pulls.listRequestedReviewers> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsListRequestedReviewersOutput = Awaited<ReturnType<typeof github.pulls.listRequestedReviewers>>;
-
-const input: PullsListRequestedReviewersInput = {} as { owner: string; repo: string; pull_number: number };
-const result: PullsListRequestedReviewersOutput = await github.pulls.listRequestedReviewers(input);
-
-// Result shape (from schema): { users: ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: s...
+github.pulls.removeRequestedReviewers(input: {
+  /** An array of user `login`s that will be removed. */
+  reviewers: (string)[];
+  /** An array of team `slug`s that will be removed. */
+  team_reviewers?: (string)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<PullRequestSimple>
 ```
 
-### `github.pulls.requestReviewers`
+<sub>`DELETE /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers` · `pulls/remove-requested-reviewers`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers`
-- **What it does**: Request reviewers for a pull request
-- **OpenAPI operationId**: `pulls/request-reviewers`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.listRequestedReviewers`
 
-**Inputs**
-
-- Client input type: `{ body?: unknown | unknown; owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; s...`
-- OpenAPI response codes: `201`, `403`, `422`
+Get all requested reviewers for a pull request — [API reference](https://docs.github.com/rest/pulls/review-requests#get-all-requested-reviewers-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsRequestReviewersInput = Parameters<typeof github.pulls.requestReviewers> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsRequestReviewersOutput = Awaited<ReturnType<typeof github.pulls.requestReviewers>>;
-
-const input: PullsRequestReviewersInput = {} as { body?: unknown | unknown; owner: string; repo: string; pull_number: number };
-const result: PullsRequestReviewersOutput = await github.pulls.requestReviewers(input);
-
-// Result shape (from schema): { url: string; id: number; node_id: string; html_url: string; diff_url: string; patch_url: string; issue_url: string; commits_url: string; review_comments_url: string; review_comment_url: string; comments_url: string; s...
+github.pulls.listRequestedReviewers(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<PullRequestReviewRequest>
 ```
 
-### `github.pulls.listReviews`
+<sub>`GET /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers` · `pulls/list-requested-reviewers`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews`
-- **What it does**: List reviews for a pull request
-- **OpenAPI operationId**: `pulls/list-reviews`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.requestReviewers`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pull_number: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_u...`
-- OpenAPI response codes: `200`
+Request reviewers for a pull request — [API reference](https://docs.github.com/rest/pulls/review-requests#request-reviewers-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsListReviewsInput = Parameters<typeof github.pulls.listReviews> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsListReviewsOutput = Awaited<ReturnType<typeof github.pulls.listReviews>>;
-
-const input: PullsListReviewsInput = {} as { owner: string; repo: string; pull_number: number; per_page?: number; page?: number };
-const result: PullsListReviewsOutput = await github.pulls.listReviews(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_u...
+github.pulls.requestReviewers(input: {
+  body?: unknown | unknown;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<PullRequestSimple>
 ```
 
-### `github.pulls.createReview`
+<sub>`POST /repos/{owner}/{repo}/pulls/{pull_number}/requested_reviewers` · `pulls/request-reviewers`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews`
-- **What it does**: Create a review for a pull request
-- **OpenAPI operationId**: `pulls/create-review`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.listReviews`
 
-**Inputs**
-
-- Client input type: `{ commit_id?: string; body?: string; event?: "APPROVE" | "REQUEST_CHANGES" | "COMMENT"; comments?: ({ path: string; position?: number; body: string; line?: number; side?: string; start_line?: number; start_side?: string })[]; owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...`
-- OpenAPI response codes: `200`, `403`, `422`
+List reviews for a pull request — [API reference](https://docs.github.com/rest/pulls/reviews#list-reviews-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsCreateReviewInput = Parameters<typeof github.pulls.createReview> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsCreateReviewOutput = Awaited<ReturnType<typeof github.pulls.createReview>>;
-
-const input: PullsCreateReviewInput = {} as { commit_id?: string; body?: string; event?: "APPROVE" | "REQUEST_CHANGES" | "COMMENT"; comments?: ({ path: string; position?: number; body: string; line?: number; side?: string; start_line?: number; start_side?: string })[]; owner: string; repo: string; pull_number: number };
-const result: PullsCreateReviewOutput = await github.pulls.createReview(input);
-
-// Result shape (from schema): { id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...
+github.pulls.listReviews(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(PullRequestReview)[]>
 ```
 
-### `github.pulls.deletePendingReview`
+<sub>`GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews` · `pulls/list-reviews`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}`
-- **What it does**: Delete a pending review for a pull request
-- **OpenAPI operationId**: `pulls/delete-pending-review`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.createReview`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pull_number: number; review_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...`
-- OpenAPI response codes: `200`, `404`, `422`
+Create a review for a pull request — [API reference](https://docs.github.com/rest/pulls/reviews#create-a-review-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsDeletePendingReviewInput = Parameters<typeof github.pulls.deletePendingReview> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsDeletePendingReviewOutput = Awaited<ReturnType<typeof github.pulls.deletePendingReview>>;
-
-const input: PullsDeletePendingReviewInput = {} as { owner: string; repo: string; pull_number: number; review_id: number };
-const result: PullsDeletePendingReviewOutput = await github.pulls.deletePendingReview(input);
-
-// Result shape (from schema): { id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...
+github.pulls.createReview(input: {
+  /** The SHA of the commit that needs a review. Not using the latest commit SHA may render your review comment outdated if a subsequent commit modifies the line you specify as the `position`. Defaults to the most recent commit in the pull request when you do not specify a value. */
+  commit_id?: string;
+  /** **Required** when using `REQUEST_CHANGES` or `COMMENT` for the `event` parameter. The body text of the pull request review. */
+  body?: string;
+  /** The review action you want to perform. The review actions include: `APPROVE`, `REQUEST_CHANGES`, or `COMMENT`. By leaving this blank, you set the review action state to `PENDING`, which means you will need to [submit the pull request review](https://docs.github.com/rest/pulls/reviews#submit-a-review-for-a-pull-request) when you are ready. */
+  event?: "APPROVE" | "REQUEST_CHANGES" | "COMMENT";
+  /** Use the following table to specify the location, destination, and contents of the draft review comment. */
+  comments?: ({ path: string; position?: number; body: string; line?: number; side?: string; start_line?: number; start_side?: string })[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<PullRequestReview>
 ```
 
-### `github.pulls.getReview`
+<sub>`POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews` · `pulls/create-review`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}`
-- **What it does**: Get a review for a pull request
-- **OpenAPI operationId**: `pulls/get-review`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.deletePendingReview`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pull_number: number; review_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...`
-- OpenAPI response codes: `200`, `404`
+Delete a pending review for a pull request — [API reference](https://docs.github.com/rest/pulls/reviews#delete-a-pending-review-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsGetReviewInput = Parameters<typeof github.pulls.getReview> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsGetReviewOutput = Awaited<ReturnType<typeof github.pulls.getReview>>;
-
-const input: PullsGetReviewInput = {} as { owner: string; repo: string; pull_number: number; review_id: number };
-const result: PullsGetReviewOutput = await github.pulls.getReview(input);
-
-// Result shape (from schema): { id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...
+github.pulls.deletePendingReview(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The unique identifier of the review. */
+  review_id: number;
+}): Promise<PullRequestReview>
 ```
 
-### `github.pulls.updateReview`
+<sub>`DELETE /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}` · `pulls/delete-pending-review`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}`
-- **What it does**: Update a review for a pull request
-- **OpenAPI operationId**: `pulls/update-review`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.getReview`
 
-**Inputs**
-
-- Client input type: `{ body: string; owner: string; repo: string; pull_number: number; review_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...`
-- OpenAPI response codes: `200`, `422`
+Get a review for a pull request — [API reference](https://docs.github.com/rest/pulls/reviews#get-a-review-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsUpdateReviewInput = Parameters<typeof github.pulls.updateReview> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsUpdateReviewOutput = Awaited<ReturnType<typeof github.pulls.updateReview>>;
-
-const input: PullsUpdateReviewInput = {} as { body: string; owner: string; repo: string; pull_number: number; review_id: number };
-const result: PullsUpdateReviewOutput = await github.pulls.updateReview(input);
-
-// Result shape (from schema): { id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...
+github.pulls.getReview(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The unique identifier of the review. */
+  review_id: number;
+}): Promise<PullRequestReview>
 ```
 
-### `github.pulls.listCommentsForReview`
+<sub>`GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}` · `pulls/get-review`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/comments`
-- **What it does**: List comments for a pull request review
-- **OpenAPI operationId**: `pulls/list-comments-for-review`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.updateReview`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; pull_number: number; review_id: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position: number | null; original_position: number; commit_id: string; original_commit_id: string; in_...`
-- OpenAPI response codes: `200`, `404`
+Update a review for a pull request — [API reference](https://docs.github.com/rest/pulls/reviews#update-a-review-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsListCommentsForReviewInput = Parameters<typeof github.pulls.listCommentsForReview> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsListCommentsForReviewOutput = Awaited<ReturnType<typeof github.pulls.listCommentsForReview>>;
-
-const input: PullsListCommentsForReviewInput = {} as { owner: string; repo: string; pull_number: number; review_id: number; per_page?: number; page?: number };
-const result: PullsListCommentsForReviewOutput = await github.pulls.listCommentsForReview(input);
-
-// Result shape (from schema): ({ url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position: number | null; original_position: number; commit_id: string; original_commit_id: string; in_...
+github.pulls.updateReview(input: {
+  /** The body text of the pull request review. */
+  body: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The unique identifier of the review. */
+  review_id: number;
+}): Promise<PullRequestReview>
 ```
 
-### `github.pulls.dismissReview`
+<sub>`PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}` · `pulls/update-review`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/dismissals`
-- **What it does**: Dismiss a review for a pull request
-- **OpenAPI operationId**: `pulls/dismiss-review`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.listCommentsForReview`
 
-**Inputs**
-
-- Client input type: `{ message: string; event?: "DISMISS"; owner: string; repo: string; pull_number: number; review_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...`
-- OpenAPI response codes: `200`, `404`, `422`
+List comments for a pull request review — [API reference](https://docs.github.com/rest/pulls/reviews#list-comments-for-a-pull-request-review)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsDismissReviewInput = Parameters<typeof github.pulls.dismissReview> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsDismissReviewOutput = Awaited<ReturnType<typeof github.pulls.dismissReview>>;
-
-const input: PullsDismissReviewInput = {} as { message: string; event?: "DISMISS"; owner: string; repo: string; pull_number: number; review_id: number };
-const result: PullsDismissReviewOutput = await github.pulls.dismissReview(input);
-
-// Result shape (from schema): { id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...
+github.pulls.listCommentsForReview(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The unique identifier of the review. */
+  review_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(ReviewComment)[]>
 ```
 
-### `github.pulls.submitReview`
+<sub>`GET /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/comments` · `pulls/list-comments-for-review`</sub>
 
-- **HTTP**: `POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/events`
-- **What it does**: Submit a review for a pull request
-- **OpenAPI operationId**: `pulls/submit-review`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.dismissReview`
 
-**Inputs**
-
-- Client input type: `{ body?: string; event: "APPROVE" | "REQUEST_CHANGES" | "COMMENT"; owner: string; repo: string; pull_number: number; review_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...`
-- OpenAPI response codes: `200`, `403`, `404`, `422`
+Dismiss a review for a pull request — [API reference](https://docs.github.com/rest/pulls/reviews#dismiss-a-review-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsSubmitReviewInput = Parameters<typeof github.pulls.submitReview> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsSubmitReviewOutput = Awaited<ReturnType<typeof github.pulls.submitReview>>;
-
-const input: PullsSubmitReviewInput = {} as { body?: string; event: "APPROVE" | "REQUEST_CHANGES" | "COMMENT"; owner: string; repo: string; pull_number: number; review_id: number };
-const result: PullsSubmitReviewOutput = await github.pulls.submitReview(input);
-
-// Result shape (from schema): { id: number; node_id: string; user: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_ur...
+github.pulls.dismissReview(input: {
+  /** The message for the pull request review dismissal */
+  message: string;
+  event?: "DISMISS";
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The unique identifier of the review. */
+  review_id: number;
+}): Promise<PullRequestReview>
 ```
 
-### `github.pulls.updateBranch`
+<sub>`PUT /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/dismissals` · `pulls/dismiss-review`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/pulls/{pull_number}/update-branch`
-- **What it does**: Update a pull request branch
-- **OpenAPI operationId**: `pulls/update-branch`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `202`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.submitReview`
 
-**Inputs**
-
-- Client input type: `{ expected_head_sha?: string; owner: string; repo: string; pull_number: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `403`, `422`
+Submit a review for a pull request — [API reference](https://docs.github.com/rest/pulls/reviews#submit-a-review-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsUpdateBranchInput = Parameters<typeof github.pulls.updateBranch> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsUpdateBranchOutput = Awaited<ReturnType<typeof github.pulls.updateBranch>>;
-
-const input: PullsUpdateBranchInput = {} as { expected_head_sha?: string; owner: string; repo: string; pull_number: number };
-const result: PullsUpdateBranchOutput = await github.pulls.updateBranch(input);
-
-// Result shape (from schema): unknown
+github.pulls.submitReview(input: {
+  /** The body text of the pull request review */
+  body?: string;
+  /** The review action you want to perform. The review actions include: `APPROVE`, `REQUEST_CHANGES`, or `COMMENT`. When you leave this blank, the API returns _HTTP 422 (Unrecognizable entity)_ and sets the review action state to `PENDING`, which means you will need to re-submit the pull request review using a review action. */
+  event: "APPROVE" | "REQUEST_CHANGES" | "COMMENT";
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+  /** The unique identifier of the review. */
+  review_id: number;
+}): Promise<PullRequestReview>
 ```
 
-### `github.pulls.listReviewCommentsForRepo`
+<sub>`POST /repos/{owner}/{repo}/pulls/{pull_number}/reviews/{review_id}/events` · `pulls/submit-review`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/comments`
-- **What it does**: List review comments in a repository
-- **OpenAPI operationId**: `pulls/list-review-comments-for-repo`
-- **Path params**: None
-- **Query params**: `sort`, `direction`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.updateBranch`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; sort?: "created" | "updated" | "created_at"; direction?: "asc" | "desc"; since?: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply...`
-- OpenAPI response codes: `200`
+Update a pull request branch — [API reference](https://docs.github.com/rest/pulls/pulls#update-a-pull-request-branch)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsListReviewCommentsForRepoInput = Parameters<typeof github.pulls.listReviewCommentsForRepo> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsListReviewCommentsForRepoOutput = Awaited<ReturnType<typeof github.pulls.listReviewCommentsForRepo>>;
-
-const input: PullsListReviewCommentsForRepoInput = {} as { owner: string; repo: string; sort?: "created" | "updated" | "created_at"; direction?: "asc" | "desc"; since?: string; per_page?: number; page?: number };
-const result: PullsListReviewCommentsForRepoOutput = await github.pulls.listReviewCommentsForRepo(input);
-
-// Result shape (from schema): ({ url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply...
+github.pulls.updateBranch(input: {
+  /** The expected SHA of the pull request's HEAD ref. This is the most recent commit on the pull request's branch. If the expected SHA does not match the pull request's HEAD, you will receive a `422 Unprocessable Entity` status. You can use the "[List commits](https://docs.github.com/rest/commits/commits#list-commits)" endpoint to find the most recent commit SHA. Default: SHA of the pull request's current HEAD ref. */
+  expected_head_sha?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request. */
+  pull_number: number;
+}): Promise<{ message?: string; url?: string }>
 ```
 
-### `github.pulls.deleteReviewComment`
+<sub>`PUT /repos/{owner}/{repo}/pulls/{pull_number}/update-branch` · `pulls/update-branch`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/pulls/comments/{comment_id}`
-- **What it does**: Delete a review comment for a pull request
-- **OpenAPI operationId**: `pulls/delete-review-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.listReviewCommentsForRepo`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; comment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+List review comments in a repository — [API reference](https://docs.github.com/rest/pulls/comments#list-review-comments-in-a-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsDeleteReviewCommentInput = Parameters<typeof github.pulls.deleteReviewComment> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsDeleteReviewCommentOutput = Awaited<ReturnType<typeof github.pulls.deleteReviewComment>>;
-
-const input: PullsDeleteReviewCommentInput = {} as { owner: string; repo: string; comment_id: number };
-const result: PullsDeleteReviewCommentOutput = await github.pulls.deleteReviewComment(input);
-
-// Result shape (from schema): unknown
+github.pulls.listReviewCommentsForRepo(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  sort?: "created" | "updated" | "created_at";
+  /** The direction to sort results. Ignored without `sort` parameter. */
+  direction?: "asc" | "desc";
+  /** Only show results that were last updated after the given time. This is a timestamp in [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) format: `YYYY-MM-DDTHH:MM:SSZ`. */
+  since?: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(PullRequestReviewComment)[]>
 ```
 
-### `github.pulls.getReviewComment`
+<sub>`GET /repos/{owner}/{repo}/pulls/comments` · `pulls/list-review-comments-for-repo`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/pulls/comments/{comment_id}`
-- **What it does**: Get a review comment for a pull request
-- **OpenAPI operationId**: `pulls/get-review-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.deleteReviewComment`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; comment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply_...`
-- OpenAPI response codes: `200`, `404`
+Delete a review comment for a pull request — [API reference](https://docs.github.com/rest/pulls/comments#delete-a-review-comment-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsGetReviewCommentInput = Parameters<typeof github.pulls.getReviewComment> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsGetReviewCommentOutput = Awaited<ReturnType<typeof github.pulls.getReviewComment>>;
-
-const input: PullsGetReviewCommentInput = {} as { owner: string; repo: string; comment_id: number };
-const result: PullsGetReviewCommentOutput = await github.pulls.getReviewComment(input);
-
-// Result shape (from schema): { url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply_...
+github.pulls.deleteReviewComment(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the comment. */
+  comment_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.pulls.updateReviewComment`
+<sub>`DELETE /repos/{owner}/{repo}/pulls/comments/{comment_id}` · `pulls/delete-review-comment`</sub>
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/pulls/comments/{comment_id}`
-- **What it does**: Update a review comment for a pull request
-- **OpenAPI operationId**: `pulls/update-review-comment`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.pulls.getReviewComment`
 
-**Inputs**
-
-- Client input type: `{ body: string; owner: string; repo: string; comment_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply_...`
-- OpenAPI response codes: `200`
+Get a review comment for a pull request — [API reference](https://docs.github.com/rest/pulls/comments#get-a-review-comment-for-a-pull-request)
 
 ```ts
-import github from "@utdk/github";
-
-type PullsUpdateReviewCommentInput = Parameters<typeof github.pulls.updateReviewComment> extends [infer T, ...unknown[]] ? T : undefined;
-type PullsUpdateReviewCommentOutput = Awaited<ReturnType<typeof github.pulls.updateReviewComment>>;
-
-const input: PullsUpdateReviewCommentInput = {} as { body: string; owner: string; repo: string; comment_id: number };
-const result: PullsUpdateReviewCommentOutput = await github.pulls.updateReviewComment(input);
-
-// Result shape (from schema): { url: string; pull_request_review_id: number | null; id: number; node_id: string; diff_hunk: string; path: string; position?: number; original_position?: number; commit_id: string; original_commit_id: string; in_reply_...
+github.pulls.getReviewComment(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the comment. */
+  comment_id: number;
+}): Promise<PullRequestReviewComment>
 ```
 
+<sub>`GET /repos/{owner}/{repo}/pulls/comments/{comment_id}` · `pulls/get-review-comment`</sub>
+
+## `github.pulls.updateReviewComment`
+
+Update a review comment for a pull request — [API reference](https://docs.github.com/rest/pulls/comments#update-a-review-comment-for-a-pull-request)
+
+```ts
+github.pulls.updateReviewComment(input: {
+  /** The text of the reply to the review comment. */
+  body: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The unique identifier of the comment. */
+  comment_id: number;
+}): Promise<PullRequestReviewComment>
+```
+
+<sub>`PATCH /repos/{owner}/{repo}/pulls/comments/{comment_id}` · `pulls/update-review-comment`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

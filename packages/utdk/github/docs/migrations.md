@@ -1,759 +1,407 @@
 # Migrations
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.migrations.listForOrg`
-
-- **HTTP**: `GET /orgs/{org}/migrations`
-- **What it does**: List organization migrations
-- **OpenAPI operationId**: `migrations/list-for-org`
-- **Path params**: None
-- **Query params**: `exclude`
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ org: string; per_page?: number; page?: number; exclude?: ("repositories")[] }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; foll...`
-- OpenAPI response codes: `200`
+22 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type MigrationsListForOrgInput = Parameters<typeof github.migrations.listForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsListForOrgOutput = Awaited<ReturnType<typeof github.migrations.listForOrg>>;
-
-const input: MigrationsListForOrgInput = {} as { org: string; per_page?: number; page?: number; exclude?: ("repositories")[] };
-const result: MigrationsListForOrgOutput = await github.migrations.listForOrg(input);
-
-// Result shape (from schema): ({ id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; foll...
 ```
 
-### `github.migrations.startForOrg`
+## `github.migrations.listForOrg`
 
-- **HTTP**: `POST /orgs/{org}/migrations`
-- **What it does**: Start an organization migration
-- **OpenAPI operationId**: `migrations/start-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ repositories: (string)[]; lock_repositories?: boolean; exclude_metadata?: boolean; exclude_git_data?: boolean; exclude_attachments?: boolean; exclude_releases?: boolean; exclude_owner_projects?: boolean; org_metadata_only?: boolean; exclude?: ("repositories")[]; org: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; follo...`
-- OpenAPI response codes: `201`, `404`, `422`
+List organization migrations — [API reference](https://docs.github.com/rest/migrations/orgs#list-organization-migrations)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsStartForOrgInput = Parameters<typeof github.migrations.startForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsStartForOrgOutput = Awaited<ReturnType<typeof github.migrations.startForOrg>>;
-
-const input: MigrationsStartForOrgInput = {} as { repositories: (string)[]; lock_repositories?: boolean; exclude_metadata?: boolean; exclude_git_data?: boolean; exclude_attachments?: boolean; exclude_releases?: boolean; exclude_owner_projects?: boolean; org_metadata_only?: boolean; exclude?: ("repositories")[]; org: string };
-const result: MigrationsStartForOrgOutput = await github.migrations.startForOrg(input);
-
-// Result shape (from schema): { id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; follo...
+github.migrations.listForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+  /** Exclude attributes from the API response to improve performance */
+  exclude?: ("repositories")[];
+}): Promise<(Migration)[]>
 ```
 
-### `github.migrations.getStatusForOrg`
+<sub>`GET /orgs/{org}/migrations` · `migrations/list-for-org`</sub>
 
-- **HTTP**: `GET /orgs/{org}/migrations/{migration_id}`
-- **What it does**: Get an organization migration status
-- **OpenAPI operationId**: `migrations/get-status-for-org`
-- **Path params**: None
-- **Query params**: `exclude`
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.startForOrg`
 
-**Inputs**
-
-- Client input type: `{ org: string; migration_id: number; exclude?: ("repositories")[] }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; follo...`
-- OpenAPI response codes: `200`, `404`
+Start an organization migration — [API reference](https://docs.github.com/rest/migrations/orgs#start-an-organization-migration)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsGetStatusForOrgInput = Parameters<typeof github.migrations.getStatusForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsGetStatusForOrgOutput = Awaited<ReturnType<typeof github.migrations.getStatusForOrg>>;
-
-const input: MigrationsGetStatusForOrgInput = {} as { org: string; migration_id: number; exclude?: ("repositories")[] };
-const result: MigrationsGetStatusForOrgOutput = await github.migrations.getStatusForOrg(input);
-
-// Result shape (from schema): { id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; follo...
+github.migrations.startForOrg(input: {
+  /** A list of arrays indicating which repositories should be migrated. */
+  repositories: (string)[];
+  /** Indicates whether repositories should be locked (to prevent manipulation) while migrating data. */
+  lock_repositories?: boolean;
+  /** Indicates whether metadata should be excluded and only git source should be included for the migration. */
+  exclude_metadata?: boolean;
+  /** Indicates whether the repository git data should be excluded from the migration. */
+  exclude_git_data?: boolean;
+  /** Indicates whether attachments should be excluded from the migration (to reduce migration archive file size). */
+  exclude_attachments?: boolean;
+  /** Indicates whether releases should be excluded from the migration (to reduce migration archive file size). */
+  exclude_releases?: boolean;
+  /** Indicates whether projects owned by the organization or users should be excluded. from the migration. */
+  exclude_owner_projects?: boolean;
+  /** Indicates whether this should only include organization metadata (repositories array should be empty and will ignore other flags). */
+  org_metadata_only?: boolean;
+  /** Exclude related items from being returned in the response in order to improve performance of the request. */
+  exclude?: ("repositories")[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+}): Promise<Migration>
 ```
 
-### `github.migrations.deleteArchiveForOrg`
+<sub>`POST /orgs/{org}/migrations` · `migrations/start-for-org`</sub>
 
-- **HTTP**: `DELETE /orgs/{org}/migrations/{migration_id}/archive`
-- **What it does**: Delete an organization migration archive
-- **OpenAPI operationId**: `migrations/delete-archive-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.getStatusForOrg`
 
-**Inputs**
-
-- Client input type: `{ org: string; migration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+Get an organization migration status — [API reference](https://docs.github.com/rest/migrations/orgs#get-an-organization-migration-status)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsDeleteArchiveForOrgInput = Parameters<typeof github.migrations.deleteArchiveForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsDeleteArchiveForOrgOutput = Awaited<ReturnType<typeof github.migrations.deleteArchiveForOrg>>;
-
-const input: MigrationsDeleteArchiveForOrgInput = {} as { org: string; migration_id: number };
-const result: MigrationsDeleteArchiveForOrgOutput = await github.migrations.deleteArchiveForOrg(input);
-
-// Result shape (from schema): unknown
+github.migrations.getStatusForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the migration. */
+  migration_id: number;
+  /** Exclude attributes from the API response to improve performance */
+  exclude?: ("repositories")[];
+}): Promise<Migration>
 ```
 
-### `github.migrations.downloadArchiveForOrg`
+<sub>`GET /orgs/{org}/migrations/{migration_id}` · `migrations/get-status-for-org`</sub>
 
-- **HTTP**: `GET /orgs/{org}/migrations/{migration_id}/archive`
-- **What it does**: Download an organization migration archive
-- **OpenAPI operationId**: `migrations/download-archive-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `302`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.deleteArchiveForOrg`
 
-**Inputs**
-
-- Client input type: `{ org: string; migration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `302`, `404`
+Delete an organization migration archive — [API reference](https://docs.github.com/rest/migrations/orgs#delete-an-organization-migration-archive)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsDownloadArchiveForOrgInput = Parameters<typeof github.migrations.downloadArchiveForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsDownloadArchiveForOrgOutput = Awaited<ReturnType<typeof github.migrations.downloadArchiveForOrg>>;
-
-const input: MigrationsDownloadArchiveForOrgInput = {} as { org: string; migration_id: number };
-const result: MigrationsDownloadArchiveForOrgOutput = await github.migrations.downloadArchiveForOrg(input);
-
-// Result shape (from schema): unknown
+github.migrations.deleteArchiveForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the migration. */
+  migration_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.migrations.unlockRepoForOrg`
+<sub>`DELETE /orgs/{org}/migrations/{migration_id}/archive` · `migrations/delete-archive-for-org`</sub>
 
-- **HTTP**: `DELETE /orgs/{org}/migrations/{migration_id}/repos/{repo_name}/lock`
-- **What it does**: Unlock an organization repository
-- **OpenAPI operationId**: `migrations/unlock-repo-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.downloadArchiveForOrg`
 
-**Inputs**
-
-- Client input type: `{ org: string; migration_id: number; repo_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+Download an organization migration archive — [API reference](https://docs.github.com/rest/migrations/orgs#download-an-organization-migration-archive)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsUnlockRepoForOrgInput = Parameters<typeof github.migrations.unlockRepoForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsUnlockRepoForOrgOutput = Awaited<ReturnType<typeof github.migrations.unlockRepoForOrg>>;
-
-const input: MigrationsUnlockRepoForOrgInput = {} as { org: string; migration_id: number; repo_name: string };
-const result: MigrationsUnlockRepoForOrgOutput = await github.migrations.unlockRepoForOrg(input);
-
-// Result shape (from schema): unknown
+github.migrations.downloadArchiveForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the migration. */
+  migration_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.migrations.listReposForOrg`
+<sub>`GET /orgs/{org}/migrations/{migration_id}/archive` · `migrations/download-archive-for-org`</sub>
 
-- **HTTP**: `GET /orgs/{org}/migrations/{migration_id}/repositories`
-- **What it does**: List repositories in an organization migration
-- **OpenAPI operationId**: `migrations/list-repos-for-org`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.unlockRepoForOrg`
 
-**Inputs**
-
-- Client input type: `{ org: string; migration_id: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...`
-- OpenAPI response codes: `200`, `404`
+Unlock an organization repository — [API reference](https://docs.github.com/rest/migrations/orgs#unlock-an-organization-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsListReposForOrgInput = Parameters<typeof github.migrations.listReposForOrg> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsListReposForOrgOutput = Awaited<ReturnType<typeof github.migrations.listReposForOrg>>;
-
-const input: MigrationsListReposForOrgInput = {} as { org: string; migration_id: number; per_page?: number; page?: number };
-const result: MigrationsListReposForOrgOutput = await github.migrations.listReposForOrg(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...
+github.migrations.unlockRepoForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the migration. */
+  migration_id: number;
+  /** repo_name parameter */
+  repo_name: string;
+}): Promise<BasicError>
 ```
 
-### `github.migrations.cancelImport`
+<sub>`DELETE /orgs/{org}/migrations/{migration_id}/repos/{repo_name}/lock` · `migrations/unlock-repo-for-org`</sub>
 
-- **HTTP**: `DELETE /repos/{owner}/{repo}/import`
-- **What it does**: Cancel an import
-- **OpenAPI operationId**: `migrations/cancel-import`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.listReposForOrg`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `503`
+List repositories in an organization migration — [API reference](https://docs.github.com/rest/migrations/orgs#list-repositories-in-an-organization-migration)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsCancelImportInput = Parameters<typeof github.migrations.cancelImport> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsCancelImportOutput = Awaited<ReturnType<typeof github.migrations.cancelImport>>;
-
-const input: MigrationsCancelImportInput = {} as { owner: string; repo: string };
-const result: MigrationsCancelImportOutput = await github.migrations.cancelImport(input);
-
-// Result shape (from schema): unknown
+github.migrations.listReposForOrg(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The unique identifier of the migration. */
+  migration_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(MinimalRepository)[]>
 ```
 
-### `github.migrations.getImportStatus`
+<sub>`GET /orgs/{org}/migrations/{migration_id}/repositories` · `migrations/list-repos-for-org`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/import`
-- **What it does**: Get an import status
-- **OpenAPI operationId**: `migrations/get-import-status`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.cancelImport`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ vcs: string | null; use_lfs?: boolean; vcs_url: string; svc_root?: string; tfvc_project?: string; status: "auth" | "error" | "none" | "detecting" | "choose" | "auth_failed" | "importing" | "mapping" | "waiting_to_push...`
-- OpenAPI response codes: `200`, `404`, `503`
+Cancel an import — [API reference](https://docs.github.com/rest/migrations/source-imports#cancel-an-import)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsGetImportStatusInput = Parameters<typeof github.migrations.getImportStatus> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsGetImportStatusOutput = Awaited<ReturnType<typeof github.migrations.getImportStatus>>;
-
-const input: MigrationsGetImportStatusInput = {} as { owner: string; repo: string };
-const result: MigrationsGetImportStatusOutput = await github.migrations.getImportStatus(input);
-
-// Result shape (from schema): { vcs: string | null; use_lfs?: boolean; vcs_url: string; svc_root?: string; tfvc_project?: string; status: "auth" | "error" | "none" | "detecting" | "choose" | "auth_failed" | "importing" | "mapping" | "waiting_to_push...
+github.migrations.cancelImport(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<BasicError>
 ```
 
-### `github.migrations.updateImport`
+<sub>`DELETE /repos/{owner}/{repo}/import` · `migrations/cancel-import`</sub>
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/import`
-- **What it does**: Update an import
-- **OpenAPI operationId**: `migrations/update-import`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.getImportStatus`
 
-**Inputs**
-
-- Client input type: `{ vcs_username?: string; vcs_password?: string; vcs?: "subversion" | "tfvc" | "git" | "mercurial"; tfvc_project?: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ vcs: string | null; use_lfs?: boolean; vcs_url: string; svc_root?: string; tfvc_project?: string; status: "auth" | "error" | "none" | "detecting" | "choose" | "auth_failed" | "importing" | "mapping" | "waiting_to_push...`
-- OpenAPI response codes: `200`, `503`
+Get an import status — [API reference](https://docs.github.com/rest/migrations/source-imports#get-an-import-status)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsUpdateImportInput = Parameters<typeof github.migrations.updateImport> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsUpdateImportOutput = Awaited<ReturnType<typeof github.migrations.updateImport>>;
-
-const input: MigrationsUpdateImportInput = {} as { vcs_username?: string; vcs_password?: string; vcs?: "subversion" | "tfvc" | "git" | "mercurial"; tfvc_project?: string; owner: string; repo: string };
-const result: MigrationsUpdateImportOutput = await github.migrations.updateImport(input);
-
-// Result shape (from schema): { vcs: string | null; use_lfs?: boolean; vcs_url: string; svc_root?: string; tfvc_project?: string; status: "auth" | "error" | "none" | "detecting" | "choose" | "auth_failed" | "importing" | "mapping" | "waiting_to_push...
+github.migrations.getImportStatus(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Import>
 ```
 
-### `github.migrations.startImport`
+<sub>`GET /repos/{owner}/{repo}/import` · `migrations/get-import-status`</sub>
 
-- **HTTP**: `PUT /repos/{owner}/{repo}/import`
-- **What it does**: Start an import
-- **OpenAPI operationId**: `migrations/start-import`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `404`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.updateImport`
 
-**Inputs**
-
-- Client input type: `{ vcs_url: string; vcs?: "subversion" | "git" | "mercurial" | "tfvc"; vcs_username?: string; vcs_password?: string; tfvc_project?: string; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ vcs: string | null; use_lfs?: boolean; vcs_url: string; svc_root?: string; tfvc_project?: string; status: "auth" | "error" | "none" | "detecting" | "choose" | "auth_failed" | "importing" | "mapping" | "waiting_to_push...`
-- OpenAPI response codes: `201`, `404`, `422`, `503`
+Update an import — [API reference](https://docs.github.com/rest/migrations/source-imports#update-an-import)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsStartImportInput = Parameters<typeof github.migrations.startImport> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsStartImportOutput = Awaited<ReturnType<typeof github.migrations.startImport>>;
-
-const input: MigrationsStartImportInput = {} as { vcs_url: string; vcs?: "subversion" | "git" | "mercurial" | "tfvc"; vcs_username?: string; vcs_password?: string; tfvc_project?: string; owner: string; repo: string };
-const result: MigrationsStartImportOutput = await github.migrations.startImport(input);
-
-// Result shape (from schema): { vcs: string | null; use_lfs?: boolean; vcs_url: string; svc_root?: string; tfvc_project?: string; status: "auth" | "error" | "none" | "detecting" | "choose" | "auth_failed" | "importing" | "mapping" | "waiting_to_push...
+github.migrations.updateImport(input: {
+  /** The username to provide to the originating repository. */
+  vcs_username?: string;
+  /** The password to provide to the originating repository. */
+  vcs_password?: string;
+  /** The type of version control system you are migrating from. */
+  vcs?: "subversion" | "tfvc" | "git" | "mercurial";
+  /** For a tfvc import, the name of the project that is being imported. */
+  tfvc_project?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Import>
 ```
 
-### `github.migrations.getCommitAuthors`
+<sub>`PATCH /repos/{owner}/{repo}/import` · `migrations/update-import`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/import/authors`
-- **What it does**: Get commit authors
-- **OpenAPI operationId**: `migrations/get-commit-authors`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.startImport`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string; since?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; remote_id: string; remote_name: string; email: string; name: string; url: string; import_url: string })[]`
-- OpenAPI response codes: `200`, `404`, `503`
+Start an import — [API reference](https://docs.github.com/rest/migrations/source-imports#start-an-import)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsGetCommitAuthorsInput = Parameters<typeof github.migrations.getCommitAuthors> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsGetCommitAuthorsOutput = Awaited<ReturnType<typeof github.migrations.getCommitAuthors>>;
-
-const input: MigrationsGetCommitAuthorsInput = {} as { owner: string; repo: string; since?: number };
-const result: MigrationsGetCommitAuthorsOutput = await github.migrations.getCommitAuthors(input);
-
-// Result shape (from schema): ({ id: number; remote_id: string; remote_name: string; email: string; name: string; url: string; import_url: string })[]
+github.migrations.startImport(input: {
+  /** The URL of the originating repository. */
+  vcs_url: string;
+  /** The originating VCS type. Without this parameter, the import job will take additional time to detect the VCS type before beginning the import. This detection step will be reflected in the response. */
+  vcs?: "subversion" | "git" | "mercurial" | "tfvc";
+  /** If authentication is required, the username to provide to `vcs_url`. */
+  vcs_username?: string;
+  /** If authentication is required, the password to provide to `vcs_url`. */
+  vcs_password?: string;
+  /** For a tfvc import, the name of the project that is being imported. */
+  tfvc_project?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Import>
 ```
 
-### `github.migrations.mapCommitAuthor`
+<sub>`PUT /repos/{owner}/{repo}/import` · `migrations/start-import`</sub>
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/import/authors/{author_id}`
-- **What it does**: Map a commit author
-- **OpenAPI operationId**: `migrations/map-commit-author`
-- **Path params**: `author_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.getCommitAuthors`
 
-**Inputs**
-
-- Client input type: `{ email?: string; name?: string; owner: string; repo: string; author_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; remote_id: string; remote_name: string; email: string; name: string; url: string; import_url: string }`
-- OpenAPI response codes: `200`, `404`, `422`, `503`
+Get commit authors — [API reference](https://docs.github.com/rest/migrations/source-imports#get-commit-authors)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsMapCommitAuthorInput = Parameters<typeof github.migrations.mapCommitAuthor> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsMapCommitAuthorOutput = Awaited<ReturnType<typeof github.migrations.mapCommitAuthor>>;
-
-const input: MigrationsMapCommitAuthorInput = {} as { email?: string; name?: string; owner: string; repo: string; author_id: number };
-const result: MigrationsMapCommitAuthorOutput = await github.migrations.mapCommitAuthor(input);
-
-// Result shape (from schema): { id: number; remote_id: string; remote_name: string; email: string; name: string; url: string; import_url: string }
+github.migrations.getCommitAuthors(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** A user ID. Only return users with an ID greater than this ID. */
+  since?: number;
+}): Promise<(PorterAuthor)[]>
 ```
 
-### `github.migrations.getLargeFiles`
+<sub>`GET /repos/{owner}/{repo}/import/authors` · `migrations/get-commit-authors`</sub>
 
-- **HTTP**: `GET /repos/{owner}/{repo}/import/large_files`
-- **What it does**: Get large files
-- **OpenAPI operationId**: `migrations/get-large-files`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.mapCommitAuthor`
 
-**Inputs**
-
-- Client input type: `{ owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ ref_name: string; path: string; oid: string; size: number })[]`
-- OpenAPI response codes: `200`, `503`
+Map a commit author — [API reference](https://docs.github.com/rest/migrations/source-imports#map-a-commit-author)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsGetLargeFilesInput = Parameters<typeof github.migrations.getLargeFiles> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsGetLargeFilesOutput = Awaited<ReturnType<typeof github.migrations.getLargeFiles>>;
-
-const input: MigrationsGetLargeFilesInput = {} as { owner: string; repo: string };
-const result: MigrationsGetLargeFilesOutput = await github.migrations.getLargeFiles(input);
-
-// Result shape (from schema): ({ ref_name: string; path: string; oid: string; size: number })[]
+github.migrations.mapCommitAuthor(input: {
+  /** The new Git author email. */
+  email?: string;
+  /** The new Git author name. */
+  name?: string;
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  author_id: number;
+}): Promise<PorterAuthor>
 ```
 
-### `github.migrations.setLfsPreference`
+<sub>`PATCH /repos/{owner}/{repo}/import/authors/{author_id}` · `migrations/map-commit-author`</sub>
 
-- **HTTP**: `PATCH /repos/{owner}/{repo}/import/lfs`
-- **What it does**: Update Git LFS preference
-- **OpenAPI operationId**: `migrations/set-lfs-preference`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `422`, `503`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.getLargeFiles`
 
-**Inputs**
-
-- Client input type: `{ use_lfs: "opt_in" | "opt_out"; owner: string; repo: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ vcs: string | null; use_lfs?: boolean; vcs_url: string; svc_root?: string; tfvc_project?: string; status: "auth" | "error" | "none" | "detecting" | "choose" | "auth_failed" | "importing" | "mapping" | "waiting_to_push...`
-- OpenAPI response codes: `200`, `422`, `503`
+Get large files — [API reference](https://docs.github.com/rest/migrations/source-imports#get-large-files)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsSetLfsPreferenceInput = Parameters<typeof github.migrations.setLfsPreference> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsSetLfsPreferenceOutput = Awaited<ReturnType<typeof github.migrations.setLfsPreference>>;
-
-const input: MigrationsSetLfsPreferenceInput = {} as { use_lfs: "opt_in" | "opt_out"; owner: string; repo: string };
-const result: MigrationsSetLfsPreferenceOutput = await github.migrations.setLfsPreference(input);
-
-// Result shape (from schema): { vcs: string | null; use_lfs?: boolean; vcs_url: string; svc_root?: string; tfvc_project?: string; status: "auth" | "error" | "none" | "detecting" | "choose" | "auth_failed" | "importing" | "mapping" | "waiting_to_push...
+github.migrations.getLargeFiles(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<(PorterLargeFile)[]>
 ```
 
-### `github.migrations.listForAuthenticatedUser`
+<sub>`GET /repos/{owner}/{repo}/import/large_files` · `migrations/get-large-files`</sub>
 
-- **HTTP**: `GET /user/migrations`
-- **What it does**: List user migrations
-- **OpenAPI operationId**: `migrations/list-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.setLfsPreference`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; foll...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Update Git LFS preference — [API reference](https://docs.github.com/rest/migrations/source-imports#update-git-lfs-preference)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsListForAuthenticatedUserInput = Parameters<typeof github.migrations.listForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsListForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.migrations.listForAuthenticatedUser>>;
-
-const input: MigrationsListForAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: MigrationsListForAuthenticatedUserOutput = await github.migrations.listForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; foll...
+github.migrations.setLfsPreference(input: {
+  /** Whether to store large files during the import. `opt_in` means large files will be stored using Git LFS. `opt_out` means large files will be removed during the import. */
+  use_lfs: "opt_in" | "opt_out";
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<Import>
 ```
 
-### `github.migrations.startForAuthenticatedUser`
+<sub>`PATCH /repos/{owner}/{repo}/import/lfs` · `migrations/set-lfs-preference`</sub>
 
-- **HTTP**: `POST /user/migrations`
-- **What it does**: Start a user migration
-- **OpenAPI operationId**: `migrations/start-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.listForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ lock_repositories?: boolean; exclude_metadata?: boolean; exclude_git_data?: boolean; exclude_attachments?: boolean; exclude_releases?: boolean; exclude_owner_projects?: boolean; org_metadata_only?: boolean; exclude?: ("repositories")[]; repositories: (string)[] }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; follo...`
-- OpenAPI response codes: `201`, `304`, `401`, `403`, `422`
+List user migrations — [API reference](https://docs.github.com/rest/migrations/users#list-user-migrations)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsStartForAuthenticatedUserInput = Parameters<typeof github.migrations.startForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsStartForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.migrations.startForAuthenticatedUser>>;
-
-const input: MigrationsStartForAuthenticatedUserInput = {} as { lock_repositories?: boolean; exclude_metadata?: boolean; exclude_git_data?: boolean; exclude_attachments?: boolean; exclude_releases?: boolean; exclude_owner_projects?: boolean; org_metadata_only?: boolean; exclude?: ("repositories")[]; repositories: (string)[] };
-const result: MigrationsStartForAuthenticatedUserOutput = await github.migrations.startForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; follo...
+github.migrations.listForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Migration)[]>
 ```
 
-### `github.migrations.getStatusForAuthenticatedUser`
+<sub>`GET /user/migrations` · `migrations/list-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/migrations/{migration_id}`
-- **What it does**: Get a user migration status
-- **OpenAPI operationId**: `migrations/get-status-for-authenticated-user`
-- **Path params**: None
-- **Query params**: `exclude`
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.startForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ migration_id: number; exclude?: (string)[] }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; follo...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Start a user migration — [API reference](https://docs.github.com/rest/migrations/users#start-a-user-migration)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsGetStatusForAuthenticatedUserInput = Parameters<typeof github.migrations.getStatusForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsGetStatusForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.migrations.getStatusForAuthenticatedUser>>;
-
-const input: MigrationsGetStatusForAuthenticatedUserInput = {} as { migration_id: number; exclude?: (string)[] };
-const result: MigrationsGetStatusForAuthenticatedUserOutput = await github.migrations.getStatusForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; follo...
+github.migrations.startForAuthenticatedUser(input: {
+  /** Lock the repositories being migrated at the start of the migration */
+  lock_repositories?: boolean;
+  /** Indicates whether metadata should be excluded and only git source should be included for the migration. */
+  exclude_metadata?: boolean;
+  /** Indicates whether the repository git data should be excluded from the migration. */
+  exclude_git_data?: boolean;
+  /** Do not include attachments in the migration */
+  exclude_attachments?: boolean;
+  /** Do not include releases in the migration */
+  exclude_releases?: boolean;
+  /** Indicates whether projects owned by the organization or users should be excluded. */
+  exclude_owner_projects?: boolean;
+  /** Indicates whether this should only include organization metadata (repositories array should be empty and will ignore other flags). */
+  org_metadata_only?: boolean;
+  /** Exclude attributes from the API response to improve performance */
+  exclude?: ("repositories")[];
+  repositories: (string)[];
+}): Promise<Migration>
 ```
 
-### `github.migrations.deleteArchiveForAuthenticatedUser`
+<sub>`POST /user/migrations` · `migrations/start-for-authenticated-user`</sub>
 
-- **HTTP**: `DELETE /user/migrations/{migration_id}/archive`
-- **What it does**: Delete a user migration archive
-- **OpenAPI operationId**: `migrations/delete-archive-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.getStatusForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ migration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`
+Get a user migration status — [API reference](https://docs.github.com/rest/migrations/users#get-a-user-migration-status)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsDeleteArchiveForAuthenticatedUserInput = Parameters<typeof github.migrations.deleteArchiveForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsDeleteArchiveForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.migrations.deleteArchiveForAuthenticatedUser>>;
-
-const input: MigrationsDeleteArchiveForAuthenticatedUserInput = {} as { migration_id: number };
-const result: MigrationsDeleteArchiveForAuthenticatedUserOutput = await github.migrations.deleteArchiveForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.migrations.getStatusForAuthenticatedUser(input: {
+  /** The unique identifier of the migration. */
+  migration_id: number;
+  exclude?: (string)[];
+}): Promise<Migration>
 ```
 
-### `github.migrations.getArchiveForAuthenticatedUser`
+<sub>`GET /user/migrations/{migration_id}` · `migrations/get-status-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/migrations/{migration_id}/archive`
-- **What it does**: Download a user migration archive
-- **OpenAPI operationId**: `migrations/get-archive-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `302`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.deleteArchiveForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ migration_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `302`, `304`, `401`, `403`
+Delete a user migration archive — [API reference](https://docs.github.com/rest/migrations/users#delete-a-user-migration-archive)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsGetArchiveForAuthenticatedUserInput = Parameters<typeof github.migrations.getArchiveForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsGetArchiveForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.migrations.getArchiveForAuthenticatedUser>>;
-
-const input: MigrationsGetArchiveForAuthenticatedUserInput = {} as { migration_id: number };
-const result: MigrationsGetArchiveForAuthenticatedUserOutput = await github.migrations.getArchiveForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.migrations.deleteArchiveForAuthenticatedUser(input: {
+  /** The unique identifier of the migration. */
+  migration_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.migrations.unlockRepoForAuthenticatedUser`
+<sub>`DELETE /user/migrations/{migration_id}/archive` · `migrations/delete-archive-for-authenticated-user`</sub>
 
-- **HTTP**: `DELETE /user/migrations/{migration_id}/repos/{repo_name}/lock`
-- **What it does**: Unlock a user repository
-- **OpenAPI operationId**: `migrations/unlock-repo-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.getArchiveForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ migration_id: number; repo_name: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`
+Download a user migration archive — [API reference](https://docs.github.com/rest/migrations/users#download-a-user-migration-archive)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsUnlockRepoForAuthenticatedUserInput = Parameters<typeof github.migrations.unlockRepoForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsUnlockRepoForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.migrations.unlockRepoForAuthenticatedUser>>;
-
-const input: MigrationsUnlockRepoForAuthenticatedUserInput = {} as { migration_id: number; repo_name: string };
-const result: MigrationsUnlockRepoForAuthenticatedUserOutput = await github.migrations.unlockRepoForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.migrations.getArchiveForAuthenticatedUser(input: {
+  /** The unique identifier of the migration. */
+  migration_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.migrations.listReposForAuthenticatedUser`
+<sub>`GET /user/migrations/{migration_id}/archive` · `migrations/get-archive-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/migrations/{migration_id}/repositories`
-- **What it does**: List repositories for a user migration
-- **OpenAPI operationId**: `migrations/list-repos-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.migrations.unlockRepoForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ migration_id: number; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...`
-- OpenAPI response codes: `200`, `404`
+Unlock a user repository — [API reference](https://docs.github.com/rest/migrations/users#unlock-a-user-repository)
 
 ```ts
-import github from "@utdk/github";
-
-type MigrationsListReposForAuthenticatedUserInput = Parameters<typeof github.migrations.listReposForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type MigrationsListReposForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.migrations.listReposForAuthenticatedUser>>;
-
-const input: MigrationsListReposForAuthenticatedUserInput = {} as { migration_id: number; per_page?: number; page?: number };
-const result: MigrationsListReposForAuthenticatedUserOutput = await github.migrations.listReposForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ id: number; node_id: string; name: string; full_name: string; owner: { name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: str...
+github.migrations.unlockRepoForAuthenticatedUser(input: {
+  /** The unique identifier of the migration. */
+  migration_id: number;
+  /** repo_name parameter */
+  repo_name: string;
+}): Promise<BasicError>
 ```
 
+<sub>`DELETE /user/migrations/{migration_id}/repos/{repo_name}/lock` · `migrations/unlock-repo-for-authenticated-user`</sub>
+
+## `github.migrations.listReposForAuthenticatedUser`
+
+List repositories for a user migration — [API reference](https://docs.github.com/rest/migrations/users#list-repositories-for-a-user-migration)
+
+```ts
+github.migrations.listReposForAuthenticatedUser(input: {
+  /** The unique identifier of the migration. */
+  migration_id: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(MinimalRepository)[]>
+```
+
+<sub>`GET /user/migrations/{migration_id}/repositories` · `migrations/list-repos-for-authenticated-user`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

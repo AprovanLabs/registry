@@ -51,6 +51,11 @@
   --color-chart-2: var(--chart-2);
   --color-chart-1: var(--chart-1);
   --color-destructive: var(--destructive);
+  --color-syntax-keyword: var(--syntax-keyword);
+  --color-syntax-fn: var(--syntax-fn);
+  --color-syntax-type: var(--syntax-type);
+  --color-syntax-string: var(--syntax-string);
+  --color-syntax-comment: var(--syntax-comment);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
@@ -89,6 +94,15 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+
+  /* Editor-syntax accents (adapted from aprovan.com navy/red) — used the way
+     a code editor highlights symbols: function names, types, strings, keywords.
+     Restrained color over the black/white base; never for large surfaces. */
+  --syntax-keyword: hsl(217 33% 27%);
+  --syntax-fn: hsl(212 68% 39%);
+  --syntax-type: hsl(180 48% 27%);
+  --syntax-string: hsl(0 62% 44%);
+  --syntax-comment: oklch(0.556 0 0);
 }
 
 * {
@@ -143,6 +157,12 @@ pre {
   --sidebar-primary-foreground: oklch(0.985 0 0);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
+
+  --syntax-keyword: hsl(217 45% 74%);
+  --syntax-fn: hsl(210 80% 72%);
+  --syntax-type: hsl(175 45% 62%);
+  --syntax-string: hsl(0 72% 72%);
+  --syntax-comment: oklch(0.708 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }

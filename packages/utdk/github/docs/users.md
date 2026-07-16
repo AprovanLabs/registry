@@ -1,1608 +1,713 @@
 # Users
 
-Use these operations through the generated client (not direct HTTP calls).
-
-Import path: `@utdk/github`
-
-## Operations
-
-### `github.users.getAuthenticated`
-
-- **HTTP**: `GET /user`
-- **What it does**: Get the authenticated user
-- **OpenAPI operationId**: `users/get-authenticated`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+47 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
-
-type UsersGetAuthenticatedInput = Parameters<typeof github.users.getAuthenticated> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersGetAuthenticatedOutput = Awaited<ReturnType<typeof github.users.getAuthenticated>>;
-
-const result: UsersGetAuthenticatedOutput = await github.users.getAuthenticated();
-
-// Result shape (from schema): { [key: string]: unknown }
 ```
 
-### `github.users.updateAuthenticated`
+## `github.users.getAuthenticated`
 
-- **HTTP**: `PATCH /user`
-- **What it does**: Update the authenticated user
-- **OpenAPI operationId**: `users/update-authenticated`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ name?: string; email?: string; blog?: string; twitter_username?: string | null; company?: string; location?: string; hireable?: boolean; bio?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gists_url: string; star...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`, `422`
+Get the authenticated user — [API reference](https://docs.github.com/rest/users/users#get-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersUpdateAuthenticatedInput = Parameters<typeof github.users.updateAuthenticated> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersUpdateAuthenticatedOutput = Awaited<ReturnType<typeof github.users.updateAuthenticated>>;
-
-const input: UsersUpdateAuthenticatedInput = {} as { name?: string; email?: string; blog?: string; twitter_username?: string | null; company?: string; location?: string; hireable?: boolean; bio?: string };
-const result: UsersUpdateAuthenticatedOutput = await github.users.updateAuthenticated(input);
-
-// Result shape (from schema): { login: string; id: number; user_view_type?: string; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gists_url: string; star...
+github.users.getAuthenticated(): Promise<PrivateUser | PublicUser>
 ```
 
-### `github.users.getById`
+<sub>`GET /user` · `users/get-authenticated`</sub>
 
-- **HTTP**: `GET /user/{account_id}`
-- **What it does**: Get a user using their ID
-- **OpenAPI operationId**: `users/get-by-id`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.updateAuthenticated`
 
-**Inputs**
-
-- Client input type: `{ account_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `200`, `404`
+Update the authenticated user — [API reference](https://docs.github.com/rest/users/users#update-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersGetByIdInput = Parameters<typeof github.users.getById> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersGetByIdOutput = Awaited<ReturnType<typeof github.users.getById>>;
-
-const input: UsersGetByIdInput = {} as { account_id: number };
-const result: UsersGetByIdOutput = await github.users.getById(input);
-
-// Result shape (from schema): { [key: string]: unknown }
+github.users.updateAuthenticated(input: {
+  /** The new name of the user. */
+  name?: string;
+  /** The publicly visible email address of the user. */
+  email?: string;
+  /** The new blog URL of the user. */
+  blog?: string;
+  /** The new Twitter username of the user. */
+  twitter_username?: string | null;
+  /** The new company of the user. */
+  company?: string;
+  /** The new location of the user. */
+  location?: string;
+  /** The new hiring availability of the user. */
+  hireable?: boolean;
+  /** The new short biography of the user. */
+  bio?: string;
+}): Promise<PrivateUser>
 ```
 
-### `github.users.listBlockedByAuthenticatedUser`
+<sub>`PATCH /user` · `users/update-authenticated`</sub>
 
-- **HTTP**: `GET /user/blocks`
-- **What it does**: List users blocked by the authenticated user
-- **OpenAPI operationId**: `users/list-blocked-by-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.getById`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Get a user using their ID — [API reference](https://docs.github.com/rest/users/users#get-a-user-using-their-id)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListBlockedByAuthenticatedUserInput = Parameters<typeof github.users.listBlockedByAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListBlockedByAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.listBlockedByAuthenticatedUser>>;
-
-const input: UsersListBlockedByAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: UsersListBlockedByAuthenticatedUserOutput = await github.users.listBlockedByAuthenticatedUser(input);
-
-// Result shape (from schema): ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
+github.users.getById(input: {
+  /** account_id parameter */
+  account_id: number;
+}): Promise<PrivateUser | PublicUser>
 ```
 
-### `github.users.unblock`
+<sub>`GET /user/{account_id}` · `users/get-by-id`</sub>
 
-- **HTTP**: `DELETE /user/blocks/{username}`
-- **What it does**: Unblock a user
-- **OpenAPI operationId**: `users/unblock`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listBlockedByAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`
+List users blocked by the authenticated user — [API reference](https://docs.github.com/rest/users/blocking#list-users-blocked-by-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersUnblockInput = Parameters<typeof github.users.unblock> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersUnblockOutput = Awaited<ReturnType<typeof github.users.unblock>>;
-
-const input: UsersUnblockInput = {} as { username: string };
-const result: UsersUnblockOutput = await github.users.unblock(input);
-
-// Result shape (from schema): unknown
+github.users.listBlockedByAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(SimpleUser)[]>
 ```
 
-### `github.users.checkBlocked`
+<sub>`GET /user/blocks` · `users/list-blocked-by-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/blocks/{username}`
-- **What it does**: Check if a user is blocked by the authenticated user
-- **OpenAPI operationId**: `users/check-blocked`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.unblock`
 
-**Inputs**
-
-- Client input type: `{ username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`
+Unblock a user — [API reference](https://docs.github.com/rest/users/blocking#unblock-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersCheckBlockedInput = Parameters<typeof github.users.checkBlocked> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersCheckBlockedOutput = Awaited<ReturnType<typeof github.users.checkBlocked>>;
-
-const input: UsersCheckBlockedInput = {} as { username: string };
-const result: UsersCheckBlockedOutput = await github.users.checkBlocked(input);
-
-// Result shape (from schema): unknown
+github.users.unblock(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<BasicError>
 ```
 
-### `github.users.block`
+<sub>`DELETE /user/blocks/{username}` · `users/unblock`</sub>
 
-- **HTTP**: `PUT /user/blocks/{username}`
-- **What it does**: Block a user
-- **OpenAPI operationId**: `users/block`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.checkBlocked`
 
-**Inputs**
-
-- Client input type: `{ username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`, `422`
+Check if a user is blocked by the authenticated user — [API reference](https://docs.github.com/rest/users/blocking#check-if-a-user-is-blocked-by-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersBlockInput = Parameters<typeof github.users.block> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersBlockOutput = Awaited<ReturnType<typeof github.users.block>>;
-
-const input: UsersBlockInput = {} as { username: string };
-const result: UsersBlockOutput = await github.users.block(input);
-
-// Result shape (from schema): unknown
+github.users.checkBlocked(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<BasicError>
 ```
 
-### `github.users.setPrimaryEmailVisibilityForAuthenticatedUser`
+<sub>`GET /user/blocks/{username}` · `users/check-blocked`</sub>
 
-- **HTTP**: `PATCH /user/email/visibility`
-- **What it does**: Set primary email visibility for the authenticated user
-- **OpenAPI operationId**: `users/set-primary-email-visibility-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.block`
 
-**Inputs**
-
-- Client input type: `{ visibility: "public" | "private" }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ email: string; primary: boolean; verified: boolean; visibility: string | null })[]`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`, `422`
+Block a user — [API reference](https://docs.github.com/rest/users/blocking#block-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersSetPrimaryEmailVisibilityForAuthenticatedUserInput = Parameters<typeof github.users.setPrimaryEmailVisibilityForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersSetPrimaryEmailVisibilityForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.setPrimaryEmailVisibilityForAuthenticatedUser>>;
-
-const input: UsersSetPrimaryEmailVisibilityForAuthenticatedUserInput = {} as { visibility: "public" | "private" };
-const result: UsersSetPrimaryEmailVisibilityForAuthenticatedUserOutput = await github.users.setPrimaryEmailVisibilityForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ email: string; primary: boolean; verified: boolean; visibility: string | null })[]
+github.users.block(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<BasicError>
 ```
 
-### `github.users.deleteEmailForAuthenticatedUser`
+<sub>`PUT /user/blocks/{username}` · `users/block`</sub>
 
-- **HTTP**: `DELETE /user/emails`
-- **What it does**: Delete an email address for the authenticated user
-- **OpenAPI operationId**: `users/delete-email-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.setPrimaryEmailVisibilityForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ body?: { emails: (string)[] } | (string)[] | string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`, `422`
+Set primary email visibility for the authenticated user — [API reference](https://docs.github.com/rest/users/emails#set-primary-email-visibility-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersDeleteEmailForAuthenticatedUserInput = Parameters<typeof github.users.deleteEmailForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersDeleteEmailForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.deleteEmailForAuthenticatedUser>>;
-
-const input: UsersDeleteEmailForAuthenticatedUserInput = {} as { body?: { emails: (string)[] } | (string)[] | string };
-const result: UsersDeleteEmailForAuthenticatedUserOutput = await github.users.deleteEmailForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.users.setPrimaryEmailVisibilityForAuthenticatedUser(input: {
+  /** Denotes whether an email is publicly visible. */
+  visibility: "public" | "private";
+}): Promise<(Email)[]>
 ```
 
-### `github.users.listEmailsForAuthenticatedUser`
+<sub>`PATCH /user/email/visibility` · `users/set-primary-email-visibility-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/emails`
-- **What it does**: List email addresses for the authenticated user
-- **OpenAPI operationId**: `users/list-emails-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.deleteEmailForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ email: string; primary: boolean; verified: boolean; visibility: string | null })[]`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Delete an email address for the authenticated user — [API reference](https://docs.github.com/rest/users/emails#delete-an-email-address-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListEmailsForAuthenticatedUserInput = Parameters<typeof github.users.listEmailsForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListEmailsForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.listEmailsForAuthenticatedUser>>;
-
-const input: UsersListEmailsForAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: UsersListEmailsForAuthenticatedUserOutput = await github.users.listEmailsForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ email: string; primary: boolean; verified: boolean; visibility: string | null })[]
+github.users.deleteEmailForAuthenticatedUser(input: {
+  body?: { emails: (string)[] } | (string)[] | string;
+}): Promise<BasicError>
 ```
 
-### `github.users.addEmailForAuthenticatedUser`
+<sub>`DELETE /user/emails` · `users/delete-email-for-authenticated-user`</sub>
 
-- **HTTP**: `POST /user/emails`
-- **What it does**: Add an email address for the authenticated user
-- **OpenAPI operationId**: `users/add-email-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listEmailsForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ body?: { emails: (string)[] } | (string)[] | string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ email: string; primary: boolean; verified: boolean; visibility: string | null })[]`
-- OpenAPI response codes: `201`, `304`, `401`, `403`, `404`, `422`
+List email addresses for the authenticated user — [API reference](https://docs.github.com/rest/users/emails#list-email-addresses-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersAddEmailForAuthenticatedUserInput = Parameters<typeof github.users.addEmailForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersAddEmailForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.addEmailForAuthenticatedUser>>;
-
-const input: UsersAddEmailForAuthenticatedUserInput = {} as { body?: { emails: (string)[] } | (string)[] | string };
-const result: UsersAddEmailForAuthenticatedUserOutput = await github.users.addEmailForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ email: string; primary: boolean; verified: boolean; visibility: string | null })[]
+github.users.listEmailsForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Email)[]>
 ```
 
-### `github.users.listFollowersForAuthenticatedUser`
+<sub>`GET /user/emails` · `users/list-emails-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/followers`
-- **What it does**: List followers of the authenticated user
-- **OpenAPI operationId**: `users/list-followers-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.addEmailForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+Add an email address for the authenticated user — [API reference](https://docs.github.com/rest/users/emails#add-an-email-address-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListFollowersForAuthenticatedUserInput = Parameters<typeof github.users.listFollowersForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListFollowersForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.listFollowersForAuthenticatedUser>>;
-
-const input: UsersListFollowersForAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: UsersListFollowersForAuthenticatedUserOutput = await github.users.listFollowersForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
+github.users.addEmailForAuthenticatedUser(input: {
+  body?: { emails: (string)[] } | (string)[] | string;
+}): Promise<(Email)[]>
 ```
 
-### `github.users.listFollowedByAuthenticatedUser`
+<sub>`POST /user/emails` · `users/add-email-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/following`
-- **What it does**: List the people the authenticated user follows
-- **OpenAPI operationId**: `users/list-followed-by-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listFollowersForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`
+List followers of the authenticated user — [API reference](https://docs.github.com/rest/users/followers#list-followers-of-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListFollowedByAuthenticatedUserInput = Parameters<typeof github.users.listFollowedByAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListFollowedByAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.listFollowedByAuthenticatedUser>>;
-
-const input: UsersListFollowedByAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: UsersListFollowedByAuthenticatedUserOutput = await github.users.listFollowedByAuthenticatedUser(input);
-
-// Result shape (from schema): ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
+github.users.listFollowersForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(SimpleUser)[]>
 ```
 
-### `github.users.unfollow`
+<sub>`GET /user/followers` · `users/list-followers-for-authenticated-user`</sub>
 
-- **HTTP**: `DELETE /user/following/{username}`
-- **What it does**: Unfollow a user
-- **OpenAPI operationId**: `users/unfollow`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listFollowedByAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`
+List the people the authenticated user follows — [API reference](https://docs.github.com/rest/users/followers#list-the-people-the-authenticated-user-follows)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersUnfollowInput = Parameters<typeof github.users.unfollow> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersUnfollowOutput = Awaited<ReturnType<typeof github.users.unfollow>>;
-
-const input: UsersUnfollowInput = {} as { username: string };
-const result: UsersUnfollowOutput = await github.users.unfollow(input);
-
-// Result shape (from schema): unknown
+github.users.listFollowedByAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(SimpleUser)[]>
 ```
 
-### `github.users.checkPersonIsFollowedByAuthenticated`
+<sub>`GET /user/following` · `users/list-followed-by-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/following/{username}`
-- **What it does**: Check if a person is followed by the authenticated user
-- **OpenAPI operationId**: `users/check-person-is-followed-by-authenticated`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.unfollow`
 
-**Inputs**
-
-- Client input type: `{ username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`
+Unfollow a user — [API reference](https://docs.github.com/rest/users/followers#unfollow-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersCheckPersonIsFollowedByAuthenticatedInput = Parameters<typeof github.users.checkPersonIsFollowedByAuthenticated> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersCheckPersonIsFollowedByAuthenticatedOutput = Awaited<ReturnType<typeof github.users.checkPersonIsFollowedByAuthenticated>>;
-
-const input: UsersCheckPersonIsFollowedByAuthenticatedInput = {} as { username: string };
-const result: UsersCheckPersonIsFollowedByAuthenticatedOutput = await github.users.checkPersonIsFollowedByAuthenticated(input);
-
-// Result shape (from schema): unknown
+github.users.unfollow(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<BasicError>
 ```
 
-### `github.users.follow`
+<sub>`DELETE /user/following/{username}` · `users/unfollow`</sub>
 
-- **HTTP**: `PUT /user/following/{username}`
-- **What it does**: Follow a user
-- **OpenAPI operationId**: `users/follow`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.checkPersonIsFollowedByAuthenticated`
 
-**Inputs**
-
-- Client input type: `{ username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`, `422`
+Check if a person is followed by the authenticated user — [API reference](https://docs.github.com/rest/users/followers#check-if-a-person-is-followed-by-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersFollowInput = Parameters<typeof github.users.follow> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersFollowOutput = Awaited<ReturnType<typeof github.users.follow>>;
-
-const input: UsersFollowInput = {} as { username: string };
-const result: UsersFollowOutput = await github.users.follow(input);
-
-// Result shape (from schema): unknown
+github.users.checkPersonIsFollowedByAuthenticated(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<BasicError>
 ```
 
-### `github.users.listGpgKeysForAuthenticatedUser`
+<sub>`GET /user/following/{username}` · `users/check-person-is-followed-by-authenticated`</sub>
 
-- **HTTP**: `GET /user/gpg_keys`
-- **What it does**: List GPG keys for the authenticated user
-- **OpenAPI operationId**: `users/list-gpg-keys-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.follow`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; name?: string | null; primary_key_id: number | null; key_id: string; public_key: string; emails: ({ email?: string; verified?: boolean })[]; subkeys: ({ id?: number; primary_key_id?: number; key_id?: stri...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Follow a user — [API reference](https://docs.github.com/rest/users/followers#follow-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListGpgKeysForAuthenticatedUserInput = Parameters<typeof github.users.listGpgKeysForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListGpgKeysForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.listGpgKeysForAuthenticatedUser>>;
-
-const input: UsersListGpgKeysForAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: UsersListGpgKeysForAuthenticatedUserOutput = await github.users.listGpgKeysForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ id: number; name?: string | null; primary_key_id: number | null; key_id: string; public_key: string; emails: ({ email?: string; verified?: boolean })[]; subkeys: ({ id?: number; primary_key_id?: number; key_id?: stri...
+github.users.follow(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<BasicError>
 ```
 
-### `github.users.createGpgKeyForAuthenticatedUser`
+<sub>`PUT /user/following/{username}` · `users/follow`</sub>
 
-- **HTTP**: `POST /user/gpg_keys`
-- **What it does**: Create a GPG key for the authenticated user
-- **OpenAPI operationId**: `users/create-gpg-key-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listGpgKeysForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ name?: string; armored_public_key: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name?: string | null; primary_key_id: number | null; key_id: string; public_key: string; emails: ({ email?: string; verified?: boolean })[]; subkeys: ({ id?: number; primary_key_id?: number; key_id?: strin...`
-- OpenAPI response codes: `201`, `304`, `401`, `403`, `404`, `422`
+List GPG keys for the authenticated user — [API reference](https://docs.github.com/rest/users/gpg-keys#list-gpg-keys-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersCreateGpgKeyForAuthenticatedUserInput = Parameters<typeof github.users.createGpgKeyForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersCreateGpgKeyForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.createGpgKeyForAuthenticatedUser>>;
-
-const input: UsersCreateGpgKeyForAuthenticatedUserInput = {} as { name?: string; armored_public_key: string };
-const result: UsersCreateGpgKeyForAuthenticatedUserOutput = await github.users.createGpgKeyForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; name?: string | null; primary_key_id: number | null; key_id: string; public_key: string; emails: ({ email?: string; verified?: boolean })[]; subkeys: ({ id?: number; primary_key_id?: number; key_id?: strin...
+github.users.listGpgKeysForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(GpgKey)[]>
 ```
 
-### `github.users.deleteGpgKeyForAuthenticatedUser`
+<sub>`GET /user/gpg_keys` · `users/list-gpg-keys-for-authenticated-user`</sub>
 
-- **HTTP**: `DELETE /user/gpg_keys/{gpg_key_id}`
-- **What it does**: Delete a GPG key for the authenticated user
-- **OpenAPI operationId**: `users/delete-gpg-key-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.createGpgKeyForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ gpg_key_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`, `422`
+Create a GPG key for the authenticated user — [API reference](https://docs.github.com/rest/users/gpg-keys#create-a-gpg-key-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersDeleteGpgKeyForAuthenticatedUserInput = Parameters<typeof github.users.deleteGpgKeyForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersDeleteGpgKeyForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.deleteGpgKeyForAuthenticatedUser>>;
-
-const input: UsersDeleteGpgKeyForAuthenticatedUserInput = {} as { gpg_key_id: number };
-const result: UsersDeleteGpgKeyForAuthenticatedUserOutput = await github.users.deleteGpgKeyForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.users.createGpgKeyForAuthenticatedUser(input: {
+  /** A descriptive name for the new key. */
+  name?: string;
+  /** A GPG key in ASCII-armored format. */
+  armored_public_key: string;
+}): Promise<GpgKey>
 ```
 
-### `github.users.getGpgKeyForAuthenticatedUser`
+<sub>`POST /user/gpg_keys` · `users/create-gpg-key-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/gpg_keys/{gpg_key_id}`
-- **What it does**: Get a GPG key for the authenticated user
-- **OpenAPI operationId**: `users/get-gpg-key-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.deleteGpgKeyForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ gpg_key_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name?: string | null; primary_key_id: number | null; key_id: string; public_key: string; emails: ({ email?: string; verified?: boolean })[]; subkeys: ({ id?: number; primary_key_id?: number; key_id?: strin...`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Delete a GPG key for the authenticated user — [API reference](https://docs.github.com/rest/users/gpg-keys#delete-a-gpg-key-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersGetGpgKeyForAuthenticatedUserInput = Parameters<typeof github.users.getGpgKeyForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersGetGpgKeyForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.getGpgKeyForAuthenticatedUser>>;
-
-const input: UsersGetGpgKeyForAuthenticatedUserInput = {} as { gpg_key_id: number };
-const result: UsersGetGpgKeyForAuthenticatedUserOutput = await github.users.getGpgKeyForAuthenticatedUser(input);
-
-// Result shape (from schema): { id: number; name?: string | null; primary_key_id: number | null; key_id: string; public_key: string; emails: ({ email?: string; verified?: boolean })[]; subkeys: ({ id?: number; primary_key_id?: number; key_id?: strin...
+github.users.deleteGpgKeyForAuthenticatedUser(input: {
+  /** The unique identifier of the GPG key. */
+  gpg_key_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.users.listPublicSshKeysForAuthenticatedUser`
+<sub>`DELETE /user/gpg_keys/{gpg_key_id}` · `users/delete-gpg-key-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/keys`
-- **What it does**: List public SSH keys for the authenticated user
-- **OpenAPI operationId**: `users/list-public-ssh-keys-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.getGpgKeyForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ key: string; id: number; url: string; title: string; created_at: string; verified: boolean; read_only: boolean; last_used?: string | null })[]`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Get a GPG key for the authenticated user — [API reference](https://docs.github.com/rest/users/gpg-keys#get-a-gpg-key-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListPublicSshKeysForAuthenticatedUserInput = Parameters<typeof github.users.listPublicSshKeysForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListPublicSshKeysForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.listPublicSshKeysForAuthenticatedUser>>;
-
-const input: UsersListPublicSshKeysForAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: UsersListPublicSshKeysForAuthenticatedUserOutput = await github.users.listPublicSshKeysForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ key: string; id: number; url: string; title: string; created_at: string; verified: boolean; read_only: boolean; last_used?: string | null })[]
+github.users.getGpgKeyForAuthenticatedUser(input: {
+  /** The unique identifier of the GPG key. */
+  gpg_key_id: number;
+}): Promise<GpgKey>
 ```
 
-### `github.users.createPublicSshKeyForAuthenticatedUser`
+<sub>`GET /user/gpg_keys/{gpg_key_id}` · `users/get-gpg-key-for-authenticated-user`</sub>
 
-- **HTTP**: `POST /user/keys`
-- **What it does**: Create a public SSH key for the authenticated user
-- **OpenAPI operationId**: `users/create-public-ssh-key-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listPublicSshKeysForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ title?: string; key: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ key: string; id: number; url: string; title: string; created_at: string; verified: boolean; read_only: boolean; last_used?: string | null }`
-- OpenAPI response codes: `201`, `304`, `401`, `403`, `404`, `422`
+List public SSH keys for the authenticated user — [API reference](https://docs.github.com/rest/users/keys#list-public-ssh-keys-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersCreatePublicSshKeyForAuthenticatedUserInput = Parameters<typeof github.users.createPublicSshKeyForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersCreatePublicSshKeyForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.createPublicSshKeyForAuthenticatedUser>>;
-
-const input: UsersCreatePublicSshKeyForAuthenticatedUserInput = {} as { title?: string; key: string };
-const result: UsersCreatePublicSshKeyForAuthenticatedUserOutput = await github.users.createPublicSshKeyForAuthenticatedUser(input);
-
-// Result shape (from schema): { key: string; id: number; url: string; title: string; created_at: string; verified: boolean; read_only: boolean; last_used?: string | null }
+github.users.listPublicSshKeysForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Key)[]>
 ```
 
-### `github.users.deletePublicSshKeyForAuthenticatedUser`
+<sub>`GET /user/keys` · `users/list-public-ssh-keys-for-authenticated-user`</sub>
 
-- **HTTP**: `DELETE /user/keys/{key_id}`
-- **What it does**: Delete a public SSH key for the authenticated user
-- **OpenAPI operationId**: `users/delete-public-ssh-key-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.createPublicSshKeyForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ key_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`
+Create a public SSH key for the authenticated user — [API reference](https://docs.github.com/rest/users/keys#create-a-public-ssh-key-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersDeletePublicSshKeyForAuthenticatedUserInput = Parameters<typeof github.users.deletePublicSshKeyForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersDeletePublicSshKeyForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.deletePublicSshKeyForAuthenticatedUser>>;
-
-const input: UsersDeletePublicSshKeyForAuthenticatedUserInput = {} as { key_id: number };
-const result: UsersDeletePublicSshKeyForAuthenticatedUserOutput = await github.users.deletePublicSshKeyForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.users.createPublicSshKeyForAuthenticatedUser(input: {
+  /** A descriptive name for the new key. */
+  title?: string;
+  /** The public SSH key to add to your GitHub account. */
+  key: string;
+}): Promise<Key>
 ```
 
-### `github.users.getPublicSshKeyForAuthenticatedUser`
+<sub>`POST /user/keys` · `users/create-public-ssh-key-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/keys/{key_id}`
-- **What it does**: Get a public SSH key for the authenticated user
-- **OpenAPI operationId**: `users/get-public-ssh-key-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.deletePublicSshKeyForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ key_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ key: string; id: number; url: string; title: string; created_at: string; verified: boolean; read_only: boolean; last_used?: string | null }`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Delete a public SSH key for the authenticated user — [API reference](https://docs.github.com/rest/users/keys#delete-a-public-ssh-key-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersGetPublicSshKeyForAuthenticatedUserInput = Parameters<typeof github.users.getPublicSshKeyForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersGetPublicSshKeyForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.getPublicSshKeyForAuthenticatedUser>>;
-
-const input: UsersGetPublicSshKeyForAuthenticatedUserInput = {} as { key_id: number };
-const result: UsersGetPublicSshKeyForAuthenticatedUserOutput = await github.users.getPublicSshKeyForAuthenticatedUser(input);
-
-// Result shape (from schema): { key: string; id: number; url: string; title: string; created_at: string; verified: boolean; read_only: boolean; last_used?: string | null }
+github.users.deletePublicSshKeyForAuthenticatedUser(input: {
+  /** The unique identifier of the key. */
+  key_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.users.listPublicEmailsForAuthenticatedUser`
+<sub>`DELETE /user/keys/{key_id}` · `users/delete-public-ssh-key-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/public_emails`
-- **What it does**: List public email addresses for the authenticated user
-- **OpenAPI operationId**: `users/list-public-emails-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.getPublicSshKeyForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ email: string; primary: boolean; verified: boolean; visibility: string | null })[]`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Get a public SSH key for the authenticated user — [API reference](https://docs.github.com/rest/users/keys#get-a-public-ssh-key-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListPublicEmailsForAuthenticatedUserInput = Parameters<typeof github.users.listPublicEmailsForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListPublicEmailsForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.listPublicEmailsForAuthenticatedUser>>;
-
-const input: UsersListPublicEmailsForAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: UsersListPublicEmailsForAuthenticatedUserOutput = await github.users.listPublicEmailsForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ email: string; primary: boolean; verified: boolean; visibility: string | null })[]
+github.users.getPublicSshKeyForAuthenticatedUser(input: {
+  /** The unique identifier of the key. */
+  key_id: number;
+}): Promise<Key>
 ```
 
-### `github.users.deleteSocialAccountForAuthenticatedUser`
+<sub>`GET /user/keys/{key_id}` · `users/get-public-ssh-key-for-authenticated-user`</sub>
 
-- **HTTP**: `DELETE /user/social_accounts`
-- **What it does**: Delete social accounts for the authenticated user
-- **OpenAPI operationId**: `users/delete-social-account-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listPublicEmailsForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ account_urls: (string)[] }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`, `422`
+List public email addresses for the authenticated user — [API reference](https://docs.github.com/rest/users/emails#list-public-email-addresses-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersDeleteSocialAccountForAuthenticatedUserInput = Parameters<typeof github.users.deleteSocialAccountForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersDeleteSocialAccountForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.deleteSocialAccountForAuthenticatedUser>>;
-
-const input: UsersDeleteSocialAccountForAuthenticatedUserInput = {} as { account_urls: (string)[] };
-const result: UsersDeleteSocialAccountForAuthenticatedUserOutput = await github.users.deleteSocialAccountForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.users.listPublicEmailsForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(Email)[]>
 ```
 
-### `github.users.listSocialAccountsForAuthenticatedUser`
+<sub>`GET /user/public_emails` · `users/list-public-emails-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/social_accounts`
-- **What it does**: List social accounts for the authenticated user
-- **OpenAPI operationId**: `users/list-social-accounts-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.deleteSocialAccountForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ provider: string; url: string })[]`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Delete social accounts for the authenticated user — [API reference](https://docs.github.com/rest/users/social-accounts#delete-social-accounts-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListSocialAccountsForAuthenticatedUserInput = Parameters<typeof github.users.listSocialAccountsForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListSocialAccountsForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.listSocialAccountsForAuthenticatedUser>>;
-
-const input: UsersListSocialAccountsForAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: UsersListSocialAccountsForAuthenticatedUserOutput = await github.users.listSocialAccountsForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ provider: string; url: string })[]
+github.users.deleteSocialAccountForAuthenticatedUser(input: {
+  /** Full URLs for the social media profiles to delete. */
+  account_urls: (string)[];
+}): Promise<BasicError>
 ```
 
-### `github.users.addSocialAccountForAuthenticatedUser`
+<sub>`DELETE /user/social_accounts` · `users/delete-social-account-for-authenticated-user`</sub>
 
-- **HTTP**: `POST /user/social_accounts`
-- **What it does**: Add social accounts for the authenticated user
-- **OpenAPI operationId**: `users/add-social-account-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listSocialAccountsForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ account_urls: (string)[] }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ provider: string; url: string })[]`
-- OpenAPI response codes: `201`, `304`, `401`, `403`, `404`, `422`
+List social accounts for the authenticated user — [API reference](https://docs.github.com/rest/users/social-accounts#list-social-accounts-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersAddSocialAccountForAuthenticatedUserInput = Parameters<typeof github.users.addSocialAccountForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersAddSocialAccountForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.addSocialAccountForAuthenticatedUser>>;
-
-const input: UsersAddSocialAccountForAuthenticatedUserInput = {} as { account_urls: (string)[] };
-const result: UsersAddSocialAccountForAuthenticatedUserOutput = await github.users.addSocialAccountForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ provider: string; url: string })[]
+github.users.listSocialAccountsForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(SocialAccount)[]>
 ```
 
-### `github.users.listSshSigningKeysForAuthenticatedUser`
+<sub>`GET /user/social_accounts` · `users/list-social-accounts-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/ssh_signing_keys`
-- **What it does**: List SSH signing keys for the authenticated user
-- **OpenAPI operationId**: `users/list-ssh-signing-keys-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.addSocialAccountForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ key: string; id: number; title: string; created_at: string })[]`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Add social accounts for the authenticated user — [API reference](https://docs.github.com/rest/users/social-accounts#add-social-accounts-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListSshSigningKeysForAuthenticatedUserInput = Parameters<typeof github.users.listSshSigningKeysForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListSshSigningKeysForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.listSshSigningKeysForAuthenticatedUser>>;
-
-const input: UsersListSshSigningKeysForAuthenticatedUserInput = {} as { per_page?: number; page?: number };
-const result: UsersListSshSigningKeysForAuthenticatedUserOutput = await github.users.listSshSigningKeysForAuthenticatedUser(input);
-
-// Result shape (from schema): ({ key: string; id: number; title: string; created_at: string })[]
+github.users.addSocialAccountForAuthenticatedUser(input: {
+  /** Full URLs for the social media profiles to add. */
+  account_urls: (string)[];
+}): Promise<(SocialAccount)[]>
 ```
 
-### `github.users.createSshSigningKeyForAuthenticatedUser`
+<sub>`POST /user/social_accounts` · `users/add-social-account-for-authenticated-user`</sub>
 
-- **HTTP**: `POST /user/ssh_signing_keys`
-- **What it does**: Create a SSH signing key for the authenticated user
-- **OpenAPI operationId**: `users/create-ssh-signing-key-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `304`, `401`, `403`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listSshSigningKeysForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ title?: string; key: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ key: string; id: number; title: string; created_at: string }`
-- OpenAPI response codes: `201`, `304`, `401`, `403`, `404`, `422`
+List SSH signing keys for the authenticated user — [API reference](https://docs.github.com/rest/users/ssh-signing-keys#list-ssh-signing-keys-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersCreateSshSigningKeyForAuthenticatedUserInput = Parameters<typeof github.users.createSshSigningKeyForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersCreateSshSigningKeyForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.createSshSigningKeyForAuthenticatedUser>>;
-
-const input: UsersCreateSshSigningKeyForAuthenticatedUserInput = {} as { title?: string; key: string };
-const result: UsersCreateSshSigningKeyForAuthenticatedUserOutput = await github.users.createSshSigningKeyForAuthenticatedUser(input);
-
-// Result shape (from schema): { key: string; id: number; title: string; created_at: string }
+github.users.listSshSigningKeysForAuthenticatedUser(input: {
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(SshSigningKey)[]>
 ```
 
-### `github.users.deleteSshSigningKeyForAuthenticatedUser`
+<sub>`GET /user/ssh_signing_keys` · `users/list-ssh-signing-keys-for-authenticated-user`</sub>
 
-- **HTTP**: `DELETE /user/ssh_signing_keys/{ssh_signing_key_id}`
-- **What it does**: Delete an SSH signing key for the authenticated user
-- **OpenAPI operationId**: `users/delete-ssh-signing-key-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `204`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.createSshSigningKeyForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ ssh_signing_key_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `304`, `401`, `403`, `404`
+Create a SSH signing key for the authenticated user — [API reference](https://docs.github.com/rest/users/ssh-signing-keys#create-a-ssh-signing-key-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersDeleteSshSigningKeyForAuthenticatedUserInput = Parameters<typeof github.users.deleteSshSigningKeyForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersDeleteSshSigningKeyForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.deleteSshSigningKeyForAuthenticatedUser>>;
-
-const input: UsersDeleteSshSigningKeyForAuthenticatedUserInput = {} as { ssh_signing_key_id: number };
-const result: UsersDeleteSshSigningKeyForAuthenticatedUserOutput = await github.users.deleteSshSigningKeyForAuthenticatedUser(input);
-
-// Result shape (from schema): unknown
+github.users.createSshSigningKeyForAuthenticatedUser(input: {
+  /** A descriptive name for the new key. */
+  title?: string;
+  /** The public SSH key to add to your GitHub account. For more information, see "[Checking for existing SSH keys](https://docs.github.com/authentication/connecting-to-github-with-ssh/checking-for-existing-ssh-keys)." */
+  key: string;
+}): Promise<SshSigningKey>
 ```
 
-### `github.users.getSshSigningKeyForAuthenticatedUser`
+<sub>`POST /user/ssh_signing_keys` · `users/create-ssh-signing-key-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /user/ssh_signing_keys/{ssh_signing_key_id}`
-- **What it does**: Get an SSH signing key for the authenticated user
-- **OpenAPI operationId**: `users/get-ssh-signing-key-for-authenticated-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`, `401`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.deleteSshSigningKeyForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ ssh_signing_key_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ key: string; id: number; title: string; created_at: string }`
-- OpenAPI response codes: `200`, `304`, `401`, `403`, `404`
+Delete an SSH signing key for the authenticated user — [API reference](https://docs.github.com/rest/users/ssh-signing-keys#delete-an-ssh-signing-key-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersGetSshSigningKeyForAuthenticatedUserInput = Parameters<typeof github.users.getSshSigningKeyForAuthenticatedUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersGetSshSigningKeyForAuthenticatedUserOutput = Awaited<ReturnType<typeof github.users.getSshSigningKeyForAuthenticatedUser>>;
-
-const input: UsersGetSshSigningKeyForAuthenticatedUserInput = {} as { ssh_signing_key_id: number };
-const result: UsersGetSshSigningKeyForAuthenticatedUserOutput = await github.users.getSshSigningKeyForAuthenticatedUser(input);
-
-// Result shape (from schema): { key: string; id: number; title: string; created_at: string }
+github.users.deleteSshSigningKeyForAuthenticatedUser(input: {
+  /** The unique identifier of the SSH signing key. */
+  ssh_signing_key_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.users.list`
+<sub>`DELETE /user/ssh_signing_keys/{ssh_signing_key_id}` · `users/delete-ssh-signing-key-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /users`
-- **What it does**: List users
-- **OpenAPI operationId**: `users/list`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `304`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.getSshSigningKeyForAuthenticatedUser`
 
-**Inputs**
-
-- Client input type: `{ since?: number; per_page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`, `304`
+Get an SSH signing key for the authenticated user — [API reference](https://docs.github.com/rest/users/ssh-signing-keys#get-an-ssh-signing-key-for-the-authenticated-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListInput = Parameters<typeof github.users.list> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListOutput = Awaited<ReturnType<typeof github.users.list>>;
-
-const input: UsersListInput = {} as { since?: number; per_page?: number };
-const result: UsersListOutput = await github.users.list(input);
-
-// Result shape (from schema): ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
+github.users.getSshSigningKeyForAuthenticatedUser(input: {
+  /** The unique identifier of the SSH signing key. */
+  ssh_signing_key_id: number;
+}): Promise<SshSigningKey>
 ```
 
-### `github.users.getByUsername`
+<sub>`GET /user/ssh_signing_keys/{ssh_signing_key_id}` · `users/get-ssh-signing-key-for-authenticated-user`</sub>
 
-- **HTTP**: `GET /users/{username}`
-- **What it does**: Get a user
-- **OpenAPI operationId**: `users/get-by-username`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.list`
 
-**Inputs**
-
-- Client input type: `{ username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ [key: string]: unknown }`
-- OpenAPI response codes: `200`, `404`
+List users — [API reference](https://docs.github.com/rest/users/users#list-users)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersGetByUsernameInput = Parameters<typeof github.users.getByUsername> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersGetByUsernameOutput = Awaited<ReturnType<typeof github.users.getByUsername>>;
-
-const input: UsersGetByUsernameInput = {} as { username: string };
-const result: UsersGetByUsernameOutput = await github.users.getByUsername(input);
-
-// Result shape (from schema): { [key: string]: unknown }
+github.users.list(input: {
+  /** A user ID. Only return users with an ID greater than this ID. */
+  since?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+}): Promise<(SimpleUser)[]>
 ```
 
-### `github.users.deleteAttestationsById`
+<sub>`GET /users` · `users/list`</sub>
 
-- **HTTP**: `DELETE /users/{username}/attestations/{attestation_id}`
-- **What it does**: Delete attestations by ID
-- **OpenAPI operationId**: `users/delete-attestations-by-id`
-- **Path params**: `attestation_id`
-- **Query params**: None
-- **Response codes**: `200`, `204`, `403`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.getByUsername`
 
-**Inputs**
-
-- Client input type: `{ username: string; attestation_id: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`, `204`, `403`, `404`
+Get a user — [API reference](https://docs.github.com/rest/users/users#get-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersDeleteAttestationsByIdInput = Parameters<typeof github.users.deleteAttestationsById> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersDeleteAttestationsByIdOutput = Awaited<ReturnType<typeof github.users.deleteAttestationsById>>;
-
-const input: UsersDeleteAttestationsByIdInput = {} as { username: string; attestation_id: number };
-const result: UsersDeleteAttestationsByIdOutput = await github.users.deleteAttestationsById(input);
-
-// Result shape (from schema): unknown
+github.users.getByUsername(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<PrivateUser | PublicUser>
 ```
 
-### `github.users.listAttestations`
+<sub>`GET /users/{username}` · `users/get-by-username`</sub>
 
-- **HTTP**: `GET /users/{username}/attestations/{subject_digest}`
-- **What it does**: List attestations
-- **OpenAPI operationId**: `users/list-attestations`
-- **Path params**: `subject_digest`
-- **Query params**: `predicate_type`
-- **Response codes**: `200`, `201`, `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.deleteAttestationsById`
 
-**Inputs**
-
-- Client input type: `{ username: string; subject_digest: string; per_page?: number; before?: string; after?: string; predicate_type?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ attestations?: ({ bundle?: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; repository_id?: number; bundle_url?: string; initiator?: string })[] }`
-- OpenAPI response codes: `200`, `201`, `204`, `404`
+Delete attestations by ID — [API reference](https://docs.github.com/rest/users/attestations#delete-attestations-by-id)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListAttestationsInput = Parameters<typeof github.users.listAttestations> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListAttestationsOutput = Awaited<ReturnType<typeof github.users.listAttestations>>;
-
-const input: UsersListAttestationsInput = {} as { username: string; subject_digest: string; per_page?: number; before?: string; after?: string; predicate_type?: string };
-const result: UsersListAttestationsOutput = await github.users.listAttestations(input);
-
-// Result shape (from schema): { attestations?: ({ bundle?: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; repository_id?: number; bundle_url?: string; initiator?: string })[] }
+github.users.deleteAttestationsById(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** Attestation ID */
+  attestation_id: number;
+}): Promise<BasicError>
 ```
 
-### `github.users.listAttestationsBulk`
+<sub>`DELETE /users/{username}/attestations/{attestation_id}` · `users/delete-attestations-by-id`</sub>
 
-- **HTTP**: `POST /users/{username}/attestations/bulk-list`
-- **What it does**: List attestations by bulk subject digests
-- **OpenAPI operationId**: `users/list-attestations-bulk`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listAttestations`
 
-**Inputs**
-
-- Client input type: `{ subject_digests: (string)[]; predicate_type?: string; username: string; per_page?: number; before?: string; after?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ attestations_subject_digests?: { [key: string]: ({ bundle?: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; repository_id?: number; bundle_url?: st...`
-- OpenAPI response codes: `200`
+List attestations — [API reference](https://docs.github.com/rest/users/attestations#list-attestations)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListAttestationsBulkInput = Parameters<typeof github.users.listAttestationsBulk> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListAttestationsBulkOutput = Awaited<ReturnType<typeof github.users.listAttestationsBulk>>;
-
-const input: UsersListAttestationsBulkInput = {} as { subject_digests: (string)[]; predicate_type?: string; username: string; per_page?: number; before?: string; after?: string };
-const result: UsersListAttestationsBulkOutput = await github.users.listAttestationsBulk(input);
-
-// Result shape (from schema): { attestations_subject_digests?: { [key: string]: ({ bundle?: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; repository_id?: number; bundle_url?: st...
+github.users.listAttestations(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** Subject Digest */
+  subject_digest: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+  /** Optional filter for fetching attestations with a given predicate type. This option accepts `provenance`, `sbom`, `release`, or freeform text for custom predicate types. */
+  predicate_type?: string;
+}): Promise<{ attestations?: ({ bundle?: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; repository_id?: number; bundle_url?: string; initiator?: string })[] }>
 ```
 
-### `github.users.deleteAttestationsBulk`
+<sub>`GET /users/{username}/attestations/{subject_digest}` · `users/list-attestations`</sub>
 
-- **HTTP**: `POST /users/{username}/attestations/delete-request`
-- **What it does**: Delete attestations in bulk
-- **OpenAPI operationId**: `users/delete-attestations-bulk`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listAttestationsBulk`
 
-**Inputs**
-
-- Client input type: `{ body: { subject_digests: (string)[] } | { attestation_ids: (number)[] }; username: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`, `404`
+List attestations by bulk subject digests — [API reference](https://docs.github.com/rest/users/attestations#list-attestations-by-bulk-subject-digests)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersDeleteAttestationsBulkInput = Parameters<typeof github.users.deleteAttestationsBulk> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersDeleteAttestationsBulkOutput = Awaited<ReturnType<typeof github.users.deleteAttestationsBulk>>;
-
-const input: UsersDeleteAttestationsBulkInput = {} as { body: { subject_digests: (string)[] } | { attestation_ids: (number)[] }; username: string };
-const result: UsersDeleteAttestationsBulkOutput = await github.users.deleteAttestationsBulk(input);
-
-// Result shape (from schema): unknown
+github.users.listAttestationsBulk(input: {
+  /** List of subject digests to fetch attestations for. */
+  subject_digests: (string)[];
+  /** Optional filter for fetching attestations with a given predicate type. This option accepts `provenance`, `sbom`, `release`, or freeform text for custom predicate types. */
+  predicate_type?: string;
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results before this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  before?: string;
+  /** A cursor, as given in the [Link header](https://docs.github.com/rest/guides/using-pagination-in-the-rest-api#using-link-headers). If specified, the query only searches for results after this cursor. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  after?: string;
+}): Promise<{ attestations_subject_digests?: { [key: string]: ({ bundle?: { mediaType?: string; verificationMaterial?: { [key: string]: unknown }; dsseEnvelope?: { [key: string]: unknown } }; repository_id?: number; bundle_url?: string })[] | null | undefined }; page_info?: { has_next?: boolean; has_previous?: boolean; next?: string; previous?: string } }>
 ```
 
-### `github.users.deleteAttestationsBySubjectDigest`
+<sub>`POST /users/{username}/attestations/bulk-list` · `users/list-attestations-bulk`</sub>
 
-- **HTTP**: `DELETE /users/{username}/attestations/digest/{subject_digest}`
-- **What it does**: Delete attestations by subject digest
-- **OpenAPI operationId**: `users/delete-attestations-by-subject-digest`
-- **Path params**: `subject_digest`
-- **Query params**: None
-- **Response codes**: `200`, `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.deleteAttestationsBulk`
 
-**Inputs**
-
-- Client input type: `{ username: string; subject_digest: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`, `204`, `404`
+Delete attestations in bulk — [API reference](https://docs.github.com/rest/users/attestations#delete-attestations-in-bulk)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersDeleteAttestationsBySubjectDigestInput = Parameters<typeof github.users.deleteAttestationsBySubjectDigest> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersDeleteAttestationsBySubjectDigestOutput = Awaited<ReturnType<typeof github.users.deleteAttestationsBySubjectDigest>>;
-
-const input: UsersDeleteAttestationsBySubjectDigestInput = {} as { username: string; subject_digest: string };
-const result: UsersDeleteAttestationsBySubjectDigestOutput = await github.users.deleteAttestationsBySubjectDigest(input);
-
-// Result shape (from schema): unknown
+github.users.deleteAttestationsBulk(input: {
+  /** The request body must include either `subject_digests` or `attestation_ids`, but not both. */
+  body: { subject_digests: (string)[] } | { attestation_ids: (number)[] };
+  /** The handle for the GitHub user account. */
+  username: string;
+}): Promise<BasicError>
 ```
 
-### `github.users.listFollowersForUser`
+<sub>`POST /users/{username}/attestations/delete-request` · `users/delete-attestations-bulk`</sub>
 
-- **HTTP**: `GET /users/{username}/followers`
-- **What it does**: List followers of a user
-- **OpenAPI operationId**: `users/list-followers-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.deleteAttestationsBySubjectDigest`
 
-**Inputs**
-
-- Client input type: `{ username: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`
+Delete attestations by subject digest — [API reference](https://docs.github.com/rest/users/attestations#delete-attestations-by-subject-digest)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListFollowersForUserInput = Parameters<typeof github.users.listFollowersForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListFollowersForUserOutput = Awaited<ReturnType<typeof github.users.listFollowersForUser>>;
-
-const input: UsersListFollowersForUserInput = {} as { username: string; per_page?: number; page?: number };
-const result: UsersListFollowersForUserOutput = await github.users.listFollowersForUser(input);
-
-// Result shape (from schema): ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
+github.users.deleteAttestationsBySubjectDigest(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** Subject Digest */
+  subject_digest: string;
+}): Promise<BasicError>
 ```
 
-### `github.users.listFollowingForUser`
+<sub>`DELETE /users/{username}/attestations/digest/{subject_digest}` · `users/delete-attestations-by-subject-digest`</sub>
 
-- **HTTP**: `GET /users/{username}/following`
-- **What it does**: List the people a user follows
-- **OpenAPI operationId**: `users/list-following-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listFollowersForUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...`
-- OpenAPI response codes: `200`
+List followers of a user — [API reference](https://docs.github.com/rest/users/followers#list-followers-of-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListFollowingForUserInput = Parameters<typeof github.users.listFollowingForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListFollowingForUserOutput = Awaited<ReturnType<typeof github.users.listFollowingForUser>>;
-
-const input: UsersListFollowingForUserInput = {} as { username: string; per_page?: number; page?: number };
-const result: UsersListFollowingForUserOutput = await github.users.listFollowingForUser(input);
-
-// Result shape (from schema): ({ name?: string | null; email?: string | null; login: string; id: number; node_id: string; avatar_url: string; gravatar_id: string | null; url: string; html_url: string; followers_url: string; following_url: string; gi...
+github.users.listFollowersForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(SimpleUser)[]>
 ```
 
-### `github.users.checkFollowingForUser`
+<sub>`GET /users/{username}/followers` · `users/list-followers-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/following/{target_user}`
-- **What it does**: Check if a user follows another user
-- **OpenAPI operationId**: `users/check-following-for-user`
-- **Path params**: `target_user`
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listFollowingForUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; target_user: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+List the people a user follows — [API reference](https://docs.github.com/rest/users/followers#list-the-people-a-user-follows)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersCheckFollowingForUserInput = Parameters<typeof github.users.checkFollowingForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersCheckFollowingForUserOutput = Awaited<ReturnType<typeof github.users.checkFollowingForUser>>;
-
-const input: UsersCheckFollowingForUserInput = {} as { username: string; target_user: string };
-const result: UsersCheckFollowingForUserOutput = await github.users.checkFollowingForUser(input);
-
-// Result shape (from schema): unknown
+github.users.listFollowingForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(SimpleUser)[]>
 ```
 
-### `github.users.listGpgKeysForUser`
+<sub>`GET /users/{username}/following` · `users/list-following-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/gpg_keys`
-- **What it does**: List GPG keys for a user
-- **OpenAPI operationId**: `users/list-gpg-keys-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.checkFollowingForUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; name?: string | null; primary_key_id: number | null; key_id: string; public_key: string; emails: ({ email?: string; verified?: boolean })[]; subkeys: ({ id?: number; primary_key_id?: number; key_id?: stri...`
-- OpenAPI response codes: `200`
+Check if a user follows another user — [API reference](https://docs.github.com/rest/users/followers#check-if-a-user-follows-another-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListGpgKeysForUserInput = Parameters<typeof github.users.listGpgKeysForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListGpgKeysForUserOutput = Awaited<ReturnType<typeof github.users.listGpgKeysForUser>>;
-
-const input: UsersListGpgKeysForUserInput = {} as { username: string; per_page?: number; page?: number };
-const result: UsersListGpgKeysForUserOutput = await github.users.listGpgKeysForUser(input);
-
-// Result shape (from schema): ({ id: number; name?: string | null; primary_key_id: number | null; key_id: string; public_key: string; emails: ({ email?: string; verified?: boolean })[]; subkeys: ({ id?: number; primary_key_id?: number; key_id?: stri...
+github.users.checkFollowingForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  target_user: string;
+}): Promise<unknown>
 ```
 
-### `github.users.getContextForUser`
+<sub>`GET /users/{username}/following/{target_user}` · `users/check-following-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/hovercard`
-- **What it does**: Get contextual information for a user
-- **OpenAPI operationId**: `users/get-context-for-user`
-- **Path params**: None
-- **Query params**: `subject_type`, `subject_id`
-- **Response codes**: `200`, `404`, `422`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listGpgKeysForUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; subject_type?: "organization" | "repository" | "issue" | "pull_request"; subject_id?: string }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ contexts: ({ message: string; octicon: string })[] }`
-- OpenAPI response codes: `200`, `404`, `422`
+List GPG keys for a user — [API reference](https://docs.github.com/rest/users/gpg-keys#list-gpg-keys-for-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersGetContextForUserInput = Parameters<typeof github.users.getContextForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersGetContextForUserOutput = Awaited<ReturnType<typeof github.users.getContextForUser>>;
-
-const input: UsersGetContextForUserInput = {} as { username: string; subject_type?: "organization" | "repository" | "issue" | "pull_request"; subject_id?: string };
-const result: UsersGetContextForUserOutput = await github.users.getContextForUser(input);
-
-// Result shape (from schema): { contexts: ({ message: string; octicon: string })[] }
+github.users.listGpgKeysForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(GpgKey)[]>
 ```
 
-### `github.users.listPublicKeysForUser`
+<sub>`GET /users/{username}/gpg_keys` · `users/list-gpg-keys-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/keys`
-- **What it does**: List public keys for a user
-- **OpenAPI operationId**: `users/list-public-keys-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.getContextForUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; key: string; created_at?: string; last_used?: string | null })[]`
-- OpenAPI response codes: `200`
+Get contextual information for a user — [API reference](https://docs.github.com/rest/users/users#get-contextual-information-for-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListPublicKeysForUserInput = Parameters<typeof github.users.listPublicKeysForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListPublicKeysForUserOutput = Awaited<ReturnType<typeof github.users.listPublicKeysForUser>>;
-
-const input: UsersListPublicKeysForUserInput = {} as { username: string; per_page?: number; page?: number };
-const result: UsersListPublicKeysForUserOutput = await github.users.listPublicKeysForUser(input);
-
-// Result shape (from schema): ({ id: number; key: string; created_at?: string; last_used?: string | null })[]
+github.users.getContextForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** Identifies which additional information you'd like to receive about the person's hovercard. Can be `organization`, `repository`, `issue`, `pull_request`. **Required** when using `subject_id`. */
+  subject_type?: "organization" | "repository" | "issue" | "pull_request";
+  /** Uses the ID for the `subject_type` you specified. **Required** when using `subject_type`. */
+  subject_id?: string;
+}): Promise<Hovercard>
 ```
 
-### `github.users.listSocialAccountsForUser`
+<sub>`GET /users/{username}/hovercard` · `users/get-context-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/social_accounts`
-- **What it does**: List social accounts for a user
-- **OpenAPI operationId**: `users/list-social-accounts-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listPublicKeysForUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ provider: string; url: string })[]`
-- OpenAPI response codes: `200`
+List public keys for a user — [API reference](https://docs.github.com/rest/users/keys#list-public-keys-for-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListSocialAccountsForUserInput = Parameters<typeof github.users.listSocialAccountsForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListSocialAccountsForUserOutput = Awaited<ReturnType<typeof github.users.listSocialAccountsForUser>>;
-
-const input: UsersListSocialAccountsForUserInput = {} as { username: string; per_page?: number; page?: number };
-const result: UsersListSocialAccountsForUserOutput = await github.users.listSocialAccountsForUser(input);
-
-// Result shape (from schema): ({ provider: string; url: string })[]
+github.users.listPublicKeysForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(KeySimple)[]>
 ```
 
-### `github.users.listSshSigningKeysForUser`
+<sub>`GET /users/{username}/keys` · `users/list-public-keys-for-user`</sub>
 
-- **HTTP**: `GET /users/{username}/ssh_signing_keys`
-- **What it does**: List SSH signing keys for a user
-- **OpenAPI operationId**: `users/list-ssh-signing-keys-for-user`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **Source**: [OpenAPI reference](https://docs.github.com/rest/)
-- **TypeScript**: [Client interface](../types.ts)
+## `github.users.listSocialAccountsForUser`
 
-**Inputs**
-
-- Client input type: `{ username: string; per_page?: number; page?: number }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ key: string; id: number; title: string; created_at: string })[]`
-- OpenAPI response codes: `200`
+List social accounts for a user — [API reference](https://docs.github.com/rest/users/social-accounts#list-social-accounts-for-a-user)
 
 ```ts
-import github from "@utdk/github";
-
-type UsersListSshSigningKeysForUserInput = Parameters<typeof github.users.listSshSigningKeysForUser> extends [infer T, ...unknown[]] ? T : undefined;
-type UsersListSshSigningKeysForUserOutput = Awaited<ReturnType<typeof github.users.listSshSigningKeysForUser>>;
-
-const input: UsersListSshSigningKeysForUserInput = {} as { username: string; per_page?: number; page?: number };
-const result: UsersListSshSigningKeysForUserOutput = await github.users.listSshSigningKeysForUser(input);
-
-// Result shape (from schema): ({ key: string; id: number; title: string; created_at: string })[]
+github.users.listSocialAccountsForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(SocialAccount)[]>
 ```
 
+<sub>`GET /users/{username}/social_accounts` · `users/list-social-accounts-for-user`</sub>
+
+## `github.users.listSshSigningKeysForUser`
+
+List SSH signing keys for a user — [API reference](https://docs.github.com/rest/users/ssh-signing-keys#list-ssh-signing-keys-for-a-user)
+
+```ts
+github.users.listSshSigningKeysForUser(input: {
+  /** The handle for the GitHub user account. */
+  username: string;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(SshSigningKey)[]>
+```
+
+<sub>`GET /users/{username}/ssh_signing_keys` · `users/list-ssh-signing-keys-for-user`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

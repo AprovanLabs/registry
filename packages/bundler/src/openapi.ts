@@ -11,6 +11,10 @@ import type { OpenAPIV3 } from "openapi-types";
 type PublicToolTypes = {
   inputType: string;
   outputType: string;
+  /** Preferred response content schema with `$ref`s preserved (for named-type rendering). */
+  rawResponseSchema?: unknown;
+  /** Operation-level external documentation URL from the spec, when present. */
+  docsUrl?: string;
 };
 
 const OPERATION_METHODS = ["delete", "get", "head", "options", "patch", "post", "put", "trace"] as const;
@@ -250,17 +254,57 @@ export function applyProviderOpenApiOptions(
   };
 }
 
+function getRawResponseSchema(
+  document: OpenAPIV3.Document,
+  operation: OpenAPIV3.OperationObject | undefined,
+): unknown {
+  if (!operation) {
+    return undefined;
+  }
+
+  const responseEntries = Object.entries(operation.responses ?? {}).sort(([left], [right]) => {
+    const leftScore = /^2\d\d$/.test(left) ? 0 : left === "default" ? 2 : 1;
+    const rightScore = /^2\d\d$/.test(right) ? 0 : right === "default" ? 2 : 1;
+    return leftScore - rightScore;
+  });
+
+  for (const [, responseValue] of responseEntries) {
+    const response = isReferenceObject(responseValue)
+      ? (getRefTarget(document, responseValue.$ref) as OpenAPIV3.ResponseObject | undefined)
+      : responseValue;
+
+    if (!response?.content) {
+      continue;
+    }
+
+    const contentEntry =
+      response.content["application/json"] ??
+      Object.entries(response.content).find(([contentType]) => contentType.includes("json"))?.[1] ??
+      Object.values(response.content)[0];
+
+    if (contentEntry?.schema) {
+      return contentEntry.schema;
+    }
+  }
+
+  return undefined;
+}
+
 export function buildPublicTypeMap(document: OpenAPIV3.Document, tools: Tool[]): Map<string, PublicToolTypes> {
   return new Map(
     tools.map((tool) => {
       const operation = getOperation(document, tool);
       const responseSchema = getResponseSchema(document, operation);
+      const rawResponseSchema = getRawResponseSchema(document, operation);
+      const docsUrl = operation?.externalDocs?.url;
 
       return [
         tool.name,
         {
           inputType: schemaToTypeScriptType(tool.inputs),
           outputType: responseSchema ? schemaToTypeScriptType(responseSchema) : schemaToTypeScriptType(tool.outputs),
+          ...(rawResponseSchema !== undefined ? { rawResponseSchema } : {}),
+          ...(docsUrl ? { docsUrl } : {}),
         },
       ];
     }),

@@ -6,7 +6,9 @@ import {
   resolveProviderOutputDir,
 } from "../provider.js";
 import { stripProviderToolName, type RegistryProvider } from "../provider.js";
-import { schemaToTypeScriptType } from "../schema.js";
+import { buildPublicTypeMap } from "../openapi.js";
+import { createProviderSchemaTypes, type ProviderSchemaTypes } from "../render.js";
+import { schemaToObjectContent, schemaToTypeScriptType, type SchemaRenderContext } from "../schema.js";
 import { groupOpenApiOperations } from "./grouping.js";
 import { getDocsStaleCheckResult } from "./hash.js";
 import { readDocsManifest } from "./manifest.js";
@@ -45,12 +47,17 @@ type ExistingDocsMetadata = {
 type AugmentedOperation = {
   accessPath: string[];
   description?: string;
+  docsUrl?: string;
   hasInput: boolean;
   hasOptions: boolean;
+  httpMethod: string;
   inputType: string;
   optionsOptional: boolean;
   optionsType: string;
   outputType: string;
+  rawInputSchema?: unknown;
+  rawOutputSchema?: unknown;
+  requiredInputKeys: string[];
   toolName: string;
 };
 
@@ -130,7 +137,8 @@ function buildOperationLookup(
   provider: string,
   providerOptions: RegistryProvider["options"] | undefined,
   tools: Tool[] | undefined,
-  clientToolMap: Map<string, ClientToolDefinition> | undefined
+  clientToolMap: Map<string, ClientToolDefinition> | undefined,
+  publicTypeMap?: ReturnType<typeof buildPublicTypeMap>,
 ): {
   byMethodAndPath: Map<string, AugmentedOperation>;
   byOperationId: Map<string, AugmentedOperation>;
@@ -149,15 +157,22 @@ function buildOperationLookup(
       name: provider,
       options: providerOptions,
     });
+    const publicTypes = publicTypeMap?.get(tool.name);
+    const inputSchemaRecord = mapped.inputSchema as { required?: string[] } | undefined;
     const operation: AugmentedOperation = {
       accessPath: mapped.accessPath,
       description: tool.description,
+      docsUrl: publicTypes?.docsUrl,
       hasInput: mapped.hasInput,
       hasOptions: mapped.hasOptions,
+      httpMethod: mapped.runtimeMetadata.method,
       inputType: mapped.inputType,
       optionsOptional: mapped.optionsOptional,
       optionsType: mapped.optionsType,
-      outputType: schemaToTypeScriptType(tool.outputs),
+      outputType: publicTypes?.outputType ?? schemaToTypeScriptType(tool.outputs),
+      rawInputSchema: mapped.rawInputSchema,
+      rawOutputSchema: publicTypes?.rawResponseSchema,
+      requiredInputKeys: Array.isArray(inputSchemaRecord?.required) ? inputSchemaRecord.required : [],
       toolName: strippedToolName,
     };
 
@@ -264,17 +279,68 @@ type GroupDocOptions = {
   packageSpecifier: string;
   clientVariable: string;
   promptsHash: string;
+  schemaContext?: SchemaRenderContext;
 };
+
+function isExpandableObjectSchema(schema: unknown): boolean {
+  const record = schema as { type?: string; properties?: Record<string, unknown> } | undefined;
+  if (!record || typeof record !== "object") return false;
+  if (record.type !== "object" && !record.properties) return false;
+  return Object.keys(record.properties ?? {}).length > 0;
+}
+
+/**
+ * Render an operation as a TypeScript signature — the same shape a user sees
+ * in their editor, with named component types for outputs and documented
+ * properties for inputs.
+ */
+function renderDocSignature(
+  callPath: string,
+  operation: AugmentedOperation | undefined,
+  context?: SchemaRenderContext,
+): string {
+  if (!operation) {
+    return `${callPath}(input): Promise<unknown>`;
+  }
+
+  const inputSource = operation.rawInputSchema;
+  const inputTypeStr =
+    inputSource && isExpandableObjectSchema(inputSource)
+      ? `{\n${schemaToObjectContent(inputSource, "  ", context)}\n}`
+      : inputSource
+        ? schemaToTypeScriptType(inputSource, context)
+        : operation.inputType;
+  const outputTypeStr =
+    operation.rawOutputSchema !== undefined
+      ? schemaToTypeScriptType(operation.rawOutputSchema, context)
+      : operation.outputType;
+
+  const parameters = [
+    operation.hasInput ? `input: ${inputTypeStr}` : undefined,
+    operation.hasOptions
+      ? `options${operation.optionsOptional ? "?" : ""}: ${truncateInlineType(operation.optionsType)}`
+      : undefined,
+  ].filter((value): value is string => Boolean(value));
+
+  return `${callPath}(${parameters.join(", ")}): Promise<${truncateInlineType(outputTypeStr, 400)}>`;
+}
 
 function buildGroupDocContent(
   group: ReturnType<typeof groupOpenApiOperations>[number],
   opts: GroupDocOptions
 ): string {
-  const { openApiDocument, operationLookup, packageSpecifier, clientVariable, promptsHash } = opts;
+  const { openApiDocument, operationLookup, packageSpecifier, clientVariable, promptsHash, schemaContext } = opts;
+  const fallbackSourceUrl =
+    openApiDocument.externalDocs?.url ?? toOptionalString(openApiDocument.info?.contact?.url);
+
   return [
     `# ${group.title}`,
     "",
-    "## Operations",
+    `${group.operations.length} operation${group.operations.length === 1 ? "" : "s"} · \`${packageSpecifier}\``,
+    "",
+    "```ts",
+    `import ${clientVariable} from "${packageSpecifier}";`,
+    "```",
     "",
     ...group.operations.flatMap((operation) => {
       const openApiOperation = getOperationFromPath(
@@ -294,91 +360,157 @@ function buildGroupDocContent(
         operation.path
       );
       const callPath = `${clientVariable}.${methodName}`;
-      const aliasBase = toPascalCase(methodName);
-      const inputAlias = `${aliasBase}Input`;
-      const outputAlias = `${aliasBase}Output`;
       const operationDescription =
         operation.summary ??
         openApiOperation?.summary ??
         openApiOperation?.description ??
         operationDetails?.description;
-      const pathParams = openApiOperation?.parameters
-        ?.filter(isParameterObject)
-        .filter((parameter) => parameter.in === "path")
-        .map((parameter) => parameter.name);
-      const queryParams = openApiOperation?.parameters
-        ?.filter(isParameterObject)
-        .filter((parameter) => parameter.in === "query")
-        .map((parameter) => parameter.name);
-      const inputType = operationDetails?.inputType ?? "Unknown";
-      const outputType = operationDetails?.outputType ?? "Unknown";
-      const outputPreview = truncateInlineType(outputType);
-      const invocationArgs = [
-        operationDetails?.hasInput ? "input" : undefined,
-        operationDetails?.hasOptions ? "options" : undefined,
+      const docsUrl = openApiOperation?.externalDocs?.url ?? operationDetails?.docsUrl;
+      const descriptionLine = [
+        operationDescription?.trim().replace(/\s+/g, " "),
+        docsUrl
+          ? `[API reference](${docsUrl})`
+          : fallbackSourceUrl
+            ? `[Provider docs](${fallbackSourceUrl})`
+            : undefined,
       ]
-        .filter((value): value is string => Boolean(value))
-        .join(", ");
-      const fallbackSourceUrl =
-        openApiDocument.externalDocs?.url ?? toOptionalString(openApiDocument.info?.contact?.url);
+        .filter(Boolean)
+        .join(" — ");
 
       return [
-        `### \`${callPath}\``,
+        `## \`${callPath}\``,
         "",
-        `- **HTTP**: \`${operation.method.toUpperCase()} ${operation.path}\``,
-        operationDescription ? `- **What it does**: ${operationDescription}` : undefined,
-        operation.operationId
-          ? `- **OpenAPI operationId**: \`${operation.operationId}\``
-          : undefined,
-        `- **Path params**: ${formatListOrNone(pathParams ?? [])}`,
-        `- **Query params**: ${formatListOrNone(queryParams ?? [])}`,
-        `- **Response codes**: ${formatResponseCodes(openApiOperation)}`,
-        operationDetails?.hasOptions
-          ? `- **Transport options**: \`${operationDetails.optionsType}\`${
-              operationDetails.optionsOptional ? " (optional)" : ""
-            }`
-          : "- **Transport options**: None",
-        fallbackSourceUrl ? `- **Source**: [OpenAPI reference](${fallbackSourceUrl})` : undefined,
-        "- **TypeScript**: [Client interface](../types.ts)",
-        "",
-        "**Inputs**",
-        "",
-        `- Client input type: \`${inputType}\``,
-        operationDetails?.hasOptions
-          ? `- Client transport options: \`${operationDetails.optionsType}\`${
-              operationDetails.optionsOptional ? " (optional)" : ""
-            }`
-          : "- Client transport options: None",
-        "",
-        "**Outputs**",
-        "",
-        `- Client return type: \`${outputPreview}\``,
-        `- OpenAPI response codes: ${formatResponseCodes(openApiOperation)}`,
-        "",
+        ...(descriptionLine ? [descriptionLine, ""] : []),
         "```ts",
-        `import ${clientVariable} from "${packageSpecifier}";`,
-        "",
-        `type ${inputAlias} = Parameters<typeof ${callPath}> extends [infer T, ...unknown[]] ? T : undefined;`,
-        `type ${outputAlias} = Awaited<ReturnType<typeof ${callPath}>>;`,
-        operationDetails?.hasOptions
-          ? `type ${aliasBase}Options = Parameters<typeof ${callPath}> extends [unknown, infer T, ...unknown[]] ? T : undefined;`
-          : undefined,
-        "",
-        operationDetails?.hasInput ? `const input: ${inputAlias} = {} as ${inputType};` : undefined,
-        operationDetails?.hasOptions
-          ? `const options: ${aliasBase}Options = {} as ${operationDetails.optionsType};`
-          : undefined,
-        `const result: ${outputAlias} = await ${callPath}(${invocationArgs});`,
-        "",
-        `// Result shape (from schema): ${outputPreview}`,
+        renderDocSignature(callPath, operationDetails, schemaContext),
         "```",
         "",
-      ].filter((line): line is string => line !== undefined);
+        `<sub>\`${operation.method.toUpperCase()} ${operation.path}\`${
+          operation.operationId ? ` · \`${operation.operationId}\`` : ""
+        }</sub>`,
+        "",
+      ];
     }),
+    "Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.",
     "",
     "<!-- prompt-hash:",
     promptsHash,
     "-->",
+    "",
+  ].join("\n");
+}
+
+// ---------------------------------------------------------------------------
+// README builder
+// ---------------------------------------------------------------------------
+
+/**
+ * Summarize the spec's `securitySchemes` as setup-oriented bullets that match
+ * the gateway credential model. (The LLM auth phase can later replace these
+ * with richer, provider-specific setup steps.)
+ */
+function buildAuthSection(openApiDocument: OpenAPIV3.Document): string[] {
+  const schemes = openApiDocument.components?.securitySchemes ?? {};
+  const bullets: string[] = [];
+
+  for (const definition of Object.values(schemes)) {
+    if (!definition || typeof definition !== "object" || "$ref" in definition) continue;
+
+    if (definition.type === "http" && definition.scheme === "bearer") {
+      bullets.push("- **Bearer token** — sent as `Authorization: Bearer <token>`.");
+    } else if (definition.type === "http") {
+      bullets.push(`- **HTTP ${definition.scheme}** authentication.`);
+    } else if (definition.type === "apiKey") {
+      bullets.push(`- **API key** — sent as the \`${definition.name}\` ${definition.in}.`);
+    } else if (definition.type === "oauth2") {
+      const flows = Object.keys(definition.flows ?? {});
+      bullets.push(`- **OAuth 2.0** — flows: ${flows.join(", ") || "unspecified"}.`);
+    } else if (definition.type === "openIdConnect") {
+      bullets.push(`- **OpenID Connect** — [discovery document](${definition.openIdConnectUrl}).`);
+    }
+  }
+
+  if (bullets.length === 0) {
+    return [];
+  }
+
+  return [
+    "## Authentication",
+    "",
+    ...bullets,
+    "",
+    "Configure credentials once in the registry credentials area — the gateway injects them on every call, so code stays credential-free.",
+    "",
+  ];
+}
+
+/** Pick a friendly first call for the quick start: prefer no-input GETs. */
+function pickExampleOperation(
+  operationLookup: ReturnType<typeof buildOperationLookup>,
+): AugmentedOperation | undefined {
+  const operations = [...operationLookup.byOperationId.values()];
+
+  return (
+    operations.find((operation) => operation.httpMethod.toUpperCase() === "GET" && !operation.hasInput) ??
+    operations.find((operation) => operation.httpMethod.toUpperCase() === "GET" && operation.requiredInputKeys.length === 0) ??
+    operations.find((operation) => operation.httpMethod.toUpperCase() === "GET") ??
+    operations[0]
+  );
+}
+
+function buildReadme(options: {
+  provider: string;
+  openApiDocument: OpenAPIV3.Document;
+  groups: ReturnType<typeof groupOpenApiOperations>;
+  operationLookup: ReturnType<typeof buildOperationLookup>;
+  packageSpecifier: string;
+  clientVariable: string;
+  indexMarkdown: string;
+}): string {
+  const { provider, openApiDocument, groups, operationLookup, packageSpecifier, clientVariable, indexMarkdown } = options;
+  const title = toOptionalString(openApiDocument.info?.title) ?? provider;
+  const example = pickExampleOperation(operationLookup);
+  const exampleArgs = example
+    ? example.requiredInputKeys.length > 0
+      ? `{ /* ${example.requiredInputKeys.join(", ")} */ }`
+      : example.hasInput
+        ? "{}"
+        : ""
+    : "{}";
+  const exampleCall = example
+    ? `const result = await ${clientVariable}.${example.accessPath.join(".")}(${exampleArgs});`
+    : `const result = await ${clientVariable}.someOperation({});`;
+
+  return [
+    `# ${title}`,
+    "",
+    `\`${packageSpecifier}\` — a typed SDK generated from the provider's OpenAPI spec. ${getOverviewBlurb(groups)}`,
+    "",
+    "## Quick start",
+    "",
+    "```ts",
+    `import ${clientVariable} from "${packageSpecifier}";`,
+    "",
+    exampleCall,
+    "```",
+    "",
+    `In the UTDK isolate runtime, \`${clientVariable}\` is also available directly as a namespace value — no import needed.`,
+    "",
+    ...buildAuthSection(openApiDocument),
+    "## Operations",
+    "",
+    ...groups.map(
+      (group) =>
+        `- [${group.title}](./docs/${group.key}.md) — ${group.operations.length} operation${group.operations.length === 1 ? "" : "s"}`
+    ),
+    "",
+    "Every operation is a typed method (`" +
+      `${clientVariable}.group.action(input)` +
+      "`); result shapes are named exported types you can hover in your editor.",
+    "",
+    "## Source Index",
+    "",
+    indexMarkdown.trim(),
     "",
   ].join("\n");
 }
@@ -445,12 +577,21 @@ export async function augmentProviderDocs(
   }
 
   const groups = groupOpenApiOperations(options.openApiDocument);
+  const publicTypeMap = buildPublicTypeMap(options.openApiDocument, options.tools ?? []);
   const operationLookup = buildOperationLookup(
     options.provider,
     options.providerOptions,
     options.tools,
-    options.clientToolMap
+    options.clientToolMap,
+    publicTypeMap,
   );
+  const schemaTypes = createProviderSchemaTypes(options.openApiDocument);
+  const schemaContext: SchemaRenderContext | undefined = schemaTypes
+    ? {
+        refTypeName: (ref) => schemaTypes.refToName.get(ref),
+        resolveRef: schemaTypes.resolveRef,
+      }
+    : undefined;
   const packageSpecifier = getClientPackageSpecifier(options.provider);
   const clientVariable = toCamelCase(options.provider.split(/[./]/u).at(-1) ?? options.provider);
   const groupDocOpts: GroupDocOptions = {
@@ -459,41 +600,21 @@ export async function augmentProviderDocs(
     packageSpecifier,
     clientVariable,
     promptsHash: prompts.hash,
+    schemaContext,
   };
   const docs = groups.map((group) => ({
     relativePath: `${group.key}.md`,
     content: buildGroupDocContent(group, groupDocOpts),
   }));
-  const readme = [
-    `# ${options.provider}`,
-    "",
-    `${packageSpecifier} is a generated, typed client for this provider.`,
-    "",
-    getOverviewBlurb(groups),
-    "",
-    "## Quick start",
-    "",
-    "```ts",
-    `import ${clientVariable} from "${packageSpecifier}";`,
-    "",
-    "// Example operation call (see guides below for full signatures)",
-    `await ${clientVariable}.someOperation({});`,
-    "```",
-    "",
-    "## Capability guides",
-    "",
-    ...groups.map(
-      (group) =>
-        `- [${group.title}](./docs/${group.key}.md) - ${group.operations.length} operations`
-    ),
-    "",
-    "Each guide is organized by callable operation name (for example, `client.someOperation`), with typed input/output snippets.",
-    "",
-    "## Source Index",
-    "",
-    indexMarkdown.trim(),
-    "",
-  ].join("\n");
+  const readme = buildReadme({
+    provider: options.provider,
+    openApiDocument: options.openApiDocument,
+    groups,
+    operationLookup,
+    packageSpecifier,
+    clientVariable,
+    indexMarkdown,
+  });
 
   return {
     readme,

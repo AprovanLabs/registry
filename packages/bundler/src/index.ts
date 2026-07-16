@@ -4,6 +4,7 @@ import { buildClientToolMap } from "./client-api.js";
 import { augmentProviderDocs, type AugmentProviderDocsResult } from "./docs/augment.js";
 import { loadProviderDocs, type LoadProviderDocsOptions, type LoadProviderDocsResult } from "./docs/load.js";
 import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
+import { runAuthIntelPhase, type RunAuthIntelPhaseOptions, type RunAuthIntelPhaseResult } from "./phases/authIntel.js";
 import { runEnrichPhase, type RunEnrichPhaseOptions, type RunEnrichPhaseResult } from "./phases/enrich.js";
 import { runResearchPhase, type RunResearchPhaseOptions, type RunResearchPhaseResult } from "./phases/research.js";
 import { runReviewPhase, type RunReviewPhaseOptions, type RunReviewPhaseResult } from "./phases/review.js";
@@ -21,6 +22,7 @@ import {
   splitProviderName,
 } from "./provider.js";
 import {
+  createProviderSchemaTypes,
   renderCopyAssetsScript,
   renderNamespaceEntry,
   renderNamespacePackageJson,
@@ -38,6 +40,9 @@ import {
 import { loadProviderTools } from "./utcp.js";
 
 export {
+  runAuthIntelPhase,
+  type RunAuthIntelPhaseOptions,
+  type RunAuthIntelPhaseResult,
   runResearchPhase,
   type RunResearchPhaseOptions,
   type RunResearchPhaseResult,
@@ -231,8 +236,9 @@ export async function generateRegistryTypes(
     writeTextFile(path.join(providerDir, "index.ts"), renderProviderEntry(provider.name, providerClientImportPath)),
     ...(await (async () => {
       const typesDir = path.join(providerDir, "types");
-      const groupTypeFiles = renderProviderGroupTypes(provider, tools, publicTypeMap, clientToolMap);
-      const indexContent = renderProviderTypesIndex(provider, tools, publicTypeMap, clientToolMap);
+      const schemaTypes = createProviderSchemaTypes(openApiDocument);
+      const groupTypeFiles = renderProviderGroupTypes(provider, tools, publicTypeMap, clientToolMap, schemaTypes);
+      const indexContent = renderProviderTypesIndex(provider, tools, publicTypeMap, clientToolMap, schemaTypes);
       const typePaths = await Promise.all(
         [...groupTypeFiles.entries()].map(([fileName, content]) =>
           writeTextFile(path.join(typesDir, fileName), content)
