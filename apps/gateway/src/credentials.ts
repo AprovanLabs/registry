@@ -20,11 +20,18 @@ import {
   readFileSync,
   writeFileSync,
 } from "node:fs";
+import { createRequire } from "node:module";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { GetCommand, PutCommand, QueryCommand, TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
-import Database from "better-sqlite3";
 import { getDynamoDocClient } from "./db/client.js";
+import type Database from "better-sqlite3";
+
+const loadSqlite = (): typeof import("better-sqlite3") => {
+  const req =
+    typeof require === "function" ? require : createRequire(import.meta.url);
+  return req("better-sqlite3");
+};
 
 // ---------------------------------------------------------------------------
 // Types
@@ -304,7 +311,8 @@ export class CredentialStoreSqlite implements ICredentialStore {
       this.key = randomBytes(32);
       writeFileSync(keyPath, this.key.toString("base64"), { mode: 0o600 });
     }
-    this.database = new Database(join(directory, "gateway.db"));
+    const SqliteDatabase = loadSqlite();
+    this.database = new SqliteDatabase(join(directory, "gateway.db"));
     this.database.exec(`
       CREATE TABLE IF NOT EXISTS credentials (
         id TEXT PRIMARY KEY,

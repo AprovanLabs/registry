@@ -1,8 +1,26 @@
 import { createHash } from "node:crypto";
 import { mkdirSync } from "node:fs";
+import { createRequire } from "node:module";
 import { homedir } from "node:os";
 import { join } from "node:path";
-import Database from "better-sqlite3";
+import type Database from "better-sqlite3";
+
+/**
+ * Lazily load the native `better-sqlite3` module. It is a native addon that
+ * esbuild cannot bundle (hence `externalModules` in infra) and is NOT shipped
+ * in the Lambda package, which uses the DynamoDB backend. A top-level
+ * `import` would run at module load and crash the Lambda on init with
+ * `Runtime.ImportModuleError`, so the require is deferred to the point where
+ * the SQLite backend is actually constructed (local dev only).
+ *
+ * Works in both the CJS Lambda bundle (where `require` exists) and the ESM
+ * dev runtime (where it doesn't, so we derive one from `import.meta.url`).
+ */
+const loadSqlite = (): typeof import("better-sqlite3") => {
+  const req =
+    typeof require === "function" ? require : createRequire(import.meta.url);
+  return req("better-sqlite3");
+};
 
 export type ContentKind = "prompt" | "artifact";
 
@@ -19,7 +37,8 @@ export class ContentStore {
 
   constructor(directory = join(homedir(), ".aprovan")) {
     mkdirSync(directory, { recursive: true, mode: 0o700 });
-    this.database = new Database(join(directory, "gateway.db"));
+    const SqliteDatabase = loadSqlite();
+    this.database = new SqliteDatabase(join(directory, "gateway.db"));
     this.database.exec(`
       CREATE TABLE IF NOT EXISTS content (
         kind TEXT NOT NULL,

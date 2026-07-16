@@ -85,7 +85,6 @@ export function HeaderSession() {
       links={[
         { label: "Credentials", href: withBasePath("/account/credentials") },
         { label: "Permissions", href: withBasePath("/admin/permissions") },
-        { label: "MCP setup", href: withBasePath("/docs/mcp") },
       ]}
       onSelectWorkspace={handleSelectWorkspace}
       onSignIn={() =>

@@ -31,13 +31,13 @@ const currentPath = Astro.url.pathname;
           <img class="w-6" src="https://github.com/AprovanLabs/aprovan.com/raw/refs/heads/main/docs/assets/social-icon.png"></img>
           Registry
         </a>
+        <a
+          class={`text-sm transition-colors ${currentPath.startsWith(withBasePath("/docs/mcp")) ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
+          href={withBasePath("/docs/mcp")}
+        >
+          MCP
+        </a>
         <div class="flex items-center gap-4 ml-auto">
-          <a
-            class={`text-sm transition-colors ${currentPath.startsWith(withBasePath("/docs/mcp")) ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
-            href={withBasePath("/docs/mcp")}
-          >
-            MCP
-          </a>
           <HeaderSession client:load />
         </div>
       </nav>

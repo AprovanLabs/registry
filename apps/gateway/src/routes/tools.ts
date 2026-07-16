@@ -280,7 +280,9 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
       provider,
     );
   }
-  const args = body.args;
+  // Chat clients (AI SDK) send `stream: true` at the top level of the request;
+  // provider chat-completion operations expect it inside their own arguments.
+  const args = body.stream === true ? { ...body.args, stream: true } : body.args;
 
   // Execute via Isolate with telemetry
   const executor = await getExecutor();
@@ -309,6 +311,8 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
     },
   );
 
+  // For streaming operations this measures time to first byte, not the full
+  // stream duration — the response body is still being produced when we log.
   const durationMs = Date.now() - startTime;
 
   // 5. Log request/response metadata (no bodies)
@@ -320,8 +324,97 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
     return c.json({ error: isolateResult.error ?? "Execution failed" }, 500);
   }
 
+  // Streaming results (provider chat-completion operations called with
+  // `stream: true`) are passed through as-is — typically SSE — rather than
+  // JSON-buffered. Requires Lambda response streaming to reach the client
+  // incrementally (see src/lambda.ts and infra/src/gateway-lambda.ts).
+  const streamBody = asStreamBody(isolateResult.data);
+  if (streamBody) {
+    return c.newResponse(streamBody.stream, 200, streamBody.headers);
+  }
+
   return c.json({ data: isolateResult.data, meta: { requestId, durationMs } });
 });
+
+// ---------------------------------------------------------------------------
+// Streaming pass-through helpers
+// ---------------------------------------------------------------------------
+
+const SSE_HEADERS: Record<string, string> = {
+  "Content-Type": "text/event-stream; charset=utf-8",
+  "Cache-Control": "no-cache, no-transform",
+};
+
+interface StreamBody {
+  stream: ReadableStream<Uint8Array>;
+  headers: Record<string, string>;
+}
+
+function isAsyncIterable(value: unknown): value is AsyncIterable<unknown> {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    typeof (value as AsyncIterable<unknown>)[Symbol.asyncIterator] === "function"
+  );
+}
+
+/**
+ * Detect a streaming execution result and normalize it to a byte stream plus
+ * response headers. Handles the shapes provider modules can hand back:
+ * a fetch `Response` (raw SSE from the upstream API), a bare `ReadableStream`,
+ * or an async-iterable SDK stream (e.g. OpenAI chunk objects, which are
+ * re-encoded as SSE `data:` events). Returns undefined for plain JSON data.
+ */
+function asStreamBody(data: unknown): StreamBody | undefined {
+  if (data instanceof Response) {
+    if (!data.body) return undefined;
+    return {
+      stream: data.body,
+      headers: {
+        ...SSE_HEADERS,
+        "Content-Type": data.headers.get("content-type") ?? SSE_HEADERS["Content-Type"]!,
+      },
+    };
+  }
+  if (data instanceof ReadableStream) {
+    return { stream: data, headers: { ...SSE_HEADERS } };
+  }
+  if (isAsyncIterable(data)) {
+    return { stream: sseFromAsyncIterable(data), headers: { ...SSE_HEADERS } };
+  }
+  return undefined;
+}
+
+/**
+ * Encode an async-iterable stream as SSE. String and byte chunks are assumed
+ * to already be wire-format (pre-encoded SSE) and pass through untouched;
+ * object chunks become `data: <json>` events, terminated by `data: [DONE]`
+ * to match the OpenAI-style contract chat clients expect.
+ */
+function sseFromAsyncIterable(iterable: AsyncIterable<unknown>): ReadableStream<Uint8Array> {
+  const encoder = new TextEncoder();
+  const iterator = iterable[Symbol.asyncIterator]();
+  return new ReadableStream<Uint8Array>({
+    async pull(controller) {
+      const { value, done } = await iterator.next();
+      if (done) {
+        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+        controller.close();
+        return;
+      }
+      if (value instanceof Uint8Array) {
+        controller.enqueue(value);
+      } else if (typeof value === "string") {
+        controller.enqueue(encoder.encode(value));
+      } else {
+        controller.enqueue(encoder.encode(`data: ${JSON.stringify(value)}\n\n`));
+      }
+    },
+    async cancel(reason) {
+      await iterator.return?.(reason);
+    },
+  });
+}
 
 // ---------------------------------------------------------------------------
 // Logging helper — logs metadata only (no credential values, no request/response bodies)

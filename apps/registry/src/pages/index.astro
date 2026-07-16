@@ -50,7 +50,7 @@ await github.users.getByUsername({ username: 'octocat' });`,
 ---
 
 <BaseLayout title="Aprovan Registry">
-  <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
+  <main class="flex flex-col w-full min-h-screen gap-8 px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
     <section class="flex flex-col gap-3">
       <div class="flex flex-wrap items-center gap-2">
         <Badge variant="outline">{catalog.providerCount} providers</Badge>
@@ -58,7 +58,7 @@ await github.users.getByUsername({ username: 'octocat' });`,
         {updatedAtLabel ? <Badge variant="outline">Updated {updatedAtLabel}</Badge> : null}
       </div>
       <h1 class="max-w-3xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-        Find the right UTDK provider fast.
+        Call any API.
       </h1>
     </section>
 
@@ -66,8 +66,8 @@ await github.users.getByUsername({ username: 'octocat' });`,
 
     <section class="flex flex-col gap-4">
       <div class="flex flex-col gap-1">
-        <h2 class="text-2xl font-semibold tracking-tight">Packages</h2>
-        <p class="text-sm text-muted-foreground">Compact cards with fast filters for provider exploration.</p>
+        <h2 class="text-2xl font-semibold tracking-tight">Providers</h2>
+        <p class="text-sm text-muted-foreground">Search by name or contents.</p>
       </div>
       <RegistryBrowser
         client:load

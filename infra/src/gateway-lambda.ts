@@ -164,6 +164,11 @@ export class GatewayLambda extends Construct {
     // that signed request must live here, on the function's own account/region.
     this.functionUrl = this.function.addFunctionUrl({
       authType: lambda.FunctionUrlAuthType.AWS_IAM,
+      // Response streaming: the handler uses hono `streamHandle`
+      // (awslambda.streamifyResponse), which requires RESPONSE_STREAM. Lets
+      // SSE from provider chat-completion operations reach clients
+      // incrementally instead of buffering the whole payload.
+      invokeMode: lambda.InvokeMode.RESPONSE_STREAM,
     });
 
     const stack = Stack.of(this);
@@ -174,6 +179,15 @@ export class GatewayLambda extends Construct {
       // Scoped to this account's CloudFront distributions. The specific
       // distribution id lives in the core WebStack (created after this stack),
       // so a wildcard avoids a cross-repo deploy-ordering cycle.
+      sourceArn: `arn:${stack.partition}:cloudfront::${stack.account}:distribution/*`,
+    });
+    // Since October 2025, CloudFront OAC additionally requires
+    // lambda:InvokeFunction on the resource policy — with only
+    // InvokeFunctionUrl, OAC-signed requests pass signature validation but are
+    // rejected 403 "Forbidden" at the policy check.
+    this.function.addPermission("CloudFrontOacInvokeFunction", {
+      principal: new iam.ServicePrincipal("cloudfront.amazonaws.com"),
+      action: "lambda:InvokeFunction",
       sourceArn: `arn:${stack.partition}:cloudfront::${stack.account}:distribution/*`,
     });
 
