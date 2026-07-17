@@ -1,3 +1,6 @@
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { DocsPipelineError } from "./docs/types.js";
 import { runAuthIntelPhase } from "./phases/authIntel.js";
 import { runEnrichPhase } from "./phases/enrich.js";
@@ -7,6 +10,28 @@ import { runShipPhase } from "./phases/ship.js";
 import { DEFAULT_OUTPUT_ROOT } from "./provider.js";
 import { runSmokeTest } from "./verification/smoke.js";
 import { augmentRegistryProviderDocs, loadRegistryProviderDocs, runFullPipeline } from "./index.js";
+
+// Load the package-local .env (LLM provider config) regardless of runner —
+// tsx does not read .env files on its own. Existing env vars win.
+function loadLocalEnv(): void {
+  const envPath = path.resolve(fileURLToPath(new URL(".", import.meta.url)), "../.env");
+  let raw: string;
+  try {
+    raw = readFileSync(envPath, "utf8");
+  } catch {
+    return;
+  }
+  for (const line of raw.split("\n")) {
+    const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+    if (!match) continue;
+    const [, key, value] = match;
+    if (key && value !== undefined && process.env[key] === undefined) {
+      process.env[key] = value.replace(/^["']|["']$/g, "");
+    }
+  }
+}
+
+loadLocalEnv();
 
 type CliCommand = "generate" | "load-docs" | "augment-docs";
 type PipelinePhase = "research" | "enrich" | "auth" | "review" | "ship";

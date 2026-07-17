@@ -11,6 +11,7 @@ import { PlayIcon, SearchIcon } from "lucide-react";
 import * as React from "react";
 import { CopyButton } from "@/components/CopyButton";
 import { TryItPanel } from "@/components/TryItPanel";
+import { HighlightedCode } from "@/lib/highlight";
 import {
   Card,
   CardContent,
@@ -27,6 +28,55 @@ export interface SdkExplorerProps {
   provider: string;
   packageName: string;
   symbols: SdkSymbol[];
+}
+
+/**
+ * Hover card exploring a symbol's typed signature — every input field with
+ * its type, requiredness, and doc line. Pure CSS reveal (group-hover) so it
+ * works without portals inside the scrolling list.
+ */
+function TypeHoverCard({ symbol }: { symbol: SdkSymbol }) {
+  return (
+    <div className="absolute left-8 top-full z-30 mt-1 hidden w-max max-w-md rounded-xl border bg-popover p-3 shadow-lg group-hover:block">
+      <p className="mb-2 font-mono text-xs">
+        <span className="text-syntax-fn">{symbol.method}</span>
+        <span className="text-muted-foreground">(</span>
+        {symbol.fields.length > 0 ? (
+          <span className="text-muted-foreground">{"{ … }"}</span>
+        ) : null}
+        <span className="text-muted-foreground">)</span>
+      </p>
+      {symbol.fields.length === 0 ? (
+        <p className="text-xs text-muted-foreground">No inputs.</p>
+      ) : (
+        <ul className="flex max-h-64 flex-col gap-1.5 overflow-y-auto">
+          {symbol.fields.map((field) => (
+            <li className="font-mono text-xs" key={`${field.location}:${field.name}`}>
+              <span>{field.name}</span>
+              {!field.required && <span className="text-muted-foreground">?</span>}
+              <span className="text-muted-foreground">: </span>
+              <span className="text-syntax-type">
+                {field.enumValues && field.enumValues.length > 0
+                  ? field.enumValues.slice(0, 4).map((v) => JSON.stringify(v)).join(" | ") +
+                    (field.enumValues.length > 4 ? " | …" : "")
+                  : (field.type ?? "string")}
+              </span>
+              {field.description ? (
+                <span className="ml-1.5 font-sans text-muted-foreground">
+                  — {field.description.length > 80
+                    ? `${field.description.slice(0, 80)}…`
+                    : field.description}
+                </span>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      )}
+      <p className="mt-2 border-t pt-2 font-mono text-[0.65rem] uppercase text-muted-foreground/70">
+        {symbol.httpMethod} {symbol.httpPath}
+      </p>
+    </div>
+  );
 }
 
 function preferredDefault(symbols: SdkSymbol[]): SdkSymbol | undefined {
@@ -86,7 +136,6 @@ export function SdkExplorer({ provider, packageName, symbols }: SdkExplorerProps
         <Card>
           <CardHeader>
             <CardTitle className="flex flex-wrap items-baseline gap-2 font-mono text-base">
-              <span className="text-syntax-keyword">await</span>
               {active ? (
                 <span>
                   {active.namespace ? (
@@ -113,12 +162,12 @@ export function SdkExplorer({ provider, packageName, symbols }: SdkExplorerProps
           </CardHeader>
           {active ? (
             <CardContent className="flex flex-col gap-4">
-              <div className="rounded-xl border bg-muted/50 p-3">
-                <div className="mb-2 flex items-center justify-between gap-3">
-                  <p className="text-xs font-medium text-muted-foreground">Use it as an SDK</p>
+              <div className="p-3 border rounded-xl bg-muted/50">
+                <div className="flex items-center justify-between gap-3 mb-2">
+                  <p className="text-xs font-medium text-muted-foreground">Import and Run</p>
                   <CopyButton idleLabel="Copy" size="xs" text={active.snippet} />
                 </div>
-                <pre className="overflow-x-auto text-xs leading-5"><code>{active.snippet}</code></pre>
+                <pre className="overflow-x-auto text-xs leading-5"><code><HighlightedCode code={active.snippet} /></code></pre>
               </div>
               <TryItPanel
                 key={active.sdkPath}
@@ -159,7 +208,7 @@ export function SdkExplorer({ provider, packageName, symbols }: SdkExplorerProps
                     {namespace}
                   </p>
                 ) : null}
-                <ul className="divide-y rounded-xl border">
+                <ul className="border divide-y rounded-xl">
                   {groupSymbols.map((symbol) => {
                     const isActive = symbol.sdkPath === activePath;
 
@@ -167,13 +216,14 @@ export function SdkExplorer({ provider, packageName, symbols }: SdkExplorerProps
                       <li
                         key={symbol.sdkPath}
                         className={cn(
-                          "group flex items-center gap-3 px-3 py-2 transition-colors",
+                          "group relative flex items-center gap-3 px-3 py-2 transition-colors",
                           isActive ? "bg-accent/60" : "hover:bg-muted/40",
                         )}
                       >
+                        <TypeHoverCard symbol={symbol} />
                         <button
                           aria-label={`Try ${symbol.sdkPath}`}
-                          className="inline-flex size-6 shrink-0 items-center justify-center rounded-md border text-muted-foreground opacity-60 transition-all hover:bg-background hover:text-syntax-fn group-hover:opacity-100"
+                          className="inline-flex items-center justify-center transition-all border rounded-md size-6 shrink-0 text-muted-foreground opacity-60 hover:bg-background hover:text-syntax-fn group-hover:opacity-100"
                           onClick={() => activate(symbol.sdkPath)}
                           title={`Try ${symbol.sdkPath}`}
                           type="button"
@@ -185,14 +235,14 @@ export function SdkExplorer({ provider, packageName, symbols }: SdkExplorerProps
                           onClick={() => activate(symbol.sdkPath)}
                           type="button"
                         >
-                          <span className="truncate font-mono text-sm">
+                          <span className="font-mono text-sm truncate">
                             <span className="text-syntax-fn">{symbol.method}</span>
                             <span className="text-muted-foreground">
                               ({symbol.paramsPreview})
                             </span>
                           </span>
                           {symbol.summary ? (
-                            <span className="truncate text-xs text-muted-foreground">
+                            <span className="text-xs truncate text-muted-foreground">
                               {symbol.summary}
                             </span>
                           ) : null}

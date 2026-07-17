@@ -8,8 +8,10 @@
  *   - OAuth2 authorization code (redirects to provider, returns via /account/oauth-callback)
  */
 
-import { CheckIcon, SearchIcon, XIcon } from "lucide-react";
+import { CheckIcon, PlusIcon, SearchIcon, XIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { CopyButton } from "@/components/CopyButton";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -63,6 +65,122 @@ const CREDENTIAL_TYPES: { value: CredentialType; label: string; description: str
 ];
 
 // ---------------------------------------------------------------------------
+// Scopes multi-select
+// ---------------------------------------------------------------------------
+
+/**
+ * Scope picker: the provider's known scopes render as toggleable chips
+ * (hover for the scope's description); anything else can be typed in and
+ * added freeform (new/undocumented scopes).
+ */
+function ScopesField({
+  available,
+  value,
+  onChange,
+}: {
+  /** Known scopes → descriptions, from the provider's OpenAPI securitySchemes. */
+  available?: Record<string, string>;
+  value: string[];
+  onChange: (scopes: string[]) => void;
+}) {
+  const [draft, setDraft] = useState("");
+
+  const knownScopes = Object.keys(available ?? {});
+  const customScopes = value.filter((scope) => !knownScopes.includes(scope));
+
+  const toggle = (scope: string) =>
+    onChange(
+      value.includes(scope) ? value.filter((s) => s !== scope) : [...value, scope],
+    );
+
+  const addDraft = () => {
+    const added = draft
+      .split(/[\s,]+/)
+      .filter(Boolean)
+      .filter((scope) => !value.includes(scope));
+    if (added.length > 0) onChange([...value, ...added]);
+    setDraft("");
+  };
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      <span className="text-sm font-medium">
+        Scopes <span className="font-normal text-muted-foreground">(optional)</span>
+      </span>
+      {knownScopes.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {knownScopes.map((scope) => {
+            const selected = value.includes(scope);
+            return (
+              <button
+                className={`rounded-full border px-2.5 py-0.5 font-mono text-xs transition-colors ${
+                  selected
+                    ? "border-ring bg-accent text-accent-foreground"
+                    : "border-border text-muted-foreground hover:bg-muted/60 hover:text-foreground"
+                }`}
+                key={scope}
+                onClick={() => toggle(scope)}
+                title={available?.[scope] || scope}
+                type="button"
+              >
+                {selected ? "✓ " : ""}
+                {scope}
+              </button>
+            );
+          })}
+        </div>
+      )}
+      {customScopes.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {customScopes.map((scope) => (
+            <Badge className="gap-1 font-mono text-xs" key={scope} variant="secondary">
+              {scope}
+              <button
+                aria-label={`Remove scope ${scope}`}
+                className="text-muted-foreground transition-colors hover:text-foreground"
+                onClick={() => toggle(scope)}
+                type="button"
+              >
+                <XIcon className="size-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+      <div className="flex items-center gap-2">
+        <Input
+          className="h-8 font-mono text-xs"
+          onBlur={addDraft}
+          onChange={(e) => setDraft(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === ",") {
+              e.preventDefault();
+              addDraft();
+            }
+          }}
+          placeholder={
+            knownScopes.length > 0
+              ? "Add a scope not listed above…"
+              : "e.g. read:user repo"
+          }
+          type="text"
+          value={draft}
+        />
+        <Button
+          disabled={!draft.trim()}
+          onClick={addDraft}
+          size="icon-sm"
+          type="button"
+          variant="outline"
+        >
+          <PlusIcon />
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Component
 // ---------------------------------------------------------------------------
 
@@ -97,14 +215,21 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
   const [clientId, setClientId] = useState("");
   const [clientSecret, setClientSecret] = useState("");
   const [tokenUrl, setTokenUrl] = useState("");
-  const [scopes, setScopes] = useState("");
+  const [scopes, setScopes] = useState<string[]>([]);
 
   // OAuth2 auth code fields
   const [authUrl, setAuthUrl] = useState("");
   const [oauthClientId, setOauthClientId] = useState("");
   const [oauthClientSecret, setOauthClientSecret] = useState("");
   const [oauthTokenUrl, setOauthTokenUrl] = useState("");
-  const [oauthScopes, setOauthScopes] = useState("");
+  const [oauthScopes, setOauthScopes] = useState<string[]>([]);
+
+  // The redirect URI the provider's OAuth app must allow. Rendered copiable
+  // so it can be pasted into the provider's app settings before authorizing.
+  const callbackUrl =
+    typeof window !== "undefined"
+      ? window.location.origin + withBasePath("/account/oauth-callback")
+      : "";
 
   const resolvedProvider = provider === "__custom__" ? customProvider.trim() : provider;
 
@@ -190,7 +315,7 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
         clientSecret: oauthClientSecret,
         tokenUrl: oauthTokenUrl,
         redirectUri,
-        scopes: oauthScopes ? oauthScopes.split(/[\s,]+/).filter(Boolean) : undefined,
+        scopes: oauthScopes.length > 0 ? oauthScopes : undefined,
         state,
       };
       saveOAuthPending(pending);
@@ -221,7 +346,7 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
           clientId,
           clientSecret,
           tokenUrl,
-          scopes: scopes ? scopes.split(/[\s,]+/).filter(Boolean) : undefined,
+          scopes: scopes.length > 0 ? scopes : undefined,
         };
       }
 
@@ -484,17 +609,11 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
                   value={tokenUrl}
                 />
               </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium">
-                  Scopes <span className="text-muted-foreground font-normal">(space or comma separated)</span>
-                </span>
-                <Input
-                  onChange={(e) => setScopes(e.target.value)}
-                  placeholder="read:user repo"
-                  type="text"
-                  value={scopes}
-                />
-              </label>
+              <ScopesField
+                available={selectedCatalogEntry?.auth.oauth?.scopes}
+                onChange={setScopes}
+                value={scopes}
+              />
             </>
           )}
 
@@ -503,6 +622,19 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
               <div className="rounded-lg border border-border bg-muted/30 px-3 py-2 text-xs text-muted-foreground">
                 You will be redirected to the provider to authorize access. After approval you
                 will return here automatically.
+              </div>
+              <div className="flex flex-col gap-1.5">
+                <span className="text-sm font-medium">Callback URL</span>
+                <div className="flex items-center gap-2">
+                  <code className="min-w-0 flex-1 truncate rounded-lg border bg-muted/40 px-3 py-1.5 font-mono text-xs">
+                    {callbackUrl}
+                  </code>
+                  <CopyButton idleLabel="Copy" size="sm" text={callbackUrl} />
+                </div>
+                <span className="text-xs text-muted-foreground">
+                  Register this as the redirect URI in the provider&apos;s OAuth app settings
+                  before authorizing.
+                </span>
               </div>
               <label className="flex flex-col gap-1.5">
                 <span className="text-sm font-medium">Authorization URL</span>
@@ -543,29 +675,11 @@ export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFor
                   value={oauthClientSecret}
                 />
               </label>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-sm font-medium">
-                  Scopes <span className="text-muted-foreground font-normal">(space or comma separated)</span>
-                </span>
-                <Input
-                  onChange={(e) => setOauthScopes(e.target.value)}
-                  placeholder="user-read-private playlist-read-private"
-                  type="text"
-                  value={oauthScopes}
-                />
-                {selectedCatalogEntry?.auth.oauth?.scopes &&
-                  Object.keys(selectedCatalogEntry.auth.oauth.scopes).length > 0 && (
-                    <span className="text-xs text-muted-foreground">
-                      Available:{" "}
-                      {Object.keys(selectedCatalogEntry.auth.oauth.scopes)
-                        .slice(0, 6)
-                        .join(", ")}
-                      {Object.keys(selectedCatalogEntry.auth.oauth.scopes).length > 6
-                        ? "…"
-                        : ""}
-                    </span>
-                  )}
-              </label>
+              <ScopesField
+                available={selectedCatalogEntry?.auth.oauth?.scopes}
+                onChange={setOauthScopes}
+                value={oauthScopes}
+              />
             </>
           )}
 

@@ -28,10 +28,15 @@ type SchemaLike = {
   enum?: Array<string | number>;
   default?: unknown;
   properties?: Record<string, SchemaLike & { description?: string }>;
-  required?: string[];
+  /** OpenAPI object schemas use string[]; some specs incorrectly use a boolean. */
+  required?: string[] | boolean;
 };
 
 const MAX_PREVIEW_PARAMS = 4;
+
+function requiredPropertyNames(schema: SchemaLike | null): Set<string> {
+  return new Set(Array.isArray(schema?.required) ? schema.required : []);
+}
 
 function toTryItFields(operation: RegistryOperation): TryItField[] {
   const parameterFields: TryItField[] = operation.parameters
@@ -53,7 +58,7 @@ function toTryItFields(operation: RegistryOperation): TryItField[] {
     });
 
   const bodySchema = (operation.input?.schema ?? null) as SchemaLike | null;
-  const bodyRequired = new Set(bodySchema?.required ?? []);
+  const bodyRequired = requiredPropertyNames(bodySchema);
   const bodyFields: TryItField[] = Object.entries(bodySchema?.properties ?? {}).map(
     ([name, schema]) => ({
       name,

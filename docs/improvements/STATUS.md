@@ -72,11 +72,17 @@ Kill the "horrific" inline type blobs; a real typing system.
 ## Workstream D — LLM augmentation
 
 - [x] **D1. Auth interpretation** — `phases/authIntel.ts` (`generate <provider>
-  --phase auth`): Claude (structured outputs, `@anthropic-ai/sdk`) interprets
-  `securitySchemes` + cached docs into `auth.json` (gateway credential types,
-  exact headers, ordered setup steps, OAuth URLs/scopes). Rendered as an
-  Authentication card on provider pages. **Not yet run live** — needs
-  `ANTHROPIC_API_KEY` (or `ant auth login`); code typechecked + wired.
+  --phase auth`): structured-output LLM interprets `securitySchemes` + cached
+  docs into `auth.json` (gateway credential types, exact headers, ordered
+  setup steps, OAuth URLs/scopes). Rendered as an Authentication card on
+  provider pages. **Run live 2026-07-16** on `googleapis/books` via the
+  OpenAI-compatible backend (GLM 5.2 on synthetic.new) — correct OAuth URLs,
+  scope, and methods.
+- [x] **D1b. Pluggable LLM backend** — `src/llm.ts`: one structured-completion
+  entry point with two backends. OpenAI-compatible (synthetic.new; default
+  `hf:zai-org/GLM-5.2`) wins when `SYNTHETIC_PROVIDER_URL` +
+  `SYNTHETIC_PROVIDER_API_KEY` are set (package-local `.env`, gitignored);
+  Anthropic otherwise. Model override: `--model` / `UTDK_AUTH_INTEL_MODEL`.
 - [ ] **D2. Description augmentation** — rewrite scraped descriptions into
   crisp summaries; flag operations with empty/poor descriptions and generate
   one-liners. (Same phase pattern as D1; not started.)
@@ -119,6 +125,25 @@ Kill the "horrific" inline type blobs; a real typing system.
 - [x] **F6. Homepage story** — hero now leads with "Every API is an SDK",
   `@utdk/<name>` imports, and the isolate namespace-value example rendered
   with syntax accents.
+- [x] **F7. Playground + shared runtime** — `@aprovan/runtime`
+  (packages/runtime): namespace proxies, gateway transport, policy layer
+  (retry/backoff/rate-limit/timeout), RuntimeEvent span feed, iframe sandbox
+  (patchwork-compatible postMessage protocol). `/playground` runs scripts
+  live; homepage auto-runs a keyless Open-Meteo demo (15s loop) through the
+  same sandbox + span view. Spans expand to explore inputs/outputs.
+- [x] **F8. Docs page cleanup** — stale generated-markdown doc links removed
+  from the package page (right rail + badge); metadata `<dl>` collapsed into
+  a compact About sidebar; SdkExplorer hoisted above the README; type
+  signatures explorable via hover cards (fields, types, requiredness, doc
+  lines); syntax highlighting (site-theme tokenizer) across snippets,
+  samples, and the playground editor.
+- [x] **F9. OAuth credential UX + token exchange** — copiable callback URL in
+  the auth-code form; scopes as toggle chips (known scopes from the spec) +
+  freeform entry. Gateway now actually exchanges/refreshes OAuth tokens
+  (`apps/gateway/src/oauthTokens.ts`): auth-code exchanged at credential
+  creation, client-credentials + refresh at call time, form-body → HTTP
+  Basic retry (Figma). Root cause of the "Invalid token" 500: OAuth payloads
+  were stored but never exchanged, so provider calls went out unauthenticated.
 
 ---
 
@@ -139,3 +164,14 @@ Kill the "horrific" inline type blobs; a real typing system.
   `--phase auth` across providers once credentials are available; D2
   description augmentation; catalog-card logos; domain-form resolution
   endpoint (provenance.md later phases).
+- **2026-07-16 (later)** — Feedback pass: F7/F8/F9 landed (playground +
+  `@aprovan/runtime`, docs cleanup, hover types, syntax highlighting,
+  explorable spans, homepage auto-demo, OAuth UX + gateway token exchange).
+  D1 run live on `googleapis/books` through the new OpenAI-compatible LLM
+  backend (D1b, GLM 5.2 via synthetic.new; config validated with test
+  queries first). Gateway: 35 tests green incl. 8 new oauthTokens tests;
+  bundler: 171 green; runtime: 10 green; web app typechecks + builds.
+  **Open follow-ups:** run `--phase auth` across all curated providers with
+  the GLM backend (cheap now); deploy gateway + web for the OAuth fix to
+  reach prod; publish `@aprovan/runtime` and swap patchwork's compiler
+  bridge to it; D2 description augmentation via the same llm.ts backend.

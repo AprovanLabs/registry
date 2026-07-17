@@ -11,9 +11,10 @@
 
 import { Hono } from "hono";
 import { z } from "zod";
-import { getCredentialStore } from "../credentials.js";
+import { getCredentialStore, type CredentialInput } from "../credentials.js";
 import { requireAuth, requireAdmin } from "../middleware/auth.js";
 import { validateBody } from "../middleware/validate.js";
+import { exchangeAuthorizationCode, OAuthExchangeError } from "../oauthTokens.js";
 import { invalidateToolListCache } from "./tools.js";
 
 export const credentialsRouter = new Hono();
@@ -58,8 +59,29 @@ credentialsRouter.post("/", requireAdmin, validateBody(credentialSchema), async 
   const principal = c.get("principal");
   const workspaceId = principal.workspaceId;
 
+  const input: CredentialInput = c.req.valid("json");
+
+  // Authorization codes are single-use and expire within minutes — exchange
+  // for tokens now and store the token set instead of the dead code.
+  if (input.payload.type === "oauth2_authcode") {
+    try {
+      const tokens = await exchangeAuthorizationCode(input.payload);
+      input.payload = {
+        ...input.payload,
+        code: "",
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        expiresAt: tokens.expiresAt,
+      };
+    } catch (err) {
+      const message =
+        err instanceof OAuthExchangeError ? err.message : "OAuth token exchange failed";
+      return c.json({ error: message }, 400);
+    }
+  }
+
   const store = getCredentialStore();
-  const record = await store.create(workspaceId, c.req.valid("json"));
+  const record = await store.create(workspaceId, input);
   // A new credential may unlock a provider's tools for this workspace.
   invalidateToolListCache(workspaceId);
   return c.json(record, 201);

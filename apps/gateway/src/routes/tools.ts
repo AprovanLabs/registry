@@ -21,6 +21,7 @@ import { getAuditStore } from "../audit.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
 import { getAuthMode, requireAuth } from "../middleware/auth.js";
+import { OAuthExchangeError, resolveToInjectable } from "../oauthTokens.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import type { ToolCallRequest } from "../contract.js";
 import type { CredentialPayload } from "../credentials.js";
@@ -275,10 +276,26 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
             headerName: body.credential.name,
           };
   } else {
-    credentials = await getCredentialStore().resolveForProvider(
-      workspaceId,
-      provider,
-    );
+    const store = getCredentialStore();
+    const record = await store.resolveRecordForProvider(workspaceId, provider);
+    if (record) {
+      // OAuth payloads resolve to live bearer tokens here (client-credentials
+      // grant or refresh); the executor only ever sees injectable credentials.
+      try {
+        credentials = await resolveToInjectable(record.payload, {
+          cacheKey: `${workspaceId}:${provider}:${record.id}`,
+          persist: (payload) => store.updatePayload(workspaceId, record.id, payload),
+        });
+      } catch (err) {
+        const message =
+          err instanceof OAuthExchangeError
+            ? `OAuth token resolution failed for ${provider}: ${err.message}`
+            : `OAuth token resolution failed for ${provider}`;
+        logMetadata({ requestId, workspaceId, callerId, provider, operation, status: 502 });
+        getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status: 502 });
+        return c.json({ error: message }, 502);
+      }
+    }
   }
   // Chat clients (AI SDK) send `stream: true` at the top level of the request;
   // provider chat-completion operations expect it inside their own arguments.

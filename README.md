@@ -10,6 +10,10 @@ _While the registry prefers TypeScript as the first-party supported language, al
     - Supports exposing 3rd party applications as MCP toolkits
     - Optionally search available tools via management endpoints and tools
     - A built-in, Isolate runtime allows running sandboxed tools as TypeScript modules
+- [packages/runtime](packages/runtime): The shared sandbox runtime (`@aprovan/runtime`) — the formal boundary between the registry (execution plane: SDKs, gateway, credentials, telemetry) and patchwork (UI plane: generative widgets).
+    - Declared dependencies become namespace proxies (`github.repos.list(...)`) whose calls route through the gateway, where credentials are injected server-side
+    - Execution policy (retries, backoff, rate limits, timeouts) configured globally, per provider, or per call
+    - A `RuntimeEvent` stream (call spans, retries, logs) feeds live execution views; a browser iframe sandbox speaks the same postMessage protocol as patchwork widgets
 - [packages/bundler](packages/bundler): Combine scraped 3rd party OpenAPI specs and associated documentation to auto-generate versioned 3rd party MCP clients. We rely on UTCP for it's method of service external APIs as a single source and a UTCP code mode-inspired method using Isolates for the actual execution.
     - [providers.json](./docs/data/providers.json) provides a set of potential UTCP-documented APIs.
 - [apps/registry](apps/registry): Registry web app for searching versioned 3rd party APIs and registering integration credentials.

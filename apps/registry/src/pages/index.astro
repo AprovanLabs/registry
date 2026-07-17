@@ -1,9 +1,11 @@
 ---
+import { HomeSandboxDemo } from "@/components/HomeSandboxDemo";
 import { RegistryBrowser } from "@/components/RegistryBrowser";
 import { SnippetCarousel } from "@/components/SnippetCarousel";
 import { Badge } from "@/components/ui/badge";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { getRegistryCatalog } from "@/lib/registry";
+import { withBasePath } from "@/lib/site";
 
 const catalog = await getRegistryCatalog();
 const updatedAtLabel = catalog.updatedAt
@@ -63,14 +65,18 @@ await github.users.getByUsername({ username: 'octocat' });`,
       <p class="max-w-2xl text-base leading-7 text-muted-foreground">
         Import any provider as
         <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-sm text-syntax-string">@utdk/&lt;name&gt;</code>
-        — or skip the import entirely: in the sandboxed isolate runtime, providers are
-        namespace values, so
+        and your script runs in a sandboxed isolate — in the browser or on the
+        gateway — where providers are live namespaces:
         <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-sm"><span class="text-syntax-keyword">await</span> <span class="text-syntax-type">github</span>.<span class="text-syntax-fn">getRepos</span>({"{"} username {"}"})</code>
-        just works. Typed clients, hover-ready docs, credentials handled by the gateway.
+        just works. The sandbox only speaks to the gateway; credentials are
+        injected server-side and never enter your code.
+        <a class="font-medium underline underline-offset-4 hover:text-foreground" href={withBasePath("/playground")}>Run a script live →</a>
       </p>
     </section>
 
     <SnippetCarousel client:load items={snippetItems} />
+
+    <HomeSandboxDemo client:only="react" />
 
     <section class="flex flex-col gap-4">
       <div class="flex flex-col gap-1">

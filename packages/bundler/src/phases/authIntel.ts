@@ -15,7 +15,7 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
-import Anthropic from "@anthropic-ai/sdk";
+import { createStructuredCompletion } from "../llm.js";
 import { applyProviderOpenApiOptions, loadOpenApiDocument } from "../openapi.js";
 import {
   DEFAULT_OUTPUT_ROOT,
@@ -78,8 +78,6 @@ export type RunAuthIntelPhaseResult = {
   skipped: boolean;
   authIntel: ProviderAuthIntel;
 };
-
-const DEFAULT_MODEL = "claude-opus-4-8";
 
 const AUTH_INTEL_SCHEMA = {
   type: "object",
@@ -210,7 +208,8 @@ export async function runAuthIntelPhase(
   options: RunAuthIntelPhaseOptions,
 ): Promise<RunAuthIntelPhaseResult> {
   const outputRoot = options.outputRoot ?? DEFAULT_OUTPUT_ROOT;
-  const model = options.model ?? process.env.UTDK_AUTH_INTEL_MODEL ?? DEFAULT_MODEL;
+  // Backend default applies when neither the option nor the env is set (see llm.ts).
+  const model = options.model ?? process.env.UTDK_AUTH_INTEL_MODEL;
   const providers = await loadRegistryProviders();
   const provider = resolveProvider(providers, options.provider);
   const rawDocument = await loadOpenApiDocument(provider);
@@ -230,15 +229,10 @@ export async function runAuthIntelPhase(
   // model that context when available.
   const docsIndex = await readOptionalText(resolveProviderDocsIndexPath(provider.name));
 
-  const client = new Anthropic();
-
-  const response = await client.messages.create({
+  const completion = await createStructuredCompletion({
     model,
-    max_tokens: 4096,
-    thinking: { type: "adaptive" },
-    output_config: {
-      format: { type: "json_schema", schema: AUTH_INTEL_SCHEMA },
-    },
+    schema: AUTH_INTEL_SCHEMA as unknown as Record<string, unknown>,
+    schemaName: "auth_intel",
     system: [
       "You analyze API authentication requirements for a package registry.",
       "The registry stores credentials centrally (types: bearer_token, api_key, oauth2_client, oauth2_authcode) and a gateway injects them into requests at call time.",
@@ -246,43 +240,26 @@ export async function runAuthIntelPhase(
       "Be precise about header names and flows. Only cite URLs present in the source material — never invent console/registration URLs.",
       "Setup steps must be actionable and end with configuring the credential in the registry credentials area.",
     ].join(" "),
-    messages: [
-      {
-        role: "user",
-        content: [
-          `Provider: ${provider.name}`,
-          "",
-          "## Auth-relevant OpenAPI content",
-          "```json",
-          authSource,
-          "```",
-          ...(docsIndex
-            ? ["", "## Cached provider docs index", docsIndex.slice(0, 20000)]
-            : []),
-        ].join("\n"),
-      },
-    ],
+    user: [
+      `Provider: ${provider.name}`,
+      "",
+      "## Auth-relevant OpenAPI content",
+      "```json",
+      authSource,
+      "```",
+      ...(docsIndex
+        ? ["", "## Cached provider docs index", docsIndex.slice(0, 20000)]
+        : []),
+    ].join("\n"),
   });
 
-  if (response.stop_reason === "refusal") {
-    throw new Error(`Auth-intel model refused the request for ${provider.name}.`);
-  }
-
-  const textBlock = response.content.find(
-    (block): block is Anthropic.TextBlock => block.type === "text",
-  );
-
-  if (!textBlock) {
-    throw new Error(`Auth-intel response for ${provider.name} contained no text output.`);
-  }
-
-  const raw = JSON.parse(textBlock.text) as RawAuthIntel;
+  const raw = JSON.parse(completion.text) as RawAuthIntel;
 
   const authIntel: ProviderAuthIntel = {
     provider: provider.name,
     generatedAt: new Date().toISOString(),
     sourceHash,
-    model,
+    model: completion.model,
     auth: {
       summary: raw.summary,
       methods: raw.methods,

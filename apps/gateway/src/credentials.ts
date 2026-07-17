@@ -72,6 +72,11 @@ export interface OAuth2AuthCodePayload {
   redirectUri: string;
   codeVerifier?: string;
   scopes?: string[];
+  /** Resolved tokens, written after the authorization-code exchange. */
+  accessToken?: string;
+  refreshToken?: string;
+  /** Epoch ms when the access token expires. */
+  expiresAt?: number;
 }
 
 export type CredentialPayload =
@@ -112,6 +117,16 @@ export interface ICredentialStore {
    * workspace. Used by the tool proxy to inject credentials at call time.
    */
   resolveForProvider(workspaceId: string, provider: string): Promise<CredentialPayload | undefined>;
+  /**
+   * Like `resolveForProvider` but includes the credential id so callers can
+   * persist payload updates (e.g. refreshed OAuth tokens).
+   */
+  resolveRecordForProvider(
+    workspaceId: string,
+    provider: string,
+  ): Promise<{ id: string; payload: CredentialPayload } | undefined>;
+  /** Replace a credential's payload in place (OAuth token refresh). */
+  updatePayload(workspaceId: string, id: string, payload: CredentialPayload): Promise<void>;
 }
 
 // ---------------------------------------------------------------------------
@@ -252,6 +267,13 @@ export class CredentialStoreDynamodb implements ICredentialStore {
   }
 
   async resolveForProvider(workspaceId: string, provider: string): Promise<CredentialPayload | undefined> {
+    return (await this.resolveRecordForProvider(workspaceId, provider))?.payload;
+  }
+
+  async resolveRecordForProvider(
+    workspaceId: string,
+    provider: string,
+  ): Promise<{ id: string; payload: CredentialPayload } | undefined> {
     const client = getDynamoDocClient();
     const result = await client.send(
       new QueryCommand({
@@ -266,7 +288,33 @@ export class CredentialStoreDynamodb implements ICredentialStore {
     );
     const item = result.Items?.[0] as Record<string, unknown> | undefined;
     if (!item) return undefined;
-    return JSON.parse(item["payload"] as string) as CredentialPayload;
+    return {
+      id: item["id"] as string,
+      payload: JSON.parse(item["payload"] as string) as CredentialPayload,
+    };
+  }
+
+  async updatePayload(workspaceId: string, id: string, payload: CredentialPayload): Promise<void> {
+    const provider = await this.resolveProviderViaPointer(workspaceId, id);
+    if (provider === undefined) return;
+    const client = getDynamoDocClient();
+    const existing = await client.send(
+      new GetCommand({
+        TableName: this.tableName,
+        Key: { PK: `WS#${workspaceId}`, SK: `CRED#${provider}#${id}` },
+      }),
+    );
+    if (!existing.Item) return;
+    await client.send(
+      new PutCommand({
+        TableName: this.tableName,
+        Item: {
+          ...existing.Item,
+          payload: JSON.stringify(payload),
+          updatedAt: new Date().toISOString(),
+        },
+      }),
+    );
   }
 
   /**
@@ -411,13 +459,34 @@ export class CredentialStoreSqlite implements ICredentialStore {
     workspaceId: string,
     provider: string,
   ): Promise<CredentialPayload | undefined> {
+    return (await this.resolveRecordForProvider(workspaceId, provider))?.payload;
+  }
+
+  async resolveRecordForProvider(
+    workspaceId: string,
+    provider: string,
+  ): Promise<{ id: string; payload: CredentialPayload } | undefined> {
     const row = this.database
       .prepare(
-        `SELECT payload FROM credentials
+        `SELECT id, payload FROM credentials
          WHERE workspace_id = ? AND provider = ? ORDER BY created_at LIMIT 1`,
       )
-      .get(workspaceId, provider) as { payload?: string } | undefined;
-    return row?.payload ? this.decrypt(row.payload) : undefined;
+      .get(workspaceId, provider) as { id?: string; payload?: string } | undefined;
+    if (!row?.id || !row.payload) return undefined;
+    return { id: row.id, payload: this.decrypt(row.payload) };
+  }
+
+  async updatePayload(
+    workspaceId: string,
+    id: string,
+    payload: CredentialPayload,
+  ): Promise<void> {
+    this.database
+      .prepare(
+        `UPDATE credentials SET payload = ?, updated_at = ?
+         WHERE workspace_id = ? AND id = ?`,
+      )
+      .run(this.encrypt(payload), new Date().toISOString(), workspaceId, id);
   }
 
   private encrypt(payload: CredentialPayload): string {

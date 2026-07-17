@@ -2,6 +2,7 @@
 import { CopyButton } from "@/components/CopyButton";
 import MarkdownInline from "@/components/MarkdownInline.astro";
 import MarkdownContent from "@/components/MarkdownContent.astro";
+import { HighlightedCode } from "@/lib/highlight";
 import { SdkExplorer } from "@/components/SdkExplorer";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -100,9 +101,6 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
       <div class="flex flex-wrap items-center gap-2">
         <Badge>{entry.kind}</Badge>
         <Badge variant="outline">{entry.operationCount} operations</Badge>
-        {entry.docs.length > 0 ? (
-          <Badge variant="secondary">{entry.docs.length} docs pages</Badge>
-        ) : null}
       </div>
     </header>
 
@@ -138,10 +136,10 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
         </Card>
       </aside>
 
-      <section class="flex flex-col gap-6">
+      <section class="flex min-w-0 flex-col gap-6">
         <Card>
           <CardHeader>
-            <div class="flex flex-wrap items-center gap-2">
+            <div class="col-start-1 flex flex-wrap items-center gap-2">
               <Badge variant="outline">{entry.packageName}</Badge>
               {parentEntry ? (
                 <a
@@ -152,7 +150,7 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
                 </a>
               ) : null}
             </div>
-            <div class="flex items-center gap-3">
+            <div class="col-start-1 flex items-center gap-3">
               {logoUrl ? (
                 <img
                   alt=""
@@ -166,7 +164,7 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
               <CardTitle className="text-3xl">{entry.title}</CardTitle>
             </div>
             {originDomain ? (
-              <p class="font-mono text-xs text-muted-foreground">
+              <p class="col-start-1 font-mono text-xs text-muted-foreground">
                 <span class="text-syntax-type">{entry.providerPath}</span>
                 {" · owned by "}
                 {siteUrl ? (
@@ -210,7 +208,7 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
                     text={entry.importSample}
                   />
                 </div>
-                <pre class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><code>{entry.importSample}</code></pre>
+                <pre class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><code><HighlightedCode code={entry.importSample} /></code></pre>
               </div>
 
               {entry.createClientSample ? (
@@ -224,7 +222,7 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
                       text={entry.createClientSample}
                     />
                   </div>
-                  <pre class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><code>{entry.createClientSample}</code></pre>
+                  <pre class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><code><HighlightedCode code={entry.createClientSample} /></code></pre>
                 </div>
               ) : (
                 <div class="rounded-xl border bg-muted/50 p-4">
@@ -242,81 +240,23 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
               )}
             </div>
 
-            <Separator />
-
-            <dl class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-              <div class="flex flex-col gap-1">
-                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  Provider path
-                </dt>
-                <dd class="font-mono text-sm">{entry.providerPath}</dd>
-              </div>
-              <div class="flex flex-col gap-1">
-                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  Source API title
-                </dt>
-                <dd class="text-sm">{entry.openApiTitle ?? "Unavailable"}</dd>
-              </div>
-              <div class="flex flex-col gap-1">
-                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  Version
-                </dt>
-                <dd class="text-sm">{entry.openApiVersion ?? entry.version ?? "Unavailable"}</dd>
-              </div>
-              <div class="flex flex-col gap-1">
-                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  Generated
-                </dt>
-                <dd class="text-sm">{generatedAtLabel ?? "Unavailable"}</dd>
-              </div>
-              <div class="flex flex-col gap-1">
-                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  Homepage
-                </dt>
-                <dd class="text-sm">
-                  {siteUrl ? (
-                    <a
-                      class="font-medium text-primary underline-offset-4 hover:underline"
-                      href={siteUrl}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      Open site
-                    </a>
-                  ) : (
-                    "Unavailable"
-                  )}
-                </dd>
-              </div>
-              <div class="flex flex-col gap-1">
-                <dt class="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-                  API spec
-                </dt>
-                <dd class="text-sm">
-                  {specUrl ? (
-                    <a
-                      class="font-medium text-primary underline-offset-4 hover:underline"
-                      href={specUrl}
-                      rel="noreferrer"
-                      target="_blank"
-                    >
-                      View spec
-                    </a>
-                  ) : (
-                    "Unavailable"
-                  )}
-                </dd>
-              </div>
-            </dl>
           </CardContent>
         </Card>
 
         {activeDoc ? (
           <Card>
             <CardHeader>
+              <a
+                class="text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
+                href={overviewHref}
+              >
+                ← Back to {entry.title}
+              </a>
               <CardTitle>{activeDoc.title}</CardTitle>
               <CardDescription>
-                Optional generated docs page for <code>{entry.packageName}</code>.
+                Generated reference page for <code>{entry.packageName}</code> — the
+                interactive SDK explorer on the package overview is the canonical
+                reference.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -325,27 +265,13 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
           </Card>
         ) : (
           <>
-            {entry.readmeHtml ? (
-              <Card>
-                <CardHeader>
-                  <CardTitle>README</CardTitle>
-                  <CardDescription>
-                    Embedded directly from the package source.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <MarkdownContent html={entry.readmeHtml} />
-                </CardContent>
-              </Card>
-            ) : (
-              <Card>
-                <CardHeader>
-                  <CardTitle>No README found</CardTitle>
-                  <CardDescription>
-                    This package does not currently include a top-level README.
-                  </CardDescription>
-                </CardHeader>
-              </Card>
+            {operations.length > 0 && (
+              <SdkExplorer
+                client:load
+                packageName={entry.packageName}
+                provider={entry.providerPath}
+                symbols={sdkSymbols}
+              />
             )}
 
             {entry.authIntel ? (
@@ -381,14 +307,19 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
               </Card>
             ) : null}
 
-            {operations.length > 0 && (
-              <SdkExplorer
-                client:load
-                packageName={entry.packageName}
-                provider={entry.providerPath}
-                symbols={sdkSymbols}
-              />
-            )}
+            {entry.readmeHtml ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>README</CardTitle>
+                  <CardDescription>
+                    Embedded directly from the package source.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <MarkdownContent html={entry.readmeHtml} />
+                </CardContent>
+              </Card>
+            ) : null}
 
             {childEntries.length ? (
               <Card>
@@ -417,39 +348,49 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
         )}
       </section>
 
-      <aside class="flex flex-col gap-6">
+      <aside class="flex min-w-0 flex-col gap-6">
         <Card size="sm">
           <CardHeader>
-            <CardTitle>Docs</CardTitle>
-            <CardDescription>
-              README overview plus any generated package docs.
-            </CardDescription>
+            <CardTitle>About</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col gap-1">
-            <a
-              class:list={[
-                "rounded-lg px-2.5 py-2 text-sm transition-colors",
-                !activeDoc
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:bg-muted hover:text-foreground",
-              ]}
-              href={overviewHref}
-            >
-              Overview
-            </a>
-            {entry.docs.map((doc) => (
+          <CardContent className="flex flex-col gap-2.5 text-sm">
+            <div class="flex items-baseline justify-between gap-3">
+              <span class="text-xs text-muted-foreground">Provider</span>
+              <code class="font-mono text-xs">{entry.providerPath}</code>
+            </div>
+            {entry.openApiVersion ?? entry.version ? (
+              <div class="flex items-baseline justify-between gap-3">
+                <span class="text-xs text-muted-foreground">Version</span>
+                <span class="text-xs">{entry.openApiVersion ?? entry.version}</span>
+              </div>
+            ) : null}
+            {generatedAtLabel ? (
+              <div class="flex items-baseline justify-between gap-3">
+                <span class="text-xs text-muted-foreground">Generated</span>
+                <span class="text-xs">{generatedAtLabel}</span>
+              </div>
+            ) : null}
+            {siteUrl || specUrl ? <Separator /> : null}
+            {siteUrl ? (
               <a
-                class:list={[
-                  "rounded-lg px-2.5 py-2 text-sm transition-colors",
-                  activeDoc?.slug === doc.slug
-                    ? "bg-accent text-accent-foreground"
-                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                ]}
-                href={withBasePath(`/packages/${entry.providerPath}/docs/${doc.slug}`)}
+                class="text-xs font-medium text-primary underline-offset-4 hover:underline"
+                href={siteUrl}
+                rel="noreferrer"
+                target="_blank"
               >
-                {doc.title}
+                Vendor site ↗
               </a>
-            ))}
+            ) : null}
+            {specUrl ? (
+              <a
+                class="text-xs font-medium text-primary underline-offset-4 hover:underline"
+                href={specUrl}
+                rel="noreferrer"
+                target="_blank"
+              >
+                Original API spec ↗
+              </a>
+            ) : null}
           </CardContent>
         </Card>
 

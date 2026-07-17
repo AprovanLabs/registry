@@ -37,6 +37,12 @@ const currentPath = Astro.url.pathname;
         >
           MCP
         </a>
+        <a
+          class={`text-sm transition-colors ${currentPath.startsWith(withBasePath("/playground")) ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
+          href={withBasePath("/playground")}
+        >
+          Playground
+        </a>
         <div class="flex items-center gap-4 ml-auto">
           <HeaderSession client:load />
         </div>

@@ -342,12 +342,12 @@ export function TryItConsole({
 
   return (
     <Card>
-      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 border-b pb-3">
-        <div className="flex items-center gap-2 min-w-0">
+      <CardHeader className="flex flex-row flex-wrap items-center justify-between gap-2 pb-3 border-b">
+        <div className="flex items-center min-w-0 gap-2">
           <Badge variant="outline">
             <span className="font-mono">{provider}</span>
           </Badge>
-          <code className="truncate font-mono text-xs text-muted-foreground">
+          <code className="font-mono text-xs truncate text-muted-foreground">
             {operation}
           </code>
         </div>
@@ -386,7 +386,7 @@ export function TryItConsole({
                   value={values[field.name] ?? ""}
                 />
                 {field.description && (
-                  <span className="line-clamp-2 text-xs text-muted-foreground">
+                  <span className="text-xs line-clamp-2 text-muted-foreground">
                     {field.description}
                   </span>
                 )}
@@ -399,7 +399,7 @@ export function TryItConsole({
               Arguments <span className="font-normal text-muted-foreground">(JSON)</span>
             </span>
             <textarea
-              className="min-h-28 w-full rounded-lg border border-input bg-transparent px-3 py-2 font-mono text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+              className="w-full px-3 py-2 font-mono text-sm bg-transparent border rounded-lg outline-none min-h-28 border-input focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
               onChange={(event) => setJsonText(event.target.value)}
               spellCheck={false}
               value={jsonText}
@@ -412,7 +412,7 @@ export function TryItConsole({
         {authState === "signed-out" ? (
           <div className="flex flex-wrap items-center gap-3 rounded-lg border bg-muted/30 px-3 py-2.5">
             <p className="text-sm text-muted-foreground">
-              Sign in to run this operation against the gateway.
+              Sign in to run this operation.
             </p>
             <Button onClick={onSignIn} size="sm" type="button">
               Sign in
@@ -445,7 +445,7 @@ export function TryItConsole({
                 {result.durationMs} ms
               </span>
             </div>
-            <pre className="max-h-96 overflow-auto rounded-lg border bg-muted/30 p-3 font-mono text-xs leading-relaxed">
+            <pre className="p-3 overflow-auto font-mono text-xs leading-relaxed border rounded-lg max-h-96 bg-muted/30">
               {result.ok
                 ? JSON.stringify(result.data, null, 2)
                 : result.error}
