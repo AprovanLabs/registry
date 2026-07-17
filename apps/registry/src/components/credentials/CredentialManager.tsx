@@ -118,7 +118,12 @@ function CredentialList({
   const [error, setError] = useState<string | null>(null);
   const [providerFilter, setProviderFilter] = useState("");
   const [search, setSearch] = useState("");
-  const [showAddForm, setShowAddForm] = useState(false);
+  // `?provider=<id>` deep links (e.g. from patchwork's provider picker) open
+  // the add form with that provider preselected.
+  const [requestedProvider] = useState(
+    () => new URLSearchParams(window.location.search).get("provider") ?? "",
+  );
+  const [showAddForm, setShowAddForm] = useState(() => Boolean(requestedProvider));
   const [revokingId, setRevokingId] = useState<string | null>(null);
 
   const fetchCredentials = useCallback(async () => {
@@ -289,6 +294,7 @@ function CredentialList({
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-lg">
             <AddCredentialForm
+              initialProvider={requestedProvider || undefined}
               onCancel={() => setShowAddForm(false)}
               onSaved={(record) => {
                 setCredentials((prev) => [record, ...prev]);

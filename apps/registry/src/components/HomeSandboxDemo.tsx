@@ -1,98 +1,191 @@
 /**
- * HomeSandboxDemo — the sandbox running live on the landing page.
+ * HomeSandboxDemo — an editable sandbox run on the landing page.
  *
- * Auto-runs the demo script on a slow timer (rotating cities), pausing while
- * the tab is hidden. Left: the highlighted script; right: the same live span
- * view the playground uses. Every run is a real sandboxed-iframe execution
- * against Open-Meteo's free APIs — no credentials, no gateway needed.
+ * The visitor edits the script, picks a city (autocomplete backed by the same
+ * keyless Open-Meteo geocoding API the script calls), and runs it on demand in
+ * the sandboxed iframe. Results show as a compact headline; the full span/log
+ * view is details-on-demand. No credentials, no gateway, no timers.
  */
 
-import { instrument, runScriptInSandbox, type RuntimeEvent } from "@aprovan/runtime";
+import {
+  instrument,
+  runScriptInSandbox,
+  type RuntimeEvent,
+  type SandboxRun,
+} from "@aprovan/runtime";
+import { ChevronDownIcon, PlayIcon } from "lucide-react";
 import * as React from "react";
+import { CodeEditor } from "@/components/CodeEditor";
 import { INITIAL_RUN, reduceRunEvent, RunView, type RunState } from "@/components/RunView";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { createDemoTransport, DEMO_CITIES, DEMO_SCRIPT } from "@/lib/demo";
-import { HighlightedCode } from "@/lib/highlight";
+  createDemoTransport,
+  DEFAULT_DEMO_CITY,
+  DEMO_SCRIPT,
+  fetchCitySuggestions,
+  type CitySuggestion,
+} from "@/lib/demo";
 import { compileScript } from "@/lib/playground";
+import { cn } from "@/lib/utils";
 import { withBasePath } from "@/lib/site";
 
-const RUN_INTERVAL_MS = 15_000;
+function CityAutocomplete({
+  value,
+  onChange,
+  onSubmit,
+}: {
+  value: string;
+  onChange: (city: string) => void;
+  onSubmit: () => void;
+}) {
+  const [suggestions, setSuggestions] = React.useState<CitySuggestion[]>([]);
+  const [open, setOpen] = React.useState(false);
+  const abortRef = React.useRef<AbortController | null>(null);
+  const debounceRef = React.useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const rootRef = React.useRef<HTMLDivElement>(null);
 
-export function HomeSandboxDemo() {
-  const [run, setRun] = React.useState<RunState>(INITIAL_RUN);
-  const [cityIndex, setCityIndex] = React.useState(0);
-  const runningRef = React.useRef(false);
+  const search = (query: string) => {
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+      fetchCitySuggestions(query, controller.signal)
+        .then((results) => {
+          setSuggestions(results);
+          setOpen(results.length > 0);
+        })
+        .catch(() => {
+          // Aborted or offline — keep whatever is showing.
+        });
+    }, 250);
+  };
 
   React.useEffect(() => {
-    let disposed = false;
-    let timer: ReturnType<typeof setTimeout> | undefined;
-
-    const runOnce = (index: number) => {
-      if (disposed || document.hidden || runningRef.current) {
-        schedule(index);
-        return;
-      }
-      runningRef.current = true;
-      setCityIndex(index);
-      setRun({ events: [], running: true, startTs: Date.now() });
-
-      const onEvent = (event: RuntimeEvent) => {
-        setRun((previous) => reduceRunEvent(previous, event));
-        if (event.type === "script:end") {
-          runningRef.current = false;
-          schedule(index + 1);
-        }
-      };
-
-      try {
-        const compiled = compileScript(DEMO_SCRIPT);
-        runScriptInSandbox({
-          body: compiled.body,
-          dependencies: compiled.dependencies,
-          transport: instrument(createDemoTransport(), onEvent),
-          inputs: { city: DEMO_CITIES[index % DEMO_CITIES.length] },
-          onEvent,
-          timeoutMs: 20_000,
-        }).result.catch(() => {
-          // surfaced through script:end
-        });
-      } catch {
-        runningRef.current = false;
-        schedule(index + 1);
-      }
+    const close = (event: MouseEvent) => {
+      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
     };
-
-    const schedule = (index: number) => {
-      if (disposed) return;
-      timer = setTimeout(() => runOnce(index), RUN_INTERVAL_MS);
-    };
-
-    // First run shortly after mount so the page settles first.
-    timer = setTimeout(() => runOnce(0), 1_200);
-
+    document.addEventListener("mousedown", close);
     return () => {
-      disposed = true;
-      if (timer) clearTimeout(timer);
+      document.removeEventListener("mousedown", close);
+      clearTimeout(debounceRef.current);
+      abortRef.current?.abort();
     };
   }, []);
 
-  const city = DEMO_CITIES[cityIndex % DEMO_CITIES.length];
+  return (
+    <div className="relative w-48" ref={rootRef}>
+      <Input
+        aria-label="City"
+        onChange={(event) => {
+          onChange(event.target.value);
+          search(event.target.value);
+        }}
+        onFocus={() => suggestions.length > 0 && setOpen(true)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter") {
+            event.preventDefault();
+            setOpen(false);
+            onSubmit();
+          }
+          if (event.key === "Escape") setOpen(false);
+        }}
+        placeholder="City…"
+        spellCheck={false}
+        value={value}
+      />
+      {open && (
+        <ul className="absolute z-10 mt-1 w-64 overflow-hidden rounded-lg border bg-popover text-popover-foreground shadow-md">
+          {suggestions.map((place) => (
+            <li key={place.id}>
+              <button
+                className="flex w-full items-baseline gap-1.5 px-3 py-1.5 text-left text-sm hover:bg-muted"
+                onClick={() => {
+                  onChange(place.name);
+                  setOpen(false);
+                }}
+                type="button"
+              >
+                <span>{place.name}</span>
+                <span className="truncate text-xs text-muted-foreground">
+                  {[place.admin1, place.country].filter(Boolean).join(", ")}
+                </span>
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+/** Headline facts pulled from a finished run. */
+function runHeadline(run: RunState): string | null {
+  if (run.running || !run.startTs || !run.endTs) return null;
+  const seconds = ((run.endTs - run.startTs) / 1000).toFixed(1);
+  const calls = run.events.filter((event) => event.type === "call:start").length;
+  if (run.error) return `failed after ${seconds}s`;
+  const result = run.result as { city?: string; temperature?: number } | undefined;
+  const reading =
+    result && typeof result.temperature === "number"
+      ? `${result.city ?? "?"} · ${result.temperature}°C`
+      : "done";
+  return `${reading} · ${calls} call${calls === 1 ? "" : "s"} · ${seconds}s`;
+}
+
+export function HomeSandboxDemo() {
+  const [source, setSource] = React.useState(DEMO_SCRIPT);
+  const [city, setCity] = React.useState(DEFAULT_DEMO_CITY);
+  const [run, setRun] = React.useState<RunState>(INITIAL_RUN);
+  const [compileError, setCompileError] = React.useState<string | null>(null);
+  const [showDetails, setShowDetails] = React.useState(false);
+  const sandboxRef = React.useRef<SandboxRun | null>(null);
+
+  React.useEffect(() => () => sandboxRef.current?.dispose(), []);
+
+  const start = () => {
+    if (run.running) return;
+    let compiled;
+    try {
+      compiled = compileScript(source);
+    } catch (error) {
+      setCompileError(error instanceof Error ? error.message : String(error));
+      return;
+    }
+    setCompileError(null);
+    setRun({ events: [], running: true, startTs: Date.now() });
+
+    const onEvent = (event: RuntimeEvent) => {
+      setRun((previous) => reduceRunEvent(previous, event));
+    };
+
+    const sandbox = runScriptInSandbox({
+      body: compiled.body,
+      dependencies: compiled.dependencies,
+      transport: instrument(createDemoTransport(), onEvent),
+      inputs: { city },
+      onEvent,
+      timeoutMs: 20_000,
+    });
+    sandbox.result.catch(() => {
+      // Failures surface through the script:end event.
+    });
+    sandboxRef.current = sandbox;
+  };
+
+  const headline = runHeadline(run);
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-3">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex flex-col gap-1">
-          <h2 className="text-2xl font-semibold tracking-tight">Watch the sandbox run</h2>
+          <h2 className="text-2xl font-semibold tracking-tight">Try the sandbox</h2>
           <p className="text-sm text-muted-foreground">
-            This is live — the script below executes in a sandboxed iframe against
-            Open-Meteo&apos;s free API, on a slow loop. No credentials involved.
+            Edit the script, pick a city, press run — a real sandboxed-iframe
+            execution against Open-Meteo&apos;s keyless API.
           </p>
         </div>
         <a
@@ -103,42 +196,66 @@ export function HomeSandboxDemo() {
         </a>
       </div>
 
-      <div className="grid items-start gap-6 lg:grid-cols-2">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 font-mono text-sm">
-              weather({"{"} city: <span className="text-syntax-string">"{city}"</span> {"}"})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <pre className="overflow-x-auto rounded-lg border bg-muted/40 p-3 text-xs leading-5">
-              <code>
-                <HighlightedCode code={DEMO_SCRIPT} />
-              </code>
-            </pre>
-          </CardContent>
-        </Card>
+      <Card>
+        <CardHeader className="pb-3">
+          <CardTitle className="flex flex-wrap items-center gap-2 text-base">
+            <span className="font-mono text-sm">
+              weather({"{"} city {"}"})
+            </span>
+            <div className="ml-auto flex items-center gap-2">
+              <CityAutocomplete onChange={setCity} onSubmit={start} value={city} />
+              <Button disabled={run.running || !city.trim()} onClick={start} type="button">
+                <PlayIcon className="size-3.5" />
+                {run.running ? "Running…" : "Run"}
+              </Button>
+            </div>
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-3">
+          <CodeEditor
+            ariaLabel="Demo script"
+            minHeightClass="min-h-[13rem]"
+            onChange={setSource}
+            value={source}
+          />
+          {compileError && <p className="text-sm text-destructive">{compileError}</p>}
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              Live execution
-              {run.running && (
-                <span className="size-2 animate-pulse rounded-full bg-syntax-fn" title="running" />
+          {(run.running || headline) && (
+            <div className="flex flex-col gap-2 rounded-lg border bg-muted/30 p-3">
+              <button
+                className="flex items-center gap-2 text-left"
+                onClick={() => setShowDetails((previous) => !previous)}
+                type="button"
+              >
+                {run.running ? (
+                  <>
+                    <span className="size-2 animate-pulse rounded-full bg-syntax-fn" />
+                    <span className="text-sm text-muted-foreground">Running…</span>
+                  </>
+                ) : (
+                  <>
+                    <Badge variant={run.error ? "destructive" : "secondary"}>
+                      {run.error ? "error" : "result"}
+                    </Badge>
+                    <span className="font-mono text-sm">{headline}</span>
+                  </>
+                )}
+                <span className="ml-auto flex items-center gap-1 text-xs text-muted-foreground">
+                  {showDetails ? "Hide" : "Show"} spans & logs
+                  <ChevronDownIcon
+                    className={cn("size-3.5 transition-transform", showDetails && "rotate-180")}
+                  />
+                </span>
+              </button>
+              {showDetails && (
+                <div className="flex flex-col gap-4 pt-1">
+                  <RunView emptyHint="Waiting for the first call…" run={run} />
+                </div>
               )}
-              <Badge className="ml-auto" variant="outline">
-                auto-runs every {RUN_INTERVAL_MS / 1000}s
-              </Badge>
-            </CardTitle>
-            <CardDescription>
-              Spans, latency, logs — the same view the playground gives your own scripts.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-4">
-            <RunView emptyHint="Warming up the sandbox…" run={run} />
-          </CardContent>
-        </Card>
-      </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </section>
   );
 }

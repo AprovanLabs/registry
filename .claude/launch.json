@@ -6,6 +6,27 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@aprovan/registry-web", "dev"],
       "port": 4321
+    },
+    {
+      "name": "gateway",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@aprovan/registry-app", "dev"],
+      "env": { "APROVAN_ENV": "off", "STORE_BACKEND": "sqlite" },
+      "port": 4000
+    },
+    {
+      "name": "gateway-verify",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "@aprovan/registry-app", "dev"],
+      "env": { "APROVAN_ENV": "off", "STORE_BACKEND": "sqlite", "GATEWAY_PORT": "4001" },
+      "port": 4001
+    },
+    {
+      "name": "patchwork-web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["-C", "../patchwork/client/web", "dev", "--port", "5175", "--strictPort"],
+      "env": { "APROVAN_ENV": "off", "GATEWAY_URL": "http://localhost:4001" },
+      "port": 5175
     }
   ]
 }

@@ -1,7 +1,9 @@
 import { defineConfig } from "tsup";
 
 export default defineConfig({
-  entry: ["src/index.tsx"],
+  // `editor` is a separate entry so consumers that never render the TS editor
+  // don't pull `typescript` + CodeMirror into their module graph.
+  entry: ["src/index.tsx", "src/editor.tsx", "src/dependency-panel.tsx"],
   format: ["esm"],
   dts: true,
   clean: true,

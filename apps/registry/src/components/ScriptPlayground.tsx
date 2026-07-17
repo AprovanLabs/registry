@@ -17,11 +17,14 @@ import {
   type RuntimeEvent,
   type SandboxRun,
 } from "@aprovan/runtime";
+import {
+  DependencyPanel,
+  type ProviderCatalogInfo,
+} from "@aprovan/registry-ui/dependency-panel";
 import { PlayIcon, SquareIcon } from "lucide-react";
 import * as React from "react";
 import { CodeEditor } from "@/components/CodeEditor";
 import { INITIAL_RUN, reduceRunEvent, RunView, type RunState } from "@/components/RunView";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -31,9 +34,25 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getAccessToken, getAuthenticatedUser, isAuthConfigured, signIn } from "@/lib/auth";
+import {
+  fetchCatalogProviders,
+  fetchProviderTypes,
+  type ProviderTypesBundle,
+} from "@/lib/catalog";
 import { loadSession } from "@/lib/gateway";
 import { compileScript, detectDependencies, SAMPLE_SCRIPT } from "@/lib/playground";
-import { gatewayBaseUrl } from "@/lib/site";
+import { gatewayBaseUrl, withBasePath } from "@/lib/site";
+
+/**
+ * The TypeScript-aware editor pulls the `typescript` package into the page;
+ * lazy-load it and keep the lightweight highlighted textarea as the fallback
+ * so the playground is usable immediately.
+ */
+const TsScriptEditor = React.lazy(() =>
+  import("@aprovan/registry-ui/editor").then((module) => ({
+    default: module.TsScriptEditor,
+  })),
+);
 
 type AuthState = "unknown" | "signed-out" | "ready";
 
@@ -45,7 +64,43 @@ export function ScriptPlayground() {
   const [authState, setAuthState] = React.useState<AuthState>("unknown");
   const [run, setRun] = React.useState<RunState>(INITIAL_RUN);
   const [compileError, setCompileError] = React.useState<string | null>(null);
+  const [catalog, setCatalog] = React.useState<
+    Record<string, ProviderCatalogInfo> | undefined
+  >();
+  const [extraTypeFiles, setExtraTypeFiles] = React.useState<
+    Record<string, string>
+  >({});
   const sandboxRef = React.useRef<SandboxRun | null>(null);
+  // Per-provider type-bundle cache; null marks "no generated types".
+  const typeBundlesRef = React.useRef(
+    new Map<string, ProviderTypesBundle | null>(),
+  );
+
+  React.useEffect(() => {
+    fetchCatalogProviders()
+      .then((providers) =>
+        setCatalog(
+          Object.fromEntries(
+            providers.map((provider) => [
+              provider.id,
+              {
+                title: provider.title,
+                icon: provider.icon ?? undefined,
+                site: provider.site ?? undefined,
+                originDomain: provider.originDomain ?? undefined,
+                originSpecUrl: provider.originSpecUrl ?? undefined,
+                authMethods: provider.auth.declared
+                  ? provider.auth.methods
+                  : undefined,
+              },
+            ]),
+          ),
+        ),
+      )
+      .catch(() => {
+        // Panel degrades to "unregistered" rows without catalog data.
+      });
+  }, []);
 
   React.useEffect(() => {
     if (!isAuthConfigured()) {
@@ -65,6 +120,52 @@ export function ScriptPlayground() {
       return [];
     }
   }, [source]);
+
+  // Mount real provider types for every import (registry's answer to
+  // automatic type acquisition). Bundles land at
+  // /node_modules/@utdk/<provider>/…; bare-name imports get a one-line
+  // alias module. Providers without bundles keep the ambient `any` fallback.
+  React.useEffect(() => {
+    let cancelled = false;
+    const providers = [...new Set(dependencies.map((dep) => dep.provider))];
+    void Promise.all(
+      providers.map(async (provider) => {
+        if (!typeBundlesRef.current.has(provider)) {
+          typeBundlesRef.current.set(
+            provider,
+            await fetchProviderTypes(provider).catch(() => null),
+          );
+        }
+        return [provider, typeBundlesRef.current.get(provider) ?? null] as const;
+      }),
+    ).then((bundles) => {
+      if (cancelled) return;
+      const files: Record<string, string> = {};
+      for (const dependency of dependencies) {
+        const bundle = bundles.find(([p]) => p === dependency.provider)?.[1];
+        if (!bundle) continue;
+        for (const [relative, content] of Object.entries(bundle.files)) {
+          files[`/node_modules/${bundle.module}/${relative}`] = content;
+        }
+        if (dependency.specifier !== bundle.module) {
+          files[`/node_modules/${dependency.specifier}/index.d.ts`] =
+            `export * from "${bundle.module}";\n` +
+            `export { default } from "${bundle.module}";\n`;
+        }
+      }
+      setExtraTypeFiles((previous) => {
+        const prevKeys = Object.keys(previous);
+        const nextKeys = Object.keys(files);
+        const unchanged =
+          prevKeys.length === nextKeys.length &&
+          nextKeys.every((key) => previous[key] === files[key]);
+        return unchanged ? previous : files;
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [dependencies]);
 
   const start = () => {
     let compiled;
@@ -141,27 +242,27 @@ export function ScriptPlayground() {
             Imports declare the sandbox&apos;s dependencies — each one becomes a
             namespace proxied through the gateway with your workspace credentials.
           </CardDescription>
-          <div className="flex flex-wrap gap-1.5 pt-1">
-            {dependencies.length === 0 ? (
-              <span className="text-xs text-muted-foreground">No providers imported yet.</span>
-            ) : (
-              dependencies.map((dependency) => (
-                <Badge key={`${dependency.identifier}:${dependency.specifier}`} variant="secondary">
-                  <span className="font-mono text-xs">
-                    {dependency.identifier}
-                    <span className="text-muted-foreground">
-                      {" → "}
-                      {dependency.provider}
-                      {dependency.path ? `.${dependency.path}` : ""}
-                    </span>
-                  </span>
-                </Badge>
-              ))
-            )}
-          </div>
+          <DependencyPanel
+            catalog={catalog}
+            className="mt-1"
+            dependencies={dependencies}
+            registryBaseUrl={withBasePath("/").replace(/\/$/, "")}
+          />
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          <CodeEditor ariaLabel="Script source" onChange={setSource} value={source} />
+          <React.Suspense
+            fallback={
+              <CodeEditor ariaLabel="Script source" onChange={setSource} value={source} />
+            }
+          >
+            <TsScriptEditor
+              ariaLabel="Script source"
+              className="w-full overflow-hidden rounded-lg border border-input focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50"
+              extraFiles={extraTypeFiles}
+              onChange={setSource}
+              value={source}
+            />
+          </React.Suspense>
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-medium">
               Inputs <span className="font-normal text-muted-foreground">(passed to the default export)</span>

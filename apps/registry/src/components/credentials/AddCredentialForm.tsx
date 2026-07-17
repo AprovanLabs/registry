@@ -188,10 +188,17 @@ interface AddCredentialFormProps {
   token: string;
   onSaved: (record: CredentialRecord) => void;
   onCancel: () => void;
+  /** Preselect a provider (deep links: `/account/credentials?provider=openai`). */
+  initialProvider?: string;
 }
 
-export function AddCredentialForm({ token, onSaved, onCancel }: AddCredentialFormProps) {
-  const [provider, setProvider] = useState("");
+export function AddCredentialForm({
+  token,
+  onSaved,
+  onCancel,
+  initialProvider,
+}: AddCredentialFormProps) {
+  const [provider, setProvider] = useState(initialProvider ?? "");
   const [customProvider, setCustomProvider] = useState("");
   const [label, setLabel] = useState("");
   const [credType, setCredType] = useState<CredentialType>("bearer_token");

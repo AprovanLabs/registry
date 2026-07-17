@@ -30,6 +30,11 @@ export interface CatalogProviderSummary {
   packageName: string;
   icon: string | null;
   auth: ProviderAuthInfo;
+  /** Vendor site (branding), when known. */
+  site: string | null;
+  /** Upstream spec origin — the vendor's domain, never an aggregator. */
+  originDomain: string | null;
+  originSpecUrl: string | null;
 }
 
 export interface CatalogIndexProvider {
@@ -133,6 +138,26 @@ export async function fetchCatalogProviders(): Promise<CatalogProviderSummary[]>
   }
   const body = (await response.json()) as { providers: CatalogProviderSummary[] };
   return body.providers;
+}
+
+/** Provider `.d.ts` bundle for the browser TS editor (`/catalog/types/`). */
+export interface ProviderTypesBundle {
+  module: string;
+  files: Record<string, string>;
+}
+
+/**
+ * Fetch a provider's type bundle; null when the provider has no generated
+ * types (the editor's ambient `any` fallback covers it).
+ */
+export async function fetchProviderTypes(
+  providerPath: string,
+): Promise<ProviderTypesBundle | null> {
+  const response = await fetch(
+    withBasePath(`/catalog/types/${providerPath}.json`),
+  );
+  if (!response.ok) return null;
+  return (await response.json()) as ProviderTypesBundle;
 }
 
 export async function fetchCatalogIndex(): Promise<CatalogIndex> {

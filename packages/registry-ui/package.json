@@ -6,23 +6,40 @@
     ".": {
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js"
+    },
+    "./editor": {
+      "types": "./dist/editor.d.ts",
+      "import": "./dist/editor.js"
+    },
+    "./dependency-panel": {
+      "types": "./dist/dependency-panel.d.ts",
+      "import": "./dist/dependency-panel.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@aprovan/registry-main": "workspace:*",
-    "@aprovan/ui": "^0.2.1"
+    "@aprovan/ui": "^0.2.1",
+    "@codemirror/autocomplete": "^6.20.3",
+    "@codemirror/lang-javascript": "^6.2.5",
+    "@codemirror/state": "^6.7.1",
+    "@codemirror/view": "^6.43.6",
+    "@typescript/vfs": "^1.6.4",
+    "@valtown/codemirror-ts": "^2.3.1",
+    "codemirror": "^6.0.2",
+    "typescript": "^5.9.3"
   },
   "devDependencies": {
     "@aprovan/tsconfig": "^0.1.0",
     "@types/react": "^19.2.7",
     "react": "19.2.7",
-    "tsup": "^8.5.0",
-    "typescript": "^5.7.3"
+    "tsup": "^8.5.0"
   },
   "peerDependencies": {
     "react": ">=18"

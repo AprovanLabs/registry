@@ -288,7 +288,13 @@ function methodAcceptsInput(metadata: ToolRuntimeMetadata): boolean {
   return metadata.bodyKind !== "none" || metadata.pathParameterKeys.length > 0 || metadata.queryParameterKeys.length > 0;
 }
 
-function buildUrl(baseUrl: string, routeTemplate: string, pathParams: Record<string, unknown>, queryParams: Record<string, unknown>): string {
+function buildUrl(
+  baseUrl: string,
+  routeTemplate: string,
+  pathParams: Record<string, unknown>,
+  queryParams: Record<string, unknown>,
+  specBaseUrl?: string,
+): string {
   let pathname = routeTemplate;
 
   for (const match of routeTemplate.match(/\{([^}]+)\}/g) ?? []) {
@@ -299,6 +305,29 @@ function buildUrl(baseUrl: string, routeTemplate: string, pathParams: Record<str
     }
 
     pathname = pathname.replace(match, encodeURIComponent(String(pathParams[key])));
+  }
+
+  // Route templates carry the spec server's base path (e.g. "/v1/chat/completions"
+  // for a server of "https://api.openai.com/v1"). When the caller overrides
+  // `baseUrl`, treat it as the API root the spec server would have been —
+  // strip the spec base path from the route and resolve the remainder under
+  // the override's full path. This matches the OpenAI-SDK `baseURL` convention
+  // ("https://api.synthetic.new/openai/v1" + "/chat/completions").
+  if (specBaseUrl) {
+    let specPath = "/";
+    try {
+      specPath = new URL(specBaseUrl).pathname;
+    } catch {
+      // Unparseable spec server URL — keep the route template as-is.
+    }
+    const trimmedSpecPath = specPath.replace(/\/+$/u, "");
+    if (trimmedSpecPath && (pathname === trimmedSpecPath || pathname.startsWith(`${trimmedSpecPath}/`))) {
+      pathname = pathname.slice(trimmedSpecPath.length) || "/";
+    }
+    const overrideBase = new URL(baseUrl);
+    const overridePath = overrideBase.pathname.replace(/\/+$/u, "");
+    pathname = `${overridePath}${pathname.startsWith("/") ? pathname : `/${pathname}`}`;
+    baseUrl = overrideBase.origin;
   }
 
   const url = new URL(pathname, baseUrl.endsWith("/") ? baseUrl : `${baseUrl}/`);
@@ -351,6 +380,12 @@ async function parseResponse(response: Response): Promise<unknown> {
   }
 
   const contentType = response.headers.get("content-type") ?? "";
+
+  // Server-sent event bodies (streaming chat completions) must reach the
+  // caller incrementally — hand back the raw byte stream instead of buffering.
+  if (contentType.includes("text/event-stream")) {
+    return response.body;
+  }
 
   if (contentType.includes("json")) {
     return response.json();
@@ -424,7 +459,13 @@ async function executeRequest(
         requestHeaders["Content-Type"] = metadata.contentType;
       }
 
-      const url = buildUrl(baseUrl, metadata.routeTemplate, request.pathParams, request.queryParams);
+      const url = buildUrl(
+        baseUrl,
+        metadata.routeTemplate,
+        request.pathParams,
+        request.queryParams,
+        options.baseUrl ? getFallbackBaseUrl(options.openApiDocument) : undefined,
+      );
 
       // Set UTDK-specific span attributes
       span.setAttribute("utdk.provider", provider);

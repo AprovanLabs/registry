@@ -29,7 +29,42 @@ export default async function weather({ city }) {
 }
 `;
 
-export const DEMO_CITIES = ["Tokyo", "Nairobi", "Reykjavík", "São Paulo", "Sydney"];
+export const DEFAULT_DEMO_CITY = "Tokyo";
+
+export interface CitySuggestion {
+  id: number;
+  name: string;
+  /** Region/state, when the geocoder knows one. */
+  admin1?: string;
+  country?: string;
+}
+
+/**
+ * City autocomplete against the same keyless geocoding API the demo script
+ * calls — the suggestions themselves are a taste of the provider.
+ */
+export async function fetchCitySuggestions(
+  query: string,
+  signal?: AbortSignal,
+): Promise<CitySuggestion[]> {
+  const trimmed = query.trim();
+  if (trimmed.length < 2) return [];
+  const response = await fetch(
+    `https://geocoding-api.open-meteo.com/v1/search?${new URLSearchParams({
+      name: trimmed,
+      count: "5",
+    }).toString()}`,
+    { signal },
+  );
+  if (!response.ok) return [];
+  const data = (await response.json()) as { results?: CitySuggestion[] };
+  return (data.results ?? []).map(({ id, name, admin1, country }) => ({
+    id,
+    name,
+    admin1,
+    country,
+  }));
+}
 
 const DEMO_ENDPOINTS: Record<string, (args: Record<string, unknown>) => string> = {
   "open-meteo/geocoding.search": (args) =>

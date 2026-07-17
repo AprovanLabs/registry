@@ -1,6 +1,7 @@
 import { type Namer } from "@aprovan/cdk";
 import { CfnOutput, RemovalPolicy, Stack, type StackProps } from "aws-cdk-lib";
 import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
+import { BlockPublicAccess, Bucket, BucketEncryption } from "aws-cdk-lib/aws-s3";
 import { type Construct } from "constructs";
 import { GatewayLambda } from "./gateway-lambda.js";
 
@@ -124,6 +125,33 @@ export class RegistryApp extends Stack {
       sortKey: { name: "groupId", type: AttributeType.STRING },
     });
 
+    // Workspace filesystem (WFS): version/pointer index rows in Dynamo,
+    // content-addressed blobs in S3 (see apps/gateway/src/fs-store.ts).
+    const fsTable = new Table(this, "FsFilesTable", {
+      ...storeTableProps,
+      tableName: names.regional("fs-files"),
+      partitionKey: { name: "workspaceId", type: AttributeType.STRING },
+      sortKey: { name: "sk", type: AttributeType.STRING },
+    });
+
+    const fsBucket = new Bucket(this, "FsBucket", {
+      bucketName: names.regional("workspace-fs"),
+      blockPublicAccess: BlockPublicAccess.BLOCK_ALL,
+      encryption: BucketEncryption.S3_MANAGED,
+      enforceSSL: true,
+      removalPolicy: isProd ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
+      autoDeleteObjects: !isProd,
+    });
+
+    new CfnOutput(this, "FS_TABLE_NAME", {
+      value: fsTable.tableName,
+      exportName: names.regional("fs-table-name"),
+    });
+    new CfnOutput(this, "FS_BUCKET_NAME", {
+      value: fsBucket.bucketName,
+      exportName: names.regional("fs-bucket-name"),
+    });
+
     const gateway = new GatewayLambda(this, "Gateway", {
       environmentName,
       names,
@@ -136,6 +164,8 @@ export class RegistryApp extends Stack {
       groupPrefixGrantsTable,
       groupToolGrantsTable,
       userGroupsTable,
+      fsTable,
+      fsBucket,
     });
 
     new CfnOutput(this, "GatewayFunctionUrl", {

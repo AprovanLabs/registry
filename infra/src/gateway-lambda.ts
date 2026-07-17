@@ -4,6 +4,7 @@ import { type Namer } from "@aprovan/cdk";
 import { Duration, Fn, Stack } from "aws-cdk-lib";
 import { type ITable, Table } from "aws-cdk-lib/aws-dynamodb";
 import * as iam from "aws-cdk-lib/aws-iam";
+import { type IBucket } from "aws-cdk-lib/aws-s3";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
@@ -46,6 +47,10 @@ export interface GatewayLambdaProps {
   groupPrefixGrantsTable: ITable;
   groupToolGrantsTable: ITable;
   userGroupsTable: ITable;
+  /** Workspace filesystem index table (fs-store.ts `FsStoreS3`). */
+  fsTable: ITable;
+  /** Workspace filesystem content-blob bucket. */
+  fsBucket: IBucket;
   sharedEnv: Record<string, string>;
 }
 
@@ -69,6 +74,8 @@ export class GatewayLambda extends Construct {
       groupPrefixGrantsTable,
       groupToolGrantsTable,
       userGroupsTable,
+      fsTable,
+      fsBucket,
     } = props;
 
     const environment: Record<string, string> = {
@@ -84,6 +91,8 @@ export class GatewayLambda extends Construct {
       GROUP_TOOL_GRANTS_TABLE: groupToolGrantsTable.tableName,
       USER_GROUPS_TABLE: userGroupsTable.tableName,
       USERGROUPS_TABLE: userGroupsTable.tableName,
+      FS_TABLE: fsTable.tableName,
+      FS_BUCKET: fsBucket.bucketName,
       GATEWAY_REGISTRY_BASE_URL: "https://aprovan.com/registry",
       ...lambdaEnv(sharedEnv),
     };
@@ -113,10 +122,15 @@ export class GatewayLambda extends Construct {
       groupPrefixGrantsTable,
       groupToolGrantsTable,
       userGroupsTable,
+      fsTable,
     ];
     for (const table of registryTables) {
       table.grantReadWriteData(this.function);
     }
+
+    // WFS content blobs — includes presigned PUT/GET, which sign with the
+    // function's own credentials and therefore need object-level grants.
+    fsBucket.grantReadWrite(this.function);
 
     for (const tableName of [
       sharedEnv["DYNAMODB_USERS_TABLE"],

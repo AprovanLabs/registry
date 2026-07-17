@@ -33,6 +33,7 @@ import {
   type ProviderTool,
 } from "@utdk/mcp-core";
 import { mayInvokeTool } from "../authorize.js";
+import { FS_TOOLS, FS_TOOL_NAMES, handleFsTool } from "./fs-tools.js";
 import { getAuditStore } from "../audit.js";
 import { getContentStore } from "../content-store.js";
 import { getCredentialStore } from "../credentials.js";
@@ -108,11 +109,16 @@ export async function buildMcpServer(principal: Principal): Promise<Server> {
     },
   );
 
-  server.setRequestHandler(ListToolsRequestSchema, async () => ({ tools: META_TOOLS }));
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({
+    // Built-in workspace tools (filesystem) + the UTDK meta-tools.
+    tools: [...FS_TOOLS, ...META_TOOLS],
+  }));
 
   server.setRequestHandler(CallToolRequestSchema, async (request) => {
     const toolName = request.params.name;
     const args = (request.params.arguments ?? {}) as Record<string, unknown>;
+
+    if (FS_TOOL_NAMES.has(toolName)) return handleFsTool(principal, toolName, args);
 
     if (toolName === "list_tools") return handleListTools(permitted, args);
     if (toolName === "search_tools") return handleSearchTools(permitted, args);

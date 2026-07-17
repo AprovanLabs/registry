@@ -1,0 +1,34 @@
+# Local AWS-parity backends for the gateway (task: kill the SQLite-only
+# local workarounds — local dev runs the same DynamoDB/S3 code paths as
+# Lambda).
+#
+#   docker compose up -d
+#   cd apps/gateway && STORE_BACKEND=dynamodb \
+#     DYNAMO_ENDPOINT=http://localhost:8000 \
+#     S3_ENDPOINT=http://localhost:9000 FS_BUCKET=aprovan-fs pnpm dev
+#
+# The gateway auto-creates the FS bucket against MinIO; DynamoDB tables are
+# created by the test/dev bootstrap (see apps/gateway/tests/*dynamodb*).
+# MinIO console: http://localhost:9001 (minioadmin / minioadmin).
+
+services:
+  dynamodb:
+    image: amazon/dynamodb-local:latest
+    command: ["-jar", "DynamoDBLocal.jar", "-inMemory", "-sharedDb"]
+    ports:
+      - "8000:8000"
+
+  minio:
+    image: minio/minio:latest
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio-data:/data
+
+volumes:
+  minio-data:

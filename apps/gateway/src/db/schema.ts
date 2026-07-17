@@ -291,7 +291,29 @@ export const Audit: TableSchema = {
   },
 };
 
+/**
+ * Workspace filesystem index (see src/fs-store.ts `FsStoreS3`). Content
+ * blobs live in S3 (`FS_BUCKET`); this table holds latest-pointer and
+ * version rows: `sk = P#<path>` / `sk = V#<path>#<hash>`.
+ */
+export const FsFiles: TableSchema = {
+  tableName: "FsFiles",
+  createInput: {
+    TableName: "FsFiles",
+    KeySchema: [
+      { AttributeName: "workspaceId", KeyType: "HASH" },
+      { AttributeName: "sk", KeyType: "RANGE" },
+    ],
+    AttributeDefinitions: [
+      { AttributeName: "workspaceId", AttributeType: "S" },
+      { AttributeName: "sk", AttributeType: "S" },
+    ],
+    BillingMode: "PAY_PER_REQUEST",
+  },
+};
+
 export const ALL_TABLES: TableSchema[] = [
+  FsFiles,
   Users,
   Workspaces,
   Memberships,

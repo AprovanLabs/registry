@@ -29,6 +29,12 @@ export interface IsolateExecuteOptions {
   args: Record<string, unknown>;
   /** Credential payload to inject at call time (not via process.env) */
   credentials: CredentialPayload | undefined;
+  /**
+   * API root override (OpenAI-SDK `baseURL` semantics). Used by LLM chat
+   * provider aliases that ride an OpenAI-compatible module against a
+   * different upstream (see src/llm.ts).
+   */
+  baseUrl?: string;
   /** Execution timeout in ms (default: 30_000) */
   timeout?: number;
 }
@@ -201,7 +207,7 @@ class DirectExecutor implements IsolateExecutor {
       // This allows us to inject credentials at construction time
       const factoryName = toClientFactoryName(options.provider);
       const factory = mod[factoryName] as
-        | ((opts?: { headers?: Record<string, string> }) => Promise<unknown>)
+        | ((opts?: { headers?: Record<string, string>; baseUrl?: string }) => Promise<unknown>)
         | undefined;
 
       if (typeof factory !== "function") {
@@ -214,10 +220,10 @@ class DirectExecutor implements IsolateExecutor {
       const authHeaders = buildAuthHeaders(options.credentials);
 
       // Create the client with credential injection and await it
-      const client = (await factory({ headers: authHeaders })) as Record<
-        string,
-        unknown
-      >;
+      const client = (await factory({
+        headers: authHeaders,
+        ...(options.baseUrl ? { baseUrl: options.baseUrl } : {}),
+      })) as Record<string, unknown>;
 
       // Debug: log available top-level keys on the client
       const clientKeys = Object.keys(client);

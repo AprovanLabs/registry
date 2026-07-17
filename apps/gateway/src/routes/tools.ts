@@ -20,6 +20,7 @@ import { mayInvokeTool } from "../authorize.js";
 import { getAuditStore } from "../audit.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
+import { isLlmProvider } from "../llm.js";
 import { getAuthMode, requireAuth } from "../middleware/auth.js";
 import { OAuthExchangeError, resolveToInjectable } from "../oauthTokens.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
@@ -182,6 +183,10 @@ async function discoverTools(workspaceId: string): Promise<ToolEntry[]> {
       const mod = await getProviderModule(provider);
       tools.push(...deriveToolEntries(provider, mod));
     } catch (err) {
+      // LLM chat providers (anthropic, synthetic.new, …) are credential-store
+      // aliases handled by /llm — they have no utdk module of their own, so a
+      // failed import here is expected and not worth logging.
+      if (isLlmProvider(provider)) continue;
       // A single unresolvable provider should not break discovery for the rest.
       process.stderr.write(
         JSON.stringify({
