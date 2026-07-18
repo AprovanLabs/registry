@@ -40,7 +40,7 @@ if [[ "${SKIP_BUILD:-}" != "1" ]]; then
     PUBLIC_GATEWAY_URL="/api/gateway" \
     PUBLIC_COGNITO_AUTHORITY="$PUBLIC_COGNITO_AUTHORITY" \
     PUBLIC_COGNITO_CLIENT_ID="$PUBLIC_COGNITO_CLIENT_ID" \
-      pnpm --filter @aprovan/registry-web build
+      pnpm exec turbo build --filter=@aprovan/registry-web
   )
 fi
 

@@ -32,6 +32,12 @@ CDK_FLAGS=(--require-approval "${CDK_REQUIRE_APPROVAL:-never}")
 
 log "Deploying registry infra (env=$ENVIRONMENT account=$CDK_DEFAULT_ACCOUNT region=$CDK_DEFAULT_REGION)"
 (
+  cd "$REPO_ROOT"
+  # The gateway Lambda bundle (esbuild in the CDK app) resolves workspace
+  # packages through their dist/ exports — build them first.
+  pnpm exec turbo build --filter=@aprovan/registry-app
+)
+(
   cd "$REPO_ROOT/infra"
   pnpm run build
   pnpm exec cdk deploy "${CDK_FLAGS[@]}"
