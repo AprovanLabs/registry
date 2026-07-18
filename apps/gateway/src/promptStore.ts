@@ -34,8 +34,9 @@ function posthogConfig():
 }
 
 /**
- * Fetch a prompt by name from PostHog prompt management
- * (`/api/projects/:id/llm_prompts/`, entries shaped `{ name, prompt }`).
+ * Fetch a prompt by name from PostHog prompt management via the resolve
+ * endpoint (`/api/projects/:id/llm_prompts/resolve/name/:name/`), which
+ * returns the latest version as `{ prompt: { name, prompt } }`.
  * Fail-soft: any error (network, 4xx, unexpected shape) resolves undefined.
  */
 async function readPosthogPrompt(id: string): Promise<string | undefined> {
@@ -48,17 +49,15 @@ async function readPosthogPrompt(id: string): Promise<string | undefined> {
   let content: string | undefined;
   try {
     const response = await fetch(
-      `${config.host}/api/projects/${config.projectId}/llm_prompts/`,
+      `${config.host}/api/projects/${config.projectId}/llm_prompts/resolve/name/${encodeURIComponent(id)}/`,
       {
         headers: { Authorization: `Bearer ${config.apiKey}` },
         signal: AbortSignal.timeout(3_000),
       },
     );
     if (response.ok) {
-      const data = (await response.json()) as {
-        results?: Array<{ name?: string; prompt?: string }>;
-      };
-      content = data.results?.find((p) => p.name === id)?.prompt;
+      const data = (await response.json()) as { prompt?: { prompt?: string } };
+      content = data.prompt?.prompt;
     }
   } catch {
     // Fall through to WFS.

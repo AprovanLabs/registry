@@ -131,13 +131,37 @@ export function providersHref(
   return withBasePath(`/providers/?${params.toString()}`);
 }
 
+/**
+ * Gateway LLM chat aliases without a UTDK package of their own. Chat
+ * credentials are keyed by these ids (gateway `src/llm.ts` rides them on the
+ * OpenAI-compatible module), so the credential picker must offer them even
+ * though the generated catalog doesn't know them.
+ */
+const LLM_CHAT_ALIASES: CatalogProviderSummary[] = [
+  {
+    id: "synthetic.new",
+    title: "Synthetic.new",
+    description: "LLM chat provider — OpenAI-compatible API (api.synthetic.new).",
+    packageName: "utdk/openai",
+    icon: null,
+    auth: { methods: ["bearer_token"], declared: true, apiKeyHeader: null, oauth: null },
+    site: "https://synthetic.new",
+    originDomain: null,
+    originSpecUrl: null,
+  },
+];
+
 export async function fetchCatalogProviders(): Promise<CatalogProviderSummary[]> {
   const response = await fetch(withBasePath("/catalog/providers.json"));
   if (!response.ok) {
     throw new Error(`Failed to load provider catalog (${response.status})`);
   }
   const body = (await response.json()) as { providers: CatalogProviderSummary[] };
-  return body.providers;
+  const known = new Set(body.providers.map((provider) => provider.id));
+  return [
+    ...body.providers,
+    ...LLM_CHAT_ALIASES.filter((alias) => !known.has(alias.id)),
+  ];
 }
 
 /** Provider `.d.ts` bundle for the browser TS editor (`/catalog/types/`). */

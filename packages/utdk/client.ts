@@ -514,6 +514,10 @@ function toRuntimeMethods(tools: Tool[], toolMetadata: ToolRuntimeMetadataMap): 
 }
 
 function buildClient<TClient extends object>(tools: Tool[], toolMetadata: ToolRuntimeMetadataMap, options: CreateClientOptions): TClient {
+  return buildClientFromMethods<TClient>(toRuntimeMethods(tools, toolMetadata), options);
+}
+
+function buildClientFromMethods<TClient extends object>(methods: RuntimeMethod[], options: CreateClientOptions): TClient {
   const value: Record<string, unknown> = {};
 
   function setPath(target: Record<string, unknown>, path: string[], entry: unknown): void {
@@ -536,7 +540,7 @@ function buildClient<TClient extends object>(tools: Tool[], toolMetadata: ToolRu
     setPath(child, rest, entry);
   }
 
-  for (const method of toRuntimeMethods(tools, toolMetadata)) {
+  for (const method of methods) {
     const acceptsInput = methodAcceptsInput(method.metadata);
 
     setPath(
@@ -564,6 +568,21 @@ function buildClient<TClient extends object>(tools: Tool[], toolMetadata: ToolRu
 export async function createClient<TClient extends object>(
   options: CreateClientOptions,
 ): Promise<TClient> {
+  // Generated providers ship a complete runtime-metadata map (one entry per
+  // tool, same codegen pass as the OpenAPI manual), and request execution
+  // only reads metadata + options. Skip the OpenAPI → manual conversion in
+  // that case: on large documents (github: 12MB, 1204 tools) the conversion
+  // costs seconds per client — tens of seconds on small Lambdas.
+  const metadataEntries = Object.entries(options.toolMetadata ?? {});
+  if (metadataEntries.length > 0) {
+    const methods: RuntimeMethod[] = metadataEntries.map(([toolName, metadata]) => ({
+      accessPath: metadata.accessPath,
+      metadata,
+      toolName,
+    }));
+    return buildClientFromMethods<TClient>(methods, options);
+  }
+
   const converter = new OpenApiConverter(options.openApiDocument, {
     callTemplateName: options.name,
     baseUrl: options.baseUrl,
