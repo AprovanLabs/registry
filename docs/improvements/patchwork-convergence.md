@@ -1,6 +1,6 @@
 # Patchwork ⇄ Registry convergence — plan & status
 
-_Last updated: 2026-07-17_
+_Last updated: 2026-07-18_
 
 Living doc for marrying the registry (execution plane) and patchwork (UI plane)
 experiences, with `core` holding the shared primitives. Companion to
@@ -298,6 +298,58 @@ the workspace, not the browser profile.
   packages' React-19 types don't clash with React 18. Publishing stays
   commit/push → actions.
 
+## Round 3 (2026-07-18) — deploys land, LLM providers, prompts→FS
+
+- [x] **Deployed login 401 fixed** — root cause: the deployed registry app
+  bundled `@aprovan/ui` ≤0.2.2, which sends the token in `Authorization`
+  (overwritten by CloudFront OAC SigV4). Core publish.yml now publishes new
+  stable versions as `latest` on main pushes (release = version bump + push);
+  0.2.3 published and consumed (`^0.2.3` in apps/registry + registry-ui).
+  Verified live: both header forms reach the gateway (401 becomes "Invalid or
+  expired Cognito token", not "Missing…").
+- [x] **Registry Deploy CI green (first time)** — two fixes: pnpm-lock.yaml
+  was gitignored (frozen-lockfile + setup-node cache failed on every run;
+  now committed), and CDK's esbuild bundle couldn't resolve unbuilt
+  workspace deps (`deploy-infra.sh`/`deploy-web.sh` now turbo-build
+  `@aprovan/registry-app` / `@aprovan/registry-web` with dependencies first;
+  turbo.json hashes `PUBLIC_*`). The FS infra (FsFilesTable + FsBucket +
+  Lambda env/grants) is **deployed**; prod chat/FS run on S3+Dynamo.
+- [x] **Core Lambda@Edge deployed** — `oac-body-hash` live on `api/gateway/*`
+  (body hash for MCP POSTs + viewer `Authorization` → `X-Aprovan-Authorization`
+  copy). Verified: external-style MCP POST now reaches gateway auth. Also
+  unblocked the core main stack: `AprovanEnvironment` had changed resource
+  type in-place (SSM Parameter → custom resource), which CloudFormation
+  rejects — retained the live parameter via a surgical DeletionPolicy update,
+  renamed the construct to `AprovanEnvironmentWriter`, deployed.
+- [x] **Anthropic + Gemini UTDK packages** — authored compact official-surface
+  specs (`data/openapi/anthropic.json` Messages API; `gemini.json` Generative
+  Language API), each declaring both native (`x-api-key`/`x-goog-api-key`)
+  and bearer schemes (bearer = what their OpenAI-compat chat surfaces take).
+  Bundler-generated `@utdk/anthropic` + `@utdk/gemini`; catalog now lists
+  them with auth methods, so credential setup deep-links work for every chat
+  provider. Gateway chat id `google` → `gemini` to match.
+- [x] **Pill provider picker** — trigger is now a bordered pill with provider
+  mark + name + always-visible connectivity dot (green = credential, amber =
+  missing); unconnected popover rows show amber dot + "ADD KEY ↗" deep-link.
+  Verified live in dev in both themes against real `/llm/providers` data.
+- [x] **Prompts/artifacts absorbed into WFS; ContentStore deleted** — the
+  SQLite-only ContentStore would have crashed the prod Lambda on the first
+  stored-prompt lookup (better-sqlite3 not shipped). `/llm/:provider/chat`
+  reads `prompts/<id>.md` from the workspace FS; the MCP server lists/reads
+  prompts + resources from the `prompts/` and `artifacts/` subtrees;
+  `/prompts` + `/artifacts` routes removed (no consumers existed).
+- [x] **`chat-patchwork-widget` prompt seeded** — canonical copy at
+  `data/prompts/chat-patchwork-widget.md` (tsx fence + `path="main.tsx"`,
+  shadcn-image import contract, `window.patchwork` runtime, theme-token
+  styling, full-file revisions); `scripts/seed-prompts.ts` writes it through
+  the gateway's own FS store. Seeded to local sqlite and prod
+  (`ws_jacob_personal`); verified live — chat answers with the fence
+  contract from the stored prompt.
+- [x] **Patchwork CI unblocked** — `vars.AWS_DEPLOY_ROLE_ARN` set on the
+  patchwork repo (deploy job had been silently skipping; the shared deploy
+  role already trusted `repo:AprovanLabs/patchwork:*`), and publish.yml now
+  builds workspace deps before dts (`--filter "pkg..."`).
+
 ## Open ideas / parking lot (decisions recorded 2026-07-17)
 
 Done this round: S3/Dynamo WFS backend, gateway MCP fs tools,
@@ -321,18 +373,16 @@ direction:
   (also what scopes the MCP fs tools and presigned uploads properly).
 - Skills-lock / OKF indexing: per prior thoughts; rides the prefix-metadata
   model above.
-- Publish `@aprovan/ui` fix so patchwork's local gateway client shim
-  (`client/web/src/lib/gateway.ts` header workaround) can shrink back to
-  `createGatewayClient` — after Lambda@Edge lands the payload-hash half of
-  the workaround is obsolete too.
+- Shrink patchwork's local gateway client shim
+  (`client/web/src/lib/gateway.ts`) back to `createGatewayClient`: both
+  halves of the workaround are now obsolete (`@aprovan/ui` 0.2.3 sends
+  `X-Aprovan-Authorization`; the deployed Lambda@Edge hashes bodies).
 - Provider claiming flow (provenance.md) — unchanged.
 - `/catalog/types` follow-ups: trim bundle size (github is ~4.4 MB across 52
   files; mount only imported tag groups), adopt `TsScriptEditor` +
   provider types in patchwork's EditModal.
-- LLM chat: resolve the `chat-patchwork-widget` stored prompt (route already
-  expands `{{vars}}` from the ContentStore prompt when present — the prompt
-  content itself still needs seeding); tool-calling support in the
-  UI-message-stream adapter when chat grows tool use.
+- LLM chat: tool-calling support in the UI-message-stream adapter when chat
+  grows tool use.
 
 ## Challenges / risks
 
