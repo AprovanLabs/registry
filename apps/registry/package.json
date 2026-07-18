@@ -18,7 +18,7 @@
     "@aprovan/registry-main": "workspace:*",
     "@aprovan/registry-ui": "workspace:*",
     "@aprovan/runtime": "workspace:*",
-    "@aprovan/ui": "^0.2.1",
+    "@aprovan/ui": "^0.2.3",
     "@astrojs/react": "^5.0.3",
     "@fontsource-variable/geist": "^5.2.8",
     "astro": "^6.1.4",

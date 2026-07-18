@@ -134,7 +134,6 @@ dist
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
-pnpm-lock.yaml
 .turbo/
 
 # Vite logs files

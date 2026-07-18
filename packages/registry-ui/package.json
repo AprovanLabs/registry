@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "@aprovan/registry-main": "workspace:*",
-    "@aprovan/ui": "^0.2.1",
+    "@aprovan/ui": "^0.2.3",
     "@codemirror/autocomplete": "^6.20.3",
     "@codemirror/lang-javascript": "^6.2.5",
     "@codemirror/state": "^6.7.1",
