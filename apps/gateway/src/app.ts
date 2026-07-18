@@ -9,7 +9,6 @@ import { Hono } from "hono";
 import { getAuthMode } from "./middleware/auth.js";
 import { auditRouter } from "./routes/audit.js";
 import { authRouter } from "./routes/auth.js";
-import { artifactsRouter, promptsRouter } from "./routes/content.js";
 import { credentialsRouter } from "./routes/credentials.js";
 import { fsRouter, fsUploadsRouter } from "./routes/fs.js";
 import { groupsRouter } from "./routes/groups.js";
@@ -111,8 +110,6 @@ export function createApp(): Hono {
   app.route("/tools", toolsRouter);
   app.route("/llm", llmRouter);
   app.route("/audit", auditRouter);
-  app.route("/prompts", promptsRouter);
-  app.route("/artifacts", artifactsRouter);
   app.route("/fs", fsRouter);
   app.route("/fs-uploads", fsUploadsRouter);
 

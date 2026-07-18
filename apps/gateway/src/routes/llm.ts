@@ -13,7 +13,7 @@
 
 import { Hono } from "hono";
 import { getAuditStore } from "../audit.js";
-import { getContentStore } from "../content-store.js";
+import { getFsStore } from "../fs-store.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor } from "../isolate.js";
 import { requireAuth } from "../middleware/auth.js";
@@ -131,6 +131,18 @@ interface ChatRequestBody {
   credential?: { type: string; token?: string; value?: string; name?: string };
 }
 
+/** Read a stored prompt from the workspace FS (`prompts/<id>.md`, then bare). */
+async function readStoredPrompt(
+  workspaceId: string,
+  id: string,
+): Promise<string | undefined> {
+  const store = getFsStore();
+  const file =
+    (await store.read(workspaceId, `prompts/${id}.md`)) ??
+    (await store.read(workspaceId, `prompts/${id}`));
+  return file?.content;
+}
+
 /** Expand `{{key}}` placeholders; non-string vars are JSON-encoded. */
 function expandPromptVars(template: string, vars: Record<string, unknown> = {}): string {
   return template.replace(/\{\{\s*([\w.-]+)\s*\}\}/gu, (match, key: string) => {
@@ -159,11 +171,12 @@ llmRouter.post("/:provider/chat", rateLimitByUserId, async (c) => {
     return c.json({ error: "messages must contain at least one text message" }, 400);
   }
 
-  // System prompt: explicit `system` wins; otherwise a stored prompt by id.
+  // System prompt: explicit `system` wins; otherwise a stored prompt from the
+  // workspace FS (`prompts/<id>.md` — prompts are plain files, see routes/fs).
   let system = typeof body.system === "string" ? body.system : undefined;
   if (!system && body.prompt?.id) {
-    const stored = getContentStore().get("prompt", workspaceId, body.prompt.id);
-    if (stored) system = expandPromptVars(stored.content, body.prompt.vars);
+    const stored = await readStoredPrompt(workspaceId, body.prompt.id);
+    if (stored) system = expandPromptVars(stored, body.prompt.vars);
   }
   if (system) {
     messages.unshift({ role: "system", content: system });

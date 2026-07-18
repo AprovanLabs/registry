@@ -35,7 +35,7 @@ import {
 import { mayInvokeTool } from "../authorize.js";
 import { FS_TOOLS, FS_TOOL_NAMES, handleFsTool } from "./fs-tools.js";
 import { getAuditStore } from "../audit.js";
-import { getContentStore } from "../content-store.js";
+import { getFsStore } from "../fs-store.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor } from "../isolate.js";
 import { getAuthMode, type Principal } from "../middleware/auth.js";
@@ -152,49 +152,53 @@ export async function buildMcpServer(principal: Principal): Promise<Server> {
     };
   });
 
+  // Prompts and artifacts are plain workspace-FS files under prompts/ and
+  // artifacts/ — the same tree the fs_* tools and /fs routes operate on.
   server.setRequestHandler(ListPromptsRequestSchema, async () => ({
-    prompts: getContentStore()
-      .list("prompt", principal.workspaceId)
-      .map((prompt) => ({ name: prompt.name })),
+    prompts: (await getFsStore().list(principal.workspaceId, "prompts/")).map(
+      (entry) => ({
+        name: entry.path.replace(/^prompts\//u, "").replace(/\.md$/u, ""),
+      }),
+    ),
   }));
   server.setRequestHandler(GetPromptRequestSchema, async (request) => {
-    const prompt = getContentStore().get(
-      "prompt",
-      principal.workspaceId,
-      request.params.name,
-    );
-    if (!prompt) throw new Error(`Prompt not found: ${request.params.name}`);
+    const store = getFsStore();
+    const name = request.params.name;
+    const file =
+      (await store.read(principal.workspaceId, `prompts/${name}.md`)) ??
+      (await store.read(principal.workspaceId, `prompts/${name}`));
+    if (!file) throw new Error(`Prompt not found: ${name}`);
     return {
       messages: [
         {
           role: "user" as const,
-          content: { type: "text" as const, text: prompt.content },
+          content: { type: "text" as const, text: file.content },
         },
       ],
     };
   });
   server.setRequestHandler(ListResourcesRequestSchema, async () => ({
-    resources: getContentStore()
-      .list("artifact", principal.workspaceId)
-      .map((artifact) => ({
-        uri: `aprovan://${artifact.name}/${artifact.hash}`,
-        name: artifact.name,
-        mimeType: artifact.mimeType,
-      })),
+    resources: (await getFsStore().list(principal.workspaceId, "artifacts/")).map(
+      (entry) => ({
+        uri: `aprovan://${entry.path}`,
+        name: entry.path.replace(/^artifacts\//u, ""),
+        mimeType: entry.mimeType,
+      }),
+    ),
   }));
   server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
     const url = new URL(request.params.uri);
-    const [name, hash] = `${url.host}${url.pathname}`.split("/").filter(Boolean);
-    const artifact = name
-      ? getContentStore().get("artifact", principal.workspaceId, name, hash)
+    const path = `${url.host}${url.pathname}`.replace(/\/+$/u, "");
+    const file = path
+      ? await getFsStore().read(principal.workspaceId, path)
       : undefined;
-    if (!artifact) throw new Error(`Resource not found: ${request.params.uri}`);
+    if (!file) throw new Error(`Resource not found: ${request.params.uri}`);
     return {
       contents: [
         {
           uri: request.params.uri,
-          mimeType: artifact.mimeType,
-          text: artifact.content,
+          mimeType: file.mimeType,
+          text: file.content,
         },
       ],
     };
