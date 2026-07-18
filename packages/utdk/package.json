@@ -1800,6 +1800,11 @@
       "import": "./dist/anchore/index.js",
       "default": "./dist/anchore/index.js"
     },
+    "./anthropic": {
+      "types": "./dist/anthropic/index.d.ts",
+      "import": "./dist/anthropic/index.js",
+      "default": "./dist/anthropic/index.js"
+    },
     "./apache": {
       "types": "./dist/apache/index.d.ts",
       "import": "./dist/apache/index.js",
@@ -7644,6 +7649,11 @@
       "types": "./dist/gamesparks/game-details/index.d.ts",
       "import": "./dist/gamesparks/game-details/index.js",
       "default": "./dist/gamesparks/game-details/index.js"
+    },
+    "./gemini": {
+      "types": "./dist/gemini/index.d.ts",
+      "import": "./dist/gemini/index.js",
+      "default": "./dist/gemini/index.js"
     },
     "./geneea": {
       "types": "./dist/geneea/index.d.ts",

@@ -192,6 +192,18 @@
       "provenancePath": "./posthog/provenance.json",
       "generatedAt": "2026-07-12T21:24:25.211Z",
       "bundlerVersion": "0.1.1"
+    },
+    "anthropic": {
+      "packageName": "@utdk/anthropic",
+      "provenancePath": "./anthropic/provenance.json",
+      "generatedAt": "2026-07-18T05:49:36.982Z",
+      "bundlerVersion": "0.1.1"
+    },
+    "gemini": {
+      "packageName": "@utdk/gemini",
+      "provenancePath": "./gemini/provenance.json",
+      "generatedAt": "2026-07-18T05:50:01.379Z",
+      "bundlerVersion": "0.1.1"
     }
   }
 }

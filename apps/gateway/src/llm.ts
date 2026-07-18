@@ -44,7 +44,7 @@ const CHAT_PROVIDERS: LlmChatProvider[] = [
     defaultModel: "claude-sonnet-5",
   },
   {
-    id: "google",
+    id: "gemini",
     label: "Gemini",
     module: "openai",
     baseUrl: "https://generativelanguage.googleapis.com/v1beta/openai",
