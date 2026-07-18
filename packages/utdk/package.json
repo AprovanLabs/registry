@@ -4,6 +4,9 @@
   "private": true,
   "type": "module",
   "description": "Generated UTDK provider clients",
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsc -p tsconfig.json && node ./copy-assets.mjs",
     "check-types": "tsc -p tsconfig.json --noEmit",
@@ -25,6 +28,7 @@
       "import": "./dist/client.js",
       "default": "./dist/client.js"
     },
+    "./registry.json": "./dist/registry.json",
     "./ably-io": {
       "types": "./dist/ably-io/index.d.ts",
       "import": "./dist/ably-io/index.js",

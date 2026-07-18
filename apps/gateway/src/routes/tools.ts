@@ -22,6 +22,7 @@ import { getCredentialStore } from "../credentials.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
 import { isLlmProvider } from "../llm.js";
 import { getAuthMode, requireAuth } from "../middleware/auth.js";
+import { coreToolEntries, getCoreService, ServiceError } from "../services.js";
 import { OAuthExchangeError, resolveToInjectable } from "../oauthTokens.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import type { ToolCallRequest } from "../contract.js";
@@ -177,7 +178,9 @@ async function discoverTools(workspaceId: string): Promise<ToolEntry[]> {
   const credentials = await credStore.list(workspaceId);
   const providers = Array.from(new Set(credentials.map((c) => c.provider)));
 
-  const tools: ToolEntry[] = [];
+  // Core service namespaces (events, keyvalue) are first-party and always
+  // available — no credential required.
+  const tools: ToolEntry[] = [...coreToolEntries()];
   for (const provider of providers) {
     try {
       const mod = await getProviderModule(provider);
@@ -240,6 +243,35 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
 
   const provider = c.req.param("provider");
   const operation = c.req.param("operation");
+
+  // Core services (events, keyvalue) are first-party: auto-tenanted by the
+  // caller's workspace, open to any authed member, no credential or UTDK
+  // module involved.
+  const coreService = provider ? getCoreService(provider) : undefined;
+  if (coreService && provider && operation) {
+    const requestId = crypto.randomUUID();
+    const startTime = Date.now();
+    let body: ToolCallRequest;
+    try {
+      body = await c.req.json<ToolCallRequest>();
+    } catch {
+      return c.json({ error: "Expected { args }" }, 400);
+    }
+    try {
+      const data = await coreService.call(
+        { workspaceId, userId: callerId },
+        operation,
+        (body.args ?? {}) as Record<string, unknown>,
+      );
+      const durationMs = Date.now() - startTime;
+      getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status: 200, durationMs });
+      return c.json({ data, meta: { requestId, durationMs } });
+    } catch (err) {
+      const status = err instanceof ServiceError ? err.status : 500;
+      getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status });
+      return c.json({ error: err instanceof Error ? err.message : String(err) }, status as 400);
+    }
+  }
 
   if (
     getAuthMode() === "oidc" &&

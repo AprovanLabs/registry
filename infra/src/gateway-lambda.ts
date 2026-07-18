@@ -107,9 +107,27 @@ export class GatewayLambda extends Construct {
       memorySize: 1024,
       environment,
       bundling: {
-        externalModules: ["better-sqlite3"],
+        // `utdk` is external because the gateway resolves providers with a
+        // template-literal dynamic import (`import(\`utdk/${provider}\`)`),
+        // which esbuild cannot bundle. The package (dist + prod deps) is
+        // staged into the asset's node_modules by the afterBundling hook via
+        // `pnpm deploy`, so the runtime resolves it from /var/task.
+        externalModules: ["better-sqlite3", "utdk"],
         minify: true,
         sourceMap: true,
+        commandHooks: {
+          beforeBundling: () => [],
+          beforeInstall: () => [],
+          afterBundling: (inputDir: string, outputDir: string) => [
+            // hoisted linker: a flat node_modules without the .pnpm virtual
+            // store — symlinks get duplicated into real files when the asset
+            // is zipped, which blew past Lambda's 250MB unzipped limit.
+            `pnpm --dir "${inputDir}" --filter utdk --prod --config.node-linker=hoisted deploy "${outputDir}/node_modules/utdk"`,
+            // Type declarations, source maps, and bin shims are dead weight.
+            `find "${outputDir}/node_modules/utdk/dist" -type f \\( -name "*.d.ts" -o -name "*.js.map" \\) -delete`,
+            `rm -rf "${outputDir}/node_modules/utdk/node_modules/.bin"`,
+          ],
+        },
       },
     });
 
@@ -132,16 +150,26 @@ export class GatewayLambda extends Construct {
     // function's own credentials and therefore need object-level grants.
     fsBucket.grantReadWrite(this.function);
 
-    for (const tableName of [
-      sharedEnv["DYNAMODB_USERS_TABLE"],
-      sharedEnv["DYNAMODB_WORKSPACES_TABLE"],
-      sharedEnv["DYNAMODB_MEMBERSHIPS_TABLE"],
-      sharedEnv["DYNAMODB_INVITES_TABLE"],
-    ]) {
+    // Core identity tables live in the aprovan stack and are imported by name.
+    // `fromTableName` does not know about GSIs, so `grantReadWriteData` would
+    // omit `/index/*` ARNs and deny Query on ByUserId / ByEmail / etc.
+    // Declare each index explicitly via `fromTableAttributes`.
+    const coreTables: Array<{ envKey: string; globalIndexes?: string[] }> = [
+      { envKey: "DYNAMODB_USERS_TABLE", globalIndexes: ["ByEmail"] },
+      { envKey: "DYNAMODB_WORKSPACES_TABLE" },
+      { envKey: "DYNAMODB_MEMBERSHIPS_TABLE", globalIndexes: ["ByUserId"] },
+      {
+        envKey: "DYNAMODB_INVITES_TABLE",
+        globalIndexes: ["ByEmailWorkspace", "ByWorkspace"],
+      },
+    ];
+    for (const { envKey, globalIndexes } of coreTables) {
+      const tableName = sharedEnv[envKey];
       if (!tableName) continue;
-      Table.fromTableName(this, `Core-${tableName}`, tableName).grantReadWriteData(
-        this.function,
-      );
+      Table.fromTableAttributes(this, `Core-${tableName}`, {
+        tableName,
+        globalIndexes,
+      }).grantReadWriteData(this.function);
     }
 
     const userPoolId = sharedEnv["COGNITO_USER_POOL_ID"];
