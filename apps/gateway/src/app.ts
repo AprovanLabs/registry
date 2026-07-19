@@ -13,6 +13,7 @@ import { credentialsRouter } from "./routes/credentials.js";
 import { fsRouter, fsUploadsRouter } from "./routes/fs.js";
 import { groupsRouter } from "./routes/groups.js";
 import { invitesRouter } from "./routes/invites.js";
+import { appsRouter } from "./routes/apps.js";
 import { hooksRouter } from "./routes/hooks.js";
 import { llmRouter } from "./routes/llm.js";
 import { mcpRouter } from "./routes/mcp.js";
@@ -100,6 +101,9 @@ export function createApp(): Hono {
   app.route("/.well-known", wellKnownRouter);
   // Workflow webhooks + cron tick authenticate with their own tokens.
   app.route("/hooks", hooksRouter);
+  // Published apps: any authenticated user, gated by each app's manifest
+  // (roles, tool allow-list, per-user rate limits) — not workspace membership.
+  app.route("/apps", appsRouter);
 
   app.route("/auth", authRouter);
   app.route("/session", sessionRouter);

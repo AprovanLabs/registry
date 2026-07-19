@@ -33,7 +33,9 @@ import {
 } from "./store.js";
 
 export const MAX_EVENT_DEPTH = 2;
-const SCRIPT_TIMEOUT_MS = 60_000;
+// Generous enough for a couple of LLM calls (chat-provider dispatch allows
+// 120s per call); the sync spin-loop guard below stays tight.
+const SCRIPT_TIMEOUT_MS = 180_000;
 
 function stringify(value: unknown): string {
   if (typeof value === "string") return value;
@@ -74,10 +76,15 @@ export interface RunWorkflowOptions {
   input?: unknown;
   /** Event-cascade depth (0 = user/API initiated). */
   depth?: number;
+  /**
+   * App session running this workflow (routes/apps.ts): tool calls made by
+   * the script inherit the per-(app, user) data partitioning.
+   */
+  appScope?: ServiceContext["appScope"];
 }
 
 export async function runWorkflow(options: RunWorkflowOptions): Promise<WorkflowRun> {
-  const { workspaceId, userId, registration, trigger, triggerDetail, input, depth = 0 } = options;
+  const { workspaceId, userId, registration, trigger, triggerDetail, input, depth = 0, appScope } = options;
 
   const run: WorkflowRun = {
     id: newRunId(),
@@ -104,7 +111,7 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
   // workflowDepth marks tool calls from this run as workflow-context, so
   // `events.emit` cascades subscribed workflows with an incremented depth
   // (capped at MAX_EVENT_DEPTH in triggerEventWorkflows).
-  const ctx: ServiceContext = { workspaceId, userId, workflowDepth: depth + 1 };
+  const ctx: ServiceContext = { workspaceId, userId, workflowDepth: depth + 1, appScope };
 
   const pushLog = (level: WorkflowLogLine["level"], parts: unknown[]) => {
     if (run.logs.length >= 500) return;
@@ -168,7 +175,14 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
     },
   };
   for (const namespace of namespaces) {
-    sandbox[namespace] = namespaceProxy(dispatchFor(namespace));
+    const proxy = namespaceProxy(dispatchFor(namespace));
+    sandbox[namespace] = proxy;
+    // Namespaces that aren't valid identifiers (e.g. "synthetic.new") also
+    // bind under a sanitized alias so scripts can call `synthetic_new.…`.
+    const alias = namespace.replace(/[^\w$]/gu, "_");
+    if (alias !== namespace && !(alias in sandbox)) {
+      sandbox[alias] = proxy;
+    }
   }
 
   try {

@@ -169,21 +169,56 @@ One CloudFront distribution (core `WebStack`), one bucket, three prefixes:
 All deploy scripts resolve the bucket/distribution from SSM
 (`/aprovan/<env>/web/*`) — no hardcoded ids.
 
-## Where this goes next: apps
+## Apps: published bundles
 
-The intended trajectory for "deploy independent apps via chat":
+A workspace can **publish apps** — bundles other authenticated users consume
+without being workspace members. The owning workspace is the app's "account":
+its credentials execute, its FS stores the data, its members administer.
 
-1. **An app is a workspace** — its own scripts, files, workflows, credentials,
-   logs. Nothing new to build; workspaces already isolate all of it.
-2. **Allow-listed secret grants** — a new gateway primitive
-   (`credential_grants`: owning workspace → app workspace, per-provider
-   allow-list). `resolveRecordForProvider` consults grants after local
-   credentials; the audit record notes the grant. This is the one genuinely
-   new mechanism required.
-3. **App surface** = its workflows: webhooks are its endpoints, cron its
-   background jobs, events its internal bus, and Tailor-rendered widgets its
-   UI. `workflows.register` from chat is already the deploy step.
+```
+apps.publish({
+  name: "liift4",
+  title: "LIIFT4 Tracker",
+  widget_path: "apps/liift4/widget.tsx",   // patchwork widget source in the VFS
+  workflows: ["some-endpoint"],            // registered workflows the app exposes
+  allowed_tools: ["keyvalue.*"],           // deny-by-default tool allow-list
+  roles: { admins: [subs], access: "any"|"listed", users: [subs] },
+  rate_limit: { rps: 10, burst: 30 },      // per app user
+})
+```
 
-Design constraint to preserve: **capability = namespace, tenancy = workspace,
-transport = tools proxy.** Anything that respects those three shows up in
-every surface without new integration code.
+The manifest lives at `.services/apps/<name>.json`. Public surface
+(`routes/apps.ts`, token auth only — no membership):
+
+- `GET  /apps/:ws/:name` — manifest + the caller's role
+- `GET  /apps/:ws/:name/widget` — HTML shell that compiles the widget
+  in-browser (patchwork compiler from esm.sh) and proxies its namespace calls
+  back to the app tools endpoint with the viewer's token (same-origin under
+  aprovan.com, so the shared auth token just works)
+- `POST /apps/:ws/:name/tools/:namespace/:procedure` — allow-list-gated,
+  per-user rate-limited tool dispatch
+- `POST /apps/:ws/:name/workflows/:name/run` — run a bundled workflow
+
+**Per-user data**: app sessions carry `ServiceContext.appScope`, and data
+services partition on it — a keyvalue key `k` physically lives at
+`app:<app>:<userSub>:k`, so every app user gets a private partition (their
+workout log follows them across devices) and the owner workspace's own keys
+stay untouched. Workflows run through an app inherit the same scope.
+
+The LIIFT4 Tracker (`apps/gateway/examples/liift4-widget.tsx`) is the
+reference app: a full patchwork widget whose only backend is `keyvalue.*`
+through the app surface.
+
+### Still ahead
+
+- **Credential grants** — allow-listed sharing of specific provider
+  credentials from one workspace to another (per-provider `credential_grants`
+  consulted by `resolveRecordForProvider`), for apps that need their own
+  workspace but borrowed secrets.
+- App discovery/directory UI, admin cross-partition tooling, and queryable
+  (Dynamo-style) filters on the keyvalue partitions.
+
+Design constraint to preserve: **capability = namespace, tenancy = workspace
+(partitioned per app user under `appScope`), transport = tools proxy.**
+Anything that respects those three shows up in every surface without new
+integration code.

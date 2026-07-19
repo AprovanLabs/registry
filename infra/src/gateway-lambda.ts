@@ -1,8 +1,10 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { type Namer } from "@aprovan/cdk";
-import { Duration, Fn, Stack } from "aws-cdk-lib";
+import { Duration, Fn, Names, Stack } from "aws-cdk-lib";
 import { type ITable, Table } from "aws-cdk-lib/aws-dynamodb";
+import * as events from "aws-cdk-lib/aws-events";
+import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as iam from "aws-cdk-lib/aws-iam";
 import { type IBucket } from "aws-cdk-lib/aws-s3";
 import * as lambda from "aws-cdk-lib/aws-lambda";
@@ -237,5 +239,49 @@ export class GatewayLambda extends Construct {
       0,
       Fn.split("/", Fn.select(1, Fn.split("//", this.functionUrl.url))),
     );
+
+    // -----------------------------------------------------------------------
+    // Workflow cron tick — EventBridge invokes the gateway once a minute with
+    // a Function-URL-shaped event for POST /hooks/cron/tick, which runs every
+    // cron-triggered workflow whose expression matches the current UTC
+    // minute. The shared secret keeps the CloudFront-reachable route from
+    // being triggerable by outsiders; both sides live here so no manual
+    // secret management is needed.
+    // -----------------------------------------------------------------------
+    const cronTickSecret = Names.uniqueId(this.function);
+    this.function.addEnvironment("CRON_TICK_SECRET", cronTickSecret);
+
+    new events.Rule(this, "WorkflowCronTick", {
+      ruleName: names.regional("gateway-cron-tick"),
+      description: "Minute tick for gateway workflow cron triggers",
+      schedule: events.Schedule.rate(Duration.minutes(1)),
+      targets: [
+        new targets.LambdaFunction(this.function, {
+          event: events.RuleTargetInput.fromObject({
+            version: "2.0",
+            routeKey: "$default",
+            rawPath: "/api/gateway/hooks/cron/tick",
+            rawQueryString: "",
+            headers: {
+              "content-type": "application/json",
+              "x-cron-secret": cronTickSecret,
+            },
+            requestContext: {
+              http: {
+                method: "POST",
+                path: "/api/gateway/hooks/cron/tick",
+                protocol: "HTTP/1.1",
+                sourceIp: "127.0.0.1",
+                userAgent: "eventbridge-cron",
+              },
+              requestId: "cron-tick",
+              stage: "$default",
+            },
+            body: "{}",
+            isBase64Encoded: false,
+          }),
+        }),
+      ],
+    });
   }
 }

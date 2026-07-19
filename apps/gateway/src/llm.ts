@@ -57,6 +57,13 @@ const CHAT_PROVIDERS: LlmChatProvider[] = [
     baseUrl: "https://api.synthetic.new/openai/v1",
     defaultModel: "hf:zai-org/GLM-5.2",
   },
+  {
+    id: "openrouter",
+    label: "OpenRouter",
+    module: "openai",
+    baseUrl: "https://openrouter.ai/api/v1",
+    defaultModel: "openrouter/auto",
+  },
 ];
 
 export function listLlmProviders(): LlmChatProvider[] {

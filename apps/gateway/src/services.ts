@@ -17,6 +17,7 @@
  * core namespaces appear in tool discovery next to credentialed providers.
  */
 
+import { appsService } from "./apps/service.js";
 import { getFsStore, normalizeFsPath } from "./fs-store.js";
 import { workflowsService } from "./workflows/service.js";
 import type { ToolEntry } from "./routes/tools.js";
@@ -30,6 +31,14 @@ export interface ServiceContext {
    * chains; absent means a user/API call (depth 0).
    */
   workflowDepth?: number;
+  /**
+   * Set when the caller reached the workspace through a published app (see
+   * src/apps). Data services partition state per (app, user): a keyvalue key
+   * `k` physically lives at `app:<app>:<userId>:k`, so an app user can only
+   * ever touch their own partition — the workout tracker's per-user weights,
+   * for example — while the owner workspace's own keys stay untouched.
+   */
+  appScope?: { app: string; userId: string; role: "admin" | "user" };
 }
 
 export interface CoreService {
@@ -66,6 +75,16 @@ export class ServiceError extends Error {
 // ---------------------------------------------------------------------------
 
 const KV_PREFIX = ".services/keyvalue/";
+
+/**
+ * App sessions read and write inside a per-(app, user) partition. The
+ * partition prefix itself satisfies IDENT_RE (`:`-separated), so scoped keys
+ * remain ordinary keyvalue keys on the FS store.
+ */
+function scopedKey(ctx: ServiceContext, key: string): string {
+  if (!ctx.appScope) return key;
+  return `app:${ctx.appScope.app}:${ctx.appScope.userId}:${key}`;
+}
 
 const keyvalue: CoreService = {
   tools: [
@@ -104,14 +123,14 @@ const keyvalue: CoreService = {
     switch (procedure) {
       case "get": {
         const key = ident(args["key"], "key");
-        const file = await store.read(ctx.workspaceId, KV_PREFIX + key);
+        const file = await store.read(ctx.workspaceId, KV_PREFIX + scopedKey(ctx, key));
         return { key, value: file ? (JSON.parse(file.content) as unknown) : null };
       }
       case "set": {
         const key = ident(args["key"], "key");
         await store.write(
           ctx.workspaceId,
-          KV_PREFIX + key,
+          KV_PREFIX + scopedKey(ctx, key),
           JSON.stringify(args["value"] ?? null),
           "application/json",
         );
@@ -119,15 +138,20 @@ const keyvalue: CoreService = {
       }
       case "delete": {
         const key = ident(args["key"], "key");
-        const deleted = await store.remove(ctx.workspaceId, KV_PREFIX + key);
+        const deleted = await store.remove(ctx.workspaceId, KV_PREFIX + scopedKey(ctx, key));
         return { key, deleted };
       }
       case "list": {
         // FS listing is directory-style; key-prefix filtering happens here.
+        // App sessions only ever see their own partition, with the partition
+        // prefix stripped from the returned keys.
         const prefix = typeof args["prefix"] === "string" ? args["prefix"] : "";
+        const scope = scopedKey(ctx, "");
         const entries = await store.list(ctx.workspaceId, KV_PREFIX.slice(0, -1));
         const keys = entries
           .map((e) => e.path.slice(KV_PREFIX.length))
+          .filter((k) => k.startsWith(scope))
+          .map((k) => k.slice(scope.length))
           .filter((k) => k.startsWith(prefix));
         return { keys };
       }
@@ -530,6 +554,7 @@ export const CORE_SERVICES: Record<string, CoreService> = {
   vfs,
   registry,
   workflows: workflowsService,
+  apps: appsService,
 };
 
 export function getCoreService(namespace: string): CoreService | undefined {
