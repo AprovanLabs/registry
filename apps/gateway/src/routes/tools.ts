@@ -20,7 +20,7 @@ import { mayInvokeTool } from "../authorize.js";
 import { getAuditStore } from "../audit.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
-import { isLlmProvider } from "../llm.js";
+import { isLlmProvider, resolveLlmProvider } from "../llm.js";
 import { getAuthMode, requireAuth } from "../middleware/auth.js";
 import {
   catalogToolEntries,
@@ -170,6 +170,51 @@ function synthesizeInputSchema(meta: Record<string, unknown>): Record<string, un
   return schema;
 }
 
+/**
+ * Curated entries for LLM chat-provider aliases. These execute through the
+ * alias's OpenAI-compatible module (see the POST route's alias resolution),
+ * so widgets can call e.g. `synthetic.new.createChatCompletion` directly.
+ */
+function llmToolEntries(providerId: string): ToolEntry[] {
+  const alias = resolveLlmProvider(providerId);
+  const label = alias?.label ?? providerId;
+  return [
+    {
+      provider: providerId,
+      name: `${providerId}.createChatCompletion`,
+      operation: "createChatCompletion",
+      description: `Chat completion via ${label} (OpenAI-compatible). Defaults to model ${alias?.defaultModel ?? "provider default"}.`,
+      inputSchema: {
+        type: "object",
+        properties: {
+          model: { type: "string", description: `Model id (default: ${alias?.defaultModel ?? "provider default"})` },
+          messages: {
+            type: "array",
+            description: "OpenAI-style chat messages [{ role, content }]",
+            items: {
+              type: "object",
+              properties: {
+                role: { type: "string", enum: ["system", "user", "assistant"] },
+                content: { type: "string" },
+              },
+              required: ["role", "content"],
+            },
+          },
+          stream: { type: "boolean", description: "Stream the response as SSE" },
+        },
+        required: ["messages"],
+      },
+    },
+    {
+      provider: providerId,
+      name: `${providerId}.listModels`,
+      operation: "listModels",
+      description: `List models available from ${label}.`,
+      inputSchema: { type: "object", properties: {} },
+    },
+  ];
+}
+
 async function discoverTools(workspaceId: string): Promise<ToolEntry[]> {
   const now = Date.now();
   const cached = toolListCache.get(workspaceId);
@@ -188,8 +233,13 @@ async function discoverTools(workspaceId: string): Promise<ToolEntry[]> {
   const tools: ToolEntry[] = [...coreToolEntries()];
   for (const provider of providers) {
     // LLM chat providers (anthropic, synthetic.new, …) are credential-store
-    // aliases handled by /llm — they have no utdk module of their own.
-    if (isLlmProvider(provider)) continue;
+    // aliases onto OpenAI-compatible modules. They surface a curated entry
+    // set (chat + model listing); the tool-call route resolves the alias to
+    // its executing module and base URL.
+    if (isLlmProvider(provider)) {
+      tools.push(...llmToolEntries(provider));
+      continue;
+    }
 
     let entries: ToolEntry[] = [];
     try {
@@ -353,7 +403,15 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   }
   // Chat clients (AI SDK) send `stream: true` at the top level of the request;
   // provider chat-completion operations expect it inside their own arguments.
-  const args = body.stream === true ? { ...body.args, stream: true } : body.args;
+  let args = body.stream === true ? { ...body.args, stream: true } : body.args;
+
+  // LLM chat-provider aliases (synthetic.new, anthropic, …) execute through
+  // their OpenAI-compatible module with the alias's base URL. Credentials are
+  // stored under the alias id, so the resolution above already found them.
+  const llmAlias = isLlmProvider(provider) ? resolveLlmProvider(provider) : undefined;
+  if (llmAlias && operation === "createChatCompletion" && !("model" in args)) {
+    args = { ...args, model: llmAlias.defaultModel };
+  }
 
   // Execute via Isolate with telemetry
   const executor = await getExecutor();
@@ -366,11 +424,12 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
       span.setAttribute("request_id", requestId);
 
       const r = await executor.execute({
-        provider,
+        provider: llmAlias?.module ?? provider,
         operation,
         args,
         credentials,
-        timeout: 30_000,
+        ...(llmAlias?.baseUrl ? { baseUrl: llmAlias.baseUrl } : {}),
+        timeout: llmAlias ? 120_000 : 30_000,
       });
 
       span.setAttribute("success", r.success);
