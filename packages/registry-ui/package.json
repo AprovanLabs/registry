@@ -1,6 +1,6 @@
 {
   "name": "@aprovan/registry-ui",
-  "version": "0.1.0",
+  "version": "0.2.3",
   "type": "module",
   "exports": {
     ".": {
@@ -14,7 +14,16 @@
     "./dependency-panel": {
       "types": "./dist/dependency-panel.d.ts",
       "import": "./dist/dependency-panel.js"
-    }
+    },
+    "./workflows-panel": {
+      "types": "./dist/workflows-panel.d.ts",
+      "import": "./dist/workflows-panel.js"
+    },
+    "./tailor": {
+      "types": "./dist/tailor.d.ts",
+      "import": "./dist/tailor.js"
+    },
+    "./tailor.css": "./dist/tailor.css"
   },
   "files": [
     "dist"
@@ -24,7 +33,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@aprovan/registry-main": "workspace:*",
+    "@aprovan/registry-main": "0.1.0-dev.7343775",
     "@aprovan/ui": "^0.2.3",
     "@codemirror/autocomplete": "^6.20.3",
     "@codemirror/lang-javascript": "^6.2.5",
@@ -33,7 +42,9 @@
     "@typescript/vfs": "^1.6.4",
     "@valtown/codemirror-ts": "^2.3.1",
     "codemirror": "^6.0.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "@xyflow/react": "^12.8.2",
+    "web-tree-sitter": "^0.25.10"
   },
   "devDependencies": {
     "@aprovan/tsconfig": "^0.1.0",

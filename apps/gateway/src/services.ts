@@ -18,11 +18,18 @@
  */
 
 import { getFsStore, normalizeFsPath } from "./fs-store.js";
+import { workflowsService } from "./workflows/service.js";
 import type { ToolEntry } from "./routes/tools.js";
 
 export interface ServiceContext {
   workspaceId: string;
   userId: string;
+  /**
+   * Event-cascade depth when the caller is a workflow run (set by the
+   * workflow runner). `events.emit` uses it to cap workflow→event→workflow
+   * chains; absent means a user/API call (depth 0).
+   */
+  workflowDepth?: number;
 }
 
 export interface CoreService {
@@ -192,6 +199,15 @@ const events: CoreService = {
           lines.slice(-EVENTS_MAX_RETAINED).join("\n"),
           "application/jsonl",
         );
+        // Every emission kicks off subscribed workflows. The runner sets
+        // `workflowDepth` on its context, so workflow→event→workflow chains
+        // carry an incrementing depth and are capped (loop-safe). Dynamic
+        // import breaks the services ⇄ workflows module cycle.
+        void import("./workflows/runner.js")
+          .then(({ triggerEventWorkflows }) =>
+            triggerEventWorkflows(ctx, channel, record.payload, ctx.workflowDepth ?? 0),
+          )
+          .catch(() => undefined);
         return { id: record.id, channel };
       }
       case "list": {
@@ -513,6 +529,7 @@ export const CORE_SERVICES: Record<string, CoreService> = {
   events,
   vfs,
   registry,
+  workflows: workflowsService,
 };
 
 export function getCoreService(namespace: string): CoreService | undefined {

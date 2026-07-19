@@ -2,6 +2,8 @@
   "extends": "@aprovan/tsconfig/react.json",
   "compilerOptions": {
     "module": "ESNext",
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "outDir": "dist",
     "rootDir": "src"
   },

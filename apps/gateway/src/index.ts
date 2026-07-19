@@ -79,3 +79,8 @@ serve({ fetch: app.fetch, port: PORT }, (info) => {
     `[gateway] Listening on http://localhost:${info.port} (auth=${getAuthMode()})\n`,
   );
 });
+
+// Long-lived server: drive cron workflows with a local minute tick. (On
+// Lambda, EventBridge Scheduler POSTs /hooks/cron/tick instead.)
+const { startLocalCronLoop } = await import("./routes/hooks.js");
+startLocalCronLoop();

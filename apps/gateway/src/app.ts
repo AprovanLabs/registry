@@ -13,6 +13,7 @@ import { credentialsRouter } from "./routes/credentials.js";
 import { fsRouter, fsUploadsRouter } from "./routes/fs.js";
 import { groupsRouter } from "./routes/groups.js";
 import { invitesRouter } from "./routes/invites.js";
+import { hooksRouter } from "./routes/hooks.js";
 import { llmRouter } from "./routes/llm.js";
 import { mcpRouter } from "./routes/mcp.js";
 import { membersRouter } from "./routes/members.js";
@@ -97,6 +98,8 @@ export function createApp(): Hono {
 
   // Unauthenticated — must be mounted before requireAuth touches any prefix.
   app.route("/.well-known", wellKnownRouter);
+  // Workflow webhooks + cron tick authenticate with their own tokens.
+  app.route("/hooks", hooksRouter);
 
   app.route("/auth", authRouter);
   app.route("/session", sessionRouter);

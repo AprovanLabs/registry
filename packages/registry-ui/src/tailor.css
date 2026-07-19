@@ -1,0 +1,45 @@
+/*
+ * Theme tokens for the Tailor flow renderer (@aprovan/registry-ui/tailor).
+ * Import from the host app's Tailwind v4 entry css:
+ *
+ *   @import "@aprovan/registry-ui/tailor.css";
+ *
+ * Generic surface tokens (background, card, border, muted, …) come from the
+ * host's own theme; these are only the Tailor-specific chip palettes.
+ */
+
+@theme {
+  /* provider (blue) */
+  --color-provider-bg: #dbeafe;
+  --color-provider-border: #93c5fd;
+  --color-provider-text: #1d4ed8;
+
+  /* block / async (violet) */
+  --color-block-bg: #ede9fe;
+  --color-block-border: #c4b5fd;
+  --color-block-text: #6d28d9;
+
+  /* var local (green) */
+  --color-var-bg: #dcfce7;
+  --color-var-border: #86efac;
+  --color-var-text: #166534;
+
+  /* var outer (orange) */
+  --color-var-outer-bg: #ffedd5;
+  --color-var-outer-border: #fdba74;
+  --color-var-outer-text: #9a3412;
+
+  /* var input (pink) */
+  --color-var-input-bg: #fce7f3;
+  --color-var-input-border: #f9a8d4;
+  --color-var-input-text: #9d174d;
+
+  --color-chip: #f5f5f5;
+  --color-accent: #171717;
+}
+
+/* React Flow canvas fills its container */
+.tailor-canvas {
+  flex: 1;
+  min-height: 320px;
+}
