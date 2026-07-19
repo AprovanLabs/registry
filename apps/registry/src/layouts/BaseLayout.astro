@@ -1,6 +1,6 @@
 ---
 import "@/styles/global.css";
-import { HeaderSession } from "@/components/shell/HeaderSession";
+import { RegistryHeader } from "@/components/shell/RegistryHeader";
 import { withBasePath } from "@/lib/site";
 
 interface Props {
@@ -14,6 +14,10 @@ const {
 } = Astro.props;
 
 const currentPath = Astro.url.pathname;
+const links = [
+  { label: "MCP", href: withBasePath("/docs/mcp"), current: currentPath.startsWith(withBasePath("/docs/mcp")) },
+  { label: "Playground", href: withBasePath("/playground"), current: currentPath.startsWith(withBasePath("/playground")) },
+];
 ---
 
 <!doctype html>
@@ -25,29 +29,7 @@ const currentPath = Astro.url.pathname;
     <title>{title}</title>
   </head>
   <body>
-    <header class="sticky top-0 z-20 border-b bg-background/80 backdrop-blur">
-      <nav class="flex items-center gap-4 sm:gap-6 px-4 py-3 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <a class="flex flex-row items-center gap-2 text-sm font-semibold transition-colors hover:text-foreground/80" href={withBasePath("/")}>
-          <img class="w-6" src="https://github.com/AprovanLabs/aprovan.com/raw/refs/heads/main/docs/assets/social-icon.png"></img>
-          Registry
-        </a>
-        <a
-          class={`text-sm transition-colors ${currentPath.startsWith(withBasePath("/docs/mcp")) ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
-          href={withBasePath("/docs/mcp")}
-        >
-          MCP
-        </a>
-        <a
-          class={`text-sm transition-colors ${currentPath.startsWith(withBasePath("/playground")) ? "text-foreground font-medium" : "text-muted-foreground hover:text-foreground"}`}
-          href={withBasePath("/playground")}
-        >
-          Playground
-        </a>
-        <div class="flex items-center gap-4 ml-auto">
-          <HeaderSession client:load />
-        </div>
-      </nav>
-    </header>
+    <RegistryHeader client:load homeHref={withBasePath("/")} links={links} />
     <slot />
   </body>
 </html>
