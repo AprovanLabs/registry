@@ -22,7 +22,12 @@ import { getCredentialStore } from "../credentials.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
 import { isLlmProvider } from "../llm.js";
 import { getAuthMode, requireAuth } from "../middleware/auth.js";
-import { coreToolEntries, getCoreService, ServiceError } from "../services.js";
+import {
+  catalogToolEntries,
+  coreToolEntries,
+  getCoreService,
+  ServiceError,
+} from "../services.js";
 import { OAuthExchangeError, resolveToInjectable } from "../oauthTokens.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import type { ToolCallRequest } from "../contract.js";
@@ -178,28 +183,40 @@ async function discoverTools(workspaceId: string): Promise<ToolEntry[]> {
   const credentials = await credStore.list(workspaceId);
   const providers = Array.from(new Set(credentials.map((c) => c.provider)));
 
-  // Core service namespaces (events, keyvalue) are first-party and always
-  // available — no credential required.
+  // Core service namespaces (events, keyvalue, vfs, registry) are first-party
+  // and always available — no credential required.
   const tools: ToolEntry[] = [...coreToolEntries()];
   for (const provider of providers) {
+    // LLM chat providers (anthropic, synthetic.new, …) are credential-store
+    // aliases handled by /llm — they have no utdk module of their own.
+    if (isLlmProvider(provider)) continue;
+
+    let entries: ToolEntry[] = [];
     try {
       const mod = await getProviderModule(provider);
-      tools.push(...deriveToolEntries(provider, mod));
-    } catch (err) {
-      // LLM chat providers (anthropic, synthetic.new, …) are credential-store
-      // aliases handled by /llm — they have no utdk module of their own, so a
-      // failed import here is expected and not worth logging.
-      if (isLlmProvider(provider)) continue;
-      // A single unresolvable provider should not break discovery for the rest.
-      process.stderr.write(
-        JSON.stringify({
-          ts: new Date().toISOString(),
-          type: "gateway_tool_discovery_error",
-          provider,
-          error: err instanceof Error ? err.message : String(err),
-        }) + "\n",
-      );
+      entries = deriveToolEntries(provider, mod);
+    } catch {
+      // Module unresolvable — the catalog fallback below still covers it.
     }
+    // Generated modules typically export only the client factory (no `tools`
+    // / `toolMetadata`), so the public registry catalog is the usual source
+    // of operation schemas.
+    if (entries.length === 0) {
+      try {
+        entries = await catalogToolEntries(provider);
+      } catch (err) {
+        // A single unresolvable provider should not break discovery.
+        process.stderr.write(
+          JSON.stringify({
+            ts: new Date().toISOString(),
+            type: "gateway_tool_discovery_error",
+            provider,
+            error: err instanceof Error ? err.message : String(err),
+          }) + "\n",
+        );
+      }
+    }
+    tools.push(...entries);
   }
 
   toolListCache.set(workspaceId, { tools, expiresAt: now + getToolListTtlMs() });

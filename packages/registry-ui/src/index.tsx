@@ -491,7 +491,7 @@ export function McpInstallWidget(): React.ReactElement {
   return (
     <div>
       <Badge>{config.mode}</Badge>
-      <code>https://aprovan.com/api/gateway/mcp</code>
+      <code>https://aprovan.com/api/mcp</code>
     </div>
   );
 }

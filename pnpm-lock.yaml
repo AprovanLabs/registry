@@ -143,8 +143,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/runtime
       '@aprovan/ui':
-        specifier: ^0.2.3
-        version: 0.2.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^0.2.4
+        version: 0.2.4(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@astrojs/react':
         specifier: ^5.0.3
         version: 5.0.4(@types/node@25.6.2)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(jiti@2.7.0)(lightningcss@1.32.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tsx@4.21.0)(yaml@2.8.4)
@@ -531,6 +531,8 @@ importers:
 
   packages/utdk/airtable: {}
 
+  packages/utdk/anthropic: {}
+
   packages/utdk/asana: {}
 
   packages/utdk/common:
@@ -553,6 +555,8 @@ importers:
   packages/utdk/figma: {}
 
   packages/utdk/front: {}
+
+  packages/utdk/gemini: {}
 
   packages/utdk/github: {}
 
@@ -661,6 +665,11 @@ packages:
 
   '@aprovan/ui@0.2.3':
     resolution: {integrity: sha512-yL1Z/Rp7WcwC7MpO0d2RV65LgkI5zCW2nAyX7HzNteji/XBLs7EejwBnE1F/Jox3FWzWj5JEHyN24kuS6m1l6Q==}
+    peerDependencies:
+      react: 19.2.7
+
+  '@aprovan/ui@0.2.4':
+    resolution: {integrity: sha512-AT/gBENeyCMiqsU0T6TXUs9WgNK+Sl/+f3FjBW3TGxNYhSTmWraI+CNU5sXB3YXFpg7bzaCSCxYCCI5H3yM61Q==}
     peerDependencies:
       react: 19.2.7
 
@@ -7114,6 +7123,19 @@ snapshots:
   '@aprovan/tsconfig@0.1.0': {}
 
   '@aprovan/ui@0.2.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      class-variance-authority: 0.7.1
+      clsx: 2.1.1
+      oidc-client-ts: 3.5.0
+      radix-ui: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      react: 19.2.7
+      tailwind-merge: 3.5.0
+    transitivePeerDependencies:
+      - '@types/react'
+      - '@types/react-dom'
+      - react-dom
+
+  '@aprovan/ui@0.2.4(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       class-variance-authority: 0.7.1
       clsx: 2.1.1

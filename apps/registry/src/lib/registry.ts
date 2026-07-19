@@ -358,6 +358,67 @@ export function getDocPage(
   return entry.docs.find((doc) => doc.slug === docSlug) ?? null;
 }
 
+/**
+ * Pick a small, representative operation for example snippets: prefer simple
+ * reads (GET, few required params, list/get/search-ish names) over deep or
+ * heavily-parameterized calls.
+ */
+export function pickExampleOperation(
+  operations: RegistryOperation[],
+): RegistryOperation | null {
+  const score = (op: RegistryOperation): number => {
+    const required = op.parameters.filter((p) => p.required).length;
+    let s = required * 2 + op.sdkPath.split(".").length;
+    if (op.httpMethod.toUpperCase() === "GET") s -= 10;
+    if (/(^|\.)(list|get|search)/iu.test(op.sdkPath)) s -= 4;
+    return s;
+  };
+  return (
+    [...operations].sort((a, b) => score(a) - score(b))[0] ?? null
+  );
+}
+
+function sampleValue(name: string, rawSchema: unknown): string {
+  const schema = (
+    rawSchema && typeof rawSchema === "object" ? rawSchema : {}
+  ) as { type?: string; enum?: unknown[]; default?: unknown };
+  if (schema.enum && schema.enum.length > 0) return JSON.stringify(schema.enum[0]);
+  if (schema.default !== undefined) return JSON.stringify(schema.default);
+  switch (schema.type) {
+    case "integer":
+    case "number":
+      return "1";
+    case "boolean":
+      return "true";
+    case "array":
+      return "[]";
+    default:
+      return `'<${name}>'`;
+  }
+}
+
+const IDENTIFIER_RE = /^[A-Za-z_$][\w$]*$/u;
+
+/**
+ * A runnable-looking example call with placeholder argument values, built
+ * from the operation's real SDK path and required parameters.
+ */
+export function buildExampleSnippet(
+  packageName: string,
+  providerPath: string,
+  operation: RegistryOperation,
+): string {
+  const importIdentifier = toImportIdentifier(providerPath);
+  const required = operation.parameters.filter((p) => p.required).slice(0, 3);
+  const args = required
+    .map((p) => {
+      const key = IDENTIFIER_RE.test(p.name) ? p.name : JSON.stringify(p.name);
+      return `${key}: ${sampleValue(p.name, p.schema)}`;
+    })
+    .join(", ");
+  return `import ${importIdentifier} from "${packageName}";\nawait ${importIdentifier}.${operation.sdkPath}(${args ? `{ ${args} }` : ""});`;
+}
+
 export function buildOperationSnippet(
   packageName: string,
   providerPath: string,

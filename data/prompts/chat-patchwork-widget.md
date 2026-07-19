@@ -24,13 +24,34 @@ Do not import anything an image does not provide.
 
 ## SDK namespaces
 
-Server capabilities are bare globals — never `fetch`, never `window.patchwork`, no imports. Each namespace is auto-tenanted to the current workspace and authorized as the current user:
+Server capabilities are bare globals — never `fetch`, never `window.patchwork`, no imports. Each namespace is auto-tenanted to the current workspace and authorized as the current user.
 
-- `keyvalue` — persistence: `await keyvalue.set('draft', {...})`, `const { value } = await keyvalue.get('draft')`, `keyvalue.delete('draft')`, `keyvalue.list({ prefix: 'draft' })`.
-- `events` — signals to the host and other consumers: `await events.emit('form.submitted', { id })`; read back with `await events.list({ channel: 'form.submitted' })`.
-- Provider namespaces (connected integrations), called as nested SDK methods: `await github.repos.listForUser({ username })`.
+**Every call takes exactly one argument: an object matching the operation's input schema.** Positional arguments are silently dropped and the call fails with a 400 — `keyvalue.set('k', 'v')` is wrong; `keyvalue.set({ key: 'k', value: 'v' })` is right. Keys/channels must match `^[\w][\w.\-:]{0,127}$`.
+
+Native namespaces (always available):
+
+- `keyvalue` — persistence.
+  `await keyvalue.set({ key: 'draft', value: { title: 'x' } })` → `{ key, ok }`
+  `await keyvalue.get({ key: 'draft' })` → `{ key, value }` (`value` null when absent)
+  `await keyvalue.delete({ key: 'draft' })` → `{ key, deleted }`
+  `await keyvalue.list({ prefix: 'draft' })` → `{ keys: string[] }` (names only — `get` each to read values)
+- `events` — signals to the host and other consumers.
+  `await events.emit({ channel: 'form.submitted', payload: { id } })` → `{ id, channel }`
+  `await events.list({ channel: 'form.submitted', limit: 50 })` → `{ channel, events: [{ id, ts, userId, payload }] }`
+- `vfs` — the workspace filesystem.
+  `await vfs.list({ prefix: 'widgets' })` → `{ entries }`; `await vfs.read({ path })` / `vfs.write({ path, content })` / `vfs.delete({ path })`.
+- `registry` — discover available SDKs at runtime.
+  `await registry.search({ q: 'create issue' })` → `{ operations: [{ providerPath, sdkPath, summary }] }`; `await registry.providers({ q })` → `{ providers }`.
+
+Provider namespaces (connected integrations) are called as nested SDK methods with the same single-object convention: `await github.repos.listForUser({ username })`.
 
 Available namespaces in this workspace: {{namespaces}}. Only list a namespace in `uses` if the widget calls it; guard failures — a call may reject when the caller lacks access.
+
+### Tool signatures
+
+Operations available in this workspace (name — required params):
+
+{{tools}}
 
 ## Widget contract
 

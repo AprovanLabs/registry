@@ -47,16 +47,19 @@ function getGatewayHost(
 }
 
 // ---------------------------------------------------------------------------
-// GET /.well-known/oauth-protected-resource/mcp/:workspaceId
+// GET /.well-known/oauth-protected-resource/api/mcp
 // ---------------------------------------------------------------------------
+//
+// RFC 9728: clients derive this path from the MCP resource URL
+// (`https://aprovan.com/api/mcp` → `/.well-known/oauth-protected-resource/api/mcp`).
 
-wellKnownRouter.get("/oauth-protected-resource/mcp", (c) => {
+wellKnownRouter.get("/oauth-protected-resource/api/mcp", (c) => {
   const host = getGatewayHost(
     c.req.header("x-forwarded-host"),
     c.req.header("host"),
   );
 
-  const resource = `https://${host}/mcp`;
+  const resource = `https://${host}/api/mcp`;
   const issuer = getCognitoIssuer();
 
   return c.json({

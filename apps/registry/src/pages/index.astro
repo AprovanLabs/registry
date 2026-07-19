@@ -4,7 +4,11 @@ import { RegistryBrowser } from "@/components/RegistryBrowser";
 import { SnippetCarousel } from "@/components/SnippetCarousel";
 import { Badge } from "@/components/ui/badge";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-import { getRegistryCatalog } from "@/lib/registry";
+import {
+  buildExampleSnippet,
+  getRegistryCatalog,
+  pickExampleOperation,
+} from "@/lib/registry";
 import { withBasePath } from "@/lib/site";
 
 const catalog = await getRegistryCatalog();
@@ -31,22 +35,24 @@ const featuredEntries = [
   )
   .slice(0, 5);
 
+// Every carousel card shows a real call: GitHub keeps its curated example;
+// the rest derive one from a representative operation in their catalog.
 const snippetItems = featuredEntries.map((entry) => {
+  let code: string;
   if (entry.providerPath === "github") {
-    return {
-      providerPath: entry.providerPath,
-      providerTitle: entry.title,
-      iconUrl: entry.openApiIcon,
-      code: `import github from '@utdk/github';
-await github.users.getByUsername({ username: 'octocat' });`,
-    };
+    code = `import github from '@utdk/github';
+await github.users.getByUsername({ username: 'octocat' });`;
+  } else {
+    const operation = pickExampleOperation(entry.operations);
+    code = operation
+      ? buildExampleSnippet(entry.packageName, entry.providerPath, operation)
+      : entry.importSample;
   }
-
   return {
     providerPath: entry.providerPath,
     providerTitle: entry.title,
     iconUrl: entry.openApiIcon,
-    code: entry.importSample,
+    code,
   };
 });
 ---

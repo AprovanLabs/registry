@@ -36,7 +36,7 @@ export function compileScript(source: string): CompiledScript {
 }
 
 /** Default editor contents — the north-star script, runnable as-is. */
-export const SAMPLE_SCRIPT = `import github from '@utdk/github';
+export const SAMPLE_SCRIPT = `import github from 'github';
 import slack from 'slack';
 
 export default async function report({ username, channel }) {

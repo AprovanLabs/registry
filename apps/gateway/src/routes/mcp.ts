@@ -15,7 +15,7 @@ mcpRouter.use("*", async (c, next) => {
       c.req.header("x-forwarded-host") ??
       c.req.header("host") ??
       "aprovan.com";
-    const metadata = `https://${host}/.well-known/oauth-protected-resource/mcp`;
+    const metadata = `https://${host}/.well-known/oauth-protected-resource/api/mcp`;
     const code = error instanceof Error ? error.message : "invalid_token";
     const status = code === "workspace_forbidden" ? 403 : 401;
     return c.json(

@@ -1,9 +1,10 @@
 /**
  * AWS Lambda entry point for the registry gateway.
  *
- * CloudFront forwards `https://aprovan.com/api/gateway/*` to the function URL,
- * so routes are mounted under `/api/gateway`. Direct function URL calls can use
- * the same prefix.
+ * CloudFront forwards `https://aprovan.com/api/*` (and `/.well-known/*`) to
+ * the function URL. REST routes are mounted under `/api/gateway`; the public
+ * MCP endpoint lives at `/api/mcp` with its OAuth resource metadata under
+ * `/.well-known`. Direct function URL calls can use the same prefixes.
  */
 
 import { configureTelemetry } from "@utdk/common/telemetry";
@@ -11,6 +12,8 @@ import { Hono } from "hono";
 import { streamHandle } from "hono/aws-lambda";
 import { createApp } from "./app.js";
 import { initAuth } from "./middleware/auth.js";
+import { mcpRouter } from "./routes/mcp.js";
+import { wellKnownRouter } from "./routes/well-known.js";
 
 let ready: Promise<void> | undefined;
 
@@ -42,6 +45,10 @@ app.use("*", async (_c, next) => {
   await next();
 });
 app.route("/api/gateway", gateway);
+// Public MCP endpoint (https://aprovan.com/api/mcp) + its RFC 9728 OAuth
+// resource metadata, which clients resolve at the domain root.
+app.route("/api/mcp", mcpRouter);
+app.route("/.well-known", wellKnownRouter);
 
 // Streaming handler — requires InvokeMode.RESPONSE_STREAM on the function URL
 // (see infra/src/gateway-lambda.ts). Buffered JSON responses still work; SSE

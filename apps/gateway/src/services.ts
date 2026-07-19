@@ -17,7 +17,7 @@
  * core namespaces appear in tool discovery next to credentialed providers.
  */
 
-import { getFsStore } from "./fs-store.js";
+import { getFsStore, normalizeFsPath } from "./fs-store.js";
 import type { ToolEntry } from "./routes/tools.js";
 
 export interface ServiceContext {
@@ -210,10 +210,310 @@ const events: CoreService = {
 };
 
 // ---------------------------------------------------------------------------
+// vfs — the workspace filesystem as a tool namespace. Same store and
+// semantics as the /fs routes and the MCP fs_* tools, so widgets can read
+// and persist files without a bespoke transport.
+// ---------------------------------------------------------------------------
+
+function fsPath(value: unknown): string {
+  const path = typeof value === "string" ? normalizeFsPath(value) : null;
+  if (!path) throw new ServiceError("path must be a workspace-relative file path", 400);
+  return path;
+}
+
+const vfs: CoreService = {
+  tools: [
+    {
+      name: "vfs.list",
+      operation: "list",
+      description: "List workspace files (latest version metadata), optionally under a directory prefix.",
+      inputSchema: { type: "object", properties: { prefix: { type: "string" } } },
+    },
+    {
+      name: "vfs.read",
+      operation: "read",
+      description: "Read a workspace file (latest version unless a content hash pins an older one).",
+      inputSchema: {
+        type: "object",
+        properties: { path: { type: "string" }, hash: { type: "string" } },
+        required: ["path"],
+      },
+    },
+    {
+      name: "vfs.write",
+      operation: "write",
+      description: "Write a workspace file (content-hash versioned; prior versions stay readable).",
+      inputSchema: {
+        type: "object",
+        properties: {
+          path: { type: "string" },
+          content: { type: "string" },
+          mimeType: { type: "string" },
+        },
+        required: ["path", "content"],
+      },
+    },
+    {
+      name: "vfs.delete",
+      operation: "delete",
+      description: "Delete a workspace file, or a whole subtree with recursive=true.",
+      inputSchema: {
+        type: "object",
+        properties: { path: { type: "string" }, recursive: { type: "boolean" } },
+        required: ["path"],
+      },
+    },
+  ],
+
+  async call(ctx, procedure, args) {
+    const store = getFsStore();
+    switch (procedure) {
+      case "list": {
+        const raw = typeof args["prefix"] === "string" ? args["prefix"] : "";
+        const prefix = raw ? normalizeFsPath(raw) : "";
+        if (prefix === null) throw new ServiceError(`Invalid prefix: ${raw}`, 400);
+        return { entries: await store.list(ctx.workspaceId, prefix) };
+      }
+      case "read": {
+        const path = fsPath(args["path"]);
+        const hash = typeof args["hash"] === "string" ? args["hash"] : undefined;
+        const file = await store.read(ctx.workspaceId, path, hash);
+        if (!file) throw new ServiceError(`Not found: ${path}`, 404);
+        return file;
+      }
+      case "write": {
+        const path = fsPath(args["path"]);
+        if (typeof args["content"] !== "string") {
+          throw new ServiceError("content must be a string", 400);
+        }
+        const mimeType = typeof args["mimeType"] === "string" ? args["mimeType"] : undefined;
+        const { content: _content, ...meta } = await store.write(
+          ctx.workspaceId,
+          path,
+          args["content"],
+          mimeType,
+        );
+        return meta;
+      }
+      case "delete": {
+        const path = fsPath(args["path"]);
+        const removed =
+          args["recursive"] === true
+            ? (await store.removePrefix(ctx.workspaceId, path)) > 0
+            : await store.remove(ctx.workspaceId, path);
+        if (!removed) throw new ServiceError(`Not found: ${path}`, 404);
+        return { deleted: path };
+      }
+      default:
+        throw new ServiceError(`Unknown vfs procedure: ${procedure}`, 404);
+    }
+  },
+};
+
+// ---------------------------------------------------------------------------
+// registry — meta tools over the public registry catalog, so widgets (and
+// agents) can discover which UTDK SDKs exist and which operations they can
+// call through the tool proxy without leaving the gateway surface.
+// ---------------------------------------------------------------------------
+
+const REGISTRY_BASE = (): string =>
+  (process.env["GATEWAY_REGISTRY_BASE_URL"] ?? "https://aprovan.com/registry").replace(/\/$/, "");
+
+interface CatalogProvider {
+  id: string;
+  title: string;
+  description: string | null;
+  packageName: string;
+  icon: string | null;
+  auth?: unknown;
+}
+
+interface CatalogOperation {
+  providerPath: string;
+  providerTitle: string;
+  operationId: string;
+  sdkPath: string;
+  method: string;
+  path: string;
+  summary: string | null;
+}
+
+interface CatalogCache {
+  providers: CatalogProvider[];
+  operations: CatalogOperation[];
+  expiresAt: number;
+}
+
+const CATALOG_TTL_MS = 10 * 60 * 1000;
+let catalogCache: CatalogCache | null = null;
+
+async function fetchCatalogJson<T>(path: string): Promise<T> {
+  const response = await fetch(`${REGISTRY_BASE()}${path}`);
+  if (!response.ok) {
+    throw new ServiceError(`Registry catalog unavailable (${response.status})`, 502);
+  }
+  return (await response.json()) as T;
+}
+
+async function loadCatalog(): Promise<CatalogCache> {
+  const now = Date.now();
+  if (catalogCache && catalogCache.expiresAt > now) return catalogCache;
+  const [providersBody, opsBody] = await Promise.all([
+    fetchCatalogJson<{ providers: CatalogProvider[] }>("/catalog/providers.json"),
+    fetchCatalogJson<{ operations: CatalogOperation[] }>("/catalog/ops.json"),
+  ]);
+  catalogCache = {
+    providers: providersBody.providers ?? [],
+    operations: opsBody.operations ?? [],
+    expiresAt: now + CATALOG_TTL_MS,
+  };
+  return catalogCache;
+}
+
+interface CatalogDetailField {
+  name: string;
+  required: boolean;
+  description: string | null;
+  schema: unknown;
+}
+
+interface CatalogDetailOperation {
+  sdkPath: string;
+  httpMethod: string;
+  summary: string | null;
+  description: string | null;
+  parameters?: CatalogDetailField[];
+  requestBodyFields?: CatalogDetailField[];
+}
+
+function schemaFromCatalogOp(op: CatalogDetailOperation): Record<string, unknown> {
+  const properties: Record<string, unknown> = {};
+  const required: string[] = [];
+  for (const field of [...(op.parameters ?? []), ...(op.requestBodyFields ?? [])]) {
+    if (!field?.name || field.name in properties) continue;
+    const schema =
+      field.schema && typeof field.schema === "object"
+        ? (field.schema as Record<string, unknown>)
+        : { type: "string" };
+    properties[field.name] = {
+      ...schema,
+      ...(field.description ? { description: field.description } : {}),
+    };
+    if (field.required) required.push(field.name);
+  }
+  return {
+    type: "object",
+    properties,
+    ...(required.length > 0 ? { required } : {}),
+  };
+}
+
+const providerDetailCache = new Map<
+  string,
+  { entries: ToolEntry[]; expiresAt: number }
+>();
+
+/**
+ * Tool entries for a provider derived from the public registry catalog
+ * (`/catalog/p/<provider>.json`). Used as the discovery source when the
+ * provider's UTDK module doesn't export tool metadata itself — which is the
+ * common case today, since generated modules only export the client factory.
+ */
+export async function catalogToolEntries(provider: string): Promise<ToolEntry[]> {
+  const now = Date.now();
+  const cached = providerDetailCache.get(provider);
+  if (cached && cached.expiresAt > now) return cached.entries;
+  const detail = await fetchCatalogJson<{ operations?: CatalogDetailOperation[] }>(
+    `/catalog/p/${provider}.json`,
+  );
+  const entries: ToolEntry[] = (detail.operations ?? [])
+    .filter((op) => typeof op.sdkPath === "string" && op.sdkPath)
+    .map((op) => ({
+      provider,
+      name: `${provider}.${op.sdkPath}`,
+      operation: op.sdkPath,
+      description: op.summary ?? op.description ?? undefined,
+      inputSchema: schemaFromCatalogOp(op),
+      outputSchema: undefined,
+    }));
+  providerDetailCache.set(provider, {
+    entries,
+    expiresAt: now + CATALOG_TTL_MS,
+  });
+  return entries;
+}
+
+const registry: CoreService = {
+  tools: [
+    {
+      name: "registry.providers",
+      operation: "providers",
+      description:
+        "List registry providers (UTDK SDKs): id, title, description, package, icon, and supported credential kinds. Optional `q` substring filter.",
+      inputSchema: { type: "object", properties: { q: { type: "string" } } },
+    },
+    {
+      name: "registry.search",
+      operation: "search",
+      description:
+        "Search registry SDK operations by keyword. Returns the sdkPath to call (e.g. `github.users.getByUsername`) plus HTTP method/path and summary.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          q: { type: "string" },
+          provider: { type: "string" },
+          limit: { type: "number" },
+        },
+        required: ["q"],
+      },
+    },
+  ],
+
+  async call(_ctx, procedure, args) {
+    const catalog = await loadCatalog();
+    switch (procedure) {
+      case "providers": {
+        const q = typeof args["q"] === "string" ? args["q"].toLowerCase() : "";
+        const providers = q
+          ? catalog.providers.filter((p) =>
+              [p.id, p.title, p.description, p.packageName]
+                .filter(Boolean)
+                .some((v) => String(v).toLowerCase().includes(q)),
+            )
+          : catalog.providers;
+        return { providers };
+      }
+      case "search": {
+        const q = typeof args["q"] === "string" ? args["q"].trim().toLowerCase() : "";
+        if (!q) throw new ServiceError("q is required", 400);
+        const provider = typeof args["provider"] === "string" ? args["provider"] : "";
+        const limit = Math.min(Number(args["limit"]) || 25, 100);
+        const operations = catalog.operations
+          .filter((op) => !provider || op.providerPath === provider)
+          .filter((op) =>
+            [op.sdkPath, op.operationId, op.summary, op.providerTitle, op.path]
+              .filter(Boolean)
+              .some((v) => String(v).toLowerCase().includes(q)),
+          )
+          .slice(0, limit);
+        return { operations };
+      }
+      default:
+        throw new ServiceError(`Unknown registry procedure: ${procedure}`, 404);
+    }
+  },
+};
+
+// ---------------------------------------------------------------------------
 // Registry
 // ---------------------------------------------------------------------------
 
-export const CORE_SERVICES: Record<string, CoreService> = { keyvalue, events };
+export const CORE_SERVICES: Record<string, CoreService> = {
+  keyvalue,
+  events,
+  vfs,
+  registry,
+};
 
 export function getCoreService(namespace: string): CoreService | undefined {
   return CORE_SERVICES[namespace];

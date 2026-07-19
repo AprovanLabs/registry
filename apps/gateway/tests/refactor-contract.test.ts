@@ -18,12 +18,12 @@ describe("greenfield gateway contract", () => {
 
   it("publishes one workspace-less MCP resource", async () => {
     const response = await createApp().request(
-      "/.well-known/oauth-protected-resource/mcp",
+      "/.well-known/oauth-protected-resource/api/mcp",
       { headers: { Host: "aprovan.com" } },
     );
     expect(response.status).toBe(200);
     expect(await response.json()).toMatchObject({
-      resource: "https://aprovan.com/mcp",
+      resource: "https://aprovan.com/api/mcp",
       resource_name: "Aprovan Gateway",
     });
   });
