@@ -97,7 +97,7 @@ const hiddenWebhookEventCount = webhookIntel
   description={entry.summary ?? entry.description ?? undefined}
   title={pageTitle}
 >
-  <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+  <main class="mx-auto flex min-h-screen min-w-0 w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
     <header class="flex flex-col gap-3">
       <a
         class="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
@@ -111,7 +111,7 @@ const hiddenWebhookEventCount = webhookIntel
       </div>
     </header>
 
-    <div class="grid gap-6 xl:grid-cols-[240px_minmax(0,1fr)_260px]">
+    <div class="grid min-w-0 gap-6 xl:grid-cols-[240px_minmax(0,1fr)_260px]">
       <aside class="hidden xl:block">
         <Card size="sm">
           <CardHeader>
@@ -132,8 +132,8 @@ const hiddenWebhookEventCount = webhookIntel
                   ]}
                   href={withBasePath(`/packages/${candidate.providerPath}`)}
                 >
-                  <span class="block font-medium">{candidate.title}</span>
-                  <span class="block font-mono text-xs opacity-80">
+                  <span class="block truncate font-medium">{candidate.title}</span>
+                  <span class="block truncate font-mono text-xs opacity-80">
                     {candidate.packageName}
                   </span>
                 </a>
@@ -171,7 +171,7 @@ const hiddenWebhookEventCount = webhookIntel
               <CardTitle className="text-3xl">{entry.title}</CardTitle>
             </div>
             {originDomain ? (
-              <p class="col-start-1 font-mono text-xs text-muted-foreground">
+              <p class="col-start-1 break-all font-mono text-xs text-muted-foreground">
                 <span class="text-syntax-type">{entry.providerPath}</span>
                 {" · owned by "}
                 {siteUrl ? (
@@ -436,7 +436,7 @@ const hiddenWebhookEventCount = webhookIntel
           <CardContent className="flex flex-col gap-2.5 text-sm">
             <div class="flex items-baseline justify-between gap-3">
               <span class="text-xs text-muted-foreground">Provider</span>
-              <code class="font-mono text-xs">{entry.providerPath}</code>
+              <code class="break-all font-mono text-xs">{entry.providerPath}</code>
             </div>
             {entry.openApiVersion ?? entry.version ? (
               <div class="flex items-baseline justify-between gap-3">

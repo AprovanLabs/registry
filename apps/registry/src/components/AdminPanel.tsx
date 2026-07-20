@@ -149,7 +149,7 @@ function AdminPanelContent({
   return (
     <div className="flex flex-col gap-6">
       {/* Tab bar */}
-      <div className="flex items-center gap-1 border-b">
+      <div className="flex flex-wrap items-center gap-1 border-b">
         {TABS.map((t) => (
           <button
             key={t.id}
@@ -239,40 +239,42 @@ function MembersTab({ token }: { token: string }) {
             <p className="px-4 py-3 text-sm text-muted-foreground">No members found.</p>
           )}
           {members.length > 0 && (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-xs text-muted-foreground">
-                  <th className="pb-2 pl-4 pt-3 text-left font-medium">User</th>
-                  <th className="pb-2 pr-4 pt-3 text-left font-medium">Role</th>
-                  <th className="pb-2 pr-4 pt-3 text-left font-medium">Joined</th>
-                  <th className="pb-2 pr-4 pt-3" />
-                </tr>
-              </thead>
-              <tbody>
-                {members.map((m) => (
-                  <tr key={m.userId} className="border-b last:border-0">
-                    <td className="py-2 pl-4 font-mono text-xs">{m.userId}</td>
-                    <td className="py-2 pr-4">
-                      <Badge variant={m.role === "admin" ? "default" : "secondary"}>
-                        {m.role}
-                      </Badge>
-                    </td>
-                    <td className="py-2 pr-4 text-xs text-muted-foreground">
-                      {m.createdAt ? new Date(m.createdAt).toLocaleDateString() : "—"}
-                    </td>
-                    <td className="py-2 pr-4">
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => removeMember(m.userId)}
-                      >
-                        Remove
-                      </Button>
-                    </td>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-xs text-muted-foreground">
+                    <th className="pb-2 pl-4 pt-3 text-left font-medium">User</th>
+                    <th className="pb-2 pr-4 pt-3 text-left font-medium">Role</th>
+                    <th className="pb-2 pr-4 pt-3 text-left font-medium">Joined</th>
+                    <th className="pb-2 pr-4 pt-3" />
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {members.map((m) => (
+                    <tr key={m.userId} className="border-b last:border-0">
+                      <td className="py-2 pl-4 font-mono text-xs">{m.userId}</td>
+                      <td className="py-2 pr-4">
+                        <Badge variant={m.role === "admin" ? "default" : "secondary"}>
+                          {m.role}
+                        </Badge>
+                      </td>
+                      <td className="py-2 pr-4 text-xs text-muted-foreground">
+                        {m.createdAt ? new Date(m.createdAt).toLocaleDateString() : "—"}
+                      </td>
+                      <td className="py-2 pr-4">
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={() => removeMember(m.userId)}
+                        >
+                          Remove
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </CardContent>
       </Card>
@@ -391,7 +393,7 @@ function GroupsTab({ token }: { token: string }) {
       </Card>
 
       {/* Groups list + detail */}
-      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_1fr]">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-[240px_minmax(0,1fr)]">
         {/* Group list */}
         <Card>
           <CardHeader>
@@ -724,9 +726,9 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
             {toolGrants.map((g) => (
               <li
                 key={`${g.provider}#${g.operation}`}
-                className="flex items-center justify-between rounded border px-3 py-1"
+                className="flex min-w-0 items-center justify-between gap-2 rounded border px-3 py-1"
               >
-                <span className="font-mono text-xs">
+                <span className="min-w-0 flex-1 truncate font-mono text-xs">
                   {g.provider} / {g.operation === "*" ? <Badge variant="secondary">all</Badge> : g.operation}
                 </span>
                 <button

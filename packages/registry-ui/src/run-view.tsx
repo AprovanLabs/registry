@@ -313,7 +313,7 @@ function SpanRow({
             <p className="mb-1 text-[0.65rem] font-medium uppercase text-muted-foreground">
               Input
             </p>
-            <pre className="max-h-48 overflow-auto rounded-lg border bg-muted/30 p-2 font-mono text-xs leading-relaxed">
+            <pre className="max-h-48 overflow-auto break-words rounded-lg border bg-muted/30 p-2 font-mono text-xs leading-relaxed">
               {formatJson(span.input)}
             </pre>
           </div>
@@ -322,7 +322,7 @@ function SpanRow({
               {status === "error" ? "Error" : "Output"}
             </p>
             <pre
-              className={`max-h-48 overflow-auto rounded-lg border bg-muted/30 p-2 font-mono text-xs leading-relaxed ${
+              className={`max-h-48 overflow-auto break-words rounded-lg border bg-muted/30 p-2 font-mono text-xs leading-relaxed ${
                 status === "error" ? "text-red-600 dark:text-red-400" : ""
               }`}
             >

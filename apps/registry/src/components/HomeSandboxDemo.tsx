@@ -208,7 +208,7 @@ export function HomeSandboxDemo() {
             <span className="font-mono text-sm">
               weather({"{"} city {"}"})
             </span>
-            <div className="ml-auto flex items-center gap-2">
+            <div className="ml-auto flex flex-wrap items-center gap-2">
               <CityAutocomplete onChange={setCity} onSubmit={start} value={city} />
               <Button disabled={run.running || !city.trim()} onClick={start} type="button">
                 <PlayIcon className="size-3.5" />

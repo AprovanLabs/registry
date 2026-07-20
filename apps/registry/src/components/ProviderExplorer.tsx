@@ -389,7 +389,7 @@ function BrowseView({
                   <p className="truncate font-mono text-xs font-medium text-foreground">
                     {op.sdkPath}
                   </p>
-                  <p className="mt-0.5 flex items-center gap-1 truncate font-mono text-[0.65rem] text-muted-foreground">
+                  <p className="mt-0.5 flex items-center gap-1 break-all font-mono text-[0.65rem] text-muted-foreground">
                     <MethodBadge method={op.method} />
                     {op.path}
                   </p>
@@ -508,7 +508,7 @@ function ProviderView({
   onSelectOp: (operationId: string) => void;
 }) {
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6">
       <Breadcrumb
         crumbs={[
           { label: "Providers", onClick: onBack },
@@ -581,7 +581,7 @@ function ProviderView({
                   <p className="truncate font-mono text-xs font-medium text-foreground">
                     {op.sdkPath}
                   </p>
-                  <p className="mt-0.5 flex items-center gap-1 truncate font-mono text-[0.65rem] text-muted-foreground">
+                  <p className="mt-0.5 flex items-center gap-1 break-all font-mono text-[0.65rem] text-muted-foreground">
                     <MethodBadge method={op.httpMethod} />
                     {op.httpPath}
                   </p>
@@ -624,7 +624,7 @@ function OperationView({
     : [];
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6">
       <Breadcrumb
         crumbs={[
           { label: "Providers", onClick: () => navigate() },
@@ -670,7 +670,7 @@ function OperationView({
           </Card>
         </aside>
 
-        <section className="flex flex-col gap-6">
+        <section className="flex min-w-0 flex-col gap-6">
           <Card>
             <CardHeader>
               <div className="flex flex-wrap items-center gap-2">
@@ -684,7 +684,7 @@ function OperationView({
                 ))}
                 <span className="flex items-center gap-1.5 rounded border border-border px-2 py-0.5 text-xs">
                   <MethodBadge method={operation.httpMethod} />
-                  <code className="font-mono text-xs text-muted-foreground">
+                  <code className="break-all font-mono text-xs text-muted-foreground">
                     {operation.httpPath}
                   </code>
                 </span>
@@ -813,7 +813,7 @@ function SnippetBlock({ label, text }: { label: string; text: string }) {
         <p className="text-sm font-medium">{label}</p>
         <CopyButton idleLabel="Copy" size="xs" text={text} />
       </div>
-      <pre className="overflow-x-auto rounded-lg bg-background p-3 text-xs leading-5">
+      <pre className="overflow-x-auto break-all rounded-lg bg-background p-3 text-xs leading-5">
         <code>{text}</code>
       </pre>
     </div>

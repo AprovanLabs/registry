@@ -445,7 +445,7 @@ export function TryItConsole({
                 {result.durationMs} ms
               </span>
             </div>
-            <pre className="p-3 overflow-auto font-mono text-xs leading-relaxed border rounded-lg max-h-96 bg-muted/30">
+            <pre className="max-h-96 max-w-full overflow-auto break-words rounded-lg border bg-muted/30 p-3 font-mono text-xs leading-relaxed">
               {result.ok
                 ? JSON.stringify(result.data, null, 2)
                 : result.error}
