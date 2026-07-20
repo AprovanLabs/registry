@@ -54,6 +54,7 @@ function summarize(registration: WorkflowRegistration, workspaceId: string) {
     description: registration.description,
     scriptPath: registration.scriptPath,
     triggers: registration.triggers,
+    bindings: registration.bindings,
     webhookPath: registration.triggers.webhook ? hookPath(workspaceId, registration.name) : undefined,
     createdBy: registration.createdBy,
     updatedAt: registration.updatedAt,
@@ -81,6 +82,11 @@ export const workflowsService: CoreService = {
               webhook: { type: "boolean", description: "Expose a tokened webhook endpoint" },
               events: { type: "array", items: { type: "string" }, description: "Event channels that trigger a run" },
             },
+          },
+          bindings: {
+            type: "object",
+            description:
+              "Per-workflow interface bindings (interface → provider), e.g. { llm: 'openai' } — this workflow's llm.createChatCompletion uses OpenAI regardless of the workspace binding",
           },
         },
         required: ["name", "script_path"],
@@ -154,11 +160,22 @@ export const workflowsService: CoreService = {
         const existing = await readRegistration(ctx.workspaceId, name);
         const triggers = parseTriggers(args["triggers"]);
         const now = new Date().toISOString();
+        const bindings =
+          typeof args["bindings"] === "object" &&
+          args["bindings"] !== null &&
+          !Array.isArray(args["bindings"])
+            ? Object.fromEntries(
+                Object.entries(args["bindings"] as Record<string, unknown>).filter(
+                  (entry): entry is [string, string] => typeof entry[1] === "string",
+                ),
+              )
+            : existing?.bindings;
         const registration: WorkflowRegistration = {
           name,
           description: typeof args["description"] === "string" ? args["description"] : existing?.description,
           scriptPath,
           triggers,
+          bindings,
           // Webhook token survives re-registration so external callers keep working.
           hookToken: triggers.webhook
             ? (existing?.hookToken ?? crypto.randomUUID().replace(/-/g, ""))

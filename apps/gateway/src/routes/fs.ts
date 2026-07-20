@@ -15,7 +15,7 @@
  */
 
 import { Hono } from "hono";
-import { getFsStore, normalizeFsPath } from "../fs-store.js";
+import { getFsStore, isServicePath, normalizeFsPath } from "../fs-store.js";
 import { requireAuth } from "../middleware/auth.js";
 
 export const fsRouter = new Hono();
@@ -26,14 +26,20 @@ fsRouter.get("/", async (c) => {
   const prefix = c.req.query("prefix") ?? "";
   const normalized = prefix ? normalizeFsPath(prefix) : "";
   if (normalized === null) return c.json({ error: "Invalid prefix" }, 400);
-  return c.json({
-    entries: await getFsStore().list(c.get("principal").workspaceId, normalized),
-  });
+  if (normalized && isServicePath(normalized)) {
+    return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
+  }
+  const entries = await getFsStore().list(c.get("principal").workspaceId, normalized);
+  // Root listings hide the service subtree entirely.
+  return c.json({ entries: entries.filter((entry) => !isServicePath(entry.path)) });
 });
 
 fsRouter.get("/:path{.+}", async (c) => {
   const path = normalizeFsPath(c.req.param("path"));
   if (!path) return c.json({ error: "Invalid path" }, 400);
+  if (isServicePath(path)) {
+    return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
+  }
   const file = await getFsStore().read(
     c.get("principal").workspaceId,
     path,
@@ -45,6 +51,9 @@ fsRouter.get("/:path{.+}", async (c) => {
 fsRouter.put("/:path{.+}", async (c) => {
   const path = normalizeFsPath(c.req.param("path"));
   if (!path) return c.json({ error: "Invalid path" }, 400);
+  if (isServicePath(path)) {
+    return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
+  }
   const body = await c.req.json<{ content?: string; mimeType?: string }>();
   if (typeof body.content !== "string") {
     return c.json({ error: "content must be a string" }, 400);
@@ -61,6 +70,9 @@ fsRouter.put("/:path{.+}", async (c) => {
 fsRouter.delete("/:path{.+}", async (c) => {
   const path = normalizeFsPath(c.req.param("path"));
   if (!path) return c.json({ error: "Invalid path" }, 400);
+  if (isServicePath(path)) {
+    return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
+  }
   const workspaceId = c.get("principal").workspaceId;
   const store = getFsStore();
   const removed =
@@ -107,6 +119,9 @@ fsUploadsRouter.post("/complete", async (c) => {
   const body = await c.req.json<{ path?: string; hash?: string; mimeType?: string }>();
   const path = body.path ? normalizeFsPath(body.path) : null;
   if (!path) return c.json({ error: "Invalid path" }, 400);
+  if (isServicePath(path)) {
+    return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
+  }
   if (!body.hash || !HASH_PATTERN.test(body.hash)) {
     return c.json({ error: "hash must be the hex SHA-256 of the content" }, 400);
   }

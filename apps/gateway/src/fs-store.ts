@@ -103,6 +103,18 @@ export function normalizeFsPath(raw: string): string | null {
   return segments.join("/");
 }
 
+/**
+ * Service-internal paths (`.services/**`): workflow/app/webhook
+ * registrations, hook tokens and HMAC secrets, keyvalue state. These are
+ * managed exclusively through their tool namespaces (workflows.*, apps.*,
+ * webhooks.*, keyvalue.*) — the raw FS surfaces must never expose them, or
+ * any member could read webhook signing secrets or tamper with
+ * registrations.
+ */
+export function isServicePath(path: string): boolean {
+  return path === ".services" || path.startsWith(".services/");
+}
+
 const inPrefix = (path: string, prefix: string): boolean =>
   prefix === "" || path === prefix || path.startsWith(`${prefix}/`);
 

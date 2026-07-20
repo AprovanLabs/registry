@@ -1,6 +1,7 @@
 import { type Namer } from "@aprovan/cdk";
 import { CfnOutput, RemovalPolicy, Stack, type StackProps } from "aws-cdk-lib";
 import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
+import { Key } from "aws-cdk-lib/aws-kms";
 import { BlockPublicAccess, Bucket, BucketEncryption } from "aws-cdk-lib/aws-s3";
 import { type Construct } from "constructs";
 import { GatewayLambda } from "./gateway-lambda.js";
@@ -23,6 +24,16 @@ export class RegistryApp extends Stack {
       deletionProtection: isProd,
       removalPolicy: isProd ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
     };
+
+    // Customer-managed key for credential-payload envelope encryption
+    // (gateway credentialCipher.ts). Rotation on; retained in prod so
+    // encrypted payloads stay decryptable even if the stack is torn down.
+    const credentialsKey = new Key(this, "CredentialsKey", {
+      alias: names.regional("credentials"),
+      description: "Envelope encryption for gateway credential payloads",
+      enableKeyRotation: true,
+      removalPolicy: isProd ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
+    });
 
     const credentialsTable = new Table(this, "CredentialsTable", {
       ...storeTableProps,
@@ -156,6 +167,7 @@ export class RegistryApp extends Stack {
       environmentName,
       names,
       sharedEnv,
+      credentialsKey,
       credentialsTable,
       permissionsTable,
       auditTable,

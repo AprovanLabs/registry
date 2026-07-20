@@ -15,11 +15,14 @@ import {
   appName,
   listApps,
   readApp,
+  readWorkspaceConfig,
   removeApp,
   saveApp,
+  writeWorkspaceConfig,
   type AppManifest,
   type AppRateLimit,
   type AppRoles,
+  type WorkspaceShare,
 } from "./store.js";
 
 function appPath(workspaceId: string, name: string): string {
@@ -65,6 +68,7 @@ function parseRateLimit(raw: unknown): AppRateLimit | undefined {
   const limit: AppRateLimit = {};
   if (typeof value["rps"] === "number" && value["rps"] > 0) limit.rps = value["rps"];
   if (typeof value["burst"] === "number" && value["burst"] > 0) limit.burst = value["burst"];
+  if (typeof value["daily"] === "number" && value["daily"] > 0) limit.daily = value["daily"];
   return limit;
 }
 
@@ -120,7 +124,11 @@ export const appsService: CoreService = {
             type: "object",
             description: "{ admins: [subs], access: 'any'|'listed', users: [subs] }",
           },
-          rate_limit: { type: "object", description: "{ rps, burst } per user" },
+          rate_limit: {
+            type: "object",
+            description:
+              "{ rps, burst, daily } per user — daily is a durable calls-per-UTC-day budget (default 1000)",
+          },
         },
         required: ["name", "allowed_tools"],
       },
@@ -139,6 +147,38 @@ export const appsService: CoreService = {
         type: "object",
         properties: { name: { type: "string" } },
         required: ["name"],
+      },
+    },
+    {
+      name: "apps.shares",
+      operation: "shares",
+      description:
+        "List the workspace paths shared with apps (apps always have automatic access to their own folder; shares expose paths outside it).",
+      inputSchema: { type: "object", properties: {} },
+    },
+    {
+      name: "apps.share",
+      operation: "share",
+      description:
+        "Share a workspace path prefix with apps: { prefix, apps: [names] or '*', mode: 'read'|'readwrite' }. App sessions reach shared paths via '~/<path>'.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          prefix: { type: "string", description: "Workspace path prefix (e.g. shared/recipes)" },
+          apps: { description: "App names, or '*' for every published app" },
+          mode: { type: "string", enum: ["read", "readwrite"] },
+        },
+        required: ["prefix"],
+      },
+    },
+    {
+      name: "apps.unshare",
+      operation: "unshare",
+      description: "Remove a workspace path share by prefix.",
+      inputSchema: {
+        type: "object",
+        properties: { prefix: { type: "string" } },
+        required: ["prefix"],
       },
     },
     {
@@ -221,6 +261,44 @@ export const appsService: CoreService = {
           purgeData: args["purge_data"] === true,
         });
         return { name, removed };
+      }
+      case "shares": {
+        const config = await readWorkspaceConfig(ctx.workspaceId);
+        return { shares: config.shares ?? [] };
+      }
+      case "share": {
+        const rawPrefix = args["prefix"];
+        if (typeof rawPrefix !== "string" || !rawPrefix.trim()) {
+          throw new ServiceError("prefix is required", 400);
+        }
+        const prefix = rawPrefix.replace(/^\/+|\/+$/g, "");
+        if (prefix === ".services" || prefix.startsWith(".services/")) {
+          throw new ServiceError("service state cannot be shared with apps", 400);
+        }
+        const share: WorkspaceShare = {
+          prefix,
+          apps:
+            args["apps"] === "*" || args["apps"] === undefined
+              ? "*"
+              : Array.isArray(args["apps"])
+                ? args["apps"].filter((a): a is string => typeof a === "string")
+                : (() => {
+                    throw new ServiceError('apps must be an array of names or "*"', 400);
+                  })(),
+          mode: args["mode"] === "readwrite" ? "readwrite" : "read",
+        };
+        const config = await readWorkspaceConfig(ctx.workspaceId);
+        const shares = (config.shares ?? []).filter((s) => s.prefix !== share.prefix);
+        shares.push(share);
+        await writeWorkspaceConfig(ctx.workspaceId, { ...config, shares });
+        return share;
+      }
+      case "unshare": {
+        const prefix = String(args["prefix"] ?? "").replace(/^\/+|\/+$/g, "");
+        const config = await readWorkspaceConfig(ctx.workspaceId);
+        const shares = (config.shares ?? []).filter((s) => s.prefix !== prefix);
+        await writeWorkspaceConfig(ctx.workspaceId, { ...config, shares });
+        return { prefix, removed: true };
       }
       default:
         throw new ServiceError(`Unknown apps procedure: ${procedure}`, 404);

@@ -3,6 +3,7 @@ import { fileURLToPath } from "node:url";
 import { type Namer } from "@aprovan/cdk";
 import { Duration, Fn, Names, Stack } from "aws-cdk-lib";
 import { type ITable, Table } from "aws-cdk-lib/aws-dynamodb";
+import { type IKey } from "aws-cdk-lib/aws-kms";
 import * as events from "aws-cdk-lib/aws-events";
 import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as iam from "aws-cdk-lib/aws-iam";
@@ -41,6 +42,8 @@ function lambdaEnv(sharedEnv: Record<string, string>): Record<string, string> {
 export interface GatewayLambdaProps {
   environmentName: string;
   names: Namer;
+  /** Envelope-encryption key for credential payloads (credentialCipher.ts). */
+  credentialsKey: IKey;
   credentialsTable: ITable;
   permissionsTable: ITable;
   auditTable: ITable;
@@ -68,6 +71,7 @@ export class GatewayLambda extends Construct {
       environmentName,
       names,
       sharedEnv,
+      credentialsKey,
       credentialsTable,
       permissionsTable,
       auditTable,
@@ -85,6 +89,7 @@ export class GatewayLambda extends Construct {
       APROVAN_ENV: environmentName,
       STORE_BACKEND: "dynamodb",
       CREDENTIALS_TABLE: credentialsTable.tableName,
+      CREDENTIALS_KMS_KEY_ID: credentialsKey.keyId,
       PERMISSIONS_TABLE: permissionsTable.tableName,
       AUDIT_TABLE: auditTable.tableName,
       SESSIONS_TABLE: sessionsTable.tableName,
@@ -114,7 +119,15 @@ export class GatewayLambda extends Construct {
         // which esbuild cannot bundle. The package (dist + prod deps) is
         // staged into the asset's node_modules by the afterBundling hook via
         // `pnpm deploy`, so the runtime resolves it from /var/task.
-        externalModules: ["better-sqlite3", "utdk"],
+        // The QuickJS sandbox variant is external because it reads its .wasm
+        // file from disk relative to its own module directory at runtime;
+        // the afterBundling hook copies the package (and its ffi-types dep)
+        // into the asset's node_modules.
+        externalModules: [
+          "better-sqlite3",
+          "utdk",
+          "@jitl/quickjs-wasmfile-debug-asyncify",
+        ],
         minify: true,
         sourceMap: true,
         commandHooks: {
@@ -128,6 +141,16 @@ export class GatewayLambda extends Construct {
             // Type declarations, source maps, and bin shims are dead weight.
             `find "${outputDir}/node_modules/utdk/dist" -type f \\( -name "*.d.ts" -o -name "*.js.map" \\) -delete`,
             `rm -rf "${outputDir}/node_modules/utdk/node_modules/.bin"`,
+            // Stage the QuickJS wasm variant + its dep, dereferencing pnpm
+            // symlinks. Resolved from the gateway package so the copied
+            // version always matches the one the gateway was built against.
+            `node -e '${[
+              `const fs=require("fs"),p=require("path");`,
+              `for(const m of["@jitl/quickjs-wasmfile-debug-asyncify","@jitl/quickjs-ffi-types"]){`,
+              `const s=p.dirname(require.resolve(m+"/package.json",{paths:["${inputDir}/apps/gateway"]}));`,
+              `fs.cpSync(s,p.join("${outputDir}","node_modules",m),{recursive:true,dereference:true});`,
+              `}`,
+            ].join("")}'`,
           ],
         },
       },
@@ -151,6 +174,9 @@ export class GatewayLambda extends Construct {
     // WFS content blobs — includes presigned PUT/GET, which sign with the
     // function's own credentials and therefore need object-level grants.
     fsBucket.grantReadWrite(this.function);
+
+    // Credential envelope encryption: generate data keys + unwrap them.
+    credentialsKey.grantEncryptDecrypt(this.function);
 
     // Core identity tables live in the aprovan stack and are imported by name.
     // `fromTableName` does not know about GSIs, so `grantReadWriteData` would

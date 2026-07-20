@@ -21,10 +21,17 @@ import {
   DependencyPanel,
   type ProviderCatalogInfo,
 } from "@aprovan/registry-ui/dependency-panel";
+import {
+  INITIAL_RUN,
+  reduceRunEvent,
+  RunView,
+  runViewFromRuntimeEvents,
+  type RunState,
+} from "@aprovan/registry-ui/run-view";
+import { createGatewayClient } from "@aprovan/ui/gateway";
 import { PlayIcon, SquareIcon } from "lucide-react";
 import * as React from "react";
 import { CodeEditor } from "@/components/CodeEditor";
-import { INITIAL_RUN, reduceRunEvent, RunView, type RunState } from "@/components/RunView";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -40,7 +47,14 @@ import {
   type ProviderTypesBundle,
 } from "@/lib/catalog";
 import { loadSession } from "@/lib/gateway";
-import { compileScript, detectDependencies, SAMPLE_SCRIPT } from "@/lib/playground";
+import {
+  BUILTIN_BY_ID,
+  BUILTIN_NAMESPACES,
+  compileScript,
+  detectDependencies,
+  SAMPLE_SCRIPT,
+  synthesizeWorkflowImports,
+} from "@/lib/playground";
 import { gatewayBaseUrl, withBasePath } from "@/lib/site";
 
 /**
@@ -56,10 +70,30 @@ const TsScriptEditor = React.lazy(() =>
 
 type AuthState = "unknown" | "signed-out" | "ready";
 
+/** Loading state for a workspace file passed via `?file=<path>`. */
+type FileLoad =
+  | { status: "idle" }
+  | { status: "loading"; path: string }
+  | { status: "loaded"; path: string }
+  | { status: "error"; path: string; message: string };
+
 export function ScriptPlayground() {
-  const [source, setSource] = React.useState(SAMPLE_SCRIPT);
+  // `?file=<workspace path>` (e.g. the workflows panel's "script" button)
+  // opens that file instead of the sample — the sample never shows in that
+  // flow, even while loading or on error.
+  const requestedFile = React.useMemo(
+    () =>
+      typeof window === "undefined"
+        ? null
+        : new URLSearchParams(window.location.search).get("file"),
+    [],
+  );
+  const [source, setSource] = React.useState(requestedFile ? "" : SAMPLE_SCRIPT);
+  const [fileLoad, setFileLoad] = React.useState<FileLoad>(
+    requestedFile ? { status: "loading", path: requestedFile } : { status: "idle" },
+  );
   const [inputsJson, setInputsJson] = React.useState(
-    '{ "username": "octocat", "channel": "#general" }',
+    '{ "username": "octocat" }',
   );
   const [authState, setAuthState] = React.useState<AuthState>("unknown");
   const [run, setRun] = React.useState<RunState>(INITIAL_RUN);
@@ -76,11 +110,26 @@ export function ScriptPlayground() {
     new Map<string, ProviderTypesBundle | null>(),
   );
 
+  // Built-in namespaces (core services, interfaces, chat aliases) are always
+  // in the catalog map so the dependency panel labels them instead of
+  // "unregistered" — registry packages merge in when the fetch lands.
+  const builtinCatalog = React.useMemo(
+    () =>
+      Object.fromEntries(
+        BUILTIN_NAMESPACES.map((ns) => [ns.id, { title: ns.label, typed: true }]),
+      ),
+    [],
+  );
+
+  const catalogRef = React.useRef<Record<string, ProviderCatalogInfo>>(builtinCatalog);
+
   React.useEffect(() => {
+    setCatalog(builtinCatalog);
     fetchCatalogProviders()
-      .then((providers) =>
-        setCatalog(
-          Object.fromEntries(
+      .then((providers) => {
+        const merged = {
+          ...builtinCatalog,
+          ...Object.fromEntries(
             providers.map((provider) => [
               provider.id,
               {
@@ -95,12 +144,72 @@ export function ScriptPlayground() {
               },
             ]),
           ),
-        ),
-      )
+        };
+        catalogRef.current = merged;
+        setCatalog(merged);
+        // A file loaded before the catalog arrived may gain imports for
+        // registry packages it uses (github, …) now that they're known.
+        setSource((current) => synthesizeWorkflowImports(current, Object.keys(merged)));
+      })
       .catch(() => {
         // Panel degrades to "unregistered" rows without catalog data.
       });
-  }, []);
+  }, [builtinCatalog]);
+
+  // Fetch the requested file once auth has settled: firing at mount races
+  // the OIDC client's session restore, the read 401s, and the flow lands on
+  // the wrong content.
+  React.useEffect(() => {
+    const path = requestedFile;
+    if (!path) return;
+    // Wait for session restore, then attempt regardless of sign-in state —
+    // the gateway decides whether the read needs a token (local dev runs
+    // open); a 401 surfaces as a sign-in hint below.
+    if (isAuthConfigured() && authState === "unknown") return;
+    let cancelled = false;
+    setFileLoad({ status: "loading", path });
+    const client = createGatewayClient({
+      baseUrl: gatewayBaseUrl(),
+      getToken: getAccessToken,
+    });
+    client
+      .request<{ data?: { content?: unknown } }>("/tools/vfs/read", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ args: { path } }),
+      })
+      .then((result) => {
+        if (cancelled) return;
+        const content = result.data?.content;
+        if (typeof content === "string") {
+          // Raw workflow scripts use bare namespace globals; the playground
+          // compiles imports into sandbox bindings, so synthesize them from
+          // usage (also lights up editor types for each namespace).
+          setSource(synthesizeWorkflowImports(content, Object.keys(catalogRef.current)));
+          setFileLoad({ status: "loaded", path });
+        } else {
+          setFileLoad({
+            status: "error",
+            path,
+            message: "The file has no readable text content.",
+          });
+        }
+      })
+      .catch((error: unknown) => {
+        if (cancelled) return;
+        const message = error instanceof Error ? error.message : "Request failed";
+        setFileLoad({
+          status: "error",
+          path,
+          message: /401|unauthorized/iu.test(message)
+            ? "Sign in to load workspace files"
+            : message,
+        });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [requestedFile, authState]);
 
   React.useEffect(() => {
     if (!isAuthConfigured()) {
@@ -130,6 +239,8 @@ export function ScriptPlayground() {
     const providers = [...new Set(dependencies.map((dep) => dep.provider))];
     void Promise.all(
       providers.map(async (provider) => {
+        // Built-in namespaces ship their types inline — nothing to fetch.
+        if (BUILTIN_BY_ID.has(provider)) return [provider, null] as const;
         if (!typeBundlesRef.current.has(provider)) {
           typeBundlesRef.current.set(
             provider,
@@ -142,6 +253,11 @@ export function ScriptPlayground() {
       if (cancelled) return;
       const files: Record<string, string> = {};
       for (const dependency of dependencies) {
+        const builtin = BUILTIN_BY_ID.get(dependency.provider);
+        if (builtin) {
+          files[`/node_modules/${dependency.specifier}/index.d.ts`] = builtin.types;
+          continue;
+        }
         const bundle = bundles.find(([p]) => p === dependency.provider)?.[1];
         if (!bundle) continue;
         for (const [relative, content] of Object.entries(bundle.files)) {
@@ -250,6 +366,24 @@ export function ScriptPlayground() {
           />
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
+          {fileLoad.status === "loading" && (
+            <p className="text-xs text-muted-foreground">
+              Loading <code className="font-mono">{fileLoad.path}</code> from your
+              workspace…
+            </p>
+          )}
+          {fileLoad.status === "loaded" && (
+            <p className="text-xs text-muted-foreground">
+              Editing workspace file <code className="font-mono">{fileLoad.path}</code>{" "}
+              (changes here run in the sandbox only — they are not saved back).
+            </p>
+          )}
+          {fileLoad.status === "error" && (
+            <p className="rounded-lg border border-destructive/40 bg-destructive/5 px-3 py-2 text-xs text-destructive">
+              Couldn&apos;t load <code className="font-mono">{fileLoad.path}</code>{" "}
+              from your workspace: {fileLoad.message}.
+            </p>
+          )}
           <React.Suspense
             fallback={
               <CodeEditor ariaLabel="Script source" onChange={setSource} value={source} />
@@ -322,7 +456,7 @@ export function ScriptPlayground() {
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
-          <RunView run={run} />
+          <RunView model={runViewFromRuntimeEvents(run)} />
         </CardContent>
       </Card>
     </div>

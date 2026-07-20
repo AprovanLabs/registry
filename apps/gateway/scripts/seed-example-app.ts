@@ -11,7 +11,7 @@
  *     --workspace ws_jacob_personal --user <sub>
  */
 
-import { readFileSync } from "node:fs";
+import { readFileSync, readdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { parseArgs } from "node:util";
@@ -45,17 +45,41 @@ if (!workspaceId || !userId) {
 }
 
 const scriptsDir = dirname(fileURLToPath(import.meta.url));
-const appSource = readFileSync(join(scriptsDir, "../examples/liift4/index.tsx"), "utf-8");
 
 const ownerCtx = { workspaceId, userId };
 const apps = CORE_SERVICES["apps"]!;
 const store = getFsStore();
 
-// 1. The app is an ordinary workspace folder with an index.tsx entrypoint.
-await store.write(workspaceId, "apps/liift4/index.tsx", appSource, "text/typescript-jsx");
-console.log("✔ wrote apps/liift4/index.tsx");
+/** Copy every file under examples/<app>/ into the workspace app folder. */
+async function writeAppFolder(app: string): Promise<void> {
+  const root = join(scriptsDir, "../examples", app);
+  const stack = [root];
+  while (stack.length > 0) {
+    const dir = stack.pop()!;
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const full = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        stack.push(full);
+        continue;
+      }
+      const relative = full.slice(root.length + 1);
+      await store.write(
+        workspaceId!,
+        `apps/${app}/${relative}`,
+        readFileSync(full, "utf-8"),
+        relative.endsWith(".tsx") ? "text/typescript-jsx" : "text/typescript",
+      );
+      console.log(`✔ wrote apps/${app}/${relative}`);
+    }
+  }
+}
 
-// 2. Publish the app bundle.
+// 1. Apps are ordinary workspace folders with an index.tsx entrypoint —
+//    devtools is deliberately multi-file (lib/ + widgets/ modules).
+await writeAppFolder("liift4");
+await writeAppFolder("devtools");
+
+// 2. Publish the app bundles.
 const published = await apps.call(ownerCtx, "publish", {
   name: "liift4",
   title: "LIIFT4 Tracker",
@@ -64,9 +88,24 @@ const published = await apps.call(ownerCtx, "publish", {
   dir: "apps/liift4",
   visibility: "private",
   allowed_tools: ["keyvalue.*"],
-  rate_limit: { rps: 10, burst: 30 },
+  rate_limit: { rps: 10, burst: 30, daily: 2000 },
 });
 console.log("✔ published:", JSON.stringify(published, null, 2));
+
+// Dev Tools is a static page: account required (any Aprovan account), no
+// backend tools at all — keyvalue.get satisfies the non-empty allow-list
+// requirement without exposing anything the page actually calls.
+const publishedDevtools = await apps.call(ownerCtx, "publish", {
+  name: "devtools",
+  title: "Dev Tools",
+  description:
+    "Everyday developer utilities — Base64, JSON ↔ YAML, date/time zones. Runs entirely in your browser.",
+  dir: "apps/devtools",
+  visibility: "private",
+  allowed_tools: ["keyvalue.get"],
+  rate_limit: { rps: 5, burst: 10, daily: 500 },
+});
+console.log("✔ published:", JSON.stringify(publishedDevtools, null, 2));
 
 // 3. Validate per-user co-located partitions through the same dispatch the
 //    /apps routes use — data lands next to the app in apps/liift4/data/<user>/.
@@ -107,4 +146,4 @@ console.log("✔ per-user partitions isolated and co-located (apps/liift4/data/<
 await invokeTool(asUser("validation-alice"), "keyvalue", "delete", { key: "liift4-state" });
 await invokeTool(asUser("validation-bob"), "keyvalue", "delete", { key: "liift4-state" });
 
-console.log(`✔ done — live app: https://aprovan.com/apps/${workspaceId}/liift4`);
+console.log(`✔ done — live apps: https://aprovan.com/apps/${workspaceId}/liift4 and /apps/${workspaceId}/devtools`);

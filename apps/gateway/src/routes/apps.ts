@@ -31,6 +31,7 @@ import { runWorkflow } from "../workflows/runner.js";
 import { readRegistration } from "../workflows/store.js";
 import { ServiceError, type ServiceContext } from "../services.js";
 import { callerRole, readApp, toolAllowed, type AppManifest } from "../apps/store.js";
+import { countDailyCall } from "../apps/usage.js";
 
 export const appsRouter = new Hono();
 
@@ -161,6 +162,18 @@ appsRouter.post("/:workspaceId/:name/tools/:namespace/:procedure{.*}", async (c)
     if (!toolAllowed(session.manifest, namespace, procedure)) {
       return c.json({ error: `Tool ${namespace}.${procedure} is not allowed for this app` }, 403);
     }
+    const usage = await countDailyCall(session.workspaceId, session.manifest, session.sub);
+    if (!usage.allowed) {
+      return c.json(
+        {
+          error: "daily_limit_exceeded",
+          used: usage.used,
+          limit: usage.limit,
+          resetsAfter: usage.date,
+        },
+        429,
+      );
+    }
 
     let body: { args?: unknown };
     try {
@@ -203,6 +216,18 @@ appsRouter.post("/:workspaceId/:name/workflows/:workflow/run", async (c) => {
     }
     if (!checkAppRateLimit(session)) {
       return c.json({ error: "rate_limit_exceeded" }, 429);
+    }
+    const usage = await countDailyCall(session.workspaceId, session.manifest, session.sub);
+    if (!usage.allowed) {
+      return c.json(
+        {
+          error: "daily_limit_exceeded",
+          used: usage.used,
+          limit: usage.limit,
+          resetsAfter: usage.date,
+        },
+        429,
+      );
     }
 
     const registration = await readRegistration(session.workspaceId, workflowName);

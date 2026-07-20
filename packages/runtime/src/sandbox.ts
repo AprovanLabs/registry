@@ -129,8 +129,11 @@ function buildSandboxDocument(
   )};
 
   var AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-  var paramNames = DEPS.map(function (d) { return d.identifier; }).concat(["inputs"]);
-  var paramValues = DEPS.map(function (d) { return createNamespaceProxy(d.provider, d.path); }).concat([INPUTS]);
+  // Both spellings: exported-function scripts receive "inputs" as their
+  // parameter; bare workflow scripts read the "input" global the workflow
+  // runner provides (the trigger payload).
+  var paramNames = DEPS.map(function (d) { return d.identifier; }).concat(["inputs", "input"]);
+  var paramValues = DEPS.map(function (d) { return createNamespaceProxy(d.provider, d.path); }).concat([INPUTS, INPUTS]);
 
   Promise.resolve()
     .then(function () {

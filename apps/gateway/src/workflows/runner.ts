@@ -1,27 +1,29 @@
 /**
  * Server-side workflow script runner — the gateway twin of the registry
- * playground's browser sandbox. The script runs inside a fresh `vm` context
- * where the only capabilities are:
+ * playground's browser sandbox. The script runs inside a QuickJS WASM
+ * isolate (see sandbox.ts) where the only capabilities are:
  *
  *   - namespace proxies (core services + every credentialed provider), each
  *     call dispatched through {@link invokeTool} and recorded as a span
  *   - `console.*`, captured into the run record
  *   - `input` — the trigger payload (webhook body, event payload, manual args)
  *
- * No `require`, `process`, `fetch`, or host globals: all effects ride the
- * same tool-dispatch path widgets use, so tracing, credentials, and authz are
- * uniform. Scripts are plain async JavaScript (`await github.repos.get(...)`)
- * with an optional trailing `return`.
+ * No `require`, `process`, `fetch`, or host globals — the WASM boundary
+ * makes that a guarantee rather than a convention: all effects ride the
+ * same tool-dispatch path widgets use, so tracing, credentials, and authz
+ * are uniform. Scripts are plain async JavaScript
+ * (`await github.repos.get(...)`) with an optional trailing `return`.
  *
  * Event emissions from inside a run trigger subscribed workflows with an
  * incremented depth; MAX_EVENT_DEPTH caps cascades to prevent loops.
  */
 
-import vm from "node:vm";
 import { getFsStore } from "../fs-store.js";
+import { listInterfaces } from "../interfaces.js";
 import { CORE_SERVICES, ServiceError, type ServiceContext } from "../services.js";
 import { getCredentialStore } from "../credentials.js";
 import { invokeTool } from "./invoke.js";
+import { runScriptInSandbox } from "./sandbox.js";
 import {
   newRunId,
   readRegistration,
@@ -37,6 +39,34 @@ export const MAX_EVENT_DEPTH = 2;
 // 120s per call); the sync spin-loop guard below stays tight.
 const SCRIPT_TIMEOUT_MS = 180_000;
 
+/**
+ * Top-level provider names from the utdk registry (github, stripe, …),
+ * loaded once. Used to expose script-referenced public providers as
+ * namespaces even when no credential is stored.
+ */
+let utdkProvidersPromise: Promise<Set<string>> | undefined;
+
+function utdkProviderNames(): Promise<Set<string>> {
+  utdkProvidersPromise ??= (async () => {
+    try {
+      const { createRequire } = await import("node:module");
+      const require = createRequire(import.meta.url);
+      const registry = require("utdk/registry.json") as {
+        providers?: Record<string, unknown>;
+      };
+      const names = new Set<string>();
+      for (const name of Object.keys(registry.providers ?? {})) {
+        const root = name.split("/")[0] ?? "";
+        if (/^[A-Za-z_$][\w$]*$/u.test(root)) names.add(root);
+      }
+      return names;
+    } catch {
+      return new Set<string>();
+    }
+  })();
+  return utdkProvidersPromise;
+}
+
 function stringify(value: unknown): string {
   if (typeof value === "string") return value;
   try {
@@ -44,27 +74,6 @@ function stringify(value: unknown): string {
   } catch {
     return String(value);
   }
-}
-
-/**
- * A recursive proxy turning `ns.a.b.c(args)` into
- * `dispatch("a.b.c", args)` — mirrors the playground sandbox's namespace
- * globals so scripts run unchanged in either runtime.
- */
-function namespaceProxy(
-  dispatch: (path: string, args: unknown[]) => Promise<unknown>,
-  pathPrefix = "",
-): unknown {
-  const target = () => undefined;
-  return new Proxy(target, {
-    get(_t, prop) {
-      if (typeof prop !== "string" || prop === "then") return undefined;
-      return namespaceProxy(dispatch, pathPrefix ? `${pathPrefix}.${prop}` : prop);
-    },
-    apply(_t, _thisArg, args) {
-      return dispatch(pathPrefix || "default", args);
-    },
-  });
 }
 
 export interface RunWorkflowOptions {
@@ -111,7 +120,15 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
   // workflowDepth marks tool calls from this run as workflow-context, so
   // `events.emit` cascades subscribed workflows with an incremented depth
   // (capped at MAX_EVENT_DEPTH in triggerEventWorkflows).
-  const ctx: ServiceContext = { workspaceId, userId, workflowDepth: depth + 1, appScope };
+  const ctx: ServiceContext = {
+    workspaceId,
+    userId,
+    workflowDepth: depth + 1,
+    appScope,
+    // Registration-level interface bindings pin e.g. `llm` to a specific
+    // provider for this workflow's runs.
+    interfaceBindings: registration.bindings,
+  };
 
   const pushLog = (level: WorkflowLogLine["level"], parts: unknown[]) => {
     if (run.logs.length >= 500) return;
@@ -154,9 +171,19 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
       }
     };
 
-  // Namespace globals: every core service plus every credentialed provider
-  // (LLM aliases included — they dispatch through the alias resolution).
+  // Namespace globals: every core service, every generic interface (llm, …
+  // — resolved to the workspace's bound implementation at call time), plus
+  // every credentialed provider (LLM aliases included — they dispatch
+  // through the alias resolution), plus any registry provider the script
+  // references — public APIs (github, …) work without a credential, so a
+  // missing credential must not strip the namespace.
   const namespaces = new Set<string>(Object.keys(CORE_SERVICES));
+  for (const def of listInterfaces()) namespaces.add(def.id);
+  const registryProviders = await utdkProviderNames();
+  for (const match of scriptFile.content.matchAll(/([A-Za-z_$][\w$]*)\s*\./gu)) {
+    const identifier = match[1]!;
+    if (registryProviders.has(identifier)) namespaces.add(identifier);
+  }
   try {
     const credentials = await getCredentialStore().list(workspaceId);
     for (const credential of credentials) namespaces.add(credential.provider);
@@ -164,49 +191,17 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
     // Credential listing is best-effort; core namespaces still work.
   }
 
-  const sandbox: Record<string, unknown> = {
-    input: input ?? null,
-    console: {
-      log: (...parts: unknown[]) => pushLog("log", parts),
-      info: (...parts: unknown[]) => pushLog("info", parts),
-      warn: (...parts: unknown[]) => pushLog("warn", parts),
-      error: (...parts: unknown[]) => pushLog("error", parts),
-      debug: (...parts: unknown[]) => pushLog("debug", parts),
-    },
-  };
-  for (const namespace of namespaces) {
-    const proxy = namespaceProxy(dispatchFor(namespace));
-    sandbox[namespace] = proxy;
-    // Namespaces that aren't valid identifiers (e.g. "synthetic.new") also
-    // bind under a sanitized alias so scripts can call `synthetic_new.…`.
-    const alias = namespace.replace(/[^\w$]/gu, "_");
-    if (alias !== namespace && !(alias in sandbox)) {
-      sandbox[alias] = proxy;
-    }
-  }
-
   try {
-    const context = vm.createContext(sandbox);
-    const script = new vm.Script(
-      `(async () => {\n${scriptFile.content}\n})()`,
-      { filename: registration.scriptPath },
-    );
-    const resultPromise = script.runInContext(context, {
-      timeout: 5_000, // guards synchronous spin-loops only
-    }) as Promise<unknown>;
-
-    let timer: NodeJS.Timeout | undefined;
-    const timeout = new Promise<never>((_, reject) => {
-      timer = setTimeout(
-        () => reject(new ServiceError(`Workflow timed out after ${SCRIPT_TIMEOUT_MS}ms`, 504)),
-        SCRIPT_TIMEOUT_MS,
-      );
-    });
-    try {
-      run.result = (await Promise.race([resultPromise, timeout])) ?? null;
-    } finally {
-      clearTimeout(timer);
-    }
+    run.result =
+      (await runScriptInSandbox({
+        source: scriptFile.content,
+        filename: registration.scriptPath,
+        input: input ?? null,
+        namespaces: [...namespaces],
+        dispatch: (namespace, path, args) => dispatchFor(namespace)(path, args),
+        log: pushLog,
+        timeoutMs: SCRIPT_TIMEOUT_MS,
+      })) ?? null;
     run.status = "succeeded";
   } catch (err) {
     run.status = "failed";

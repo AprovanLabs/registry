@@ -11,12 +11,14 @@
  *                                UI message stream protocol back to `useChat`.
  */
 
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { getAuditStore } from "../audit.js";
 import { expandPromptVars, resolveStoredPrompt } from "../promptStore.js";
 import { getCredentialStore } from "../credentials.js";
+import { readBindings, resolveInterfaceForWorkspace } from "../interfaces.js";
 import { getExecutor } from "../isolate.js";
 import { requireAuth } from "../middleware/auth.js";
+import { ServiceError } from "../services.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import { OAuthExchangeError, resolveToInjectable } from "../oauthTokens.js";
 import {
@@ -38,15 +40,22 @@ llmRouter.use("*", requireAuth);
 
 llmRouter.get("/providers", async (c) => {
   const workspaceId = c.get("principal").workspaceId;
-  const credentials = await getCredentialStore().list(workspaceId);
+  const [credentials, bindings] = await Promise.all([
+    getCredentialStore().list(workspaceId),
+    readBindings(workspaceId),
+  ]);
   const connected = new Set(credentials.map((credential) => credential.provider));
+  const binding = bindings["llm"];
   return c.json({
     providers: listLlmProviders().map((provider) => ({
       id: provider.id,
       label: provider.label,
       defaultModel: provider.defaultModel,
       connected: connected.has(provider.id),
+      /** Whether this provider is the workspace's `llm` interface binding. */
+      bound: binding?.provider === provider.id,
     })),
+    binding: binding ?? null,
   });
 });
 
@@ -131,12 +140,39 @@ interface ChatRequestBody {
   credential?: { type: string; token?: string; value?: string; name?: string };
 }
 
+// The generic endpoint: chat via the workspace's `llm` interface binding
+// (or the first connected compatible provider). Scripts, widgets, and chat
+// hit one URL; swapping the backing provider is an interfaces.bind call.
+llmRouter.post("/chat", rateLimitByUserId, async (c) => {
+  const workspaceId = c.get("principal").workspaceId;
+  let resolved;
+  try {
+    resolved = await resolveInterfaceForWorkspace(workspaceId, "llm");
+  } catch (err) {
+    const status = err instanceof ServiceError ? err.status : 500;
+    return c.json({ error: err instanceof Error ? err.message : String(err) }, status as 400);
+  }
+  const provider = resolveLlmProvider(resolved.compat.provider);
+  if (!provider) return c.json({ error: `Bound provider unavailable: ${resolved.compat.provider}` }, 500);
+  const boundModel = typeof resolved.options["model"] === "string" ? resolved.options["model"] : undefined;
+  return handleChat(c, provider, boundModel);
+});
+
 llmRouter.post("/:provider/chat", rateLimitByUserId, async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
   const providerId = c.req.param("provider") ?? "";
   const provider = resolveLlmProvider(providerId);
   if (!provider) return c.json({ error: `Unknown LLM provider: ${providerId}` }, 404);
+  return handleChat(c, provider);
+});
+
+async function handleChat(
+  c: Context,
+  provider: NonNullable<ReturnType<typeof resolveLlmProvider>>,
+  boundModel?: string,
+): Promise<Response> {
+  const principal = c.get("principal");
+  const workspaceId = principal.workspaceId;
+  const providerId = provider.id;
 
   let body: ChatRequestBody;
   try {
@@ -183,7 +219,7 @@ llmRouter.post("/:provider/chat", rateLimitByUserId, async (c) => {
     provider: provider.module,
     operation: "createChatCompletion",
     args: {
-      model: body.model || provider.defaultModel,
+      model: body.model || boundModel || provider.defaultModel,
       messages,
       stream: true,
     },
@@ -242,4 +278,4 @@ llmRouter.post("/:provider/chat", rateLimitByUserId, async (c) => {
     },
   });
   return c.newResponse(stream, 200, UI_MESSAGE_STREAM_HEADERS);
-});
+}

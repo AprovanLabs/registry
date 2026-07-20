@@ -15,7 +15,8 @@
   },
   "dependencies": {
     "@utcp/http": "^1.1.1",
-    "@utcp/sdk": "^1.1.0"
+    "@utcp/sdk": "^1.1.0",
+    "@utdk/sql": "workspace:*"
   },
   "exports": {
     ".": {
@@ -13560,6 +13561,26 @@
       "types": "./dist/zuora/index.d.ts",
       "import": "./dist/zuora/index.js",
       "default": "./dist/zuora/index.js"
+    },
+    "./postgres": {
+      "types": "./dist/postgres/index.d.ts",
+      "import": "./dist/postgres/index.js",
+      "default": "./dist/postgres/index.js"
+    },
+    "./snowflake": {
+      "types": "./dist/snowflake/index.d.ts",
+      "import": "./dist/snowflake/index.js",
+      "default": "./dist/snowflake/index.js"
+    },
+    "./databricks": {
+      "types": "./dist/databricks/index.d.ts",
+      "import": "./dist/databricks/index.js",
+      "default": "./dist/databricks/index.js"
+    },
+    "./postman-explore": {
+      "types": "./dist/postman-explore/index.d.ts",
+      "import": "./dist/postman-explore/index.js",
+      "default": "./dist/postman-explore/index.js"
     }
   }
 }

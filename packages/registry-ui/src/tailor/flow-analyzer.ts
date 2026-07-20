@@ -30,15 +30,44 @@ const FN_NODE_TYPES = new Set([
 
 const BRANCH_METHODS = new Set(["then", "catch", "finally"]);
 
-const parserReady = initParser();
+// Lazy singleton: nothing loads until the first analyzeScript call, so
+// importing the module (e.g. for renderer registration) has no side effects.
+let parserPromise: Promise<Parser> | undefined;
 
+function parserReady(): Promise<Parser> {
+  parserPromise ??= initParser();
+  return parserPromise;
+}
+
+/**
+ * The wasm files ship in this package's dist (see tsup onSuccess) and load
+ * from there; the CDN is only a fallback for hosts whose bundler didn't
+ * carry the assets. A CDN-blocked environment (CSP, ad-blocker, offline)
+ * therefore still works with local assets — and when nothing loads, the
+ * timeout in analyzeScript turns the failure into a visible parse error
+ * instead of a canvas that stays blank forever (emscripten aborts outside
+ * the awaited chain, leaving the init promise pending).
+ */
 async function initParser() {
+  const localBase = new URL(".", import.meta.url);
+  let useLocal = false;
+  try {
+    const probe = await fetch(new URL("tree-sitter.wasm", localBase), { method: "HEAD" });
+    useLocal = probe.ok;
+  } catch {
+    useLocal = false;
+  }
   await Parser.init({
-    locateFile: (file: string) => `https://cdn.jsdelivr.net/npm/web-tree-sitter/${file}`,
+    locateFile: (file: string) =>
+      useLocal
+        ? new URL(file, localBase).toString()
+        : `https://cdn.jsdelivr.net/npm/web-tree-sitter/${file}`,
   });
   const parser = new Parser();
   const language = await Language.load(
-    "https://cdn.jsdelivr.net/npm/tree-sitter-javascript/tree-sitter-javascript.wasm",
+    useLocal
+      ? new URL("tree-sitter-javascript.wasm", localBase).toString()
+      : "https://cdn.jsdelivr.net/npm/tree-sitter-javascript/tree-sitter-javascript.wasm",
   );
   parser.setLanguage(language);
   return parser;
@@ -537,7 +566,15 @@ export function buildLocalProducedMap(
 }
 
 export async function analyzeScript(source: string): Promise<FlowAnalysis> {
-  const parser = await parserReady;
+  const parser = await Promise.race([
+    parserReady(),
+    new Promise<never>((_, reject) =>
+      setTimeout(
+        () => reject(new Error("Flow parser failed to load (network blocked or offline)")),
+        12_000,
+      ),
+    ),
+  ]);
   const tree = parser.parse(source);
   if (!tree) {
     throw new Error("Parser returned no syntax tree");

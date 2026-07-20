@@ -20,10 +20,10 @@ export function WorkflowsHost() {
     [],
   );
 
-  const invoke = React.useCallback(
-    async (operation: string, args: Record<string, unknown>) => {
+  const invokeTool = React.useCallback(
+    async (namespace: string, operation: string, args: Record<string, unknown>) => {
       const result = await client.request<{ data?: unknown }>(
-        `/tools/workflows/${operation}`,
+        `/tools/${namespace}/${operation}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -33,6 +33,18 @@ export function WorkflowsHost() {
       return result.data;
     },
     [client],
+  );
+
+  const invoke = React.useCallback(
+    (operation: string, args: Record<string, unknown>) =>
+      invokeTool("workflows", operation, args),
+    [invokeTool],
+  );
+
+  const invokeApps = React.useCallback(
+    (operation: string, args: Record<string, unknown>) =>
+      invokeTool("apps", operation, args),
+    [invokeTool],
   );
 
   if (!isAuthConfigured()) {
@@ -46,6 +58,7 @@ export function WorkflowsHost() {
   return (
     <WorkflowsPanel
       invoke={invoke}
+      invokeApps={invokeApps}
       onOpenScript={(path) =>
         window.open(withBasePath(`/playground?file=${encodeURIComponent(path)}`), "_self")
       }

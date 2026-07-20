@@ -165,11 +165,10 @@ describe("co-located app data", () => {
     });
     expect(denied.status).toBe(403);
 
-    // Share read access with every app.
-    await putFile(
-      ".services/workspace.json",
-      JSON.stringify({ shares: [{ prefix: "shared", apps: "*", mode: "read" }] }),
-    );
+    // Share read access with every app (service state itself is not
+    // reachable through /fs — shares are managed via the apps tools).
+    const shared = await manage("apps/share", { prefix: "shared", apps: "*", mode: "read" });
+    expect(shared.status).toBe(200);
 
     const allowed = await appCall("alice", "reader/tools/vfs/read", {
       args: { path: "~/shared/recipes.json" },
@@ -181,5 +180,34 @@ describe("co-located app data", () => {
       args: { path: "~/shared/recipes.json", content: "[]" },
     });
     expect(write.status).toBe(403);
+  });
+});
+
+describe("daily call limits", () => {
+  it("meters per-(app, user) calls per day and rejects past the budget", async () => {
+    await publishFolderApp("metered", {
+      rate_limit: { rps: 100, burst: 100, daily: 3 },
+    });
+
+    for (let i = 0; i < 3; i += 1) {
+      const res = await appCall("visitor", "metered/tools/keyvalue/set", {
+        args: { key: `k${i}`, value: i },
+      });
+      expect(res.status).toBe(200);
+    }
+
+    const blocked = await appCall("visitor", "metered/tools/keyvalue/set", {
+      args: { key: "k4", value: 4 },
+    });
+    expect(blocked.status).toBe(429);
+    const body = (await blocked.json()) as { error: string; used: number; limit: number };
+    expect(body.error).toBe("daily_limit_exceeded");
+    expect(body.limit).toBe(3);
+
+    // A different user has their own budget.
+    const other = await appCall("someone-else", "metered/tools/keyvalue/set", {
+      args: { key: "k", value: 1 },
+    });
+    expect(other.status).toBe(200);
   });
 });

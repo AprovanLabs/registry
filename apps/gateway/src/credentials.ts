@@ -24,6 +24,7 @@ import { createRequire } from "node:module";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import { GetCommand, PutCommand, QueryCommand, TransactWriteCommand } from "@aws-sdk/lib-dynamodb";
+import { getCredentialCipher } from "./credentialCipher.js";
 import { getDynamoDocClient } from "./db/client.js";
 import type Database from "better-sqlite3";
 
@@ -145,8 +146,9 @@ export interface ICredentialStore {
  * hot path — `resolveForProvider(wsId, provider)` — queries the partition with
  * `begins_with(SK, "CRED#<provider>#")` in one round trip.
  *
- * Per APR-272, the payload is stored as plaintext JSON and DynamoDB SSE handles
- * at-rest encryption (no application-level crypto in this cut).
+ * Payloads are sealed with the credential cipher (KMS envelope in prod, see
+ * credentialCipher.ts) on top of DynamoDB SSE; legacy plaintext rows decrypt
+ * as themselves and re-encrypt on their next write.
  */
 export class CredentialStoreDynamodb implements ICredentialStore {
   private readonly tableName: string;
@@ -165,7 +167,7 @@ export class CredentialStoreDynamodb implements ICredentialStore {
       workspaceId,
       provider: input.provider,
       type: input.payload.type,
-      payload: JSON.stringify(input.payload),
+      payload: await getCredentialCipher().encrypt(JSON.stringify(input.payload)),
       createdAt: now,
       updatedAt: now,
     };
@@ -263,7 +265,8 @@ export class CredentialStoreDynamodb implements ICredentialStore {
       }),
     );
     if (!result.Item) return undefined;
-    return JSON.parse((result.Item as Record<string, unknown>)["payload"] as string) as CredentialPayload;
+    const stored = (result.Item as Record<string, unknown>)["payload"] as string;
+    return JSON.parse(await getCredentialCipher().decrypt(stored)) as CredentialPayload;
   }
 
   async resolveForProvider(workspaceId: string, provider: string): Promise<CredentialPayload | undefined> {
@@ -290,7 +293,9 @@ export class CredentialStoreDynamodb implements ICredentialStore {
     if (!item) return undefined;
     return {
       id: item["id"] as string,
-      payload: JSON.parse(item["payload"] as string) as CredentialPayload,
+      payload: JSON.parse(
+        await getCredentialCipher().decrypt(item["payload"] as string),
+      ) as CredentialPayload,
     };
   }
 
@@ -310,7 +315,7 @@ export class CredentialStoreDynamodb implements ICredentialStore {
         TableName: this.tableName,
         Item: {
           ...existing.Item,
-          payload: JSON.stringify(payload),
+          payload: await getCredentialCipher().encrypt(JSON.stringify(payload)),
           updatedAt: new Date().toISOString(),
         },
       }),

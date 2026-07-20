@@ -41,6 +41,8 @@ export interface AppRateLimit {
   rps?: number;
   /** Burst capacity per user (default 10). */
   burst?: number;
+  /** Calls per user per UTC day (default 1000); durable across instances. */
+  daily?: number;
 }
 
 export interface AppManifest {
@@ -184,6 +186,18 @@ export async function readWorkspaceConfig(workspaceId: string): Promise<Workspac
   } catch {
     return {};
   }
+}
+
+export async function writeWorkspaceConfig(
+  workspaceId: string,
+  config: WorkspaceConfig,
+): Promise<void> {
+  await getFsStore().write(
+    workspaceId,
+    WORKSPACE_CONFIG_PATH,
+    JSON.stringify(config, null, 2),
+    "application/json",
+  );
 }
 
 /**

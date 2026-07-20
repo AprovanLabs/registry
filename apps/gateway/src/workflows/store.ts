@@ -35,6 +35,13 @@ export interface WorkflowRegistration {
   /** Workspace VFS path of the script to run. */
   scriptPath: string;
   triggers: WorkflowTriggers;
+  /**
+   * Per-workflow interface bindings (interface id → provider id), overriding
+   * the workspace binding for this workflow's runs — e.g. { llm: "openai" }
+   * pins `llm.createChatCompletion` to OpenAI here while chat and other
+   * workflows keep the workspace default.
+   */
+  bindings?: Record<string, string>;
   /** Bearer token external webhook callers must present. */
   hookToken?: string;
   createdBy: string;

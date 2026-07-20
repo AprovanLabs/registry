@@ -13,10 +13,16 @@ import {
   type RuntimeEvent,
   type SandboxRun,
 } from "@aprovan/runtime";
+import {
+  INITIAL_RUN,
+  reduceRunEvent,
+  RunView,
+  runViewFromRuntimeEvents,
+  type RunState,
+} from "@aprovan/registry-ui/run-view";
 import { ChevronDownIcon, PlayIcon } from "lucide-react";
 import * as React from "react";
 import { CodeEditor } from "@/components/CodeEditor";
-import { INITIAL_RUN, reduceRunEvent, RunView, type RunState } from "@/components/RunView";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -249,7 +255,10 @@ export function HomeSandboxDemo() {
               </button>
               {showDetails && (
                 <div className="flex flex-col gap-4 pt-1">
-                  <RunView emptyHint="Waiting for the first call…" run={run} />
+                  <RunView
+                    emptyHint="Waiting for the first call…"
+                    model={runViewFromRuntimeEvents(run)}
+                  />
                 </div>
               )}
             </div>

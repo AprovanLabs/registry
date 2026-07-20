@@ -38,8 +38,20 @@
   --color-accent: #171717;
 }
 
-/* React Flow canvas fills its container */
+/*
+ * React Flow canvas fills its container. A bare min-height is NOT enough:
+ * React Flow sizes itself with height: 100%, and percentage heights resolve
+ * against the parent's `height` property (auto → 0 → blank canvas +
+ * "container needs a width and a height" warning). Flex stretch gives the
+ * child a definite size instead.
+ */
 .tailor-canvas {
+  display: flex;
+  flex: 1;
+  min-height: 320px;
+}
+
+.tailor-canvas > .react-flow {
   flex: 1;
   min-height: 320px;
 }

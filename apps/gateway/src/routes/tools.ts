@@ -20,6 +20,7 @@ import { mayInvokeTool } from "../authorize.js";
 import { getAuditStore } from "../audit.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
+import { isInterface, listInterfaces, resolveInterfaceForWorkspace } from "../interfaces.js";
 import { isLlmProvider, resolveLlmProvider } from "../llm.js";
 import { getAuthMode, requireAuth } from "../middleware/auth.js";
 import {
@@ -175,6 +176,51 @@ function synthesizeInputSchema(meta: Record<string, unknown>): Record<string, un
  * alias's OpenAI-compatible module (see the POST route's alias resolution),
  * so widgets can call e.g. `synthetic.new.createChatCompletion` directly.
  */
+/**
+ * Discovery entries for a generic interface namespace. The `llm` interface
+ * carries the OpenAI-compatible chat surface; calls dispatch to the bound
+ * implementation, so the entry text stays provider-neutral.
+ */
+function interfaceToolEntries(interfaceId: string): ToolEntry[] {
+  if (interfaceId !== "llm") return [];
+  return [
+    {
+      provider: "llm",
+      name: "llm.createChatCompletion",
+      operation: "createChatCompletion",
+      description:
+        "Chat completion via the workspace's bound LLM provider (interfaces.bind to switch). OpenAI-compatible; model defaults to the binding's model.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          model: { type: "string", description: "Model id (default: the binding's model)" },
+          messages: {
+            type: "array",
+            description: "OpenAI-style chat messages [{ role, content }]",
+            items: {
+              type: "object",
+              properties: {
+                role: { type: "string", enum: ["system", "user", "assistant"] },
+                content: { type: "string" },
+              },
+              required: ["role", "content"],
+            },
+          },
+          stream: { type: "boolean", description: "Stream the response as SSE" },
+        },
+        required: ["messages"],
+      },
+    },
+    {
+      provider: "llm",
+      name: "llm.listModels",
+      operation: "listModels",
+      description: "List models from the workspace's bound LLM provider.",
+      inputSchema: { type: "object", properties: {} },
+    },
+  ];
+}
+
 function llmToolEntries(providerId: string): ToolEntry[] {
   const alias = resolveLlmProvider(providerId);
   const label = alias?.label ?? providerId;
@@ -231,6 +277,16 @@ async function discoverTools(workspaceId: string): Promise<ToolEntry[]> {
   // Core service namespaces (events, keyvalue, vfs, registry) are first-party
   // and always available — no credential required.
   const tools: ToolEntry[] = [...coreToolEntries()];
+
+  // Generic interfaces (llm, …) surface whenever any compatible provider is
+  // connected; calls resolve to the workspace's binding (interfaces.bind) or
+  // the first connected implementation.
+  const connected = new Set(providers);
+  for (const def of listInterfaces()) {
+    if (!def.compat.some((entry) => connected.has(entry.provider))) continue;
+    tools.push(...interfaceToolEntries(def.id));
+  }
+
   for (const provider of providers) {
     // LLM chat providers (anthropic, synthetic.new, …) are credential-store
     // aliases onto OpenAI-compatible modules. They surface a curated entry
@@ -308,7 +364,7 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   const callerId = principal.sub;
   const workspaceId = principal.workspaceId;
 
-  const provider = c.req.param("provider");
+  let provider = c.req.param("provider");
   const operation = c.req.param("operation");
 
   // Core services (events, keyvalue) are first-party: auto-tenanted by the
@@ -336,6 +392,28 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
     } catch (err) {
       const status = err instanceof ServiceError ? err.status : 500;
       getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status });
+      return c.json({ error: err instanceof Error ? err.message : String(err) }, status as 400);
+    }
+  }
+
+  // Generic interfaces (llm, …) resolve to the workspace's bound
+  // implementation and dispatch as that concrete provider — credential
+  // lookup, alias resolution, permissions, and audit all see the real
+  // provider id.
+  let interfaceDefaults: Record<string, unknown> | undefined;
+  let interfaceModule: string | undefined;
+  let interfaceTimeoutMs: number | undefined;
+  if (provider && operation && isInterface(provider)) {
+    try {
+      const resolved = await resolveInterfaceForWorkspace(workspaceId, provider);
+      interfaceDefaults = resolved.def.defaultsFor.includes(operation)
+        ? resolved.options
+        : undefined;
+      provider = resolved.compat.provider;
+      interfaceModule = resolved.compat.module;
+      interfaceTimeoutMs = resolved.def.timeoutMs;
+    } catch (err) {
+      const status = err instanceof ServiceError ? err.status : 500;
       return c.json({ error: err instanceof Error ? err.message : String(err) }, status as 400);
     }
   }
@@ -404,6 +482,10 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   // Chat clients (AI SDK) send `stream: true` at the top level of the request;
   // provider chat-completion operations expect it inside their own arguments.
   let args = body.stream === true ? { ...body.args, stream: true } : body.args;
+  // Interface binding defaults (e.g. model) fill in missing args only.
+  if (interfaceDefaults) {
+    args = { ...interfaceDefaults, ...args };
+  }
 
   // LLM chat-provider aliases (synthetic.new, anthropic, …) execute through
   // their OpenAI-compatible module with the alias's base URL. Credentials are
@@ -424,12 +506,12 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
       span.setAttribute("request_id", requestId);
 
       const r = await executor.execute({
-        provider: llmAlias?.module ?? provider,
+        provider: interfaceModule ?? llmAlias?.module ?? provider,
         operation,
         args,
         credentials,
         ...(llmAlias?.baseUrl ? { baseUrl: llmAlias.baseUrl } : {}),
-        timeout: llmAlias ? 120_000 : 30_000,
+        timeout: interfaceTimeoutMs ?? (llmAlias ? 120_000 : 30_000),
       });
 
       span.setAttribute("success", r.success);

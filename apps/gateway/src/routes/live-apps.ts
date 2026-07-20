@@ -198,6 +198,13 @@ function buildAppShell(app: LiveApp): string {
 <div id="status">Loading ${title.replace(/</g, "&lt;")}…</div>
 <div id="root"></div>
 <script>window.__APP_CONFIG__ = ${JSON.stringify(config).replace(/</g, "\\u003c")};</script>
+<script type="importmap">
+{
+  "imports": {
+    "esbuild-wasm": "https://unpkg.com/esbuild-wasm@0.27.2/esm/browser.min.js"
+  }
+}
+</script>
 <script type="module">
 const cfg = window.__APP_CONFIG__;
 const status = document.getElementById("status");
@@ -213,17 +220,30 @@ const authHeaders = token ? { "X-Aprovan-Authorization": "Bearer " + token } : {
 try {
   const projectRes = await fetch(cfg.liveBase + "/__project__", { headers: authHeaders });
   if (projectRes.status === 401 || projectRes.status === 403) {
-    status.innerHTML = 'This app is private — <a href="https://aprovan.com">sign in at aprovan.com</a> and come back.';
+    // Any Aprovan account works when the app's role model allows it — the
+    // caller does not need to be a member of the owning workspace. Sign-in
+    // happens on the same origin, so when another tab stores the token this
+    // page picks it up and reloads into the app.
+    const returnTo = encodeURIComponent(location.pathname + location.search);
+    status.innerHTML =
+      'This app requires an Aprovan account — ' +
+      '<a href="https://aprovan.com/?return=' + returnTo + '" target="_blank" rel="noopener">sign in</a>' +
+      ' (this page will continue automatically).';
+    window.addEventListener("storage", (event) => {
+      if (event.key === "aprovan.accessToken" && event.newValue) location.reload();
+    });
     throw new Error("not authorized");
   }
   if (!projectRes.ok) throw new Error("Failed to load app source (" + projectRes.status + ")");
   const project = await projectRes.json();
 
   // Version-pinned: esm.sh caches the unversioned "latest" redirect for
-  // hours, so a bare spec can silently serve a stale compiler.
-  const { createCompiler } = await import("https://esm.sh/@aprovan/patchwork-compiler@0.1.3");
+  // hours, so a bare spec can silently serve a stale compiler. esbuild-wasm
+  // is external + import-mapped to its real ESM browser build — esm.sh's
+  // UMD interop drops its named exports ("build is not a function").
+  const { createCompiler } = await import("https://esm.sh/@aprovan/patchwork-compiler@0.1.4?external=esbuild-wasm");
   const compiler = await createCompiler({
-    image: "@aprovan/patchwork-image-shadcn@0.1.3",
+    image: "@aprovan/patchwork-image-shadcn@0.1.4",
     cdnBaseUrl: "https://esm.sh",
     widgetCdnBaseUrl: "https://esm.sh",
     proxyUrl: cfg.appBase + "/tools",
@@ -248,7 +268,11 @@ try {
     { typescript: true },
   );
   status.remove();
-  await compiler.mount(widget, { target: document.getElementById("root"), mode: "iframe", sandbox: ["allow-scripts", "allow-same-origin"] });
+  // allow-scripts ONLY: adding allow-same-origin would let published app
+  // code escape the iframe sandbox and read the viewer's stored token —
+  // the service proxy runs in this parent shell, so the widget needs no
+  // same-origin powers.
+  await compiler.mount(widget, { target: document.getElementById("root"), mode: "iframe", sandbox: ["allow-scripts"] });
 } catch (err) {
   if (String(err && err.message) !== "not authorized") {
     status.textContent = "Failed to load app: " + (err && err.message ? err.message : err);

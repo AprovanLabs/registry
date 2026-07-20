@@ -18,7 +18,9 @@
  */
 
 import { appsService } from "./apps/service.js";
-import { getFsStore, normalizeFsPath } from "./fs-store.js";
+import { getFsStore, isServicePath, normalizeFsPath } from "./fs-store.js";
+import { interfacesService } from "./interfaces-service.js";
+import { syncService } from "./sync.js";
 import { webhooksService } from "./webhooks/service.js";
 import { workflowsService } from "./workflows/service.js";
 import type { ToolEntry } from "./routes/tools.js";
@@ -43,6 +45,12 @@ export interface ServiceContext {
    * shares them with the app.
    */
   appScope?: { app: string; dir?: string; userId: string; role: "admin" | "user" };
+  /**
+   * Per-run interface binding overrides (interface id → provider id), set by
+   * the workflow runner from the registration's `bindings`. Interface
+   * dispatch prefers these over the workspace binding.
+   */
+  interfaceBindings?: Record<string, string>;
 }
 
 export interface CoreService {
@@ -266,6 +274,12 @@ const events: CoreService = {
 function fsPath(value: unknown): string {
   const path = typeof value === "string" ? normalizeFsPath(value) : null;
   if (!path) throw new ServiceError("path must be a workspace-relative file path", 400);
+  // Service state (.services/**) is managed only through its tool
+  // namespaces — never through raw vfs access (it holds hook tokens and
+  // webhook HMAC secrets).
+  if (isServicePath(path)) {
+    throw new ServiceError("Service state is managed through its tool namespaces", 403);
+  }
   return path;
 }
 
@@ -292,7 +306,7 @@ async function resolveVfsPath(
   }
 
   if (value.startsWith("~/")) {
-    const path = fsPath(value.slice(2));
+    const path = fsPath(value.slice(2)); // also rejects .services/**
     const { readWorkspaceConfig, shareAllows } = await import("./apps/store.js");
     const config = await readWorkspaceConfig(ctx.workspaceId);
     if (!shareAllows(config, scope.app, path, write)) {
@@ -362,7 +376,11 @@ const vfs: CoreService = {
         }
         const prefix = raw ? normalizeFsPath(raw) : "";
         if (prefix === null) throw new ServiceError(`Invalid prefix: ${raw}`, 400);
-        return { entries: await store.list(ctx.workspaceId, prefix) };
+        if (prefix && isServicePath(prefix)) {
+          throw new ServiceError("Service state is managed through its tool namespaces", 403);
+        }
+        const entries = await store.list(ctx.workspaceId, prefix);
+        return { entries: entries.filter((entry) => !isServicePath(entry.path)) };
       }
       case "read": {
         const path = await resolveVfsPath(ctx, args["path"], false);
@@ -606,6 +624,8 @@ export const CORE_SERVICES: Record<string, CoreService> = {
   workflows: workflowsService,
   apps: appsService,
   webhooks: webhooksService,
+  interfaces: interfacesService,
+  sync: syncService,
 };
 
 export function getCoreService(namespace: string): CoreService | undefined {

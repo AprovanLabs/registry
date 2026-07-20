@@ -20,6 +20,7 @@ import { StepNode } from "./tailor/StepNode";
 import { analyzeScript } from "./tailor/flow-analyzer";
 import { buildGraph } from "./tailor/graph-builder";
 import type { FlowAnalysis, FocusView } from "./tailor/types";
+import { isWorkflowScript, registerRenderer } from "./renderers";
 
 const nodeTypes = { step: StepNode, parallel: ParallelNode };
 
@@ -134,6 +135,40 @@ export function TailorFlow({
 
   const atRoot = focusStack.length === 0;
 
+  // Hosts often mount the flow inside a modal/tab that is zero-sized (or
+  // animating) at init, which leaves fitView with a broken viewport and an
+  // apparently blank canvas. Re-fit whenever the canvas gains real
+  // dimensions.
+  const canvasRef = React.useRef<HTMLDivElement | null>(null);
+  const flowRef = React.useRef<{ fitView: (options?: { padding?: number }) => unknown } | null>(
+    null,
+  );
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || typeof ResizeObserver === "undefined") return;
+    let lastArea = 0;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[entries.length - 1];
+      if (!entry) return;
+      const { width, height } = entry.contentRect;
+      const area = width * height;
+      if (area > 0 && lastArea === 0) {
+        requestAnimationFrame(() => flowRef.current?.fitView({ padding: 0.15 }));
+      }
+      lastArea = area;
+    });
+    observer.observe(canvas);
+    return () => observer.disconnect();
+  }, []);
+
+  // A new graph (script change / focus navigation) also needs a fit once
+  // nodes are measured.
+  React.useEffect(() => {
+    if (graph.nodes.length === 0) return;
+    const timer = window.setTimeout(() => flowRef.current?.fitView({ padding: 0.15 }), 50);
+    return () => window.clearTimeout(timer);
+  }, [graph]);
+
   return (
     <div className={`flex min-h-[380px] flex-col ${className ?? ""}`}>
       <div className="flex flex-wrap items-center justify-between gap-1.5 border-b bg-muted/50 px-3.5">
@@ -156,8 +191,16 @@ export function TailorFlow({
         </p>
       )}
 
-      <div className="tailor-canvas">
-        <ReactFlow edges={graph.edges} fitView nodes={graph.nodes} nodeTypes={nodeTypes}>
+      <div className="tailor-canvas" ref={canvasRef}>
+        <ReactFlow
+          edges={graph.edges}
+          fitView
+          nodes={graph.nodes}
+          nodeTypes={nodeTypes}
+          onInit={(instance) => {
+            flowRef.current = instance;
+          }}
+        >
           <Controls position="top-right" />
           <Background gap={22} size={1.2} />
         </ReactFlow>
@@ -180,3 +223,14 @@ export function TailorFlow({
     </div>
   );
 }
+
+// Register the workflow-script renderer: any surface that imports TailorFlow
+// gets `resolveRenderer({ path, content })` → flow graph for workflow
+// scripts. Lives here (not renderers.tsx) so run-view consumers that never
+// render graphs don't pull @xyflow/react into their bundle.
+registerRenderer({
+  id: "workflow-script",
+  label: "Workflow",
+  match: (input) => (input.content && isWorkflowScript(input.path, input.content) ? 100 : 0),
+  Component: ({ input }) => <TailorFlow source={input.content ?? ""} />,
+});

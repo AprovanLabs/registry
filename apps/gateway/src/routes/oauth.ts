@@ -19,6 +19,7 @@ import {
   CognitoIdentityProviderClient,
   CreateUserPoolClientCommand,
 } from "@aws-sdk/client-cognito-identity-provider";
+import { RateLimiter } from "@utdk/common/rateLimit";
 import { Hono } from "hono";
 import { z } from "zod";
 
@@ -55,7 +56,41 @@ function getUserPoolId(): string | undefined {
 // POST /oauth/register — RFC 7591
 // ---------------------------------------------------------------------------
 
+// DCR is unauthenticated by design (RFC 7591), which makes it a Cognito
+// app-client-creation primitive for anyone on the internet. Throttle hard
+// per source IP and allow disabling outright.
+const dcrLimiters = new Map<string, RateLimiter>();
+
+function dcrRateLimited(sourceIp: string): boolean {
+  let limiter = dcrLimiters.get(sourceIp);
+  if (!limiter) {
+    // A legitimate MCP client registers once; 3 burst / one every 30s is
+    // generous for humans and hostile to sprawl.
+    limiter = new RateLimiter({ requestsPerSecond: 1 / 30, burst: 3 });
+    if (dcrLimiters.size > 10_000) dcrLimiters.clear();
+    dcrLimiters.set(sourceIp, limiter);
+  }
+  return !limiter.tryAcquire();
+}
+
 oauthRouter.post("/register", async (c) => {
+  if (process.env["GATEWAY_DISABLE_DCR"] === "1") {
+    return c.json(
+      { error: "access_denied", error_description: "Dynamic client registration is disabled" },
+      403,
+    );
+  }
+  const sourceIp =
+    c.req.header("cloudfront-viewer-address")?.split(":")[0] ??
+    c.req.header("x-forwarded-for")?.split(",")[0]?.trim() ??
+    "unknown";
+  if (dcrRateLimited(sourceIp)) {
+    return c.json(
+      { error: "slow_down", error_description: "Too many registration attempts" },
+      429,
+    );
+  }
+
   const userPoolId = getUserPoolId();
   if (!userPoolId) {
     return c.json(
