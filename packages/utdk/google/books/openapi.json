@@ -27,7 +27,7 @@
       "media"
     ],
     "x-logo": {
-      "url": "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+      "url": "https://api.apis.guru/v2/cache/logo/https_www.google.com_images_branding_googlelogo_2x_googlelogo_color_272x92dp.png"
     },
     "x-origin": [
       {
@@ -122,7 +122,7 @@
       ],
       "post": {
         "description": "Add a user-upload volume and triggers processing.",
-        "operationId": "cloudloading.addBook",
+        "operationId": "books.cloudloading.addBook",
         "parameters": [
           {
             "description": "A drive document id. The upload_client_token must not be set.",
@@ -222,7 +222,7 @@
       ],
       "post": {
         "description": "Remove the book and its contents",
-        "operationId": "cloudloading.deleteBook",
+        "operationId": "books.cloudloading.deleteBook",
         "parameters": [
           {
             "description": "The id of the book to be removed.",
@@ -299,7 +299,7 @@
       ],
       "post": {
         "description": "Updates a user-upload volume.",
-        "operationId": "cloudloading.updateBook",
+        "operationId": "books.cloudloading.updateBook",
         "requestBody": {
           "content": {
             "application/json": {
@@ -339,7 +339,7 @@
     "/books/v1/dictionary/listOfflineMetadata": {
       "get": {
         "description": "Returns a list of offline dictionary metadata available",
-        "operationId": "dictionary.listOfflineMetadata",
+        "operationId": "books.dictionary.listOfflineMetadata",
         "parameters": [
           {
             "description": "The device/version ID from which to request the data.",
@@ -416,7 +416,7 @@
     "/books/v1/familysharing/getFamilyInfo": {
       "get": {
         "description": "Gets information regarding the family that the user is part of.",
-        "operationId": "familysharing.getFamilyInfo",
+        "operationId": "books.familysharing.getFamilyInfo",
         "parameters": [
           {
             "description": "String to identify the originator of this request.",
@@ -527,7 +527,7 @@
       ],
       "post": {
         "description": "Initiates sharing of the content with the user's family. Empty response indicates success.",
-        "operationId": "familysharing.share",
+        "operationId": "books.familysharing.share",
         "parameters": [
           {
             "description": "The docid to share.",
@@ -619,7 +619,7 @@
       ],
       "post": {
         "description": "Initiates revoking content that has already been shared with the user's family. Empty response indicates success.",
-        "operationId": "familysharing.unshare",
+        "operationId": "books.familysharing.unshare",
         "parameters": [
           {
             "description": "The docid to unshare.",
@@ -676,7 +676,7 @@
     "/books/v1/myconfig/getUserSettings": {
       "get": {
         "description": "Gets the current settings for the user.",
-        "operationId": "myconfig.getUserSettings",
+        "operationId": "books.myconfig.getUserSettings",
         "parameters": [
           {
             "description": "Unused. Added only to workaround TEX mandatory request template requirement",
@@ -787,7 +787,7 @@
       ],
       "post": {
         "description": "Release downloaded content access restriction.",
-        "operationId": "myconfig.releaseDownloadAccess",
+        "operationId": "books.myconfig.releaseDownloadAccess",
         "parameters": [
           {
             "description": "The device/version ID from which to release the restriction.",
@@ -894,7 +894,7 @@
       ],
       "post": {
         "description": "Request concurrent and download access restrictions.",
-        "operationId": "myconfig.requestAccess",
+        "operationId": "books.myconfig.requestAccess",
         "parameters": [
           {
             "description": "The device/version ID from which to request the restrictions.",
@@ -1020,7 +1020,7 @@
       ],
       "post": {
         "description": "Request downloaded content access for specified volumes on the My eBooks shelf.",
-        "operationId": "myconfig.syncVolumeLicenses",
+        "operationId": "books.myconfig.syncVolumeLicenses",
         "parameters": [
           {
             "description": "The device/version ID from which to release the restriction.",
@@ -1169,7 +1169,7 @@
       ],
       "post": {
         "description": "Sets the settings for the user. If a sub-object is specified, it will overwrite the existing sub-object stored in the server. Unspecified sub-objects will retain the existing value.",
-        "operationId": "myconfig.updateUserSettings",
+        "operationId": "books.myconfig.updateUserSettings",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1209,7 +1209,7 @@
     "/books/v1/mylibrary/annotations": {
       "get": {
         "description": "Retrieves a list of annotations, possibly filtered.",
-        "operationId": "mylibrary.annotations.list",
+        "operationId": "books.mylibrary.annotations.list",
         "parameters": [
           {
             "description": "The content version for the requested volume.",
@@ -1362,7 +1362,7 @@
       ],
       "post": {
         "description": "Inserts a new annotation.",
-        "operationId": "mylibrary.annotations.insert",
+        "operationId": "books.mylibrary.annotations.insert",
         "parameters": [
           {
             "description": "The ID for the annotation to insert.",
@@ -1471,7 +1471,7 @@
       ],
       "post": {
         "description": "Gets the summary of specified layers.",
-        "operationId": "mylibrary.annotations.summary",
+        "operationId": "books.mylibrary.annotations.summary",
         "parameters": [
           {
             "description": "Array of layer IDs to get the summary for.",
@@ -1492,14 +1492,6 @@
             "in": "query",
             "name": "volumeId",
             "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "Optional. String to identify the originator of this request.",
-            "in": "query",
-            "name": "source",
             "schema": {
               "type": "string"
             }
@@ -1535,7 +1527,7 @@
     "/books/v1/mylibrary/annotations/{annotationId}": {
       "delete": {
         "description": "Deletes an annotation.",
-        "operationId": "mylibrary.annotations.delete",
+        "operationId": "books.mylibrary.annotations.delete",
         "parameters": [
           {
             "description": "The ID for the annotation to delete.",
@@ -1618,7 +1610,7 @@
       ],
       "put": {
         "description": "Updates an existing annotation.",
-        "operationId": "mylibrary.annotations.update",
+        "operationId": "books.mylibrary.annotations.update",
         "parameters": [
           {
             "description": "The ID for the annotation to update.",
@@ -1677,7 +1669,7 @@
     "/books/v1/mylibrary/bookshelves": {
       "get": {
         "description": "Retrieves a list of bookshelves belonging to the authenticated user.",
-        "operationId": "mylibrary.bookshelves.list",
+        "operationId": "books.mylibrary.bookshelves.list",
         "parameters": [
           {
             "description": "String to identify the originator of this request.",
@@ -1753,7 +1745,7 @@
     "/books/v1/mylibrary/bookshelves/{shelf}": {
       "get": {
         "description": "Retrieves metadata for a specific bookshelf belonging to the authenticated user.",
-        "operationId": "mylibrary.bookshelves.get",
+        "operationId": "books.mylibrary.bookshelves.get",
         "parameters": [
           {
             "description": "ID of bookshelf to retrieve.",
@@ -1873,7 +1865,7 @@
       ],
       "post": {
         "description": "Adds a volume to a bookshelf.",
-        "operationId": "mylibrary.bookshelves.addVolume",
+        "operationId": "books.mylibrary.bookshelves.addVolume",
         "parameters": [
           {
             "description": "ID of bookshelf to which to add a volume.",
@@ -1981,7 +1973,7 @@
       ],
       "post": {
         "description": "Clears all volumes from a bookshelf.",
-        "operationId": "mylibrary.bookshelves.clearVolumes",
+        "operationId": "books.mylibrary.bookshelves.clearVolumes",
         "parameters": [
           {
             "description": "ID of bookshelf from which to remove a volume.",
@@ -2066,7 +2058,7 @@
       ],
       "post": {
         "description": "Moves a volume within a bookshelf.",
-        "operationId": "mylibrary.bookshelves.moveVolume",
+        "operationId": "books.mylibrary.bookshelves.moveVolume",
         "parameters": [
           {
             "description": "ID of bookshelf with the volume.",
@@ -2169,7 +2161,7 @@
       ],
       "post": {
         "description": "Removes a volume from a bookshelf.",
-        "operationId": "mylibrary.bookshelves.removeVolume",
+        "operationId": "books.mylibrary.bookshelves.removeVolume",
         "parameters": [
           {
             "description": "ID of bookshelf from which to remove a volume.",
@@ -2240,7 +2232,7 @@
     "/books/v1/mylibrary/bookshelves/{shelf}/volumes": {
       "get": {
         "description": "Gets volume information for volumes on a bookshelf.",
-        "operationId": "mylibrary.bookshelves.volumes.list",
+        "operationId": "books.mylibrary.bookshelves.volumes.list",
         "parameters": [
           {
             "description": "The bookshelf ID or name retrieve volumes for.",
@@ -2380,7 +2372,7 @@
     "/books/v1/mylibrary/readingpositions/{volumeId}": {
       "get": {
         "description": "Retrieves my reading position information for a volume.",
-        "operationId": "mylibrary.readingpositions.get",
+        "operationId": "books.mylibrary.readingpositions.get",
         "parameters": [
           {
             "description": "ID of volume for which to retrieve a reading position.",
@@ -2508,7 +2500,7 @@
       ],
       "post": {
         "description": "Sets my reading position information for a volume.",
-        "operationId": "mylibrary.readingpositions.setPosition",
+        "operationId": "books.mylibrary.readingpositions.setPosition",
         "parameters": [
           {
             "description": "ID of volume for which to update the reading position.",
@@ -2609,7 +2601,7 @@
     "/books/v1/notification/get": {
       "get": {
         "description": "Returns notification details for a given notification id.",
-        "operationId": "notification.get",
+        "operationId": "books.notification.get",
         "parameters": [
           {
             "description": "String to identify the notification.",
@@ -2702,7 +2694,7 @@
     "/books/v1/onboarding/listCategories": {
       "get": {
         "description": "List categories for onboarding experience.",
-        "operationId": "onboarding.listCategories",
+        "operationId": "books.onboarding.listCategories",
         "parameters": [
           {
             "description": "ISO-639-1 language and ISO-3166-1 country code. Default is en-US if unset.",
@@ -2778,7 +2770,7 @@
     "/books/v1/onboarding/listCategoryVolumes": {
       "get": {
         "description": "List available volumes under categories for onboarding experience.",
-        "operationId": "onboarding.listCategoryVolumes",
+        "operationId": "books.onboarding.listCategoryVolumes",
         "parameters": [
           {
             "description": "List of category ids requested.",
@@ -2896,7 +2888,7 @@
     "/books/v1/personalizedstream/get": {
       "get": {
         "description": "Returns a stream of personalized book clusters",
-        "operationId": "personalizedstream.get",
+        "operationId": "books.personalizedstream.get",
         "parameters": [
           {
             "description": "ISO-639-1 language and ISO-3166-1 country code. Ex: 'en_US'. Used for generating recommendations.",
@@ -3028,7 +3020,7 @@
       ],
       "post": {
         "description": "Accepts the promo offer.",
-        "operationId": "promooffer.accept",
+        "operationId": "books.promooffer.accept",
         "parameters": [
           {
             "description": "device android_id",
@@ -3159,7 +3151,7 @@
       ],
       "post": {
         "description": "Marks the promo offer as dismissed.",
-        "operationId": "promooffer.dismiss",
+        "operationId": "books.promooffer.dismiss",
         "parameters": [
           {
             "description": "device android_id",
@@ -3248,7 +3240,7 @@
     "/books/v1/promooffer/get": {
       "get": {
         "description": "Returns a list of promo offers available to the user",
-        "operationId": "promooffer.get",
+        "operationId": "books.promooffer.get",
         "parameters": [
           {
             "description": "device android_id",
@@ -3364,7 +3356,7 @@
     "/books/v1/series/get": {
       "get": {
         "description": "Returns Series metadata for the given series ids.",
-        "operationId": "series.get",
+        "operationId": "books.series.get",
         "parameters": [
           {
             "description": "String that identifies the series",
@@ -3446,7 +3438,7 @@
     "/books/v1/series/membership/get": {
       "get": {
         "description": "Returns Series membership data given the series id.",
-        "operationId": "series.membership.get",
+        "operationId": "books.series.membership.get",
         "parameters": [
           {
             "description": "String that identifies the series",
@@ -3539,7 +3531,7 @@
     "/books/v1/users/{userId}/bookshelves": {
       "get": {
         "description": "Retrieves a list of public bookshelves for the specified user.",
-        "operationId": "bookshelves.list",
+        "operationId": "books.bookshelves.list",
         "parameters": [
           {
             "description": "ID of user for whom to retrieve bookshelves.",
@@ -3624,7 +3616,7 @@
     "/books/v1/users/{userId}/bookshelves/{shelf}": {
       "get": {
         "description": "Retrieves metadata for a specific bookshelf for the specified user.",
-        "operationId": "bookshelves.get",
+        "operationId": "books.bookshelves.get",
         "parameters": [
           {
             "description": "ID of user for whom to retrieve bookshelves.",
@@ -3718,7 +3710,7 @@
     "/books/v1/users/{userId}/bookshelves/{shelf}/volumes": {
       "get": {
         "description": "Retrieves volumes in a specific bookshelf for the specified user.",
-        "operationId": "bookshelves.volumes.list",
+        "operationId": "books.bookshelves.volumes.list",
         "parameters": [
           {
             "description": "ID of user for whom to retrieve bookshelf volumes.",
@@ -3838,7 +3830,7 @@
     "/books/v1/volumes": {
       "get": {
         "description": "Performs a book search.",
-        "operationId": "volumes.list",
+        "operationId": "books.volumes.list",
         "parameters": [
           {
             "description": "Full-text search query string.",
@@ -4060,7 +4052,7 @@
     "/books/v1/volumes/mybooks": {
       "get": {
         "description": "Return a list of books in My Library.",
-        "operationId": "volumes.mybooks.list",
+        "operationId": "books.volumes.mybooks.list",
         "parameters": [
           {
             "description": "How the book was acquired",
@@ -4214,7 +4206,7 @@
     "/books/v1/volumes/recommended": {
       "get": {
         "description": "Return a list of recommended books for the current user.",
-        "operationId": "volumes.recommended.list",
+        "operationId": "books.volumes.recommended.list",
         "parameters": [
           {
             "description": "ISO-639-1 language and ISO-3166-1 country code. Ex: 'en_US'. Used for generating recommendations.",
@@ -4346,7 +4338,7 @@
       ],
       "post": {
         "description": "Rate a recommended book for the current user.",
-        "operationId": "volumes.recommended.rate",
+        "operationId": "books.volumes.recommended.rate",
         "parameters": [
           {
             "description": "Rating to be given to the volume.",
@@ -4418,7 +4410,7 @@
     "/books/v1/volumes/useruploaded": {
       "get": {
         "description": "Return a list of books uploaded by the current user.",
-        "operationId": "volumes.useruploaded.list",
+        "operationId": "books.volumes.useruploaded.list",
         "parameters": [
           {
             "description": "ISO-639-1 language and ISO-3166-1 country code. Ex: 'en_US'. Used for generating recommendations.",
@@ -4553,7 +4545,7 @@
     "/books/v1/volumes/{volumeId}": {
       "get": {
         "description": "Gets volume information for a single volume.",
-        "operationId": "volumes.get",
+        "operationId": "books.volumes.get",
         "parameters": [
           {
             "description": "ID of volume to retrieve.",
@@ -4682,7 +4674,7 @@
     "/books/v1/volumes/{volumeId}/associated": {
       "get": {
         "description": "Return a list of associated books.",
-        "operationId": "volumes.associated.list",
+        "operationId": "books.volumes.associated.list",
         "parameters": [
           {
             "description": "ID of the source volume.",
@@ -4802,7 +4794,7 @@
     "/books/v1/volumes/{volumeId}/layers/{layerId}": {
       "get": {
         "description": "Gets the volume annotations for a volume and layer.",
-        "operationId": "layers.volumeAnnotations.list",
+        "operationId": "books.layers.volumeAnnotations.list",
         "parameters": [
           {
             "description": "The volume to retrieve annotations for.",
@@ -4995,7 +4987,7 @@
     "/books/v1/volumes/{volumeId}/layers/{layerId}/annotations/{annotationId}": {
       "get": {
         "description": "Gets the volume annotation.",
-        "operationId": "layers.volumeAnnotations.get",
+        "operationId": "books.layers.volumeAnnotations.get",
         "parameters": [
           {
             "description": "The volume to retrieve annotations for.",
@@ -5106,7 +5098,7 @@
     "/books/v1/volumes/{volumeId}/layers/{layerId}/data": {
       "get": {
         "description": "Gets the annotation data for a volume and layer.",
-        "operationId": "layers.annotationData.list",
+        "operationId": "books.layers.annotationData.list",
         "parameters": [
           {
             "description": "The volume to retrieve annotation data for.",
@@ -5289,7 +5281,7 @@
     "/books/v1/volumes/{volumeId}/layers/{layerId}/data/{annotationDataId}": {
       "get": {
         "description": "Gets the annotation data.",
-        "operationId": "layers.annotationData.get",
+        "operationId": "books.layers.annotationData.get",
         "parameters": [
           {
             "description": "The volume to retrieve annotations for.",
@@ -5442,7 +5434,7 @@
     "/books/v1/volumes/{volumeId}/layersummary": {
       "get": {
         "description": "List the layer summaries for a volume.",
-        "operationId": "layers.list",
+        "operationId": "books.layers.list",
         "parameters": [
           {
             "description": "The volume to retrieve layers for.",
@@ -5553,7 +5545,7 @@
     "/books/v1/volumes/{volumeId}/layersummary/{summaryId}": {
       "get": {
         "description": "Gets the layer summary for a volume.",
-        "operationId": "layers.get",
+        "operationId": "books.layers.get",
         "parameters": [
           {
             "description": "The volume to retrieve layers for.",

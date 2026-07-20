@@ -2,9 +2,11 @@
  * Public app surface — how OTHER users consume a workspace's published apps.
  *
  *   GET  /apps/:workspaceId/:name              — manifest (public metadata)
- *   GET  /apps/:workspaceId/:name/widget       — the app's widget UI page
  *   POST /apps/:workspaceId/:name/tools/:namespace/:procedure
  *   POST /apps/:workspaceId/:name/workflows/:workflow/run
+ *
+ * The live page surface (aprovan.com/apps/...) lives in routes/live-apps.ts;
+ * this router is the authenticated API the pages call back into.
  *
  * Auth: any valid Cognito token — membership in the owning workspace is NOT
  * required. That's the point: the owner workspace is the app's "account"
@@ -24,7 +26,6 @@ import { Hono } from "hono";
 import { RateLimiter } from "@utdk/common/rateLimit";
 import { getAuditStore } from "../audit.js";
 import { getAuthMode, readBearerToken, verifyAccessToken } from "../middleware/auth.js";
-import { getFsStore } from "../fs-store.js";
 import { invokeTool } from "../workflows/invoke.js";
 import { runWorkflow } from "../workflows/runner.js";
 import { readRegistration } from "../workflows/store.js";
@@ -84,7 +85,7 @@ async function resolveAppSession(
     ctx: {
       workspaceId,
       userId: sub,
-      appScope: { app: manifest.name, userId: sub, role },
+      appScope: { app: manifest.name, dir: manifest.dir, userId: sub, role },
     },
   };
 }
@@ -127,150 +128,21 @@ function errorResponse(c: { json: (body: unknown, status?: number) => Response }
 appsRouter.get("/:workspaceId/:name", async (c) => {
   try {
     const session = await resolveAppSession(c);
-    const { manifest } = session;
+    const { manifest, workspaceId } = session;
     return c.json({
       name: manifest.name,
       title: manifest.title,
       description: manifest.description,
+      visibility: manifest.visibility ?? "private",
       workflows: manifest.workflows ?? [],
       allowedTools: manifest.allowedTools,
       role: session.role,
-      widget: manifest.widgetPath ? true : false,
+      liveUrl: manifest.dir ? `/apps/${workspaceId}/${manifest.name}` : undefined,
     });
   } catch (err) {
     return errorResponse(c, err);
   }
 });
-
-// ---------------------------------------------------------------------------
-// GET /apps/:workspaceId/:name/widget — the widget UI
-//
-// Serves an HTML shell that loads the patchwork compiler from esm.sh,
-// fetches the widget source (inlined here), and mounts it with every
-// namespace call proxied back to this app's tool endpoint with the viewer's
-// token. Served same-origin under aprovan.com, so the shared auth token in
-// localStorage (the @aprovan/ui client's storage key) just works.
-// ---------------------------------------------------------------------------
-
-appsRouter.get("/:workspaceId/:name/widget", async (c) => {
-  try {
-    const session = await resolveAppSession(c).catch(async (err) => {
-      // The widget page itself is public chrome — auth happens client-side
-      // with the viewer's stored token. Only 404 (no such app) is fatal here.
-      if (err instanceof ServiceError && err.status === 404) throw err;
-      const workspaceId = c.req.param("workspaceId")!;
-      const name = c.req.param("name")!;
-      const manifest = await readApp(workspaceId, name);
-      if (!manifest) throw new ServiceError("Not found", 404);
-      return { manifest, workspaceId, sub: "", role: "user" as const, ctx: { workspaceId, userId: "" } };
-    });
-    const { manifest, workspaceId } = session;
-    if (!manifest.widgetPath) throw new ServiceError("This app has no widget UI", 404);
-
-    const file = await getFsStore().read(workspaceId, manifest.widgetPath);
-    if (!file) throw new ServiceError("Widget source missing", 404);
-
-    const html = buildWidgetShell(manifest, workspaceId, file.content);
-    return c.newResponse(html, 200, {
-      "Content-Type": "text/html; charset=utf-8",
-      "Cache-Control": "no-store",
-    });
-  } catch (err) {
-    return errorResponse(c, err);
-  }
-});
-
-function buildWidgetShell(manifest: AppManifest, workspaceId: string, source: string): string {
-  const title = manifest.title ?? manifest.name;
-  // The widget's injected namespaces are the allow-list's namespaces — the
-  // widget can only reference what the app surface will actually serve.
-  const services = [...new Set(manifest.allowedTools.map((tool) => tool.split(".")[0]!))];
-  const config = {
-    app: manifest.name,
-    workspaceId,
-    title,
-    appBase: `/api/gateway/apps/${workspaceId}/${manifest.name}`,
-    services,
-    source,
-  };
-  // The shell compiles the widget in-browser with the published patchwork
-  // compiler and binds each allow-listed namespace to the app tools endpoint.
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>${title.replace(/</g, "&lt;")}</title>
-<style>
-  body { margin: 0; font-family: system-ui, sans-serif; }
-  #status { padding: 16px; color: #666; font-size: 14px; }
-  #root { min-height: 100vh; }
-</style>
-</head>
-<body>
-<div id="status">Loading ${title.replace(/</g, "&lt;")}…</div>
-<div id="root"></div>
-<script>window.__APP_CONFIG__ = ${JSON.stringify(config).replace(/</g, "\\u003c")};</script>
-<script type="module">
-const cfg = window.__APP_CONFIG__;
-const status = document.getElementById("status");
-
-// The @aprovan/ui auth client mirrors the access token here for same-origin
-// non-React callers — exactly this case.
-const token =
-  localStorage.getItem("aprovan.accessToken") ||
-  localStorage.getItem("patchwork_access_token") ||
-  "";
-
-async function callTool(namespace, procedure, args) {
-  const res = await fetch(cfg.appBase + "/tools/" + namespace + "/" + procedure, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      ...(token ? { "X-Aprovan-Authorization": "Bearer " + token } : {}),
-    },
-    body: JSON.stringify({ args }),
-  });
-  const body = await res.json();
-  if (!res.ok) throw new Error(body.error || (namespace + "." + procedure + " failed"));
-  return body.data;
-}
-
-try {
-  // Version-pinned: esm.sh caches the unversioned "latest" redirect for
-  // hours, so a bare spec can silently serve a stale compiler.
-  const { createCompiler } = await import("https://esm.sh/@aprovan/patchwork-compiler@0.1.2");
-  const compiler = await createCompiler({
-    image: "@aprovan/patchwork-image-shadcn@0.1.2",
-    cdnBaseUrl: "https://esm.sh",
-    widgetCdnBaseUrl: "https://esm.sh",
-    proxyUrl: cfg.appBase + "/tools",
-    proxyFetch: (url, init) => fetch(url, {
-      ...init,
-      headers: {
-        ...(init && init.headers ? init.headers : {}),
-        ...(token ? { "X-Aprovan-Authorization": "Bearer " + token } : {}),
-      },
-    }),
-  });
-  const widget = await compiler.compile(cfg.source, {
-    name: cfg.app,
-    version: "1.0.0",
-    platform: "browser",
-    image: "@aprovan/patchwork-image-shadcn",
-    services: cfg.services,
-  }, { typescript: true });
-  status.remove();
-  await compiler.mount(widget, { target: document.getElementById("root"), mode: "iframe", sandbox: ["allow-scripts", "allow-same-origin"] });
-} catch (err) {
-  status.textContent = "Failed to load app: " + (err && err.message ? err.message : err) +
-    (token ? "" : " — sign in at https://aprovan.com first so the app can reach its data.");
-  console.error(err);
-}
-</script>
-</body>
-</html>`;
-}
 
 // ---------------------------------------------------------------------------
 // POST /apps/:workspaceId/:name/tools/:namespace/:procedure

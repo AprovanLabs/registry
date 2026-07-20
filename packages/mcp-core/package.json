@@ -27,7 +27,6 @@
     "@utdk/datadog": "workspace:*",
     "@utdk/figma": "workspace:*",
     "@utdk/github": "workspace:*",
-    "@utdk/google": "workspace:*",
     "@utdk/hubspot": "workspace:*",
     "@utdk/intercom": "workspace:*",
     "@utdk/jira": "workspace:*",
@@ -40,7 +39,8 @@
     "@utdk/spotify": "workspace:*",
     "@utdk/stripe": "workspace:*",
     "@utdk/twilio": "workspace:*",
-    "@utdk/zendesk": "workspace:*"
+    "@utdk/zendesk": "workspace:*",
+    "utdk": "workspace:*"
   },
   "devDependencies": {
     "@types/node": "^25.5.0",

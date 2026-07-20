@@ -30,6 +30,8 @@ export interface CatalogProviderSummary {
   packageName: string;
   icon: string | null;
   auth: ProviderAuthInfo;
+  /** Whether the provider can deliver outbound webhooks (bundler webhook intel). */
+  webhooks: boolean;
   /** Vendor site (branding), when known. */
   site: string | null;
   /** Upstream spec origin — the vendor's domain, never an aggregator. */
@@ -145,6 +147,7 @@ const LLM_CHAT_ALIASES: CatalogProviderSummary[] = [
     packageName: "utdk/openai",
     icon: null,
     auth: { methods: ["bearer_token"], declared: true, apiKeyHeader: null, oauth: null },
+    webhooks: false,
     site: "https://synthetic.new",
     originDomain: null,
     originSpecUrl: null,

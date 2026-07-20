@@ -300,12 +300,12 @@ describe("nested provider rendering", () => {
       ] satisfies RegistryProvider[],
     );
 
-    expect(rendered).toContain('export * from "./books/index.js";');
-    expect(rendered).toContain("export { default as books }");
-    expect(rendered).toContain('export * from "./calendar/index.js";');
+    expect(rendered).toContain('export { default as books } from "./books/index.js";');
+    expect(rendered).toContain('export { default as calendar } from "./calendar/index.js";');
+    expect(rendered).not.toContain("export *");
   });
 
-  it("uses the namespace package name for nested providers", () => {
+  it("renders the namespace package as a private, nameless subpath package", () => {
     const rendered = renderNamespacePackageJson(
       "google.books",
       [{ name: "google.books", url: "https://example.com/google-books.json" }] satisfies RegistryProvider[],
@@ -313,7 +313,8 @@ describe("nested provider rendering", () => {
       new Date("2026-04-07T00:00:00.000Z"),
     );
 
-    expect(rendered).toContain('"name": "@utdk/google"');
+    expect(rendered).toContain('"private": true');
+    expect(rendered).not.toContain('"name":');
     expect(rendered).toContain('"namespace": "google"');
     expect(rendered).toContain('"providers": [');
     expect(rendered).toContain('"google/books"');

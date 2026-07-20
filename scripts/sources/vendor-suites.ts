@@ -4,13 +4,13 @@
  * (Google, Microsoft) in data/registry.json.
  *
  * The registry models a vendor suite as `<vendor>/<service>` names —
- * `googleapis/drive`, `microsoft/graph` — which the bundler turns into
+ * `google/drive`, `microsoft/graph` — which the bundler turns into
  * per-service utdk subpath exports plus a vendor-level index
- * (`utdk/googleapis`, `utdk/microsoft`). This script:
+ * (`utdk/google`, `utdk/microsoft`). This script:
  *
  * 1. **Validates** the suite: every generated utdk package directory whose
  *    `package.json#utdk.provider` names a suite provider must still have a
- *    registry entry — orphans (e.g. stale pre-rename `google/<service>`
+ *    registry entry — orphans (e.g. stale pre-rename `googleapis/<service>`
  *    packages) are reported.
  * 2. **Curates** the popular services: attaches the vendor OAuth credential
  *    template (`options.auth`), branding, and documentation URLs — the docs
@@ -85,21 +85,23 @@ type VendorSuite = {
 const SUITES: VendorSuite[] = [
   {
     vendor: "google",
-    prefixes: ["googleapis/", "google/"],
+    // "googleapis/" is the pre-rename prefix — kept so any stale generated
+    // package under it is reported as an orphan.
+    prefixes: ["google/", "googleapis/"],
     site: "https://developers.google.com",
     auth: GOOGLE_OAUTH,
     services: [
-      { name: "googleapis/drive", docsUrl: "https://developers.google.com/workspace/drive/api/reference/rest" },
-      { name: "googleapis/gmail", docsUrl: "https://developers.google.com/workspace/gmail/api/reference/rest" },
-      { name: "googleapis/calendar", docsUrl: "https://developers.google.com/workspace/calendar/api/v3/reference" },
-      { name: "googleapis/sheets", docsUrl: "https://developers.google.com/workspace/sheets/api/reference/rest" },
-      { name: "googleapis/docs", docsUrl: "https://developers.google.com/workspace/docs/api/reference/rest" },
-      { name: "googleapis/slides", docsUrl: "https://developers.google.com/workspace/slides/api/reference/rest" },
-      { name: "googleapis/forms", docsUrl: "https://developers.google.com/workspace/forms/api/reference/rest" },
-      { name: "googleapis/tasks", docsUrl: "https://developers.google.com/workspace/tasks/reference/rest" },
-      { name: "googleapis/people", docsUrl: "https://developers.google.com/people/api/rest" },
-      { name: "googleapis/books", docsUrl: "https://developers.google.com/books/docs/v1/reference" },
-      { name: "googleapis/youtube", docsUrl: "https://developers.google.com/youtube/v3/docs" },
+      { name: "google/drive", docsUrl: "https://developers.google.com/workspace/drive/api/reference/rest" },
+      { name: "google/gmail", docsUrl: "https://developers.google.com/workspace/gmail/api/reference/rest" },
+      { name: "google/calendar", docsUrl: "https://developers.google.com/workspace/calendar/api/v3/reference" },
+      { name: "google/sheets", docsUrl: "https://developers.google.com/workspace/sheets/api/reference/rest" },
+      { name: "google/docs", docsUrl: "https://developers.google.com/workspace/docs/api/reference/rest" },
+      { name: "google/slides", docsUrl: "https://developers.google.com/workspace/slides/api/reference/rest" },
+      { name: "google/forms", docsUrl: "https://developers.google.com/workspace/forms/api/reference/rest" },
+      { name: "google/tasks", docsUrl: "https://developers.google.com/workspace/tasks/reference/rest" },
+      { name: "google/people", docsUrl: "https://developers.google.com/people/api/rest" },
+      { name: "google/books", docsUrl: "https://developers.google.com/books/docs/v1/reference" },
+      { name: "google/youtube", docsUrl: "https://developers.google.com/youtube/v3/docs" },
     ],
   },
   {

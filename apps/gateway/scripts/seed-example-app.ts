@@ -1,9 +1,9 @@
 #!/usr/bin/env tsx
 /**
  * seed-example-app.ts — publish the LIIFT4 Tracker example app into a
- * workspace and validate the app surface end-to-end: widget source in the
- * VFS, manifest published, and per-(app, user) keyvalue isolation exercised
- * exactly the way the public /apps routes do it.
+ * workspace and validate the app surface end-to-end: app folder in the VFS
+ * (index.tsx entrypoint), manifest published, and per-(app, user) keyvalue
+ * co-location exercised exactly the way the public /apps routes do it.
  *
  * Usage:
  *   cd apps/gateway
@@ -45,15 +45,15 @@ if (!workspaceId || !userId) {
 }
 
 const scriptsDir = dirname(fileURLToPath(import.meta.url));
-const widgetSource = readFileSync(join(scriptsDir, "../examples/liift4-widget.tsx"), "utf-8");
+const appSource = readFileSync(join(scriptsDir, "../examples/liift4/index.tsx"), "utf-8");
 
 const ownerCtx = { workspaceId, userId };
 const apps = CORE_SERVICES["apps"]!;
 const store = getFsStore();
 
-// 1. Widget source is an ordinary workspace file.
-await store.write(workspaceId, "apps/liift4/widget.tsx", widgetSource, "text/typescript-jsx");
-console.log("✔ wrote apps/liift4/widget.tsx");
+// 1. The app is an ordinary workspace folder with an index.tsx entrypoint.
+await store.write(workspaceId, "apps/liift4/index.tsx", appSource, "text/typescript-jsx");
+console.log("✔ wrote apps/liift4/index.tsx");
 
 // 2. Publish the app bundle.
 const published = await apps.call(ownerCtx, "publish", {
@@ -61,17 +61,19 @@ const published = await apps.call(ownerCtx, "publish", {
   title: "LIIFT4 Tracker",
   description:
     "Weight tracker for the LIIFT4 program — weeks, round-split days, and a core timer. Your log is private to your account and follows you across devices.",
-  widget_path: "apps/liift4/widget.tsx",
+  dir: "apps/liift4",
+  visibility: "private",
   allowed_tools: ["keyvalue.*"],
   rate_limit: { rps: 10, burst: 30 },
 });
 console.log("✔ published:", JSON.stringify(published, null, 2));
 
-// 3. Validate per-user isolation through the same dispatch the /apps routes use.
+// 3. Validate per-user co-located partitions through the same dispatch the
+//    /apps routes use — data lands next to the app in apps/liift4/data/<user>/.
 const asUser = (sub: string) => ({
   workspaceId,
   userId: sub,
-  appScope: { app: "liift4", userId: sub, role: "user" as const },
+  appScope: { app: "liift4", dir: "apps/liift4", userId: sub, role: "user" as const },
 });
 
 await invokeTool(asUser("validation-alice"), "keyvalue", "set", {
@@ -96,10 +98,13 @@ const owner = (await invokeTool(ownerCtx, "keyvalue", "get", {
 if (alice.value.weights["w1:legs:0:0"] !== 45) throw new Error("alice partition wrong");
 if (bob.value.weeks.length !== 2) throw new Error("bob partition wrong");
 if (owner.value !== null) throw new Error("owner namespace polluted");
-console.log("✔ per-user partitions isolated (alice / bob / owner all distinct)");
+
+const aliceFile = await store.read(workspaceId, "apps/liift4/data/validation-alice/liift4-state");
+if (!aliceFile) throw new Error("alice data not co-located under apps/liift4/data/");
+console.log("✔ per-user partitions isolated and co-located (apps/liift4/data/<user>/)");
 
 // Clean up validation partitions.
 await invokeTool(asUser("validation-alice"), "keyvalue", "delete", { key: "liift4-state" });
 await invokeTool(asUser("validation-bob"), "keyvalue", "delete", { key: "liift4-state" });
 
-console.log(`✔ done — widget: https://aprovan.com/api/gateway/apps/${workspaceId}/liift4/widget`);
+console.log(`✔ done — live app: https://aprovan.com/apps/${workspaceId}/liift4`);

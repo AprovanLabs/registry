@@ -1,3 +1,4 @@
+import { existsSync } from "node:fs";
 import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { buildClientToolMap } from "./client-api.js";
@@ -5,6 +6,11 @@ import { augmentProviderDocs, type AugmentProviderDocsResult } from "./docs/augm
 import { loadProviderDocs, type LoadProviderDocsOptions, type LoadProviderDocsResult } from "./docs/load.js";
 import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
 import { runAuthIntelPhase, type RunAuthIntelPhaseOptions, type RunAuthIntelPhaseResult } from "./phases/authIntel.js";
+import {
+  runWebhookIntelPhase,
+  type RunWebhookIntelPhaseOptions,
+  type RunWebhookIntelPhaseResult,
+} from "./phases/webhookIntel.js";
 import { runEnrichPhase, type RunEnrichPhaseOptions, type RunEnrichPhaseResult } from "./phases/enrich.js";
 import { runResearchPhase, type RunResearchPhaseOptions, type RunResearchPhaseResult } from "./phases/research.js";
 import { runReviewPhase, type RunReviewPhaseOptions, type RunReviewPhaseResult } from "./phases/review.js";
@@ -43,6 +49,9 @@ export {
   runAuthIntelPhase,
   type RunAuthIntelPhaseOptions,
   type RunAuthIntelPhaseResult,
+  runWebhookIntelPhase,
+  type RunWebhookIntelPhaseOptions,
+  type RunWebhookIntelPhaseResult,
   runResearchPhase,
   type RunResearchPhaseOptions,
   type RunResearchPhaseResult,
@@ -155,6 +164,9 @@ export async function augmentRegistryProviderDocs(
       packageJsonPath,
       renderProviderPackageJson(provider, openApiDocument, previousPackageJson, undefined, {
         docsMetadata: augmented.metadata,
+        // Suite leaves are private subpaths of the root "utdk" package —
+        // keep the docs rewrite consistent with the scaffold.
+        includePackageName: splitProviderName(provider.name).length === 1,
       }),
     ),
   ]);
@@ -188,8 +200,14 @@ export async function generateRegistryTypes(
   const legacyRuntimePath = path.join(providerDir, "runtime.ts");
   const providerSegments = splitProviderName(provider.name);
   const providerClientImportPath = getProviderClientImportPath(provider.name);
+  // The registry can hold hundreds of services per vendor namespace, but the
+  // namespace index/package must only reference services that have actually
+  // been generated — otherwise it would re-export modules that don't exist.
   const namespaceProviders = providers.filter(
-    (entry) => getProviderPackageRootName(entry.name) === getProviderPackageRootName(provider.name),
+    (entry) =>
+      getProviderPackageRootName(entry.name) === getProviderPackageRootName(provider.name) &&
+      (entry.name === provider.name ||
+        existsSync(path.join(resolveProviderOutputDir(entry.name, outputRoot), "index.ts"))),
   );
   const previousProviderPackageJson = await readOptionalTextFile(providerPackageJsonPath);
   const previousLeafPackageJson =

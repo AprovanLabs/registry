@@ -3,7 +3,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
   DEFAULT_OUTPUT_ROOT,
-  getProviderPackageName,
+  getProviderImportSpecifier,
   loadRegistryProviders,
   resolveProvider,
   resolveProviderOutputDir,
@@ -218,7 +218,7 @@ export async function runShipPhase(options: RunShipPhaseOptions): Promise<RunShi
 
   // Update the output catalog so consumers can discover provenance per provider
   await updateCatalog(outputRoot, provider.name, {
-    packageName: getProviderPackageName(provider.name),
+    packageName: getProviderImportSpecifier(provider.name),
     provenancePath: `./${splitProviderName(provider.name).join("/")}/provenance.json`,
     generatedAt,
     bundlerVersion,

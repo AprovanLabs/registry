@@ -20,6 +20,7 @@ export const GET: APIRoute = async () => {
       packageName: entry.packageName,
       icon: entry.openApiIcon,
       auth: entry.auth,
+      webhooks: entry.webhookIntel?.supported ?? false,
       site: entry.branding?.site ?? null,
       originDomain: entry.provenance?.originDomain ?? null,
       originSpecUrl: entry.provenance?.originSpecUrl ?? null,

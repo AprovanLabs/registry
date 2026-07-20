@@ -20,6 +20,7 @@
 
 import { loadAprovanEnv, dotenv } from "@aprovan/node";
 import { serve } from "@hono/node-server";
+import { Hono } from "hono";
 import { configureTelemetry } from "@utdk/common/telemetry";
 import { createApp } from "./app.js";
 import { initAuth, getAuthMode } from "./middleware/auth.js";
@@ -74,7 +75,15 @@ await initAuth();
 
 const app = createApp();
 
-serve({ fetch: app.fetch, port: PORT }, (info) => {
+// Live app pages, same shape as prod (aprovan.com/apps/...). Registered on
+// the outer app first so GET page requests win; API calls fall through to
+// the inner /apps router.
+const { liveAppsRouter } = await import("./routes/live-apps.js");
+const outer = new Hono();
+outer.route("/apps", liveAppsRouter);
+outer.route("/", app);
+
+serve({ fetch: outer.fetch, port: PORT }, (info) => {
   process.stderr.write(
     `[gateway] Listening on http://localhost:${info.port} (auth=${getAuthMode()})\n`,
   );

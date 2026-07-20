@@ -55,7 +55,7 @@ All `@utdk/*` workspace packages are supported as optional dependencies:
 - `@utdk/twilio`
 - `@utdk/datadog`
 - `@utdk/figma`
-- `@utdk/google`
+- `utdk/google/<service>` (suite — e.g. `UTDK_PROVIDERS=google/drive,google/gmail`)
 - `@utdk/openai`
 - `@utdk/spotify`
 

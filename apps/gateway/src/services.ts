@@ -19,6 +19,7 @@
 
 import { appsService } from "./apps/service.js";
 import { getFsStore, normalizeFsPath } from "./fs-store.js";
+import { webhooksService } from "./webhooks/service.js";
 import { workflowsService } from "./workflows/service.js";
 import type { ToolEntry } from "./routes/tools.js";
 
@@ -33,12 +34,15 @@ export interface ServiceContext {
   workflowDepth?: number;
   /**
    * Set when the caller reached the workspace through a published app (see
-   * src/apps). Data services partition state per (app, user): a keyvalue key
-   * `k` physically lives at `app:<app>:<userId>:k`, so an app user can only
-   * ever touch their own partition — the workout tracker's per-user weights,
-   * for example — while the owner workspace's own keys stay untouched.
+   * src/apps). Data is co-located with the app: a keyvalue key `k` for an
+   * app session physically lives at `<dir>/data/<userId>/k`, and vfs paths
+   * resolve relative to the app's own folder — so an app automatically owns
+   * its folder and an app user only ever touches their own partition, while
+   * the rest of the workspace stays untouched. Workspace paths outside the
+   * folder are reachable only via `~/<path>` when `.services/workspace.json`
+   * shares them with the app.
    */
-  appScope?: { app: string; userId: string; role: "admin" | "user" };
+  appScope?: { app: string; dir?: string; userId: string; role: "admin" | "user" };
 }
 
 export interface CoreService {
@@ -77,13 +81,18 @@ export class ServiceError extends Error {
 const KV_PREFIX = ".services/keyvalue/";
 
 /**
- * App sessions read and write inside a per-(app, user) partition. The
- * partition prefix itself satisfies IDENT_RE (`:`-separated), so scoped keys
- * remain ordinary keyvalue keys on the FS store.
+ * Where a keyvalue key physically lives. Workspace callers use the shared
+ * `.services/keyvalue/` folder; app sessions read and write a per-(app,
+ * user) partition co-located with the app itself (`<dir>/data/<userId>/`),
+ * so an app's data travels with its folder.
  */
-function scopedKey(ctx: ServiceContext, key: string): string {
-  if (!ctx.appScope) return key;
-  return `app:${ctx.appScope.app}:${ctx.appScope.userId}:${key}`;
+function kvPath(ctx: ServiceContext, key: string): string {
+  const scope = ctx.appScope;
+  if (!scope) return KV_PREFIX + key;
+  if (!scope.dir) {
+    throw new ServiceError(`App ${scope.app} has no folder (dir) configured`, 400);
+  }
+  return `${scope.dir}/data/${scope.userId}/${key}`;
 }
 
 const keyvalue: CoreService = {
@@ -123,14 +132,14 @@ const keyvalue: CoreService = {
     switch (procedure) {
       case "get": {
         const key = ident(args["key"], "key");
-        const file = await store.read(ctx.workspaceId, KV_PREFIX + scopedKey(ctx, key));
+        const file = await store.read(ctx.workspaceId, kvPath(ctx, key));
         return { key, value: file ? (JSON.parse(file.content) as unknown) : null };
       }
       case "set": {
         const key = ident(args["key"], "key");
         await store.write(
           ctx.workspaceId,
-          KV_PREFIX + scopedKey(ctx, key),
+          kvPath(ctx, key),
           JSON.stringify(args["value"] ?? null),
           "application/json",
         );
@@ -138,20 +147,19 @@ const keyvalue: CoreService = {
       }
       case "delete": {
         const key = ident(args["key"], "key");
-        const deleted = await store.remove(ctx.workspaceId, KV_PREFIX + scopedKey(ctx, key));
+        const deleted = await store.remove(ctx.workspaceId, kvPath(ctx, key));
         return { key, deleted };
       }
       case "list": {
         // FS listing is directory-style; key-prefix filtering happens here.
-        // App sessions only ever see their own partition, with the partition
-        // prefix stripped from the returned keys.
+        // App sessions only ever see their own co-located partition.
         const prefix = typeof args["prefix"] === "string" ? args["prefix"] : "";
-        const scope = scopedKey(ctx, "");
-        const entries = await store.list(ctx.workspaceId, KV_PREFIX.slice(0, -1));
+        const root = kvPath(ctx, "");
+        const entries = await store.list(ctx.workspaceId, root.replace(/\/$/, ""));
         const keys = entries
-          .map((e) => e.path.slice(KV_PREFIX.length))
-          .filter((k) => k.startsWith(scope))
-          .map((k) => k.slice(scope.length))
+          .map((e) => e.path)
+          .filter((p) => p.startsWith(root))
+          .map((p) => p.slice(root.length))
           .filter((k) => k.startsWith(prefix));
         return { keys };
       }
@@ -261,6 +269,41 @@ function fsPath(value: unknown): string {
   return path;
 }
 
+/**
+ * Resolve a vfs path for the caller. Workspace callers address the whole
+ * workspace. App sessions address their own folder (`data/x` means
+ * `<dir>/data/x`) with automatic access; `~/<path>` addresses the workspace
+ * root and is allowed only when `.services/workspace.json` shares that
+ * prefix with the app at the required level.
+ */
+async function resolveVfsPath(
+  ctx: ServiceContext,
+  value: unknown,
+  write: boolean,
+): Promise<string> {
+  const scope = ctx.appScope;
+  if (!scope) return fsPath(value);
+
+  if (!scope.dir) {
+    throw new ServiceError(`App ${scope.app} has no folder (dir) configured`, 400);
+  }
+  if (typeof value !== "string") {
+    throw new ServiceError("path must be a file path", 400);
+  }
+
+  if (value.startsWith("~/")) {
+    const path = fsPath(value.slice(2));
+    const { readWorkspaceConfig, shareAllows } = await import("./apps/store.js");
+    const config = await readWorkspaceConfig(ctx.workspaceId);
+    if (!shareAllows(config, scope.app, path, write)) {
+      throw new ServiceError(`Path not shared with this app: ~/${path}`, 403);
+    }
+    return path;
+  }
+
+  return fsPath(`${scope.dir}/${value}`);
+}
+
 const vfs: CoreService = {
   tools: [
     {
@@ -310,19 +353,26 @@ const vfs: CoreService = {
     switch (procedure) {
       case "list": {
         const raw = typeof args["prefix"] === "string" ? args["prefix"] : "";
+        if (ctx.appScope) {
+          if (!ctx.appScope.dir) {
+            throw new ServiceError(`App ${ctx.appScope.app} has no folder (dir) configured`, 400);
+          }
+          const root = raw ? await resolveVfsPath(ctx, raw, false) : ctx.appScope.dir;
+          return { entries: await store.list(ctx.workspaceId, root) };
+        }
         const prefix = raw ? normalizeFsPath(raw) : "";
         if (prefix === null) throw new ServiceError(`Invalid prefix: ${raw}`, 400);
         return { entries: await store.list(ctx.workspaceId, prefix) };
       }
       case "read": {
-        const path = fsPath(args["path"]);
+        const path = await resolveVfsPath(ctx, args["path"], false);
         const hash = typeof args["hash"] === "string" ? args["hash"] : undefined;
         const file = await store.read(ctx.workspaceId, path, hash);
         if (!file) throw new ServiceError(`Not found: ${path}`, 404);
         return file;
       }
       case "write": {
-        const path = fsPath(args["path"]);
+        const path = await resolveVfsPath(ctx, args["path"], true);
         if (typeof args["content"] !== "string") {
           throw new ServiceError("content must be a string", 400);
         }
@@ -336,7 +386,7 @@ const vfs: CoreService = {
         return meta;
       }
       case "delete": {
-        const path = fsPath(args["path"]);
+        const path = await resolveVfsPath(ctx, args["path"], true);
         const removed =
           args["recursive"] === true
             ? (await store.removePrefix(ctx.workspaceId, path)) > 0
@@ -555,6 +605,7 @@ export const CORE_SERVICES: Record<string, CoreService> = {
   registry,
   workflows: workflowsService,
   apps: appsService,
+  webhooks: webhooksService,
 };
 
 export function getCoreService(namespace: string): CoreService | undefined {

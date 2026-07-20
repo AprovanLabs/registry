@@ -136,6 +136,27 @@ export type RegistryAuthIntel = {
   } | null;
 };
 
+/** LLM-generated webhook intelligence (bundler webhook-intel phase → webhooks.json). */
+export type RegistryWebhookIntel = {
+  supported: boolean;
+  summary: string;
+  configMethods: Array<"console" | "api">;
+  events: Array<{ name: string; description: string }>;
+  managementEndpoints: Array<{
+    method: string;
+    path: string;
+    description: string;
+  }>;
+  signature: {
+    header: string | null;
+    scheme: string | null;
+    detail: string | null;
+  } | null;
+  payloadFormat: string | null;
+  docsUrl: string | null;
+  setupSteps: Array<{ title: string; detail: string }>;
+};
+
 export type RegistryDocPage = {
   slug: string;
   title: string;
@@ -286,6 +307,7 @@ export type RegistryEntry = {
   scorecardInfrastructure: string | null;
   auth: ProviderAuthInfo;
   authIntel: RegistryAuthIntel | null;
+  webhookIntel: RegistryWebhookIntel | null;
   provenance: RegistryProvenance | null;
   branding: RegistryBranding | null;
   operations: RegistryOperation[];
@@ -547,6 +569,9 @@ async function buildRegistryEntry(
   const authIntelFile = await readJson<{ auth?: RegistryAuthIntel }>(
     path.join(absolutePath, "auth.json"),
   );
+  const webhookIntelFile = await readJson<{ webhooks?: RegistryWebhookIntel }>(
+    path.join(absolutePath, "webhooks.json"),
+  );
   const readmeMarkdown = await readText(path.join(absolutePath, "README.md"));
   const docs = await loadDocs(path.join(absolutePath, "docs"));
 
@@ -611,6 +636,7 @@ async function buildRegistryEntry(
     scorecardInfrastructure,
     auth: extractProviderAuth(openApiDocument),
     authIntel: authIntelFile?.auth ?? null,
+    webhookIntel: webhookIntelFile?.webhooks ?? null,
     provenance: manifest?.utdk?.provenance ?? null,
     branding: manifest?.utdk?.branding ?? null,
     operations,

@@ -84,6 +84,13 @@ const originDomain = entry.provenance?.originDomain ?? null;
 // Chain-of-ownership rule: link the vendor's original spec, never the
 // aggregator cache we fetched through.
 const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
+// Webhook intel renders only for providers that can actually deliver hooks.
+const webhookIntel = entry.webhookIntel?.supported ? entry.webhookIntel : null;
+const MAX_WEBHOOK_EVENTS = 12;
+const visibleWebhookEvents = webhookIntel?.events.slice(0, MAX_WEBHOOK_EVENTS) ?? [];
+const hiddenWebhookEventCount = webhookIntel
+  ? Math.max(0, webhookIntel.events.length - MAX_WEBHOOK_EVENTS)
+  : 0;
 ---
 
 <BaseLayout
@@ -303,6 +310,79 @@ const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
                     Credentials are stored once in the registry credentials area; the gateway
                     injects them on every call.
                   </p>
+                </CardContent>
+              </Card>
+            ) : null}
+
+            {webhookIntel ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Webhooks</CardTitle>
+                  <CardDescription>{webhookIntel.summary}</CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-3">
+                  <div class="flex flex-wrap gap-2">
+                    {webhookIntel.configMethods.map((method) => (
+                      <Badge variant="secondary">
+                        {method === "console" ? "console setup" : "api setup"}
+                      </Badge>
+                    ))}
+                    {webhookIntel.signature?.header ? (
+                      <Badge variant="outline">
+                        signature: {webhookIntel.signature.header}
+                      </Badge>
+                    ) : null}
+                    {webhookIntel.payloadFormat ? (
+                      <Badge variant="outline">{webhookIntel.payloadFormat}</Badge>
+                    ) : null}
+                  </div>
+                  {visibleWebhookEvents.length > 0 ? (
+                    <div class="flex flex-col gap-1.5">
+                      <p class="text-sm font-medium">Events</p>
+                      <ul class="flex flex-col gap-1 text-sm">
+                        {visibleWebhookEvents.map((event) => (
+                          <li>
+                            <code class="font-mono text-xs">{event.name}</code>
+                            <span class="text-muted-foreground"> — {event.description}</span>
+                          </li>
+                        ))}
+                      </ul>
+                      {hiddenWebhookEventCount > 0 ? (
+                        <p class="text-xs text-muted-foreground">
+                          +{hiddenWebhookEventCount} more events
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : null}
+                  {webhookIntel.setupSteps.length > 0 ? (
+                    <ol class="flex list-decimal flex-col gap-2 pl-5 text-sm">
+                      {webhookIntel.setupSteps.map((step) => (
+                        <li>
+                          <span class="font-medium">{step.title}</span>
+                          <span class="text-muted-foreground"> — {step.detail}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  ) : null}
+                  <p class="text-xs text-muted-foreground">
+                    Register in your workspace: webhook registrations are managed from the
+                    Workflows panel (or the gateway <code>webhooks.*</code> tools) and receive
+                    deliveries at{" "}
+                    <code>
+                      https://aprovan.com/api/gateway/hooks/&lt;workspace&gt;/webhooks/&lt;id&gt;?token=…
+                    </code>
+                    .
+                  </p>
+                  {webhookIntel.docsUrl ? (
+                    <a
+                      class="text-xs font-medium text-primary underline-offset-4 hover:underline"
+                      href={webhookIntel.docsUrl}
+                      rel="noreferrer"
+                      target="_blank"
+                    >
+                      Provider webhook docs ↗
+                    </a>
+                  ) : null}
                 </CardContent>
               </Card>
             ) : null}

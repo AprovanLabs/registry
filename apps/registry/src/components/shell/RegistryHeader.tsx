@@ -10,8 +10,8 @@ import { AppHeader, type AppNavLink } from "@aprovan/ui/shell";
 import * as React from "react";
 import { HeaderSession } from "./HeaderSession";
 
+const APP_HOME: AppNavLink = { label: "Home", href: "https://aprovan.com/" };
 const APP_FAMILY: AppNavLink[] = [
-  { label: "Home", href: "https://aprovan.com/" },
   { label: "Chat", href: "https://aprovan.com/chat/" },
 ];
 
@@ -25,7 +25,7 @@ export function RegistryHeader({
   return (
     <AppHeader
       homeHref={homeHref}
-      links={[...links, ...APP_FAMILY]}
+      links={[APP_HOME, ...links, ...APP_FAMILY]}
       logo={
         <img
           alt=""

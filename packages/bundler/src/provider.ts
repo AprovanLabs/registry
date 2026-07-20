@@ -101,6 +101,16 @@ export function getProviderPackageName(providerName: string): string {
   return `@utdk/${getProviderPackageRootName(providerName)}`;
 }
 
+/**
+ * Import specifier consumers use for a provider's client.
+ * Top-level providers are scoped packages (@utdk/github); vendor-suite
+ * services are subpaths of the root "utdk" package (utdk/google/drive).
+ */
+export function getProviderImportSpecifier(providerName: string): string {
+  const segments = splitProviderName(providerName);
+  return segments.length > 1 ? `utdk/${segments.join("/")}` : `@utdk/${segments.join("/")}`;
+}
+
 export function getProviderClientImportPath(providerName: string): string {
   return `${"../".repeat(splitProviderName(providerName).length)}client.js`;
 }

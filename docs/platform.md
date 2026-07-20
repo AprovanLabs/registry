@@ -113,6 +113,19 @@ becomes the run's result.
 - **Webhook** — `POST /hooks/:workspaceId/:name`, authenticated by the
   per-workflow `hookToken` minted at registration (header `X-Hook-Token` or
   `?token=`). Mounted before Cognito auth; external systems can call it.
+- **Provider webhooks** — `webhooks.register` mints a stable inbound URL
+  (`POST /hooks/:ws/webhooks/:id`) for an external product's webhooks
+  (GitHub, Figma, Stripe, …) and fans deliveries out to the listed
+  workflows with `{ provider, event, payload }` as `input`. Deliveries
+  authenticate with the registration token or, better, the provider's HMAC
+  signature (`signature: { header, scheme, secret }` — e.g. GitHub's
+  `X-Hub-Signature-256`). Registrations are workspace-level or user-level
+  (`level: "user"`), optionally filtered to specific `events`, and carry
+  delivery stats (`deliveryCount`, `lastDeliveryAt`, `lastEvent`,
+  `lastError`) so the UI can show whether a hook is actually firing.
+  Provider pages in the registry render LLM-generated `webhooks.json` intel
+  (bundler `--phase webhooks`, mirroring auth intel): supported events,
+  signature scheme, and setup steps.
 - **Cron** — a minute tick (`POST /hooks/cron/tick`, guarded by
   `CRON_TICK_SECRET`) matches each registration's expression against the
   current UTC minute. Long-lived gateways self-tick; on Lambda, point an
@@ -164,22 +177,26 @@ One CloudFront distribution (core `WebStack`), one bucket, three prefixes:
 | `/` (+ `/privacy-policy`, `/auth/callback`) | aprovan.com | `scripts/deploy-web.sh` (bucket root, protects sibling prefixes — AWS S3 filter semantics: last matching filter wins, so protective excludes come after includes) |
 | `/chat/*` | patchwork | `scripts/deploy-web.sh` |
 | `/registry/*` | registry | `scripts/deploy-web.sh` |
-| `/api/*`, `/.well-known/*` | registry gateway (Lambda) | `infra/ && make deploy` |
+| `/api/*`, `/.well-known/*`, `/apps/*` | registry gateway (Lambda) | `infra/ && make deploy` |
 
 All deploy scripts resolve the bucket/distribution from SSM
 (`/aprovan/<env>/web/*`) — no hardcoded ids.
 
-## Apps: published bundles
+## Apps: published folders
 
-A workspace can **publish apps** — bundles other authenticated users consume
-without being workspace members. The owning workspace is the app's "account":
-its credentials execute, its FS stores the data, its members administer.
+A workspace can **publish apps** — folders other authenticated users consume
+without being workspace members. An app is a workspace folder following Node
+conventions: `index.tsx` is the UI entrypoint, and everything the app stores
+lives next to it under `<dir>/data/`. The owning workspace is the app's
+"account": its credentials execute, its FS stores the data, its members
+administer.
 
 ```
 apps.publish({
   name: "liift4",
   title: "LIIFT4 Tracker",
-  widget_path: "apps/liift4/widget.tsx",   // patchwork widget source in the VFS
+  dir: "apps/liift4",                      // folder; entry is <dir>/index.tsx
+  visibility: "private",                   // "public" pages need no account
   workflows: ["some-endpoint"],            // registered workflows the app exposes
   allowed_tools: ["keyvalue.*"],           // deny-by-default tool allow-list
   roles: { admins: [subs], access: "any"|"listed", users: [subs] },
@@ -187,27 +204,43 @@ apps.publish({
 })
 ```
 
-The manifest lives at `.services/apps/<name>.json`. Public surface
-(`routes/apps.ts`, token auth only — no membership):
+The manifest lives at `.services/apps/<name>.json`. Two surfaces:
+
+**Live pages** (`routes/live-apps.ts`, mounted at the domain root —
+CloudFront forwards `apps/*` to the gateway):
+
+- `GET /apps/:ws/:name` — the app as a standalone website. The shell fetches
+  the app's source project and compiles `<dir>/index.tsx` in-browser
+  (patchwork compiler from esm.sh); namespace calls proxy back to the app
+  tools endpoint with the viewer's token.
+- `GET /apps/:ws/:name/__project__` — the source project JSON; **this is
+  where `visibility` is enforced server-side** ("public" serves to anyone,
+  "private" requires a token passing the role model).
+- `GET /apps/:ws/:name/*` — static files from the app folder (never
+  `data/`), SPA-fallback to the page.
+
+**API** (`routes/apps.ts` under `/api/gateway/apps`, token auth only — no
+membership):
 
 - `GET  /apps/:ws/:name` — manifest + the caller's role
-- `GET  /apps/:ws/:name/widget` — HTML shell that compiles the widget
-  in-browser (patchwork compiler from esm.sh) and proxies its namespace calls
-  back to the app tools endpoint with the viewer's token (same-origin under
-  aprovan.com, so the shared auth token just works)
 - `POST /apps/:ws/:name/tools/:namespace/:procedure` — allow-list-gated,
   per-user rate-limited tool dispatch
 - `POST /apps/:ws/:name/workflows/:name/run` — run a bundled workflow
 
-**Per-user data**: app sessions carry `ServiceContext.appScope`, and data
-services partition on it — a keyvalue key `k` physically lives at
-`app:<app>:<userSub>:k`, so every app user gets a private partition (their
-workout log follows them across devices) and the owner workspace's own keys
-stay untouched. Workflows run through an app inherit the same scope.
+**Co-located per-user data**: app sessions carry `ServiceContext.appScope`
+(including the app's `dir`), and data services resolve into the app's own
+folder — a keyvalue key `k` physically lives at `<dir>/data/<userSub>/k`, so
+every app user gets a private partition that travels with the app folder,
+and the rest of the workspace stays untouched. App-session `vfs` paths
+resolve app-relative (automatic access to the app's own folder); paths
+outside it use the `~/<path>` form and are allowed only when
+`.services/workspace.json` shares that prefix
+(`{ shares: [{ prefix, apps: [names]|"*", mode: "read"|"readwrite" }] }`).
+Workflows run through an app inherit the same scope.
 
-The LIIFT4 Tracker (`apps/gateway/examples/liift4-widget.tsx`) is the
+The LIIFT4 Tracker (`apps/gateway/examples/liift4/index.tsx`) is the
 reference app: a full patchwork widget whose only backend is `keyvalue.*`
-through the app surface.
+through the app surface (`scripts/seed-example-app.ts` publishes it).
 
 ### Still ahead
 

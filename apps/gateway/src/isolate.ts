@@ -186,8 +186,10 @@ function buildAuthHeaders(
  * client factory name (e.g. "createGithubClient", "createGoogleCloudClient").
  */
 function toClientFactoryName(provider: string): string {
+  // Split on "/" and "." too — suite providers ("google/books") pascal-case
+  // per segment, matching the bundler's generated createGoogleBooksClient.
   const pascalCase = provider
-    .split(/[-_]/)
+    .split(/[-_/.]/)
     .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase())
     .join("");
   return `create${pascalCase}Client`;

@@ -12,6 +12,7 @@ import { Hono } from "hono";
 import { streamHandle } from "hono/aws-lambda";
 import { createApp } from "./app.js";
 import { initAuth } from "./middleware/auth.js";
+import { liveAppsRouter } from "./routes/live-apps.js";
 import { mcpRouter } from "./routes/mcp.js";
 import { wellKnownRouter } from "./routes/well-known.js";
 
@@ -49,6 +50,9 @@ app.route("/api/gateway", gateway);
 // resource metadata, which clients resolve at the domain root.
 app.route("/api/mcp", mcpRouter);
 app.route("/.well-known", wellKnownRouter);
+// Live app pages (https://aprovan.com/apps/<workspace>/<name>) — CloudFront
+// forwards `apps/*` here alongside `api/*`.
+app.route("/apps", liveAppsRouter);
 
 // Streaming handler — requires InvokeMode.RESPONSE_STREAM on the function URL
 // (see infra/src/gateway-lambda.ts). Buffered JSON responses still work; SSE

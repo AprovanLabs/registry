@@ -3,12 +3,15 @@
  * workspace. Like every core service it rides tool discovery, so chat can
  * publish an app ("publish my workout tracker for others") the same way it
  * registers workflows. The public consumption surface lives in
- * routes/apps.ts.
+ * routes/apps.ts; the live page surface in routes/live-apps.ts.
  */
 
+import { getFsStore } from "../fs-store.js";
 import { ServiceError, type CoreService } from "../services.js";
 import { readRegistration } from "../workflows/store.js";
 import {
+  APP_ENTRY_FILE,
+  appDir,
   appName,
   listApps,
   readApp,
@@ -65,18 +68,29 @@ function parseRateLimit(raw: unknown): AppRateLimit | undefined {
   return limit;
 }
 
+function parseVisibility(raw: unknown): "public" | "private" | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (raw !== "public" && raw !== "private") {
+    throw new ServiceError('visibility must be "public" or "private"', 400);
+  }
+  return raw;
+}
+
 function summarize(manifest: AppManifest, workspaceId: string) {
   return {
     name: manifest.name,
     title: manifest.title,
     description: manifest.description,
-    widgetPath: manifest.widgetPath,
+    dir: manifest.dir,
+    visibility: manifest.visibility ?? "private",
     workflows: manifest.workflows ?? [],
     allowedTools: manifest.allowedTools,
     roles: manifest.roles,
     rateLimit: manifest.rateLimit,
+    /** Live page URL (aprovan.com/apps/<workspace>/<name>). */
+    liveUrl: manifest.dir ? appPath(workspaceId, manifest.name) : undefined,
+    /** API surface base (/api/gateway/apps/...). */
     appPath: appPath(workspaceId, manifest.name),
-    widgetUrl: manifest.widgetPath ? `${appPath(workspaceId, manifest.name)}/widget` : undefined,
     updatedAt: manifest.updatedAt,
   };
 }
@@ -87,14 +101,15 @@ export const appsService: CoreService = {
       name: "apps.publish",
       operation: "publish",
       description:
-        "Publish (or update) an app: a bundle of workflows, an optional widget UI, a tool allow-list, roles, and per-user rate limits that other authenticated users can consume at /apps/<workspace>/<name>. App users get their own keyvalue data partition automatically.",
+        "Publish (or update) an app from a workspace folder: <dir>/index.tsx is the UI entrypoint, and app data is stored per-user next to the app in <dir>/data/. Includes workflows, a tool allow-list, roles, rate limits, and visibility ('public' pages need no Aprovan account to view; 'private' requires a signed-in account passing the role model). The live app serves at /apps/<workspace>/<name>.",
       inputSchema: {
         type: "object",
         properties: {
           name: { type: "string", description: "App id (kebab-case)" },
           title: { type: "string" },
           description: { type: "string" },
-          widget_path: { type: "string", description: "Workspace path of the app's widget source (e.g. apps/liift4/widget.tsx)" },
+          dir: { type: "string", description: "Workspace folder the app lives in (e.g. apps/liift4); entry is <dir>/index.tsx" },
+          visibility: { type: "string", enum: ["public", "private"], description: "Who can open the live page (default private)" },
           workflows: { type: "array", items: { type: "string" }, description: "Registered workflow names the app exposes as runnable endpoints" },
           allowed_tools: {
             type: "array",
@@ -129,10 +144,14 @@ export const appsService: CoreService = {
     {
       name: "apps.remove",
       operation: "remove",
-      description: "Unpublish an app (its data partitions remain in the workspace).",
+      description:
+        "Unpublish an app. By default its folder (UI + data) stays in the workspace; pass purge_data=true to delete the folder too.",
       inputSchema: {
         type: "object",
-        properties: { name: { type: "string" } },
+        properties: {
+          name: { type: "string" },
+          purge_data: { type: "boolean", description: "Also delete the app folder and all per-user data" },
+        },
         required: ["name"],
       },
     },
@@ -156,14 +175,25 @@ export const appsService: CoreService = {
             throw new ServiceError(`Unknown workflow: ${workflow}`, 400);
           }
         }
+        // Every app is a folder; `apps/<name>` is the convention when none is
+        // given. An explicitly pointed-at folder must have its entrypoint in
+        // place at publish time — publishing a live URL that 404s helps no one.
+        const explicitDir = args["dir"] !== undefined ? appDir(args["dir"]) : undefined;
+        const dir = explicitDir ?? existing?.dir ?? `apps/${name}`;
+        if (explicitDir && explicitDir !== existing?.dir) {
+          const entry = await getFsStore().read(ctx.workspaceId, `${dir}/${APP_ENTRY_FILE}`);
+          if (!entry) {
+            throw new ServiceError(`App entrypoint not found: ${dir}/${APP_ENTRY_FILE}`, 400);
+          }
+        }
         const now = new Date().toISOString();
         const manifest: AppManifest = {
           name,
           title: typeof args["title"] === "string" ? args["title"] : existing?.title,
           description:
             typeof args["description"] === "string" ? args["description"] : existing?.description,
-          widgetPath:
-            typeof args["widget_path"] === "string" ? args["widget_path"] : existing?.widgetPath,
+          dir,
+          visibility: parseVisibility(args["visibility"]) ?? existing?.visibility ?? "private",
           workflows,
           allowedTools: parseAllowedTools(args["allowed_tools"]),
           roles: parseRoles(args["roles"]) ?? existing?.roles,
@@ -187,7 +217,9 @@ export const appsService: CoreService = {
       }
       case "remove": {
         const name = appName(args["name"]);
-        const removed = await removeApp(ctx.workspaceId, name);
+        const removed = await removeApp(ctx.workspaceId, name, {
+          purgeData: args["purge_data"] === true,
+        });
         return { name, removed };
       }
       default:

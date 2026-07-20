@@ -5,7 +5,7 @@ import {
   resolveProviderDocsManifestPath,
   resolveProviderOutputDir,
 } from "../provider.js";
-import { stripProviderToolName, type RegistryProvider } from "../provider.js";
+import { getProviderImportSpecifier, stripProviderToolName, type RegistryProvider } from "../provider.js";
 import { buildPublicTypeMap } from "../openapi.js";
 import { createProviderSchemaTypes, type ProviderSchemaTypes } from "../render.js";
 import { schemaToObjectContent, schemaToTypeScriptType, type SchemaRenderContext } from "../schema.js";
@@ -204,7 +204,7 @@ function formatListOrNone(values: string[]): string {
 }
 
 function getClientPackageSpecifier(provider: string): string {
-  return `@utdk/${provider.replace(/\./g, "/")}`;
+  return getProviderImportSpecifier(provider);
 }
 
 function getOperationMethodName(

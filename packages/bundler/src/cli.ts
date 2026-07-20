@@ -3,6 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { DocsPipelineError } from "./docs/types.js";
 import { runAuthIntelPhase } from "./phases/authIntel.js";
+import { runWebhookIntelPhase } from "./phases/webhookIntel.js";
 import { runEnrichPhase } from "./phases/enrich.js";
 import { runResearchPhase } from "./phases/research.js";
 import { runReviewPhase } from "./phases/review.js";
@@ -34,7 +35,7 @@ function loadLocalEnv(): void {
 loadLocalEnv();
 
 type CliCommand = "generate" | "load-docs" | "augment-docs";
-type PipelinePhase = "research" | "enrich" | "auth" | "review" | "ship";
+type PipelinePhase = "research" | "enrich" | "auth" | "webhooks" | "review" | "ship";
 
 type ParsedCommand = {
   command: CliCommand;
@@ -59,13 +60,24 @@ function getOptionValue(argv: string[], index: number, flag: string): string {
 }
 
 function isValidPhase(value: string): value is PipelinePhase {
-  return value === "research" || value === "enrich" || value === "auth" || value === "review" || value === "ship";
+  return (
+    value === "research" ||
+    value === "enrich" ||
+    value === "auth" ||
+    value === "webhooks" ||
+    value === "review" ||
+    value === "ship"
+  );
 }
 
 function parseCommand(argv: string[]): ParsedCommand {
-  const [first, second, ...rest] = argv;
-  const command: CliCommand = first === "load-docs" || first === "augment-docs" || first === "generate" ? first : "generate";
-  const candidateProvider = command === "generate" && first !== "generate" ? first : second;
+  const [first, second, ...tail] = argv;
+  const explicitCommand = first === "load-docs" || first === "augment-docs" || first === "generate";
+  const command: CliCommand = explicitCommand ? (first as CliCommand) : "generate";
+  const candidateProvider = explicitCommand ? second : first;
+  // When the command is implicit ("<provider> --flag ..."), the second token
+  // is the first option — don't drop it.
+  const rest = explicitCommand ? tail : second === undefined ? [] : [second, ...tail];
 
   if (!candidateProvider) {
     throw new Error('Expected a provider name.');
@@ -88,7 +100,7 @@ function parseCommand(argv: string[]): ParsedCommand {
     if (token === "--phase") {
       const value = getOptionValue(rest, index, token);
       if (!isValidPhase(value)) {
-        throw new Error(`Unknown phase: ${value}. Valid phases are: research, enrich, auth, review, ship.`);
+        throw new Error(`Unknown phase: ${value}. Valid phases are: research, enrich, auth, webhooks, review, ship.`);
       }
       parsed.phase = value;
       index += 1;
@@ -179,6 +191,16 @@ async function main(): Promise<void> {
         overwrite: parsed.overwriteDocs,
       });
       writeJson({ ok: true, command: "generate", phase: "auth", provider: parsed.provider, result });
+      return;
+    }
+
+    if (parsed.phase === "webhooks") {
+      const result = await runWebhookIntelPhase({
+        provider: parsed.provider,
+        outputRoot: parsed.outputRoot,
+        overwrite: parsed.overwriteDocs,
+      });
+      writeJson({ ok: true, command: "generate", phase: "webhooks", provider: parsed.provider, result });
       return;
     }
 

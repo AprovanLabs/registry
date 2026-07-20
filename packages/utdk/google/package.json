@@ -1,6 +1,6 @@
 {
-  "name": "@utdk/google",
-  "version": "0.0.1-20260407.8",
+  "private": true,
+  "version": "0.0.1-20260719.11",
   "type": "module",
   "description": "Generated UTDK provider clients for google.",
   "keywords": [
@@ -11,25 +11,20 @@
   ],
   "utdk": {
     "namespace": "google",
-    "generation": 8,
-    "generatedAt": "2026-04-07T02:25:39.564Z",
+    "generation": 11,
+    "generatedAt": "2026-07-19T23:51:45.966Z",
     "providers": [
       "google/books",
+      "google/calendar",
+      "google/docs",
       "google/drive",
-      "google/fcm",
-      "google/home",
+      "google/forms",
+      "google/gmail",
+      "google/people",
+      "google/sheets",
+      "google/slides",
+      "google/tasks",
       "google/youtube"
-    ],
-    "auth": [
-      {
-        "auth_type": "oauth2",
-        "flow": "authorization_code",
-        "client_id": "${GOOGLE_CLIENT_ID}",
-        "client_secret": "${GOOGLE_CLIENT_SECRET}",
-        "authorization_url": "https://accounts.google.com/o/oauth2/v2/auth",
-        "token_url": "https://oauth2.googleapis.com/token",
-        "scopes": []
-      }
     ]
   }
 }

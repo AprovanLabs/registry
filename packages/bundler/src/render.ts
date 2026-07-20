@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import {
-  getProviderPackageName,
+  getProviderImportSpecifier,
   getProviderPackageRootName,
   normalizeProviderName,
   resolveRepoPath,
@@ -709,6 +709,7 @@ export function renderRootPackageJson(providers: RegistryProvider[]): string {
       private: true,
       type: "module",
       description: "Generated UTDK provider clients",
+      files: ["dist"],
       scripts: {
         build: "tsc -p tsconfig.json && node ./copy-assets.mjs",
         "check-types": "tsc -p tsconfig.json --noEmit",
@@ -730,6 +731,12 @@ export function renderRootPackageJson(providers: RegistryProvider[]): string {
           import: "./dist/client.js",
           default: "./dist/client.js",
         },
+        // The gateway Lambda resolves the provider catalog at runtime
+        // (utdk/registry.json), and mcp-core resolves per-provider
+        // openapi.json/package.json for suite providers (utdk/google/books/...).
+        "./registry.json": "./dist/registry.json",
+        "./*/openapi.json": "./dist/*/openapi.json",
+        "./*/package.json": "./dist/*/package.json",
         ...providerExports,
       },
     },
@@ -866,7 +873,7 @@ export function renderProviderReadme(
     "## Quick start",
     "",
     "```ts",
-    `import client from "@utdk/${provider.name}";`,
+    `import client from "${getProviderImportSpecifier(provider.name)}";`,
     "",
     "// Use the typed client to call provider operations",
     "const result = await client.someOperation({});",
@@ -901,13 +908,14 @@ export function renderNamespaceEntry(namespaceSegments: string[], providers: Reg
     childExports.set(childSegment, toCamelCase(childSegment));
   }
 
+  // Only re-export each service's default client. Star re-exports would
+  // collide at the vendor level — sibling services share type names
+  // (e.g. Channel, Comment, Thumbnail across the Google suite). Types stay
+  // importable per service (utdk/<vendor>/<service>).
   return [...childExports.entries()]
     .sort(([left], [right]) => left.localeCompare(right))
-    .map(
-      ([segment, identifier]) =>
-        `export * from "./${segment}/index.js";\nexport { default as ${identifier} } from "./${segment}/index.js";`,
-    )
-    .join("\n\n")
+    .map(([segment, identifier]) => `export { default as ${identifier} } from "./${segment}/index.js";`)
+    .join("\n")
     .concat("\n");
 }
 
@@ -924,7 +932,9 @@ export function renderNamespacePackageJson(
 
   return JSON.stringify(
     {
-      name: getProviderPackageName(providerName),
+      // Vendor namespaces are subpaths of the root "utdk" package
+      // (utdk/google, utdk/google/books), not standalone workspace packages.
+      private: true,
       version: `0.0.1-${dateStamp}.${generation}`,
       type: "module",
       description: `Generated UTDK provider clients for ${packageRootName}.`,

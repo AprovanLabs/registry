@@ -29,6 +29,8 @@
       "default": "./dist/client.js"
     },
     "./registry.json": "./dist/registry.json",
+    "./*/openapi.json": "./dist/*/openapi.json",
+    "./*/package.json": "./dist/*/package.json",
     "./ably-io": {
       "types": "./dist/ably-io/index.d.ts",
       "import": "./dist/ably-io/index.js",
@@ -6759,6 +6761,11 @@
       "import": "./dist/cloud-elements/ecwid/index.js",
       "default": "./dist/cloud-elements/ecwid/index.js"
     },
+    "./cloudflare": {
+      "types": "./dist/cloudflare/index.d.ts",
+      "import": "./dist/cloudflare/index.js",
+      "default": "./dist/cloudflare/index.js"
+    },
     "./cloudmersive": {
       "types": "./dist/cloudmersive/index.d.ts",
       "import": "./dist/cloudmersive/index.js",
@@ -7003,6 +7010,11 @@
       "types": "./dist/deeparteffects/index.d.ts",
       "import": "./dist/deeparteffects/index.js",
       "default": "./dist/deeparteffects/index.js"
+    },
+    "./deepgram": {
+      "types": "./dist/deepgram/index.d.ts",
+      "import": "./dist/deepgram/index.js",
+      "default": "./dist/deepgram/index.js"
     },
     "./departureboard": {
       "types": "./dist/departureboard/index.d.ts",
@@ -7499,6 +7511,11 @@
       "import": "./dist/flickr/index.js",
       "default": "./dist/flickr/index.js"
     },
+    "./fly-io": {
+      "types": "./dist/fly-io/index.d.ts",
+      "import": "./dist/fly-io/index.js",
+      "default": "./dist/fly-io/index.js"
+    },
     "./formapi": {
       "types": "./dist/formapi/index.d.ts",
       "import": "./dist/formapi/index.js",
@@ -7854,6 +7871,11 @@
       "import": "./dist/goog/index.js",
       "default": "./dist/goog/index.js"
     },
+    "./google": {
+      "types": "./dist/google/index.d.ts",
+      "import": "./dist/google/index.js",
+      "default": "./dist/google/index.js"
+    },
     "./google-cloud-run": {
       "types": "./dist/google-cloud-run/index.d.ts",
       "import": "./dist/google-cloud-run/index.js",
@@ -7869,1415 +7891,1410 @@
       "import": "./dist/google-home/index.js",
       "default": "./dist/google-home/index.js"
     },
-    "./googleapis": {
-      "types": "./dist/googleapis/index.d.ts",
-      "import": "./dist/googleapis/index.js",
-      "default": "./dist/googleapis/index.js"
-    },
-    "./googleapis/abusiveexperiencereport": {
-      "types": "./dist/googleapis/abusiveexperiencereport/index.d.ts",
-      "import": "./dist/googleapis/abusiveexperiencereport/index.js",
-      "default": "./dist/googleapis/abusiveexperiencereport/index.js"
-    },
-    "./googleapis/acceleratedmobilepageurl": {
-      "types": "./dist/googleapis/acceleratedmobilepageurl/index.d.ts",
-      "import": "./dist/googleapis/acceleratedmobilepageurl/index.js",
-      "default": "./dist/googleapis/acceleratedmobilepageurl/index.js"
-    },
-    "./googleapis/accessapproval": {
-      "types": "./dist/googleapis/accessapproval/index.d.ts",
-      "import": "./dist/googleapis/accessapproval/index.js",
-      "default": "./dist/googleapis/accessapproval/index.js"
-    },
-    "./googleapis/accesscontextmanager": {
-      "types": "./dist/googleapis/accesscontextmanager/index.d.ts",
-      "import": "./dist/googleapis/accesscontextmanager/index.js",
-      "default": "./dist/googleapis/accesscontextmanager/index.js"
-    },
-    "./googleapis/acmedns": {
-      "types": "./dist/googleapis/acmedns/index.d.ts",
-      "import": "./dist/googleapis/acmedns/index.js",
-      "default": "./dist/googleapis/acmedns/index.js"
-    },
-    "./googleapis/adexchangebuyer": {
-      "types": "./dist/googleapis/adexchangebuyer/index.d.ts",
-      "import": "./dist/googleapis/adexchangebuyer/index.js",
-      "default": "./dist/googleapis/adexchangebuyer/index.js"
-    },
-    "./googleapis/adexchangebuyer2": {
-      "types": "./dist/googleapis/adexchangebuyer2/index.d.ts",
-      "import": "./dist/googleapis/adexchangebuyer2/index.js",
-      "default": "./dist/googleapis/adexchangebuyer2/index.js"
-    },
-    "./googleapis/adexperiencereport": {
-      "types": "./dist/googleapis/adexperiencereport/index.d.ts",
-      "import": "./dist/googleapis/adexperiencereport/index.js",
-      "default": "./dist/googleapis/adexperiencereport/index.js"
-    },
-    "./googleapis/admin": {
-      "types": "./dist/googleapis/admin/index.d.ts",
-      "import": "./dist/googleapis/admin/index.js",
-      "default": "./dist/googleapis/admin/index.js"
-    },
-    "./googleapis/admob": {
-      "types": "./dist/googleapis/admob/index.d.ts",
-      "import": "./dist/googleapis/admob/index.js",
-      "default": "./dist/googleapis/admob/index.js"
-    },
-    "./googleapis/adsense": {
-      "types": "./dist/googleapis/adsense/index.d.ts",
-      "import": "./dist/googleapis/adsense/index.js",
-      "default": "./dist/googleapis/adsense/index.js"
-    },
-    "./googleapis/adsensehost": {
-      "types": "./dist/googleapis/adsensehost/index.d.ts",
-      "import": "./dist/googleapis/adsensehost/index.js",
-      "default": "./dist/googleapis/adsensehost/index.js"
-    },
-    "./googleapis/advisorynotifications": {
-      "types": "./dist/googleapis/advisorynotifications/index.d.ts",
-      "import": "./dist/googleapis/advisorynotifications/index.js",
-      "default": "./dist/googleapis/advisorynotifications/index.js"
-    },
-    "./googleapis/alertcenter": {
-      "types": "./dist/googleapis/alertcenter/index.d.ts",
-      "import": "./dist/googleapis/alertcenter/index.js",
-      "default": "./dist/googleapis/alertcenter/index.js"
-    },
-    "./googleapis/analytics": {
-      "types": "./dist/googleapis/analytics/index.d.ts",
-      "import": "./dist/googleapis/analytics/index.js",
-      "default": "./dist/googleapis/analytics/index.js"
-    },
-    "./googleapis/analyticsadmin": {
-      "types": "./dist/googleapis/analyticsadmin/index.d.ts",
-      "import": "./dist/googleapis/analyticsadmin/index.js",
-      "default": "./dist/googleapis/analyticsadmin/index.js"
-    },
-    "./googleapis/analyticsdata": {
-      "types": "./dist/googleapis/analyticsdata/index.d.ts",
-      "import": "./dist/googleapis/analyticsdata/index.js",
-      "default": "./dist/googleapis/analyticsdata/index.js"
-    },
-    "./googleapis/analyticshub": {
-      "types": "./dist/googleapis/analyticshub/index.d.ts",
-      "import": "./dist/googleapis/analyticshub/index.js",
-      "default": "./dist/googleapis/analyticshub/index.js"
-    },
-    "./googleapis/analyticsreporting": {
-      "types": "./dist/googleapis/analyticsreporting/index.d.ts",
-      "import": "./dist/googleapis/analyticsreporting/index.js",
-      "default": "./dist/googleapis/analyticsreporting/index.js"
-    },
-    "./googleapis/androiddeviceprovisioning": {
-      "types": "./dist/googleapis/androiddeviceprovisioning/index.d.ts",
-      "import": "./dist/googleapis/androiddeviceprovisioning/index.js",
-      "default": "./dist/googleapis/androiddeviceprovisioning/index.js"
-    },
-    "./googleapis/androidenterprise": {
-      "types": "./dist/googleapis/androidenterprise/index.d.ts",
-      "import": "./dist/googleapis/androidenterprise/index.js",
-      "default": "./dist/googleapis/androidenterprise/index.js"
-    },
-    "./googleapis/androidmanagement": {
-      "types": "./dist/googleapis/androidmanagement/index.d.ts",
-      "import": "./dist/googleapis/androidmanagement/index.js",
-      "default": "./dist/googleapis/androidmanagement/index.js"
-    },
-    "./googleapis/androidpublisher": {
-      "types": "./dist/googleapis/androidpublisher/index.d.ts",
-      "import": "./dist/googleapis/androidpublisher/index.js",
-      "default": "./dist/googleapis/androidpublisher/index.js"
-    },
-    "./googleapis/apigateway": {
-      "types": "./dist/googleapis/apigateway/index.d.ts",
-      "import": "./dist/googleapis/apigateway/index.js",
-      "default": "./dist/googleapis/apigateway/index.js"
-    },
-    "./googleapis/apigee": {
-      "types": "./dist/googleapis/apigee/index.d.ts",
-      "import": "./dist/googleapis/apigee/index.js",
-      "default": "./dist/googleapis/apigee/index.js"
-    },
-    "./googleapis/apigeeregistry": {
-      "types": "./dist/googleapis/apigeeregistry/index.d.ts",
-      "import": "./dist/googleapis/apigeeregistry/index.js",
-      "default": "./dist/googleapis/apigeeregistry/index.js"
-    },
-    "./googleapis/apikeys": {
-      "types": "./dist/googleapis/apikeys/index.d.ts",
-      "import": "./dist/googleapis/apikeys/index.js",
-      "default": "./dist/googleapis/apikeys/index.js"
-    },
-    "./googleapis/appengine": {
-      "types": "./dist/googleapis/appengine/index.d.ts",
-      "import": "./dist/googleapis/appengine/index.js",
-      "default": "./dist/googleapis/appengine/index.js"
-    },
-    "./googleapis/appsactivity": {
-      "types": "./dist/googleapis/appsactivity/index.d.ts",
-      "import": "./dist/googleapis/appsactivity/index.js",
-      "default": "./dist/googleapis/appsactivity/index.js"
-    },
-    "./googleapis/area120tables": {
-      "types": "./dist/googleapis/area120tables/index.d.ts",
-      "import": "./dist/googleapis/area120tables/index.js",
-      "default": "./dist/googleapis/area120tables/index.js"
-    },
-    "./googleapis/artifactregistry": {
-      "types": "./dist/googleapis/artifactregistry/index.d.ts",
-      "import": "./dist/googleapis/artifactregistry/index.js",
-      "default": "./dist/googleapis/artifactregistry/index.js"
-    },
-    "./googleapis/assuredworkloads": {
-      "types": "./dist/googleapis/assuredworkloads/index.d.ts",
-      "import": "./dist/googleapis/assuredworkloads/index.js",
-      "default": "./dist/googleapis/assuredworkloads/index.js"
-    },
-    "./googleapis/authorizedbuyersmarketplace": {
-      "types": "./dist/googleapis/authorizedbuyersmarketplace/index.d.ts",
-      "import": "./dist/googleapis/authorizedbuyersmarketplace/index.js",
-      "default": "./dist/googleapis/authorizedbuyersmarketplace/index.js"
-    },
-    "./googleapis/automl": {
-      "types": "./dist/googleapis/automl/index.d.ts",
-      "import": "./dist/googleapis/automl/index.js",
-      "default": "./dist/googleapis/automl/index.js"
-    },
-    "./googleapis/baremetalsolution": {
-      "types": "./dist/googleapis/baremetalsolution/index.d.ts",
-      "import": "./dist/googleapis/baremetalsolution/index.js",
-      "default": "./dist/googleapis/baremetalsolution/index.js"
-    },
-    "./googleapis/batch": {
-      "types": "./dist/googleapis/batch/index.d.ts",
-      "import": "./dist/googleapis/batch/index.js",
-      "default": "./dist/googleapis/batch/index.js"
-    },
-    "./googleapis/beyondcorp": {
-      "types": "./dist/googleapis/beyondcorp/index.d.ts",
-      "import": "./dist/googleapis/beyondcorp/index.js",
-      "default": "./dist/googleapis/beyondcorp/index.js"
-    },
-    "./googleapis/bigquery": {
-      "types": "./dist/googleapis/bigquery/index.d.ts",
-      "import": "./dist/googleapis/bigquery/index.js",
-      "default": "./dist/googleapis/bigquery/index.js"
-    },
-    "./googleapis/bigqueryconnection": {
-      "types": "./dist/googleapis/bigqueryconnection/index.d.ts",
-      "import": "./dist/googleapis/bigqueryconnection/index.js",
-      "default": "./dist/googleapis/bigqueryconnection/index.js"
-    },
-    "./googleapis/bigquerydatatransfer": {
-      "types": "./dist/googleapis/bigquerydatatransfer/index.d.ts",
-      "import": "./dist/googleapis/bigquerydatatransfer/index.js",
-      "default": "./dist/googleapis/bigquerydatatransfer/index.js"
-    },
-    "./googleapis/bigqueryreservation": {
-      "types": "./dist/googleapis/bigqueryreservation/index.d.ts",
-      "import": "./dist/googleapis/bigqueryreservation/index.js",
-      "default": "./dist/googleapis/bigqueryreservation/index.js"
-    },
-    "./googleapis/bigtableadmin": {
-      "types": "./dist/googleapis/bigtableadmin/index.d.ts",
-      "import": "./dist/googleapis/bigtableadmin/index.js",
-      "default": "./dist/googleapis/bigtableadmin/index.js"
-    },
-    "./googleapis/billingbudgets": {
-      "types": "./dist/googleapis/billingbudgets/index.d.ts",
-      "import": "./dist/googleapis/billingbudgets/index.js",
-      "default": "./dist/googleapis/billingbudgets/index.js"
-    },
-    "./googleapis/binaryauthorization": {
-      "types": "./dist/googleapis/binaryauthorization/index.d.ts",
-      "import": "./dist/googleapis/binaryauthorization/index.js",
-      "default": "./dist/googleapis/binaryauthorization/index.js"
-    },
-    "./googleapis/blogger": {
-      "types": "./dist/googleapis/blogger/index.d.ts",
-      "import": "./dist/googleapis/blogger/index.js",
-      "default": "./dist/googleapis/blogger/index.js"
-    },
-    "./googleapis/books": {
-      "types": "./dist/googleapis/books/index.d.ts",
-      "import": "./dist/googleapis/books/index.js",
-      "default": "./dist/googleapis/books/index.js"
-    },
-    "./googleapis/businessprofileperformance": {
-      "types": "./dist/googleapis/businessprofileperformance/index.d.ts",
-      "import": "./dist/googleapis/businessprofileperformance/index.js",
-      "default": "./dist/googleapis/businessprofileperformance/index.js"
-    },
-    "./googleapis/calendar": {
-      "types": "./dist/googleapis/calendar/index.d.ts",
-      "import": "./dist/googleapis/calendar/index.js",
-      "default": "./dist/googleapis/calendar/index.js"
-    },
-    "./googleapis/certificatemanager": {
-      "types": "./dist/googleapis/certificatemanager/index.d.ts",
-      "import": "./dist/googleapis/certificatemanager/index.js",
-      "default": "./dist/googleapis/certificatemanager/index.js"
-    },
-    "./googleapis/chat": {
-      "types": "./dist/googleapis/chat/index.d.ts",
-      "import": "./dist/googleapis/chat/index.js",
-      "default": "./dist/googleapis/chat/index.js"
-    },
-    "./googleapis/chromemanagement": {
-      "types": "./dist/googleapis/chromemanagement/index.d.ts",
-      "import": "./dist/googleapis/chromemanagement/index.js",
-      "default": "./dist/googleapis/chromemanagement/index.js"
-    },
-    "./googleapis/chromepolicy": {
-      "types": "./dist/googleapis/chromepolicy/index.d.ts",
-      "import": "./dist/googleapis/chromepolicy/index.js",
-      "default": "./dist/googleapis/chromepolicy/index.js"
-    },
-    "./googleapis/chromeuxreport": {
-      "types": "./dist/googleapis/chromeuxreport/index.d.ts",
-      "import": "./dist/googleapis/chromeuxreport/index.js",
-      "default": "./dist/googleapis/chromeuxreport/index.js"
-    },
-    "./googleapis/civicinfo": {
-      "types": "./dist/googleapis/civicinfo/index.d.ts",
-      "import": "./dist/googleapis/civicinfo/index.js",
-      "default": "./dist/googleapis/civicinfo/index.js"
-    },
-    "./googleapis/classroom": {
-      "types": "./dist/googleapis/classroom/index.d.ts",
-      "import": "./dist/googleapis/classroom/index.js",
-      "default": "./dist/googleapis/classroom/index.js"
-    },
-    "./googleapis/cloudasset": {
-      "types": "./dist/googleapis/cloudasset/index.d.ts",
-      "import": "./dist/googleapis/cloudasset/index.js",
-      "default": "./dist/googleapis/cloudasset/index.js"
-    },
-    "./googleapis/cloudbilling": {
-      "types": "./dist/googleapis/cloudbilling/index.d.ts",
-      "import": "./dist/googleapis/cloudbilling/index.js",
-      "default": "./dist/googleapis/cloudbilling/index.js"
-    },
-    "./googleapis/cloudbuild": {
-      "types": "./dist/googleapis/cloudbuild/index.d.ts",
-      "import": "./dist/googleapis/cloudbuild/index.js",
-      "default": "./dist/googleapis/cloudbuild/index.js"
-    },
-    "./googleapis/cloudchannel": {
-      "types": "./dist/googleapis/cloudchannel/index.d.ts",
-      "import": "./dist/googleapis/cloudchannel/index.js",
-      "default": "./dist/googleapis/cloudchannel/index.js"
-    },
-    "./googleapis/clouddebugger": {
-      "types": "./dist/googleapis/clouddebugger/index.d.ts",
-      "import": "./dist/googleapis/clouddebugger/index.js",
-      "default": "./dist/googleapis/clouddebugger/index.js"
-    },
-    "./googleapis/clouddeploy": {
-      "types": "./dist/googleapis/clouddeploy/index.d.ts",
-      "import": "./dist/googleapis/clouddeploy/index.js",
-      "default": "./dist/googleapis/clouddeploy/index.js"
-    },
-    "./googleapis/clouderrorreporting": {
-      "types": "./dist/googleapis/clouderrorreporting/index.d.ts",
-      "import": "./dist/googleapis/clouderrorreporting/index.js",
-      "default": "./dist/googleapis/clouderrorreporting/index.js"
-    },
-    "./googleapis/cloudfunctions": {
-      "types": "./dist/googleapis/cloudfunctions/index.d.ts",
-      "import": "./dist/googleapis/cloudfunctions/index.js",
-      "default": "./dist/googleapis/cloudfunctions/index.js"
-    },
-    "./googleapis/cloudidentity": {
-      "types": "./dist/googleapis/cloudidentity/index.d.ts",
-      "import": "./dist/googleapis/cloudidentity/index.js",
-      "default": "./dist/googleapis/cloudidentity/index.js"
-    },
-    "./googleapis/cloudiot": {
-      "types": "./dist/googleapis/cloudiot/index.d.ts",
-      "import": "./dist/googleapis/cloudiot/index.js",
-      "default": "./dist/googleapis/cloudiot/index.js"
-    },
-    "./googleapis/cloudkms": {
-      "types": "./dist/googleapis/cloudkms/index.d.ts",
-      "import": "./dist/googleapis/cloudkms/index.js",
-      "default": "./dist/googleapis/cloudkms/index.js"
-    },
-    "./googleapis/cloudprivatecatalog": {
-      "types": "./dist/googleapis/cloudprivatecatalog/index.d.ts",
-      "import": "./dist/googleapis/cloudprivatecatalog/index.js",
-      "default": "./dist/googleapis/cloudprivatecatalog/index.js"
-    },
-    "./googleapis/cloudprivatecatalogproducer": {
-      "types": "./dist/googleapis/cloudprivatecatalogproducer/index.d.ts",
-      "import": "./dist/googleapis/cloudprivatecatalogproducer/index.js",
-      "default": "./dist/googleapis/cloudprivatecatalogproducer/index.js"
-    },
-    "./googleapis/cloudprofiler": {
-      "types": "./dist/googleapis/cloudprofiler/index.d.ts",
-      "import": "./dist/googleapis/cloudprofiler/index.js",
-      "default": "./dist/googleapis/cloudprofiler/index.js"
-    },
-    "./googleapis/cloudresourcemanager": {
-      "types": "./dist/googleapis/cloudresourcemanager/index.d.ts",
-      "import": "./dist/googleapis/cloudresourcemanager/index.js",
-      "default": "./dist/googleapis/cloudresourcemanager/index.js"
-    },
-    "./googleapis/cloudscheduler": {
-      "types": "./dist/googleapis/cloudscheduler/index.d.ts",
-      "import": "./dist/googleapis/cloudscheduler/index.js",
-      "default": "./dist/googleapis/cloudscheduler/index.js"
-    },
-    "./googleapis/cloudsearch": {
-      "types": "./dist/googleapis/cloudsearch/index.d.ts",
-      "import": "./dist/googleapis/cloudsearch/index.js",
-      "default": "./dist/googleapis/cloudsearch/index.js"
-    },
-    "./googleapis/cloudshell": {
-      "types": "./dist/googleapis/cloudshell/index.d.ts",
-      "import": "./dist/googleapis/cloudshell/index.js",
-      "default": "./dist/googleapis/cloudshell/index.js"
-    },
-    "./googleapis/cloudsupport": {
-      "types": "./dist/googleapis/cloudsupport/index.d.ts",
-      "import": "./dist/googleapis/cloudsupport/index.js",
-      "default": "./dist/googleapis/cloudsupport/index.js"
-    },
-    "./googleapis/cloudtasks": {
-      "types": "./dist/googleapis/cloudtasks/index.d.ts",
-      "import": "./dist/googleapis/cloudtasks/index.js",
-      "default": "./dist/googleapis/cloudtasks/index.js"
-    },
-    "./googleapis/cloudtrace": {
-      "types": "./dist/googleapis/cloudtrace/index.d.ts",
-      "import": "./dist/googleapis/cloudtrace/index.js",
-      "default": "./dist/googleapis/cloudtrace/index.js"
-    },
-    "./googleapis/commentanalyzer": {
-      "types": "./dist/googleapis/commentanalyzer/index.d.ts",
-      "import": "./dist/googleapis/commentanalyzer/index.js",
-      "default": "./dist/googleapis/commentanalyzer/index.js"
-    },
-    "./googleapis/composer": {
-      "types": "./dist/googleapis/composer/index.d.ts",
-      "import": "./dist/googleapis/composer/index.js",
-      "default": "./dist/googleapis/composer/index.js"
-    },
-    "./googleapis/compute": {
-      "types": "./dist/googleapis/compute/index.d.ts",
-      "import": "./dist/googleapis/compute/index.js",
-      "default": "./dist/googleapis/compute/index.js"
-    },
-    "./googleapis/connectors": {
-      "types": "./dist/googleapis/connectors/index.d.ts",
-      "import": "./dist/googleapis/connectors/index.js",
-      "default": "./dist/googleapis/connectors/index.js"
-    },
-    "./googleapis/contactcenteraiplatform": {
-      "types": "./dist/googleapis/contactcenteraiplatform/index.d.ts",
-      "import": "./dist/googleapis/contactcenteraiplatform/index.js",
-      "default": "./dist/googleapis/contactcenteraiplatform/index.js"
-    },
-    "./googleapis/contactcenterinsights": {
-      "types": "./dist/googleapis/contactcenterinsights/index.d.ts",
-      "import": "./dist/googleapis/contactcenterinsights/index.js",
-      "default": "./dist/googleapis/contactcenterinsights/index.js"
-    },
-    "./googleapis/container": {
-      "types": "./dist/googleapis/container/index.d.ts",
-      "import": "./dist/googleapis/container/index.js",
-      "default": "./dist/googleapis/container/index.js"
-    },
-    "./googleapis/containeranalysis": {
-      "types": "./dist/googleapis/containeranalysis/index.d.ts",
-      "import": "./dist/googleapis/containeranalysis/index.js",
-      "default": "./dist/googleapis/containeranalysis/index.js"
-    },
-    "./googleapis/content": {
-      "types": "./dist/googleapis/content/index.d.ts",
-      "import": "./dist/googleapis/content/index.js",
-      "default": "./dist/googleapis/content/index.js"
-    },
-    "./googleapis/contentwarehouse": {
-      "types": "./dist/googleapis/contentwarehouse/index.d.ts",
-      "import": "./dist/googleapis/contentwarehouse/index.js",
-      "default": "./dist/googleapis/contentwarehouse/index.js"
-    },
-    "./googleapis/customsearch": {
-      "types": "./dist/googleapis/customsearch/index.d.ts",
-      "import": "./dist/googleapis/customsearch/index.js",
-      "default": "./dist/googleapis/customsearch/index.js"
-    },
-    "./googleapis/datacatalog": {
-      "types": "./dist/googleapis/datacatalog/index.d.ts",
-      "import": "./dist/googleapis/datacatalog/index.js",
-      "default": "./dist/googleapis/datacatalog/index.js"
-    },
-    "./googleapis/dataflow": {
-      "types": "./dist/googleapis/dataflow/index.d.ts",
-      "import": "./dist/googleapis/dataflow/index.js",
-      "default": "./dist/googleapis/dataflow/index.js"
-    },
-    "./googleapis/dataform": {
-      "types": "./dist/googleapis/dataform/index.d.ts",
-      "import": "./dist/googleapis/dataform/index.js",
-      "default": "./dist/googleapis/dataform/index.js"
-    },
-    "./googleapis/datafusion": {
-      "types": "./dist/googleapis/datafusion/index.d.ts",
-      "import": "./dist/googleapis/datafusion/index.js",
-      "default": "./dist/googleapis/datafusion/index.js"
-    },
-    "./googleapis/datalabeling": {
-      "types": "./dist/googleapis/datalabeling/index.d.ts",
-      "import": "./dist/googleapis/datalabeling/index.js",
-      "default": "./dist/googleapis/datalabeling/index.js"
-    },
-    "./googleapis/datalineage": {
-      "types": "./dist/googleapis/datalineage/index.d.ts",
-      "import": "./dist/googleapis/datalineage/index.js",
-      "default": "./dist/googleapis/datalineage/index.js"
-    },
-    "./googleapis/datamigration": {
-      "types": "./dist/googleapis/datamigration/index.d.ts",
-      "import": "./dist/googleapis/datamigration/index.js",
-      "default": "./dist/googleapis/datamigration/index.js"
-    },
-    "./googleapis/datapipelines": {
-      "types": "./dist/googleapis/datapipelines/index.d.ts",
-      "import": "./dist/googleapis/datapipelines/index.js",
-      "default": "./dist/googleapis/datapipelines/index.js"
-    },
-    "./googleapis/dataplex": {
-      "types": "./dist/googleapis/dataplex/index.d.ts",
-      "import": "./dist/googleapis/dataplex/index.js",
-      "default": "./dist/googleapis/dataplex/index.js"
-    },
-    "./googleapis/dataproc": {
-      "types": "./dist/googleapis/dataproc/index.d.ts",
-      "import": "./dist/googleapis/dataproc/index.js",
-      "default": "./dist/googleapis/dataproc/index.js"
-    },
-    "./googleapis/datastore": {
-      "types": "./dist/googleapis/datastore/index.d.ts",
-      "import": "./dist/googleapis/datastore/index.js",
-      "default": "./dist/googleapis/datastore/index.js"
-    },
-    "./googleapis/datastream": {
-      "types": "./dist/googleapis/datastream/index.d.ts",
-      "import": "./dist/googleapis/datastream/index.js",
-      "default": "./dist/googleapis/datastream/index.js"
-    },
-    "./googleapis/deploymentmanager": {
-      "types": "./dist/googleapis/deploymentmanager/index.d.ts",
-      "import": "./dist/googleapis/deploymentmanager/index.js",
-      "default": "./dist/googleapis/deploymentmanager/index.js"
-    },
-    "./googleapis/dfareporting": {
-      "types": "./dist/googleapis/dfareporting/index.d.ts",
-      "import": "./dist/googleapis/dfareporting/index.js",
-      "default": "./dist/googleapis/dfareporting/index.js"
-    },
-    "./googleapis/dialogflow": {
-      "types": "./dist/googleapis/dialogflow/index.d.ts",
-      "import": "./dist/googleapis/dialogflow/index.js",
-      "default": "./dist/googleapis/dialogflow/index.js"
-    },
-    "./googleapis/digitalassetlinks": {
-      "types": "./dist/googleapis/digitalassetlinks/index.d.ts",
-      "import": "./dist/googleapis/digitalassetlinks/index.js",
-      "default": "./dist/googleapis/digitalassetlinks/index.js"
-    },
-    "./googleapis/discovery": {
-      "types": "./dist/googleapis/discovery/index.d.ts",
-      "import": "./dist/googleapis/discovery/index.js",
-      "default": "./dist/googleapis/discovery/index.js"
-    },
-    "./googleapis/discoveryengine": {
-      "types": "./dist/googleapis/discoveryengine/index.d.ts",
-      "import": "./dist/googleapis/discoveryengine/index.js",
-      "default": "./dist/googleapis/discoveryengine/index.js"
-    },
-    "./googleapis/displayvideo": {
-      "types": "./dist/googleapis/displayvideo/index.d.ts",
-      "import": "./dist/googleapis/displayvideo/index.js",
-      "default": "./dist/googleapis/displayvideo/index.js"
-    },
-    "./googleapis/dlp": {
-      "types": "./dist/googleapis/dlp/index.d.ts",
-      "import": "./dist/googleapis/dlp/index.js",
-      "default": "./dist/googleapis/dlp/index.js"
-    },
-    "./googleapis/dns": {
-      "types": "./dist/googleapis/dns/index.d.ts",
-      "import": "./dist/googleapis/dns/index.js",
-      "default": "./dist/googleapis/dns/index.js"
-    },
-    "./googleapis/docs": {
-      "types": "./dist/googleapis/docs/index.d.ts",
-      "import": "./dist/googleapis/docs/index.js",
-      "default": "./dist/googleapis/docs/index.js"
-    },
-    "./googleapis/documentai": {
-      "types": "./dist/googleapis/documentai/index.d.ts",
-      "import": "./dist/googleapis/documentai/index.js",
-      "default": "./dist/googleapis/documentai/index.js"
-    },
-    "./googleapis/domains": {
-      "types": "./dist/googleapis/domains/index.d.ts",
-      "import": "./dist/googleapis/domains/index.js",
-      "default": "./dist/googleapis/domains/index.js"
-    },
-    "./googleapis/domainsrdap": {
-      "types": "./dist/googleapis/domainsrdap/index.d.ts",
-      "import": "./dist/googleapis/domainsrdap/index.js",
-      "default": "./dist/googleapis/domainsrdap/index.js"
-    },
-    "./googleapis/doubleclickbidmanager": {
-      "types": "./dist/googleapis/doubleclickbidmanager/index.d.ts",
-      "import": "./dist/googleapis/doubleclickbidmanager/index.js",
-      "default": "./dist/googleapis/doubleclickbidmanager/index.js"
-    },
-    "./googleapis/doubleclicksearch": {
-      "types": "./dist/googleapis/doubleclicksearch/index.d.ts",
-      "import": "./dist/googleapis/doubleclicksearch/index.js",
-      "default": "./dist/googleapis/doubleclicksearch/index.js"
-    },
-    "./googleapis/drive": {
-      "types": "./dist/googleapis/drive/index.d.ts",
-      "import": "./dist/googleapis/drive/index.js",
-      "default": "./dist/googleapis/drive/index.js"
-    },
-    "./googleapis/driveactivity": {
-      "types": "./dist/googleapis/driveactivity/index.d.ts",
-      "import": "./dist/googleapis/driveactivity/index.js",
-      "default": "./dist/googleapis/driveactivity/index.js"
-    },
-    "./googleapis/drivelabels": {
-      "types": "./dist/googleapis/drivelabels/index.d.ts",
-      "import": "./dist/googleapis/drivelabels/index.js",
-      "default": "./dist/googleapis/drivelabels/index.js"
-    },
-    "./googleapis/essentialcontacts": {
-      "types": "./dist/googleapis/essentialcontacts/index.d.ts",
-      "import": "./dist/googleapis/essentialcontacts/index.js",
-      "default": "./dist/googleapis/essentialcontacts/index.js"
-    },
-    "./googleapis/eventarc": {
-      "types": "./dist/googleapis/eventarc/index.d.ts",
-      "import": "./dist/googleapis/eventarc/index.js",
-      "default": "./dist/googleapis/eventarc/index.js"
-    },
-    "./googleapis/factchecktools": {
-      "types": "./dist/googleapis/factchecktools/index.d.ts",
-      "import": "./dist/googleapis/factchecktools/index.js",
-      "default": "./dist/googleapis/factchecktools/index.js"
-    },
-    "./googleapis/fcm": {
-      "types": "./dist/googleapis/fcm/index.d.ts",
-      "import": "./dist/googleapis/fcm/index.js",
-      "default": "./dist/googleapis/fcm/index.js"
-    },
-    "./googleapis/fcmdata": {
-      "types": "./dist/googleapis/fcmdata/index.d.ts",
-      "import": "./dist/googleapis/fcmdata/index.js",
-      "default": "./dist/googleapis/fcmdata/index.js"
-    },
-    "./googleapis/file": {
-      "types": "./dist/googleapis/file/index.d.ts",
-      "import": "./dist/googleapis/file/index.js",
-      "default": "./dist/googleapis/file/index.js"
-    },
-    "./googleapis/firebase": {
-      "types": "./dist/googleapis/firebase/index.d.ts",
-      "import": "./dist/googleapis/firebase/index.js",
-      "default": "./dist/googleapis/firebase/index.js"
-    },
-    "./googleapis/firebaseappcheck": {
-      "types": "./dist/googleapis/firebaseappcheck/index.d.ts",
-      "import": "./dist/googleapis/firebaseappcheck/index.js",
-      "default": "./dist/googleapis/firebaseappcheck/index.js"
-    },
-    "./googleapis/firebaseappdistribution": {
-      "types": "./dist/googleapis/firebaseappdistribution/index.d.ts",
-      "import": "./dist/googleapis/firebaseappdistribution/index.js",
-      "default": "./dist/googleapis/firebaseappdistribution/index.js"
-    },
-    "./googleapis/firebasedatabase": {
-      "types": "./dist/googleapis/firebasedatabase/index.d.ts",
-      "import": "./dist/googleapis/firebasedatabase/index.js",
-      "default": "./dist/googleapis/firebasedatabase/index.js"
-    },
-    "./googleapis/firebasedynamiclinks": {
-      "types": "./dist/googleapis/firebasedynamiclinks/index.d.ts",
-      "import": "./dist/googleapis/firebasedynamiclinks/index.js",
-      "default": "./dist/googleapis/firebasedynamiclinks/index.js"
-    },
-    "./googleapis/firebasehosting": {
-      "types": "./dist/googleapis/firebasehosting/index.d.ts",
-      "import": "./dist/googleapis/firebasehosting/index.js",
-      "default": "./dist/googleapis/firebasehosting/index.js"
-    },
-    "./googleapis/firebaseml": {
-      "types": "./dist/googleapis/firebaseml/index.d.ts",
-      "import": "./dist/googleapis/firebaseml/index.js",
-      "default": "./dist/googleapis/firebaseml/index.js"
-    },
-    "./googleapis/firebaserules": {
-      "types": "./dist/googleapis/firebaserules/index.d.ts",
-      "import": "./dist/googleapis/firebaserules/index.js",
-      "default": "./dist/googleapis/firebaserules/index.js"
-    },
-    "./googleapis/firebasestorage": {
-      "types": "./dist/googleapis/firebasestorage/index.d.ts",
-      "import": "./dist/googleapis/firebasestorage/index.js",
-      "default": "./dist/googleapis/firebasestorage/index.js"
-    },
-    "./googleapis/firestore": {
-      "types": "./dist/googleapis/firestore/index.d.ts",
-      "import": "./dist/googleapis/firestore/index.js",
-      "default": "./dist/googleapis/firestore/index.js"
-    },
-    "./googleapis/fitness": {
-      "types": "./dist/googleapis/fitness/index.d.ts",
-      "import": "./dist/googleapis/fitness/index.js",
-      "default": "./dist/googleapis/fitness/index.js"
-    },
-    "./googleapis/forms": {
-      "types": "./dist/googleapis/forms/index.d.ts",
-      "import": "./dist/googleapis/forms/index.js",
-      "default": "./dist/googleapis/forms/index.js"
-    },
-    "./googleapis/games": {
-      "types": "./dist/googleapis/games/index.d.ts",
-      "import": "./dist/googleapis/games/index.js",
-      "default": "./dist/googleapis/games/index.js"
-    },
-    "./googleapis/gamesconfiguration": {
-      "types": "./dist/googleapis/gamesconfiguration/index.d.ts",
-      "import": "./dist/googleapis/gamesconfiguration/index.js",
-      "default": "./dist/googleapis/gamesconfiguration/index.js"
-    },
-    "./googleapis/gameservices": {
-      "types": "./dist/googleapis/gameservices/index.d.ts",
-      "import": "./dist/googleapis/gameservices/index.js",
-      "default": "./dist/googleapis/gameservices/index.js"
-    },
-    "./googleapis/gamesmanagement": {
-      "types": "./dist/googleapis/gamesmanagement/index.d.ts",
-      "import": "./dist/googleapis/gamesmanagement/index.js",
-      "default": "./dist/googleapis/gamesmanagement/index.js"
-    },
-    "./googleapis/genomics": {
-      "types": "./dist/googleapis/genomics/index.d.ts",
-      "import": "./dist/googleapis/genomics/index.js",
-      "default": "./dist/googleapis/genomics/index.js"
-    },
-    "./googleapis/gkebackup": {
-      "types": "./dist/googleapis/gkebackup/index.d.ts",
-      "import": "./dist/googleapis/gkebackup/index.js",
-      "default": "./dist/googleapis/gkebackup/index.js"
-    },
-    "./googleapis/gkehub": {
-      "types": "./dist/googleapis/gkehub/index.d.ts",
-      "import": "./dist/googleapis/gkehub/index.js",
-      "default": "./dist/googleapis/gkehub/index.js"
-    },
-    "./googleapis/gmail": {
-      "types": "./dist/googleapis/gmail/index.d.ts",
-      "import": "./dist/googleapis/gmail/index.js",
-      "default": "./dist/googleapis/gmail/index.js"
-    },
-    "./googleapis/gmailpostmastertools": {
-      "types": "./dist/googleapis/gmailpostmastertools/index.d.ts",
-      "import": "./dist/googleapis/gmailpostmastertools/index.js",
-      "default": "./dist/googleapis/gmailpostmastertools/index.js"
-    },
-    "./googleapis/groupsmigration": {
-      "types": "./dist/googleapis/groupsmigration/index.d.ts",
-      "import": "./dist/googleapis/groupsmigration/index.js",
-      "default": "./dist/googleapis/groupsmigration/index.js"
-    },
-    "./googleapis/groupssettings": {
-      "types": "./dist/googleapis/groupssettings/index.d.ts",
-      "import": "./dist/googleapis/groupssettings/index.js",
-      "default": "./dist/googleapis/groupssettings/index.js"
-    },
-    "./googleapis/healthcare": {
-      "types": "./dist/googleapis/healthcare/index.d.ts",
-      "import": "./dist/googleapis/healthcare/index.js",
-      "default": "./dist/googleapis/healthcare/index.js"
-    },
-    "./googleapis/homegraph": {
-      "types": "./dist/googleapis/homegraph/index.d.ts",
-      "import": "./dist/googleapis/homegraph/index.js",
-      "default": "./dist/googleapis/homegraph/index.js"
-    },
-    "./googleapis/iam": {
-      "types": "./dist/googleapis/iam/index.d.ts",
-      "import": "./dist/googleapis/iam/index.js",
-      "default": "./dist/googleapis/iam/index.js"
-    },
-    "./googleapis/iamcredentials": {
-      "types": "./dist/googleapis/iamcredentials/index.d.ts",
-      "import": "./dist/googleapis/iamcredentials/index.js",
-      "default": "./dist/googleapis/iamcredentials/index.js"
-    },
-    "./googleapis/iap": {
-      "types": "./dist/googleapis/iap/index.d.ts",
-      "import": "./dist/googleapis/iap/index.js",
-      "default": "./dist/googleapis/iap/index.js"
-    },
-    "./googleapis/ideahub": {
-      "types": "./dist/googleapis/ideahub/index.d.ts",
-      "import": "./dist/googleapis/ideahub/index.js",
-      "default": "./dist/googleapis/ideahub/index.js"
-    },
-    "./googleapis/identitytoolkit": {
-      "types": "./dist/googleapis/identitytoolkit/index.d.ts",
-      "import": "./dist/googleapis/identitytoolkit/index.js",
-      "default": "./dist/googleapis/identitytoolkit/index.js"
-    },
-    "./googleapis/ids": {
-      "types": "./dist/googleapis/ids/index.d.ts",
-      "import": "./dist/googleapis/ids/index.js",
-      "default": "./dist/googleapis/ids/index.js"
-    },
-    "./googleapis/indexing": {
-      "types": "./dist/googleapis/indexing/index.d.ts",
-      "import": "./dist/googleapis/indexing/index.js",
-      "default": "./dist/googleapis/indexing/index.js"
-    },
-    "./googleapis/integrations": {
-      "types": "./dist/googleapis/integrations/index.d.ts",
-      "import": "./dist/googleapis/integrations/index.js",
-      "default": "./dist/googleapis/integrations/index.js"
-    },
-    "./googleapis/jobs": {
-      "types": "./dist/googleapis/jobs/index.d.ts",
-      "import": "./dist/googleapis/jobs/index.js",
-      "default": "./dist/googleapis/jobs/index.js"
-    },
-    "./googleapis/keep": {
-      "types": "./dist/googleapis/keep/index.d.ts",
-      "import": "./dist/googleapis/keep/index.js",
-      "default": "./dist/googleapis/keep/index.js"
-    },
-    "./googleapis/kgsearch": {
-      "types": "./dist/googleapis/kgsearch/index.d.ts",
-      "import": "./dist/googleapis/kgsearch/index.js",
-      "default": "./dist/googleapis/kgsearch/index.js"
-    },
-    "./googleapis/kmsinventory": {
-      "types": "./dist/googleapis/kmsinventory/index.d.ts",
-      "import": "./dist/googleapis/kmsinventory/index.js",
-      "default": "./dist/googleapis/kmsinventory/index.js"
-    },
-    "./googleapis/language": {
-      "types": "./dist/googleapis/language/index.d.ts",
-      "import": "./dist/googleapis/language/index.js",
-      "default": "./dist/googleapis/language/index.js"
-    },
-    "./googleapis/libraryagent": {
-      "types": "./dist/googleapis/libraryagent/index.d.ts",
-      "import": "./dist/googleapis/libraryagent/index.js",
-      "default": "./dist/googleapis/libraryagent/index.js"
-    },
-    "./googleapis/licensing": {
-      "types": "./dist/googleapis/licensing/index.d.ts",
-      "import": "./dist/googleapis/licensing/index.js",
-      "default": "./dist/googleapis/licensing/index.js"
-    },
-    "./googleapis/lifesciences": {
-      "types": "./dist/googleapis/lifesciences/index.d.ts",
-      "import": "./dist/googleapis/lifesciences/index.js",
-      "default": "./dist/googleapis/lifesciences/index.js"
-    },
-    "./googleapis/localservices": {
-      "types": "./dist/googleapis/localservices/index.d.ts",
-      "import": "./dist/googleapis/localservices/index.js",
-      "default": "./dist/googleapis/localservices/index.js"
-    },
-    "./googleapis/logging": {
-      "types": "./dist/googleapis/logging/index.d.ts",
-      "import": "./dist/googleapis/logging/index.js",
-      "default": "./dist/googleapis/logging/index.js"
-    },
-    "./googleapis/managedidentities": {
-      "types": "./dist/googleapis/managedidentities/index.d.ts",
-      "import": "./dist/googleapis/managedidentities/index.js",
-      "default": "./dist/googleapis/managedidentities/index.js"
-    },
-    "./googleapis/manufacturers": {
-      "types": "./dist/googleapis/manufacturers/index.d.ts",
-      "import": "./dist/googleapis/manufacturers/index.js",
-      "default": "./dist/googleapis/manufacturers/index.js"
-    },
-    "./googleapis/memcache": {
-      "types": "./dist/googleapis/memcache/index.d.ts",
-      "import": "./dist/googleapis/memcache/index.js",
-      "default": "./dist/googleapis/memcache/index.js"
-    },
-    "./googleapis/metastore": {
-      "types": "./dist/googleapis/metastore/index.d.ts",
-      "import": "./dist/googleapis/metastore/index.js",
-      "default": "./dist/googleapis/metastore/index.js"
-    },
-    "./googleapis/migrationcenter": {
-      "types": "./dist/googleapis/migrationcenter/index.d.ts",
-      "import": "./dist/googleapis/migrationcenter/index.js",
-      "default": "./dist/googleapis/migrationcenter/index.js"
-    },
-    "./googleapis/mirror": {
-      "types": "./dist/googleapis/mirror/index.d.ts",
-      "import": "./dist/googleapis/mirror/index.js",
-      "default": "./dist/googleapis/mirror/index.js"
-    },
-    "./googleapis/ml": {
-      "types": "./dist/googleapis/ml/index.d.ts",
-      "import": "./dist/googleapis/ml/index.js",
-      "default": "./dist/googleapis/ml/index.js"
-    },
-    "./googleapis/monitoring": {
-      "types": "./dist/googleapis/monitoring/index.d.ts",
-      "import": "./dist/googleapis/monitoring/index.js",
-      "default": "./dist/googleapis/monitoring/index.js"
-    },
-    "./googleapis/my-business": {
-      "types": "./dist/googleapis/my-business/index.d.ts",
-      "import": "./dist/googleapis/my-business/index.js",
-      "default": "./dist/googleapis/my-business/index.js"
-    },
-    "./googleapis/mybusinessaccountmanagement": {
-      "types": "./dist/googleapis/mybusinessaccountmanagement/index.d.ts",
-      "import": "./dist/googleapis/mybusinessaccountmanagement/index.js",
-      "default": "./dist/googleapis/mybusinessaccountmanagement/index.js"
-    },
-    "./googleapis/mybusinessbusinesscalls": {
-      "types": "./dist/googleapis/mybusinessbusinesscalls/index.d.ts",
-      "import": "./dist/googleapis/mybusinessbusinesscalls/index.js",
-      "default": "./dist/googleapis/mybusinessbusinesscalls/index.js"
-    },
-    "./googleapis/mybusinessbusinessinformation": {
-      "types": "./dist/googleapis/mybusinessbusinessinformation/index.d.ts",
-      "import": "./dist/googleapis/mybusinessbusinessinformation/index.js",
-      "default": "./dist/googleapis/mybusinessbusinessinformation/index.js"
-    },
-    "./googleapis/mybusinesslodging": {
-      "types": "./dist/googleapis/mybusinesslodging/index.d.ts",
-      "import": "./dist/googleapis/mybusinesslodging/index.js",
-      "default": "./dist/googleapis/mybusinesslodging/index.js"
-    },
-    "./googleapis/mybusinessnotifications": {
-      "types": "./dist/googleapis/mybusinessnotifications/index.d.ts",
-      "import": "./dist/googleapis/mybusinessnotifications/index.js",
-      "default": "./dist/googleapis/mybusinessnotifications/index.js"
-    },
-    "./googleapis/mybusinessplaceactions": {
-      "types": "./dist/googleapis/mybusinessplaceactions/index.d.ts",
-      "import": "./dist/googleapis/mybusinessplaceactions/index.js",
-      "default": "./dist/googleapis/mybusinessplaceactions/index.js"
-    },
-    "./googleapis/mybusinessqanda": {
-      "types": "./dist/googleapis/mybusinessqanda/index.d.ts",
-      "import": "./dist/googleapis/mybusinessqanda/index.js",
-      "default": "./dist/googleapis/mybusinessqanda/index.js"
-    },
-    "./googleapis/mybusinessverifications": {
-      "types": "./dist/googleapis/mybusinessverifications/index.d.ts",
-      "import": "./dist/googleapis/mybusinessverifications/index.js",
-      "default": "./dist/googleapis/mybusinessverifications/index.js"
-    },
-    "./googleapis/networkconnectivity": {
-      "types": "./dist/googleapis/networkconnectivity/index.d.ts",
-      "import": "./dist/googleapis/networkconnectivity/index.js",
-      "default": "./dist/googleapis/networkconnectivity/index.js"
-    },
-    "./googleapis/networkmanagement": {
-      "types": "./dist/googleapis/networkmanagement/index.d.ts",
-      "import": "./dist/googleapis/networkmanagement/index.js",
-      "default": "./dist/googleapis/networkmanagement/index.js"
-    },
-    "./googleapis/networksecurity": {
-      "types": "./dist/googleapis/networksecurity/index.d.ts",
-      "import": "./dist/googleapis/networksecurity/index.js",
-      "default": "./dist/googleapis/networksecurity/index.js"
-    },
-    "./googleapis/networkservices": {
-      "types": "./dist/googleapis/networkservices/index.d.ts",
-      "import": "./dist/googleapis/networkservices/index.js",
-      "default": "./dist/googleapis/networkservices/index.js"
-    },
-    "./googleapis/notebooks": {
-      "types": "./dist/googleapis/notebooks/index.d.ts",
-      "import": "./dist/googleapis/notebooks/index.js",
-      "default": "./dist/googleapis/notebooks/index.js"
-    },
-    "./googleapis/oauth2": {
-      "types": "./dist/googleapis/oauth2/index.d.ts",
-      "import": "./dist/googleapis/oauth2/index.js",
-      "default": "./dist/googleapis/oauth2/index.js"
-    },
-    "./googleapis/ondemandscanning": {
-      "types": "./dist/googleapis/ondemandscanning/index.d.ts",
-      "import": "./dist/googleapis/ondemandscanning/index.js",
-      "default": "./dist/googleapis/ondemandscanning/index.js"
-    },
-    "./googleapis/orgpolicy": {
-      "types": "./dist/googleapis/orgpolicy/index.d.ts",
-      "import": "./dist/googleapis/orgpolicy/index.js",
-      "default": "./dist/googleapis/orgpolicy/index.js"
-    },
-    "./googleapis/osconfig": {
-      "types": "./dist/googleapis/osconfig/index.d.ts",
-      "import": "./dist/googleapis/osconfig/index.js",
-      "default": "./dist/googleapis/osconfig/index.js"
-    },
-    "./googleapis/oslogin": {
-      "types": "./dist/googleapis/oslogin/index.d.ts",
-      "import": "./dist/googleapis/oslogin/index.js",
-      "default": "./dist/googleapis/oslogin/index.js"
-    },
-    "./googleapis/pagespeedonline": {
-      "types": "./dist/googleapis/pagespeedonline/index.d.ts",
-      "import": "./dist/googleapis/pagespeedonline/index.js",
-      "default": "./dist/googleapis/pagespeedonline/index.js"
-    },
-    "./googleapis/paymentsresellersubscription": {
-      "types": "./dist/googleapis/paymentsresellersubscription/index.d.ts",
-      "import": "./dist/googleapis/paymentsresellersubscription/index.js",
-      "default": "./dist/googleapis/paymentsresellersubscription/index.js"
-    },
-    "./googleapis/people": {
-      "types": "./dist/googleapis/people/index.d.ts",
-      "import": "./dist/googleapis/people/index.js",
-      "default": "./dist/googleapis/people/index.js"
-    },
-    "./googleapis/playablelocations": {
-      "types": "./dist/googleapis/playablelocations/index.d.ts",
-      "import": "./dist/googleapis/playablelocations/index.js",
-      "default": "./dist/googleapis/playablelocations/index.js"
-    },
-    "./googleapis/playcustomapp": {
-      "types": "./dist/googleapis/playcustomapp/index.d.ts",
-      "import": "./dist/googleapis/playcustomapp/index.js",
-      "default": "./dist/googleapis/playcustomapp/index.js"
-    },
-    "./googleapis/playdeveloperreporting": {
-      "types": "./dist/googleapis/playdeveloperreporting/index.d.ts",
-      "import": "./dist/googleapis/playdeveloperreporting/index.js",
-      "default": "./dist/googleapis/playdeveloperreporting/index.js"
-    },
-    "./googleapis/playintegrity": {
-      "types": "./dist/googleapis/playintegrity/index.d.ts",
-      "import": "./dist/googleapis/playintegrity/index.js",
-      "default": "./dist/googleapis/playintegrity/index.js"
-    },
-    "./googleapis/plus": {
-      "types": "./dist/googleapis/plus/index.d.ts",
-      "import": "./dist/googleapis/plus/index.js",
-      "default": "./dist/googleapis/plus/index.js"
-    },
-    "./googleapis/policyanalyzer": {
-      "types": "./dist/googleapis/policyanalyzer/index.d.ts",
-      "import": "./dist/googleapis/policyanalyzer/index.js",
-      "default": "./dist/googleapis/policyanalyzer/index.js"
-    },
-    "./googleapis/policysimulator": {
-      "types": "./dist/googleapis/policysimulator/index.d.ts",
-      "import": "./dist/googleapis/policysimulator/index.js",
-      "default": "./dist/googleapis/policysimulator/index.js"
-    },
-    "./googleapis/policytroubleshooter": {
-      "types": "./dist/googleapis/policytroubleshooter/index.d.ts",
-      "import": "./dist/googleapis/policytroubleshooter/index.js",
-      "default": "./dist/googleapis/policytroubleshooter/index.js"
-    },
-    "./googleapis/poly": {
-      "types": "./dist/googleapis/poly/index.d.ts",
-      "import": "./dist/googleapis/poly/index.js",
-      "default": "./dist/googleapis/poly/index.js"
-    },
-    "./googleapis/privateca": {
-      "types": "./dist/googleapis/privateca/index.d.ts",
-      "import": "./dist/googleapis/privateca/index.js",
-      "default": "./dist/googleapis/privateca/index.js"
-    },
-    "./googleapis/prod-tt-sasportal": {
-      "types": "./dist/googleapis/prod-tt-sasportal/index.d.ts",
-      "import": "./dist/googleapis/prod-tt-sasportal/index.js",
-      "default": "./dist/googleapis/prod-tt-sasportal/index.js"
-    },
-    "./googleapis/proximitybeacon": {
-      "types": "./dist/googleapis/proximitybeacon/index.d.ts",
-      "import": "./dist/googleapis/proximitybeacon/index.js",
-      "default": "./dist/googleapis/proximitybeacon/index.js"
-    },
-    "./googleapis/publicca": {
-      "types": "./dist/googleapis/publicca/index.d.ts",
-      "import": "./dist/googleapis/publicca/index.js",
-      "default": "./dist/googleapis/publicca/index.js"
-    },
-    "./googleapis/pubsub": {
-      "types": "./dist/googleapis/pubsub/index.d.ts",
-      "import": "./dist/googleapis/pubsub/index.js",
-      "default": "./dist/googleapis/pubsub/index.js"
-    },
-    "./googleapis/pubsublite": {
-      "types": "./dist/googleapis/pubsublite/index.d.ts",
-      "import": "./dist/googleapis/pubsublite/index.js",
-      "default": "./dist/googleapis/pubsublite/index.js"
-    },
-    "./googleapis/readerrevenuesubscriptionlinking": {
-      "types": "./dist/googleapis/readerrevenuesubscriptionlinking/index.d.ts",
-      "import": "./dist/googleapis/readerrevenuesubscriptionlinking/index.js",
-      "default": "./dist/googleapis/readerrevenuesubscriptionlinking/index.js"
-    },
-    "./googleapis/realtimebidding": {
-      "types": "./dist/googleapis/realtimebidding/index.d.ts",
-      "import": "./dist/googleapis/realtimebidding/index.js",
-      "default": "./dist/googleapis/realtimebidding/index.js"
-    },
-    "./googleapis/recaptchaenterprise": {
-      "types": "./dist/googleapis/recaptchaenterprise/index.d.ts",
-      "import": "./dist/googleapis/recaptchaenterprise/index.js",
-      "default": "./dist/googleapis/recaptchaenterprise/index.js"
-    },
-    "./googleapis/recommendationengine": {
-      "types": "./dist/googleapis/recommendationengine/index.d.ts",
-      "import": "./dist/googleapis/recommendationengine/index.js",
-      "default": "./dist/googleapis/recommendationengine/index.js"
-    },
-    "./googleapis/recommender": {
-      "types": "./dist/googleapis/recommender/index.d.ts",
-      "import": "./dist/googleapis/recommender/index.js",
-      "default": "./dist/googleapis/recommender/index.js"
-    },
-    "./googleapis/redis": {
-      "types": "./dist/googleapis/redis/index.d.ts",
-      "import": "./dist/googleapis/redis/index.js",
-      "default": "./dist/googleapis/redis/index.js"
-    },
-    "./googleapis/remotebuildexecution": {
-      "types": "./dist/googleapis/remotebuildexecution/index.d.ts",
-      "import": "./dist/googleapis/remotebuildexecution/index.js",
-      "default": "./dist/googleapis/remotebuildexecution/index.js"
-    },
-    "./googleapis/replicapool": {
-      "types": "./dist/googleapis/replicapool/index.d.ts",
-      "import": "./dist/googleapis/replicapool/index.js",
-      "default": "./dist/googleapis/replicapool/index.js"
-    },
-    "./googleapis/reseller": {
-      "types": "./dist/googleapis/reseller/index.d.ts",
-      "import": "./dist/googleapis/reseller/index.js",
-      "default": "./dist/googleapis/reseller/index.js"
-    },
-    "./googleapis/resourcesettings": {
-      "types": "./dist/googleapis/resourcesettings/index.d.ts",
-      "import": "./dist/googleapis/resourcesettings/index.js",
-      "default": "./dist/googleapis/resourcesettings/index.js"
-    },
-    "./googleapis/retail": {
-      "types": "./dist/googleapis/retail/index.d.ts",
-      "import": "./dist/googleapis/retail/index.js",
-      "default": "./dist/googleapis/retail/index.js"
-    },
-    "./googleapis/run": {
-      "types": "./dist/googleapis/run/index.d.ts",
-      "import": "./dist/googleapis/run/index.js",
-      "default": "./dist/googleapis/run/index.js"
-    },
-    "./googleapis/runtimeconfig": {
-      "types": "./dist/googleapis/runtimeconfig/index.d.ts",
-      "import": "./dist/googleapis/runtimeconfig/index.js",
-      "default": "./dist/googleapis/runtimeconfig/index.js"
-    },
-    "./googleapis/safebrowsing": {
-      "types": "./dist/googleapis/safebrowsing/index.d.ts",
-      "import": "./dist/googleapis/safebrowsing/index.js",
-      "default": "./dist/googleapis/safebrowsing/index.js"
-    },
-    "./googleapis/sasportal": {
-      "types": "./dist/googleapis/sasportal/index.d.ts",
-      "import": "./dist/googleapis/sasportal/index.js",
-      "default": "./dist/googleapis/sasportal/index.js"
-    },
-    "./googleapis/script": {
-      "types": "./dist/googleapis/script/index.d.ts",
-      "import": "./dist/googleapis/script/index.js",
-      "default": "./dist/googleapis/script/index.js"
-    },
-    "./googleapis/searchads360": {
-      "types": "./dist/googleapis/searchads360/index.d.ts",
-      "import": "./dist/googleapis/searchads360/index.js",
-      "default": "./dist/googleapis/searchads360/index.js"
-    },
-    "./googleapis/searchconsole": {
-      "types": "./dist/googleapis/searchconsole/index.d.ts",
-      "import": "./dist/googleapis/searchconsole/index.js",
-      "default": "./dist/googleapis/searchconsole/index.js"
-    },
-    "./googleapis/secretmanager": {
-      "types": "./dist/googleapis/secretmanager/index.d.ts",
-      "import": "./dist/googleapis/secretmanager/index.js",
-      "default": "./dist/googleapis/secretmanager/index.js"
-    },
-    "./googleapis/securitycenter": {
-      "types": "./dist/googleapis/securitycenter/index.d.ts",
-      "import": "./dist/googleapis/securitycenter/index.js",
-      "default": "./dist/googleapis/securitycenter/index.js"
-    },
-    "./googleapis/servicebroker": {
-      "types": "./dist/googleapis/servicebroker/index.d.ts",
-      "import": "./dist/googleapis/servicebroker/index.js",
-      "default": "./dist/googleapis/servicebroker/index.js"
-    },
-    "./googleapis/serviceconsumermanagement": {
-      "types": "./dist/googleapis/serviceconsumermanagement/index.d.ts",
-      "import": "./dist/googleapis/serviceconsumermanagement/index.js",
-      "default": "./dist/googleapis/serviceconsumermanagement/index.js"
-    },
-    "./googleapis/servicecontrol": {
-      "types": "./dist/googleapis/servicecontrol/index.d.ts",
-      "import": "./dist/googleapis/servicecontrol/index.js",
-      "default": "./dist/googleapis/servicecontrol/index.js"
-    },
-    "./googleapis/servicedirectory": {
-      "types": "./dist/googleapis/servicedirectory/index.d.ts",
-      "import": "./dist/googleapis/servicedirectory/index.js",
-      "default": "./dist/googleapis/servicedirectory/index.js"
-    },
-    "./googleapis/servicemanagement": {
-      "types": "./dist/googleapis/servicemanagement/index.d.ts",
-      "import": "./dist/googleapis/servicemanagement/index.js",
-      "default": "./dist/googleapis/servicemanagement/index.js"
-    },
-    "./googleapis/servicenetworking": {
-      "types": "./dist/googleapis/servicenetworking/index.d.ts",
-      "import": "./dist/googleapis/servicenetworking/index.js",
-      "default": "./dist/googleapis/servicenetworking/index.js"
-    },
-    "./googleapis/serviceusage": {
-      "types": "./dist/googleapis/serviceusage/index.d.ts",
-      "import": "./dist/googleapis/serviceusage/index.js",
-      "default": "./dist/googleapis/serviceusage/index.js"
-    },
-    "./googleapis/sheets": {
-      "types": "./dist/googleapis/sheets/index.d.ts",
-      "import": "./dist/googleapis/sheets/index.js",
-      "default": "./dist/googleapis/sheets/index.js"
-    },
-    "./googleapis/shoppingcontent": {
-      "types": "./dist/googleapis/shoppingcontent/index.d.ts",
-      "import": "./dist/googleapis/shoppingcontent/index.js",
-      "default": "./dist/googleapis/shoppingcontent/index.js"
-    },
-    "./googleapis/siteverification": {
-      "types": "./dist/googleapis/siteverification/index.d.ts",
-      "import": "./dist/googleapis/siteverification/index.js",
-      "default": "./dist/googleapis/siteverification/index.js"
-    },
-    "./googleapis/slides": {
-      "types": "./dist/googleapis/slides/index.d.ts",
-      "import": "./dist/googleapis/slides/index.js",
-      "default": "./dist/googleapis/slides/index.js"
-    },
-    "./googleapis/smartdevicemanagement": {
-      "types": "./dist/googleapis/smartdevicemanagement/index.d.ts",
-      "import": "./dist/googleapis/smartdevicemanagement/index.js",
-      "default": "./dist/googleapis/smartdevicemanagement/index.js"
-    },
-    "./googleapis/sourcerepo": {
-      "types": "./dist/googleapis/sourcerepo/index.d.ts",
-      "import": "./dist/googleapis/sourcerepo/index.js",
-      "default": "./dist/googleapis/sourcerepo/index.js"
-    },
-    "./googleapis/spanner": {
-      "types": "./dist/googleapis/spanner/index.d.ts",
-      "import": "./dist/googleapis/spanner/index.js",
-      "default": "./dist/googleapis/spanner/index.js"
-    },
-    "./googleapis/speech": {
-      "types": "./dist/googleapis/speech/index.d.ts",
-      "import": "./dist/googleapis/speech/index.js",
-      "default": "./dist/googleapis/speech/index.js"
-    },
-    "./googleapis/sql": {
-      "types": "./dist/googleapis/sql/index.d.ts",
-      "import": "./dist/googleapis/sql/index.js",
-      "default": "./dist/googleapis/sql/index.js"
-    },
-    "./googleapis/sqladmin": {
-      "types": "./dist/googleapis/sqladmin/index.d.ts",
-      "import": "./dist/googleapis/sqladmin/index.js",
-      "default": "./dist/googleapis/sqladmin/index.js"
-    },
-    "./googleapis/storage": {
-      "types": "./dist/googleapis/storage/index.d.ts",
-      "import": "./dist/googleapis/storage/index.js",
-      "default": "./dist/googleapis/storage/index.js"
-    },
-    "./googleapis/storagetransfer": {
-      "types": "./dist/googleapis/storagetransfer/index.d.ts",
-      "import": "./dist/googleapis/storagetransfer/index.js",
-      "default": "./dist/googleapis/storagetransfer/index.js"
-    },
-    "./googleapis/streetviewpublish": {
-      "types": "./dist/googleapis/streetviewpublish/index.d.ts",
-      "import": "./dist/googleapis/streetviewpublish/index.js",
-      "default": "./dist/googleapis/streetviewpublish/index.js"
-    },
-    "./googleapis/sts": {
-      "types": "./dist/googleapis/sts/index.d.ts",
-      "import": "./dist/googleapis/sts/index.js",
-      "default": "./dist/googleapis/sts/index.js"
-    },
-    "./googleapis/tagmanager": {
-      "types": "./dist/googleapis/tagmanager/index.d.ts",
-      "import": "./dist/googleapis/tagmanager/index.js",
-      "default": "./dist/googleapis/tagmanager/index.js"
-    },
-    "./googleapis/tasks": {
-      "types": "./dist/googleapis/tasks/index.d.ts",
-      "import": "./dist/googleapis/tasks/index.js",
-      "default": "./dist/googleapis/tasks/index.js"
-    },
-    "./googleapis/testing": {
-      "types": "./dist/googleapis/testing/index.d.ts",
-      "import": "./dist/googleapis/testing/index.js",
-      "default": "./dist/googleapis/testing/index.js"
-    },
-    "./googleapis/texttospeech": {
-      "types": "./dist/googleapis/texttospeech/index.d.ts",
-      "import": "./dist/googleapis/texttospeech/index.js",
-      "default": "./dist/googleapis/texttospeech/index.js"
-    },
-    "./googleapis/toolresults": {
-      "types": "./dist/googleapis/toolresults/index.d.ts",
-      "import": "./dist/googleapis/toolresults/index.js",
-      "default": "./dist/googleapis/toolresults/index.js"
-    },
-    "./googleapis/tpu": {
-      "types": "./dist/googleapis/tpu/index.d.ts",
-      "import": "./dist/googleapis/tpu/index.js",
-      "default": "./dist/googleapis/tpu/index.js"
-    },
-    "./googleapis/trafficdirector": {
-      "types": "./dist/googleapis/trafficdirector/index.d.ts",
-      "import": "./dist/googleapis/trafficdirector/index.js",
-      "default": "./dist/googleapis/trafficdirector/index.js"
-    },
-    "./googleapis/transcoder": {
-      "types": "./dist/googleapis/transcoder/index.d.ts",
-      "import": "./dist/googleapis/transcoder/index.js",
-      "default": "./dist/googleapis/transcoder/index.js"
-    },
-    "./googleapis/translate": {
-      "types": "./dist/googleapis/translate/index.d.ts",
-      "import": "./dist/googleapis/translate/index.js",
-      "default": "./dist/googleapis/translate/index.js"
-    },
-    "./googleapis/travelimpactmodel": {
-      "types": "./dist/googleapis/travelimpactmodel/index.d.ts",
-      "import": "./dist/googleapis/travelimpactmodel/index.js",
-      "default": "./dist/googleapis/travelimpactmodel/index.js"
-    },
-    "./googleapis/vault": {
-      "types": "./dist/googleapis/vault/index.d.ts",
-      "import": "./dist/googleapis/vault/index.js",
-      "default": "./dist/googleapis/vault/index.js"
-    },
-    "./googleapis/vectortile": {
-      "types": "./dist/googleapis/vectortile/index.d.ts",
-      "import": "./dist/googleapis/vectortile/index.js",
-      "default": "./dist/googleapis/vectortile/index.js"
-    },
-    "./googleapis/verifiedaccess": {
-      "types": "./dist/googleapis/verifiedaccess/index.d.ts",
-      "import": "./dist/googleapis/verifiedaccess/index.js",
-      "default": "./dist/googleapis/verifiedaccess/index.js"
-    },
-    "./googleapis/versionhistory": {
-      "types": "./dist/googleapis/versionhistory/index.d.ts",
-      "import": "./dist/googleapis/versionhistory/index.js",
-      "default": "./dist/googleapis/versionhistory/index.js"
-    },
-    "./googleapis/videointelligence": {
-      "types": "./dist/googleapis/videointelligence/index.d.ts",
-      "import": "./dist/googleapis/videointelligence/index.js",
-      "default": "./dist/googleapis/videointelligence/index.js"
-    },
-    "./googleapis/vision": {
-      "types": "./dist/googleapis/vision/index.d.ts",
-      "import": "./dist/googleapis/vision/index.js",
-      "default": "./dist/googleapis/vision/index.js"
-    },
-    "./googleapis/vmmigration": {
-      "types": "./dist/googleapis/vmmigration/index.d.ts",
-      "import": "./dist/googleapis/vmmigration/index.js",
-      "default": "./dist/googleapis/vmmigration/index.js"
-    },
-    "./googleapis/vpcaccess": {
-      "types": "./dist/googleapis/vpcaccess/index.d.ts",
-      "import": "./dist/googleapis/vpcaccess/index.js",
-      "default": "./dist/googleapis/vpcaccess/index.js"
-    },
-    "./googleapis/webfonts": {
-      "types": "./dist/googleapis/webfonts/index.d.ts",
-      "import": "./dist/googleapis/webfonts/index.js",
-      "default": "./dist/googleapis/webfonts/index.js"
-    },
-    "./googleapis/webmasters": {
-      "types": "./dist/googleapis/webmasters/index.d.ts",
-      "import": "./dist/googleapis/webmasters/index.js",
-      "default": "./dist/googleapis/webmasters/index.js"
-    },
-    "./googleapis/webrisk": {
-      "types": "./dist/googleapis/webrisk/index.d.ts",
-      "import": "./dist/googleapis/webrisk/index.js",
-      "default": "./dist/googleapis/webrisk/index.js"
-    },
-    "./googleapis/websecurityscanner": {
-      "types": "./dist/googleapis/websecurityscanner/index.d.ts",
-      "import": "./dist/googleapis/websecurityscanner/index.js",
-      "default": "./dist/googleapis/websecurityscanner/index.js"
-    },
-    "./googleapis/workflowexecutions": {
-      "types": "./dist/googleapis/workflowexecutions/index.d.ts",
-      "import": "./dist/googleapis/workflowexecutions/index.js",
-      "default": "./dist/googleapis/workflowexecutions/index.js"
-    },
-    "./googleapis/workflows": {
-      "types": "./dist/googleapis/workflows/index.d.ts",
-      "import": "./dist/googleapis/workflows/index.js",
-      "default": "./dist/googleapis/workflows/index.js"
-    },
-    "./googleapis/workloadmanager": {
-      "types": "./dist/googleapis/workloadmanager/index.d.ts",
-      "import": "./dist/googleapis/workloadmanager/index.js",
-      "default": "./dist/googleapis/workloadmanager/index.js"
-    },
-    "./googleapis/workstations": {
-      "types": "./dist/googleapis/workstations/index.d.ts",
-      "import": "./dist/googleapis/workstations/index.js",
-      "default": "./dist/googleapis/workstations/index.js"
-    },
-    "./googleapis/youtube": {
-      "types": "./dist/googleapis/youtube/index.d.ts",
-      "import": "./dist/googleapis/youtube/index.js",
-      "default": "./dist/googleapis/youtube/index.js"
-    },
-    "./googleapis/youtubeanalytics": {
-      "types": "./dist/googleapis/youtubeanalytics/index.d.ts",
-      "import": "./dist/googleapis/youtubeanalytics/index.js",
-      "default": "./dist/googleapis/youtubeanalytics/index.js"
-    },
-    "./googleapis/youtubereporting": {
-      "types": "./dist/googleapis/youtubereporting/index.d.ts",
-      "import": "./dist/googleapis/youtubereporting/index.js",
-      "default": "./dist/googleapis/youtubereporting/index.js"
+    "./google/abusiveexperiencereport": {
+      "types": "./dist/google/abusiveexperiencereport/index.d.ts",
+      "import": "./dist/google/abusiveexperiencereport/index.js",
+      "default": "./dist/google/abusiveexperiencereport/index.js"
+    },
+    "./google/acceleratedmobilepageurl": {
+      "types": "./dist/google/acceleratedmobilepageurl/index.d.ts",
+      "import": "./dist/google/acceleratedmobilepageurl/index.js",
+      "default": "./dist/google/acceleratedmobilepageurl/index.js"
+    },
+    "./google/accessapproval": {
+      "types": "./dist/google/accessapproval/index.d.ts",
+      "import": "./dist/google/accessapproval/index.js",
+      "default": "./dist/google/accessapproval/index.js"
+    },
+    "./google/accesscontextmanager": {
+      "types": "./dist/google/accesscontextmanager/index.d.ts",
+      "import": "./dist/google/accesscontextmanager/index.js",
+      "default": "./dist/google/accesscontextmanager/index.js"
+    },
+    "./google/acmedns": {
+      "types": "./dist/google/acmedns/index.d.ts",
+      "import": "./dist/google/acmedns/index.js",
+      "default": "./dist/google/acmedns/index.js"
+    },
+    "./google/adexchangebuyer": {
+      "types": "./dist/google/adexchangebuyer/index.d.ts",
+      "import": "./dist/google/adexchangebuyer/index.js",
+      "default": "./dist/google/adexchangebuyer/index.js"
+    },
+    "./google/adexchangebuyer2": {
+      "types": "./dist/google/adexchangebuyer2/index.d.ts",
+      "import": "./dist/google/adexchangebuyer2/index.js",
+      "default": "./dist/google/adexchangebuyer2/index.js"
+    },
+    "./google/adexperiencereport": {
+      "types": "./dist/google/adexperiencereport/index.d.ts",
+      "import": "./dist/google/adexperiencereport/index.js",
+      "default": "./dist/google/adexperiencereport/index.js"
+    },
+    "./google/admin": {
+      "types": "./dist/google/admin/index.d.ts",
+      "import": "./dist/google/admin/index.js",
+      "default": "./dist/google/admin/index.js"
+    },
+    "./google/admob": {
+      "types": "./dist/google/admob/index.d.ts",
+      "import": "./dist/google/admob/index.js",
+      "default": "./dist/google/admob/index.js"
+    },
+    "./google/adsense": {
+      "types": "./dist/google/adsense/index.d.ts",
+      "import": "./dist/google/adsense/index.js",
+      "default": "./dist/google/adsense/index.js"
+    },
+    "./google/adsensehost": {
+      "types": "./dist/google/adsensehost/index.d.ts",
+      "import": "./dist/google/adsensehost/index.js",
+      "default": "./dist/google/adsensehost/index.js"
+    },
+    "./google/advisorynotifications": {
+      "types": "./dist/google/advisorynotifications/index.d.ts",
+      "import": "./dist/google/advisorynotifications/index.js",
+      "default": "./dist/google/advisorynotifications/index.js"
+    },
+    "./google/alertcenter": {
+      "types": "./dist/google/alertcenter/index.d.ts",
+      "import": "./dist/google/alertcenter/index.js",
+      "default": "./dist/google/alertcenter/index.js"
+    },
+    "./google/analytics": {
+      "types": "./dist/google/analytics/index.d.ts",
+      "import": "./dist/google/analytics/index.js",
+      "default": "./dist/google/analytics/index.js"
+    },
+    "./google/analyticsadmin": {
+      "types": "./dist/google/analyticsadmin/index.d.ts",
+      "import": "./dist/google/analyticsadmin/index.js",
+      "default": "./dist/google/analyticsadmin/index.js"
+    },
+    "./google/analyticsdata": {
+      "types": "./dist/google/analyticsdata/index.d.ts",
+      "import": "./dist/google/analyticsdata/index.js",
+      "default": "./dist/google/analyticsdata/index.js"
+    },
+    "./google/analyticshub": {
+      "types": "./dist/google/analyticshub/index.d.ts",
+      "import": "./dist/google/analyticshub/index.js",
+      "default": "./dist/google/analyticshub/index.js"
+    },
+    "./google/analyticsreporting": {
+      "types": "./dist/google/analyticsreporting/index.d.ts",
+      "import": "./dist/google/analyticsreporting/index.js",
+      "default": "./dist/google/analyticsreporting/index.js"
+    },
+    "./google/androiddeviceprovisioning": {
+      "types": "./dist/google/androiddeviceprovisioning/index.d.ts",
+      "import": "./dist/google/androiddeviceprovisioning/index.js",
+      "default": "./dist/google/androiddeviceprovisioning/index.js"
+    },
+    "./google/androidenterprise": {
+      "types": "./dist/google/androidenterprise/index.d.ts",
+      "import": "./dist/google/androidenterprise/index.js",
+      "default": "./dist/google/androidenterprise/index.js"
+    },
+    "./google/androidmanagement": {
+      "types": "./dist/google/androidmanagement/index.d.ts",
+      "import": "./dist/google/androidmanagement/index.js",
+      "default": "./dist/google/androidmanagement/index.js"
+    },
+    "./google/androidpublisher": {
+      "types": "./dist/google/androidpublisher/index.d.ts",
+      "import": "./dist/google/androidpublisher/index.js",
+      "default": "./dist/google/androidpublisher/index.js"
+    },
+    "./google/apigateway": {
+      "types": "./dist/google/apigateway/index.d.ts",
+      "import": "./dist/google/apigateway/index.js",
+      "default": "./dist/google/apigateway/index.js"
+    },
+    "./google/apigee": {
+      "types": "./dist/google/apigee/index.d.ts",
+      "import": "./dist/google/apigee/index.js",
+      "default": "./dist/google/apigee/index.js"
+    },
+    "./google/apigeeregistry": {
+      "types": "./dist/google/apigeeregistry/index.d.ts",
+      "import": "./dist/google/apigeeregistry/index.js",
+      "default": "./dist/google/apigeeregistry/index.js"
+    },
+    "./google/apikeys": {
+      "types": "./dist/google/apikeys/index.d.ts",
+      "import": "./dist/google/apikeys/index.js",
+      "default": "./dist/google/apikeys/index.js"
+    },
+    "./google/appengine": {
+      "types": "./dist/google/appengine/index.d.ts",
+      "import": "./dist/google/appengine/index.js",
+      "default": "./dist/google/appengine/index.js"
+    },
+    "./google/appsactivity": {
+      "types": "./dist/google/appsactivity/index.d.ts",
+      "import": "./dist/google/appsactivity/index.js",
+      "default": "./dist/google/appsactivity/index.js"
+    },
+    "./google/area120tables": {
+      "types": "./dist/google/area120tables/index.d.ts",
+      "import": "./dist/google/area120tables/index.js",
+      "default": "./dist/google/area120tables/index.js"
+    },
+    "./google/artifactregistry": {
+      "types": "./dist/google/artifactregistry/index.d.ts",
+      "import": "./dist/google/artifactregistry/index.js",
+      "default": "./dist/google/artifactregistry/index.js"
+    },
+    "./google/assuredworkloads": {
+      "types": "./dist/google/assuredworkloads/index.d.ts",
+      "import": "./dist/google/assuredworkloads/index.js",
+      "default": "./dist/google/assuredworkloads/index.js"
+    },
+    "./google/authorizedbuyersmarketplace": {
+      "types": "./dist/google/authorizedbuyersmarketplace/index.d.ts",
+      "import": "./dist/google/authorizedbuyersmarketplace/index.js",
+      "default": "./dist/google/authorizedbuyersmarketplace/index.js"
+    },
+    "./google/automl": {
+      "types": "./dist/google/automl/index.d.ts",
+      "import": "./dist/google/automl/index.js",
+      "default": "./dist/google/automl/index.js"
+    },
+    "./google/baremetalsolution": {
+      "types": "./dist/google/baremetalsolution/index.d.ts",
+      "import": "./dist/google/baremetalsolution/index.js",
+      "default": "./dist/google/baremetalsolution/index.js"
+    },
+    "./google/batch": {
+      "types": "./dist/google/batch/index.d.ts",
+      "import": "./dist/google/batch/index.js",
+      "default": "./dist/google/batch/index.js"
+    },
+    "./google/beyondcorp": {
+      "types": "./dist/google/beyondcorp/index.d.ts",
+      "import": "./dist/google/beyondcorp/index.js",
+      "default": "./dist/google/beyondcorp/index.js"
+    },
+    "./google/bigquery": {
+      "types": "./dist/google/bigquery/index.d.ts",
+      "import": "./dist/google/bigquery/index.js",
+      "default": "./dist/google/bigquery/index.js"
+    },
+    "./google/bigqueryconnection": {
+      "types": "./dist/google/bigqueryconnection/index.d.ts",
+      "import": "./dist/google/bigqueryconnection/index.js",
+      "default": "./dist/google/bigqueryconnection/index.js"
+    },
+    "./google/bigquerydatatransfer": {
+      "types": "./dist/google/bigquerydatatransfer/index.d.ts",
+      "import": "./dist/google/bigquerydatatransfer/index.js",
+      "default": "./dist/google/bigquerydatatransfer/index.js"
+    },
+    "./google/bigqueryreservation": {
+      "types": "./dist/google/bigqueryreservation/index.d.ts",
+      "import": "./dist/google/bigqueryreservation/index.js",
+      "default": "./dist/google/bigqueryreservation/index.js"
+    },
+    "./google/bigtableadmin": {
+      "types": "./dist/google/bigtableadmin/index.d.ts",
+      "import": "./dist/google/bigtableadmin/index.js",
+      "default": "./dist/google/bigtableadmin/index.js"
+    },
+    "./google/billingbudgets": {
+      "types": "./dist/google/billingbudgets/index.d.ts",
+      "import": "./dist/google/billingbudgets/index.js",
+      "default": "./dist/google/billingbudgets/index.js"
+    },
+    "./google/binaryauthorization": {
+      "types": "./dist/google/binaryauthorization/index.d.ts",
+      "import": "./dist/google/binaryauthorization/index.js",
+      "default": "./dist/google/binaryauthorization/index.js"
+    },
+    "./google/blogger": {
+      "types": "./dist/google/blogger/index.d.ts",
+      "import": "./dist/google/blogger/index.js",
+      "default": "./dist/google/blogger/index.js"
+    },
+    "./google/books": {
+      "types": "./dist/google/books/index.d.ts",
+      "import": "./dist/google/books/index.js",
+      "default": "./dist/google/books/index.js"
+    },
+    "./google/businessprofileperformance": {
+      "types": "./dist/google/businessprofileperformance/index.d.ts",
+      "import": "./dist/google/businessprofileperformance/index.js",
+      "default": "./dist/google/businessprofileperformance/index.js"
+    },
+    "./google/calendar": {
+      "types": "./dist/google/calendar/index.d.ts",
+      "import": "./dist/google/calendar/index.js",
+      "default": "./dist/google/calendar/index.js"
+    },
+    "./google/certificatemanager": {
+      "types": "./dist/google/certificatemanager/index.d.ts",
+      "import": "./dist/google/certificatemanager/index.js",
+      "default": "./dist/google/certificatemanager/index.js"
+    },
+    "./google/chat": {
+      "types": "./dist/google/chat/index.d.ts",
+      "import": "./dist/google/chat/index.js",
+      "default": "./dist/google/chat/index.js"
+    },
+    "./google/chromemanagement": {
+      "types": "./dist/google/chromemanagement/index.d.ts",
+      "import": "./dist/google/chromemanagement/index.js",
+      "default": "./dist/google/chromemanagement/index.js"
+    },
+    "./google/chromepolicy": {
+      "types": "./dist/google/chromepolicy/index.d.ts",
+      "import": "./dist/google/chromepolicy/index.js",
+      "default": "./dist/google/chromepolicy/index.js"
+    },
+    "./google/chromeuxreport": {
+      "types": "./dist/google/chromeuxreport/index.d.ts",
+      "import": "./dist/google/chromeuxreport/index.js",
+      "default": "./dist/google/chromeuxreport/index.js"
+    },
+    "./google/civicinfo": {
+      "types": "./dist/google/civicinfo/index.d.ts",
+      "import": "./dist/google/civicinfo/index.js",
+      "default": "./dist/google/civicinfo/index.js"
+    },
+    "./google/classroom": {
+      "types": "./dist/google/classroom/index.d.ts",
+      "import": "./dist/google/classroom/index.js",
+      "default": "./dist/google/classroom/index.js"
+    },
+    "./google/cloudasset": {
+      "types": "./dist/google/cloudasset/index.d.ts",
+      "import": "./dist/google/cloudasset/index.js",
+      "default": "./dist/google/cloudasset/index.js"
+    },
+    "./google/cloudbilling": {
+      "types": "./dist/google/cloudbilling/index.d.ts",
+      "import": "./dist/google/cloudbilling/index.js",
+      "default": "./dist/google/cloudbilling/index.js"
+    },
+    "./google/cloudbuild": {
+      "types": "./dist/google/cloudbuild/index.d.ts",
+      "import": "./dist/google/cloudbuild/index.js",
+      "default": "./dist/google/cloudbuild/index.js"
+    },
+    "./google/cloudchannel": {
+      "types": "./dist/google/cloudchannel/index.d.ts",
+      "import": "./dist/google/cloudchannel/index.js",
+      "default": "./dist/google/cloudchannel/index.js"
+    },
+    "./google/clouddebugger": {
+      "types": "./dist/google/clouddebugger/index.d.ts",
+      "import": "./dist/google/clouddebugger/index.js",
+      "default": "./dist/google/clouddebugger/index.js"
+    },
+    "./google/clouddeploy": {
+      "types": "./dist/google/clouddeploy/index.d.ts",
+      "import": "./dist/google/clouddeploy/index.js",
+      "default": "./dist/google/clouddeploy/index.js"
+    },
+    "./google/clouderrorreporting": {
+      "types": "./dist/google/clouderrorreporting/index.d.ts",
+      "import": "./dist/google/clouderrorreporting/index.js",
+      "default": "./dist/google/clouderrorreporting/index.js"
+    },
+    "./google/cloudfunctions": {
+      "types": "./dist/google/cloudfunctions/index.d.ts",
+      "import": "./dist/google/cloudfunctions/index.js",
+      "default": "./dist/google/cloudfunctions/index.js"
+    },
+    "./google/cloudidentity": {
+      "types": "./dist/google/cloudidentity/index.d.ts",
+      "import": "./dist/google/cloudidentity/index.js",
+      "default": "./dist/google/cloudidentity/index.js"
+    },
+    "./google/cloudiot": {
+      "types": "./dist/google/cloudiot/index.d.ts",
+      "import": "./dist/google/cloudiot/index.js",
+      "default": "./dist/google/cloudiot/index.js"
+    },
+    "./google/cloudkms": {
+      "types": "./dist/google/cloudkms/index.d.ts",
+      "import": "./dist/google/cloudkms/index.js",
+      "default": "./dist/google/cloudkms/index.js"
+    },
+    "./google/cloudprivatecatalog": {
+      "types": "./dist/google/cloudprivatecatalog/index.d.ts",
+      "import": "./dist/google/cloudprivatecatalog/index.js",
+      "default": "./dist/google/cloudprivatecatalog/index.js"
+    },
+    "./google/cloudprivatecatalogproducer": {
+      "types": "./dist/google/cloudprivatecatalogproducer/index.d.ts",
+      "import": "./dist/google/cloudprivatecatalogproducer/index.js",
+      "default": "./dist/google/cloudprivatecatalogproducer/index.js"
+    },
+    "./google/cloudprofiler": {
+      "types": "./dist/google/cloudprofiler/index.d.ts",
+      "import": "./dist/google/cloudprofiler/index.js",
+      "default": "./dist/google/cloudprofiler/index.js"
+    },
+    "./google/cloudresourcemanager": {
+      "types": "./dist/google/cloudresourcemanager/index.d.ts",
+      "import": "./dist/google/cloudresourcemanager/index.js",
+      "default": "./dist/google/cloudresourcemanager/index.js"
+    },
+    "./google/cloudscheduler": {
+      "types": "./dist/google/cloudscheduler/index.d.ts",
+      "import": "./dist/google/cloudscheduler/index.js",
+      "default": "./dist/google/cloudscheduler/index.js"
+    },
+    "./google/cloudsearch": {
+      "types": "./dist/google/cloudsearch/index.d.ts",
+      "import": "./dist/google/cloudsearch/index.js",
+      "default": "./dist/google/cloudsearch/index.js"
+    },
+    "./google/cloudshell": {
+      "types": "./dist/google/cloudshell/index.d.ts",
+      "import": "./dist/google/cloudshell/index.js",
+      "default": "./dist/google/cloudshell/index.js"
+    },
+    "./google/cloudsupport": {
+      "types": "./dist/google/cloudsupport/index.d.ts",
+      "import": "./dist/google/cloudsupport/index.js",
+      "default": "./dist/google/cloudsupport/index.js"
+    },
+    "./google/cloudtasks": {
+      "types": "./dist/google/cloudtasks/index.d.ts",
+      "import": "./dist/google/cloudtasks/index.js",
+      "default": "./dist/google/cloudtasks/index.js"
+    },
+    "./google/cloudtrace": {
+      "types": "./dist/google/cloudtrace/index.d.ts",
+      "import": "./dist/google/cloudtrace/index.js",
+      "default": "./dist/google/cloudtrace/index.js"
+    },
+    "./google/commentanalyzer": {
+      "types": "./dist/google/commentanalyzer/index.d.ts",
+      "import": "./dist/google/commentanalyzer/index.js",
+      "default": "./dist/google/commentanalyzer/index.js"
+    },
+    "./google/composer": {
+      "types": "./dist/google/composer/index.d.ts",
+      "import": "./dist/google/composer/index.js",
+      "default": "./dist/google/composer/index.js"
+    },
+    "./google/compute": {
+      "types": "./dist/google/compute/index.d.ts",
+      "import": "./dist/google/compute/index.js",
+      "default": "./dist/google/compute/index.js"
+    },
+    "./google/connectors": {
+      "types": "./dist/google/connectors/index.d.ts",
+      "import": "./dist/google/connectors/index.js",
+      "default": "./dist/google/connectors/index.js"
+    },
+    "./google/contactcenteraiplatform": {
+      "types": "./dist/google/contactcenteraiplatform/index.d.ts",
+      "import": "./dist/google/contactcenteraiplatform/index.js",
+      "default": "./dist/google/contactcenteraiplatform/index.js"
+    },
+    "./google/contactcenterinsights": {
+      "types": "./dist/google/contactcenterinsights/index.d.ts",
+      "import": "./dist/google/contactcenterinsights/index.js",
+      "default": "./dist/google/contactcenterinsights/index.js"
+    },
+    "./google/container": {
+      "types": "./dist/google/container/index.d.ts",
+      "import": "./dist/google/container/index.js",
+      "default": "./dist/google/container/index.js"
+    },
+    "./google/containeranalysis": {
+      "types": "./dist/google/containeranalysis/index.d.ts",
+      "import": "./dist/google/containeranalysis/index.js",
+      "default": "./dist/google/containeranalysis/index.js"
+    },
+    "./google/content": {
+      "types": "./dist/google/content/index.d.ts",
+      "import": "./dist/google/content/index.js",
+      "default": "./dist/google/content/index.js"
+    },
+    "./google/contentwarehouse": {
+      "types": "./dist/google/contentwarehouse/index.d.ts",
+      "import": "./dist/google/contentwarehouse/index.js",
+      "default": "./dist/google/contentwarehouse/index.js"
+    },
+    "./google/customsearch": {
+      "types": "./dist/google/customsearch/index.d.ts",
+      "import": "./dist/google/customsearch/index.js",
+      "default": "./dist/google/customsearch/index.js"
+    },
+    "./google/datacatalog": {
+      "types": "./dist/google/datacatalog/index.d.ts",
+      "import": "./dist/google/datacatalog/index.js",
+      "default": "./dist/google/datacatalog/index.js"
+    },
+    "./google/dataflow": {
+      "types": "./dist/google/dataflow/index.d.ts",
+      "import": "./dist/google/dataflow/index.js",
+      "default": "./dist/google/dataflow/index.js"
+    },
+    "./google/dataform": {
+      "types": "./dist/google/dataform/index.d.ts",
+      "import": "./dist/google/dataform/index.js",
+      "default": "./dist/google/dataform/index.js"
+    },
+    "./google/datafusion": {
+      "types": "./dist/google/datafusion/index.d.ts",
+      "import": "./dist/google/datafusion/index.js",
+      "default": "./dist/google/datafusion/index.js"
+    },
+    "./google/datalabeling": {
+      "types": "./dist/google/datalabeling/index.d.ts",
+      "import": "./dist/google/datalabeling/index.js",
+      "default": "./dist/google/datalabeling/index.js"
+    },
+    "./google/datalineage": {
+      "types": "./dist/google/datalineage/index.d.ts",
+      "import": "./dist/google/datalineage/index.js",
+      "default": "./dist/google/datalineage/index.js"
+    },
+    "./google/datamigration": {
+      "types": "./dist/google/datamigration/index.d.ts",
+      "import": "./dist/google/datamigration/index.js",
+      "default": "./dist/google/datamigration/index.js"
+    },
+    "./google/datapipelines": {
+      "types": "./dist/google/datapipelines/index.d.ts",
+      "import": "./dist/google/datapipelines/index.js",
+      "default": "./dist/google/datapipelines/index.js"
+    },
+    "./google/dataplex": {
+      "types": "./dist/google/dataplex/index.d.ts",
+      "import": "./dist/google/dataplex/index.js",
+      "default": "./dist/google/dataplex/index.js"
+    },
+    "./google/dataproc": {
+      "types": "./dist/google/dataproc/index.d.ts",
+      "import": "./dist/google/dataproc/index.js",
+      "default": "./dist/google/dataproc/index.js"
+    },
+    "./google/datastore": {
+      "types": "./dist/google/datastore/index.d.ts",
+      "import": "./dist/google/datastore/index.js",
+      "default": "./dist/google/datastore/index.js"
+    },
+    "./google/datastream": {
+      "types": "./dist/google/datastream/index.d.ts",
+      "import": "./dist/google/datastream/index.js",
+      "default": "./dist/google/datastream/index.js"
+    },
+    "./google/deploymentmanager": {
+      "types": "./dist/google/deploymentmanager/index.d.ts",
+      "import": "./dist/google/deploymentmanager/index.js",
+      "default": "./dist/google/deploymentmanager/index.js"
+    },
+    "./google/dfareporting": {
+      "types": "./dist/google/dfareporting/index.d.ts",
+      "import": "./dist/google/dfareporting/index.js",
+      "default": "./dist/google/dfareporting/index.js"
+    },
+    "./google/dialogflow": {
+      "types": "./dist/google/dialogflow/index.d.ts",
+      "import": "./dist/google/dialogflow/index.js",
+      "default": "./dist/google/dialogflow/index.js"
+    },
+    "./google/digitalassetlinks": {
+      "types": "./dist/google/digitalassetlinks/index.d.ts",
+      "import": "./dist/google/digitalassetlinks/index.js",
+      "default": "./dist/google/digitalassetlinks/index.js"
+    },
+    "./google/discovery": {
+      "types": "./dist/google/discovery/index.d.ts",
+      "import": "./dist/google/discovery/index.js",
+      "default": "./dist/google/discovery/index.js"
+    },
+    "./google/discoveryengine": {
+      "types": "./dist/google/discoveryengine/index.d.ts",
+      "import": "./dist/google/discoveryengine/index.js",
+      "default": "./dist/google/discoveryengine/index.js"
+    },
+    "./google/displayvideo": {
+      "types": "./dist/google/displayvideo/index.d.ts",
+      "import": "./dist/google/displayvideo/index.js",
+      "default": "./dist/google/displayvideo/index.js"
+    },
+    "./google/dlp": {
+      "types": "./dist/google/dlp/index.d.ts",
+      "import": "./dist/google/dlp/index.js",
+      "default": "./dist/google/dlp/index.js"
+    },
+    "./google/dns": {
+      "types": "./dist/google/dns/index.d.ts",
+      "import": "./dist/google/dns/index.js",
+      "default": "./dist/google/dns/index.js"
+    },
+    "./google/docs": {
+      "types": "./dist/google/docs/index.d.ts",
+      "import": "./dist/google/docs/index.js",
+      "default": "./dist/google/docs/index.js"
+    },
+    "./google/documentai": {
+      "types": "./dist/google/documentai/index.d.ts",
+      "import": "./dist/google/documentai/index.js",
+      "default": "./dist/google/documentai/index.js"
+    },
+    "./google/domains": {
+      "types": "./dist/google/domains/index.d.ts",
+      "import": "./dist/google/domains/index.js",
+      "default": "./dist/google/domains/index.js"
+    },
+    "./google/domainsrdap": {
+      "types": "./dist/google/domainsrdap/index.d.ts",
+      "import": "./dist/google/domainsrdap/index.js",
+      "default": "./dist/google/domainsrdap/index.js"
+    },
+    "./google/doubleclickbidmanager": {
+      "types": "./dist/google/doubleclickbidmanager/index.d.ts",
+      "import": "./dist/google/doubleclickbidmanager/index.js",
+      "default": "./dist/google/doubleclickbidmanager/index.js"
+    },
+    "./google/doubleclicksearch": {
+      "types": "./dist/google/doubleclicksearch/index.d.ts",
+      "import": "./dist/google/doubleclicksearch/index.js",
+      "default": "./dist/google/doubleclicksearch/index.js"
+    },
+    "./google/drive": {
+      "types": "./dist/google/drive/index.d.ts",
+      "import": "./dist/google/drive/index.js",
+      "default": "./dist/google/drive/index.js"
+    },
+    "./google/driveactivity": {
+      "types": "./dist/google/driveactivity/index.d.ts",
+      "import": "./dist/google/driveactivity/index.js",
+      "default": "./dist/google/driveactivity/index.js"
+    },
+    "./google/drivelabels": {
+      "types": "./dist/google/drivelabels/index.d.ts",
+      "import": "./dist/google/drivelabels/index.js",
+      "default": "./dist/google/drivelabels/index.js"
+    },
+    "./google/essentialcontacts": {
+      "types": "./dist/google/essentialcontacts/index.d.ts",
+      "import": "./dist/google/essentialcontacts/index.js",
+      "default": "./dist/google/essentialcontacts/index.js"
+    },
+    "./google/eventarc": {
+      "types": "./dist/google/eventarc/index.d.ts",
+      "import": "./dist/google/eventarc/index.js",
+      "default": "./dist/google/eventarc/index.js"
+    },
+    "./google/factchecktools": {
+      "types": "./dist/google/factchecktools/index.d.ts",
+      "import": "./dist/google/factchecktools/index.js",
+      "default": "./dist/google/factchecktools/index.js"
+    },
+    "./google/fcm": {
+      "types": "./dist/google/fcm/index.d.ts",
+      "import": "./dist/google/fcm/index.js",
+      "default": "./dist/google/fcm/index.js"
+    },
+    "./google/fcmdata": {
+      "types": "./dist/google/fcmdata/index.d.ts",
+      "import": "./dist/google/fcmdata/index.js",
+      "default": "./dist/google/fcmdata/index.js"
+    },
+    "./google/file": {
+      "types": "./dist/google/file/index.d.ts",
+      "import": "./dist/google/file/index.js",
+      "default": "./dist/google/file/index.js"
+    },
+    "./google/firebase": {
+      "types": "./dist/google/firebase/index.d.ts",
+      "import": "./dist/google/firebase/index.js",
+      "default": "./dist/google/firebase/index.js"
+    },
+    "./google/firebaseappcheck": {
+      "types": "./dist/google/firebaseappcheck/index.d.ts",
+      "import": "./dist/google/firebaseappcheck/index.js",
+      "default": "./dist/google/firebaseappcheck/index.js"
+    },
+    "./google/firebaseappdistribution": {
+      "types": "./dist/google/firebaseappdistribution/index.d.ts",
+      "import": "./dist/google/firebaseappdistribution/index.js",
+      "default": "./dist/google/firebaseappdistribution/index.js"
+    },
+    "./google/firebasedatabase": {
+      "types": "./dist/google/firebasedatabase/index.d.ts",
+      "import": "./dist/google/firebasedatabase/index.js",
+      "default": "./dist/google/firebasedatabase/index.js"
+    },
+    "./google/firebasedynamiclinks": {
+      "types": "./dist/google/firebasedynamiclinks/index.d.ts",
+      "import": "./dist/google/firebasedynamiclinks/index.js",
+      "default": "./dist/google/firebasedynamiclinks/index.js"
+    },
+    "./google/firebasehosting": {
+      "types": "./dist/google/firebasehosting/index.d.ts",
+      "import": "./dist/google/firebasehosting/index.js",
+      "default": "./dist/google/firebasehosting/index.js"
+    },
+    "./google/firebaseml": {
+      "types": "./dist/google/firebaseml/index.d.ts",
+      "import": "./dist/google/firebaseml/index.js",
+      "default": "./dist/google/firebaseml/index.js"
+    },
+    "./google/firebaserules": {
+      "types": "./dist/google/firebaserules/index.d.ts",
+      "import": "./dist/google/firebaserules/index.js",
+      "default": "./dist/google/firebaserules/index.js"
+    },
+    "./google/firebasestorage": {
+      "types": "./dist/google/firebasestorage/index.d.ts",
+      "import": "./dist/google/firebasestorage/index.js",
+      "default": "./dist/google/firebasestorage/index.js"
+    },
+    "./google/firestore": {
+      "types": "./dist/google/firestore/index.d.ts",
+      "import": "./dist/google/firestore/index.js",
+      "default": "./dist/google/firestore/index.js"
+    },
+    "./google/fitness": {
+      "types": "./dist/google/fitness/index.d.ts",
+      "import": "./dist/google/fitness/index.js",
+      "default": "./dist/google/fitness/index.js"
+    },
+    "./google/forms": {
+      "types": "./dist/google/forms/index.d.ts",
+      "import": "./dist/google/forms/index.js",
+      "default": "./dist/google/forms/index.js"
+    },
+    "./google/games": {
+      "types": "./dist/google/games/index.d.ts",
+      "import": "./dist/google/games/index.js",
+      "default": "./dist/google/games/index.js"
+    },
+    "./google/gamesconfiguration": {
+      "types": "./dist/google/gamesconfiguration/index.d.ts",
+      "import": "./dist/google/gamesconfiguration/index.js",
+      "default": "./dist/google/gamesconfiguration/index.js"
+    },
+    "./google/gameservices": {
+      "types": "./dist/google/gameservices/index.d.ts",
+      "import": "./dist/google/gameservices/index.js",
+      "default": "./dist/google/gameservices/index.js"
+    },
+    "./google/gamesmanagement": {
+      "types": "./dist/google/gamesmanagement/index.d.ts",
+      "import": "./dist/google/gamesmanagement/index.js",
+      "default": "./dist/google/gamesmanagement/index.js"
+    },
+    "./google/genomics": {
+      "types": "./dist/google/genomics/index.d.ts",
+      "import": "./dist/google/genomics/index.js",
+      "default": "./dist/google/genomics/index.js"
+    },
+    "./google/gkebackup": {
+      "types": "./dist/google/gkebackup/index.d.ts",
+      "import": "./dist/google/gkebackup/index.js",
+      "default": "./dist/google/gkebackup/index.js"
+    },
+    "./google/gkehub": {
+      "types": "./dist/google/gkehub/index.d.ts",
+      "import": "./dist/google/gkehub/index.js",
+      "default": "./dist/google/gkehub/index.js"
+    },
+    "./google/gmail": {
+      "types": "./dist/google/gmail/index.d.ts",
+      "import": "./dist/google/gmail/index.js",
+      "default": "./dist/google/gmail/index.js"
+    },
+    "./google/gmailpostmastertools": {
+      "types": "./dist/google/gmailpostmastertools/index.d.ts",
+      "import": "./dist/google/gmailpostmastertools/index.js",
+      "default": "./dist/google/gmailpostmastertools/index.js"
+    },
+    "./google/groupsmigration": {
+      "types": "./dist/google/groupsmigration/index.d.ts",
+      "import": "./dist/google/groupsmigration/index.js",
+      "default": "./dist/google/groupsmigration/index.js"
+    },
+    "./google/groupssettings": {
+      "types": "./dist/google/groupssettings/index.d.ts",
+      "import": "./dist/google/groupssettings/index.js",
+      "default": "./dist/google/groupssettings/index.js"
+    },
+    "./google/healthcare": {
+      "types": "./dist/google/healthcare/index.d.ts",
+      "import": "./dist/google/healthcare/index.js",
+      "default": "./dist/google/healthcare/index.js"
+    },
+    "./google/homegraph": {
+      "types": "./dist/google/homegraph/index.d.ts",
+      "import": "./dist/google/homegraph/index.js",
+      "default": "./dist/google/homegraph/index.js"
+    },
+    "./google/iam": {
+      "types": "./dist/google/iam/index.d.ts",
+      "import": "./dist/google/iam/index.js",
+      "default": "./dist/google/iam/index.js"
+    },
+    "./google/iamcredentials": {
+      "types": "./dist/google/iamcredentials/index.d.ts",
+      "import": "./dist/google/iamcredentials/index.js",
+      "default": "./dist/google/iamcredentials/index.js"
+    },
+    "./google/iap": {
+      "types": "./dist/google/iap/index.d.ts",
+      "import": "./dist/google/iap/index.js",
+      "default": "./dist/google/iap/index.js"
+    },
+    "./google/ideahub": {
+      "types": "./dist/google/ideahub/index.d.ts",
+      "import": "./dist/google/ideahub/index.js",
+      "default": "./dist/google/ideahub/index.js"
+    },
+    "./google/identitytoolkit": {
+      "types": "./dist/google/identitytoolkit/index.d.ts",
+      "import": "./dist/google/identitytoolkit/index.js",
+      "default": "./dist/google/identitytoolkit/index.js"
+    },
+    "./google/ids": {
+      "types": "./dist/google/ids/index.d.ts",
+      "import": "./dist/google/ids/index.js",
+      "default": "./dist/google/ids/index.js"
+    },
+    "./google/indexing": {
+      "types": "./dist/google/indexing/index.d.ts",
+      "import": "./dist/google/indexing/index.js",
+      "default": "./dist/google/indexing/index.js"
+    },
+    "./google/integrations": {
+      "types": "./dist/google/integrations/index.d.ts",
+      "import": "./dist/google/integrations/index.js",
+      "default": "./dist/google/integrations/index.js"
+    },
+    "./google/jobs": {
+      "types": "./dist/google/jobs/index.d.ts",
+      "import": "./dist/google/jobs/index.js",
+      "default": "./dist/google/jobs/index.js"
+    },
+    "./google/keep": {
+      "types": "./dist/google/keep/index.d.ts",
+      "import": "./dist/google/keep/index.js",
+      "default": "./dist/google/keep/index.js"
+    },
+    "./google/kgsearch": {
+      "types": "./dist/google/kgsearch/index.d.ts",
+      "import": "./dist/google/kgsearch/index.js",
+      "default": "./dist/google/kgsearch/index.js"
+    },
+    "./google/kmsinventory": {
+      "types": "./dist/google/kmsinventory/index.d.ts",
+      "import": "./dist/google/kmsinventory/index.js",
+      "default": "./dist/google/kmsinventory/index.js"
+    },
+    "./google/language": {
+      "types": "./dist/google/language/index.d.ts",
+      "import": "./dist/google/language/index.js",
+      "default": "./dist/google/language/index.js"
+    },
+    "./google/libraryagent": {
+      "types": "./dist/google/libraryagent/index.d.ts",
+      "import": "./dist/google/libraryagent/index.js",
+      "default": "./dist/google/libraryagent/index.js"
+    },
+    "./google/licensing": {
+      "types": "./dist/google/licensing/index.d.ts",
+      "import": "./dist/google/licensing/index.js",
+      "default": "./dist/google/licensing/index.js"
+    },
+    "./google/lifesciences": {
+      "types": "./dist/google/lifesciences/index.d.ts",
+      "import": "./dist/google/lifesciences/index.js",
+      "default": "./dist/google/lifesciences/index.js"
+    },
+    "./google/localservices": {
+      "types": "./dist/google/localservices/index.d.ts",
+      "import": "./dist/google/localservices/index.js",
+      "default": "./dist/google/localservices/index.js"
+    },
+    "./google/logging": {
+      "types": "./dist/google/logging/index.d.ts",
+      "import": "./dist/google/logging/index.js",
+      "default": "./dist/google/logging/index.js"
+    },
+    "./google/managedidentities": {
+      "types": "./dist/google/managedidentities/index.d.ts",
+      "import": "./dist/google/managedidentities/index.js",
+      "default": "./dist/google/managedidentities/index.js"
+    },
+    "./google/manufacturers": {
+      "types": "./dist/google/manufacturers/index.d.ts",
+      "import": "./dist/google/manufacturers/index.js",
+      "default": "./dist/google/manufacturers/index.js"
+    },
+    "./google/memcache": {
+      "types": "./dist/google/memcache/index.d.ts",
+      "import": "./dist/google/memcache/index.js",
+      "default": "./dist/google/memcache/index.js"
+    },
+    "./google/metastore": {
+      "types": "./dist/google/metastore/index.d.ts",
+      "import": "./dist/google/metastore/index.js",
+      "default": "./dist/google/metastore/index.js"
+    },
+    "./google/migrationcenter": {
+      "types": "./dist/google/migrationcenter/index.d.ts",
+      "import": "./dist/google/migrationcenter/index.js",
+      "default": "./dist/google/migrationcenter/index.js"
+    },
+    "./google/mirror": {
+      "types": "./dist/google/mirror/index.d.ts",
+      "import": "./dist/google/mirror/index.js",
+      "default": "./dist/google/mirror/index.js"
+    },
+    "./google/ml": {
+      "types": "./dist/google/ml/index.d.ts",
+      "import": "./dist/google/ml/index.js",
+      "default": "./dist/google/ml/index.js"
+    },
+    "./google/monitoring": {
+      "types": "./dist/google/monitoring/index.d.ts",
+      "import": "./dist/google/monitoring/index.js",
+      "default": "./dist/google/monitoring/index.js"
+    },
+    "./google/my-business": {
+      "types": "./dist/google/my-business/index.d.ts",
+      "import": "./dist/google/my-business/index.js",
+      "default": "./dist/google/my-business/index.js"
+    },
+    "./google/mybusinessaccountmanagement": {
+      "types": "./dist/google/mybusinessaccountmanagement/index.d.ts",
+      "import": "./dist/google/mybusinessaccountmanagement/index.js",
+      "default": "./dist/google/mybusinessaccountmanagement/index.js"
+    },
+    "./google/mybusinessbusinesscalls": {
+      "types": "./dist/google/mybusinessbusinesscalls/index.d.ts",
+      "import": "./dist/google/mybusinessbusinesscalls/index.js",
+      "default": "./dist/google/mybusinessbusinesscalls/index.js"
+    },
+    "./google/mybusinessbusinessinformation": {
+      "types": "./dist/google/mybusinessbusinessinformation/index.d.ts",
+      "import": "./dist/google/mybusinessbusinessinformation/index.js",
+      "default": "./dist/google/mybusinessbusinessinformation/index.js"
+    },
+    "./google/mybusinesslodging": {
+      "types": "./dist/google/mybusinesslodging/index.d.ts",
+      "import": "./dist/google/mybusinesslodging/index.js",
+      "default": "./dist/google/mybusinesslodging/index.js"
+    },
+    "./google/mybusinessnotifications": {
+      "types": "./dist/google/mybusinessnotifications/index.d.ts",
+      "import": "./dist/google/mybusinessnotifications/index.js",
+      "default": "./dist/google/mybusinessnotifications/index.js"
+    },
+    "./google/mybusinessplaceactions": {
+      "types": "./dist/google/mybusinessplaceactions/index.d.ts",
+      "import": "./dist/google/mybusinessplaceactions/index.js",
+      "default": "./dist/google/mybusinessplaceactions/index.js"
+    },
+    "./google/mybusinessqanda": {
+      "types": "./dist/google/mybusinessqanda/index.d.ts",
+      "import": "./dist/google/mybusinessqanda/index.js",
+      "default": "./dist/google/mybusinessqanda/index.js"
+    },
+    "./google/mybusinessverifications": {
+      "types": "./dist/google/mybusinessverifications/index.d.ts",
+      "import": "./dist/google/mybusinessverifications/index.js",
+      "default": "./dist/google/mybusinessverifications/index.js"
+    },
+    "./google/networkconnectivity": {
+      "types": "./dist/google/networkconnectivity/index.d.ts",
+      "import": "./dist/google/networkconnectivity/index.js",
+      "default": "./dist/google/networkconnectivity/index.js"
+    },
+    "./google/networkmanagement": {
+      "types": "./dist/google/networkmanagement/index.d.ts",
+      "import": "./dist/google/networkmanagement/index.js",
+      "default": "./dist/google/networkmanagement/index.js"
+    },
+    "./google/networksecurity": {
+      "types": "./dist/google/networksecurity/index.d.ts",
+      "import": "./dist/google/networksecurity/index.js",
+      "default": "./dist/google/networksecurity/index.js"
+    },
+    "./google/networkservices": {
+      "types": "./dist/google/networkservices/index.d.ts",
+      "import": "./dist/google/networkservices/index.js",
+      "default": "./dist/google/networkservices/index.js"
+    },
+    "./google/notebooks": {
+      "types": "./dist/google/notebooks/index.d.ts",
+      "import": "./dist/google/notebooks/index.js",
+      "default": "./dist/google/notebooks/index.js"
+    },
+    "./google/oauth2": {
+      "types": "./dist/google/oauth2/index.d.ts",
+      "import": "./dist/google/oauth2/index.js",
+      "default": "./dist/google/oauth2/index.js"
+    },
+    "./google/ondemandscanning": {
+      "types": "./dist/google/ondemandscanning/index.d.ts",
+      "import": "./dist/google/ondemandscanning/index.js",
+      "default": "./dist/google/ondemandscanning/index.js"
+    },
+    "./google/orgpolicy": {
+      "types": "./dist/google/orgpolicy/index.d.ts",
+      "import": "./dist/google/orgpolicy/index.js",
+      "default": "./dist/google/orgpolicy/index.js"
+    },
+    "./google/osconfig": {
+      "types": "./dist/google/osconfig/index.d.ts",
+      "import": "./dist/google/osconfig/index.js",
+      "default": "./dist/google/osconfig/index.js"
+    },
+    "./google/oslogin": {
+      "types": "./dist/google/oslogin/index.d.ts",
+      "import": "./dist/google/oslogin/index.js",
+      "default": "./dist/google/oslogin/index.js"
+    },
+    "./google/pagespeedonline": {
+      "types": "./dist/google/pagespeedonline/index.d.ts",
+      "import": "./dist/google/pagespeedonline/index.js",
+      "default": "./dist/google/pagespeedonline/index.js"
+    },
+    "./google/paymentsresellersubscription": {
+      "types": "./dist/google/paymentsresellersubscription/index.d.ts",
+      "import": "./dist/google/paymentsresellersubscription/index.js",
+      "default": "./dist/google/paymentsresellersubscription/index.js"
+    },
+    "./google/people": {
+      "types": "./dist/google/people/index.d.ts",
+      "import": "./dist/google/people/index.js",
+      "default": "./dist/google/people/index.js"
+    },
+    "./google/playablelocations": {
+      "types": "./dist/google/playablelocations/index.d.ts",
+      "import": "./dist/google/playablelocations/index.js",
+      "default": "./dist/google/playablelocations/index.js"
+    },
+    "./google/playcustomapp": {
+      "types": "./dist/google/playcustomapp/index.d.ts",
+      "import": "./dist/google/playcustomapp/index.js",
+      "default": "./dist/google/playcustomapp/index.js"
+    },
+    "./google/playdeveloperreporting": {
+      "types": "./dist/google/playdeveloperreporting/index.d.ts",
+      "import": "./dist/google/playdeveloperreporting/index.js",
+      "default": "./dist/google/playdeveloperreporting/index.js"
+    },
+    "./google/playintegrity": {
+      "types": "./dist/google/playintegrity/index.d.ts",
+      "import": "./dist/google/playintegrity/index.js",
+      "default": "./dist/google/playintegrity/index.js"
+    },
+    "./google/plus": {
+      "types": "./dist/google/plus/index.d.ts",
+      "import": "./dist/google/plus/index.js",
+      "default": "./dist/google/plus/index.js"
+    },
+    "./google/policyanalyzer": {
+      "types": "./dist/google/policyanalyzer/index.d.ts",
+      "import": "./dist/google/policyanalyzer/index.js",
+      "default": "./dist/google/policyanalyzer/index.js"
+    },
+    "./google/policysimulator": {
+      "types": "./dist/google/policysimulator/index.d.ts",
+      "import": "./dist/google/policysimulator/index.js",
+      "default": "./dist/google/policysimulator/index.js"
+    },
+    "./google/policytroubleshooter": {
+      "types": "./dist/google/policytroubleshooter/index.d.ts",
+      "import": "./dist/google/policytroubleshooter/index.js",
+      "default": "./dist/google/policytroubleshooter/index.js"
+    },
+    "./google/poly": {
+      "types": "./dist/google/poly/index.d.ts",
+      "import": "./dist/google/poly/index.js",
+      "default": "./dist/google/poly/index.js"
+    },
+    "./google/privateca": {
+      "types": "./dist/google/privateca/index.d.ts",
+      "import": "./dist/google/privateca/index.js",
+      "default": "./dist/google/privateca/index.js"
+    },
+    "./google/prod-tt-sasportal": {
+      "types": "./dist/google/prod-tt-sasportal/index.d.ts",
+      "import": "./dist/google/prod-tt-sasportal/index.js",
+      "default": "./dist/google/prod-tt-sasportal/index.js"
+    },
+    "./google/proximitybeacon": {
+      "types": "./dist/google/proximitybeacon/index.d.ts",
+      "import": "./dist/google/proximitybeacon/index.js",
+      "default": "./dist/google/proximitybeacon/index.js"
+    },
+    "./google/publicca": {
+      "types": "./dist/google/publicca/index.d.ts",
+      "import": "./dist/google/publicca/index.js",
+      "default": "./dist/google/publicca/index.js"
+    },
+    "./google/pubsub": {
+      "types": "./dist/google/pubsub/index.d.ts",
+      "import": "./dist/google/pubsub/index.js",
+      "default": "./dist/google/pubsub/index.js"
+    },
+    "./google/pubsublite": {
+      "types": "./dist/google/pubsublite/index.d.ts",
+      "import": "./dist/google/pubsublite/index.js",
+      "default": "./dist/google/pubsublite/index.js"
+    },
+    "./google/readerrevenuesubscriptionlinking": {
+      "types": "./dist/google/readerrevenuesubscriptionlinking/index.d.ts",
+      "import": "./dist/google/readerrevenuesubscriptionlinking/index.js",
+      "default": "./dist/google/readerrevenuesubscriptionlinking/index.js"
+    },
+    "./google/realtimebidding": {
+      "types": "./dist/google/realtimebidding/index.d.ts",
+      "import": "./dist/google/realtimebidding/index.js",
+      "default": "./dist/google/realtimebidding/index.js"
+    },
+    "./google/recaptchaenterprise": {
+      "types": "./dist/google/recaptchaenterprise/index.d.ts",
+      "import": "./dist/google/recaptchaenterprise/index.js",
+      "default": "./dist/google/recaptchaenterprise/index.js"
+    },
+    "./google/recommendationengine": {
+      "types": "./dist/google/recommendationengine/index.d.ts",
+      "import": "./dist/google/recommendationengine/index.js",
+      "default": "./dist/google/recommendationengine/index.js"
+    },
+    "./google/recommender": {
+      "types": "./dist/google/recommender/index.d.ts",
+      "import": "./dist/google/recommender/index.js",
+      "default": "./dist/google/recommender/index.js"
+    },
+    "./google/redis": {
+      "types": "./dist/google/redis/index.d.ts",
+      "import": "./dist/google/redis/index.js",
+      "default": "./dist/google/redis/index.js"
+    },
+    "./google/remotebuildexecution": {
+      "types": "./dist/google/remotebuildexecution/index.d.ts",
+      "import": "./dist/google/remotebuildexecution/index.js",
+      "default": "./dist/google/remotebuildexecution/index.js"
+    },
+    "./google/replicapool": {
+      "types": "./dist/google/replicapool/index.d.ts",
+      "import": "./dist/google/replicapool/index.js",
+      "default": "./dist/google/replicapool/index.js"
+    },
+    "./google/reseller": {
+      "types": "./dist/google/reseller/index.d.ts",
+      "import": "./dist/google/reseller/index.js",
+      "default": "./dist/google/reseller/index.js"
+    },
+    "./google/resourcesettings": {
+      "types": "./dist/google/resourcesettings/index.d.ts",
+      "import": "./dist/google/resourcesettings/index.js",
+      "default": "./dist/google/resourcesettings/index.js"
+    },
+    "./google/retail": {
+      "types": "./dist/google/retail/index.d.ts",
+      "import": "./dist/google/retail/index.js",
+      "default": "./dist/google/retail/index.js"
+    },
+    "./google/run": {
+      "types": "./dist/google/run/index.d.ts",
+      "import": "./dist/google/run/index.js",
+      "default": "./dist/google/run/index.js"
+    },
+    "./google/runtimeconfig": {
+      "types": "./dist/google/runtimeconfig/index.d.ts",
+      "import": "./dist/google/runtimeconfig/index.js",
+      "default": "./dist/google/runtimeconfig/index.js"
+    },
+    "./google/safebrowsing": {
+      "types": "./dist/google/safebrowsing/index.d.ts",
+      "import": "./dist/google/safebrowsing/index.js",
+      "default": "./dist/google/safebrowsing/index.js"
+    },
+    "./google/sasportal": {
+      "types": "./dist/google/sasportal/index.d.ts",
+      "import": "./dist/google/sasportal/index.js",
+      "default": "./dist/google/sasportal/index.js"
+    },
+    "./google/script": {
+      "types": "./dist/google/script/index.d.ts",
+      "import": "./dist/google/script/index.js",
+      "default": "./dist/google/script/index.js"
+    },
+    "./google/searchads360": {
+      "types": "./dist/google/searchads360/index.d.ts",
+      "import": "./dist/google/searchads360/index.js",
+      "default": "./dist/google/searchads360/index.js"
+    },
+    "./google/searchconsole": {
+      "types": "./dist/google/searchconsole/index.d.ts",
+      "import": "./dist/google/searchconsole/index.js",
+      "default": "./dist/google/searchconsole/index.js"
+    },
+    "./google/secretmanager": {
+      "types": "./dist/google/secretmanager/index.d.ts",
+      "import": "./dist/google/secretmanager/index.js",
+      "default": "./dist/google/secretmanager/index.js"
+    },
+    "./google/securitycenter": {
+      "types": "./dist/google/securitycenter/index.d.ts",
+      "import": "./dist/google/securitycenter/index.js",
+      "default": "./dist/google/securitycenter/index.js"
+    },
+    "./google/servicebroker": {
+      "types": "./dist/google/servicebroker/index.d.ts",
+      "import": "./dist/google/servicebroker/index.js",
+      "default": "./dist/google/servicebroker/index.js"
+    },
+    "./google/serviceconsumermanagement": {
+      "types": "./dist/google/serviceconsumermanagement/index.d.ts",
+      "import": "./dist/google/serviceconsumermanagement/index.js",
+      "default": "./dist/google/serviceconsumermanagement/index.js"
+    },
+    "./google/servicecontrol": {
+      "types": "./dist/google/servicecontrol/index.d.ts",
+      "import": "./dist/google/servicecontrol/index.js",
+      "default": "./dist/google/servicecontrol/index.js"
+    },
+    "./google/servicedirectory": {
+      "types": "./dist/google/servicedirectory/index.d.ts",
+      "import": "./dist/google/servicedirectory/index.js",
+      "default": "./dist/google/servicedirectory/index.js"
+    },
+    "./google/servicemanagement": {
+      "types": "./dist/google/servicemanagement/index.d.ts",
+      "import": "./dist/google/servicemanagement/index.js",
+      "default": "./dist/google/servicemanagement/index.js"
+    },
+    "./google/servicenetworking": {
+      "types": "./dist/google/servicenetworking/index.d.ts",
+      "import": "./dist/google/servicenetworking/index.js",
+      "default": "./dist/google/servicenetworking/index.js"
+    },
+    "./google/serviceusage": {
+      "types": "./dist/google/serviceusage/index.d.ts",
+      "import": "./dist/google/serviceusage/index.js",
+      "default": "./dist/google/serviceusage/index.js"
+    },
+    "./google/sheets": {
+      "types": "./dist/google/sheets/index.d.ts",
+      "import": "./dist/google/sheets/index.js",
+      "default": "./dist/google/sheets/index.js"
+    },
+    "./google/shoppingcontent": {
+      "types": "./dist/google/shoppingcontent/index.d.ts",
+      "import": "./dist/google/shoppingcontent/index.js",
+      "default": "./dist/google/shoppingcontent/index.js"
+    },
+    "./google/siteverification": {
+      "types": "./dist/google/siteverification/index.d.ts",
+      "import": "./dist/google/siteverification/index.js",
+      "default": "./dist/google/siteverification/index.js"
+    },
+    "./google/slides": {
+      "types": "./dist/google/slides/index.d.ts",
+      "import": "./dist/google/slides/index.js",
+      "default": "./dist/google/slides/index.js"
+    },
+    "./google/smartdevicemanagement": {
+      "types": "./dist/google/smartdevicemanagement/index.d.ts",
+      "import": "./dist/google/smartdevicemanagement/index.js",
+      "default": "./dist/google/smartdevicemanagement/index.js"
+    },
+    "./google/sourcerepo": {
+      "types": "./dist/google/sourcerepo/index.d.ts",
+      "import": "./dist/google/sourcerepo/index.js",
+      "default": "./dist/google/sourcerepo/index.js"
+    },
+    "./google/spanner": {
+      "types": "./dist/google/spanner/index.d.ts",
+      "import": "./dist/google/spanner/index.js",
+      "default": "./dist/google/spanner/index.js"
+    },
+    "./google/speech": {
+      "types": "./dist/google/speech/index.d.ts",
+      "import": "./dist/google/speech/index.js",
+      "default": "./dist/google/speech/index.js"
+    },
+    "./google/sql": {
+      "types": "./dist/google/sql/index.d.ts",
+      "import": "./dist/google/sql/index.js",
+      "default": "./dist/google/sql/index.js"
+    },
+    "./google/sqladmin": {
+      "types": "./dist/google/sqladmin/index.d.ts",
+      "import": "./dist/google/sqladmin/index.js",
+      "default": "./dist/google/sqladmin/index.js"
+    },
+    "./google/storage": {
+      "types": "./dist/google/storage/index.d.ts",
+      "import": "./dist/google/storage/index.js",
+      "default": "./dist/google/storage/index.js"
+    },
+    "./google/storagetransfer": {
+      "types": "./dist/google/storagetransfer/index.d.ts",
+      "import": "./dist/google/storagetransfer/index.js",
+      "default": "./dist/google/storagetransfer/index.js"
+    },
+    "./google/streetviewpublish": {
+      "types": "./dist/google/streetviewpublish/index.d.ts",
+      "import": "./dist/google/streetviewpublish/index.js",
+      "default": "./dist/google/streetviewpublish/index.js"
+    },
+    "./google/sts": {
+      "types": "./dist/google/sts/index.d.ts",
+      "import": "./dist/google/sts/index.js",
+      "default": "./dist/google/sts/index.js"
+    },
+    "./google/tagmanager": {
+      "types": "./dist/google/tagmanager/index.d.ts",
+      "import": "./dist/google/tagmanager/index.js",
+      "default": "./dist/google/tagmanager/index.js"
+    },
+    "./google/tasks": {
+      "types": "./dist/google/tasks/index.d.ts",
+      "import": "./dist/google/tasks/index.js",
+      "default": "./dist/google/tasks/index.js"
+    },
+    "./google/testing": {
+      "types": "./dist/google/testing/index.d.ts",
+      "import": "./dist/google/testing/index.js",
+      "default": "./dist/google/testing/index.js"
+    },
+    "./google/texttospeech": {
+      "types": "./dist/google/texttospeech/index.d.ts",
+      "import": "./dist/google/texttospeech/index.js",
+      "default": "./dist/google/texttospeech/index.js"
+    },
+    "./google/toolresults": {
+      "types": "./dist/google/toolresults/index.d.ts",
+      "import": "./dist/google/toolresults/index.js",
+      "default": "./dist/google/toolresults/index.js"
+    },
+    "./google/tpu": {
+      "types": "./dist/google/tpu/index.d.ts",
+      "import": "./dist/google/tpu/index.js",
+      "default": "./dist/google/tpu/index.js"
+    },
+    "./google/trafficdirector": {
+      "types": "./dist/google/trafficdirector/index.d.ts",
+      "import": "./dist/google/trafficdirector/index.js",
+      "default": "./dist/google/trafficdirector/index.js"
+    },
+    "./google/transcoder": {
+      "types": "./dist/google/transcoder/index.d.ts",
+      "import": "./dist/google/transcoder/index.js",
+      "default": "./dist/google/transcoder/index.js"
+    },
+    "./google/translate": {
+      "types": "./dist/google/translate/index.d.ts",
+      "import": "./dist/google/translate/index.js",
+      "default": "./dist/google/translate/index.js"
+    },
+    "./google/travelimpactmodel": {
+      "types": "./dist/google/travelimpactmodel/index.d.ts",
+      "import": "./dist/google/travelimpactmodel/index.js",
+      "default": "./dist/google/travelimpactmodel/index.js"
+    },
+    "./google/vault": {
+      "types": "./dist/google/vault/index.d.ts",
+      "import": "./dist/google/vault/index.js",
+      "default": "./dist/google/vault/index.js"
+    },
+    "./google/vectortile": {
+      "types": "./dist/google/vectortile/index.d.ts",
+      "import": "./dist/google/vectortile/index.js",
+      "default": "./dist/google/vectortile/index.js"
+    },
+    "./google/verifiedaccess": {
+      "types": "./dist/google/verifiedaccess/index.d.ts",
+      "import": "./dist/google/verifiedaccess/index.js",
+      "default": "./dist/google/verifiedaccess/index.js"
+    },
+    "./google/versionhistory": {
+      "types": "./dist/google/versionhistory/index.d.ts",
+      "import": "./dist/google/versionhistory/index.js",
+      "default": "./dist/google/versionhistory/index.js"
+    },
+    "./google/videointelligence": {
+      "types": "./dist/google/videointelligence/index.d.ts",
+      "import": "./dist/google/videointelligence/index.js",
+      "default": "./dist/google/videointelligence/index.js"
+    },
+    "./google/vision": {
+      "types": "./dist/google/vision/index.d.ts",
+      "import": "./dist/google/vision/index.js",
+      "default": "./dist/google/vision/index.js"
+    },
+    "./google/vmmigration": {
+      "types": "./dist/google/vmmigration/index.d.ts",
+      "import": "./dist/google/vmmigration/index.js",
+      "default": "./dist/google/vmmigration/index.js"
+    },
+    "./google/vpcaccess": {
+      "types": "./dist/google/vpcaccess/index.d.ts",
+      "import": "./dist/google/vpcaccess/index.js",
+      "default": "./dist/google/vpcaccess/index.js"
+    },
+    "./google/webfonts": {
+      "types": "./dist/google/webfonts/index.d.ts",
+      "import": "./dist/google/webfonts/index.js",
+      "default": "./dist/google/webfonts/index.js"
+    },
+    "./google/webmasters": {
+      "types": "./dist/google/webmasters/index.d.ts",
+      "import": "./dist/google/webmasters/index.js",
+      "default": "./dist/google/webmasters/index.js"
+    },
+    "./google/webrisk": {
+      "types": "./dist/google/webrisk/index.d.ts",
+      "import": "./dist/google/webrisk/index.js",
+      "default": "./dist/google/webrisk/index.js"
+    },
+    "./google/websecurityscanner": {
+      "types": "./dist/google/websecurityscanner/index.d.ts",
+      "import": "./dist/google/websecurityscanner/index.js",
+      "default": "./dist/google/websecurityscanner/index.js"
+    },
+    "./google/workflowexecutions": {
+      "types": "./dist/google/workflowexecutions/index.d.ts",
+      "import": "./dist/google/workflowexecutions/index.js",
+      "default": "./dist/google/workflowexecutions/index.js"
+    },
+    "./google/workflows": {
+      "types": "./dist/google/workflows/index.d.ts",
+      "import": "./dist/google/workflows/index.js",
+      "default": "./dist/google/workflows/index.js"
+    },
+    "./google/workloadmanager": {
+      "types": "./dist/google/workloadmanager/index.d.ts",
+      "import": "./dist/google/workloadmanager/index.js",
+      "default": "./dist/google/workloadmanager/index.js"
+    },
+    "./google/workstations": {
+      "types": "./dist/google/workstations/index.d.ts",
+      "import": "./dist/google/workstations/index.js",
+      "default": "./dist/google/workstations/index.js"
+    },
+    "./google/youtube": {
+      "types": "./dist/google/youtube/index.d.ts",
+      "import": "./dist/google/youtube/index.js",
+      "default": "./dist/google/youtube/index.js"
+    },
+    "./google/youtubeanalytics": {
+      "types": "./dist/google/youtubeanalytics/index.d.ts",
+      "import": "./dist/google/youtubeanalytics/index.js",
+      "default": "./dist/google/youtubeanalytics/index.js"
+    },
+    "./google/youtubereporting": {
+      "types": "./dist/google/youtubereporting/index.d.ts",
+      "import": "./dist/google/youtubereporting/index.js",
+      "default": "./dist/google/youtubereporting/index.js"
     },
     "./gov": {
       "types": "./dist/gov/index.d.ts",
@@ -9879,11 +9896,6 @@
       "import": "./dist/isendpro/index.js",
       "default": "./dist/isendpro/index.js"
     },
-    "./itglue": {
-      "types": "./dist/itglue/index.d.ts",
-      "import": "./dist/itglue/index.js",
-      "default": "./dist/itglue/index.js"
-    },
     "./iva-api": {
       "types": "./dist/iva-api/index.d.ts",
       "import": "./dist/iva-api/index.js",
@@ -10113,6 +10125,11 @@
       "types": "./dist/ljaero/dflight/index.d.ts",
       "import": "./dist/ljaero/dflight/index.js",
       "default": "./dist/ljaero/dflight/index.js"
+    },
+    "./lob": {
+      "types": "./dist/lob/index.d.ts",
+      "import": "./dist/lob/index.js",
+      "default": "./dist/lob/index.js"
     },
     "./logoraisr": {
       "types": "./dist/logoraisr/index.d.ts",
@@ -10494,6 +10511,11 @@
       "import": "./dist/mist/index.js",
       "default": "./dist/mist/index.js"
     },
+    "./mistral": {
+      "types": "./dist/mistral/index.d.ts",
+      "import": "./dist/mistral/index.js",
+      "default": "./dist/mistral/index.js"
+    },
     "./moderatecontent": {
       "types": "./dist/moderatecontent/index.d.ts",
       "import": "./dist/moderatecontent/index.js",
@@ -10628,6 +10650,11 @@
       "types": "./dist/nebl/index.d.ts",
       "import": "./dist/nebl/index.js",
       "default": "./dist/nebl/index.js"
+    },
+    "./neon": {
+      "types": "./dist/neon/index.d.ts",
+      "import": "./dist/neon/index.js",
+      "default": "./dist/neon/index.js"
     },
     "./neowsapp": {
       "types": "./dist/neowsapp/index.d.ts",
@@ -11104,6 +11131,11 @@
       "import": "./dist/openpolicy/index.js",
       "default": "./dist/openpolicy/index.js"
     },
+    "./openrouter": {
+      "types": "./dist/openrouter/index.d.ts",
+      "import": "./dist/openrouter/index.js",
+      "default": "./dist/openrouter/index.js"
+    },
     "./openrouteservice": {
       "types": "./dist/openrouteservice/index.d.ts",
       "import": "./dist/openrouteservice/index.js",
@@ -11263,6 +11295,11 @@
       "types": "./dist/paccurate/index.d.ts",
       "import": "./dist/paccurate/index.js",
       "default": "./dist/paccurate/index.js"
+    },
+    "./pagerduty": {
+      "types": "./dist/pagerduty/index.d.ts",
+      "import": "./dist/pagerduty/index.js",
+      "default": "./dist/pagerduty/index.js"
     },
     "./pandascore": {
       "types": "./dist/pandascore/index.d.ts",
@@ -11509,11 +11546,6 @@
       "import": "./dist/posthog/index.js",
       "default": "./dist/posthog/index.js"
     },
-    "./postman-explore": {
-      "types": "./dist/postman-explore/index.d.ts",
-      "import": "./dist/postman-explore/index.js",
-      "default": "./dist/postman-explore/index.js"
-    },
     "./postmarkapp": {
       "types": "./dist/postmarkapp/index.d.ts",
       "import": "./dist/postmarkapp/index.js",
@@ -11563,11 +11595,6 @@
       "types": "./dist/probely/index.d.ts",
       "import": "./dist/probely/index.js",
       "default": "./dist/probely/index.js"
-    },
-    "./producthunt": {
-      "types": "./dist/producthunt/index.d.ts",
-      "import": "./dist/producthunt/index.js",
-      "default": "./dist/producthunt/index.js"
     },
     "./proxykingdom": {
       "types": "./dist/proxykingdom/index.d.ts",
@@ -11738,6 +11765,16 @@
       "types": "./dist/remove/index.d.ts",
       "import": "./dist/remove/index.js",
       "default": "./dist/remove/index.js"
+    },
+    "./replicate": {
+      "types": "./dist/replicate/index.d.ts",
+      "import": "./dist/replicate/index.js",
+      "default": "./dist/replicate/index.js"
+    },
+    "./resend": {
+      "types": "./dist/resend/index.d.ts",
+      "import": "./dist/resend/index.js",
+      "default": "./dist/resend/index.js"
     },
     "./restful4up": {
       "types": "./dist/restful4up/index.d.ts",
@@ -12283,6 +12320,11 @@
       "types": "./dist/stytch/index.d.ts",
       "import": "./dist/stytch/index.js",
       "default": "./dist/stytch/index.js"
+    },
+    "./supabase": {
+      "types": "./dist/supabase/index.d.ts",
+      "import": "./dist/supabase/index.js",
+      "default": "./dist/supabase/index.js"
     },
     "./superset": {
       "types": "./dist/superset/index.d.ts",

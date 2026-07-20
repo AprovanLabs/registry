@@ -39,7 +39,8 @@ export interface UtdkAuthConfig {
 }
 
 interface UtdkPackageJson {
-  name: string;
+  /** Absent on suite leaf packages — they are private subpaths of "utdk". */
+  name?: string;
   utdk?: {
     provider: string;
     auth?: UtdkAuthConfig[];
@@ -66,6 +67,19 @@ function toMcpToolName(utcpName: string): string {
 }
 
 /**
+ * Resolve the import specifier base for a provider.
+ *
+ * Top-level providers ("github") are standalone scoped packages
+ * (@utdk/github). Vendor-suite providers ("google/drive") are subpaths of the
+ * root "utdk" package (utdk/google/drive) — there is no per-vendor scoped
+ * package. The root package's exports map exposes the per-provider
+ * openapi.json/package.json from its built dist.
+ */
+function getProviderImportBase(providerName: string): string {
+  return providerName.includes("/") ? `utdk/${providerName}` : `@utdk/${providerName}`;
+}
+
+/**
  * Load a provider package's OpenAPI document and package metadata.
  * This is the single choke point for the openapi.json dynamic-import contract.
  * Returns null if the package cannot be found or loaded.
@@ -74,7 +88,7 @@ export async function loadProviderPackage(providerName: string): Promise<{
   openApiDoc: Record<string, unknown>;
   packageJson: UtdkPackageJson;
 } | null> {
-  const packageName = `@utdk/${providerName}`;
+  const packageName = getProviderImportBase(providerName);
 
   try {
     const [openApiMod, pkgMod] = await Promise.all([
@@ -181,7 +195,7 @@ export async function loadProviders(
 
       const tools = buildProviderTools(providerName, pkg.openApiDoc, auth);
       process.stderr.write(
-        `[mcp-core] Loaded ${tools.length} tools from @utdk/${providerName}\n`,
+        `[mcp-core] Loaded ${tools.length} tools from ${getProviderImportBase(providerName)}\n`,
       );
       allTools.push(...tools);
     }),

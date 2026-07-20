@@ -365,9 +365,6 @@ importers:
       '@utdk/github':
         specifier: workspace:*
         version: link:../utdk/github
-      '@utdk/google':
-        specifier: workspace:*
-        version: link:../utdk/google
       '@utdk/hubspot':
         specifier: workspace:*
         version: link:../utdk/hubspot
@@ -407,6 +404,9 @@ importers:
       '@utdk/zendesk':
         specifier: workspace:*
         version: link:../utdk/zendesk
+      utdk:
+        specifier: workspace:*
+        version: link:../utdk
     devDependencies:
       '@types/node':
         specifier: ^25.5.0
@@ -566,11 +566,7 @@ importers:
 
   packages/utdk/github: {}
 
-  packages/utdk/google: {}
-
   packages/utdk/google-cloud-run: {}
-
-  packages/utdk/google/books: {}
 
   packages/utdk/hubspot: {}
 
