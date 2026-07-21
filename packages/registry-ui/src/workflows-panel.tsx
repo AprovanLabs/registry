@@ -788,10 +788,11 @@ function AppRow({
           </span>
           {app.liveUrl && (
             <a
-              className="font-mono text-[0.7rem] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
+              className="truncate font-mono text-[0.7rem] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
               href={app.liveUrl}
               rel="noreferrer"
               target="_blank"
+              title={app.liveUrl}
             >
               {app.liveUrl}
             </a>

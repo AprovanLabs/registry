@@ -72,7 +72,7 @@ function TypeHoverCard({ symbol }: { symbol: SdkSymbol }) {
           ))}
         </ul>
       )}
-      <p className="mt-2 border-t pt-2 font-mono text-[0.65rem] uppercase text-muted-foreground/70">
+      <p className="mt-2 break-all border-t pt-2 font-mono text-[0.65rem] uppercase text-muted-foreground/70">
         {symbol.httpMethod} {symbol.httpPath}
       </p>
     </div>
@@ -131,7 +131,7 @@ export function SdkExplorer({ provider, packageName, symbols }: SdkExplorerProps
   };
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex min-w-0 flex-col gap-6">
       <div ref={consoleRef} className="scroll-mt-24">
         <Card>
           <CardHeader>
@@ -167,7 +167,7 @@ export function SdkExplorer({ provider, packageName, symbols }: SdkExplorerProps
                   <p className="text-xs font-medium text-muted-foreground">Import and Run</p>
                   <CopyButton idleLabel="Copy" size="xs" text={active.snippet} />
                 </div>
-                <pre className="overflow-x-auto text-xs leading-5"><code><HighlightedCode code={active.snippet} /></code></pre>
+                <pre className="overflow-x-auto break-all text-xs leading-5"><code><HighlightedCode code={active.snippet} /></code></pre>
               </div>
               <TryItPanel
                 key={active.sdkPath}

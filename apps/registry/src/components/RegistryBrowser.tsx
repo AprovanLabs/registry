@@ -112,18 +112,18 @@ export function RegistryBrowser({ entries }: RegistryBrowserProps) {
           >
             <Card className="h-full py-3 transition-colors group-hover:bg-muted/30">
               <CardHeader className="gap-2 pb-0">
-                <div className="flex items-center gap-2">
+                <div className="flex min-w-0 items-center gap-2">
                   {entry.openApiIcon ? (
                     <img
                       alt={`${entry.title} logo`}
-                      className="h-5 w-5 rounded object-contain"
+                      className="h-5 w-5 shrink-0 rounded object-contain"
                       loading="lazy"
                       src={entry.openApiIcon}
                     />
                   ) : null}
-                  <CardTitle className="text-sm">{entry.title}</CardTitle>
+                  <CardTitle className="truncate text-sm">{entry.title}</CardTitle>
                 </div>
-                <CardDescription className="font-mono text-[0.7rem] text-muted-foreground">
+                <CardDescription className="truncate font-mono text-[0.7rem] text-muted-foreground">
                   {entry.packageName}
                 </CardDescription>
               <div className="flex flex-wrap items-center gap-2">

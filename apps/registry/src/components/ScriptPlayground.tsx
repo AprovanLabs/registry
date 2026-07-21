@@ -350,8 +350,8 @@ export function ScriptPlayground() {
   const stop = () => sandboxRef.current?.dispose();
 
   return (
-    <div className="grid items-start gap-6 lg:grid-cols-2">
-      <Card>
+    <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
+      <Card className="min-w-0">
         <CardHeader>
           <CardTitle className="font-mono text-base">Script</CardTitle>
           <CardDescription>
@@ -442,7 +442,7 @@ export function ScriptPlayground() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="min-w-0">
         <CardHeader>
           <CardTitle className="flex items-center gap-2 text-base">
             Live execution
