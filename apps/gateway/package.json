@@ -36,6 +36,7 @@
     "@jitl/quickjs-wasmfile-debug-asyncify": "0.32.0",
     "@modelcontextprotocol/sdk": "^1.29.0",
     "@utdk/common": "workspace:*",
+    "@utdk/llm": "workspace:*",
     "@utdk/mcp-core": "workspace:*",
     "aws-jwt-verify": "^4.0.1",
     "better-sqlite3": "^12.11.1",

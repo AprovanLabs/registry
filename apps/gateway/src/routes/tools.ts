@@ -15,6 +15,7 @@
  */
 
 import { withSpan } from "@utdk/common/telemetry";
+import { llmToolEntries as llmDiscoveryEntries } from "@utdk/llm";
 import { Hono } from "hono";
 import { mayInvokeTool } from "../authorize.js";
 import { getAuditStore } from "../audit.js";
@@ -172,93 +173,37 @@ function synthesizeInputSchema(meta: Record<string, unknown>): Record<string, un
 }
 
 /**
- * Curated entries for LLM chat-provider aliases. These execute through the
- * alias's OpenAI-compatible module (see the POST route's alias resolution),
- * so widgets can call e.g. `synthetic.new.createChatCompletion` directly.
- */
-/**
  * Discovery entries for a generic interface namespace. The `llm` interface
  * carries the OpenAI-compatible chat surface; calls dispatch to the bound
  * implementation, so the entry text stays provider-neutral.
  */
+function toLlmToolEntries(
+  provider: string,
+  entries: ReturnType<typeof llmDiscoveryEntries>,
+): ToolEntry[] {
+  return entries.map((entry) => ({
+    provider,
+    name: entry.name,
+    operation: entry.name.slice(entry.name.indexOf(".") + 1),
+    description: entry.description,
+    inputSchema: entry.inputSchema,
+  }));
+}
+
 function interfaceToolEntries(interfaceId: string): ToolEntry[] {
   if (interfaceId !== "llm") return [];
-  return [
-    {
-      provider: "llm",
-      name: "llm.createChatCompletion",
-      operation: "createChatCompletion",
-      description:
-        "Chat completion via the workspace's bound LLM provider (interfaces.bind to switch). OpenAI-compatible; model defaults to the binding's model.",
-      inputSchema: {
-        type: "object",
-        properties: {
-          model: { type: "string", description: "Model id (default: the binding's model)" },
-          messages: {
-            type: "array",
-            description: "OpenAI-style chat messages [{ role, content }]",
-            items: {
-              type: "object",
-              properties: {
-                role: { type: "string", enum: ["system", "user", "assistant"] },
-                content: { type: "string" },
-              },
-              required: ["role", "content"],
-            },
-          },
-          stream: { type: "boolean", description: "Stream the response as SSE" },
-        },
-        required: ["messages"],
-      },
-    },
-    {
-      provider: "llm",
-      name: "llm.listModels",
-      operation: "listModels",
-      description: "List models from the workspace's bound LLM provider.",
-      inputSchema: { type: "object", properties: {} },
-    },
-  ];
+  return toLlmToolEntries("llm", llmDiscoveryEntries("llm", { interfaceNamespace: true }));
 }
 
 function llmToolEntries(providerId: string): ToolEntry[] {
   const alias = resolveLlmProvider(providerId);
-  const label = alias?.label ?? providerId;
-  return [
-    {
-      provider: providerId,
-      name: `${providerId}.createChatCompletion`,
-      operation: "createChatCompletion",
-      description: `Chat completion via ${label} (OpenAI-compatible). Defaults to model ${alias?.defaultModel ?? "provider default"}.`,
-      inputSchema: {
-        type: "object",
-        properties: {
-          model: { type: "string", description: `Model id (default: ${alias?.defaultModel ?? "provider default"})` },
-          messages: {
-            type: "array",
-            description: "OpenAI-style chat messages [{ role, content }]",
-            items: {
-              type: "object",
-              properties: {
-                role: { type: "string", enum: ["system", "user", "assistant"] },
-                content: { type: "string" },
-              },
-              required: ["role", "content"],
-            },
-          },
-          stream: { type: "boolean", description: "Stream the response as SSE" },
-        },
-        required: ["messages"],
-      },
-    },
-    {
-      provider: providerId,
-      name: `${providerId}.listModels`,
-      operation: "listModels",
-      description: `List models available from ${label}.`,
-      inputSchema: { type: "object", properties: {} },
-    },
-  ];
+  return toLlmToolEntries(
+    providerId,
+    llmDiscoveryEntries(providerId, {
+      label: alias?.label,
+      defaultModel: alias?.defaultModel,
+    }),
+  );
 }
 
 async function discoverTools(workspaceId: string): Promise<ToolEntry[]> {

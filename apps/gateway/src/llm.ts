@@ -102,6 +102,8 @@ export interface OpenAiChatMessage {
   content: string;
 }
 
+export type { LlmChatMessage } from "@utdk/llm";
+
 /**
  * Flatten AI SDK UIMessages (parts arrays) into OpenAI `{role, content}`
  * messages. Non-text parts (tool calls, files) are dropped — the chat surface

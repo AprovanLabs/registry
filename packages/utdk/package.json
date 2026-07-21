@@ -16,7 +16,8 @@
   "dependencies": {
     "@utcp/http": "^1.1.1",
     "@utcp/sdk": "^1.1.0",
-    "@utdk/sql": "workspace:*"
+    "@utdk/sql": "workspace:*",
+    "@utdk/llm": "workspace:*"
   },
   "exports": {
     ".": {
