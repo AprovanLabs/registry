@@ -5,9 +5,15 @@
  * Transport-agnostic: the host passes `invoke(operation, args)` which must
  * dispatch to the gateway's `workflows` tool namespace (POST
  * /tools/workflows/:operation). Everything else — listing, trigger badges
- * (cron / webhook / events), manual runs (with an optional JSON input
- * console), run history, per-run traces (via the shared run-view), and
- * deletion — lives here so both apps stay in lockstep.
+ * (cron / webhook / events), manual runs, run history, per-run traces (via
+ * the shared run-view), and deletion — lives here so both apps stay in
+ * lockstep.
+ *
+ * Manual runs are triggered from the workflow *renderer*, not from a JSON
+ * console: the panel hands the flow renderer a `workflowRun` capability
+ * (execute + the selected run to overlay) through the renderer registry. A
+ * host that also passes `loadScript` gets the full graph with the run
+ * painted onto it; without it the same input form renders on its own.
  *
  * Passing the optional `invokeApps(operation, args)` transport (gateway
  * `apps` tool namespace) additionally renders a published-apps section with
@@ -15,7 +21,15 @@
  */
 
 import * as React from "react";
+import { RendererCapabilitiesProvider } from "./renderers";
 import { RunView, runViewFromWorkflowRun } from "./run-view";
+import { RunPanel, type RunValues } from "./tailor/RunPanel";
+
+// The graph pulls in @xyflow/react + tree-sitter, so it only loads for hosts
+// that can actually supply a script to render.
+const LazyTailorFlow = React.lazy(() =>
+  import("./tailor").then((module) => ({ default: module.TailorFlow })),
+);
 
 // ---------------------------------------------------------------------------
 // Wire types (mirror the gateway's workflows/apps service results)
@@ -64,7 +78,10 @@ export interface AppSummary {
   name: string;
   title?: string;
   description?: string;
-  dir?: string;
+  /** Workspace path of the UI entrypoint. */
+  entry?: string;
+  /** Workspace prefixes the app publishes; `paths[0]` is its root. */
+  paths?: string[];
   visibility: "public" | "private";
   liveUrl?: string;
   updatedAt?: string;
@@ -88,6 +105,12 @@ export interface WorkflowsPanelProps {
   invokeApps?: WorkflowsInvoke;
   /** Open the workflow's script in the host's editor, when available. */
   onOpenScript?: (path: string) => void;
+  /**
+   * Read a workflow's script from the workspace. When supplied, an expanded
+   * workflow renders as the flow graph with its run overlaid; without it the
+   * run form renders alone.
+   */
+  loadScript?: (path: string) => Promise<string | null>;
   className?: string;
 }
 
@@ -218,202 +241,95 @@ function ConfirmDeleteButton({
 }
 
 // ---------------------------------------------------------------------------
-// Manual-run input editor: structured field rows over the JSON payload —
-// values parse as JSON when they can (42, true, ["a"]) and fall back to
-// strings — with a raw-JSON mode for anything nested. The last input per
-// workflow is remembered so re-runs are one click.
+// Run surface: the workflow's own renderer, granted the ability to run it.
+//
+// With a script in hand this is the flow graph — inputs derived from the
+// signature, the selected run painted onto the nodes. Without one (no
+// `loadScript` from the host) the same input form renders standalone over the
+// shared run-view, so manual runs never depend on the graph.
 // ---------------------------------------------------------------------------
 
-const LAST_INPUT_PREFIX = "aprovan.workflow-input:";
-
-interface FieldRow {
-  key: string;
-  value: string;
-}
-
-function fieldsToJson(fields: FieldRow[]): string {
-  const payload: Record<string, unknown> = {};
-  for (const field of fields) {
-    if (!field.key.trim()) continue;
-    const raw = field.value;
-    try {
-      payload[field.key] = JSON.parse(raw);
-    } catch {
-      payload[field.key] = raw;
-    }
-  }
-  return Object.keys(payload).length > 0 ? JSON.stringify(payload) : "";
-}
-
-function jsonToFields(json: string): FieldRow[] | null {
-  if (!json.trim()) return [{ key: "", value: "" }];
-  try {
-    const parsed = JSON.parse(json) as unknown;
-    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) return null;
-    const rows = Object.entries(parsed).map(([key, value]) => ({
-      key,
-      value: typeof value === "string" ? value : JSON.stringify(value),
-    }));
-    return rows.length > 0 ? rows : [{ key: "", value: "" }];
-  } catch {
-    return null;
-  }
-}
-
-function RunInputEditor({
-  workflowName,
-  json,
-  onJsonChange,
-  onRun,
-  running,
-  error,
-}: {
-  workflowName: string;
-  json: string;
-  onJsonChange: (json: string) => void;
-  onRun: () => void;
-  running: boolean;
-  error: string | null;
-}) {
-  const storageKey = `${LAST_INPUT_PREFIX}${workflowName}`;
-  const [mode, setMode] = React.useState<"fields" | "raw">("fields");
-  const [fields, setFields] = React.useState<FieldRow[]>(() => {
-    const remembered = (() => {
-      try {
-        return localStorage.getItem(storageKey) ?? "";
-      } catch {
-        return "";
-      }
-    })();
-    const seed = json || remembered;
-    if (seed && seed !== json) onJsonChange(seed);
-    return jsonToFields(seed) ?? [{ key: "", value: "" }];
-  });
-
-  const syncFields = (next: FieldRow[]) => {
-    setFields(next);
-    onJsonChange(fieldsToJson(next));
-  };
-
-  const run = () => {
-    try {
-      localStorage.setItem(storageKey, json);
-    } catch {
-      // Remembering the input is best-effort.
-    }
-    onRun();
-  };
-
+/** Run metadata that sits above whichever trace view is showing. */
+function RunMeta({ trace }: { trace: WorkflowRunTrace }) {
   return (
-    <div className="space-y-2 border-t px-3 py-2">
-      <div className="flex items-center justify-between">
-        <span className="text-[0.7rem] font-medium uppercase tracking-wide text-muted-foreground">
-          Run input
-        </span>
-        <button
-          className="text-[0.7rem] text-muted-foreground underline-offset-2 hover:underline"
-          onClick={() => {
-            if (mode === "raw") {
-              const parsed = jsonToFields(json);
-              if (parsed) {
-                setFields(parsed);
-                setMode("fields");
-              }
-            } else {
-              setMode("raw");
-            }
-          }}
-          type="button"
-        >
-          {mode === "fields" ? "edit as JSON" : "edit as fields"}
-        </button>
-      </div>
-
-      {mode === "fields" ? (
-        <div className="space-y-1.5">
-          {fields.map((field, index) => (
-            <div className="flex items-center gap-1.5" key={index}>
-              <input
-                className="w-2/5 rounded-md border bg-transparent px-2 py-1 font-mono text-xs outline-none focus-visible:border-ring"
-                onChange={(event) =>
-                  syncFields(
-                    fields.map((f, i) => (i === index ? { ...f, key: event.target.value } : f)),
-                  )
-                }
-                placeholder="field"
-                spellCheck={false}
-                value={field.key}
-              />
-              <input
-                className="flex-1 rounded-md border bg-transparent px-2 py-1 font-mono text-xs outline-none focus-visible:border-ring"
-                onChange={(event) =>
-                  syncFields(
-                    fields.map((f, i) => (i === index ? { ...f, value: event.target.value } : f)),
-                  )
-                }
-                placeholder="value (JSON or text)"
-                spellCheck={false}
-                value={field.value}
-              />
-              <button
-                aria-label="Remove field"
-                className="px-1 text-muted-foreground hover:text-foreground"
-                onClick={() => syncFields(fields.filter((_, i) => i !== index))}
-                type="button"
-              >
-                ×
-              </button>
-            </div>
-          ))}
-          <button
-            className="text-[0.7rem] text-muted-foreground underline-offset-2 hover:underline"
-            onClick={() => setFields([...fields, { key: "", value: "" }])}
-            type="button"
-          >
-            + add field
-          </button>
-        </div>
-      ) : (
-        <textarea
-          className="w-full rounded-md border bg-transparent px-2 py-1.5 font-mono text-xs outline-none focus-visible:border-ring"
-          onChange={(event) => onJsonChange(event.target.value)}
-          placeholder='{ "key": "value" }'
-          rows={4}
-          spellCheck={false}
-          value={json}
-        />
-      )}
-
-      {error && <p className="text-xs text-red-600 dark:text-red-400">Invalid JSON: {error}</p>}
-      <button
-        className="rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-        disabled={running}
-        onClick={run}
-        type="button"
-      >
-        {running ? "Running…" : "Run with this input"}
-      </button>
+    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
+      <span className="flex items-center gap-1.5">
+        <StatusDot status={trace.status} />
+        {trace.status}
+      </span>
+      <span>{formatWhen(trace.startedAt)}</span>
+      {trace.durationMs !== undefined && <span>{trace.durationMs}ms</span>}
+      <span className="font-mono">
+        {trace.trigger}
+        {trace.triggerDetail ? `:${trace.triggerDetail}` : ""}
+      </span>
     </div>
   );
 }
 
-// ---------------------------------------------------------------------------
-// Run trace view (header meta + shared run-view)
-// ---------------------------------------------------------------------------
+function RunSurface({
+  workflow,
+  script,
+  trace,
+  onRun,
+}: {
+  workflow: WorkflowSummary;
+  script: string | null;
+  trace: WorkflowRunTrace | null;
+  onRun: (input: unknown) => Promise<WorkflowRunTrace>;
+}) {
+  const capabilities = React.useMemo(
+    () => ({ workflowRun: { run: onRun, activeRun: trace, storageKey: workflow.name } }),
+    [onRun, trace, workflow.name],
+  );
 
-function RunTrace({ trace }: { trace: WorkflowRunTrace }) {
-  return (
-    <div className="space-y-3 rounded-md border bg-muted/20 p-3 text-xs">
-      <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground">
-        <span className="flex items-center gap-1.5">
-          <StatusDot status={trace.status} />
-          {trace.status}
-        </span>
-        <span>{formatWhen(trace.startedAt)}</span>
-        {trace.durationMs !== undefined && <span>{trace.durationMs}ms</span>}
-        <span className="font-mono">{trace.trigger}{trace.triggerDetail ? `:${trace.triggerDetail}` : ""}</span>
+  // Standalone form + trace: everything the graph gives except the graph.
+  const [values, setValues] = React.useState<RunValues>(() => new Map());
+  const [running, setRunning] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  if (script !== null) {
+    return (
+      <div className="space-y-2">
+        {trace && <RunMeta trace={trace} />}
+        <RendererCapabilitiesProvider value={capabilities}>
+          <React.Suspense
+            fallback={<p className="text-xs text-muted-foreground">Loading flow renderer…</p>}
+          >
+            <LazyTailorFlow className="rounded-md border" source={script} />
+          </React.Suspense>
+        </RendererCapabilitiesProvider>
       </div>
-      <RunView model={runViewFromWorkflowRun(trace)} />
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      <RunPanel
+        error={error}
+        onRun={async (input) => {
+          setRunning(true);
+          setError(null);
+          try {
+            await onRun(input);
+          } catch (err) {
+            setError(err instanceof Error ? err.message : "Run failed");
+          } finally {
+            setRunning(false);
+          }
+        }}
+        onValuesChange={setValues}
+        params={[]}
+        running={running}
+        storageKey={workflow.name}
+        values={values}
+      />
+      {trace && (
+        <div className="space-y-3 rounded-md border bg-muted/20 p-3 text-xs">
+          <RunMeta trace={trace} />
+          <RunView model={runViewFromWorkflowRun(trace)} />
+        </div>
+      )}
     </div>
   );
 }
@@ -426,22 +342,22 @@ function WorkflowRow({
   workflow,
   invoke,
   onOpenScript,
+  loadScript,
   onDeleted,
 }: {
   workflow: WorkflowSummary;
   invoke: WorkflowsInvoke;
   onOpenScript?: (path: string) => void;
+  loadScript?: (path: string) => Promise<string | null>;
   onDeleted: () => void;
 }) {
   const [open, setOpen] = React.useState(false);
   const [runs, setRuns] = React.useState<WorkflowRunSummary[] | null>(null);
   const [trace, setTrace] = React.useState<WorkflowRunTrace | null>(null);
+  const [script, setScript] = React.useState<string | null>(null);
   const [running, setRunning] = React.useState(false);
   const [deleting, setDeleting] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
-  const [inputOpen, setInputOpen] = React.useState(false);
-  const [inputJson, setInputJson] = React.useState("");
-  const [inputError, setInputError] = React.useState<string | null>(null);
 
   const loadRuns = React.useCallback(async () => {
     try {
@@ -458,37 +374,45 @@ function WorkflowRow({
     if (open && runs === null) void loadRuns();
   }, [open, runs, loadRuns]);
 
-  const triggerRun = async (input?: unknown) => {
-    setRunning(true);
-    setError(null);
-    try {
-      const args: Record<string, unknown> =
-        input === undefined ? { name: workflow.name } : { name: workflow.name, input };
-      const run = (await invoke("run", args)) as WorkflowRunTrace;
-      setTrace(run);
-      setOpen(true);
-      await loadRuns();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Run failed");
-    } finally {
-      setRunning(false);
-    }
-  };
+  // Fetch the source once the row opens, so the renderer can draw the graph.
+  React.useEffect(() => {
+    if (!open || !loadScript || script !== null) return;
+    let active = true;
+    void loadScript(workflow.scriptPath)
+      .then((source) => {
+        if (active && source != null) setScript(source);
+      })
+      .catch(() => {
+        // A missing script just means the standalone run form renders.
+      });
+    return () => {
+      active = false;
+    };
+  }, [open, loadScript, script, workflow.scriptPath]);
 
-  const runWithInput = () => {
-    let input: unknown = null;
-    const raw = inputJson.trim();
-    if (raw !== "") {
+  /**
+   * The one manual-run path: shared by the row's quick "Run" and the
+   * renderer's input form, and returning the run so the renderer can overlay
+   * it immediately.
+   */
+  const triggerRun = React.useCallback(
+    async (input?: unknown) => {
+      setRunning(true);
+      setError(null);
       try {
-        input = JSON.parse(raw);
-      } catch (err) {
-        setInputError(err instanceof Error ? err.message : "Invalid JSON");
-        return;
+        const args: Record<string, unknown> =
+          input === undefined ? { name: workflow.name } : { name: workflow.name, input };
+        const run = (await invoke("run", args)) as WorkflowRunTrace;
+        setTrace(run);
+        setOpen(true);
+        await loadRuns();
+        return run;
+      } finally {
+        setRunning(false);
       }
-    }
-    setInputError(null);
-    void triggerRun(input);
-  };
+    },
+    [invoke, loadRuns, workflow.name],
+  );
 
   const removeWorkflow = async () => {
     setDeleting(true);
@@ -536,39 +460,20 @@ function WorkflowRow({
           )}
           <ConfirmDeleteButton busy={deleting} onConfirm={() => void removeWorkflow()} />
           <button
-            className={`${SMALL_BUTTON} ${inputOpen ? "bg-muted text-foreground" : ""}`}
-            onClick={() => {
-              setInputOpen((o) => !o);
-              setInputError(null);
-            }}
-            type="button"
-          >
-            Run with input…
-          </button>
-          <button
             className="rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
             disabled={running}
-            onClick={() => void triggerRun()}
+            onClick={() => {
+              triggerRun().catch((err: unknown) =>
+                setError(err instanceof Error ? err.message : "Run failed"),
+              );
+            }}
+            title="Run with no input"
             type="button"
           >
             {running ? "Running…" : "Run"}
           </button>
         </span>
       </div>
-
-      {inputOpen && (
-        <RunInputEditor
-          error={inputError}
-          json={inputJson}
-          onJsonChange={(next) => {
-            setInputJson(next);
-            setInputError(null);
-          }}
-          onRun={runWithInput}
-          running={running}
-          workflowName={workflow.name}
-        />
-      )}
 
       {workflow.description && open && (
         <p className="px-3 pb-2 text-xs text-muted-foreground">{workflow.description}</p>
@@ -584,6 +489,8 @@ function WorkflowRow({
             </p>
           )}
           {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+
+          <RunSurface onRun={triggerRun} script={script} trace={trace} workflow={workflow} />
 
           {runs === null ? (
             <p className="text-xs text-muted-foreground">Loading runs…</p>
@@ -610,8 +517,6 @@ function WorkflowRow({
               ))}
             </div>
           )}
-
-          {trace && <RunTrace trace={trace} />}
         </div>
       )}
     </div>
@@ -655,7 +560,8 @@ function AppSettings({
         .filter(Boolean);
       await invoke("publish", {
         name: app.name,
-        dir: app.dir,
+        entry: app.entry,
+        paths: app.paths,
         visibility,
         allowed_tools: allowedTools,
         roles: {
@@ -881,7 +787,13 @@ function AppsSection({ invoke }: { invoke: WorkflowsInvoke }) {
 // Panel
 // ---------------------------------------------------------------------------
 
-export function WorkflowsPanel({ invoke, invokeApps, onOpenScript, className }: WorkflowsPanelProps) {
+export function WorkflowsPanel({
+  invoke,
+  invokeApps,
+  onOpenScript,
+  loadScript,
+  className,
+}: WorkflowsPanelProps) {
   const [workflows, setWorkflows] = React.useState<WorkflowSummary[] | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -930,6 +842,7 @@ export function WorkflowsPanel({ invoke, invokeApps, onOpenScript, className }: 
             <WorkflowRow
               invoke={invoke}
               key={workflow.name}
+              loadScript={loadScript}
               onDeleted={() => void refresh()}
               onOpenScript={onOpenScript}
               workflow={workflow}

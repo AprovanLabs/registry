@@ -23,11 +23,22 @@ export type FlowStep = {
   calls: FlowStep[];
 };
 
+/** What the source lets us infer about a param's shape — drives the run form. */
+export type FlowParamKind = "string" | "number" | "boolean" | "object" | "unknown";
+
+export type FlowParam = {
+  name: string;
+  /** "unknown" when the signature gives nothing away (no default value). */
+  kind: FlowParamKind;
+  /** Source text of the default value, when the signature has one. */
+  defaultText?: string;
+};
+
 export type FlowAnalysis = {
   imports: Array<{ name: string; module: string }>;
   steps: FlowStep[];
   produced: Map<string, number>;
-  params: Array<{ name: string }>;
+  params: FlowParam[];
   fnName: string | null;
 };
 

@@ -1,5 +1,5 @@
 import { Language, Parser } from "web-tree-sitter";
-import type { FlowAnalysis, FlowArg, FlowStep } from "./types";
+import type { FlowAnalysis, FlowArg, FlowParam, FlowParamKind, FlowStep } from "./types";
 
 type NodeLike = {
   type: string;
@@ -102,8 +102,65 @@ function findFunctionNode(node: NodeLike): NodeLike | null {
   return null;
 }
 
-function extractFnParams(fnNode: NodeLike): Array<{ name: string }> {
-  const params: Array<{ name: string }> = [];
+/**
+ * A plain JS signature carries no types, so the only shape hint is a literal
+ * default (`limit = 5`, `dryRun = false`). Everything else stays "unknown"
+ * and the run form falls back to a JSON-or-text field.
+ */
+function paramKind(defaultNode: NodeLike | null | undefined): FlowParamKind {
+  if (!defaultNode) return "unknown";
+  switch (defaultNode.type) {
+    case "number":
+      return "number";
+    case "true":
+    case "false":
+      return "boolean";
+    case "string":
+    case "template_string":
+      return "string";
+    case "object":
+    case "array":
+      return "object";
+    // -1, +2 — still a number literal to a reader.
+    case "unary_expression":
+      return /^[+-]\s*[\d.]/u.test(defaultNode.text) ? "number" : "unknown";
+    default:
+      return "unknown";
+  }
+}
+
+function makeParam(name: string, defaultNode?: NodeLike | null): FlowParam {
+  const kind = paramKind(defaultNode);
+  return defaultNode ? { name, kind, defaultText: defaultNode.text } : { name, kind };
+}
+
+/** Flatten one destructured `{ a, b = 2, c: d }` binding into params. */
+function collectPatternParams(pattern: NodeLike, out: FlowParam[]): void {
+  for (const prop of namedChildrenOf(pattern)) {
+    if (prop.type === "shorthand_property_identifier_pattern") {
+      out.push(makeParam(prop.text));
+      continue;
+    }
+    // `{ limit = 5 }`
+    if (prop.type === "object_assignment_pattern") {
+      const left = prop.childForFieldName?.("left") ?? namedChildrenOf(prop)[0];
+      const right = prop.childForFieldName?.("right") ?? namedChildrenOf(prop)[1];
+      if (left) out.push(makeParam(left.text, right));
+      continue;
+    }
+    if (prop.type === "pair_pattern") {
+      const key = prop.childForFieldName?.("key")?.text;
+      if (!key) continue;
+      const value = prop.childForFieldName?.("value");
+      const dflt =
+        value?.type === "assignment_pattern" ? value.childForFieldName?.("right") : null;
+      out.push(makeParam(key, dflt));
+    }
+  }
+}
+
+function extractFnParams(fnNode: NodeLike): FlowParam[] {
+  const params: FlowParam[] = [];
   const namedKids = namedChildrenOf(fnNode);
   const fp =
     fnNode.childForFieldName?.("parameters") ??
@@ -114,21 +171,21 @@ function extractFnParams(fnNode: NodeLike): Array<{ name: string }> {
 
   for (const p of namedChildrenOf(fp)) {
     if (p.type === "identifier") {
-      params.push({ name: p.text });
+      params.push(makeParam(p.text));
       continue;
     }
 
-    if (p.type !== "object_pattern") continue;
+    if (p.type === "object_pattern") {
+      collectPatternParams(p, params);
+      continue;
+    }
 
-    for (const prop of namedChildrenOf(p)) {
-      if (prop.type === "shorthand_property_identifier_pattern") {
-        params.push({ name: prop.text });
-        continue;
-      }
-      if (prop.type === "pair_pattern") {
-        const key = prop.childForFieldName?.("key")?.text;
-        if (key) params.push({ name: key });
-      }
+    // `input = {}` / `{ a, b } = {}` — a defaulted top-level binding.
+    if (p.type === "assignment_pattern") {
+      const left = p.childForFieldName?.("left") ?? namedChildrenOf(p)[0];
+      const right = p.childForFieldName?.("right") ?? namedChildrenOf(p)[1];
+      if (left?.type === "object_pattern") collectPatternParams(left, params);
+      else if (left) params.push(makeParam(left.text, right));
     }
   }
 
@@ -522,7 +579,7 @@ function parseStatements(nodes: NodeLike[], context: ParseContext): FlowStep[] {
   return steps;
 }
 
-function buildGlobalProducedMap(steps: FlowStep[], params: Array<{ name: string }>): Map<string, number> {
+function buildGlobalProducedMap(steps: FlowStep[], params: FlowParam[]): Map<string, number> {
   const produced = new Map<string, number>();
   for (const param of params) produced.set(param.name, -1);
 
@@ -551,7 +608,7 @@ function buildGlobalProducedMap(steps: FlowStep[], params: Array<{ name: string 
 
 export function buildLocalProducedMap(
   steps: FlowStep[],
-  params: Array<{ name: string }>,
+  params: FlowParam[],
 ): Map<string, number> {
   const produced = new Map<string, number>();
   for (const param of params) produced.set(param.name, -1);
@@ -584,7 +641,7 @@ export async function analyzeScript(source: string): Promise<FlowAnalysis> {
 
   const imports: Array<{ name: string; module: string }> = [];
   const statements: NodeLike[] = [];
-  let params: Array<{ name: string }> = [];
+  let params: FlowParam[] = [];
   let fnName: string | null = null;
 
   for (const node of root.children) {

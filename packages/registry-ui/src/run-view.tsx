@@ -37,6 +37,11 @@ export interface RunViewSpan {
   input?: unknown;
   /** Call result, when the source records it (live runs). */
   output?: unknown;
+  /**
+   * Annotation from whoever built the model — e.g. the flow renderer marking
+   * a span it could not attribute to any step in the script.
+   */
+  note?: string;
 }
 
 export interface RunViewLog {
@@ -246,13 +251,27 @@ function SpanRow({
   timelineStart,
   timelineEnd,
   timelineSpanMs,
+  highlighted,
+  focused,
+  onHover,
+  onSelect,
 }: {
   span: RunViewSpan;
   timelineStart: number;
   timelineEnd: number;
   timelineSpanMs: number;
+  highlighted?: boolean;
+  focused?: boolean;
+  onHover?: (id: string | null) => void;
+  onSelect?: (id: string) => void;
 }) {
   const [expanded, setExpanded] = React.useState(false);
+  const rowRef = React.useRef<HTMLDivElement | null>(null);
+
+  // Selecting the corresponding node in a linked view scrolls this row in.
+  React.useEffect(() => {
+    if (focused) rowRef.current?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+  }, [focused]);
 
   const offsetPct = ((span.startedAt - timelineStart) / timelineSpanMs) * 100;
   const durationMs = span.durationMs ?? Math.max(timelineEnd - span.startedAt, 0);
@@ -261,11 +280,23 @@ function SpanRow({
   const expandable = span.input !== undefined || span.output !== undefined;
   const retries = span.retries ?? 0;
 
+  const linked = onHover !== undefined || onSelect !== undefined;
+
   return (
-    <div className="flex flex-col gap-0.5">
+    <div
+      className={`flex flex-col gap-0.5 rounded-sm px-1 -mx-1 transition-colors ${
+        highlighted ? "bg-muted" : ""
+      }`}
+      onMouseEnter={() => onHover?.(span.id)}
+      onMouseLeave={() => onHover?.(null)}
+      ref={rowRef}
+    >
       <button
-        className={`flex items-baseline justify-between gap-3 text-left ${expandable ? "" : "cursor-default"}`}
-        onClick={() => expandable && setExpanded((previous) => !previous)}
+        className={`flex items-baseline justify-between gap-3 text-left ${expandable || linked ? "" : "cursor-default"}`}
+        onClick={() => {
+          onSelect?.(span.id);
+          if (expandable) setExpanded((previous) => !previous);
+        }}
         type="button"
       >
         <span className="flex min-w-0 items-center gap-1 font-mono text-xs">
@@ -281,6 +312,11 @@ function SpanRow({
             {retries > 0 && (
               <span className="ml-1.5 text-muted-foreground">
                 ↻ {retries} {retries === 1 ? "retry" : "retries"}
+              </span>
+            )}
+            {span.note && (
+              <span className="ml-1.5 rounded border border-dashed px-1 text-[0.6rem] text-muted-foreground">
+                {span.note}
               </span>
             )}
           </span>
@@ -346,10 +382,27 @@ export interface RunViewProps {
   model: RunViewModel;
   /** Shown before anything has run. */
   emptyHint?: string;
+  /**
+   * Cross-highlighting hooks for hosts that render the same run somewhere
+   * else too (the flow graph links spans ↔ steps through these).
+   */
+  highlightedSpanIds?: ReadonlySet<string>;
+  /** Span to scroll into view — set when the linked view selects a node. */
+  focusSpanId?: string | null;
+  onSpanHover?: (id: string | null) => void;
+  onSpanSelect?: (id: string) => void;
   className?: string;
 }
 
-export function RunView({ model, emptyHint, className }: RunViewProps) {
+export function RunView({
+  model,
+  emptyHint,
+  highlightedSpanIds,
+  focusSpanId,
+  onSpanHover,
+  onSpanSelect,
+  className,
+}: RunViewProps) {
   const running = model.status === "running";
 
   // Re-render while running so live timing bars grow in real time.
@@ -386,7 +439,11 @@ export function RunView({ model, emptyHint, className }: RunViewProps) {
       <div className="flex flex-col gap-1.5">
         {model.spans.map((span) => (
           <SpanRow
+            focused={focusSpanId === span.id}
+            highlighted={highlightedSpanIds?.has(span.id)}
             key={span.id}
+            onHover={onSpanHover}
+            onSelect={onSpanSelect}
             span={span}
             timelineEnd={timelineEnd}
             timelineSpanMs={timelineSpanMs}

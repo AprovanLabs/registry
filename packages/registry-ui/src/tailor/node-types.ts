@@ -1,3 +1,5 @@
+import type { StepStatus } from "./trace";
+
 export type ArgChip = {
   text: string;
   /** null = plain literal, otherwise what kind of reference */
@@ -8,7 +10,16 @@ export type ArgChip = {
   inputValue?: string;
 };
 
+/** What a selected run did at this node; absent when nothing is overlaid. */
+export type RunOverlay = {
+  status: StepStatus;
+  durationMs: number;
+  error?: string;
+};
+
 export type StepNodeData = {
+  /** FlowStep.id — the key the trace correlation and hover linking use. */
+  stepId: number;
   title: string;
   object: string | null;
   method: string | null;
@@ -19,9 +30,13 @@ export type StepNodeData = {
   nested: Array<{ label: "then" | "catch" | "finally"; count: number }>;
   onOpen: (label: "then" | "catch" | "finally") => void;
   active: boolean;
+  /** Highlighted by a hovered/selected span in the trace. */
+  highlighted: boolean;
+  run?: RunOverlay;
 };
 
 export type ParallelNodeData = {
+  stepId: number;
   title: string;
   description: string | null;
   calls: Array<{
@@ -29,7 +44,10 @@ export type ParallelNodeData = {
     description: string | null;
     args: ArgChip[];
     nested: Array<{ label: "then" | "catch" | "finally"; count: number }>;
+    run?: RunOverlay;
   }>;
   onOpenCallBranch: (callIndex: number, label: "then" | "catch" | "finally") => void;
   active: boolean;
+  highlighted: boolean;
+  run?: RunOverlay;
 };

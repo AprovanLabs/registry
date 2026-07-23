@@ -8,6 +8,11 @@
  * pretty-printed JSON. Hosts can `registerRenderer` their own (e.g. the
  * chat's widget compiler or Markdown pipeline) — highest match score wins.
  *
+ * Hosts that can do more than show the content (execute a workflow, supply a
+ * recorded run) pass those abilities down through
+ * {@link RendererCapabilitiesProvider}; renderers read them with
+ * {@link useRendererCapabilities} and must stay correct without them.
+ *
  * ## Viz runtime
  *
  * Two structured shapes render natively, so workflow scripts can *return
@@ -21,6 +26,47 @@
  */
 
 import React from "react";
+import type { WorkflowRunLike } from "./run-view";
+
+// ---------------------------------------------------------------------------
+// Host capabilities
+//
+// Renderers are pure functions of their input by default. A host that can do
+// more — execute the thing it is rendering, hand over a recorded run —
+// declares it here instead of the renderer reaching for a global. Every
+// capability is optional and every renderer must degrade to a preview
+// without it.
+// ---------------------------------------------------------------------------
+
+export interface WorkflowRunCapability {
+  /** Execute the rendered workflow with this input; resolves with the run. */
+  run: (input: unknown) => Promise<WorkflowRunLike | void>;
+  /** Run whose outcome should overlay the rendered flow, when host-selected. */
+  activeRun?: WorkflowRunLike | null;
+  /** Stable key for remembering the last manual input (the workflow name). */
+  storageKey?: string;
+}
+
+export interface RendererCapabilities {
+  workflowRun?: WorkflowRunCapability;
+}
+
+const CapabilitiesContext = React.createContext<RendererCapabilities>({});
+
+/** Grant capabilities to every renderer beneath this boundary. */
+export function RendererCapabilitiesProvider({
+  value,
+  children,
+}: {
+  value: RendererCapabilities;
+  children: React.ReactNode;
+}): React.ReactElement {
+  return <CapabilitiesContext.Provider value={value}>{children}</CapabilitiesContext.Provider>;
+}
+
+export function useRendererCapabilities(): RendererCapabilities {
+  return React.useContext(CapabilitiesContext);
+}
 
 // ---------------------------------------------------------------------------
 // Registry

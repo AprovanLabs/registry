@@ -14,8 +14,8 @@ export function Breadcrumbs({ fnName, focusStack, onReset, onNavigate }: Breadcr
     [
       "rounded-full border px-2 py-0.5 text-[0.67rem] font-bold tracking-wider uppercase cursor-pointer transition-colors",
       active
-        ? "border-accent text-accent bg-neutral-100"
-        : "border-border text-muted-foreground bg-card hover:border-neutral-400",
+        ? "border-tailor-accent text-tailor-accent bg-muted"
+        : "border-border text-muted-foreground bg-card hover:border-tailor-accent/50",
     ].join(" ");
 
   return (

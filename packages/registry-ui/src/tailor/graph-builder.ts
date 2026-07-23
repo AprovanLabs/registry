@@ -1,5 +1,6 @@
 import { buildLocalProducedMap } from "./flow-analyzer";
-import type { ArgChip, StepNodeData, ParallelNodeData } from "./node-types";
+import type { ArgChip, RunOverlay, StepNodeData, ParallelNodeData } from "./node-types";
+import type { RunCorrelation } from "./trace";
 import type { FlowAnalysis, FlowStep, FocusView } from "./types";
 import type { Edge, Node } from "@xyflow/react";
 
@@ -69,18 +70,34 @@ function resolveArgs(
   return chips;
 }
 
-export function buildGraph(
-  analysis: FlowAnalysis,
-  current: FocusView,
-  inputValues: Map<string, string>,
-  onOpen: (stepId: number, label: "then" | "catch" | "finally") => void,
-  onOpenCallBranch: (stepId: number, callIndex: number, label: "then" | "catch" | "finally") => void,
-): { nodes: Array<Node<StepNodeData | ParallelNodeData>>; edges: Edge[] } {
+export interface BuildGraphOptions {
+  analysis: FlowAnalysis;
+  current: FocusView;
+  inputValues: Map<string, string>;
+  onOpen: (stepId: number, label: "then" | "catch" | "finally") => void;
+  onOpenCallBranch: (stepId: number, callIndex: number, label: "then" | "catch" | "finally") => void;
+  /** Trace overlay; undefined when no run is selected (pure preview). */
+  correlation?: RunCorrelation;
+  /** FlowStep.ids currently highlighted from the trace side. */
+  highlightedStepIds?: ReadonlySet<number>;
+}
+
+export function buildGraph({
+  analysis,
+  current,
+  inputValues,
+  onOpen,
+  onOpenCallBranch,
+  correlation,
+  highlightedStepIds,
+}: BuildGraphOptions): { nodes: Array<Node<StepNodeData | ParallelNodeData>>; edges: Edge[] } {
   const nodes: Array<Node<StepNodeData | ParallelNodeData>> = [];
   const edges: Edge[] = [];
 
   const localProduced = buildLocalProducedMap(current.steps, analysis.params);
   const stepNodeIds = new Map<number, string>();
+  const overlay = (step: FlowStep): RunOverlay | undefined => correlation?.steps.get(step.id);
+  const highlighted = (step: FlowStep) => highlightedStepIds?.has(step.id) ?? false;
 
   for (let index = 0; index < current.steps.length; index += 1) {
     const step = current.steps[index];
@@ -96,6 +113,7 @@ export function buildGraph(
         type: "step",
         position: { x: 80, y: index * 220 + 20 },
         data: {
+          stepId: step.id,
           title: methodName(step),
           object: step.object,
           method: step.method,
@@ -109,6 +127,8 @@ export function buildGraph(
           })),
           onOpen: (label) => onOpen(step.id, label),
           active: current.fromStepId === step.id,
+          highlighted: highlighted(step),
+          run: overlay(step),
         },
       });
     } else {
@@ -117,9 +137,10 @@ export function buildGraph(
         type: "parallel",
         position: { x: 80, y: index * 220 + 20 },
         data: {
+          stepId: step.id,
           title: "Promise.all",
           description: step.description,
-          calls: step.calls.map((call, _callIndex) => ({
+          calls: step.calls.map((call) => ({
             name: methodName(call),
             description: call.description,
             args: resolveArgs(call.args, localProduced, analysis.produced, inputValues, index),
@@ -127,9 +148,12 @@ export function buildGraph(
               label: nested.label,
               count: nested.steps.length,
             })),
+            run: overlay(call),
           })),
           onOpenCallBranch: (callIndex, label) => onOpenCallBranch(step.id, callIndex, label),
           active: current.fromStepId === step.id,
+          highlighted: highlighted(step) || step.calls.some(highlighted),
+          run: overlay(step),
         },
       });
     }
