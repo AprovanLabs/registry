@@ -2,9 +2,16 @@
  * App manifests — published bundles of workflows, a UI, a tool allow-list,
  * roles, and rate limits, owned by a workspace.
  *
- * An app is a *folder* in the owner workspace (e.g. `apps/liift4`) following
- * Node conventions: `index.tsx` is the UI entrypoint, and everything the app
- * stores lives next to it under `<dir>/data/` (per-user partitions). The
+ * An app binds *explicit workspace paths* to a deployed endpoint rather than
+ * relying on a folder convention: `entry` is the workspace VFS path of the UI
+ * entrypoint (e.g. `apps/liift4/widget.tsx`) and `paths` are the workspace
+ * prefixes the app publishes (default `[dirname(entry)]`, plus any shared
+ * library prefixes). Those prefixes are the single source of truth for BOTH
+ * what the live site serves AND what an app session may read/write — one
+ * prefix rule, two consumers (see {@link appPathAllowed}).
+ *
+ * Everything the app stores lives under the primary prefix at
+ * `<paths[0]>/data/<user>` ({@link appDataDir}) and is never served. The
  * owning workspace is the app's "account": its credentials execute the app's
  * workflows, its FS stores the app's data, and its members administer the
  * bundle. Consumers are any authenticated users — membership NOT required —
@@ -12,18 +19,22 @@
  * data partitions, per-user rate limits).
  *
  * Manifests are stored at `.services/apps/<name>.json` in the owner
- * workspace FS. Workspace-level sharing of paths *outside* an app's folder
- * is declared in `.services/workspace.json` (see WorkspaceConfig).
+ * workspace FS. Workspace-level sharing of paths *outside* an app's declared
+ * prefixes is declared in `.services/workspace.json` (see WorkspaceConfig).
  */
 
-import { getFsStore } from "../fs-store.js";
+import { getFsStore, normalizeFsPath } from "../fs-store.js";
 import { ServiceError } from "../services.js";
 
 const APPS_PREFIX = ".services/apps/";
 const WORKSPACE_CONFIG_PATH = ".services/workspace.json";
 
-/** The app UI entrypoint inside the app folder (Node convention). */
-export const APP_ENTRY_FILE = "index.tsx";
+/**
+ * Entrypoint file names tried, in order, when a publish points at a folder
+ * instead of a file. A folder with exactly one `*.tsx` also resolves; any
+ * other ambiguity is a 400 rather than a guess.
+ */
+export const ENTRY_CANDIDATES = ["index.tsx", "index.ts", "widget.tsx"];
 
 export interface AppRoles {
   /** Cognito subs with the app's admin role. */
@@ -50,10 +61,17 @@ export interface AppManifest {
   title?: string;
   description?: string;
   /**
-   * Workspace VFS folder the app lives in (e.g. "apps/liift4"). The UI
-   * entrypoint is `<dir>/index.tsx`; app data lives under `<dir>/data/`.
+   * Workspace VFS path of the UI entrypoint (e.g. "apps/liift4/widget.tsx").
+   * Absolute within the workspace — not relative to a folder.
    */
-  dir?: string;
+  entry: string;
+  /**
+   * Workspace path prefixes this app publishes. `paths[0]` (always the
+   * entry's folder) is the app's primary root: its data partition and its
+   * app-relative vfs paths hang off it. Additional prefixes let an app ship
+   * shared code/assets (e.g. "lib/charts") without copying them.
+   */
+  paths: string[];
   /**
    * Who can open the live app page (aprovan.com/apps/<workspace>/<name>):
    * "public" — anyone, no Aprovan account needed to view the page;
@@ -79,9 +97,9 @@ export interface AppManifest {
 
 /**
  * Workspace-level configuration (`.services/workspace.json`). `shares`
- * exposes workspace paths outside an app's own folder to app sessions —
- * apps always have automatic access to their own folder, so this is only
- * for deliberately shared data.
+ * exposes workspace paths outside an app's declared prefixes to app
+ * sessions — apps always have automatic access to their own prefixes, so
+ * this is only for deliberately shared data.
  */
 export interface WorkspaceShare {
   /** Workspace path prefix being exposed (e.g. "shared/recipes"). */
@@ -105,27 +123,115 @@ export function appName(value: unknown): string {
   return value;
 }
 
-/** The app folder, normalized without trailing slash. Throws on `.services` paths. */
-export function appDir(value: unknown): string {
-  if (typeof value !== "string" || value.trim() === "") {
-    throw new ServiceError("dir must be a workspace folder path (e.g. apps/liift4)", 400);
+/**
+ * A workspace VFS path, normalized without leading/trailing slashes. Throws
+ * on traversal and on `.services/**` (service state is reachable only through
+ * its tool namespaces).
+ */
+export function workspacePath(value: unknown, label = "path"): string {
+  const path = typeof value === "string" ? normalizeFsPath(value) : null;
+  if (!path) {
+    throw new ServiceError(`${label} must be a workspace path (e.g. apps/liift4/widget.tsx)`, 400);
   }
-  const dir = value.replace(/^\/+|\/+$/g, "");
-  if (dir === "" || dir.split("/").some((seg) => seg === "." || seg === "..")) {
-    throw new ServiceError(`Invalid app dir: ${value}`, 400);
+  if (path === ".services" || path.startsWith(".services/")) {
+    throw new ServiceError(`${label} cannot live under .services/`, 400);
   }
-  if (dir === ".services" || dir.startsWith(".services/")) {
-    throw new ServiceError("app dir cannot live under .services/", 400);
-  }
-  return dir;
+  return path;
 }
 
-/** The per-(app, user) data folder inside the app's own directory. */
-export function appDataDir(manifest: AppManifest, userId: string): string {
-  if (!manifest.dir) {
-    throw new ServiceError(`App ${manifest.name} has no folder (dir) configured`, 400);
+/** The folder holding `path` (throws when it has none — apps need a root). */
+export function pathDir(path: string, label = "entry"): string {
+  const cut = path.lastIndexOf("/");
+  if (cut <= 0) {
+    throw new ServiceError(`${label} must live in a workspace folder, not at the root: ${path}`, 400);
   }
-  return `${manifest.dir}/data/${userId}`;
+  return path.slice(0, cut);
+}
+
+/**
+ * The path binding of a published app — a manifest, or the app-session scope
+ * derived from one (see ServiceContext.appScope). Everything path-related is
+ * decided from these two fields alone.
+ */
+export interface AppPaths {
+  name: string;
+  paths: string[];
+}
+
+/** The app's primary prefix: where its data and app-relative paths live. */
+export function appRoot(app: AppPaths): string {
+  const root = app.paths?.[0];
+  if (!root) throw new ServiceError(`App ${app.name} has no published paths`, 400);
+  return root;
+}
+
+/** The per-app data partition root — served to nobody, ever. */
+export function appDataRoot(app: AppPaths): string {
+  return `${appRoot(app)}/data`;
+}
+
+/** The per-(app, user) data folder inside the app's primary prefix. */
+export function appDataDir(app: AppPaths, userId: string): string {
+  return `${appDataRoot(app)}/${userId}`;
+}
+
+const underPrefix = (path: string, prefix: string): boolean =>
+  path === prefix || path.startsWith(`${prefix}/`);
+
+/**
+ * Resolve an app-relative path (as an app session or the live site addresses
+ * it) to its absolute workspace path under the app's primary prefix.
+ */
+export function resolveAppPath(app: AppPaths, relative: string): string {
+  return workspacePath(`${appRoot(app)}/${relative}`, "path");
+}
+
+/**
+ * Does `path` belong to this app? The one place prefix authz is decided —
+ * used by the live site (what it may serve) and by app sessions (what their
+ * vfs/keyvalue calls may touch). Anything outside needs a workspace share.
+ */
+export function appPathAllowed(app: AppPaths, path: string): boolean {
+  return (app.paths ?? []).some((prefix) => underPrefix(path, prefix));
+}
+
+/**
+ * Is `path` publishable over HTTP? Declared prefixes minus the data
+ * partition — per-user app data is co-located with the code but never
+ * leaves through the live site or `__project__`.
+ */
+export function appPathServable(app: AppPaths, path: string): boolean {
+  return appPathAllowed(app, path) && !underPrefix(path, appDataRoot(app));
+}
+
+/**
+ * Resolve the UI entrypoint for a publish that points at `target`: a file
+ * path is taken as-is (after an existence check), a folder is resolved
+ * against {@link ENTRY_CANDIDATES} and then a lone `*.tsx`.
+ */
+export async function resolveAppEntry(workspaceId: string, target: unknown): Promise<string> {
+  const path = workspacePath(target, "entry");
+  const store = getFsStore();
+  if (await store.read(workspaceId, path)) return path;
+
+  const prefix = `${path}/`;
+  const names = (await store.list(workspaceId, path))
+    .map((entry) => entry.path)
+    .filter((entry) => entry.startsWith(prefix))
+    .map((entry) => entry.slice(prefix.length))
+    .filter((name) => !name.includes("/"));
+
+  const conventional = ENTRY_CANDIDATES.find((candidate) => names.includes(candidate));
+  if (conventional) return prefix + conventional;
+  const widgets = names.filter((name) => name.endsWith(".tsx"));
+  if (widgets.length === 1) return prefix + widgets[0]!;
+
+  throw new ServiceError(
+    widgets.length > 1
+      ? `Ambiguous app entrypoint in ${path} — name one explicitly (candidates: ${widgets.join(", ")})`
+      : `App entrypoint not found: ${path} is not a file and holds none of ${ENTRY_CANDIDATES.join(", ")}`,
+    400,
+  );
 }
 
 function manifestPath(name: string): string {
@@ -141,12 +247,27 @@ export async function saveApp(workspaceId: string, manifest: AppManifest): Promi
   );
 }
 
+/**
+ * Read a manifest, *resolving* its path binding rather than trusting whatever
+ * shape is on disk. Manifests written before apps declared `entry`/`paths`
+ * only name a folder, so resolve that once and rewrite in place — a published
+ * app should never 404 on a stale shape, and this is the only place that has
+ * to know the old one.
+ */
 export async function readApp(
   workspaceId: string,
   name: string,
 ): Promise<AppManifest | undefined> {
   const file = await getFsStore().read(workspaceId, manifestPath(name));
-  return file ? (JSON.parse(file.content) as AppManifest) : undefined;
+  if (!file) return undefined;
+  const stored = JSON.parse(file.content) as AppManifest & { dir?: string };
+  if (stored.entry && stored.paths?.length) return stored;
+
+  const entry = await resolveAppEntry(workspaceId, stored.entry ?? stored.dir);
+  const { dir: _legacy, ...rest } = stored;
+  const bound: AppManifest = { ...rest, entry, paths: [pathDir(entry)] };
+  await saveApp(workspaceId, bound);
+  return bound;
 }
 
 export async function listApps(workspaceId: string): Promise<AppManifest[]> {
@@ -161,7 +282,7 @@ export async function listApps(workspaceId: string): Promise<AppManifest[]> {
 }
 
 export interface RemoveAppOptions {
-  /** Also delete the app folder (UI, data partitions, everything). */
+  /** Also delete the app's primary prefix (UI, data partitions, everything). */
   purgeData?: boolean;
 }
 
@@ -172,8 +293,10 @@ export async function removeApp(
 ): Promise<boolean> {
   const manifest = await readApp(workspaceId, name);
   const removed = await getFsStore().remove(workspaceId, manifestPath(name));
-  if (options.purgeData && manifest?.dir) {
-    await getFsStore().removePrefix(workspaceId, manifest.dir);
+  // Only the primary prefix is purged: secondary prefixes are shared library
+  // paths this app doesn't own.
+  if (options.purgeData && manifest) {
+    await getFsStore().removePrefix(workspaceId, appRoot(manifest));
   }
   return removed;
 }
@@ -218,6 +341,20 @@ export function shareAllows(
     return true;
   }
   return false;
+}
+
+/**
+ * May an app session touch this workspace path? Its declared prefixes are
+ * its own turf (read and write); everything else must be shared explicitly
+ * in `.services/workspace.json`.
+ */
+export function appFsAllowed(
+  app: AppPaths,
+  config: WorkspaceConfig,
+  path: string,
+  write: boolean,
+): boolean {
+  return appPathAllowed(app, path) || shareAllows(config, app.name, path, write);
 }
 
 /** Does the allow-list permit `namespace.procedure`? */

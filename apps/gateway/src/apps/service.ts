@@ -6,18 +6,19 @@
  * routes/apps.ts; the live page surface in routes/live-apps.ts.
  */
 
-import { getFsStore } from "../fs-store.js";
 import { ServiceError, type CoreService } from "../services.js";
 import { readRegistration } from "../workflows/store.js";
 import {
-  APP_ENTRY_FILE,
-  appDir,
+  ENTRY_CANDIDATES,
   appName,
   listApps,
+  pathDir,
   readApp,
   readWorkspaceConfig,
   removeApp,
+  resolveAppEntry,
   saveApp,
+  workspacePath,
   writeWorkspaceConfig,
   type AppManifest,
   type AppRateLimit,
@@ -85,18 +86,54 @@ function summarize(manifest: AppManifest, workspaceId: string) {
     name: manifest.name,
     title: manifest.title,
     description: manifest.description,
-    dir: manifest.dir,
+    /** UI entrypoint, as a workspace path. */
+    entry: manifest.entry,
+    /** Workspace prefixes this app publishes (paths[0] is its root). */
+    paths: manifest.paths,
     visibility: manifest.visibility ?? "private",
     workflows: manifest.workflows ?? [],
     allowedTools: manifest.allowedTools,
     roles: manifest.roles,
     rateLimit: manifest.rateLimit,
     /** Live page URL (aprovan.com/apps/<workspace>/<name>). */
-    liveUrl: manifest.dir ? appPath(workspaceId, manifest.name) : undefined,
+    liveUrl: appPath(workspaceId, manifest.name),
     /** API surface base (/api/gateway/apps/...). */
     appPath: appPath(workspaceId, manifest.name),
     updatedAt: manifest.updatedAt,
   };
+}
+
+/**
+ * Resolve the manifest's path binding from the publish arguments. `entry`
+ * (a file, or a folder to resolve within) is the explicit form; `dir` is
+ * sugar for the same thing. With neither, an update keeps its binding and a
+ * fresh publish claims `apps/<name>/index.tsx` — the UI is often authored
+ * after the app is registered, so that default is not required to exist yet.
+ *
+ * `paths` always leads with the entry's folder — the primary prefix carries
+ * the app's data partition and its app-relative vfs paths, so it is derived,
+ * never declared. Extra prefixes survive an update unless `paths` is given
+ * (pass `[]` to drop them).
+ */
+async function resolveBinding(
+  workspaceId: string,
+  name: string,
+  args: Record<string, unknown>,
+  existing: AppManifest | undefined,
+): Promise<{ entry: string; paths: string[] }> {
+  const target = args["entry"] ?? args["dir"];
+  const entry =
+    target !== undefined
+      ? await resolveAppEntry(workspaceId, target)
+      : (existing?.entry ?? `apps/${name}/${ENTRY_CANDIDATES[0]}`);
+
+  const declared = args["paths"] ?? existing?.paths.slice(1) ?? [];
+  if (!Array.isArray(declared)) {
+    throw new ServiceError("paths must be an array of workspace prefixes", 400);
+  }
+  const extra = declared.map((path) => workspacePath(path, "paths[]"));
+
+  return { entry, paths: [...new Set([pathDir(entry), ...extra])] };
 }
 
 export const appsService: CoreService = {
@@ -105,14 +142,25 @@ export const appsService: CoreService = {
       name: "apps.publish",
       operation: "publish",
       description:
-        "Publish (or update) an app from a workspace folder: <dir>/index.tsx is the UI entrypoint, and app data is stored per-user next to the app in <dir>/data/. Includes workflows, a tool allow-list, roles, rate limits, and visibility ('public' pages need no Aprovan account to view; 'private' requires a signed-in account passing the role model). The live app serves at /apps/<workspace>/<name>.",
+        "Publish (or update) an app by binding workspace paths to a live endpoint: 'entry' is the UI entrypoint path (e.g. apps/liift4/widget.tsx) and 'paths' are the prefixes the app publishes — the same prefixes decide what the live site serves and what the app's sessions may read/write. App data is stored per-user under <paths[0]>/data/ and never served. Includes workflows, a tool allow-list, roles, rate limits, and visibility ('public' pages need no Aprovan account to view; 'private' requires a signed-in account passing the role model). The live app serves at /apps/<workspace>/<name>.",
       inputSchema: {
         type: "object",
         properties: {
           name: { type: "string", description: "App id (kebab-case)" },
           title: { type: "string" },
           description: { type: "string" },
-          dir: { type: "string", description: "Workspace folder the app lives in (e.g. apps/liift4); entry is <dir>/index.tsx" },
+          entry: {
+            type: "string",
+            description:
+              "Workspace path of the UI entrypoint (e.g. apps/liift4/widget.tsx). A folder resolves to index.tsx, index.ts, widget.tsx, or its only *.tsx",
+          },
+          paths: {
+            type: "array",
+            items: { type: "string" },
+            description:
+              "Extra workspace prefixes the app publishes (e.g. ['lib/charts']); the entry's folder is always included and is the app's root",
+          },
+          dir: { type: "string", description: "Sugar for entry: a folder whose entrypoint is resolved for you" },
           visibility: { type: "string", enum: ["public", "private"], description: "Who can open the live page (default private)" },
           workflows: { type: "array", items: { type: "string" }, description: "Registered workflow names the app exposes as runnable endpoints" },
           allowed_tools: {
@@ -153,7 +201,7 @@ export const appsService: CoreService = {
       name: "apps.shares",
       operation: "shares",
       description:
-        "List the workspace paths shared with apps (apps always have automatic access to their own folder; shares expose paths outside it).",
+        "List the workspace paths shared with apps (apps always have automatic access to their own declared prefixes; shares expose paths outside them).",
       inputSchema: { type: "object", properties: {} },
     },
     {
@@ -185,12 +233,12 @@ export const appsService: CoreService = {
       name: "apps.remove",
       operation: "remove",
       description:
-        "Unpublish an app. By default its folder (UI + data) stays in the workspace; pass purge_data=true to delete the folder too.",
+        "Unpublish an app. By default its files (UI + data) stay in the workspace; pass purge_data=true to delete its primary prefix too.",
       inputSchema: {
         type: "object",
         properties: {
           name: { type: "string" },
-          purge_data: { type: "boolean", description: "Also delete the app folder and all per-user data" },
+          purge_data: { type: "boolean", description: "Also delete the app's primary prefix and all per-user data" },
         },
         required: ["name"],
       },
@@ -215,24 +263,18 @@ export const appsService: CoreService = {
             throw new ServiceError(`Unknown workflow: ${workflow}`, 400);
           }
         }
-        // Every app is a folder; `apps/<name>` is the convention when none is
-        // given. An explicitly pointed-at folder must have its entrypoint in
-        // place at publish time — publishing a live URL that 404s helps no one.
-        const explicitDir = args["dir"] !== undefined ? appDir(args["dir"]) : undefined;
-        const dir = explicitDir ?? existing?.dir ?? `apps/${name}`;
-        if (explicitDir && explicitDir !== existing?.dir) {
-          const entry = await getFsStore().read(ctx.workspaceId, `${dir}/${APP_ENTRY_FILE}`);
-          if (!entry) {
-            throw new ServiceError(`App entrypoint not found: ${dir}/${APP_ENTRY_FILE}`, 400);
-          }
-        }
+        // The path binding is explicit: an entrypoint pointed at by the
+        // publisher must exist at publish time — publishing a live URL that
+        // 404s helps no one.
+        const { entry, paths } = await resolveBinding(ctx.workspaceId, name, args, existing);
         const now = new Date().toISOString();
         const manifest: AppManifest = {
           name,
           title: typeof args["title"] === "string" ? args["title"] : existing?.title,
           description:
             typeof args["description"] === "string" ? args["description"] : existing?.description,
-          dir,
+          entry,
+          paths,
           visibility: parseVisibility(args["visibility"]) ?? existing?.visibility ?? "private",
           workflows,
           allowedTools: parseAllowedTools(args["allowed_tools"]),

@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "../src/app.js";
+import { getFsStore } from "../src/fs-store.js";
 import { liveAppsRouter } from "../src/routes/live-apps.js";
 
 let dataDir: string;
@@ -57,6 +58,121 @@ async function publishFolderApp(
   expect(res.status).toBe(200);
 }
 
+describe("path binding", () => {
+  it("resolves a folder to its entrypoint, preferring the conventional names", async () => {
+    await putFile("apps/liift4/widget.tsx", "export default () => null;");
+    const published = await data<{ entry: string; paths: string[] }>(
+      await manage("apps/publish", {
+        name: "liift4",
+        dir: "apps/liift4",
+        allowed_tools: ["keyvalue.*"],
+      }),
+    );
+    expect(published.entry).toBe("apps/liift4/widget.tsx");
+    expect(published.paths).toEqual(["apps/liift4"]);
+  });
+
+  it("accepts an explicit entry path and derives the primary prefix from it", async () => {
+    await putFile("studio/ui/main.tsx", "export default () => null;");
+    const published = await data<{ entry: string; paths: string[] }>(
+      await manage("apps/publish", {
+        name: "studio",
+        entry: "studio/ui/main.tsx",
+        allowed_tools: ["keyvalue.*"],
+      }),
+    );
+    expect(published.entry).toBe("studio/ui/main.tsx");
+    expect(published.paths).toEqual(["studio/ui"]);
+  });
+
+  it("rejects an ambiguous folder with the candidates listed", async () => {
+    await putFile("apps/ambiguous/a.tsx", "export default () => null;");
+    await putFile("apps/ambiguous/b.tsx", "export default () => null;");
+    const res = await manage("apps/publish", {
+      name: "ambiguous",
+      dir: "apps/ambiguous",
+      allowed_tools: ["keyvalue.*"],
+    });
+    expect(res.status).toBe(400);
+    expect(((await res.json()) as { error: string }).error).toContain("a.tsx");
+  });
+
+  it("binds a manifest that predates entry/paths on read", async () => {
+    await putFile("apps/legacy/widget.tsx", "export default () => null;");
+    // Straight to the store: `.services/` is closed to the fs route.
+    await getFsStore().write(
+      "local",
+      ".services/apps/legacy.json",
+      JSON.stringify({
+        name: "legacy",
+        dir: "apps/legacy",
+        visibility: "public",
+        allowedTools: ["keyvalue.*"],
+        createdBy: "local",
+        createdAt: "2026-01-01T00:00:00.000Z",
+        updatedAt: "2026-01-01T00:00:00.000Z",
+      }),
+      "application/json",
+    );
+    const project = (await (
+      await liveAppsRouter.request("/local/legacy/__project__")
+    ).json()) as { entry: string; paths: string[] };
+    expect(project.entry).toBe("apps/legacy/widget.tsx");
+    expect(project.paths).toEqual(["apps/legacy"]);
+  });
+
+  it("publishes extra prefixes and serves them as one project", async () => {
+    await putFile("apps/charted/index.tsx", "export default () => null;");
+    await putFile("lib/charts/bar.ts", "export const bar = 1;");
+    const published = await data<{ paths: string[] }>(
+      await manage("apps/publish", {
+        name: "charted",
+        dir: "apps/charted",
+        paths: ["lib/charts"],
+        visibility: "public",
+        allowed_tools: ["vfs.*"],
+      }),
+    );
+    expect(published.paths).toEqual(["apps/charted", "lib/charts"]);
+
+    const project = (await (
+      await liveAppsRouter.request("/local/charted/__project__")
+    ).json()) as { entry: string; files: Array<{ path: string }> };
+    expect(project.entry).toBe("apps/charted/index.tsx");
+    expect(project.files.map((f) => f.path).sort()).toEqual([
+      "apps/charted/index.tsx",
+      "lib/charts/bar.ts",
+    ]);
+
+    // Static serving accepts either addressing: app-root-relative or the
+    // workspace path the project payload hands out.
+    expect((await liveAppsRouter.request("/local/charted/lib/charts/bar.ts")).status).toBe(200);
+
+    // The same prefixes authorize the app session's FS access — no share needed.
+    const read = await appCall("alice", "charted/tools/vfs/read", {
+      args: { path: "~/lib/charts/bar.ts" },
+    });
+    expect(read.status).toBe(200);
+
+    // ...and nothing outside them.
+    await putFile("lib/secret.ts", "export const s = 1;");
+    const denied = await appCall("alice", "charted/tools/vfs/read", {
+      args: { path: "~/lib/secret.ts" },
+    });
+    expect(denied.status).toBe(403);
+
+    // Extra prefixes survive an update that doesn't mention them.
+    const updated = await data<{ paths: string[] }>(
+      await manage("apps/publish", {
+        name: "charted",
+        dir: "apps/charted",
+        allowed_tools: ["vfs.*"],
+      }),
+    );
+    expect(updated.paths).toEqual(["apps/charted", "lib/charts"]);
+  });
+});
+
 describe("live app pages", () => {
   it("serves the page shell and the source project", async () => {
     await publishFolderApp("site", { visibility: "public" });
@@ -70,8 +186,12 @@ describe("live app pages", () => {
     const project = await liveAppsRouter.request("/local/site/__project__");
     expect(project.status).toBe(200);
     const body = (await project.json()) as { entry: string; files: Array<{ path: string }> };
-    expect(body.entry).toBe("index.tsx");
-    expect(body.files.map((f) => f.path).sort()).toEqual(["index.tsx", "lib.ts"]);
+    // Entry and files are workspace paths — the shell never guesses.
+    expect(body.entry).toBe("apps/site/index.tsx");
+    expect(body.files.map((f) => f.path).sort()).toEqual([
+      "apps/site/index.tsx",
+      "apps/site/lib.ts",
+    ]);
   });
 
   it("refuses to publish a folder app without its entrypoint", async () => {
@@ -135,7 +255,7 @@ describe("co-located app data", () => {
     expect(JSON.parse(raw.content)).toEqual({ weeks: 3 });
   });
 
-  it("resolves app vfs paths app-relative with automatic folder access", async () => {
+  it("resolves app vfs paths against the app's primary prefix", async () => {
     await publishFolderApp("notes");
 
     const write = await appCall("alice", "notes/tools/vfs/write", {

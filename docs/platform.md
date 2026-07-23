@@ -185,18 +185,21 @@ All deploy scripts resolve the bucket/distribution from SSM
 
 ## Apps: published folders
 
-A workspace can **publish apps** — folders other authenticated users consume
-without being workspace members. An app is a workspace folder following Node
-conventions: `index.tsx` is the UI entrypoint, and everything the app stores
-lives next to it under `<dir>/data/`. The owning workspace is the app's
-"account": its credentials execute, its FS stores the data, its members
-administer.
+A workspace can **publish apps** — bundles other authenticated users consume
+without being workspace members. An app binds *explicit workspace paths* to
+its endpoint: `entry` is the UI entrypoint's path and `paths` are the prefixes
+it publishes (default: the entry's folder). Those prefixes are the single
+prefix rule behind both what the live site serves and what an app session may
+read/write; everything the app stores lives under `<paths[0]>/data/<user>` and
+is never served. The owning workspace is the app's "account": its credentials
+execute, its FS stores the data, its members administer.
 
 ```
 apps.publish({
   name: "liift4",
   title: "LIIFT4 Tracker",
-  dir: "apps/liift4",                      // folder; entry is <dir>/index.tsx
+  entry: "apps/liift4/widget.tsx",         // or dir: "apps/liift4" to resolve one
+  paths: ["lib/charts"],                   // extra published prefixes (optional)
   visibility: "private",                   // "public" pages need no account
   workflows: ["some-endpoint"],            // registered workflows the app exposes
   allowed_tools: ["keyvalue.*"],           // deny-by-default tool allow-list

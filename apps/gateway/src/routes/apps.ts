@@ -17,6 +17,8 @@
  *   - per-(app, user) rate limits
  *   - per-(app, user) data partitioning (ServiceContext.appScope — keyvalue
  *     keys are transparently scoped, so users only ever see their own data)
+ *   - prefix-based FS authz: the session carries the manifest's declared
+ *     `paths`, and nothing outside them is reachable without a share
  *
  * Executions run AS the owning workspace (its credentials, its storage) but
  * attributed to the calling user.
@@ -86,7 +88,7 @@ async function resolveAppSession(
     ctx: {
       workspaceId,
       userId: sub,
-      appScope: { app: manifest.name, dir: manifest.dir, userId: sub, role },
+      appScope: { name: manifest.name, paths: manifest.paths, userId: sub, role },
     },
   };
 }
@@ -138,7 +140,7 @@ appsRouter.get("/:workspaceId/:name", async (c) => {
       workflows: manifest.workflows ?? [],
       allowedTools: manifest.allowedTools,
       role: session.role,
-      liveUrl: manifest.dir ? `/apps/${workspaceId}/${manifest.name}` : undefined,
+      liveUrl: `/apps/${workspaceId}/${manifest.name}`,
     });
   } catch (err) {
     return errorResponse(c, err);

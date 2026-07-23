@@ -3,35 +3,44 @@
  *
  *   GET /apps/:workspaceId/:name              — the app page (HTML shell)
  *   GET /apps/:workspaceId/:name/__project__  — the app's source project (JSON)
- *   GET /apps/:workspaceId/:name/*            — static files from the app
- *                                               folder, SPA-fallback to the page
+ *   GET /apps/:workspaceId/:name/*            — static files from the app's
+ *                                               prefixes, SPA-fallback to the page
  *
  * Mounted at the domain root (aprovan.com/apps/...) — CloudFront forwards
  * `apps/*` to the gateway alongside `api/*`. The shell carries no app
- * source; it fetches `__project__` with the viewer's token and compiles
- * `<dir>/index.tsx` in-browser, so **visibility is enforced server-side on
- * the project and file endpoints**, not on page chrome:
+ * source; it fetches `__project__` with the viewer's token and compiles the
+ * manifest's declared `entry` in-browser (the payload names it, so the shell
+ * never guesses), so **visibility is enforced server-side on the project and
+ * file endpoints**, not on page chrome:
  *
  *   - "public": anyone can load the project/files, no Aprovan account.
  *   - "private" (default): a valid token passing the manifest role model.
  *
+ * What may be served is decided by exactly one rule — the manifest's
+ * declared path prefixes minus its data partition (appPathServable in
+ * apps/store.js), the same rule that authorizes an app session's FS access.
  * Tool/workflow calls always ride the authenticated app API surface
- * (/api/gateway/apps/...) regardless of visibility. Files under the app's
- * `data/` partition are never served.
+ * (/api/gateway/apps/...) regardless of visibility.
  */
 
 import { Hono } from "hono";
 import { getAuthMode, readBearerToken, verifyAccessToken } from "../middleware/auth.js";
 import { getFsStore } from "../fs-store.js";
 import { ServiceError } from "../services.js";
-import { APP_ENTRY_FILE, callerRole, readApp, type AppManifest } from "../apps/store.js";
+import {
+  appPathServable,
+  callerRole,
+  readApp,
+  resolveAppPath,
+  workspacePath,
+  type AppManifest,
+} from "../apps/store.js";
 
 export const liveAppsRouter = new Hono();
 
 interface LiveApp {
   manifest: AppManifest;
   workspaceId: string;
-  dir: string;
 }
 
 type HonoCtx = {
@@ -43,8 +52,8 @@ async function resolveLiveApp(c: HonoCtx): Promise<LiveApp> {
   const name = c.req.param("name");
   if (!workspaceId || !name) throw new ServiceError("Not found", 404);
   const manifest = await readApp(workspaceId, name).catch(() => undefined);
-  if (!manifest?.dir) throw new ServiceError("Not found", 404);
-  return { manifest, workspaceId, dir: manifest.dir };
+  if (!manifest?.entry) throw new ServiceError("Not found", 404);
+  return { manifest, workspaceId };
 }
 
 /**
@@ -71,17 +80,32 @@ async function requireViewer(c: HonoCtx, manifest: AppManifest): Promise<void> {
   }
 }
 
+/**
+ * Workspace paths a URL path may address: the app's root (so URLs read like
+ * a normal site) and the raw workspace path (so the workspace-keyed paths
+ * `__project__` hands out fetch back). Traversal, `.services/**`, and
+ * anything outside the app's servable prefixes drop out here.
+ */
+function servableTargets(manifest: AppManifest, relative: string): string[] {
+  const targets: string[] = [];
+  for (const resolve of [
+    () => resolveAppPath(manifest, relative),
+    () => workspacePath(relative),
+  ]) {
+    try {
+      targets.push(resolve());
+    } catch {
+      // Not addressable — fall through to the SPA shell.
+    }
+  }
+  return targets.filter((path) => appPathServable(manifest, path));
+}
+
 function errorResponse(c: { json: (body: unknown, status?: number) => Response }, err: unknown): Response {
   if (err instanceof ServiceError) {
     return c.json({ error: err.message }, err.status as 400);
   }
   return c.json({ error: err instanceof Error ? err.message : "Internal error" }, 500);
-}
-
-/** Is this app-relative path servable? (Never the data partitions.) */
-function servablePath(relative: string): boolean {
-  if (!relative || relative.includes("..")) return false;
-  return relative !== "data" && !relative.startsWith("data/");
 }
 
 // ---------------------------------------------------------------------------
@@ -109,25 +133,30 @@ liveAppsRouter.get("/:workspaceId/:name/__project__", async (c) => {
     const app = await resolveLiveApp(c);
     await requireViewer(c, app.manifest);
 
+    // Every declared prefix ships, keyed by workspace path — so an app that
+    // publishes `apps/liift4` plus `lib/charts` compiles as one project and
+    // relative imports keep resolving.
+    const { manifest, workspaceId } = app;
     const store = getFsStore();
-    const entries = await store.list(app.workspaceId, app.dir);
-    const prefix = `${app.dir}/`;
+    const listings = await Promise.all(
+      manifest.paths.map((prefix) => store.list(workspaceId, prefix)),
+    );
+    const paths = [...new Set(listings.flat().map((entry) => entry.path))].filter((path) =>
+      appPathServable(manifest, path),
+    );
     const files = (
       await Promise.all(
-        entries
-          .map((entry) => entry.path)
-          .filter((path) => path.startsWith(prefix) && servablePath(path.slice(prefix.length)))
-          .map(async (path) => {
-            const file = await store.read(app.workspaceId, path);
-            return file ? { path: path.slice(prefix.length), content: file.content } : null;
-          }),
+        paths.map(async (path) => {
+          const file = await store.read(workspaceId, path);
+          return file ? { path, content: file.content } : null;
+        }),
       )
     ).filter((f): f is { path: string; content: string } => f !== null);
 
-    if (!files.some((f) => f.path === APP_ENTRY_FILE)) {
-      throw new ServiceError(`App entrypoint missing: ${APP_ENTRY_FILE}`, 404);
+    if (!files.some((f) => f.path === manifest.entry)) {
+      throw new ServiceError(`App entrypoint missing: ${manifest.entry}`, 404);
     }
-    return c.json({ entry: APP_ENTRY_FILE, files });
+    return c.json({ entry: manifest.entry, paths: manifest.paths, files });
   } catch (err) {
     return errorResponse(c, err);
   }
@@ -144,8 +173,8 @@ liveAppsRouter.get("/:workspaceId/:name/*", async (c) => {
     const rest = (raw as Record<string, string>)["*"] ?? "";
     const relative = rest.replace(/^\/+|\/+$/g, "");
 
-    if (relative && servablePath(relative)) {
-      const file = await getFsStore().read(app.workspaceId, `${app.dir}/${relative}`);
+    for (const target of relative ? servableTargets(app.manifest, relative) : []) {
+      const file = await getFsStore().read(app.workspaceId, target);
       if (file) {
         await requireViewer(c, app.manifest);
         return c.newResponse(file.content, 200, {
@@ -252,6 +281,9 @@ try {
       headers: { ...(init && init.headers ? init.headers : {}), ...authHeaders },
     }),
   });
+  // The payload names its own entrypoint (the manifest's declared \`entry\`)
+  // and keys every file by its workspace path, so relative imports resolve
+  // across all of the app's published prefixes.
   const widget = await compiler.compile(
     {
       id: cfg.app,
