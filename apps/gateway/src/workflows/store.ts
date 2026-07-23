@@ -10,9 +10,14 @@
  * itself lives wherever the user keeps it (e.g. `workflows/daily-report.js`) —
  * the registration only points at it, so editing the script in chat or the
  * playground immediately affects the next run.
+ *
+ * Because the script is an ordinary FS file, its content is version history
+ * for free (the FS store content-versions every write). The helpers at the
+ * bottom of this file surface that history for the `workflows.versions/
+ * version/restore` ops — the versioned artifact is the `scriptPath`.
  */
 
-import { getFsStore } from "../fs-store.js";
+import { getFsStore, type FsEntry, type FsFile } from "../fs-store.js";
 import { ServiceError } from "../services.js";
 
 const WF_PREFIX = ".services/workflows/";
@@ -141,6 +146,43 @@ export async function removeRegistration(
   const removed = await store.remove(workspaceId, regPath(name));
   await store.removePrefix(workspaceId, `${WF_PREFIX}${name}/`);
   return removed;
+}
+
+// ---------------------------------------------------------------------------
+// Script version history — thin wrappers over the FS store's per-file
+// versioning, keyed on a workflow's `scriptPath`.
+// ---------------------------------------------------------------------------
+
+/** Every stored version of a workflow's script, newest (live) first. */
+export async function listScriptVersions(
+  workspaceId: string,
+  scriptPath: string,
+): Promise<FsEntry[]> {
+  return getFsStore().listVersions(workspaceId, scriptPath);
+}
+
+/** One pinned version of a workflow's script by content hash. */
+export async function readScriptVersion(
+  workspaceId: string,
+  scriptPath: string,
+  hash: string,
+): Promise<FsFile | undefined> {
+  return getFsStore().read(workspaceId, scriptPath, hash);
+}
+
+/**
+ * Restore a past script version by re-writing its content as the new latest.
+ * Append-only: history is preserved and the old content simply becomes live
+ * again. Returns the new latest file, or undefined when `hash` is unknown.
+ */
+export async function restoreScriptVersion(
+  workspaceId: string,
+  scriptPath: string,
+  hash: string,
+): Promise<FsFile | undefined> {
+  const version = await getFsStore().read(workspaceId, scriptPath, hash);
+  if (!version) return undefined;
+  return getFsStore().write(workspaceId, scriptPath, version.content, version.mimeType);
 }
 
 export async function saveRun(workspaceId: string, run: WorkflowRun): Promise<void> {

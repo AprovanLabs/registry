@@ -3,6 +3,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createApp } from "../src/app.js";
+import { resetRateLimiters } from "../src/middleware/rateLimitMiddleware.js";
 import { resetAppRateLimiters } from "../src/routes/apps.js";
 
 let dataDir: string;
@@ -17,7 +18,12 @@ afterAll(() => {
   rmSync(dataDir, { recursive: true, force: true });
 });
 
-beforeEach(() => resetAppRateLimiters());
+beforeEach(() => {
+  resetAppRateLimiters();
+  // The per-user tools/MCP token bucket is a module-global shared across the
+  // whole file; reset it so cumulative owner tool-calls can't 429 a later test.
+  resetRateLimiters();
+});
 
 // Owner-side management rides the tools proxy (auth mode "none" → workspace
 // "local"); app consumption rides /apps with X-App-User as the caller sub.
@@ -61,6 +67,58 @@ describe("apps service (owner management)", () => {
 
     const removed = await data<{ removed: boolean }>(await manage("apps/remove", { name: "tracker" }));
     expect(removed.removed).toBe(true);
+  });
+
+  it("lists, reads, and restores entrypoint versions", async () => {
+    const tick = () => new Promise((resolve) => setTimeout(resolve, 2));
+    const writeEntry = (content: string) =>
+      createApp().request("/fs/apps/edit/index.tsx", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content, mimeType: "text/plain" }),
+      });
+    const hashOf = async (res: Response) =>
+      ((await res.json()) as { hash: string }).hash;
+
+    const v1 = await hashOf(await writeEntry("<h1>one</h1>"));
+    await tick();
+    await writeEntry("<h1>two</h1>");
+    await tick();
+    const v3 = await hashOf(await writeEntry("<h1>three</h1>"));
+    await manage("apps/publish", {
+      name: "edit",
+      allowed_tools: ["keyvalue.*"],
+      entry: "apps/edit/index.tsx",
+    });
+
+    const listed = await data<{
+      path: string;
+      versions: Array<{ hash: string; current: boolean }>;
+    }>(await manage("apps/versions", { name: "edit" }));
+    expect(listed.path).toBe("apps/edit/index.tsx");
+    expect(listed.versions).toHaveLength(3);
+    expect(listed.versions[0]).toMatchObject({ hash: v3, current: true });
+
+    const old = await data<{ content: string }>(
+      await manage("apps/version", { name: "edit", hash: v1 }),
+    );
+    expect(old.content).toBe("<h1>one</h1>");
+
+    const restored = await data<{ name: string; entry: string }>(
+      await manage("apps/restore", { name: "edit", hash: v1 }),
+    );
+    expect(restored.name).toBe("edit");
+    const live = await createApp().request("/fs/apps/edit/index.tsx");
+    expect(((await live.json()) as { content: string }).content).toBe("<h1>one</h1>");
+    const afterRestore = await data<{ versions: Array<{ hash: string; current: boolean }> }>(
+      await manage("apps/versions", { name: "edit" }),
+    );
+    expect(afterRestore.versions[0]).toMatchObject({ hash: v1, current: true });
+
+    expect(
+      (await manage("apps/version", { name: "edit", hash: "0".repeat(64) })).status,
+    ).toBe(404);
+    expect((await manage("apps/versions", { name: "ghost" })).status).toBe(404);
   });
 
   it("rejects publishing with unknown workflows or empty allow-list", async () => {

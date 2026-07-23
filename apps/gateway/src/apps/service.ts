@@ -4,6 +4,11 @@
  * publish an app ("publish my workout tracker for others") the same way it
  * registers workflows. The public consumption surface lives in
  * routes/apps.ts; the live page surface in routes/live-apps.ts.
+ *
+ * An app's UI entrypoint is content-versioned by the workspace FS, so
+ * `apps.versions/version/restore` expose that history: enumerate the entry's
+ * versions, read one back, or non-destructively restore an old one as the new
+ * latest.
  */
 
 import { ServiceError, type CoreService } from "../services.js";
@@ -12,11 +17,14 @@ import {
   ENTRY_CANDIDATES,
   appName,
   listApps,
+  listEntryVersions,
   pathDir,
   readApp,
+  readEntryVersion,
   readWorkspaceConfig,
   removeApp,
   resolveAppEntry,
+  restoreEntryVersion,
   saveApp,
   workspacePath,
   writeWorkspaceConfig,
@@ -243,6 +251,38 @@ export const appsService: CoreService = {
         required: ["name"],
       },
     },
+    {
+      name: "apps.versions",
+      operation: "versions",
+      description:
+        "List the content versions of an app's UI entrypoint (its entry), newest first. The newest version is the live one (current: true).",
+      inputSchema: {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    },
+    {
+      name: "apps.version",
+      operation: "version",
+      description: "Read one past version of an app's UI entrypoint by content hash.",
+      inputSchema: {
+        type: "object",
+        properties: { name: { type: "string" }, hash: { type: "string" } },
+        required: ["name", "hash"],
+      },
+    },
+    {
+      name: "apps.restore",
+      operation: "restore",
+      description:
+        "Restore a past version of an app's UI entrypoint: re-writes that version's content as the new latest. Non-destructive — history is preserved and the old content becomes live again. Returns the updated app.",
+      inputSchema: {
+        type: "object",
+        properties: { name: { type: "string" }, hash: { type: "string" } },
+        required: ["name", "hash"],
+      },
+    },
   ],
 
   async call(ctx, procedure, args) {
@@ -259,7 +299,7 @@ export const appsService: CoreService = {
           : (existing?.workflows ?? []);
         // Exposed workflows must actually exist in the workspace.
         for (const workflow of workflows) {
-          if (!(await readRegistration(ctx.workspaceId, workflow))) {
+          const _reg = await readRegistration(ctx.workspaceId, workflow); const _fs = await (await import("../fs-store.js")).getFsStore(); const _all = await _fs.list(ctx.workspaceId, ".services/workflows"); console.error("DBGPUB", workflow, "reg=", !!_reg, "files=", JSON.stringify(_all.map(e=>e.path))); if (!_reg) {
             throw new ServiceError(`Unknown workflow: ${workflow}`, 400);
           }
         }
@@ -341,6 +381,46 @@ export const appsService: CoreService = {
         const shares = (config.shares ?? []).filter((s) => s.prefix !== prefix);
         await writeWorkspaceConfig(ctx.workspaceId, { ...config, shares });
         return { prefix, removed: true };
+      }
+      case "versions": {
+        const name = appName(args["name"]);
+        const manifest = await readApp(ctx.workspaceId, name);
+        if (!manifest) throw new ServiceError(`Unknown app: ${name}`, 404);
+        const versions = await listEntryVersions(ctx.workspaceId, manifest.entry);
+        return {
+          path: manifest.entry,
+          versions: versions.map((version, index) => ({
+            hash: version.hash,
+            updatedAt: version.updatedAt,
+            size: version.size,
+            // listVersions is newest-first, so the head is the live version.
+            current: index === 0,
+          })),
+        };
+      }
+      case "version": {
+        const name = appName(args["name"]);
+        const hash = typeof args["hash"] === "string" ? args["hash"] : "";
+        const manifest = await readApp(ctx.workspaceId, name);
+        if (!manifest) throw new ServiceError(`Unknown app: ${name}`, 404);
+        const file = await readEntryVersion(ctx.workspaceId, manifest.entry, hash);
+        if (!file) throw new ServiceError(`Unknown version: ${name}@${hash}`, 404);
+        return {
+          path: file.path,
+          hash: file.hash,
+          content: file.content,
+          mimeType: file.mimeType,
+          updatedAt: file.updatedAt,
+        };
+      }
+      case "restore": {
+        const name = appName(args["name"]);
+        const hash = typeof args["hash"] === "string" ? args["hash"] : "";
+        const manifest = await readApp(ctx.workspaceId, name);
+        if (!manifest) throw new ServiceError(`Unknown app: ${name}`, 404);
+        const restored = await restoreEntryVersion(ctx.workspaceId, manifest.entry, hash);
+        if (!restored) throw new ServiceError(`Unknown version: ${name}@${hash}`, 404);
+        return summarize(manifest, ctx.workspaceId);
       }
       default:
         throw new ServiceError(`Unknown apps procedure: ${procedure}`, 404);

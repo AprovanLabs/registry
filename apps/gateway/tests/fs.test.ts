@@ -3,7 +3,9 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "../src/app.js";
-import { normalizeFsPath } from "../src/fs-store.js";
+import { getFsStore, normalizeFsPath } from "../src/fs-store.js";
+
+const tick = () => new Promise((resolve) => setTimeout(resolve, 2));
 
 let dataDir: string;
 
@@ -103,5 +105,26 @@ describe("workspace filesystem", () => {
   it("404s on unknown files", async () => {
     const response = await createApp().request("/fs/missing.txt");
     expect(response.status).toBe(404);
+  });
+
+  it("listVersions enumerates every version newest-first", async () => {
+    const store = getFsStore();
+    // tick() spaces the ISO-ms timestamps so ordering is deterministic.
+    await store.write("verws", "doc.txt", "a");
+    await tick();
+    await store.write("verws", "doc.txt", "b");
+    await tick();
+    const live = await store.write("verws", "doc.txt", "c");
+
+    const versions = await store.listVersions("verws", "doc.txt");
+    expect(versions).toHaveLength(3);
+    // Newest first, and the head equals the current read() hash.
+    expect(versions[0]!.hash).toBe(live.hash);
+    expect(versions.map((v) => v.hash)).toContain(
+      (await store.read("verws", "doc.txt"))!.hash,
+    );
+
+    // A path with no versions is an empty list, not an error.
+    expect(await store.listVersions("verws", "missing.txt")).toEqual([]);
   });
 });

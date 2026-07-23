@@ -19,7 +19,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createApp } from "../src/app.js";
 import { resetDynamoDocClient } from "../src/db/client.js";
 import { FsFiles } from "../src/db/schema.js";
-import { resetFsStore, resetS3Client } from "../src/fs-store.js";
+import { getFsStore, resetFsStore, resetS3Client } from "../src/fs-store.js";
 
 const TABLE_NAME = "FsFiles-test";
 const BUCKET = "aprovan-fs-test";
@@ -127,6 +127,19 @@ describe.skipIf(!ready)("workspace filesystem (S3+DynamoDB backend)", () => {
 
     const pinned = await request(`/fs/notes.md?hash=${first.hash}`);
     expect(((await pinned.json()) as { content: string }).content).toBe("v1");
+  });
+
+  it("listVersions enumerates the V# rows newest-first", async () => {
+    const first = (await (await put("versioned.md", "one")).json()) as { hash: string };
+    await put("versioned.md", "two");
+    const live = (await (await put("versioned.md", "three")).json()) as { hash: string };
+
+    const store = getFsStore();
+    const versions = await store.listVersions("local", "versioned.md");
+    expect(versions.length).toBeGreaterThanOrEqual(3);
+    expect(versions[0]!.hash).toBe(live.hash);
+    expect(versions.map((v) => v.hash)).toContain(first.hash);
+    expect(await store.listVersions("local", "nope.md")).toEqual([]);
   });
 
   it("lists a subtree without over-matching partial segments", async () => {

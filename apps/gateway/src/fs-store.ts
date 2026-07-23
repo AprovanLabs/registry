@@ -69,6 +69,11 @@ export interface FsUploadTicket {
 export interface IFsStore {
   /** Latest version of every file under `prefix` (metadata only). */
   list(workspaceId: string, prefix?: string): Promise<FsEntry[]>;
+  /**
+   * Every stored version of `path`, newest first (updatedAt desc). The first
+   * entry's hash is the current {@link read} hash. Empty when `path` has none.
+   */
+  listVersions(workspaceId: string, path: string): Promise<FsEntry[]>;
   read(workspaceId: string, path: string, hash?: string): Promise<FsFile | undefined>;
   write(workspaceId: string, path: string, content: string, mimeType?: string): Promise<FsFile>;
   /** Remove a file (all versions). Returns whether anything was deleted. */
@@ -165,6 +170,19 @@ export class FsStoreSqlite implements IFsStore {
     return rows.map((row) => this.entry(row));
   }
 
+  async listVersions(workspaceId: string, path: string): Promise<FsEntry[]> {
+    const rows = this.database
+      .prepare(
+        // rowid tiebreak keeps newest-first stable when two versions share an
+        // ISO-ms updated_at, matching read()'s latest-row selection.
+        `SELECT path, hash, mime_type, size, updated_at FROM fs_files
+         WHERE workspace_id = ? AND path = ?
+         ORDER BY updated_at DESC, rowid DESC`,
+      )
+      .all(workspaceId, path) as Record<string, unknown>[];
+    return rows.map((row) => this.entry(row));
+  }
+
   async read(workspaceId: string, path: string, hash?: string): Promise<FsFile | undefined> {
     const row = hash
       ? this.database
@@ -175,9 +193,11 @@ export class FsStoreSqlite implements IFsStore {
           .get(workspaceId, path, hash)
       : this.database
           .prepare(
+            // rowid breaks updated_at ties so the most-recently-written row
+            // always wins — two writes can share an ISO-ms timestamp.
             `SELECT path, hash, content, mime_type, size, updated_at FROM fs_files
              WHERE workspace_id = ? AND path = ?
-             ORDER BY updated_at DESC LIMIT 1`,
+             ORDER BY updated_at DESC, rowid DESC LIMIT 1`,
           )
           .get(workspaceId, path);
     if (!row) return undefined;
@@ -335,6 +355,25 @@ export class FsStoreS3 implements IFsStore {
       cursor = page.LastEvaluatedKey;
     } while (cursor);
     return entries.sort((a, b) => a.path.localeCompare(b.path));
+  }
+
+  async listVersions(workspaceId: string, path: string): Promise<FsEntry[]> {
+    // The `V#<path>#<hash>` rows are the version index for this exact path.
+    const entries: FsEntry[] = [];
+    let cursor: Record<string, unknown> | undefined;
+    do {
+      const page = await getDynamoDocClient().send(
+        new QueryCommand({
+          TableName: this.tableName,
+          KeyConditionExpression: "workspaceId = :ws AND begins_with(sk, :v)",
+          ExpressionAttributeValues: { ":ws": workspaceId, ":v": `V#${path}#` },
+          ExclusiveStartKey: cursor,
+        }),
+      );
+      for (const item of page.Items ?? []) entries.push(this.entry(item));
+      cursor = page.LastEvaluatedKey;
+    } while (cursor);
+    return entries.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
   }
 
   async read(workspaceId: string, path: string, hash?: string): Promise<FsFile | undefined> {

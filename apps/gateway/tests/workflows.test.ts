@@ -192,4 +192,54 @@ describe("workflows service", () => {
     expect(removed.removed).toBe(true);
     expect((await call("workflows/get", { name: "boom" })).status).toBe(404);
   });
+
+  it("lists, reads, and restores script versions", async () => {
+    const tick = () => new Promise((resolve) => setTimeout(resolve, 2));
+    const hashOf = async (res: Response) =>
+      ((await res.json()) as { hash: string }).hash;
+
+    const v1 = await hashOf(await writeScript("workflows/vers.js", "return 1;"));
+    await tick();
+    await writeScript("workflows/vers.js", "return 2;");
+    await tick();
+    const v3 = await hashOf(await writeScript("workflows/vers.js", "return 3;"));
+    await call("workflows/register", { name: "vers", script_path: "workflows/vers.js" });
+
+    // versions: newest-first, current flag on the live (v3) version.
+    const listed = await data<{
+      path: string;
+      versions: Array<{ hash: string; current: boolean; size: number }>;
+    }>(await call("workflows/versions", { name: "vers" }));
+    expect(listed.path).toBe("workflows/vers.js");
+    expect(listed.versions).toHaveLength(3);
+    expect(listed.versions[0]).toMatchObject({ hash: v3, current: true });
+    expect(listed.versions.slice(1).every((v) => !v.current)).toBe(true);
+
+    // version: read one past version's content by hash.
+    const old = await data<{ content: string; hash: string }>(
+      await call("workflows/version", { name: "vers", hash: v1 }),
+    );
+    expect(old.content).toBe("return 1;");
+
+    // restore: v1 becomes the live version again (append, non-destructive).
+    const restored = await data<{ name: string; scriptPath: string }>(
+      await call("workflows/restore", { name: "vers", hash: v1 }),
+    );
+    expect(restored.name).toBe("vers");
+    const script = await createApp().request("/fs/workflows/vers.js");
+    expect(((await script.json()) as { content: string }).content).toBe("return 1;");
+    const afterRestore = await data<{ versions: Array<{ hash: string; current: boolean }> }>(
+      await call("workflows/versions", { name: "vers" }),
+    );
+    expect(afterRestore.versions[0]).toMatchObject({ hash: v1, current: true });
+
+    // Unknown hash / unknown workflow => 404.
+    expect(
+      (await call("workflows/version", { name: "vers", hash: "0".repeat(64) })).status,
+    ).toBe(404);
+    expect(
+      (await call("workflows/restore", { name: "vers", hash: "0".repeat(64) })).status,
+    ).toBe(404);
+    expect((await call("workflows/versions", { name: "ghost" })).status).toBe(404);
+  });
 });

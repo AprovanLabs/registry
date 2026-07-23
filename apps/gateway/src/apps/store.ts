@@ -21,9 +21,14 @@
  * Manifests are stored at `.services/apps/<name>.json` in the owner
  * workspace FS. Workspace-level sharing of paths *outside* an app's declared
  * prefixes is declared in `.services/workspace.json` (see WorkspaceConfig).
+ *
+ * The UI `entry` is an ordinary FS file, so its content is version history for
+ * free (the FS store content-versions every write). The helpers at the bottom
+ * of this file surface that history for the `apps.versions/version/restore`
+ * ops — the versioned artifact is the manifest's `entry`.
  */
 
-import { getFsStore, normalizeFsPath } from "../fs-store.js";
+import { getFsStore, normalizeFsPath, type FsEntry, type FsFile } from "../fs-store.js";
 import { ServiceError } from "../services.js";
 
 const APPS_PREFIX = ".services/apps/";
@@ -299,6 +304,43 @@ export async function removeApp(
     await getFsStore().removePrefix(workspaceId, appRoot(manifest));
   }
   return removed;
+}
+
+// ---------------------------------------------------------------------------
+// Entrypoint version history — thin wrappers over the FS store's per-file
+// versioning, keyed on a manifest's `entry`.
+// ---------------------------------------------------------------------------
+
+/** Every stored version of an app's UI entrypoint, newest (live) first. */
+export async function listEntryVersions(
+  workspaceId: string,
+  entry: string,
+): Promise<FsEntry[]> {
+  return getFsStore().listVersions(workspaceId, entry);
+}
+
+/** One pinned version of an app's UI entrypoint by content hash. */
+export async function readEntryVersion(
+  workspaceId: string,
+  entry: string,
+  hash: string,
+): Promise<FsFile | undefined> {
+  return getFsStore().read(workspaceId, entry, hash);
+}
+
+/**
+ * Restore a past entrypoint version by re-writing its content as the new
+ * latest. Append-only: history is preserved and the old content simply becomes
+ * live again. Returns the new latest file, or undefined when `hash` is unknown.
+ */
+export async function restoreEntryVersion(
+  workspaceId: string,
+  entry: string,
+  hash: string,
+): Promise<FsFile | undefined> {
+  const version = await getFsStore().read(workspaceId, entry, hash);
+  if (!version) return undefined;
+  return getFsStore().write(workspaceId, entry, version.content, version.mimeType);
 }
 
 export async function readWorkspaceConfig(workspaceId: string): Promise<WorkspaceConfig> {

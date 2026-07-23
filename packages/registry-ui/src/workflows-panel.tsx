@@ -15,13 +15,18 @@
  * host that also passes `loadScript` gets the full graph with the run
  * painted onto it; without it the same input form renders on its own.
  *
+ * Every workflow row and app row also exposes a "Versions" affordance backed
+ * by the workspace FS content-version log (`versions` / `version` / `restore`
+ * on both namespaces): browse prior revisions of the script / entry, view one
+ * read-only, and non-destructively restore an old one as the new latest.
+ *
  * Passing the optional `invokeApps(operation, args)` transport (gateway
  * `apps` tool namespace) additionally renders a published-apps section with
  * delete/purge affordances.
  */
 
 import * as React from "react";
-import { RendererCapabilitiesProvider } from "./renderers";
+import { JsonView, RendererCapabilitiesProvider } from "./renderers";
 import { RunView, runViewFromWorkflowRun } from "./run-view";
 import { RunPanel, type RunValues } from "./tailor/RunPanel";
 
@@ -88,6 +93,15 @@ export interface AppSummary {
   allowedTools?: string[];
   roles?: { access?: "any" | "listed"; users?: string[]; admins?: string[] };
   rateLimit?: { rps?: number; burst?: number; daily?: number };
+}
+
+/** One entry in a versioned file's history (newest first from the gateway). */
+export interface FileVersion {
+  hash: string;
+  updatedAt: string;
+  size: number;
+  /** The live version — the one `read()` returns and the row currently serves. */
+  current: boolean;
 }
 
 export type WorkflowsInvoke = (
@@ -172,6 +186,12 @@ function formatWhen(iso: string): string {
   }
 }
 
+function formatBytes(n: number): string {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  return `${(n / (1024 * 1024)).toFixed(1)} MB`;
+}
+
 const SMALL_BUTTON =
   "rounded-md border px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
 
@@ -237,6 +257,188 @@ function ConfirmDeleteButton({
     >
       {busy ? "Deleting…" : armed ? "Confirm delete?" : label}
     </button>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Version history (shared by workflow rows and app rows)
+//
+// Both namespaces expose the same `versions` / `version` / `restore` shape over
+// the workspace FS content-version log, so one controlled panel serves both.
+// The parent owns the open toggle (placed in its own button cluster); this
+// lazily loads the history the first time it opens. Restore is non-destructive
+// on the backend — it re-writes the chosen revision as a new latest — so after
+// it lands we just reload the list (the "current" chip moves) and let the row
+// refresh its own summary.
+// ---------------------------------------------------------------------------
+
+/** Read-only view of one fetched revision: JSON as a tree, everything else raw. */
+function VersionContent({
+  path,
+  content,
+  mimeType,
+}: {
+  path: string;
+  content: string;
+  mimeType: string;
+}) {
+  const isJson = mimeType.includes("json") || path.endsWith(".json");
+  if (isJson) {
+    try {
+      return <JsonView value={JSON.parse(content)} />;
+    } catch {
+      // Fall through to raw text for malformed / partial JSON.
+    }
+  }
+  return (
+    <pre className="max-h-96 overflow-auto rounded-md border bg-muted/30 p-2 font-mono text-xs leading-relaxed">
+      {content}
+    </pre>
+  );
+}
+
+function VersionsSection({
+  invoke,
+  name,
+  open,
+  onRestored,
+}: {
+  invoke: WorkflowsInvoke;
+  name: string;
+  open: boolean;
+  /** Fired after a successful restore so the row can refresh its summary. */
+  onRestored?: () => void;
+}) {
+  const [versions, setVersions] = React.useState<FileVersion[] | null>(null);
+  const [path, setPath] = React.useState<string>("");
+  const [error, setError] = React.useState<string | null>(null);
+  const [viewing, setViewing] = React.useState<{ hash: string; content: string; mimeType: string } | null>(null);
+  const [busyHash, setBusyHash] = React.useState<string | null>(null);
+  const [armed, setArmed] = React.useState<string | null>(null);
+
+  const load = React.useCallback(async () => {
+    setError(null);
+    try {
+      const result = (await invoke("versions", { name })) as { path: string; versions: FileVersion[] };
+      setPath(result.path);
+      setVersions(result.versions);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to load versions");
+      setVersions([]);
+    }
+  }, [invoke, name]);
+
+  React.useEffect(() => {
+    if (open && versions === null) void load();
+  }, [open, versions, load]);
+
+  // Disarm a pending restore confirmation if the second click doesn't come.
+  React.useEffect(() => {
+    if (!armed) return;
+    const timeout = setTimeout(() => setArmed(null), 4000);
+    return () => clearTimeout(timeout);
+  }, [armed]);
+
+  const view = async (hash: string) => {
+    if (viewing?.hash === hash) {
+      setViewing(null);
+      return;
+    }
+    setError(null);
+    try {
+      const result = (await invoke("version", { name, hash })) as {
+        content: string;
+        mimeType: string;
+      };
+      setViewing({ hash, content: result.content, mimeType: result.mimeType });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to read version");
+    }
+  };
+
+  const restore = async (hash: string) => {
+    setBusyHash(hash);
+    setArmed(null);
+    setError(null);
+    try {
+      await invoke("restore", { name, hash });
+      setViewing(null);
+      await load();
+      onRestored?.();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Restore failed");
+    } finally {
+      setBusyHash(null);
+    }
+  };
+
+  if (!open) return null;
+
+  return (
+    <div className="space-y-1">
+      {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+      {versions === null ? (
+        <p className="text-xs text-muted-foreground">Loading versions…</p>
+      ) : versions.length === 0 ? (
+        <p className="text-xs text-muted-foreground">No version history yet.</p>
+      ) : (
+        <div className="space-y-0.5">
+          {versions.map((version) => (
+            <div key={version.hash}>
+              <div
+                className={`flex flex-wrap items-center gap-2 rounded px-2 py-1 text-xs ${
+                  viewing?.hash === version.hash ? "bg-muted" : ""
+                }`}
+              >
+                <code className="font-mono text-muted-foreground" title={version.hash}>
+                  {version.hash.slice(0, 10)}
+                </code>
+                <span className="text-muted-foreground">{formatWhen(version.updatedAt)}</span>
+                <span className="text-muted-foreground">{formatBytes(version.size)}</span>
+                {version.current && (
+                  <span className="inline-flex items-center rounded-full border border-emerald-300 px-2 py-0.5 text-[0.65rem] font-medium text-emerald-700 dark:border-emerald-800 dark:text-emerald-400">
+                    current
+                  </span>
+                )}
+                <span className="ml-auto flex items-center gap-1.5">
+                  <button
+                    className="rounded border px-1.5 py-0.5 text-[0.65rem] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    onClick={() => void view(version.hash)}
+                    type="button"
+                  >
+                    {viewing?.hash === version.hash ? "hide" : "view"}
+                  </button>
+                  {!version.current && (
+                    <button
+                      className={
+                        armed === version.hash
+                          ? "rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 text-[0.65rem] font-medium text-amber-700 transition-colors hover:bg-amber-100 dark:border-amber-900 dark:bg-amber-950/40 dark:text-amber-400 dark:hover:bg-amber-950/70"
+                          : "rounded border px-1.5 py-0.5 text-[0.65rem] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                      }
+                      disabled={busyHash === version.hash}
+                      onClick={() => (armed === version.hash ? void restore(version.hash) : setArmed(version.hash))}
+                      title={armed === version.hash ? "Click again to restore" : "Restore this version as the latest"}
+                      type="button"
+                    >
+                      {busyHash === version.hash
+                        ? "Restoring…"
+                        : armed === version.hash
+                          ? "Confirm restore?"
+                          : "restore"}
+                    </button>
+                  )}
+                </span>
+              </div>
+              {viewing?.hash === version.hash && (
+                <div className="px-2 pb-1 pt-0.5">
+                  <VersionContent content={viewing.content} mimeType={viewing.mimeType} path={path} />
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -352,6 +554,7 @@ function WorkflowRow({
   onDeleted: () => void;
 }) {
   const [open, setOpen] = React.useState(false);
+  const [versionsOpen, setVersionsOpen] = React.useState(false);
   const [runs, setRuns] = React.useState<WorkflowRunSummary[] | null>(null);
   const [trace, setTrace] = React.useState<WorkflowRunTrace | null>(null);
   const [script, setScript] = React.useState<string | null>(null);
@@ -458,6 +661,17 @@ function WorkflowRow({
               script
             </button>
           )}
+          <button
+            className={`${SMALL_BUTTON} ${versionsOpen ? "bg-muted text-foreground" : ""}`}
+            onClick={() => {
+              setVersionsOpen((v) => !v);
+              setOpen(true);
+            }}
+            title="Version history for this workflow's script"
+            type="button"
+          >
+            versions
+          </button>
           <ConfirmDeleteButton busy={deleting} onConfirm={() => void removeWorkflow()} />
           <button
             className="rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
@@ -489,6 +703,13 @@ function WorkflowRow({
             </p>
           )}
           {error && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
+
+          <VersionsSection
+            invoke={invoke}
+            name={workflow.name}
+            onRestored={onDeleted}
+            open={versionsOpen}
+          />
 
           <RunSurface onRun={triggerRun} script={script} trace={trace} workflow={workflow} />
 
@@ -659,6 +880,7 @@ function AppRow({
   const [purgeData, setPurgeData] = React.useState(false);
   const [deleting, setDeleting] = React.useState(false);
   const [settingsOpen, setSettingsOpen] = React.useState(false);
+  const [versionsOpen, setVersionsOpen] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
   const removeApp = async () => {
@@ -712,6 +934,14 @@ function AppRow({
           >
             access &amp; limits
           </button>
+          <button
+            className={`rounded-md border px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground ${versionsOpen ? "bg-muted text-foreground" : ""}`}
+            onClick={() => setVersionsOpen((o) => !o)}
+            title="Version history for this app's entry"
+            type="button"
+          >
+            versions
+          </button>
           <label className="flex items-center gap-1 text-[0.7rem] text-muted-foreground">
             <input
               checked={purgeData}
@@ -725,6 +955,11 @@ function AppRow({
       </div>
       {error && <p className="mt-1 text-xs text-red-600 dark:text-red-400">{error}</p>}
       {settingsOpen && <AppSettings app={app} invoke={invoke} onSaved={onDeleted} />}
+      {versionsOpen && (
+        <div className="mt-2 border-t pt-2">
+          <VersionsSection invoke={invoke} name={app.name} onRestored={onDeleted} open={versionsOpen} />
+        </div>
+      )}
     </div>
   );
 }
