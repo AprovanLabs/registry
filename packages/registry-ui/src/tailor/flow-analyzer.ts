@@ -53,7 +53,11 @@ async function initParser() {
   let useLocal = false;
   try {
     const probe = await fetch(new URL("tree-sitter.wasm", localBase), { method: "HEAD" });
-    useLocal = probe.ok;
+    // A 200 is not proof the asset is there: bundlers that pre-bundle this
+    // package move `import.meta.url` somewhere the wasm never got copied
+    // (Vite's `.vite/deps`, say), and a dev server's SPA fallback answers
+    // with index.html — which reaches emscripten as "expected magic word".
+    useLocal = probe.ok && !(probe.headers.get("content-type") ?? "").includes("html");
   } catch {
     useLocal = false;
   }
