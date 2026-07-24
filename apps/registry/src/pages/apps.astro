@@ -1,0 +1,30 @@
+---
+import { AppsHost } from "@/components/AppsHost";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+---
+
+<BaseLayout
+  description="Publish and operate apps: bundles of pages and workflows, each with its own auth boundary, allow-list, and data scope — plus releases, channels, and a trace of every run."
+  title="Apps — Aprovan Registry"
+>
+  <main class="flex flex-col w-full min-h-screen gap-6 px-4 py-8 mx-auto max-w-5xl sm:px-6 lg:px-8">
+    <section class="flex flex-col gap-3">
+      <h1 class="max-w-3xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+        Apps
+      </h1>
+      <p class="max-w-2xl text-base leading-7 text-muted-foreground">
+        An app is a bundle: pages plus the workflows it exports, wrapped in its
+        own auth boundary. Its
+        <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-sm">allowedTools</code>
+        allow-list says what an app session may call — the auto-partitioned
+        native namespaces and the app's own workflows, nothing else — and its
+        <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-sm">dataScope</code>
+        decides where an app user's data physically lands: the publisher's
+        workspace, or the caller's own. Releases pin a channel to an immutable
+        version, so promoting and rolling back are instant.
+      </p>
+    </section>
+
+    <AppsHost client:only="react" />
+  </main>
+</BaseLayout>

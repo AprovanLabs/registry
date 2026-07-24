@@ -2,17 +2,59 @@
  * `apps` core service — publish and manage app bundles from the owning
  * workspace. Like every core service it rides tool discovery, so chat can
  * publish an app ("publish my workout tracker for others") the same way it
- * registers workflows. The public consumption surface lives in
- * routes/apps.ts; the live page surface in routes/live-apps.ts.
+ * registers workflows. The public consumption surface lives in routes/apps.ts;
+ * the live page surface in routes/live-apps.ts.
  *
- * An app's UI entrypoint is content-versioned by the workspace FS, so
- * `apps.versions/version/restore` expose that history: enumerate the entry's
- * versions, read one back, or non-destructively restore an old one as the new
- * latest.
+ * The domain in one paragraph: an **app** is a bundle (pages + exported
+ * workflows + an allow-list + a data scope + roles); a **workflow** is one
+ * published capability, callable through the app as `app.<workflow>`; a
+ * **release** is an immutable pin of the content hashes the live page serves,
+ * and a **channel** is a named pointer at one. This service is where all four
+ * are edited:
+ *
+ *   publish/remove/share      — the bundle and its path binding
+ *   capabilities              — what the app may touch and where its data lands
+ *   release/releases/channels/promote/rollback — the deployable version pin
+ *   install/uninstall/installed — the caller side of `dataScope: "workspace"`
+ *   sdk                       — generated bindings (js + d.ts) for the manifest
+ *   versions/version/restore  — the entrypoint's FS content history
+ *
+ * `apps.list` composes everything a directory UI needs (workflows, triggers,
+ * last run, channels) into a single call — a directory should never need N+1
+ * round-trips to render.
  */
 
 import { ServiceError, type CoreService } from "../services.js";
-import { readRegistration } from "../workflows/store.js";
+import { hookPath } from "../workflows/service.js";
+import { listRegistrations, listRuns, type WorkflowRegistration } from "../workflows/store.js";
+import {
+  APP_WORKFLOW_NAMESPACE,
+  assertAllowedTools,
+  camelCase,
+  effectiveRateLimit,
+  nativeCapabilities,
+} from "./capabilities.js";
+import {
+  assertInstallable,
+  installPrefix,
+  listInstalls,
+  readInstall,
+  removeInstall,
+  saveInstall,
+  type AppInstall,
+} from "./install.js";
+import {
+  DEFAULT_CHANNEL,
+  channelName,
+  listReleases,
+  previousRelease,
+  readRelease,
+  saveRelease,
+  setChannel,
+  snapshotRelease,
+  type AppRelease,
+} from "./releases.js";
+import { generateAppSdk } from "./sdk.js";
 import {
   ENTRY_CANDIDATES,
   appName,
@@ -28,24 +70,35 @@ import {
   saveApp,
   workspacePath,
   writeWorkspaceConfig,
+  type AppDataScope,
   type AppManifest,
   type AppRateLimit,
   type AppRoles,
   type WorkspaceShare,
 } from "./store.js";
 
-function appPath(workspaceId: string, name: string): string {
+function livePath(workspaceId: string, name: string): string {
   return `/apps/${workspaceId}/${name}`;
 }
 
-function parseAllowedTools(raw: unknown): string[] {
+function apiBase(workspaceId: string, name: string): string {
+  return `/api/gateway/apps/${workspaceId}/${name}`;
+}
+
+function parseAllowedTools(raw: unknown, context: { app: string; workflows: string[] }): string[] {
   if (!Array.isArray(raw)) {
-    throw new ServiceError("allowed_tools must be an array of 'namespace.procedure' (or 'namespace.*') entries", 400);
+    throw new ServiceError(
+      "allowed_tools must be an array of 'namespace.procedure' (or 'namespace.*') entries",
+      400,
+    );
   }
-  const tools = raw.filter((t): t is string => typeof t === "string" && /^[\w.-]+\.(\*|[\w.-]+)$/u.test(t));
+  const tools = raw.filter((t): t is string => typeof t === "string" && t.trim().length > 0);
   if (tools.length === 0) {
     throw new ServiceError("allowed_tools must contain at least one entry", 400);
   }
+  // Deny by default AND deny by construction: only the auto-partitioned
+  // native namespaces and this app's own workflows are expressible.
+  assertAllowedTools(tools, context);
   return tools;
 }
 
@@ -89,25 +142,130 @@ function parseVisibility(raw: unknown): "public" | "private" | undefined {
   return raw;
 }
 
-function summarize(manifest: AppManifest, workspaceId: string) {
+function parseDataScope(raw: unknown): AppDataScope | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (raw !== "owner" && raw !== "workspace") {
+    throw new ServiceError(
+      'data_scope must be "owner" (publisher hosts every user\'s data) or "workspace" (each caller installs the app into their own workspace)',
+      400,
+    );
+  }
+  return raw;
+}
+
+// ---------------------------------------------------------------------------
+// Composition — what a directory UI renders
+// ---------------------------------------------------------------------------
+
+interface AppWorkflowSummary {
+  name: string;
+  /** Camel-case alias: how the SDK spells it (`app.weeklySummary`). */
+  procedure: string;
+  scriptPath: string;
+  description?: string;
+  triggers: WorkflowRegistration["triggers"];
+  input?: Record<string, unknown>;
+  output?: Record<string, unknown>;
+  webhookPath?: string;
+  /** Whether the registration still exists in the owner workspace. */
+  registered: boolean;
+  lastRun?: { id: string; status: string; startedAt: string; durationMs?: number };
+}
+
+async function summarizeWorkflows(
+  workspaceId: string,
+  manifest: AppManifest,
+  registrations: Map<string, WorkflowRegistration>,
+  withRuns: boolean,
+): Promise<AppWorkflowSummary[]> {
+  return Promise.all(
+    (manifest.workflows ?? []).map(async (name) => {
+      const registration = registrations.get(name);
+      const runs = withRuns && registration ? await listRuns(workspaceId, name, 1) : [];
+      const last = runs[0];
+      return {
+        name,
+        procedure: camelCase(name),
+        scriptPath: registration?.scriptPath ?? "",
+        description: registration?.description,
+        triggers: registration?.triggers ?? { manual: true },
+        input: registration?.input,
+        output: registration?.output,
+        webhookPath: registration?.triggers.webhook ? hookPath(workspaceId, name) : undefined,
+        registered: Boolean(registration),
+        lastRun: last
+          ? {
+              id: last.id,
+              status: last.status,
+              startedAt: last.startedAt,
+              durationMs: last.durationMs,
+            }
+          : undefined,
+      };
+    }),
+  );
+}
+
+async function describeApp(
+  workspaceId: string,
+  manifest: AppManifest,
+  registrations: Map<string, WorkflowRegistration>,
+  options: { withRuns?: boolean } = {},
+) {
   return {
     name: manifest.name,
     title: manifest.title,
     description: manifest.description,
+    visibility: manifest.visibility ?? "private",
+    dataScope: manifest.dataScope ?? "owner",
     /** UI entrypoint, as a workspace path. */
     entry: manifest.entry,
     /** Workspace prefixes this app publishes (paths[0] is its root). */
     paths: manifest.paths,
-    visibility: manifest.visibility ?? "private",
-    workflows: manifest.workflows ?? [],
+    /** Live page URL (aprovan.com/apps/<workspace>/<name>). */
+    url: livePath(workspaceId, manifest.name),
+    /** API surface base (tools + workflow runs). */
+    apiBase: apiBase(workspaceId, manifest.name),
+    /** Channel → release id. `apps.channels` resolves them to release records. */
+    channels: manifest.channels ?? {},
     allowedTools: manifest.allowedTools,
     roles: manifest.roles,
-    rateLimit: manifest.rateLimit,
-    /** Live page URL (aprovan.com/apps/<workspace>/<name>). */
-    liveUrl: appPath(workspaceId, manifest.name),
-    /** API surface base (/api/gateway/apps/...). */
-    appPath: appPath(workspaceId, manifest.name),
+    rateLimit: effectiveRateLimit(manifest),
+    createdBy: manifest.createdBy,
+    createdAt: manifest.createdAt,
     updatedAt: manifest.updatedAt,
+    workflows: await summarizeWorkflows(
+      workspaceId,
+      manifest,
+      registrations,
+      options.withRuns ?? true,
+    ),
+  };
+}
+
+async function registrationIndex(workspaceId: string): Promise<Map<string, WorkflowRegistration>> {
+  const registrations = await listRegistrations(workspaceId).catch(() => []);
+  return new Map(registrations.map((registration) => [registration.name, registration]));
+}
+
+async function requireApp(workspaceId: string, raw: unknown): Promise<AppManifest> {
+  const name = appName(raw);
+  const manifest = await readApp(workspaceId, name);
+  if (!manifest) throw new ServiceError(`Unknown app: ${name}`, 404);
+  return manifest;
+}
+
+function summarizeRelease(release: AppRelease) {
+  return {
+    id: release.id,
+    channel: release.channel,
+    notes: release.notes,
+    manifestHash: release.manifestHash,
+    entry: release.entry,
+    entryHash: release.entryHash,
+    workflows: release.workflows,
+    createdBy: release.createdBy,
+    createdAt: release.createdAt,
   };
 }
 
@@ -150,7 +308,7 @@ export const appsService: CoreService = {
       name: "apps.publish",
       operation: "publish",
       description:
-        "Publish (or update) an app by binding workspace paths to a live endpoint: 'entry' is the UI entrypoint path (e.g. apps/liift4/widget.tsx) and 'paths' are the prefixes the app publishes — the same prefixes decide what the live site serves and what the app's sessions may read/write. App data is stored per-user under <paths[0]>/data/ and never served. Includes workflows, a tool allow-list, roles, rate limits, and visibility ('public' pages need no Aprovan account to view; 'private' requires a signed-in account passing the role model). The live app serves at /apps/<workspace>/<name>.",
+        "Publish (or update) an app by binding workspace paths to a live endpoint: 'entry' is the UI entrypoint path (e.g. apps/liift4/widget.tsx) and 'paths' are the prefixes the app publishes — the same prefixes decide what the live site serves and what the app's sessions may read/write. 'workflows' is the app's export list: each becomes callable as app.<workflow>. 'allowed_tools' may only name the auto-partitioned native namespaces (vfs, keyvalue, events) or the app's own workflows — a provider (github, linear, …) must be reached through an exported workflow. 'data_scope' decides where user data lands: 'owner' (publisher hosts it, the default) or 'workspace' (each caller installs the app into their own workspace). The live app serves at /apps/<workspace>/<name>.",
       inputSchema: {
         type: "object",
         properties: {
@@ -170,11 +328,27 @@ export const appsService: CoreService = {
           },
           dir: { type: "string", description: "Sugar for entry: a folder whose entrypoint is resolved for you" },
           visibility: { type: "string", enum: ["public", "private"], description: "Who can open the live page (default private)" },
-          workflows: { type: "array", items: { type: "string" }, description: "Registered workflow names the app exposes as runnable endpoints" },
+          workflows: {
+            type: "array",
+            items: { type: "string" },
+            description:
+              "The app's export list: registered workflow names published under the app namespace (callable as app.<workflow>)",
+          },
           allowed_tools: {
             type: "array",
             items: { type: "string" },
-            description: "Tools app users may call, e.g. ['keyvalue.*'] — everything else is denied",
+            // Literal, not interpolated from the capability module: this
+            // object is built at module init, and services ⇄ apps is a
+            // module cycle — reading an imported const here would be a TDZ
+            // crash depending on which file is imported first.
+            description:
+              "Tools app users may call: vfs.*, keyvalue.*, events.* (auto-partitioned natives), or app.<workflow> for this app's exported workflows — everything else is denied",
+          },
+          data_scope: {
+            type: "string",
+            enum: ["owner", "workspace"],
+            description:
+              "'owner' (default): the publishing workspace stores every user's data under <paths[0]>/data/<user>. 'workspace': callers install the app into their own workspace (apps.install) and data lands under their install prefix, executing with their credentials",
           },
           roles: {
             type: "object",
@@ -192,18 +366,136 @@ export const appsService: CoreService = {
     {
       name: "apps.list",
       operation: "list",
-      description: "List the workspace's published apps.",
+      description:
+        "List the workspace's published apps with everything a directory needs in one call: path binding, visibility, data scope, channels, allow-list, roles, limits, and each exported workflow with its triggers, schemas, webhook path, and last run.",
+      inputSchema: { type: "object", properties: {} },
+    },
+    {
+      name: "apps.summary",
+      operation: "summary",
+      description:
+        "Lightweight app list (name, title, visibility, data scope, workflow count, updatedAt) — for pickers and menus that don't render workflow detail.",
       inputSchema: { type: "object", properties: {} },
     },
     {
       name: "apps.get",
       operation: "get",
-      description: "Get a published app's manifest and public URLs.",
+      description: "Get one app: the same composition as apps.list plus its capability report.",
       inputSchema: {
         type: "object",
         properties: { name: { type: "string" } },
         required: ["name"],
       },
+    },
+    {
+      name: "apps.capabilities",
+      operation: "capabilities",
+      description:
+        "What this app can touch and where its data lives: the allow-listed native namespaces (procedures, partitioning, rate limits) and the workflows it exports (with their declared input/output schemas). Render this instead of hardcoding namespace lists.",
+      inputSchema: {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    },
+    {
+      name: "apps.sdk",
+      operation: "sdk",
+      description:
+        "Generate the app's SDK: { js, dts } — a runtime shim over the app tool proxy plus TypeScript types built from the native namespaces and each exported workflow's declared schemas. Served live at /apps/<workspace>/<name>/__sdk__.js and __sdk__.d.ts.",
+      inputSchema: {
+        type: "object",
+        properties: { name: { type: "string" }, channel: { type: "string" } },
+        required: ["name"],
+      },
+    },
+    {
+      name: "apps.release",
+      operation: "release",
+      description:
+        "Cut a release: snapshot the manifest hash, the entrypoint's content hash, and each exported workflow's script hash, then point a channel (default 'live') at it. Releases are free to create and instant to roll back because they pin content the FS already versions.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          channel: { type: "string", description: "Channel to point at the new release (default 'live')" },
+          notes: { type: "string" },
+        },
+        required: ["name"],
+      },
+    },
+    {
+      name: "apps.releases",
+      operation: "releases",
+      description: "List an app's releases, newest first.",
+      inputSchema: {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    },
+    {
+      name: "apps.channels",
+      operation: "channels",
+      description:
+        "What each channel currently serves: the release it points at, when it was cut, and its notes. The live page serves 'live'; '?channel=preview' serves 'preview' to the app's admins.",
+      inputSchema: {
+        type: "object",
+        properties: { name: { type: "string" } },
+        required: ["name"],
+      },
+    },
+    {
+      name: "apps.promote",
+      operation: "promote",
+      description: "Point channel 'to' at whatever channel 'from' currently serves (e.g. preview → live).",
+      inputSchema: {
+        type: "object",
+        properties: { name: { type: "string" }, from: { type: "string" }, to: { type: "string" } },
+        required: ["name", "from", "to"],
+      },
+    },
+    {
+      name: "apps.rollback",
+      operation: "rollback",
+      description: "Move a channel back to the release before the one it serves.",
+      inputSchema: {
+        type: "object",
+        properties: { name: { type: "string" }, channel: { type: "string" } },
+        required: ["name"],
+      },
+    },
+    {
+      name: "apps.install",
+      operation: "install",
+      description:
+        "Install a 'workspace' data-scope app into THIS workspace: records the owner, name, pinned release, and the prefix its data lives under (<prefix>/data). Installed sessions execute with this workspace's credentials and store data here, not in the publisher's workspace.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          owner: { type: "string", description: "Workspace id that published the app" },
+          name: { type: "string" },
+          prefix: { type: "string", description: "Workspace prefix for the app's data (default apps/<name>)" },
+        },
+        required: ["owner", "name"],
+      },
+    },
+    {
+      name: "apps.uninstall",
+      operation: "uninstall",
+      description:
+        "Remove an install record from this workspace. The app's data stays on the filesystem under its prefix; delete it with vfs if you want it gone.",
+      inputSchema: {
+        type: "object",
+        properties: { owner: { type: "string" }, name: { type: "string" } },
+        required: ["owner", "name"],
+      },
+    },
+    {
+      name: "apps.installed",
+      operation: "installed",
+      description: "Apps installed into this workspace (owner, name, pinned release, data prefix).",
+      inputSchema: { type: "object", properties: {} },
     },
     {
       name: "apps.shares",
@@ -294,13 +586,18 @@ export const appsService: CoreService = {
       case "publish": {
         const name = appName(args["name"]);
         const existing = await readApp(ctx.workspaceId, name);
+        const registrations = await registrationIndex(ctx.workspaceId);
         const workflows = Array.isArray(args["workflows"])
           ? args["workflows"].filter((w): w is string => typeof w === "string")
           : (existing?.workflows ?? []);
-        // Exposed workflows must actually exist in the workspace.
+        // Exported workflows must actually exist in the workspace — the
+        // export list is the app's public surface, not a wish list.
         for (const workflow of workflows) {
-          const _reg = await readRegistration(ctx.workspaceId, workflow); const _fs = await (await import("../fs-store.js")).getFsStore(); const _all = await _fs.list(ctx.workspaceId, ".services/workflows"); console.error("DBGPUB", workflow, "reg=", !!_reg, "files=", JSON.stringify(_all.map(e=>e.path))); if (!_reg) {
-            throw new ServiceError(`Unknown workflow: ${workflow}`, 400);
+          if (!registrations.has(workflow)) {
+            throw new ServiceError(
+              `Unknown workflow: ${workflow} — register it with workflows.register before exporting it from an app`,
+              400,
+            );
           }
         }
         // The path binding is explicit: an entrypoint pointed at by the
@@ -317,7 +614,9 @@ export const appsService: CoreService = {
           paths,
           visibility: parseVisibility(args["visibility"]) ?? existing?.visibility ?? "private",
           workflows,
-          allowedTools: parseAllowedTools(args["allowed_tools"]),
+          dataScope: parseDataScope(args["data_scope"]) ?? existing?.dataScope ?? "owner",
+          channels: existing?.channels,
+          allowedTools: parseAllowedTools(args["allowed_tools"], { app: name, workflows }),
           roles: parseRoles(args["roles"]) ?? existing?.roles,
           rateLimit: parseRateLimit(args["rate_limit"]) ?? existing?.rateLimit,
           createdBy: existing?.createdBy ?? ctx.userId,
@@ -325,17 +624,217 @@ export const appsService: CoreService = {
           updatedAt: now,
         };
         await saveApp(ctx.workspaceId, manifest);
-        return summarize(manifest, ctx.workspaceId);
+        return describeApp(ctx.workspaceId, manifest, registrations, { withRuns: false });
       }
       case "list": {
+        const [manifests, registrations] = await Promise.all([
+          listApps(ctx.workspaceId),
+          registrationIndex(ctx.workspaceId),
+        ]);
+        return {
+          apps: await Promise.all(
+            manifests.map((manifest) => describeApp(ctx.workspaceId, manifest, registrations)),
+          ),
+        };
+      }
+      case "summary": {
         const manifests = await listApps(ctx.workspaceId);
-        return { apps: manifests.map((m) => summarize(m, ctx.workspaceId)) };
+        return {
+          apps: manifests.map((manifest) => ({
+            name: manifest.name,
+            title: manifest.title,
+            description: manifest.description,
+            visibility: manifest.visibility ?? "private",
+            dataScope: manifest.dataScope ?? "owner",
+            url: livePath(ctx.workspaceId, manifest.name),
+            workflowCount: (manifest.workflows ?? []).length,
+            channels: manifest.channels ?? {},
+            updatedAt: manifest.updatedAt,
+          })),
+        };
       }
       case "get": {
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
+        const registrations = await registrationIndex(ctx.workspaceId);
+        const described = await describeApp(ctx.workspaceId, manifest, registrations);
+        return {
+          ...described,
+          capabilities: {
+            native: nativeCapabilities(manifest),
+            workflows: described.workflows,
+          },
+        };
+      }
+      case "capabilities": {
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
+        const registrations = await registrationIndex(ctx.workspaceId);
+        return {
+          app: manifest.name,
+          dataScope: manifest.dataScope ?? "owner",
+          /** Auto-partitioned first-party namespaces, allow-list filtered. */
+          native: nativeCapabilities(manifest),
+          /** Exported workflows — the app's own namespace (`app.<procedure>`). */
+          workflows: (
+            await summarizeWorkflows(ctx.workspaceId, manifest, registrations, false)
+          ).map((workflow) => ({
+            ...workflow,
+            namespace: APP_WORKFLOW_NAMESPACE,
+            toolPath: `${apiBase(ctx.workspaceId, manifest.name)}/tools/${APP_WORKFLOW_NAMESPACE}/${workflow.procedure}`,
+          })),
+        };
+      }
+      case "sdk": {
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
+        const registrations = await registrationIndex(ctx.workspaceId);
+        const channel = args["channel"] === undefined ? undefined : channelName(args["channel"]);
+        const sdk = generateAppSdk(
+          manifest,
+          (manifest.workflows ?? []).map((name) => {
+            const registration = registrations.get(name);
+            return {
+              name,
+              description: registration?.description,
+              input: registration?.input,
+              output: registration?.output,
+            };
+          }),
+          { channel },
+        );
+        return {
+          app: manifest.name,
+          channel: channel ?? null,
+          namespaces: sdk.namespaces,
+          js: sdk.js,
+          dts: sdk.dts,
+          urls: {
+            js: `${livePath(ctx.workspaceId, manifest.name)}/__sdk__.js`,
+            dts: `${livePath(ctx.workspaceId, manifest.name)}/__sdk__.d.ts`,
+          },
+        };
+      }
+      case "release": {
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
+        const channel = channelName(args["channel"]);
+        const notes = typeof args["notes"] === "string" ? args["notes"] : undefined;
+        const release = await snapshotRelease(ctx.workspaceId, manifest, {
+          channel,
+          notes,
+          createdBy: ctx.userId,
+        });
+        await saveRelease(ctx.workspaceId, manifest.name, release);
+        const updated = await setChannel(ctx.workspaceId, manifest, channel, release.id);
+        return { ...summarizeRelease(release), channels: updated.channels ?? {} };
+      }
+      case "releases": {
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
+        const releases = await listReleases(ctx.workspaceId, manifest.name);
+        return {
+          name: manifest.name,
+          channels: manifest.channels ?? {},
+          releases: releases.map(summarizeRelease),
+        };
+      }
+      case "channels": {
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
+        const pointers = Object.entries(manifest.channels ?? {});
+        const channels = await Promise.all(
+          pointers.map(async ([channel, releaseId]) => {
+            const release = await readRelease(ctx.workspaceId, manifest.name, releaseId);
+            return {
+              channel,
+              release: releaseId,
+              releasedAt: release?.createdAt,
+              notes: release?.notes,
+              entryHash: release?.entryHash,
+              workflows: release?.workflows ?? {},
+              /** False when the pointer names a release that no longer exists. */
+              resolved: Boolean(release),
+            };
+          }),
+        );
+        return {
+          name: manifest.name,
+          /** The channel the live page serves when none is requested. */
+          defaultChannel: DEFAULT_CHANNEL,
+          channels,
+        };
+      }
+      case "promote": {
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
+        const from = channelName(args["from"], "");
+        const to = channelName(args["to"], "");
+        if (!from || !to) throw new ServiceError("from and to channels are required", 400);
+        const releaseId = manifest.channels?.[from];
+        if (!releaseId) throw new ServiceError(`Channel ${from} has no release to promote`, 404);
+        const updated = await setChannel(ctx.workspaceId, manifest, to, releaseId);
+        return { name: manifest.name, from, to, release: releaseId, channels: updated.channels ?? {} };
+      }
+      case "rollback": {
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
+        const channel = channelName(args["channel"]);
+        const releases = await listReleases(ctx.workspaceId, manifest.name);
+        const target = previousRelease(releases, manifest.channels?.[channel], channel);
+        if (!target) {
+          throw new ServiceError(`No earlier release to roll ${channel} back to`, 404);
+        }
+        const updated = await setChannel(ctx.workspaceId, manifest, channel, target.id);
+        return {
+          name: manifest.name,
+          channel,
+          release: target.id,
+          rolledBackFrom: manifest.channels?.[channel] ?? null,
+          channels: updated.channels ?? {},
+        };
+      }
+      case "install": {
+        const owner = typeof args["owner"] === "string" ? args["owner"] : "";
+        if (!owner) throw new ServiceError("owner (the publishing workspace id) is required", 400);
         const name = appName(args["name"]);
-        const manifest = await readApp(ctx.workspaceId, name);
-        if (!manifest) throw new ServiceError(`Unknown app: ${name}`, 404);
-        return summarize(manifest, ctx.workspaceId);
+        const manifest = await readApp(owner, name).catch(() => undefined);
+        if (!manifest) throw new ServiceError(`Unknown app: ${owner}/${name}`, 404);
+        assertInstallable(manifest);
+        const existing = await readInstall(ctx.workspaceId, owner, name);
+        const install: AppInstall = {
+          owner,
+          name,
+          release: manifest.channels?.[DEFAULT_CHANNEL] ?? null,
+          prefix: installPrefix(args["prefix"] ?? existing?.prefix, name),
+          installedAt: new Date().toISOString(),
+        };
+        await saveInstall(ctx.workspaceId, install);
+        return {
+          ...install,
+          title: manifest.title,
+          url: livePath(owner, name),
+          /** Where this workspace's copy of the app's data lives. */
+          dataPrefix: `${install.prefix}/data`,
+        };
+      }
+      case "uninstall": {
+        const owner = typeof args["owner"] === "string" ? args["owner"] : "";
+        const name = appName(args["name"]);
+        if (!owner) throw new ServiceError("owner is required", 400);
+        const removed = await removeInstall(ctx.workspaceId, owner, name);
+        return { owner, name, removed };
+      }
+      case "installed": {
+        const installs = await listInstalls(ctx.workspaceId);
+        return {
+          apps: await Promise.all(
+            installs.map(async (install) => {
+              const manifest = await readApp(install.owner, install.name).catch(() => undefined);
+              return {
+                ...install,
+                title: manifest?.title,
+                description: manifest?.description,
+                url: livePath(install.owner, install.name),
+                dataPrefix: `${install.prefix}/data`,
+                /** False when the publisher removed the app. */
+                available: Boolean(manifest),
+              };
+            }),
+          ),
+        };
       }
       case "remove": {
         const name = appName(args["name"]);
@@ -383,9 +882,7 @@ export const appsService: CoreService = {
         return { prefix, removed: true };
       }
       case "versions": {
-        const name = appName(args["name"]);
-        const manifest = await readApp(ctx.workspaceId, name);
-        if (!manifest) throw new ServiceError(`Unknown app: ${name}`, 404);
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
         const versions = await listEntryVersions(ctx.workspaceId, manifest.entry);
         return {
           path: manifest.entry,
@@ -399,12 +896,10 @@ export const appsService: CoreService = {
         };
       }
       case "version": {
-        const name = appName(args["name"]);
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
         const hash = typeof args["hash"] === "string" ? args["hash"] : "";
-        const manifest = await readApp(ctx.workspaceId, name);
-        if (!manifest) throw new ServiceError(`Unknown app: ${name}`, 404);
         const file = await readEntryVersion(ctx.workspaceId, manifest.entry, hash);
-        if (!file) throw new ServiceError(`Unknown version: ${name}@${hash}`, 404);
+        if (!file) throw new ServiceError(`Unknown version: ${manifest.name}@${hash}`, 404);
         return {
           path: file.path,
           hash: file.hash,
@@ -414,13 +909,16 @@ export const appsService: CoreService = {
         };
       }
       case "restore": {
-        const name = appName(args["name"]);
+        const manifest = await requireApp(ctx.workspaceId, args["name"]);
         const hash = typeof args["hash"] === "string" ? args["hash"] : "";
-        const manifest = await readApp(ctx.workspaceId, name);
-        if (!manifest) throw new ServiceError(`Unknown app: ${name}`, 404);
         const restored = await restoreEntryVersion(ctx.workspaceId, manifest.entry, hash);
-        if (!restored) throw new ServiceError(`Unknown version: ${name}@${hash}`, 404);
-        return summarize(manifest, ctx.workspaceId);
+        if (!restored) throw new ServiceError(`Unknown version: ${manifest.name}@${hash}`, 404);
+        return describeApp(
+          ctx.workspaceId,
+          manifest,
+          await registrationIndex(ctx.workspaceId),
+          { withRuns: false },
+        );
       }
       default:
         throw new ServiceError(`Unknown apps procedure: ${procedure}`, 404);

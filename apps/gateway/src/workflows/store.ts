@@ -41,6 +41,15 @@ export interface WorkflowRegistration {
   scriptPath: string;
   triggers: WorkflowTriggers;
   /**
+   * Optional JSON Schema for the run's `input` — the workflow's declared
+   * signature. It is what makes the generated app SDK typed
+   * (`app.weeklySummary({ weeks: 4 })`) and what the panel's run form renders.
+   * Undeclared means `unknown`, and the call still works.
+   */
+  input?: Record<string, unknown>;
+  /** Optional JSON Schema for the run's result (same role as `input`). */
+  output?: Record<string, unknown>;
+  /**
    * Per-workflow interface bindings (interface id → provider id), overriding
    * the workspace binding for this workflow's runs — e.g. { llm: "openai" }
    * pins `llm.createChatCompletion` to OpenAI here while chat and other
@@ -84,6 +93,33 @@ export interface WorkflowRun {
   error?: string;
   logs: WorkflowLogLine[];
   spans: WorkflowSpan[];
+  /**
+   * Trace correlation across instances. Every cascade (`events.emit` →
+   * workflow, workflow → workflow, app call → workflow) carries the trace id
+   * of the run that caused it and names its parent, so `workflows.tree` can
+   * render the whole cascade instead of one run at a time.
+   */
+  traceId?: string;
+  parentRunId?: string;
+  /** Set when the run was started through a published app. */
+  app?: string;
+}
+
+/** One node of a trace, as recorded in the trace index. */
+export interface TraceNode {
+  traceId: string;
+  runId: string;
+  workflow: string;
+  parentRunId?: string;
+  trigger: WorkflowRun["trigger"];
+  triggerDetail?: string;
+  status: WorkflowRun["status"];
+  startedAt: string;
+  durationMs?: number;
+  error?: string;
+  app?: string;
+  logCount: number;
+  spanCount: number;
 }
 
 const NAME_RE = /^[a-z0-9][a-z0-9-]{0,63}$/u;
@@ -192,6 +228,74 @@ export async function saveRun(workspaceId: string, run: WorkflowRun): Promise<vo
     JSON.stringify(run),
     "application/json",
   );
+  if (run.traceId) await indexTraceNode(workspaceId, run);
+}
+
+// ---------------------------------------------------------------------------
+// Trace index — `traceId` → the runs that carry it. Kept as its own document
+// so `workflows.tree` is one read instead of a scan across every workflow's
+// run folder. Best-effort: a lost index entry costs a tree edge, never a run.
+// ---------------------------------------------------------------------------
+
+const TRACES_PREFIX = `${WF_PREFIX}_traces/`;
+const TRACE_MAX_NODES = 200;
+
+function tracePath(traceId: string): string {
+  return `${TRACES_PREFIX}${traceId}.json`;
+}
+
+function traceNode(run: WorkflowRun): TraceNode {
+  return {
+    traceId: run.traceId!,
+    runId: run.id,
+    workflow: run.workflow,
+    parentRunId: run.parentRunId,
+    trigger: run.trigger,
+    triggerDetail: run.triggerDetail,
+    status: run.status,
+    startedAt: run.startedAt,
+    durationMs: run.durationMs,
+    error: run.error,
+    app: run.app,
+    logCount: run.logs.length,
+    spanCount: run.spans.length,
+  };
+}
+
+async function indexTraceNode(workspaceId: string, run: WorkflowRun): Promise<void> {
+  const path = tracePath(run.traceId!);
+  const store = getFsStore();
+  try {
+    const existing = await store.read(workspaceId, path).catch(() => undefined);
+    const nodes = existing ? (JSON.parse(existing.content) as TraceNode[]) : [];
+    const next = [...nodes.filter((node) => node.runId !== run.id), traceNode(run)]
+      .sort((a, b) => a.startedAt.localeCompare(b.startedAt))
+      .slice(0, TRACE_MAX_NODES);
+    await store.write(workspaceId, path, JSON.stringify(next), "application/json");
+  } catch {
+    // Tracing must never fail a run.
+  }
+}
+
+/** Every run recorded under a trace id, oldest first. */
+export async function readTrace(
+  workspaceId: string,
+  traceId: string,
+): Promise<TraceNode[]> {
+  const file = await getFsStore()
+    .read(workspaceId, tracePath(traceId))
+    .catch(() => undefined);
+  if (!file) return [];
+  try {
+    return JSON.parse(file.content) as TraceNode[];
+  } catch {
+    return [];
+  }
+}
+
+/** Trace ids are opaque correlation ids; keep them path-safe. */
+export function newTraceId(): string {
+  return crypto.randomUUID().replace(/-/gu, "");
 }
 
 export async function readRun(

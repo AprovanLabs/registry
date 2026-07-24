@@ -1,10 +1,19 @@
 /**
  * Live app pages — published apps as standalone websites:
  *
- *   GET /apps/:workspaceId/:name              — the app page (HTML shell)
- *   GET /apps/:workspaceId/:name/__project__  — the app's source project (JSON)
- *   GET /apps/:workspaceId/:name/*            — static files from the app's
- *                                               prefixes, SPA-fallback to the page
+ *   GET /apps/:workspaceId/:name               — the app page (HTML shell)
+ *   GET /apps/:workspaceId/:name/__project__   — the app's source project (JSON)
+ *   GET /apps/:workspaceId/:name/__sdk__.js    — generated runtime shim
+ *   GET /apps/:workspaceId/:name/__sdk__.d.ts  — generated types
+ *   GET /apps/:workspaceId/:name/*             — static files from the app's
+ *                                                prefixes, SPA-fallback to the page
+ *
+ * **Channels.** When the manifest has a channel pointer, content requests
+ * serve that release's pinned hashes (the entry is read at `entryHash`)
+ * instead of the latest write; with no pointer, latest — so an app that never
+ * cuts a release behaves exactly as it always did. `?channel=preview` (or any
+ * non-default channel) is honoured only for callers holding the app's admin
+ * role, and is checked on the token-bearing endpoints, not on page chrome.
  *
  * Mounted at the domain root (aprovan.com/apps/...) — CloudFront forwards
  * `apps/*` to the gateway alongside `api/*`. The shell carries no app
@@ -24,17 +33,26 @@
  */
 
 import { Hono } from "hono";
-import { getAuthMode, readBearerToken, verifyAccessToken } from "../middleware/auth.js";
-import { getFsStore } from "../fs-store.js";
-import { ServiceError } from "../services.js";
+import {
+  DEFAULT_CHANNEL,
+  channelName,
+  resolveChannelRelease,
+  type AppRelease,
+} from "../apps/releases.js";
+import { generateAppSdk } from "../apps/sdk.js";
 import {
   appPathServable,
   callerRole,
   readApp,
+  readEntryVersion,
   resolveAppPath,
   workspacePath,
   type AppManifest,
 } from "../apps/store.js";
+import { getFsStore } from "../fs-store.js";
+import { getAuthMode, readBearerToken, verifyAccessToken } from "../middleware/auth.js";
+import { ServiceError } from "../services.js";
+import { readRegistration } from "../workflows/store.js";
 
 export const liveAppsRouter = new Hono();
 
@@ -44,7 +62,11 @@ interface LiveApp {
 }
 
 type HonoCtx = {
-  req: { header(name: string): string | undefined; param(name: string): string | undefined };
+  req: {
+    header(name: string): string | undefined;
+    param(name: string): string | undefined;
+    query(name: string): string | undefined;
+  };
 };
 
 async function resolveLiveApp(c: HonoCtx): Promise<LiveApp> {
@@ -56,6 +78,18 @@ async function resolveLiveApp(c: HonoCtx): Promise<LiveApp> {
   return { manifest, workspaceId };
 }
 
+/** The caller's sub, or undefined when the request carries no identity. */
+async function viewerSub(c: HonoCtx): Promise<string | undefined> {
+  if (getAuthMode() === "none") return c.req.header("X-App-User") ?? "local";
+  const token = readBearerToken(c);
+  if (!token) return undefined;
+  try {
+    return await verifyAccessToken(token);
+  } catch {
+    throw new ServiceError("Invalid or expired token", 401);
+  }
+}
+
 /**
  * Enforce the manifest's visibility for content requests. Public apps serve
  * to anyone; private apps require a valid token whose sub passes the role
@@ -63,21 +97,41 @@ async function resolveLiveApp(c: HonoCtx): Promise<LiveApp> {
  */
 async function requireViewer(c: HonoCtx, manifest: AppManifest): Promise<void> {
   if ((manifest.visibility ?? "private") === "public") return;
-  let sub: string;
-  if (getAuthMode() === "none") {
-    sub = c.req.header("X-App-User") ?? "local";
-  } else {
-    const token = readBearerToken(c);
-    if (!token) throw new ServiceError("Sign in to view this app", 401);
-    try {
-      sub = await verifyAccessToken(token);
-    } catch {
-      throw new ServiceError("Invalid or expired token", 401);
-    }
-  }
+  const sub = await viewerSub(c);
+  if (!sub) throw new ServiceError("Sign in to view this app", 401);
   if (!callerRole(manifest, sub)) {
     throw new ServiceError("You do not have access to this app", 403);
   }
+}
+
+/**
+ * Which release a content request serves. The default channel is open to
+ * every viewer; any other channel (`?channel=preview`) is an admin-only view
+ * of unreleased content, so it is gated on the app's admin role — checked
+ * here, on the token-bearing endpoints, rather than on the page shell.
+ */
+async function resolvePin(c: HonoCtx, app: LiveApp): Promise<AppRelease | undefined> {
+  const channel = channelName(c.req.query("channel"));
+  if (channel !== DEFAULT_CHANNEL) {
+    const sub = await viewerSub(c);
+    if (!sub || callerRole(app.manifest, sub) !== "admin") {
+      throw new ServiceError(`Channel "${channel}" is visible to this app's admins only`, 403);
+    }
+  }
+  return resolveChannelRelease(app.workspaceId, app.manifest, channel);
+}
+
+/**
+ * Read a file for the live surface, honouring a release pin: the entrypoint
+ * is materialised at the release's content hash (the FS keeps every version,
+ * so a pinned read is the same read with a hash), everything else is latest.
+ */
+async function readPinned(app: LiveApp, path: string, release: AppRelease | undefined) {
+  if (release?.entryHash && path === release.entry) {
+    const pinned = await readEntryVersion(app.workspaceId, path, release.entryHash);
+    if (pinned) return pinned;
+  }
+  return getFsStore().read(app.workspaceId, path);
 }
 
 /**
@@ -115,7 +169,7 @@ function errorResponse(c: { json: (body: unknown, status?: number) => Response }
 liveAppsRouter.get("/:workspaceId/:name", async (c) => {
   try {
     const app = await resolveLiveApp(c);
-    return c.newResponse(buildAppShell(app), 200, {
+    return c.newResponse(buildAppShell(app, channelName(c.req.query("channel"))), 200, {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
     });
@@ -132,6 +186,7 @@ liveAppsRouter.get("/:workspaceId/:name/__project__", async (c) => {
   try {
     const app = await resolveLiveApp(c);
     await requireViewer(c, app.manifest);
+    const release = await resolvePin(c, app);
 
     // Every declared prefix ships, keyed by workspace path — so an app that
     // publishes `apps/liift4` plus `lib/charts` compiles as one project and
@@ -147,7 +202,7 @@ liveAppsRouter.get("/:workspaceId/:name/__project__", async (c) => {
     const files = (
       await Promise.all(
         paths.map(async (path) => {
-          const file = await store.read(workspaceId, path);
+          const file = await readPinned(app, path, release);
           return file ? { path, content: file.content } : null;
         }),
       )
@@ -156,7 +211,62 @@ liveAppsRouter.get("/:workspaceId/:name/__project__", async (c) => {
     if (!files.some((f) => f.path === manifest.entry)) {
       throw new ServiceError(`App entrypoint missing: ${manifest.entry}`, 404);
     }
-    return c.json({ entry: manifest.entry, paths: manifest.paths, files });
+    return c.json({
+      entry: manifest.entry,
+      paths: manifest.paths,
+      files,
+      release: release ? { id: release.id, channel: release.channel, createdAt: release.createdAt } : null,
+    });
+  } catch (err) {
+    return errorResponse(c, err);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// GET /:workspaceId/:name/__sdk__.js|.d.ts — generated bindings
+// ---------------------------------------------------------------------------
+//
+// The manifest is the world; these are the bindings. Both are visibility-gated
+// like `__project__` and pinned to the requested channel, so an editor and the
+// running page always see the same surface.
+
+async function sdkFor(c: HonoCtx): Promise<{ js: string; dts: string }> {
+  const app = await resolveLiveApp(c);
+  await requireViewer(c, app.manifest);
+  const release = await resolvePin(c, app);
+  const workflows = await Promise.all(
+    (app.manifest.workflows ?? []).map(async (name) => {
+      const registration = await readRegistration(app.workspaceId, name).catch(() => undefined);
+      return {
+        name,
+        description: registration?.description,
+        input: registration?.input,
+        output: registration?.output,
+      };
+    }),
+  );
+  return generateAppSdk(app.manifest, workflows, { channel: release?.channel });
+}
+
+liveAppsRouter.get("/:workspaceId/:name/__sdk__.js", async (c) => {
+  try {
+    const { js } = await sdkFor(c);
+    return c.newResponse(js, 200, {
+      "Content-Type": "text/javascript; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
+  } catch (err) {
+    return errorResponse(c, err);
+  }
+});
+
+liveAppsRouter.get("/:workspaceId/:name/__sdk__.d.ts", async (c) => {
+  try {
+    const { dts } = await sdkFor(c);
+    return c.newResponse(dts, 200, {
+      "Content-Type": "application/typescript; charset=utf-8",
+      "Cache-Control": "no-store",
+    });
   } catch (err) {
     return errorResponse(c, err);
   }
@@ -173,8 +283,9 @@ liveAppsRouter.get("/:workspaceId/:name/*", async (c) => {
     const rest = (raw as Record<string, string>)["*"] ?? "";
     const relative = rest.replace(/^\/+|\/+$/g, "");
 
+    const release = await resolvePin(c, app);
     for (const target of relative ? servableTargets(app.manifest, relative) : []) {
-      const file = await getFsStore().read(app.workspaceId, target);
+      const file = await readPinned(app, target, release);
       if (file) {
         await requireViewer(c, app.manifest);
         return c.newResponse(file.content, 200, {
@@ -184,7 +295,7 @@ liveAppsRouter.get("/:workspaceId/:name/*", async (c) => {
       }
     }
     // Client-side routes fall back to the app page.
-    return c.newResponse(buildAppShell(app), 200, {
+    return c.newResponse(buildAppShell(app, channelName(c.req.query("channel"))), 200, {
       "Content-Type": "text/html; charset=utf-8",
       "Cache-Control": "no-store",
     });
@@ -197,18 +308,27 @@ liveAppsRouter.get("/:workspaceId/:name/*", async (c) => {
 // Shell
 // ---------------------------------------------------------------------------
 
-function buildAppShell(app: LiveApp): string {
+function buildAppShell(app: LiveApp, channel = DEFAULT_CHANNEL): string {
   const { manifest, workspaceId } = app;
   const title = manifest.title ?? manifest.name;
-  // The app's injected namespaces are the allow-list's namespaces — the app
-  // can only reference what the app surface will actually serve.
-  const services = [...new Set(manifest.allowedTools.map((tool) => tool.split(".")[0]!))];
+  // The app's injected namespaces are the allow-list's namespaces plus the
+  // app's own workflow namespace — the app can only reference what the app
+  // surface will actually serve.
+  const services = [
+    ...new Set([
+      ...manifest.allowedTools.map((tool) => tool.split(".")[0]!),
+      ...((manifest.workflows ?? []).length > 0 ? ["app"] : []),
+    ]),
+  ];
   const config = {
     app: manifest.name,
     workspaceId,
     title,
     appBase: `/api/gateway/apps/${workspaceId}/${manifest.name}`,
     liveBase: `/apps/${workspaceId}/${manifest.name}`,
+    // The channel the shell asks for; content endpoints resolve the pin (and
+    // gate non-default channels on the admin role).
+    channel,
     services,
   };
   return `<!doctype html>
@@ -250,7 +370,8 @@ const token =
 const authHeaders = token ? { "X-Aprovan-Authorization": "Bearer " + token } : {};
 
 try {
-  const projectRes = await fetch(cfg.liveBase + "/__project__", { headers: authHeaders });
+  const channelQuery = cfg.channel && cfg.channel !== "live" ? "?channel=" + encodeURIComponent(cfg.channel) : "";
+  const projectRes = await fetch(cfg.liveBase + "/__project__" + channelQuery, { headers: authHeaders });
   if (projectRes.status === 401 || projectRes.status === 403) {
     // Private app, no usable session. Bounce through the chat app's sign-in —
     // it shares this origin and is an already-registered Cognito callback, and

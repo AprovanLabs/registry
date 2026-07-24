@@ -1,19 +1,33 @@
 /**
- * Registry top bar: the shared `@aprovan/ui/shell` AppHeader with
- * registry-internal navigation, the app-family switch (Home / Chat), and the
- * session area. Chat and the home page render the same AppHeader, so all
- * three surfaces share one shell — while the registry still builds and runs
- * standalone (the header only links out to its siblings).
+ * Registry top bar: the shared `@aprovan/ui/shell` AppHeader with the
+ * canonical app family (Home / Chat / Apps / Registry) from `aprovanApps`,
+ * registry-internal navigation, and the session area. Chat and the home page
+ * render the same AppHeader off the same helper, so a new top-level
+ * destination shows up on every surface at once — while the registry still
+ * builds and runs standalone (the header only links out to its siblings).
  */
 
-import { AppHeader, type AppNavLink } from "@aprovan/ui/shell";
+import { AppHeader, aprovanApps, type AppNavLink } from "@aprovan/ui/shell";
 import * as React from "react";
 import { HeaderSession } from "./HeaderSession";
 
-const APP_HOME: AppNavLink = { label: "Home", href: "https://aprovan.com/" };
-const APP_FAMILY: AppNavLink[] = [
-  { label: "Chat", href: "https://aprovan.com/chat/" },
-];
+/**
+ * The family nav with registry-internal links merged in. An internal link
+ * whose label matches a family entry *replaces* it in place: the registry
+ * hosts Apps itself, so that entry should be a same-origin link under this
+ * build's base path (and can mark itself current) rather than bouncing
+ * through aprovan.com. Everything else is appended after the family.
+ */
+function registryNav(internal: AppNavLink[]): AppNavLink[] {
+  const family = aprovanApps("Registry");
+  const overrides = new Map(internal.map((link) => [link.label, link]));
+  return [
+    ...family.map((link) => overrides.get(link.label) ?? link),
+    ...internal.filter(
+      (link) => !family.some((entry) => entry.label === link.label),
+    ),
+  ];
+}
 
 export function RegistryHeader({
   homeHref,
@@ -25,7 +39,7 @@ export function RegistryHeader({
   return (
     <AppHeader
       homeHref={homeHref}
-      links={[APP_HOME, ...links, ...APP_FAMILY]}
+      links={registryNav(links)}
       logo={
         <img
           alt=""

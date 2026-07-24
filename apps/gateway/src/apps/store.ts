@@ -61,6 +61,19 @@ export interface AppRateLimit {
   daily?: number;
 }
 
+/**
+ * Where an app user's data physically lands.
+ *
+ * - `"owner"` (default): the publishing workspace stores every user's
+ *   partition (`<paths[0]>/data/<userSub>`) and its credentials execute —
+ *   a hosted service.
+ * - `"workspace"`: the app is a template. A caller installs it
+ *   (`apps.install`) into their OWN workspace, data lands under
+ *   `<installPrefix>/data`, and execution uses the caller's credentials —
+ *   a self-deployed app, carrying no publisher liability.
+ */
+export type AppDataScope = "owner" | "workspace";
+
 export interface AppManifest {
   name: string;
   title?: string;
@@ -85,8 +98,22 @@ export interface AppManifest {
    * account regardless of visibility.
    */
   visibility?: "public" | "private";
-  /** Workflow names (owner workspace) the app exposes as runnable endpoints. */
+  /**
+   * The app's **export list**: workflow names (registered in the owner
+   * workspace) published under the app's namespace. An exported workflow is
+   * callable as `POST /tools/app/<workflow>` and as
+   * `POST /workflows/<workflow>/run`; a workflow not exported by any app is
+   * workspace-internal.
+   */
   workflows?: string[];
+  /** Where this app's user data lives (default "owner"). */
+  dataScope?: AppDataScope;
+  /**
+   * Channel → release id. The live page serves `channels.live`'s pinned
+   * content when set (see apps/releases.ts); `?channel=preview` serves
+   * `channels.preview` to the app's admins.
+   */
+  channels?: Record<string, string>;
   /**
    * Tool allow-list for app callers: exact `namespace.procedure` entries or
    * `namespace.*` wildcards. Everything not listed is denied for app
@@ -161,6 +188,12 @@ export function pathDir(path: string, label = "entry"): string {
 export interface AppPaths {
   name: string;
   paths: string[];
+  /**
+   * Owner-hosted apps partition per app user under the app folder;
+   * workspace-scoped installs already sit in the user's own workspace, so
+   * their data root has nothing to partition against (see {@link appDataDir}).
+   */
+  dataScope?: AppDataScope;
 }
 
 /** The app's primary prefix: where its data and app-relative paths live. */
@@ -175,9 +208,14 @@ export function appDataRoot(app: AppPaths): string {
   return `${appRoot(app)}/data`;
 }
 
-/** The per-(app, user) data folder inside the app's primary prefix. */
+/**
+ * The data folder a session's writes land in: per-(app, user) inside the
+ * app's primary prefix for owner-hosted apps, and the install prefix's own
+ * `data/` for a workspace-scoped install (the workspace *is* the user).
+ */
 export function appDataDir(app: AppPaths, userId: string): string {
-  return `${appDataRoot(app)}/${userId}`;
+  const root = appDataRoot(app);
+  return app.dataScope === "workspace" ? root : `${root}/${userId}`;
 }
 
 const underPrefix = (path: string, prefix: string): boolean =>

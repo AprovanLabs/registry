@@ -85,6 +85,13 @@ prototype's calls behave identically when moved into a script.
 
 ## Workflows
 
+> **The normative model for Apps, Workflows, and Runs now lives in
+> [apps-and-workflows.md](./apps-and-workflows.md)** — the naming decision, the
+> app SDK contract, `dataScope`, releases/channels, and the three (and only
+> three) ways an app reaches data. This section and "Apps: published folders"
+> below remain as the orientation summary; where they disagree, that document
+> wins.
+
 A **workflow = a workspace script + its triggers**. The registration
 (`.services/workflows/<name>.json` on the workspace FS) points at a script path
 (e.g. `workflows/daily-report.js`); the script itself is an ordinary workspace

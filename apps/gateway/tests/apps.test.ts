@@ -59,8 +59,10 @@ describe("apps service (owner management)", () => {
       rate_limit: { rps: 50, burst: 100 },
     });
     expect(publish.status).toBe(200);
-    const published = await data<{ appPath: string }>(publish);
-    expect(published.appPath).toBe("/apps/local/tracker");
+    const published = await data<{ url: string; apiBase: string; dataScope: string }>(publish);
+    expect(published.url).toBe("/apps/local/tracker");
+    expect(published.apiBase).toBe("/api/gateway/apps/local/tracker");
+    expect(published.dataScope).toBe("owner");
 
     const list = await data<{ apps: Array<{ name: string }> }>(await manage("apps/list", {}));
     expect(list.apps.map((a) => a.name)).toContain("tracker");

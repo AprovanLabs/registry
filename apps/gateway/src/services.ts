@@ -56,6 +56,15 @@ export interface ServiceContext {
    * dispatch prefers these over the workspace binding.
    */
   interfaceBindings?: Record<string, string>;
+  /**
+   * Trace correlation. Every cascade — `events.emit` → workflow, workflow →
+   * workflow, app call → workflow — carries these forward, so a run record
+   * links to the run (or app request) that caused it and `workflows.tree`
+   * can render the whole cascade. Absent means "start a new trace".
+   */
+  traceId?: string;
+  /** The run this context descends from (the parent edge in the trace). */
+  parentRunId?: string;
 }
 
 export interface CoreService {

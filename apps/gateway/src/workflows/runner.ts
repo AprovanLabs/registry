@@ -18,14 +18,15 @@
  * incremented depth; MAX_EVENT_DEPTH caps cascades to prevent loops.
  */
 
+import { getCredentialStore } from "../credentials.js";
 import { getFsStore } from "../fs-store.js";
 import { listInterfaces } from "../interfaces.js";
 import { CORE_SERVICES, ServiceError, type ServiceContext } from "../services.js";
-import { getCredentialStore } from "../credentials.js";
 import { invokeTool } from "./invoke.js";
 import { runScriptInSandbox } from "./sandbox.js";
 import {
   newRunId,
+  newTraceId,
   readRegistration,
   saveRun,
   type WorkflowLogLine,
@@ -90,11 +91,36 @@ export interface RunWorkflowOptions {
    * the script inherit the per-(app, user) data partitioning.
    */
   appScope?: ServiceContext["appScope"];
+  /**
+   * Where the script SOURCE is read from, when that differs from the
+   * workspace the run executes in — a `dataScope: "workspace"` app publishes
+   * its code from the owner workspace but runs against the caller's.
+   */
+  scriptWorkspaceId?: string;
+  /** Trace this run belongs to (a new trace is started when absent). */
+  traceId?: string;
+  /** Run that caused this one (event cascade, workflow→workflow, app call). */
+  parentRunId?: string;
+  /** App this run was started through, for the trace tree. */
+  app?: string;
 }
 
 export async function runWorkflow(options: RunWorkflowOptions): Promise<WorkflowRun> {
-  const { workspaceId, userId, registration, trigger, triggerDetail, input, depth = 0, appScope } = options;
+  const {
+    workspaceId,
+    userId,
+    registration,
+    trigger,
+    triggerDetail,
+    input,
+    depth = 0,
+    appScope,
+    scriptWorkspaceId,
+    parentRunId,
+    app,
+  } = options;
 
+  const traceId = options.traceId ?? newTraceId();
   const run: WorkflowRun = {
     id: newRunId(),
     workflow: registration.name,
@@ -105,10 +131,16 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
     input: input ?? null,
     logs: [],
     spans: [],
+    traceId,
+    parentRunId,
+    app,
   };
   const startMs = performance.now();
 
-  const scriptFile = await getFsStore().read(workspaceId, registration.scriptPath);
+  const scriptFile = await getFsStore().read(
+    scriptWorkspaceId ?? workspaceId,
+    registration.scriptPath,
+  );
   if (!scriptFile) {
     run.status = "failed";
     run.error = `Script not found: ${registration.scriptPath}`;
@@ -128,6 +160,10 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
     // Registration-level interface bindings pin e.g. `llm` to a specific
     // provider for this workflow's runs.
     interfaceBindings: registration.bindings,
+    // Anything this run causes (an emit that fires a workflow, a nested
+    // workflows.run) inherits the trace and names THIS run as its parent.
+    traceId,
+    parentRunId: run.id,
   };
 
   const pushLog = (level: WorkflowLogLine["level"], parts: unknown[]) => {
@@ -243,11 +279,22 @@ export async function triggerEventWorkflows(
       triggerDetail: channel,
       input: { channel, payload: payload ?? null },
       depth,
+      // The emitting run (or app call) is this run's parent in the trace.
+      // The app scope deliberately does NOT propagate: an event-subscribed
+      // workflow is the workspace's own automation, not part of the app
+      // session, and must keep the workspace's data view.
+      traceId: ctx.traceId,
+      parentRunId: ctx.parentRunId,
     }).catch(() => undefined);
   }
 }
 
-/** Convenience: run by name (manual/API trigger). */
+/**
+ * Convenience: run by name (manual/API trigger). A workflow→workflow call
+ * lands here with the caller's context, so the child run joins the caller's
+ * trace and names it as parent; the depth cap still applies through
+ * `workflowDepth`.
+ */
 export async function runWorkflowByName(
   ctx: ServiceContext,
   name: string,
@@ -255,6 +302,12 @@ export async function runWorkflowByName(
   input?: unknown,
   triggerDetail?: string,
 ): Promise<WorkflowRun> {
+  if ((ctx.workflowDepth ?? 0) > MAX_EVENT_DEPTH) {
+    throw new ServiceError(
+      `Workflow cascade depth exceeded (${MAX_EVENT_DEPTH}) running ${name}`,
+      429,
+    );
+  }
   const registration = await readRegistration(ctx.workspaceId, name);
   if (!registration) throw new ServiceError(`Unknown workflow: ${name}`, 404);
   return runWorkflow({
@@ -264,5 +317,10 @@ export async function runWorkflowByName(
     trigger,
     triggerDetail,
     input,
+    depth: ctx.workflowDepth ?? 0,
+    appScope: ctx.appScope,
+    traceId: ctx.traceId,
+    parentRunId: ctx.parentRunId,
+    app: ctx.appScope?.name,
   });
 }

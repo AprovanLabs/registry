@@ -12,6 +12,7 @@
  */
 
 import { ServiceError, type CoreService } from "../services.js";
+import { parseCron } from "./cron.js";
 import { runWorkflowByName } from "./runner.js";
 import {
   listRegistrations,
@@ -20,6 +21,7 @@ import {
   readRegistration,
   readRun,
   readScriptVersion,
+  readTrace,
   removeRegistration,
   restoreScriptVersion,
   saveRegistration,
@@ -28,7 +30,18 @@ import {
   type WorkflowRegistration,
   type WorkflowTriggers,
 } from "./store.js";
-import { parseCron } from "./cron.js";
+
+/**
+ * A declared JSON Schema (`input`/`output`). Kept as an opaque object: it is
+ * consumed by the SDK generator and the run form, not interpreted here.
+ */
+function parseSchema(raw: unknown, label: string): Record<string, unknown> | undefined {
+  if (raw === undefined || raw === null) return undefined;
+  if (typeof raw !== "object" || Array.isArray(raw)) {
+    throw new ServiceError(`${label} must be a JSON Schema object`, 400);
+  }
+  return raw as Record<string, unknown>;
+}
 
 function parseTriggers(raw: unknown): WorkflowTriggers {
   if (raw === undefined || raw === null) return { manual: true };
@@ -56,13 +69,16 @@ export function hookPath(workspaceId: string, name: string): string {
   return `/hooks/${workspaceId}/${name}`;
 }
 
-function summarize(registration: WorkflowRegistration, workspaceId: string) {
+export function summarizeWorkflow(registration: WorkflowRegistration, workspaceId: string) {
   return {
     name: registration.name,
     description: registration.description,
     scriptPath: registration.scriptPath,
     triggers: registration.triggers,
     bindings: registration.bindings,
+    /** Declared JSON Schemas — the workflow's signature (undeclared = unknown). */
+    input: registration.input,
+    output: registration.output,
     webhookPath: registration.triggers.webhook ? hookPath(workspaceId, registration.name) : undefined,
     createdBy: registration.createdBy,
     updatedAt: registration.updatedAt,
@@ -96,6 +112,15 @@ export const workflowsService: CoreService = {
             description:
               "Per-workflow interface bindings (interface → provider), e.g. { llm: 'openai' } — this workflow's llm.createChatCompletion uses OpenAI regardless of the workspace binding",
           },
+          input: {
+            type: "object",
+            description:
+              "JSON Schema for the run input — the workflow's declared signature. Types the generated app SDK (app.<workflow>(input)) and renders the run form. Undeclared means unknown, and calls still work.",
+          },
+          output: {
+            type: "object",
+            description: "JSON Schema for the run result (same role as `input`).",
+          },
         },
         required: ["name", "script_path"],
       },
@@ -103,7 +128,8 @@ export const workflowsService: CoreService = {
     {
       name: "workflows.list",
       operation: "list",
-      description: "List registered workflows with their triggers (cron/webhook/events).",
+      description:
+        "List registered workflows with their triggers (cron/webhook/events) and declared input/output schemas.",
       inputSchema: { type: "object", properties: {} },
     },
     {
@@ -155,6 +181,17 @@ export const workflowsService: CoreService = {
         type: "object",
         properties: { name: { type: "string" }, run_id: { type: "string" } },
         required: ["name", "run_id"],
+      },
+    },
+    {
+      name: "workflows.tree",
+      operation: "tree",
+      description:
+        "Every run linked to one trace id, oldest first — the cascade an event emission, an app call, or a workflow→workflow call produced. Each node names its parentRunId; use workflows.trace for a node's logs and spans.",
+      inputSchema: {
+        type: "object",
+        properties: { trace_id: { type: "string" } },
+        required: ["trace_id"],
       },
     },
     {
@@ -216,6 +253,8 @@ export const workflowsService: CoreService = {
           scriptPath,
           triggers,
           bindings,
+          input: parseSchema(args["input"], "input") ?? existing?.input,
+          output: parseSchema(args["output"], "output") ?? existing?.output,
           // Webhook token survives re-registration so external callers keep working.
           hookToken: triggers.webhook
             ? (existing?.hookToken ?? crypto.randomUUID().replace(/-/g, ""))
@@ -227,14 +266,14 @@ export const workflowsService: CoreService = {
         await saveRegistration(ctx.workspaceId, registration);
         await updateCronIndex(ctx.workspaceId);
         return {
-          ...summarize(registration, ctx.workspaceId),
+          ...summarizeWorkflow(registration, ctx.workspaceId),
           hookToken: registration.hookToken,
         };
       }
       case "list": {
         const registrations = await listRegistrations(ctx.workspaceId);
         return {
-          workflows: registrations.map((registration) => summarize(registration, ctx.workspaceId)),
+          workflows: registrations.map((registration) => summarizeWorkflow(registration, ctx.workspaceId)),
         };
       }
       case "get": {
@@ -243,7 +282,7 @@ export const workflowsService: CoreService = {
         if (!registration) throw new ServiceError(`Unknown workflow: ${name}`, 404);
         const runs = await listRuns(ctx.workspaceId, name, 10);
         return {
-          ...summarize(registration, ctx.workspaceId),
+          ...summarizeWorkflow(registration, ctx.workspaceId),
           hookToken: registration.hookToken,
           runs: runs.map((run) => ({
             id: run.id,
@@ -290,6 +329,21 @@ export const workflowsService: CoreService = {
         if (!run) throw new ServiceError(`Unknown run: ${name}/${runId}`, 404);
         return run;
       }
+      case "tree": {
+        const traceId = typeof args["trace_id"] === "string" ? args["trace_id"] : "";
+        if (!traceId) throw new ServiceError("trace_id is required", 400);
+        const runs = await readTrace(ctx.workspaceId, traceId);
+        // The root is whatever has no parent inside this trace — an app call
+        // or a user-initiated run — so a client can build the tree directly.
+        const ids = new Set(runs.map((run) => run.runId));
+        return {
+          traceId,
+          runs,
+          rootRunIds: runs
+            .filter((run) => !run.parentRunId || !ids.has(run.parentRunId))
+            .map((run) => run.runId),
+        };
+      }
       case "versions": {
         const name = workflowName(args["name"]);
         const registration = await readRegistration(ctx.workspaceId, name);
@@ -329,7 +383,7 @@ export const workflowsService: CoreService = {
         const restored = await restoreScriptVersion(ctx.workspaceId, registration.scriptPath, hash);
         if (!restored) throw new ServiceError(`Unknown version: ${name}@${hash}`, 404);
         return {
-          ...summarize(registration, ctx.workspaceId),
+          ...summarizeWorkflow(registration, ctx.workspaceId),
           hookToken: registration.hookToken,
         };
       }
