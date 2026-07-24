@@ -110,7 +110,11 @@ export class GatewayLambda extends Construct {
       handler: "handler",
       runtime: lambda.Runtime.NODEJS_22_X,
       architecture: lambda.Architecture.ARM_64,
-      timeout: Duration.seconds(60),
+      // Streamed chat completions run for as long as the model takes, and the
+      // function timeout is a hard cap on that: at 60s a long widget edit was
+      // killed mid-stream. CloudFront's 60s origin timeout is per-read, so a
+      // stream that keeps emitting tokens stays under it either way.
+      timeout: Duration.seconds(300),
       memorySize: 1024,
       environment,
       bundling: {
