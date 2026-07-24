@@ -9,20 +9,23 @@
  *     namespaces whose storage is automatically partitioned per (app, app
  *     user) and rate-limited per user. No credential, no workspace membership.
  *  2. **Workspace-credentialed** — a provider namespace (`github`, `linear`, …)
- *     executing with a workspace's credential. NEVER reachable from an app
- *     session's tool proxy: an app session is not a workspace member.
+ *     executing with the OWNING workspace's credential. Reachable from an app
+ *     session's tool proxy only through an explicit **credential grant**: an
+ *     `allowedTools` entry naming one *exact* procedure (`github.repos.get`) —
+ *     never a wildcard — for a provider the workspace actually holds a
+ *     credential for. `apps.capabilities` reports each grant under this tier.
  *  3. **Exported workflows** — everything else. A workflow is the BFF boundary:
  *     allow-listed by name, traced, rate-limited, and the only place a secret
  *     is ever near an app request. Exported workflows are callable as
  *     `POST /tools/app/<workflow>` — at the call site a workflow and a native
  *     procedure are indistinguishable (capability = namespace).
  *
- * `allowedTools` may therefore only name (1) and the app's own workflow
- * namespace; {@link assertAllowedTools} rejects everything else with a message
- * pointing at (3).
+ * `allowedTools` may therefore name (1), the app's own workflow namespace, and
+ * exact provider procedures (2); {@link assertAllowedTools} rejects everything
+ * else — a provider *wildcard* in particular — with a message pointing at (3).
  */
 
-import { ServiceError } from "../service-kernel.js";
+import { isCoreServiceName, ServiceError } from "../service-kernel.js";
 import { DEFAULT_DAILY_CALLS } from "./usage.js";
 import type { AppManifest } from "./store.js";
 
@@ -194,18 +197,30 @@ export function nativeCapabilities(manifest: AppManifest): NativeCapability[] {
 
 const ENTRY_RE = /^([\w-]+)\.(\*|[\w.-]+)$/u;
 
+/** One provider credential grant parsed out of `allowedTools`. */
+export interface ProviderGrant {
+  /** Provider whose workspace credential executes the call (e.g. "github"). */
+  provider: string;
+  /** Exact procedure granted (e.g. "repos.get") — never a wildcard. */
+  procedure: string;
+}
+
 /**
- * Validate an `allowed_tools` list against the three-ways-to-reach-data rule.
- * A provider namespace is rejected with the escape hatch spelled out, because
+ * Validate an `allowed_tools` list against the three-ways-to-reach-data rule
+ * and return the provider credential grants it contains (tier 2 — the caller
+ * must still verify the workspace holds a credential for each provider).
+ *
+ * A provider *wildcard* is rejected with the escape hatch spelled out, because
  * "add github.* to allowed_tools" is exactly the mistake this model exists to
- * prevent: an app session holds no workspace membership, so a provider call
- * from one would have to borrow the owner's credential with no audited
- * boundary. A workflow *is* that boundary.
+ * prevent: a blanket borrow of the owner's credential with no audited
+ * boundary. An exact procedure is a deliberate, narrow credential grant; a
+ * workflow is the boundary for anything broader.
  */
 export function assertAllowedTools(
   entries: string[],
   context: { app: string; workflows: readonly string[] },
-): void {
+): ProviderGrant[] {
+  const grants: ProviderGrant[] = [];
   for (const entry of entries) {
     const match = ENTRY_RE.exec(entry);
     if (!match) {
@@ -227,15 +242,95 @@ export function assertAllowedTools(
         400,
       );
     }
-    throw new ServiceError(
-      `allowed_tools entry "${entry}" is not reachable from an app session: "${namespace}" is neither a native namespace ` +
-        `(${NATIVE_APP_NAMESPACES.join(", ")}) nor this app's workflow namespace ("${APP_WORKFLOW_NAMESPACE}.*"). ` +
-        `App sessions hold no workspace membership, so provider credentials are never exposed to them directly — ` +
-        `export a workflow that calls ${namespace} (register it, list it in \`workflows\`), and the app calls it as ` +
-        `"${APP_WORKFLOW_NAMESPACE}.<workflow>".`,
-      400,
-    );
+    // Core service namespaces (registry, workflows, apps, …) are neither
+    // native app namespaces nor providers — they are never app-reachable.
+    if (isCoreServiceName(namespace)) {
+      throw new ServiceError(
+        `allowed_tools entry "${entry}" is not reachable from an app session: "${namespace}" is a core service ` +
+          `namespace, not a provider. Only the auto-partitioned natives (${NATIVE_APP_NAMESPACES.join(", ")}), ` +
+          `this app's workflow namespace ("${APP_WORKFLOW_NAMESPACE}.*"), and exact provider procedures are allowed.`,
+        400,
+      );
+    }
+    // Provider namespace: an entry here is a credential grant, so it must be
+    // one exact procedure. Wildcards stay behind the workflow boundary.
+    if (procedure === "*") {
+      throw new ServiceError(
+        `allowed_tools entry "${entry}" grants a whole provider namespace, which is never allowed: a provider entry ` +
+          `is a credential grant and must name one exact procedure (e.g. "${namespace}.repos.get"). ` +
+          `Anything broader belongs in an exported workflow — register one that calls ${namespace}, list it in ` +
+          `\`workflows\`, and the app calls it as "${APP_WORKFLOW_NAMESPACE}.<workflow>".`,
+        400,
+      );
+    }
+    grants.push({ provider: namespace, procedure });
   }
+  return grants;
+}
+
+/** The provider credential grants declared in an allow-list, in entry order. */
+export function providerGrantEntries(allowedTools: readonly string[]): ProviderGrant[] {
+  const grants: ProviderGrant[] = [];
+  for (const entry of allowedTools) {
+    const match = ENTRY_RE.exec(entry);
+    if (!match) continue;
+    const namespace = match[1]!;
+    const procedure = match[2]!;
+    if (isNativeNamespace(namespace) || isWorkflowNamespace(namespace)) continue;
+    if (isCoreServiceName(namespace) || procedure === "*") continue;
+    grants.push({ provider: namespace, procedure });
+  }
+  return grants;
+}
+
+/**
+ * May an app session call `namespace.procedure` as a provider credential
+ * grant? Call-time re-validation of the tier rules: only an *exact* allow-list
+ * entry on a non-native, non-core provider namespace qualifies — a wildcard
+ * never does, even if a manifest predating validation carried one.
+ */
+export function providerGrantCallable(
+  manifest: AppManifest,
+  namespace: string,
+  procedure: string,
+): boolean {
+  if (isNativeNamespace(namespace) || isWorkflowNamespace(namespace)) return false;
+  if (isCoreServiceName(namespace)) return false;
+  return manifest.allowedTools.includes(`${namespace}.${procedure}`);
+}
+
+/** One tier-2 entry of `apps.capabilities`: a provider's granted procedures. */
+export interface ProviderGrantCapability {
+  provider: string;
+  /** Exact procedures granted (never wildcards). */
+  procedures: string[];
+  tier: "workspace-credentialed";
+  /** Provider whose workspace credential executes the calls. */
+  credential: string;
+  description: string;
+}
+
+/**
+ * The workspace-credentialed half of `apps.capabilities`: each provider the
+ * allow-list grants, with the exact procedures and the credential that
+ * executes them.
+ */
+export function providerGrantCapabilities(manifest: AppManifest): ProviderGrantCapability[] {
+  const byProvider = new Map<string, string[]>();
+  for (const grant of providerGrantEntries(manifest.allowedTools)) {
+    const procedures = byProvider.get(grant.provider) ?? [];
+    if (!procedures.includes(grant.procedure)) procedures.push(grant.procedure);
+    byProvider.set(grant.provider, procedures);
+  }
+  return [...byProvider.entries()].map(([provider, procedures]) => ({
+    provider,
+    procedures,
+    tier: "workspace-credentialed" as const,
+    credential: provider,
+    description:
+      `Executes with the owning workspace's ${provider} credential, ` +
+      `rate-limited and audited per app user. Exact procedures only.`,
+  }));
 }
 
 /**

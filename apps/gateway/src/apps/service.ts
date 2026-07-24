@@ -24,6 +24,7 @@
  * round-trips to render.
  */
 
+import { getCredentialStore } from "../credentials.js";
 import { ServiceError, type CoreService } from "../service-kernel.js";
 import { hookPath } from "../workflows/service.js";
 import { listRegistrations, listRuns, type WorkflowRegistration } from "../workflows/store.js";
@@ -33,6 +34,8 @@ import {
   camelCase,
   effectiveRateLimit,
   nativeCapabilities,
+  providerGrantCapabilities,
+  type ProviderGrant,
 } from "./capabilities.js";
 import {
   assertInstallable,
@@ -43,6 +46,13 @@ import {
   saveInstall,
   type AppInstall,
 } from "./install.js";
+import {
+  isPersonalApp,
+  personalManifest,
+  toPersonalWire,
+  unbundledWorkflowNames,
+  PERSONAL_APP_NAME,
+} from "./personal.js";
 import {
   DEFAULT_CHANNEL,
   channelName,
@@ -85,7 +95,10 @@ function apiBase(workspaceId: string, name: string): string {
   return `/api/gateway/apps/${workspaceId}/${name}`;
 }
 
-function parseAllowedTools(raw: unknown, context: { app: string; workflows: string[] }): string[] {
+function parseAllowedTools(
+  raw: unknown,
+  context: { app: string; workflows: string[] },
+): { tools: string[]; grants: ProviderGrant[] } {
   if (!Array.isArray(raw)) {
     throw new ServiceError(
       "allowed_tools must be an array of 'namespace.procedure' (or 'namespace.*') entries",
@@ -96,10 +109,34 @@ function parseAllowedTools(raw: unknown, context: { app: string; workflows: stri
   if (tools.length === 0) {
     throw new ServiceError("allowed_tools must contain at least one entry", 400);
   }
-  // Deny by default AND deny by construction: only the auto-partitioned
-  // native namespaces and this app's own workflows are expressible.
-  assertAllowedTools(tools, context);
-  return tools;
+  // Deny by default AND deny by construction: the auto-partitioned native
+  // namespaces, this app's own workflows, and exact provider procedures
+  // (credential grants — verified against the credential store below).
+  const grants = assertAllowedTools(tools, context);
+  return { tools, grants };
+}
+
+/**
+ * A provider entry in `allowedTools` is a credential grant, so it is only
+ * publishable when the workspace actually holds a credential for that
+ * provider — an app promising `github.repos.get` with nothing to execute it
+ * would 502 every caller.
+ */
+async function assertGrantCredentials(
+  workspaceId: string,
+  grants: ProviderGrant[],
+): Promise<void> {
+  if (grants.length === 0) return;
+  const credentials = await getCredentialStore().list(workspaceId);
+  const held = new Set(credentials.map((credential) => credential.provider));
+  for (const provider of new Set(grants.map((grant) => grant.provider))) {
+    if (held.has(provider)) continue;
+    throw new ServiceError(
+      `allowed_tools grants ${provider} procedures, but this workspace holds no ${provider} credential — ` +
+        `connect one first, or reach ${provider} through an exported workflow.`,
+      400,
+    );
+  }
 }
 
 function parseRoles(raw: unknown): AppRoles | undefined {
@@ -250,9 +287,37 @@ async function registrationIndex(workspaceId: string): Promise<Map<string, Workf
 
 async function requireApp(workspaceId: string, raw: unknown): Promise<AppManifest> {
   const name = appName(raw);
+  // Personal is synthesized, not stored: it has no releases, channels,
+  // versions, or SDK pins — the procedures that resolve through here.
+  if (isPersonalApp(name)) {
+    throw new ServiceError(
+      `"${PERSONAL_APP_NAME}" is the workspace's built-in app — it has no releases, channels, or versions. ` +
+        `Use apps.get/apps.capabilities to inspect it.`,
+      400,
+    );
+  }
   const manifest = await readApp(workspaceId, name);
   if (!manifest) throw new ServiceError(`Unknown app: ${name}`, 404);
   return manifest;
+}
+
+/**
+ * Compose Personal for the directory: the unexported workflows inlined
+ * exactly like a real app's export list, flagged `builtin: true`.
+ */
+async function describePersonal(
+  workspaceId: string,
+  manifests: AppManifest[],
+  registrations: Map<string, WorkflowRegistration>,
+  options: { withRuns?: boolean } = {},
+) {
+  const manifest = personalManifest(
+    unbundledWorkflowNames(manifests, [...registrations.keys()]),
+  );
+  return {
+    manifest,
+    wire: toPersonalWire(await describeApp(workspaceId, manifest, registrations, options)),
+  };
 }
 
 function summarizeRelease(release: AppRelease) {
@@ -585,6 +650,14 @@ export const appsService: CoreService = {
     switch (procedure) {
       case "publish": {
         const name = appName(args["name"]);
+        if (isPersonalApp(name)) {
+          throw new ServiceError(
+            `"${PERSONAL_APP_NAME}" is the workspace's built-in app and cannot be published or edited. ` +
+              `Register workflows (workflows.register) and any not exported by another app appear in Personal ` +
+              `automatically; publish under a different name to share them.`,
+            400,
+          );
+        }
         const existing = await readApp(ctx.workspaceId, name);
         const registrations = await registrationIndex(ctx.workspaceId);
         const workflows = Array.isArray(args["workflows"])
@@ -604,6 +677,13 @@ export const appsService: CoreService = {
         // publisher must exist at publish time — publishing a live URL that
         // 404s helps no one.
         const { entry, paths } = await resolveBinding(ctx.workspaceId, name, args, existing);
+        const { tools: allowedTools, grants } = parseAllowedTools(args["allowed_tools"], {
+          app: name,
+          workflows,
+        });
+        // Provider entries are credential grants — publishable only when the
+        // workspace holds a credential for each granted provider.
+        await assertGrantCredentials(ctx.workspaceId, grants);
         const now = new Date().toISOString();
         const manifest: AppManifest = {
           name,
@@ -616,7 +696,7 @@ export const appsService: CoreService = {
           workflows,
           dataScope: parseDataScope(args["data_scope"]) ?? existing?.dataScope ?? "owner",
           channels: existing?.channels,
-          allowedTools: parseAllowedTools(args["allowed_tools"], { app: name, workflows }),
+          allowedTools,
           roles: parseRoles(args["roles"]) ?? existing?.roles,
           rateLimit: parseRateLimit(args["rate_limit"]) ?? existing?.rateLimit,
           createdBy: existing?.createdBy ?? ctx.userId,
@@ -631,48 +711,109 @@ export const appsService: CoreService = {
           listApps(ctx.workspaceId),
           registrationIndex(ctx.workspaceId),
         ]);
-        return {
-          apps: await Promise.all(
-            manifests.map((manifest) => describeApp(ctx.workspaceId, manifest, registrations)),
-          ),
-        };
+        // Personal always leads the directory: a fresh workspace has exactly
+        // one app, and every other app's position stays stable around it.
+        const personal = await describePersonal(ctx.workspaceId, manifests, registrations);
+        const apps = await Promise.all(
+          manifests.map((manifest) => describeApp(ctx.workspaceId, manifest, registrations)),
+        );
+        return { apps: [personal.wire, ...apps] };
       }
       case "summary": {
-        const manifests = await listApps(ctx.workspaceId);
+        const [manifests, registrations] = await Promise.all([
+          listApps(ctx.workspaceId),
+          registrationIndex(ctx.workspaceId),
+        ]);
+        const personalWorkflows = unbundledWorkflowNames(manifests, [...registrations.keys()]);
+        const personal = {
+          name: PERSONAL_APP_NAME,
+          title: "Personal",
+          description: personalManifest([]).description,
+          visibility: "private" as const,
+          dataScope: "owner" as const,
+          workflowCount: personalWorkflows.length,
+          channels: {},
+          updatedAt: undefined,
+          builtin: true as const,
+        };
         return {
-          apps: manifests.map((manifest) => ({
-            name: manifest.name,
-            title: manifest.title,
-            description: manifest.description,
-            visibility: manifest.visibility ?? "private",
-            dataScope: manifest.dataScope ?? "owner",
-            url: livePath(ctx.workspaceId, manifest.name),
-            workflowCount: (manifest.workflows ?? []).length,
-            channels: manifest.channels ?? {},
-            updatedAt: manifest.updatedAt,
-          })),
+          apps: [
+            personal,
+            ...manifests.map((manifest) => ({
+              name: manifest.name,
+              title: manifest.title,
+              description: manifest.description,
+              visibility: manifest.visibility ?? "private",
+              dataScope: manifest.dataScope ?? "owner",
+              url: livePath(ctx.workspaceId, manifest.name),
+              workflowCount: (manifest.workflows ?? []).length,
+              channels: manifest.channels ?? {},
+              updatedAt: manifest.updatedAt,
+            })),
+          ],
         };
       }
       case "get": {
-        const manifest = await requireApp(ctx.workspaceId, args["name"]);
+        const name = appName(args["name"]);
+        if (isPersonalApp(name)) {
+          const [manifests, registrations] = await Promise.all([
+            listApps(ctx.workspaceId),
+            registrationIndex(ctx.workspaceId),
+          ]);
+          const { manifest, wire } = await describePersonal(ctx.workspaceId, manifests, registrations);
+          return {
+            ...wire,
+            capabilities: {
+              native: nativeCapabilities(manifest),
+              /** Always empty: Personal grants no provider credentials. */
+              providers: providerGrantCapabilities(manifest),
+              workflows: wire.workflows,
+            },
+          };
+        }
+        const manifest = await requireApp(ctx.workspaceId, name);
         const registrations = await registrationIndex(ctx.workspaceId);
         const described = await describeApp(ctx.workspaceId, manifest, registrations);
         return {
           ...described,
           capabilities: {
             native: nativeCapabilities(manifest),
+            providers: providerGrantCapabilities(manifest),
             workflows: described.workflows,
           },
         };
       }
       case "capabilities": {
-        const manifest = await requireApp(ctx.workspaceId, args["name"]);
+        const name = appName(args["name"]);
+        if (isPersonalApp(name)) {
+          const [manifests, registrations] = await Promise.all([
+            listApps(ctx.workspaceId),
+            registrationIndex(ctx.workspaceId),
+          ]);
+          const { manifest } = await describePersonal(ctx.workspaceId, manifests, registrations);
+          return {
+            app: manifest.name,
+            dataScope: manifest.dataScope ?? "owner",
+            native: nativeCapabilities(manifest),
+            providers: providerGrantCapabilities(manifest),
+            workflows: (
+              await summarizeWorkflows(ctx.workspaceId, manifest, registrations, false)
+            ).map((workflow) => ({
+              ...workflow,
+              namespace: APP_WORKFLOW_NAMESPACE,
+              toolPath: `${apiBase(ctx.workspaceId, manifest.name)}/tools/${APP_WORKFLOW_NAMESPACE}/${workflow.procedure}`,
+            })),
+          };
+        }
+        const manifest = await requireApp(ctx.workspaceId, name);
         const registrations = await registrationIndex(ctx.workspaceId);
         return {
           app: manifest.name,
           dataScope: manifest.dataScope ?? "owner",
           /** Auto-partitioned first-party namespaces, allow-list filtered. */
           native: nativeCapabilities(manifest),
+          /** Provider credential grants — tier (2), exact procedures only. */
+          providers: providerGrantCapabilities(manifest),
           /** Exported workflows — the app's own namespace (`app.<procedure>`). */
           workflows: (
             await summarizeWorkflows(ctx.workspaceId, manifest, registrations, false)
@@ -838,6 +979,13 @@ export const appsService: CoreService = {
       }
       case "remove": {
         const name = appName(args["name"]);
+        if (isPersonalApp(name)) {
+          throw new ServiceError(
+            `"${PERSONAL_APP_NAME}" is the workspace's built-in app and cannot be removed. ` +
+              `Its workflows disappear from Personal on their own once another app exports them.`,
+            400,
+          );
+        }
         const removed = await removeApp(ctx.workspaceId, name, {
           purgeData: args["purge_data"] === true,
         });

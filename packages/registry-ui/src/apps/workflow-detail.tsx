@@ -34,9 +34,11 @@ import {
 import { VersionsSection } from "./versions";
 import {
   attempt,
+  normalizeApp,
   normalizeRunSummary,
   normalizeRunTrace,
   normalizeTraceTree,
+  normalizeWorkflow,
   unwrapList,
   type TraceRunNode,
   type ToolsInvoke,
@@ -75,6 +77,47 @@ export function RunMeta({ trace }: { trace: WorkflowRunTrace }) {
           <CopyChip label="trace" text={trace.traceId} />
         </span>
       )}
+    </div>
+  );
+}
+
+/**
+ * Recent runs as a horizontal strip of pills, immediately above the
+ * centerpiece rather than a list stacked far below the graph — the run
+ * that's about to open its trace lives right next to the thing it opens. The
+ * newest run lands here and highlights itself the instant a manual run
+ * starts (`triggerRun` sets the trace and reloads this list together), so
+ * starting a run reads as "select the new pill", not "go find it below".
+ */
+function RunsStrip({
+  runs,
+  activeId,
+  onSelect,
+}: {
+  runs: WorkflowRunSummary[] | null;
+  activeId?: string | undefined;
+  onSelect: (runId: string) => void;
+}) {
+  if (!runs || runs.length === 0) return null;
+  return (
+    <div className="flex items-center gap-1.5 overflow-x-auto">
+      <span className="shrink-0 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground">
+        Runs
+      </span>
+      {runs.map((run) => (
+        <button
+          className={`flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-0.5 text-[0.7rem] transition-colors hover:bg-muted ${
+            activeId === run.id ? "border-primary bg-muted font-medium" : ""
+          }`}
+          key={run.id}
+          onClick={() => onSelect(run.id)}
+          title={`${run.trigger}${run.triggerDetail ? `:${run.triggerDetail}` : ""} · ${formatWhen(run.startedAt)}`}
+          type="button"
+        >
+          <StatusDot status={run.status} />
+          <span className="text-muted-foreground">{formatWhen(run.startedAt)}</span>
+        </button>
+      ))}
     </div>
   );
 }
@@ -378,6 +421,40 @@ export function useWorkflowRun({
     [invoke, name],
   );
 
+  // Live-poll the open trace while the run is still going, so spans and logs
+  // land as the workflow produces them instead of waiting for a manual
+  // reopen. One interval per (run, "running") pair — set up once the trace
+  // enters that state, torn down the moment it leaves it (success, failure,
+  // a different run opened, or the pane unmounting).
+  const traceId = trace?.id;
+  const traceStatus = trace?.status;
+  const traceWorkflow = trace?.workflow;
+  React.useEffect(() => {
+    if (!traceId || traceStatus !== "running") return;
+    let cancelled = false;
+    let inFlight = false;
+    const poll = () => {
+      if (inFlight) return;
+      inFlight = true;
+      void attempt(() => invoke("trace", { name: traceWorkflow ?? name, run_id: traceId }))
+        .then((result) => {
+          if (cancelled || !result.ok) return;
+          const parsed = normalizeRunTrace(result.value);
+          if (!parsed) return;
+          setTrace((current) => (current?.id === traceId ? parsed : current));
+          if (parsed.status !== "running") void reloadRuns();
+        })
+        .finally(() => {
+          inFlight = false;
+        });
+    };
+    const interval = setInterval(poll, 1500);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [invoke, name, reloadRuns, traceId, traceStatus, traceWorkflow]);
+
   return { runs, trace, script, running, error, setError, triggerRun, openTrace, reloadRuns };
 }
 
@@ -513,6 +590,12 @@ export function WorkflowDetail({
         </div>
       )}
 
+      {/* One flow from here down: the strip picks a run, the surface below is
+          that run's centerpiece — the graph or form with the trace painted
+          on. Starting a new run from the button above lands here the same
+          way opening an old one from the strip does. */}
+      <RunsStrip activeId={trace?.id} onSelect={(id) => void openTrace(id)} runs={runs} />
+
       <RunSurface
         cascade={
           trace ? (
@@ -533,35 +616,6 @@ export function WorkflowDetail({
         workflow={workflow}
       />
 
-      <div className="space-y-1">
-        <SectionHeading>Runs</SectionHeading>
-        {runs === null ? (
-          <Empty>Loading runs…</Empty>
-        ) : runs.length === 0 ? (
-          <Empty>No runs yet.</Empty>
-        ) : (
-          <div className="space-y-0.5">
-            {runs.map((run) => (
-              <button
-                className={`flex w-full items-center gap-2 rounded px-2 py-1 text-left text-xs transition-colors hover:bg-muted ${
-                  trace?.id === run.id ? "bg-muted" : ""
-                }`}
-                key={run.id}
-                onClick={() => void openTrace(run.id)}
-                type="button"
-              >
-                <StatusDot status={run.status} />
-                <span className="font-mono">{run.trigger}</span>
-                <span className="text-muted-foreground">{formatWhen(run.startedAt)}</span>
-                <span className="ml-auto text-muted-foreground">
-                  {run.durationMs !== undefined ? `${run.durationMs}ms` : ""}
-                </span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-
       <div className="flex items-center gap-2 border-t pt-2">
         <span className="text-[0.7rem] text-muted-foreground">
           Removing the registration leaves the script in place.
@@ -575,5 +629,105 @@ export function WorkflowDetail({
         </span>
       </div>
     </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Standalone — resolves a workflow by name, no catalog required
+// ---------------------------------------------------------------------------
+
+export interface StandaloneWorkflowDetailProps {
+  /** The workflow to show — resolved with `workflows.get` (falling back to a
+   * `workflows.list` scan on older gateways), not read from a catalog. */
+  name: string;
+  /** Gateway `workflows` namespace transport. */
+  invoke: ToolsInvoke;
+  /**
+   * Gateway `apps` namespace transport. Purely cosmetic here: with it, the
+   * pane can say which app exports this workflow (or that it's Personal).
+   * Without it, the pane still runs the workflow and reads its trace fine.
+   */
+  invokeApps?: ToolsInvoke | undefined;
+  /** Read the script so the graph can render; without it, the form renders alone. */
+  loadScript?: ((path: string) => Promise<string | null>) | undefined;
+  /**
+   * The pane hosting this owns its height: give the graph a viewport-
+   * proportional canvas instead of the fixed desktop floor.
+   */
+  fill?: boolean;
+  className?: string;
+}
+
+/**
+ * `WorkflowDetail` as a self-contained mount: a chat preview pane (or any
+ * host that only knows a workflow's *name*, not the `WorkflowSummary` object
+ * a catalog would hand it) can render exactly this and nothing else — no
+ * `AppsCatalogProvider`, no master/detail list, no `AppsPanel` around it.
+ *
+ * Internally this is a thin resolver in front of the same detail pane
+ * `AppsPanel` renders (`WorkflowDetail` in this module, aliased on import so
+ * the two don't collide) — one implementation of the run form, the graph,
+ * the trace and the cascade tree either way.
+ */
+export function StandaloneWorkflowDetail({
+  name,
+  invoke,
+  invokeApps,
+  loadScript,
+  fill = false,
+  className,
+}: StandaloneWorkflowDetailProps) {
+  const load = React.useCallback(async (): Promise<{
+    workflow: WorkflowSummary;
+    appLabel: string | null;
+  } | null> => {
+    const direct = await attempt(() => invoke("get", { name }));
+    let workflow = direct.ok ? normalizeWorkflow(direct.value) : null;
+    if (!workflow) {
+      // Older gateways (or ones that 404 a bare `get`) still answer `list`.
+      const listed = await attempt(() => invoke("list", {}));
+      if (listed.ok) {
+        workflow =
+          unwrapList(listed.value, "workflows")
+            .map(normalizeWorkflow)
+            .find((candidate): candidate is WorkflowSummary => candidate?.name === name) ?? null;
+      }
+    }
+    if (!workflow) throw new Error(`Workflow "${name}" wasn't found`);
+
+    let appLabel: string | null = null;
+    if (invokeApps) {
+      const appsResult = await attempt(() => invokeApps("list", {}));
+      if (appsResult.ok) {
+        const apps = unwrapList(appsResult.value, "apps").map(normalizeApp);
+        const owner = apps.find(
+          (app): app is NonNullable<typeof app> => app !== null && (app.workflows ?? []).includes(name),
+        );
+        if (owner) appLabel = owner.builtin ? "Personal" : (owner.title ?? owner.name);
+      }
+    }
+    return { workflow, appLabel };
+  }, [invoke, invokeApps, name]);
+
+  const { data, error, loading } = useLoader(load, true, name);
+
+  if (loading && !data) return <Empty>Loading workflow…</Empty>;
+  if (error || !data) {
+    return <ErrorLine error={error ?? `Workflow "${name}" wasn't found`} />;
+  }
+
+  return (
+    <WorkflowDetail
+      className={className}
+      fill={fill}
+      header={
+        data.appLabel ? (
+          <span className="text-[0.7rem] text-muted-foreground">{data.appLabel}</span>
+        ) : undefined
+      }
+      invoke={invoke}
+      loadScript={loadScript}
+      workflow={data.workflow}
+    />
   );
 }

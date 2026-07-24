@@ -5,10 +5,11 @@
  * — /workflows now redirects here); it can also read a workflow's script, so
  * a selected workflow shows its flow graph.
  *
- * Three transports, all through the one gateway client:
- *   invoke      → POST /tools/workflows/:operation
- *   invokeApps  → POST /tools/apps/:operation
- *   loadScript  → POST /tools/vfs/read
+ * Four transports, all through the one gateway client:
+ *   invoke         → POST /tools/workflows/:operation
+ *   invokeApps     → POST /tools/apps/:operation
+ *   invokeRegistry → POST /tools/registry/:operation  (Access tab's provider search)
+ *   loadScript     → POST /tools/vfs/read
  */
 
 import { createGatewayClient } from "@aprovan/ui/gateway";
@@ -54,6 +55,12 @@ export function AppsHost() {
     [invokeTool],
   );
 
+  const invokeRegistry = React.useCallback(
+    (operation: string, args: Record<string, unknown>) =>
+      invokeTool("registry", operation, args),
+    [invokeTool],
+  );
+
   // A script that cannot be read (deleted, or not readable by this session)
   // is not an error the panel should surface — the run form renders alone.
   const loadScript = React.useCallback(
@@ -82,6 +89,7 @@ export function AppsHost() {
     <AppsPanel
       invoke={invoke}
       invokeApps={invokeApps}
+      invokeRegistry={invokeRegistry}
       loadScript={loadScript}
       onOpenScript={(path) =>
         window.open(withBasePath(`/playground?file=${encodeURIComponent(path)}`), "_self")

@@ -34,7 +34,6 @@ import {
   SMALL_BUTTON,
   SectionHeading,
   Segmented,
-  Stat,
   StatusDot,
   Tabs,
   TagsInput,
@@ -47,17 +46,23 @@ import {
 import { useLastRun, useRecordRun } from "./last-runs";
 import { VersionsSection } from "./versions";
 import {
+  asRecord,
+  asString,
   attempt,
+  classifyToolEntry,
   deriveCapabilities,
   mergeCapabilities,
   normalizeChannels,
   normalizeReleases,
   normalizeRunTrace,
+  unwrapList,
+  NATIVE_APP_NAMESPACES,
   type AppChannel,
   type AppRelease,
   type AppSummary,
   type CapabilityModel,
-  type CapabilityReach,
+  type ToolEntryInfo,
+  type ToolEntryTier,
   type ToolsInvoke,
   type WorkflowSummary,
 } from "./wire";
@@ -127,9 +132,14 @@ function Overview({ app }: { app: AppSummary }) {
       </FieldRow>
       <FieldRow label="Updated">{app.updatedAt ? formatWhen(app.updatedAt) : "—"}</FieldRow>
       <div className="flex flex-wrap items-center gap-1.5 pt-1">
-        <VisibilityBadge app={app} />
+        {app.builtin ? (
+          <span className={`${BADGE} border-dashed text-muted-foreground`}>builtin · personal</span>
+        ) : (
+          <VisibilityBadge app={app} />
+        )}
         <DataScopeBadge app={app} />
-        <ReleaseChip app={app} />
+        {/* No release pin for the builtin app — Personal has no release machinery. */}
+        {!app.builtin && <ReleaseChip app={app} />}
       </div>
       {app.liveUrl && (
         <a
@@ -247,7 +257,7 @@ function WorkflowsTab({
 }
 
 // ---------------------------------------------------------------------------
-// Access tab
+// Access tab (v3) — one screen, three sections: Who, What, Limits.
 // ---------------------------------------------------------------------------
 
 /**
@@ -268,166 +278,533 @@ function dataLocationPath(model: CapabilityModel, app: AppSummary): string {
   return model.dataScope === "workspace" ? "<install prefix>/data" : `${root}/data/<app user>`;
 }
 
-/** Icon + monospace path + one short line: the data-location callout. */
+/** Icon + monospace path + a tone chip, on one line — the fuller explanation
+ *  moves to the title tooltip instead of a permanent paragraph. */
 function DataLocationCallout({ model, app }: { model: CapabilityModel; app: AppSummary }) {
+  const explanation =
+    model.dataScope === "workspace"
+      ? "Self-hosted — data lives in each caller's own workspace; the publisher stores nothing and lends no credentials."
+      : "Owner-hosted — one private partition per app user, stored in the publishing workspace.";
+  const title = model.fromGateway
+    ? explanation
+    : `${explanation} Derived from the manifest — this gateway doesn't report capabilities yet.`;
   return (
-    <div className="flex items-start gap-2.5 rounded-lg border bg-muted/20 px-3 py-2.5">
-      <DatabaseIcon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
-      <div className="min-w-0 space-y-0.5">
-        <code className="block break-all font-mono text-xs font-medium">
-          {dataLocationPath(model, app)}
-        </code>
-        <p className="text-[0.7rem] text-muted-foreground">
-          {model.dataScope === "workspace"
-            ? "Self-hosted — data lives in each caller's own workspace; the publisher stores nothing and lends no credentials."
-            : "Owner-hosted — one private partition per app user, stored in the publishing workspace."}
-        </p>
-        {!model.fromGateway && (
-          <p className="text-[0.65rem] text-muted-foreground/80">
-            Derived from the manifest — this gateway doesn't report capabilities yet.
-          </p>
-        )}
-      </div>
+    <div
+      className="flex items-center gap-2 rounded-md border bg-muted/20 px-2.5 py-1.5"
+      title={title}
+    >
+      <DatabaseIcon className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
+      <code className="min-w-0 truncate font-mono text-[0.72rem] font-medium">
+        {dataLocationPath(model, app)}
+      </code>
+      <span className="ml-auto shrink-0 text-[0.65rem] text-muted-foreground">
+        {model.dataScope === "workspace" ? "self-hosted" : "owner-hosted"}
+      </span>
     </div>
   );
 }
 
-/** One reach: namespace chip, plain-language label, procedure badges, location. */
-function ReachRow({ reach }: { reach: CapabilityReach }) {
+/** The three-tier reach model, collapsed to one line + a disclosure for the
+ *  full explanation — it used to be three cards of prose above the editor;
+ *  now the editor's own tier tags carry that weight per-row. */
+function TierExplainer() {
   return (
-    <div className="rounded-md border px-2 py-1.5">
-      <div className="flex flex-wrap items-center gap-1.5">
-        <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.7rem] font-medium">
-          {reach.id}
-        </code>
-        {reach.label !== reach.id && <span className="text-xs">{reach.label}</span>}
-        {reach.entries?.map((entry) => (
-          <code className={`${BADGE} border-border font-mono text-muted-foreground`} key={entry}>
-            {entry}
-          </code>
-        ))}
-      </div>
-      {reach.detail && <p className="mt-1 text-[0.7rem] text-muted-foreground">{reach.detail}</p>}
-      {reach.location && (
-        <p className="mt-1 break-all font-mono text-[0.68rem] text-muted-foreground">
-          → {reach.location}
+    <details className="group rounded-md border px-2.5 py-1.5">
+      <summary className="cursor-pointer text-[0.7rem] text-muted-foreground marker:content-none">
+        <span className="mr-1 inline-block transition-transform group-open:rotate-90">›</span>
+        Three ways this app can reach data
+      </summary>
+      <div className="mt-1.5 space-y-1 text-[0.7rem] text-muted-foreground">
+        <p>
+          <strong className="font-medium text-foreground">Native</strong> — the auto-partitioned
+          namespaces (<code className="font-mono">vfs</code>, <code className="font-mono">keyvalue</code>,{" "}
+          <code className="font-mono">events</code>): no credential, no workspace membership,
+          wildcards allowed.
         </p>
-      )}
-    </div>
+        <p>
+          <strong className="font-medium text-foreground">This app</strong> — its own exported
+          workflows, always reachable as <code className="font-mono">{"<app>.<workflow>"}</code>.
+        </p>
+        <p>
+          <strong className="font-medium text-foreground">Provider grant</strong> — an explicit
+          credential grant onto a provider namespace: exact procedures only, never a wildcard.
+          Anything broader belongs in an exported workflow instead.
+        </p>
+      </div>
+    </details>
   );
 }
 
-/**
- * One of the three reach tiers from the "three ways data is reached" model,
- * as a distinct numbered card rather than a run of prose.
- */
-function ReachTier({
-  index,
-  title,
-  hint,
-  reaches,
-  empty,
-}: {
-  index: number;
-  title: string;
-  hint: string;
-  reaches: CapabilityReach[];
-  empty: string;
-}) {
+/** Small fixed-tone tag for a classified allow-list entry's tier. */
+function TierTag({ tier }: { tier: ToolEntryTier | null }) {
+  const label = tier === "provider" ? "provider grant" : (tier ?? "invalid");
+  const tone =
+    tier === null
+      ? "border-red-300 text-red-700 dark:border-red-900 dark:text-red-400"
+      : tier === "provider"
+        ? "border-amber-300 text-amber-700 dark:border-amber-900 dark:text-amber-400"
+        : "border-border text-muted-foreground";
+  return <span className={`${BADGE} ${tone}`}>{label}</span>;
+}
+
+/** One allow-list entry: an icon by namespace initial, the entry itself,
+ *  its tier tag, a credential-grant note where it applies, and a remover. */
+function ToolEntryRow({ info, onRemove }: { info: ToolEntryInfo; onRemove: () => void }) {
   return (
-    <div className="overflow-hidden rounded-lg border">
-      <div className="flex items-start gap-2 border-b bg-muted/30 px-2.5 py-1.5">
-        <span className="mt-px flex h-4 w-4 shrink-0 items-center justify-center rounded-full border bg-background text-[0.62rem] font-semibold text-muted-foreground">
-          {index}
+    <div className="flex flex-wrap items-center gap-2 rounded-md border px-2 py-1.5 text-xs">
+      <span
+        aria-hidden="true"
+        className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-muted font-mono text-[0.62rem] font-semibold uppercase text-muted-foreground"
+      >
+        {info.namespace.slice(0, 1) || "?"}
+      </span>
+      <code className="min-w-0 flex-1 truncate font-mono">{info.entry}</code>
+      <TierTag tier={info.tier} />
+      {info.tier === "provider" && (
+        <span
+          className={`${BADGE} border-dashed text-muted-foreground`}
+          title={`Executes with this workspace's ${info.namespace} credential — never directly from an app session.`}
+        >
+          uses workspace credential
         </span>
-        <div className="min-w-0">
-          <SectionHeading>{title}</SectionHeading>
-          <p className="text-[0.68rem] text-muted-foreground">{hint}</p>
-        </div>
-      </div>
-      <div className="space-y-1.5 p-2">
-        {reaches.length === 0 ? (
-          <Empty>{empty}</Empty>
-        ) : (
-          reaches.map((reach) => <ReachRow key={`${reach.kind}:${reach.id}`} reach={reach} />)
-        )}
-      </div>
-    </div>
-  );
-}
-
-function CapabilitiesView({ model, app }: { model: CapabilityModel; app: AppSummary }) {
-  return (
-    <div className="space-y-2.5">
-      <DataLocationCallout app={app} model={model} />
-
-      <ReachTier
-        empty="No native namespaces allowed."
-        hint="First-party namespaces, automatically partitioned per app user and rate-limited. No credential, no workspace membership."
-        index={1}
-        reaches={model.native}
-        title="Native, auto-partitioned"
-      />
-      <ReachTier
-        empty="No provider is reachable — this app is entirely self-contained."
-        hint="Provider namespaces run with the owning workspace's credential. An app session can never call one directly; it goes through an exported workflow, which is where a secret comes near the request."
-        index={2}
-        reaches={model.credentialed}
-        title="Workspace-credentialed"
-      />
-      <ReachTier
-        empty="No exported workflows."
-        hint="The BFF boundary: allow-listed by name, traced, rate-limited."
-        index={3}
-        reaches={model.workflows}
-        title="Exported workflows"
-      />
-
-      {model.rejected.length > 0 && (
-        <div className="rounded-lg border border-red-300 px-2.5 py-2 dark:border-red-900">
-          <SectionHeading>Not reachable from an app session</SectionHeading>
-          <p className="mt-0.5 text-[0.7rem] text-muted-foreground">
-            These allow-list entries name neither a native namespace nor one of this app's
-            workflows. Reach them through an exported workflow instead.
-          </p>
-          <div className="mt-1 flex flex-wrap gap-1.5">
-            {model.rejected.map((entry) => (
-              <code
-                className={`${BADGE} border-red-300 font-mono text-red-700 dark:border-red-900 dark:text-red-400`}
-                key={entry}
-              >
-                {entry}
-              </code>
-            ))}
-          </div>
-        </div>
       )}
+      {info.reason && (
+        <span
+          className="text-[0.65rem] text-red-600 dark:text-red-400"
+          title={info.reason}
+        >
+          invalid
+        </span>
+      )}
+      <button
+        aria-label={`Remove ${info.entry}`}
+        className="shrink-0 text-muted-foreground hover:text-foreground"
+        onClick={onRemove}
+        title="Remove"
+        type="button"
+      >
+        ×
+      </button>
     </div>
   );
 }
+
+type AddTier = "native" | "app" | "provider";
 
 /**
- * App access + limits editor: visibility, who may sign in, the tool
- * allow-list, and per-user rate/daily budgets. Saves ride the same
- * `apps.publish` upsert the owner used to publish.
+ * The add-tool flow: pick a tier, then a namespace (a dropdown for native, a
+ * fixed value for this app, a search box against `registry.providers` — or
+ * `registry.search` on a gateway without it — for a provider), then a
+ * procedure. A provider grant blocks on a wildcard with the same explanation
+ * {@link classifyToolEntry} would give back after a round-trip, so the user
+ * never has to fail once to learn the rule.
  */
-function AppSettings({
+function AddToolForm({
   app,
-  invoke,
-  onSaved,
+  invokeRegistry,
+  onAdd,
 }: {
   app: AppSummary;
-  invoke: ToolsInvoke;
-  onSaved: () => void;
+  invokeRegistry?: ToolsInvoke | undefined;
+  onAdd: (entry: string) => void;
 }) {
+  const [open, setOpen] = React.useState(false);
+  const [tier, setTier] = React.useState<AddTier>("native");
+  const [namespace, setNamespace] = React.useState<string>(NATIVE_APP_NAMESPACES[0]);
+  const [procedure, setProcedure] = React.useState("*");
+  const [suggestions, setSuggestions] = React.useState<string[]>([]);
+  const [searching, setSearching] = React.useState(false);
+
+  React.useEffect(() => {
+    if (tier === "native") setNamespace(NATIVE_APP_NAMESPACES[0]);
+    else if (tier === "app") setNamespace(app.name);
+    else setNamespace("");
+    setProcedure(tier === "provider" ? "" : "*");
+    setSuggestions([]);
+  }, [tier, app.name]);
+
+  // Provider namespace search, debounced. `registry.providers` is the direct
+  // hit — `{ providers: [{ id, title, description? }], total }`, paged. A
+  // gateway without it still has `registry.search`, but that searches
+  // *operations*, not providers (`{ operations: [{ providerPath,
+  // providerTitle, sdkPath, ... }] }`), so the fallback dedupes `providerPath`
+  // off the matched operations instead — a coarser list, but the same
+  // namespaces either way.
+  React.useEffect(() => {
+    if (tier !== "provider" || !invokeRegistry || namespace.length < 2) {
+      setSuggestions([]);
+      return;
+    }
+    let alive = true;
+    setSearching(true);
+    const timeout = setTimeout(() => {
+      void attempt(() => invokeRegistry("providers", { q: namespace, offset: 0, limit: 20 }))
+        .then((direct) => {
+          if (direct.ok) {
+            const ids = unwrapList(direct.value, "providers")
+              .map((entry) => asString(asRecord(entry)?.["id"]))
+              .filter((id): id is string => Boolean(id));
+            return [...new Set(ids)];
+          }
+          if (!direct.missing) return [];
+          return attempt(() => invokeRegistry("search", { q: namespace })).then((fallback) => {
+            if (!fallback.ok) return [];
+            const ids = unwrapList(fallback.value, "operations")
+              .map((entry) => asString(asRecord(entry)?.["providerPath"]))
+              .filter((id): id is string => Boolean(id));
+            return [...new Set(ids)];
+          });
+        })
+        .then((ids) => {
+          if (alive) setSuggestions(ids);
+        })
+        .finally(() => {
+          if (alive) setSearching(false);
+        });
+    }, 250);
+    return () => {
+      alive = false;
+      clearTimeout(timeout);
+    };
+  }, [tier, invokeRegistry, namespace]);
+
+  const trimmedProcedure = procedure.trim();
+  const wildcard = trimmedProcedure === "" || trimmedProcedure === "*";
+  const blocked = tier === "provider" && wildcard;
+  const canAdd = namespace.trim().length > 0 && !blocked;
+  const entry = `${namespace.trim()}.${wildcard && tier !== "provider" ? "*" : trimmedProcedure}`;
+
+  if (!open) {
+    return (
+      <button className={SMALL_BUTTON} onClick={() => setOpen(true)} type="button">
+        + add tool
+      </button>
+    );
+  }
+
+  return (
+    <div className="space-y-2 rounded-md border p-2">
+      <Segmented
+        ariaLabel="Tier"
+        onChange={setTier}
+        options={[
+          { value: "native", label: "Native", hint: "vfs, keyvalue, events — auto-partitioned" },
+          { value: "app", label: "This app", hint: `${app.name}'s own exported workflows` },
+          { value: "provider", label: "Provider", hint: "A credential grant — exact procedure only" },
+        ]}
+        value={tier}
+      />
+
+      <div className="grid gap-2 sm:grid-cols-2">
+        <div className="space-y-1">
+          <label className={LABEL}>Namespace</label>
+          {tier === "native" ? (
+            <select
+              className={FIELD}
+              onChange={(event) => setNamespace(event.target.value)}
+              value={namespace}
+            >
+              {NATIVE_APP_NAMESPACES.map((ns) => (
+                <option key={ns} value={ns}>
+                  {ns}
+                </option>
+              ))}
+            </select>
+          ) : tier === "app" ? (
+            <input className={`${FIELD} text-muted-foreground`} disabled value={namespace} />
+          ) : (
+            <div className="relative space-y-1">
+              <input
+                className={FIELD}
+                onChange={(event) => setNamespace(event.target.value)}
+                placeholder={invokeRegistry ? "Search providers…" : "Provider namespace, e.g. github"}
+                spellCheck={false}
+                value={namespace}
+              />
+              {invokeRegistry && namespace.length >= 2 && (
+                <div className="max-h-32 overflow-y-auto rounded-md border bg-background">
+                  {searching ? (
+                    <p className="px-2 py-1 text-[0.7rem] text-muted-foreground">Searching…</p>
+                  ) : suggestions.length === 0 ? (
+                    <p className="px-2 py-1 text-[0.7rem] text-muted-foreground">No matches</p>
+                  ) : (
+                    suggestions.map((id) => (
+                      <button
+                        className="block w-full px-2 py-1 text-left font-mono text-xs hover:bg-muted"
+                        key={id}
+                        onClick={() => {
+                          setNamespace(id);
+                          setSuggestions([]);
+                        }}
+                        type="button"
+                      >
+                        {id}
+                      </button>
+                    ))
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="space-y-1">
+          <label className={LABEL}>Procedure</label>
+          <input
+            className={FIELD}
+            onChange={(event) => setProcedure(event.target.value)}
+            placeholder={tier === "provider" ? "exact procedure, e.g. repos.get" : "* or a specific name"}
+            value={procedure}
+          />
+        </div>
+      </div>
+
+      {blocked && (
+        <p className="text-[0.7rem] text-amber-700 dark:text-amber-400">
+          Provider grants are credential grants — exact procedures only ({namespace || "provider"}
+          .some.procedure, never {namespace || "provider"}.*). Anything broader belongs in an
+          exported workflow.
+        </p>
+      )}
+
+      <div className="flex items-center gap-2">
+        <button
+          className="rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+          disabled={!canAdd}
+          onClick={() => {
+            onAdd(entry);
+            setOpen(false);
+          }}
+          type="button"
+        >
+          Add
+        </button>
+        <button className={SMALL_BUTTON} onClick={() => setOpen(false)} type="button">
+          Cancel
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * WHAT — the unified allow-list editor. Every entry is classified locally by
+ * {@link classifyToolEntry} (no gateway round-trip needed, so this works the
+ * same on a gateway that has never heard of `apps.capabilities`) and rendered
+ * as one typed row instead of three separate read-only cards plus a bare tag
+ * input underneath them.
+ */
+function WhatSection({
+  app,
+  tools,
+  onChange,
+  invokeRegistry,
+}: {
+  app: AppSummary;
+  tools: string[];
+  onChange: (next: string[]) => void;
+  invokeRegistry?: ToolsInvoke | undefined;
+}) {
+  const rows = tools.map((entry) => classifyToolEntry(entry, app));
+  return (
+    <div className="space-y-2">
+      <TierExplainer />
+      {rows.length === 0 ? (
+        <Empty>No tools allow-listed yet.</Empty>
+      ) : (
+        <div className="space-y-1">
+          {rows.map((info) => (
+            <ToolEntryRow
+              info={info}
+              key={info.entry}
+              onRemove={() => onChange(tools.filter((entry) => entry !== info.entry))}
+            />
+          ))}
+        </div>
+      )}
+      <AddToolForm
+        app={app}
+        invokeRegistry={invokeRegistry}
+        onAdd={(entry) => {
+          if (!tools.includes(entry)) onChange([...tools, entry]);
+        }}
+      />
+    </div>
+  );
+}
+
+/** WHO — visibility, who may use it, and admins as one compact block. */
+function WhoSection({
+  visibility,
+  onVisibilityChange,
+  access,
+  onAccessChange,
+  users,
+  onUsersChange,
+  admins,
+}: {
+  visibility: AppSummary["visibility"];
+  onVisibilityChange: (next: AppSummary["visibility"]) => void;
+  access: "any" | "listed";
+  onAccessChange: (next: "any" | "listed") => void;
+  users: string[];
+  onUsersChange: (next: string[]) => void;
+  admins: string[];
+}) {
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap items-center gap-2">
+        <Segmented
+          ariaLabel="Page visibility"
+          onChange={onVisibilityChange}
+          options={[
+            { value: "private", label: "Private", hint: "An Aprovan account is required" },
+            { value: "public", label: "Public", hint: "Anyone can open the page" },
+          ]}
+          value={visibility}
+        />
+        <Segmented
+          ariaLabel="Who may use it"
+          onChange={onAccessChange}
+          options={[
+            { value: "any", label: "Any account" },
+            { value: "listed", label: "Listed only" },
+          ]}
+          value={access}
+        />
+      </div>
+      <div className="flex flex-wrap items-start gap-x-4 gap-y-2">
+        {access === "listed" && (
+          <div className="min-w-[12rem] flex-1 space-y-1">
+            <span className={LABEL}>Users</span>
+            <TagsInput
+              ariaLabel="Allowed users"
+              onChange={onUsersChange}
+              placeholder="Cognito sub, press Enter…"
+              value={users}
+            />
+          </div>
+        )}
+        <div className="space-y-1">
+          <span className={LABEL}>Admins</span>
+          {admins.length ? (
+            <div className="flex flex-wrap gap-1">
+              {admins.map((admin) => (
+                <UserChip id={admin} key={admin} />
+              ))}
+            </div>
+          ) : (
+            <span className={`${BADGE} border-border text-muted-foreground`}>
+              Workspace members
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** One rate-limit number, editable in place — the tile stays a tile, it just
+ *  also accepts input. */
+function EditableStat({
+  label,
+  value,
+  onChange,
+  hint,
+}: {
+  label: string;
+  value: string;
+  onChange: (next: string) => void;
+  hint?: string;
+}) {
+  return (
+    <div className="rounded-md border px-2 py-1" title={hint}>
+      <input
+        aria-label={label}
+        className="w-14 bg-transparent text-sm font-semibold leading-5 tabular-nums outline-none"
+        inputMode="numeric"
+        onChange={(event) => onChange(event.target.value)}
+        value={value}
+      />
+      <div className="text-[0.62rem] uppercase tracking-wide text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
+/** LIMITS — the rate-limit stat row, now editable in place instead of a
+ *  read-only summary above a separate edit form. */
+function LimitsSection({
+  rps,
+  onRpsChange,
+  burst,
+  onBurstChange,
+  daily,
+  onDailyChange,
+}: {
+  rps: string;
+  onRpsChange: (next: string) => void;
+  burst: string;
+  onBurstChange: (next: string) => void;
+  daily: string;
+  onDailyChange: (next: string) => void;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <EditableStat hint="Requests per second, per app user" label="req / s" onChange={onRpsChange} value={rps} />
+      <EditableStat hint="Burst allowance above the steady rate" label="burst" onChange={onBurstChange} value={burst} />
+      <EditableStat hint="Calls per day, per app user" label="per day" onChange={onDailyChange} value={daily} />
+      <span className="text-[0.65rem] text-muted-foreground">per app user</span>
+    </div>
+  );
+}
+
+function AccessTab({
+  app,
+  workflows,
+  invoke,
+  invokeRegistry,
+  onChanged,
+}: {
+  app: AppSummary;
+  workflows: WorkflowSummary[];
+  invoke: ToolsInvoke;
+  invokeRegistry?: ToolsInvoke | undefined;
+  onChanged: () => void;
+}) {
+  // The data-location line still wants the gateway's own capability read when
+  // there is one — everything else in this tab works entirely off the
+  // manifest (`classifyToolEntry` needs no round-trip), so a gateway that has
+  // never heard of `apps.capabilities` only loses this one line's precision.
+  const load = React.useCallback(async (): Promise<CapabilityModel> => {
+    const base = deriveCapabilities(app, workflows);
+    const result = await attempt(() => invoke("capabilities", { name: app.name }));
+    return result.ok ? mergeCapabilities(base, result.value) : base;
+  }, [app, invoke, workflows]);
+  const { data } = useLoader(load, true, app.name);
+  const model = data ?? deriveCapabilities(app, workflows);
+
   const [visibility, setVisibility] = React.useState(app.visibility);
   const [access, setAccess] = React.useState(app.roles?.access ?? "any");
   const [users, setUsers] = React.useState<string[]>(app.roles?.users ?? []);
   const [tools, setTools] = React.useState<string[]>(app.allowedTools ?? []);
   const [rps, setRps] = React.useState(String(app.rateLimit?.rps ?? 5));
+  const [burst, setBurst] = React.useState(String(app.rateLimit?.burst ?? 10));
   const [daily, setDaily] = React.useState(String(app.rateLimit?.daily ?? 1000));
   const [saving, setSaving] = React.useState(false);
   const [status, setStatus] = React.useState<string | null>(null);
+
+  // A different app in the same pane resets every field to its own values —
+  // otherwise switching apps would carry the previous app's unsaved edits.
+  React.useEffect(() => {
+    setVisibility(app.visibility);
+    setAccess(app.roles?.access ?? "any");
+    setUsers(app.roles?.users ?? []);
+    setTools(app.allowedTools ?? []);
+    setRps(String(app.rateLimit?.rps ?? 5));
+    setBurst(String(app.rateLimit?.burst ?? 10));
+    setDaily(String(app.rateLimit?.daily ?? 1000));
+    setStatus(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- keyed on identity, not every field
+  }, [app.name]);
 
   const save = async () => {
     setSaving(true);
@@ -445,11 +822,12 @@ function AppSettings({
         },
         rate_limit: {
           rps: Number(rps) > 0 ? Number(rps) : 5,
+          burst: Number(burst) > 0 ? Number(burst) : 10,
           daily: Number(daily) > 0 ? Number(daily) : 1000,
         },
       });
       setStatus("Saved");
-      onSaved();
+      onChanged();
     } catch (err) {
       setStatus(err instanceof Error ? err.message : "Save failed");
     } finally {
@@ -458,74 +836,40 @@ function AppSettings({
   };
 
   return (
-    <div className="space-y-2.5">
-      <div className="flex flex-wrap items-end gap-x-5 gap-y-2.5">
-        <div className="space-y-1">
-          <label className={LABEL}>Page visibility</label>
-          <Segmented
-            ariaLabel="Page visibility"
-            onChange={setVisibility}
-            options={[
-              { value: "private", label: "Private", hint: "An Aprovan account is required" },
-              { value: "public", label: "Public", hint: "Anyone can open the page" },
-            ]}
-            value={visibility}
-          />
-        </div>
-        <div className="space-y-1">
-          <label className={LABEL}>Who may use it</label>
-          <Segmented
-            ariaLabel="Who may use it"
-            onChange={setAccess}
-            options={[
-              { value: "any", label: "Any signed-in account" },
-              { value: "listed", label: "Only listed users" },
-            ]}
-            value={access}
-          />
-        </div>
-      </div>
-      {access === "listed" && (
-        <div className="space-y-1">
-          <label className={LABEL}>Allowed users (Cognito subs)</label>
-          <TagsInput
-            ariaLabel="Allowed users"
-            onChange={setUsers}
-            placeholder="Add a Cognito sub and press Enter…"
-            value={users}
-          />
-        </div>
-      )}
-      <div className="space-y-1">
-        <label className={LABEL}>Tool allow-list</label>
-        <TagsInput
-          ariaLabel="Tool allow-list"
-          onChange={setTools}
-          placeholder="namespace.procedure or namespace.*, press Enter…"
-          value={tools}
+    <div className="space-y-3">
+      <DataLocationCallout app={app} model={model} />
+
+      <div className="space-y-1.5">
+        <SectionHeading>Who</SectionHeading>
+        <WhoSection
+          access={access}
+          admins={app.roles?.admins ?? []}
+          onAccessChange={setAccess}
+          onUsersChange={setUsers}
+          onVisibilityChange={setVisibility}
+          users={users}
+          visibility={visibility}
         />
       </div>
-      <div className="grid max-w-sm gap-2.5 sm:grid-cols-2">
-        <div>
-          <label className={LABEL}>Requests / second / user</label>
-          <input
-            className={FIELD}
-            inputMode="numeric"
-            onChange={(event) => setRps(event.target.value)}
-            value={rps}
-          />
-        </div>
-        <div>
-          <label className={LABEL}>Calls / day / user</label>
-          <input
-            className={FIELD}
-            inputMode="numeric"
-            onChange={(event) => setDaily(event.target.value)}
-            value={daily}
-          />
-        </div>
+
+      <div className="space-y-1.5">
+        <SectionHeading>What it can touch</SectionHeading>
+        <WhatSection app={app} invokeRegistry={invokeRegistry} onChange={setTools} tools={tools} />
       </div>
-      <div className="flex items-center gap-2">
+
+      <div className="space-y-1.5">
+        <SectionHeading>Limits</SectionHeading>
+        <LimitsSection
+          burst={burst}
+          daily={daily}
+          onBurstChange={setBurst}
+          onDailyChange={setDaily}
+          onRpsChange={setRps}
+          rps={rps}
+        />
+      </div>
+
+      <div className="flex items-center gap-2 border-t pt-2">
         <button
           className="rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
           disabled={saving}
@@ -545,86 +889,6 @@ function AppSettings({
             {status}
           </span>
         )}
-      </div>
-    </div>
-  );
-}
-
-function AccessTab({
-  app,
-  workflows,
-  invoke,
-  onChanged,
-}: {
-  app: AppSummary;
-  workflows: WorkflowSummary[];
-  invoke: ToolsInvoke;
-  onChanged: () => void;
-}) {
-  const load = React.useCallback(async (): Promise<CapabilityModel> => {
-    const base = deriveCapabilities(app, workflows);
-    const result = await attempt(() => invoke("capabilities", { name: app.name }));
-    return result.ok ? mergeCapabilities(base, result.value) : base;
-  }, [app, invoke, workflows]);
-  const { data } = useLoader(load, true, app.name);
-  const model = data ?? deriveCapabilities(app, workflows);
-
-  return (
-    <div className="space-y-3">
-      <CapabilitiesView app={app} model={model} />
-
-      {/* Roles as chips, not prose: who may open it, who administers it. */}
-      <div className="grid gap-2 sm:grid-cols-2">
-        <div className="space-y-1.5 rounded-lg border px-2.5 py-2">
-          <SectionHeading>Who may open it</SectionHeading>
-          {app.roles?.access === "listed" ? (
-            app.roles.users?.length ? (
-              <div className="flex flex-wrap gap-1">
-                {app.roles.users.map((user) => (
-                  <UserChip id={user} key={user} />
-                ))}
-              </div>
-            ) : (
-              <Empty>Listed users only — none listed yet.</Empty>
-            )
-          ) : (
-            <span className={`${BADGE} border-border text-muted-foreground`}>
-              Any signed-in account
-            </span>
-          )}
-        </div>
-        <div className="space-y-1.5 rounded-lg border px-2.5 py-2">
-          <SectionHeading>Admins</SectionHeading>
-          {app.roles?.admins?.length ? (
-            <div className="flex flex-wrap gap-1">
-              {app.roles.admins.map((admin) => (
-                <UserChip id={admin} key={admin} />
-              ))}
-            </div>
-          ) : (
-            <span className={`${BADGE} border-border text-muted-foreground`}>
-              Workspace members
-            </span>
-          )}
-        </div>
-      </div>
-
-      {/* Rate limit as a scannable stat row rather than a sentence. */}
-      <div className="space-y-1">
-        <SectionHeading hint="Enforced per app user">Rate limit</SectionHeading>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <Stat label="req / s" value={app.rateLimit?.rps ?? "—"} />
-          <Stat label="burst" value={app.rateLimit?.burst ?? "—"} />
-          <Stat label="per day" value={app.rateLimit?.daily ?? "—"} />
-          <span className="text-[0.65rem] text-muted-foreground">
-            per app user{app.rateLimit ? "" : " · gateway defaults"}
-          </span>
-        </div>
-      </div>
-
-      <div className="space-y-1.5 border-t pt-2.5">
-        <SectionHeading>Edit access &amp; limits</SectionHeading>
-        <AppSettings app={app} invoke={invoke} onSaved={onChanged} />
       </div>
     </div>
   );
@@ -868,6 +1132,13 @@ export interface AppDetailProps {
   invokeApps: ToolsInvoke;
   /** Gateway `workflows` namespace transport — the Workflows tab runs through it. */
   invoke: ToolsInvoke;
+  /**
+   * Gateway `registry` namespace transport, for the Access tab's provider
+   * search (`registry.providers`, falling back to `registry.search`) when
+   * adding a provider credential grant. Omit it and that step becomes a
+   * plain namespace text field — everything else in Access still works.
+   */
+  invokeRegistry?: ToolsInvoke | undefined;
   onSelectWorkflow: (name: string) => void;
   /** The app was edited in place — refresh the catalog, keep it selected. */
   onChanged?: (() => void) | undefined;
@@ -888,6 +1159,7 @@ export function AppDetail({
   workflows,
   invokeApps,
   invoke,
+  invokeRegistry,
   onSelectWorkflow,
   onChanged,
   onRemoved,
@@ -948,9 +1220,12 @@ export function AppDetail({
       <Tabs
         active={active}
         onChange={setTab}
-        tabs={TABS.map((entry) =>
-          entry.id === "workflows" ? { ...entry, badge: workflows.length } : entry,
-        )}
+        tabs={TABS
+          // The builtin Personal app has no release machinery — it's your
+          // workspace, not a deploy — so the tab that would only ever say
+          // "unsupported" doesn't render at all.
+          .filter((entry) => entry.id !== "releases" || !app.builtin)
+          .map((entry) => (entry.id === "workflows" ? { ...entry, badge: workflows.length } : entry))}
       />
 
       {active === "overview" && <Overview app={app} />}
@@ -966,11 +1241,12 @@ export function AppDetail({
         <AccessTab
           app={app}
           invoke={invokeApps}
+          invokeRegistry={invokeRegistry}
           onChanged={() => onChanged?.()}
           workflows={workflows}
         />
       )}
-      {active === "releases" && <ReleasesTab app={app} invoke={invokeApps} />}
+      {active === "releases" && !app.builtin && <ReleasesTab app={app} invoke={invokeApps} />}
       {active === "versions" && (
         <VersionsSection
           invoke={invokeApps}
@@ -980,19 +1256,26 @@ export function AppDetail({
         />
       )}
 
-      <div className="flex flex-wrap items-center gap-2 border-t pt-2">
-        <label className="flex items-center gap-1 text-[0.7rem] text-muted-foreground">
-          <input
-            checked={purgeData}
-            onChange={(event) => setPurgeData(event.target.checked)}
-            type="checkbox"
-          />
-          also delete the app folder &amp; every user's data
-        </label>
-        <span className="ml-auto">
-          <ConfirmDeleteButton busy={deleting} label="Unpublish" onConfirm={() => void removeApp()} />
-        </span>
-      </div>
+      {app.builtin ? (
+        <p className="border-t pt-2 text-[0.7rem] text-muted-foreground">
+          Personal is built into your workspace — there's nothing to unpublish. Remove a workflow
+          from the Workflows tab to take it out of Personal.
+        </p>
+      ) : (
+        <div className="flex flex-wrap items-center gap-2 border-t pt-2">
+          <label className="flex items-center gap-1 text-[0.7rem] text-muted-foreground">
+            <input
+              checked={purgeData}
+              onChange={(event) => setPurgeData(event.target.checked)}
+              type="checkbox"
+            />
+            also delete the app folder &amp; every user's data
+          </label>
+          <span className="ml-auto">
+            <ConfirmDeleteButton busy={deleting} label="Unpublish" onConfirm={() => void removeApp()} />
+          </span>
+        </div>
+      )}
     </div>
   );
 }

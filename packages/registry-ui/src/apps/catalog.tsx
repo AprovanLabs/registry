@@ -1,25 +1,25 @@
 /**
- * The catalog: one loader for both namespaces, and the grouped list that every
- * Apps surface renders.
+ * The rendered list: the grouped catalog from `@aprovan/ui/apps-store`, drawn
+ * as rows.
  *
- * Shape follows the spec — each app is a group whose children are the
- * workflows it exports, and a trailing "Workspace" group holds registered
- * workflows no app bundles (chat, cron and the panel can run them; no app user
- * can). Depth, not a flat list, is what makes this scale past a handful of
- * entries; on top of that the list filters and renders a capped window with a
- * "show more" tail, so a workspace with hundreds of workflows stays responsive
- * without pulling in a virtualiser.
+ * The catalog *store* — loading, grouping, Personal-app synthesis — moved to
+ * `@aprovan/ui/apps-store` (2026-07-24) so it's shared with any host that
+ * renders an Apps surface. What stays here is presentation: `AppsList`, its
+ * rows, and the size-aware expand/collapse behaviour, all re-exported under
+ * their original names so nothing importing `./catalog` (or
+ * `@aprovan/registry-ui/apps-panel`) had to change.
  *
- * `AppsList` is the *same component and the same state* at both densities —
- * the chat sidebar passes `variant="sidebar"` for a 288px column, the registry
- * passes `variant="full"` for the master column of the master/detail panel.
- * Which groups start open follows the *row count*, not the variant
- * ({@link SMALL_LIST_ROWS}), and a host may control it outright.
- *
- * Loading is deduplicated by {@link AppsCatalogProvider}: a page that mounts
- * two surfaces (chat mounts the sidebar explorer and the full panel) otherwise
- * runs `apps.list` + `workflows.list` once per surface and refreshes them
- * independently.
+ * There is no "Workspace" pseudo-group anymore. Every workflow belongs to an
+ * app — the ones nothing exports belong to the implicit **Personal** app,
+ * which the store either reads from the gateway (`builtin: true`) or
+ * synthesizes client-side. This list renders it like any other app group,
+ * just with quieter chrome: no visibility badge, no release chip, a "builtin"
+ * tone on the label instead of a public/private pill. `AppsList` is the *same
+ * component and the same state* at both densities — the chat sidebar passes
+ * `variant="sidebar"` for a 288px column, the registry passes `variant="full"`
+ * for the master column of the master/detail panel. Which groups start open
+ * follows the *row count*, not the variant ({@link SMALL_LIST_ROWS}), and a
+ * host may control it outright.
  */
 
 import * as React from "react";
@@ -30,251 +30,29 @@ import {
   SMALL_BUTTON,
   StatusDot,
   TINY_BUTTON,
-  TriggerBadges,
   VisibilityBadge,
 } from "./ui";
-import { LastRunProvider, useLastRun, useRecordRun } from "./last-runs";
+import { useLastRun, useRecordRun } from "./last-runs";
+import { attempt, normalizeRunTrace, type AppSummary, type ToolsInvoke, type WorkflowSummary } from "./wire";
+
+export {
+  AppsCatalogProvider,
+  PERSONAL_GROUP_ID,
+  useAppsCatalog,
+  useSharedAppsCatalog,
+  /** @deprecated the "Workspace" pseudo-group is gone; kept for older persisted state. */
+  WORKSPACE_GROUP_ID,
+  type AppsCatalog,
+  type AppsCatalogProviderProps,
+  type AppsSelection,
+  type CatalogGroup,
+} from "@aprovan/ui/apps-store";
 import {
-  attempt,
-  normalizeApp,
-  normalizeRunTrace,
-  normalizeWorkflow,
-  unwrapList,
-  type AppSummary,
-  type ToolsInvoke,
-  type WorkflowRunSummary,
-  type WorkflowSummary,
-} from "./wire";
-
-/** What the detail pane is showing. */
-export type AppsSelection =
-  | { kind: "app"; name: string }
-  | { kind: "workflow"; name: string; app?: string };
-
-export const WORKSPACE_GROUP_ID = "__workspace__";
-
-export interface CatalogGroup {
-  id: string;
-  kind: "app" | "workspace";
-  label: string;
-  app?: AppSummary;
-  workflows: WorkflowSummary[];
-}
-
-export interface AppsCatalog {
-  apps: AppSummary[];
-  workflows: WorkflowSummary[];
-  groups: CatalogGroup[];
-  appByName: Map<string, AppSummary>;
-  workflowByName: Map<string, WorkflowSummary>;
-  /** Last runs the gateway inlined on `list`, ready to seed the run cache. */
-  lastRunSeed: Map<string, WorkflowRunSummary | null>;
-  loading: boolean;
-  error: string | null;
-  /** The gateway has no `apps` namespace — render workflows only, no error. */
-  appsUnavailable: boolean;
-  refresh: () => void;
-}
-
-/**
- * The catalog one {@link AppsCatalogProvider} owns, shared by every surface
- * beneath it. `null` means "no provider" — each hook then loads its own.
- */
-const AppsCatalogContext = React.createContext<AppsCatalog | null>(null);
-
-/** Load both namespaces and group them. The engine behind `useAppsCatalog`. */
-function useCatalogLoader({
-  invoke,
-  invokeApps,
-  enabled,
-}: {
-  invoke: ToolsInvoke | undefined;
-  invokeApps?: ToolsInvoke | undefined;
-  enabled: boolean;
-}): AppsCatalog {
-  const [apps, setApps] = React.useState<AppSummary[]>([]);
-  const [workflows, setWorkflows] = React.useState<WorkflowSummary[]>([]);
-  const [loading, setLoading] = React.useState(enabled);
-  const [error, setError] = React.useState<string | null>(null);
-  const [appsUnavailable, setAppsUnavailable] = React.useState(!invokeApps);
-  const [nonce, setNonce] = React.useState(0);
-
-  React.useEffect(() => {
-    if (!enabled || !invoke) {
-      setLoading(false);
-      return;
-    }
-    let alive = true;
-    setLoading(true);
-    void (async () => {
-      const [workflowResult, appResult] = await Promise.all([
-        attempt(() => invoke("list", {})),
-        invokeApps ? attempt(() => invokeApps("list", {})) : Promise.resolve(null),
-      ]);
-      if (!alive) return;
-
-      if (workflowResult.ok) {
-        setWorkflows(
-          unwrapList(workflowResult.value, "workflows")
-            .map(normalizeWorkflow)
-            .filter((workflow): workflow is WorkflowSummary => workflow !== null),
-        );
-        setError(null);
-      } else {
-        setWorkflows([]);
-        setError(workflowResult.missing ? null : (workflowResult.error ?? "Failed to load workflows"));
-      }
-
-      if (!appResult) {
-        setApps([]);
-        setAppsUnavailable(true);
-      } else if (appResult.ok) {
-        setApps(
-          unwrapList(appResult.value, "apps")
-            .map(normalizeApp)
-            .filter((app): app is AppSummary => app !== null),
-        );
-        setAppsUnavailable(false);
-      } else {
-        // A missing/erroring apps namespace degrades to workflows-only rather
-        // than blanking the panel.
-        setApps([]);
-        setAppsUnavailable(true);
-      }
-      setLoading(false);
-    })();
-    return () => {
-      alive = false;
-    };
-  }, [enabled, invoke, invokeApps, nonce]);
-
-  return React.useMemo(() => {
-    const workflowByName = new Map(workflows.map((workflow) => [workflow.name, workflow]));
-    const appByName = new Map(apps.map((app) => [app.name, app]));
-    const bundled = new Set<string>();
-
-    const groups: CatalogGroup[] = apps
-      .slice()
-      .sort((a, b) => (a.title ?? a.name).localeCompare(b.title ?? b.name))
-      .map((app) => {
-        // The gateway inlines each export on `apps.list`; when it does, that
-        // is the richer record (it carries `procedure` and `lastRun`). Fall
-        // back to the registration from `workflows.list`, then to a stub, so
-        // an export that lost its registration still shows as dangling
-        // rather than vanishing.
-        const inlined = new Map((app.exports ?? []).map((w) => [w.name, w]));
-        const exported = app.workflows ?? [];
-        const rows: WorkflowSummary[] = [];
-        for (const name of exported) {
-          bundled.add(name);
-          const workflow = inlined.get(name) ?? workflowByName.get(name);
-          rows.push(
-            workflow
-              ? { ...workflowByName.get(name), ...workflow, apps: [...(workflow.apps ?? []), app.name] }
-              : { name, scriptPath: "", triggers: {}, apps: [app.name] },
-          );
-        }
-        return {
-          id: app.name,
-          kind: "app" as const,
-          label: app.title ?? app.name,
-          app,
-          workflows: rows,
-        };
-      });
-
-    // The Workspace group always closes the list, even when it holds nothing:
-    // a stable anatomy (apps, then the workspace tail) reads better than a
-    // group that appears and disappears, and the list renders an inline
-    // "No unbundled workflows" row for the empty case instead of a dead header.
-    const unbundled = workflows.filter((workflow) => !bundled.has(workflow.name));
-    groups.push({
-      id: WORKSPACE_GROUP_ID,
-      kind: "workspace",
-      label: "Workspace",
-      workflows: unbundled,
-    });
-
-    const lastRunSeed = new Map<string, WorkflowRunSummary | null>();
-    for (const workflow of workflows) {
-      if (workflow.lastRun) lastRunSeed.set(workflow.name, workflow.lastRun);
-    }
-
-    return {
-      apps,
-      workflows,
-      groups,
-      appByName,
-      workflowByName,
-      lastRunSeed,
-      loading,
-      error,
-      appsUnavailable,
-      refresh: () => setNonce((n) => n + 1),
-    };
-  }, [apps, workflows, loading, error, appsUnavailable]);
-}
-
-export interface AppsCatalogProviderProps {
-  /** Gateway `workflows` tool namespace (POST /tools/workflows/:operation). */
-  invoke: ToolsInvoke;
-  /** Gateway `apps` tool namespace; omit and the tree degrades to Workspace. */
-  invokeApps?: ToolsInvoke | undefined;
-  children: React.ReactNode;
-}
-
-/**
- * One catalog for a whole page.
- *
- * A host that mounts two Apps surfaces at once — chat renders the sidebar
- * explorer *and* the full panel in a tab — otherwise runs `apps.list` +
- * `workflows.list` twice on mount and, worse, refreshing in one surface leaves
- * the other stale. Wrap both in this and they share one load, one cache and
- * one `refresh()`. It carries a {@link LastRunProvider} too, so the run dots
- * are fetched once rather than once per surface.
- *
- * Entirely optional: `useAppsCatalog` falls back to its own fetch with no
- * provider above it, which is what every single-surface host already does.
- */
-export function AppsCatalogProvider({
-  invoke,
-  invokeApps,
-  children,
-}: AppsCatalogProviderProps) {
-  const catalog = useCatalogLoader({ invoke, invokeApps, enabled: true });
-  return (
-    <AppsCatalogContext.Provider value={catalog}>
-      <LastRunProvider invoke={invoke} seed={catalog.lastRunSeed}>
-        {children}
-      </LastRunProvider>
-    </AppsCatalogContext.Provider>
-  );
-}
-
-/** The shared catalog, when a provider is above — used to skip a second one. */
-export function useSharedAppsCatalog(): AppsCatalog | null {
-  return React.useContext(AppsCatalogContext);
-}
-
-/**
- * The catalog for one surface: the shared one from {@link AppsCatalogProvider}
- * when there is one, otherwise a load of its own. Either side may fail
- * independently — no apps still gives you the Workspace group, and no
- * workflows still gives you the app directory.
- */
-export function useAppsCatalog(options?: {
-  invoke?: ToolsInvoke | undefined;
-  invokeApps?: ToolsInvoke | undefined;
-}): AppsCatalog {
-  const shared = React.useContext(AppsCatalogContext);
-  // Called unconditionally (hook rules) but inert when a provider answered.
-  const own = useCatalogLoader({
-    invoke: options?.invoke,
-    invokeApps: options?.invokeApps,
-    enabled: shared === null && options?.invoke !== undefined,
-  });
-  return shared ?? own;
-}
+  PERSONAL_GROUP_ID,
+  type AppsCatalog,
+  type AppsSelection,
+  type CatalogGroup,
+} from "@aprovan/ui/apps-store";
 
 // ---------------------------------------------------------------------------
 // Rows
@@ -322,6 +100,12 @@ function InlineRunButton({
   );
 }
 
+/**
+ * One row: the last-run status dot and the name, nothing else. Trigger
+ * information (cron, webhook, events) used to render here as one-glyph marks;
+ * it now lives only in the workflow's own detail pane, where there's room to
+ * say what it means instead of making the list guess at an icon.
+ */
 function WorkflowRow({
   workflow,
   selected,
@@ -356,9 +140,6 @@ function WorkflowRow({
           <span className="inline-block h-2 w-2 shrink-0 rounded-full border border-border" />
         )}
         <span className="truncate text-xs">{workflow.name}</span>
-        {/* One-glyph trigger marks at both densities: the full badges (cron
-            expressions and all) belong to the detail pane, not a master list. */}
-        <TriggerBadges compact workflow={workflow} />
       </button>
       <span className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
         <InlineRunButton compact={compact} invoke={invoke} name={workflow.name} />
@@ -385,13 +166,15 @@ function WorkflowRow({
  *
  *  - the **row** selects. An app row opens the app detail (and, via the
  *    list's select path, expands the group if it was collapsed — selecting
- *    never collapses); the Workspace row has nothing to open, so its row
- *    toggles like a plain folder.
- *  - the **chevron** toggles expansion alone, never touching the selection.
+ *    never collapses).
+ *  - the **chevron** toggles expansion alone, never touching the selection —
+ *    and is hidden entirely on a group with no workflows, since there is
+ *    nothing to reveal.
  *
  * Badges stay off the row in both densities (a count plus a "public" marker
  * at most) — data scope and release pins belong to the detail pane, not a
- * master list that has to scan.
+ * master list that has to scan. The builtin Personal app gets none of that:
+ * no visibility badge (it's never public), quieter label tone instead.
  */
 function GroupHeader({
   group,
@@ -412,35 +195,53 @@ function GroupHeader({
 }) {
   const app = group.app;
   const compact = variant === "sidebar";
+  const builtin = app?.builtin === true;
+  const hasWorkflows = group.workflows.length > 0;
   return (
     <div
       className={`group flex items-center gap-1 rounded px-1 py-1 transition-colors ${
         selected ? "bg-muted" : "hover:bg-muted/60"
       }`}
     >
-      <button
-        aria-expanded={expanded}
-        aria-label={expanded ? `Collapse ${group.label}` : `Expand ${group.label}`}
-        className="shrink-0 rounded px-1 text-muted-foreground hover:bg-muted hover:text-foreground"
-        onClick={(event) => {
-          event.stopPropagation();
-          onToggle();
-        }}
-        title={expanded ? "Collapse" : "Expand"}
-        type="button"
-      >
-        <span className={`inline-block transition-transform ${expanded ? "rotate-90" : ""}`}>›</span>
-      </button>
+      {hasWorkflows ? (
+        <button
+          aria-expanded={expanded}
+          aria-label={expanded ? `Collapse ${group.label}` : `Expand ${group.label}`}
+          className="shrink-0 rounded px-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+          onClick={(event) => {
+            event.stopPropagation();
+            onToggle();
+          }}
+          title={expanded ? "Collapse" : "Expand"}
+          type="button"
+        >
+          <span className={`inline-block transition-transform ${expanded ? "rotate-90" : ""}`}>›</span>
+        </button>
+      ) : (
+        // No chevron when there's nothing to reveal — a fixed-width spacer so
+        // the label still lines up with groups that have one.
+        <span aria-hidden="true" className="inline-block w-[1.375rem] shrink-0" />
+      )}
       <button
         className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
         onClick={app ? onSelect : onToggle}
         type="button"
       >
-        <span className="truncate text-xs font-medium">{group.label}</span>
+        <span
+          className={`truncate text-xs font-medium ${builtin ? "text-muted-foreground" : ""}`}
+        >
+          {group.label}
+        </span>
         <span className="shrink-0 text-[0.65rem] tabular-nums text-muted-foreground">
           {group.workflows.length}
         </span>
-        {app && !compact && app.visibility === "public" && <VisibilityBadge app={app} />}
+        {builtin ? (
+          <span className="shrink-0 rounded-full border border-dashed px-1.5 py-px text-[0.6rem] text-muted-foreground">
+            personal
+          </span>
+        ) : (
+          app && !compact && app.visibility === "public" && <VisibilityBadge app={app} />
+        )}
       </button>
       {app && (app.liveUrl || onOpenApp) && (
         <span className="shrink-0 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
@@ -463,7 +264,6 @@ function GroupHeader({
               onClick={(event) => event.stopPropagation()}
               rel="noreferrer"
               target="_blank"
-              title={app.liveUrl}
             >
               open
             </a>
@@ -565,13 +365,14 @@ export function AppsList({
   const isExpanded = React.useCallback(
     (group: CatalogGroup) => {
       if (query) return true;
+      if (group.workflows.length === 0) return false;
       // An explicit set — the user's, or the host's — always wins, so a
       // chevron-collapse sticks even while something inside is selected.
       // Before any toggle materialises one, the group holding the selection
       // opens itself so the selected row is never invisible.
       if (expandedList !== null) return expandedList.includes(group.id);
       if (selection?.kind === "workflow" && selection.app === group.id) return true;
-      if (selection?.kind === "workflow" && group.id === WORKSPACE_GROUP_ID && !selection.app) {
+      if (selection?.kind === "workflow" && group.id === PERSONAL_GROUP_ID && !selection.app) {
         return true;
       }
       if (selection?.kind === "app" && selection.name === group.id) return true;
@@ -632,7 +433,7 @@ export function AppsList({
         : `w:${selection.app ?? ""}:${selection.name}`;
     if (lastRevealed.current === key) return;
     lastRevealed.current = key;
-    ensureExpanded(selection.kind === "app" ? selection.name : (selection.app ?? WORKSPACE_GROUP_ID));
+    ensureExpanded(selection.kind === "app" ? selection.name : (selection.app ?? PERSONAL_GROUP_ID));
   }, [selection, ensureExpanded]);
 
   // Flatten to rows first so the cap counts *rendered rows*, not groups —
@@ -644,13 +445,14 @@ export function AppsList({
   const rows: Row[] = [];
   for (const group of filtered) {
     rows.push({ key: `g:${group.id}`, kind: "group", group });
-    if (!isExpanded(group)) continue;
     if (group.workflows.length === 0) {
-      // An expanded, empty group says so inline instead of silently rendering
-      // nothing — the difference between "collapsed?" and "empty".
+      // No chevron on a group with nothing to reveal — so there is no
+      // collapsed state to hide behind, and the row always says so inline
+      // rather than silently rendering nothing.
       rows.push({ key: `e:${group.id}`, kind: "empty", group });
       continue;
     }
+    if (!isExpanded(group)) continue;
     for (const workflow of group.workflows) {
       rows.push({ key: `w:${group.id}:${workflow.name}`, kind: "workflow", group, workflow });
     }
@@ -709,9 +511,7 @@ export function AppsList({
                   className={`${compact ? "pl-6" : "pl-8"} py-0.5 text-[0.7rem] italic text-muted-foreground`}
                   key={row.key}
                 >
-                  {row.group.kind === "workspace"
-                    ? "No unbundled workflows"
-                    : "No exported workflows"}
+                  No workflows yet
                 </p>
               ) : (
                 <div className={compact ? "pl-3" : "pl-5"} key={row.key}>

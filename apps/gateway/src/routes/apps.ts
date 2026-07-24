@@ -16,12 +16,15 @@
  * alias). `/workflows/:name/run` is the same dispatch under an older spelling.
  *
  * Auth: any valid Cognito token — membership in the owning workspace is NOT
- * required. That's the point: the owner workspace is the app's "account"
- * (its data, credentials, and controls), and outside callers reach it only
- * through this surface, which enforces:
+ * required (the exception is `personal`, see below). That's the point: the
+ * owner workspace is the app's "account" (its data, credentials, and
+ * controls), and outside callers reach it only through this surface, which
+ * enforces:
  *   - the app's role model (admins / listed users / any authenticated user)
- *   - the tool allow-list (`allowedTools` — deny by default, and only
- *     expressible over native namespaces + the app's own workflows)
+ *   - the tool allow-list (`allowedTools` — deny by default): native
+ *     namespaces, the app's own workflows, and exact provider procedures
+ *     (credential grants, tier 2 — dispatched with the OWNING workspace's
+ *     credential regardless of where execution otherwise lands)
  *   - per-(app, user) rate limits and a durable daily budget
  *   - per-(app, user) data partitioning (ServiceContext.appScope)
  *   - prefix-based FS authz: the session carries the manifest's declared
@@ -33,6 +36,11 @@
  *   - "workspace": if the caller's workspace holds an install record, as
  *     THEIR workspace, under the install prefix, with their credentials. The
  *     app is code; the user brings the workspace.
+ *
+ * `:name` = "personal" is the one exception: it is synthesized (see
+ * apps/personal.ts), never stored, and members-only — the manifest role
+ * model doesn't apply, workspace membership does. Execution never leaves the
+ * workspace it belongs to.
  */
 
 import { RateLimiter } from "@utdk/common/rateLimit";
@@ -40,10 +48,12 @@ import { Hono } from "hono";
 import {
   isNativeNamespace,
   isWorkflowNamespace,
+  providerGrantCallable,
   resolveExportedWorkflow,
   workflowCallable,
 } from "../apps/capabilities.js";
 import { installedScope, readInstall, type AppInstall } from "../apps/install.js";
+import { isPersonalApp, personalCallerRole, readPersonalManifest } from "../apps/personal.js";
 import { callerRole, readApp, toolAllowed, type AppManifest, type AppPaths } from "../apps/store.js";
 import { countDailyCall } from "../apps/usage.js";
 import { getAuditStore } from "../audit.js";
@@ -114,10 +124,34 @@ async function resolveAppSession(c: HonoCtx): Promise<AppSession> {
   const name = c.req.param("name");
   if (!workspaceId || !name) throw new ServiceError("Not found", 404);
 
+  const sub = await callerSub(c);
+
+  // Personal is synthesized, never stored, and members-only: the manifest
+  // role model doesn't apply — the caller's workspace membership is the
+  // whole access check. It never installs elsewhere, so execution always
+  // stays in this same workspace with this workspace's own credentials.
+  if (isPersonalApp(name)) {
+    const role = await personalCallerRole(workspaceId, sub);
+    if (!role) throw new ServiceError("You do not have access to this app", 403);
+    const manifest = await readPersonalManifest(workspaceId);
+    return {
+      manifest,
+      workspaceId,
+      executionWorkspaceId: workspaceId,
+      sub,
+      role,
+      ctx: {
+        workspaceId,
+        userId: sub,
+        appScope: { name: manifest.name, paths: manifest.paths, dataScope: manifest.dataScope, userId: sub, role },
+        traceId: newTraceId(),
+      },
+    };
+  }
+
   const manifest = await readApp(workspaceId, name).catch(() => undefined);
   if (!manifest) throw new ServiceError("Not found", 404);
 
-  const sub = await callerSub(c);
   const role = callerRole(manifest, sub);
   if (!role) throw new ServiceError("You do not have access to this app", 403);
 
@@ -335,25 +369,48 @@ appsRouter.post("/:workspaceId/:name/tools/:namespace/:procedure{.*}", async (c)
       return response;
     }
 
-    // Everything else must be an allow-listed native namespace. A provider
-    // namespace can never appear here: publish rejects it, and this is the
-    // second gate.
-    if (!isNativeNamespace(namespace) || !toolAllowed(session.manifest, namespace, procedure)) {
-      return c.json({ error: `Tool ${namespace}.${procedure} is not allowed for this app` }, 403);
+    // An allow-listed native namespace runs in the execution workspace (the
+    // caller's own for a workspace-scoped install; the owner's otherwise).
+    if (isNativeNamespace(namespace)) {
+      if (!toolAllowed(session.manifest, namespace, procedure)) {
+        return c.json({ error: `Tool ${namespace}.${procedure} is not allowed for this app` }, 403);
+      }
+      const data = await invokeTool(session.ctx, namespace, procedure, await readArgs(c));
+      const durationMs = Date.now() - startTime;
+      getAuditStore().append({
+        requestId: crypto.randomUUID(),
+        workspaceId: session.executionWorkspaceId,
+        callerId: `app:${session.manifest.name}:${session.sub}`,
+        provider: namespace,
+        operation: procedure,
+        status: 200,
+        durationMs,
+      });
+      return c.json({ data, meta: { app: session.manifest.name, durationMs } });
     }
 
-    const data = await invokeTool(session.ctx, namespace, procedure, await readArgs(c));
-    const durationMs = Date.now() - startTime;
-    getAuditStore().append({
-      requestId: crypto.randomUUID(),
-      workspaceId: session.executionWorkspaceId,
-      callerId: `app:${session.manifest.name}:${session.sub}`,
-      provider: namespace,
-      operation: procedure,
-      status: 200,
-      durationMs,
-    });
-    return c.json({ data, meta: { app: session.manifest.name, durationMs } });
+    // A provider entry in `allowedTools` is an explicit credential grant —
+    // re-validated here at call time (tier-2 re-check) — and always executes
+    // with the OWNING workspace's credential, never the execution workspace's
+    // (a workspace-scoped install carries no credentials of its own; the
+    // grant was only ever a promise the owner could keep).
+    if (providerGrantCallable(session.manifest, namespace, procedure)) {
+      const grantCtx = { ...session.ctx, workspaceId: session.workspaceId };
+      const data = await invokeTool(grantCtx, namespace, procedure, await readArgs(c));
+      const durationMs = Date.now() - startTime;
+      getAuditStore().append({
+        requestId: crypto.randomUUID(),
+        workspaceId: session.executionWorkspaceId,
+        callerId: `app:${session.manifest.name}:${session.sub}`,
+        provider: namespace,
+        operation: procedure,
+        status: 200,
+        durationMs,
+      });
+      return c.json({ data, meta: { app: session.manifest.name, durationMs } });
+    }
+
+    return c.json({ error: `Tool ${namespace}.${procedure} is not allowed for this app` }, 403);
   } catch (err) {
     return errorResponse(c, err);
   }

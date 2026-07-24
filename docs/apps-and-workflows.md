@@ -46,10 +46,25 @@ App  ── pages ────────► static/compiled UI under the app's
 
 ### Workflows are the app's exported surface
 
-An app's `workflows: []` is its **export list** — the WASI-world analogue. A
-workflow not listed by any app is workspace-internal (chat, cron, the panel can
-run it; no app user can). Listing it publishes it under the app's namespace and
-subjects it to the app's auth, rate limit, and data scope.
+An app's `workflows: []` is its **export list** — the WASI-world analogue.
+Listing a workflow publishes it under the app's namespace and subjects it to
+the app's auth, rate limit, and data scope.
+
+### The Personal app (2026-07-24)
+
+There is no such thing as an unbundled workflow anymore — **every workflow
+belongs to an app**, and the ones nothing exports belong to the workspace's
+implicit **Personal** app. Personal is synthesized by the gateway, not stored:
+`name: "personal"`, private, members-only, `dataScope` partitioned per user in
+the user's own workspace, workflows executing with the caller's own
+credentials — your own deployment of yourself. It appears in `apps.list` like
+any other app (flagged `builtin: true`), cannot be unpublished, and has no
+release machinery.
+
+This kills the "Workspace" pseudo-group: the explorer shows apps, all the way
+down, and a fresh workspace shows exactly one — Personal. Publishing an app
+later is *promoting* workflows out of Personal, which is the natural mental
+model for "user friendly but powerful": start personal, share deliberately.
 
 Each workflow declares an optional JSON-Schema `input` and `output`. Those
 schemas are what makes the generated SDK typed; they are also what the run form
@@ -80,11 +95,21 @@ This is the whitelisting story, stated once so both UIs can render it verbatim.
    goes through a workflow: the BFF boundary, allow-listed by name, traced,
    rate-limited, and the only place a secret is ever near the request.
 
-`allowedTools` may therefore only contain entries from (1) and the app's own
-workflow namespace (`app.*` — `workflow.*` is accepted as a synonym). A publish
-that lists a provider namespace directly is rejected with a message pointing at
-(3), and the app tool proxy refuses non-native namespaces a second time at call
-time.
+`allowedTools` is one list whose entries resolve to the three tiers:
+
+- **native** namespaces — wildcards allowed (`keyvalue.*`);
+- the app's own **`app.*`** namespace (`workflow.*` accepted as a synonym);
+- **provider procedures** — allowed since 2026-07-24, but each entry is an
+  explicit **credential grant** and is therefore held to a stricter shape:
+  *exact* procedures only (`github.repos.get` — never `github.*`), and the
+  publish fails unless the owning workspace actually holds a credential for
+  that provider. `apps.capabilities` reports each grant under tier (2) with
+  the provider whose credential executes it, so the Access pane never has to
+  guess. Anything broader than a single procedure still belongs in an
+  exported workflow.
+
+A wildcard on a provider namespace is rejected with a message pointing at
+(3), and the app tool proxy re-validates the tier rules at call time.
 
 The **export list is the grant** for workflows: a workflow in `workflows: []`
 is callable as `app.<workflow>`. Listing `app.<workflow>` entries in

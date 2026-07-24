@@ -75,11 +75,13 @@ const toolListCache = new Map<string, CachedToolList>();
 /** Drop the cached tool list for a workspace (call when credentials change). */
 export function invalidateToolListCache(workspaceId: string): void {
   toolListCache.delete(workspaceId);
+  configuredToolListCache.delete(workspaceId);
 }
 
 /** Clear every cached tool list (used in tests). */
 export function resetToolListCache(): void {
   toolListCache.clear();
+  configuredToolListCache.clear();
 }
 
 /**
@@ -274,9 +276,64 @@ async function discoverTools(workspaceId: string): Promise<ToolEntry[]> {
   return tools;
 }
 
+// ---------------------------------------------------------------------------
+// GET /tools?scope=configured — fast discovery, no catalog scan
+// ---------------------------------------------------------------------------
+//
+// `discoverTools` above falls back to a network fetch of the public registry
+// catalog (`catalogToolEntries`) for any credentialed provider whose UTDK
+// module doesn't export its own tool metadata — the common case. That scan is
+// the slow part. "configured" scope skips it entirely: core services (always
+// free), LLM chat-provider aliases (a static curated entry set, no I/O), and
+// whatever a credentialed provider's own module exports directly. A provider
+// with neither simply contributes no operations to this scope — the default
+// (unscoped) list is still the place that finds them via the catalog.
+
+const configuredToolListCache = new Map<string, CachedToolList>();
+
+async function discoverConfiguredTools(workspaceId: string): Promise<ToolEntry[]> {
+  const now = Date.now();
+  const cached = configuredToolListCache.get(workspaceId);
+  if (cached && cached.expiresAt > now) {
+    return cached.tools;
+  }
+
+  const credStore = getCredentialStore();
+  const credentials = await credStore.list(workspaceId);
+  const providers = Array.from(new Set(credentials.map((c) => c.provider)));
+
+  const tools: ToolEntry[] = [...coreToolEntries()];
+
+  const connected = new Set(providers);
+  for (const def of listInterfaces()) {
+    if (!def.compat.some((entry) => connected.has(entry.provider))) continue;
+    tools.push(...interfaceToolEntries(def.id));
+  }
+
+  for (const provider of providers) {
+    if (isLlmProvider(provider)) {
+      tools.push(...llmToolEntries(provider));
+      continue;
+    }
+    try {
+      const mod = await getProviderModule(provider);
+      tools.push(...deriveToolEntries(provider, mod));
+    } catch {
+      // Unresolvable module, and configured scope doesn't fall back to the
+      // catalog — this provider just contributes nothing here.
+    }
+  }
+
+  configuredToolListCache.set(workspaceId, { tools, expiresAt: now + getToolListTtlMs() });
+  return tools;
+}
+
 toolsRouter.get("/", async (c) => {
   const workspaceId = c.get("principal").workspaceId;
-  const tools = await discoverTools(workspaceId);
+  const tools =
+    c.req.query("scope") === "configured"
+      ? await discoverConfiguredTools(workspaceId)
+      : await discoverTools(workspaceId);
   return c.json({ tools, workspace_id: workspaceId });
 });
 

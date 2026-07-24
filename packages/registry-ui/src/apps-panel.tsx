@@ -6,13 +6,14 @@
  * an export list of workflows plus an allow-list, a data scope and an auth
  * boundary — and a workspace accumulates far more of both than a single flat
  * list can carry. So the panel is master/detail. The master column groups by
- * app (each group header is the app, its children are the workflows it
- * exports) with a final "Workspace" group for registered workflows no app
- * bundles; it filters, and it renders a capped window with a "show more" tail
- * so hundreds of entries stay usable without a virtualiser dependency. The
- * detail column is the app (Overview / Workflows / Access / Releases /
- * Versions) or the workflow (the TailorFlow graph, run form, run history,
- * trace, and the cascade tree when the run fanned out).
+ * app, all the way down: every workflow belongs to one, and the ones nothing
+ * exports belong to the workspace's implicit **Personal** app (a first-class
+ * group, not a "Workspace" catch-all — there is no such thing anymore). It
+ * filters, and it renders a capped window with a "show more" tail so hundreds
+ * of entries stay usable without a virtualiser dependency. The detail column
+ * is the app (Overview / Workflows / Access / Releases / Versions) or the
+ * workflow (the TailorFlow graph, run form, run history, trace, and the
+ * cascade tree when the run fanned out).
  *
  * Transport-agnostic, exactly like the panel it replaces: the host supplies
  * `invoke(operation, args)` for the gateway's `workflows` namespace and
@@ -46,7 +47,7 @@ import * as React from "react";
 import { AppDetail, type AppDetailTab } from "./apps/app-detail";
 import {
   AppsList,
-  WORKSPACE_GROUP_ID,
+  PERSONAL_GROUP_ID,
   useAppsCatalog,
   useSharedAppsCatalog,
   type AppsCatalog,
@@ -55,11 +56,17 @@ import {
 } from "./apps/catalog";
 import { LastRunProvider } from "./apps/last-runs";
 import { Empty, mergeClasses, RefreshButton } from "./apps/ui";
-import { WorkflowDetail } from "./apps/workflow-detail";
+import { WorkflowDetail as WorkflowDetailView } from "./apps/workflow-detail";
 import type { AppSummary, ToolsInvoke, WorkflowSummary } from "./apps/wire";
 
 export type { AppDetailTab } from "./apps/app-detail";
-export { WORKSPACE_GROUP_ID, type AppsSelection, type CatalogGroup } from "./apps/catalog";
+export {
+  PERSONAL_GROUP_ID,
+  /** @deprecated see {@link PERSONAL_GROUP_ID} — the "Workspace" pseudo-group is gone. */
+  WORKSPACE_GROUP_ID,
+  type AppsSelection,
+  type CatalogGroup,
+} from "./apps/catalog";
 export type {
   AppChannel,
   AppRateLimit,
@@ -92,9 +99,17 @@ export interface AppsPanelProps {
   /**
    * Transport for the gateway's `apps` tool namespace
    * (POST /tools/apps/:operation). Omit it (or point it at a gateway with no
-   * `apps` namespace) and the panel degrades to the Workspace group alone.
+   * `apps` namespace) and the panel degrades to the Personal group alone.
    */
   invokeApps?: AppsInvoke;
+  /**
+   * Transport for the gateway's `registry` tool namespace
+   * (POST /tools/registry/:operation). Used only by the Access tab's
+   * provider search when adding a credential grant (`registry.providers`,
+   * falling back to `registry.search`); omit it and that step becomes a
+   * plain text field.
+   */
+  invokeRegistry?: AppsInvoke;
   /**
    * Read a workflow's script from the workspace. With it, a selected workflow
    * renders as the flow graph with its run painted on; without it the same
@@ -162,7 +177,12 @@ function findWorkflow(
   selection: AppsSelection | null,
 ): { workflow: WorkflowSummary; group: CatalogGroup | undefined } | null {
   if (selection?.kind !== "workflow") return null;
-  const groupId = selection.app ?? WORKSPACE_GROUP_ID;
+  // Legacy selections persisted before the Personal app existed carry no
+  // `app` at all (the old "Workspace" pseudo-group). `WORKSPACE_GROUP_ID`
+  // never matches a real group anymore, so the second `find` below — any
+  // group holding a workflow of this name — is what actually resolves them;
+  // this is just the fast path for everything created since.
+  const groupId = selection.app ?? PERSONAL_GROUP_ID;
   const group =
     catalog.groups.find((candidate) => candidate.id === groupId) ??
     catalog.groups.find((candidate) =>
@@ -178,6 +198,7 @@ function findWorkflow(
 export function AppsPanel({
   invoke,
   invokeApps,
+  invokeRegistry,
   loadScript,
   onOpenScript,
   onOpenApp,
@@ -317,6 +338,7 @@ export function AppsPanel({
               app={selectedApp}
               invoke={invoke}
               invokeApps={invokeApps}
+              invokeRegistry={invokeRegistry}
               key={selectedApp.name}
               // An edit reloads the catalog and keeps the app selected; only a
               // delete clears it, and that goes down the `removed` path.
@@ -331,9 +353,11 @@ export function AppsPanel({
               }
             />
           ) : selectedWorkflow ? (
-            <WorkflowDetail
+            <WorkflowDetailView
               header={
-                selectedWorkflow.group && selectedWorkflow.group.kind === "app" ? (
+                // Every group is a real app now — Personal included — so this
+                // always has a label and a place to go back to.
+                selectedWorkflow.group ? (
                   <button
                     className="text-[0.7rem] text-muted-foreground underline-offset-2 hover:text-foreground hover:underline"
                     onClick={() => select({ kind: "app", name: selectedWorkflow.group?.id ?? "" })}
@@ -342,7 +366,7 @@ export function AppsPanel({
                     ‹ {selectedWorkflow.group.label}
                   </button>
                 ) : (
-                  <span className="text-[0.7rem] text-muted-foreground">Workspace</span>
+                  <span className="text-[0.7rem] text-muted-foreground">Personal</span>
                 )
               }
               fill={fill}
@@ -391,9 +415,24 @@ export function AppsExplorer(props: AppsExplorerProps) {
 export { AppsCatalogProvider, AppsList, useAppsCatalog } from "./apps/catalog";
 export type { AppsCatalogProviderProps } from "./apps/catalog";
 export { AppDetail } from "./apps/app-detail";
-export { WorkflowDetail } from "./apps/workflow-detail";
+/**
+ * The standalone mount: resolves a workflow by *name* (`workflows.get`,
+ * falling back to a `workflows.list` scan) so a host that only has a name in
+ * hand — chat's widget preview pane, most obviously — can render exactly one
+ * workflow's run form, graph and trace with no catalog and no `AppsPanel`
+ * around it. `AppsPanel`'s own master/detail view keeps using the
+ * catalog-fed, `WorkflowSummary`-in-hand version internally (see
+ * `WorkflowDetailProps` below) — same underlying pane either way.
+ */
+export {
+  StandaloneWorkflowDetail as WorkflowDetail,
+  type StandaloneWorkflowDetailProps as WorkflowDetailProps,
+} from "./apps/workflow-detail";
+/** The catalog-fed pane `WorkflowDetail` used to be — still exported under
+ * its own name for a host that already has a `WorkflowSummary` in hand. */
+export { WorkflowDetail as WorkflowDetailView } from "./apps/workflow-detail";
 export { LastRunProvider, useLastRun } from "./apps/last-runs";
 export type { AppsCatalog } from "./apps/catalog";
 export type { AppDetailProps } from "./apps/app-detail";
 export type { AppsListProps } from "./apps/catalog";
-export type { WorkflowDetailProps } from "./apps/workflow-detail";
+export type { WorkflowDetailProps as WorkflowDetailViewProps } from "./apps/workflow-detail";

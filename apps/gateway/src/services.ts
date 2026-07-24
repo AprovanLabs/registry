@@ -525,8 +525,15 @@ const registry: CoreService = {
       name: "registry.providers",
       operation: "providers",
       description:
-        "List registry providers (UTDK SDKs): id, title, description, package, icon, and supported credential kinds. Optional `q` substring filter.",
-      inputSchema: { type: "object", properties: { q: { type: "string" } } },
+        "Page through registry providers (UTDK SDKs): id, title, and description. Optional `q` substring filter over id/title/description/package; `offset`/`limit` page the (post-filter) result (limit default 25, max 100). Returns { providers, total }.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          q: { type: "string" },
+          offset: { type: "number" },
+          limit: { type: "number" },
+        },
+      },
     },
     {
       name: "registry.search",
@@ -549,15 +556,25 @@ const registry: CoreService = {
     const catalog = await loadCatalog();
     switch (procedure) {
       case "providers": {
-        const q = typeof args["q"] === "string" ? args["q"].toLowerCase() : "";
-        const providers = q
+        const q = typeof args["q"] === "string" ? args["q"].trim().toLowerCase() : "";
+        // Same catalog source and substring match as `search`, but over
+        // providers: id/title/description/package, in the catalog's stable
+        // order (never re-sorted, so a page is stable across calls).
+        const matches = q
           ? catalog.providers.filter((p) =>
               [p.id, p.title, p.description, p.packageName]
                 .filter(Boolean)
                 .some((v) => String(v).toLowerCase().includes(q)),
             )
           : catalog.providers;
-        return { providers };
+        const offset = Math.max(0, Math.trunc(Number(args["offset"])) || 0);
+        const limit = Math.min(100, Math.max(1, Math.trunc(Number(args["limit"])) || 25));
+        const providers = matches.slice(offset, offset + limit).map((p) => ({
+          id: p.id,
+          title: p.title,
+          ...(p.description ? { description: p.description } : {}),
+        }));
+        return { providers, total: matches.length };
       }
       case "search": {
         const q = typeof args["q"] === "string" ? args["q"].trim().toLowerCase() : "";
