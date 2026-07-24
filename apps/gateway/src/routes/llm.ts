@@ -18,7 +18,7 @@ import { getCredentialStore } from "../credentials.js";
 import { readBindings, resolveInterfaceForWorkspace } from "../interfaces.js";
 import { getExecutor } from "../isolate.js";
 import { requireAuth } from "../middleware/auth.js";
-import { ServiceError } from "../services.js";
+import { ServiceError } from "../service-kernel.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import { OAuthExchangeError, resolveToInjectable } from "../oauthTokens.js";
 import {

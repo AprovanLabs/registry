@@ -6,7 +6,7 @@
  * /hooks surface (routes/hooks.ts).
  */
 
-import { ServiceError, type CoreService } from "../services.js";
+import { ServiceError, type CoreService } from "../service-kernel.js";
 import { readRegistration } from "../workflows/store.js";
 import {
   listWebhooks,

@@ -19,7 +19,7 @@
 
 import { createHash } from "node:crypto";
 import { getFsStore } from "../fs-store.js";
-import { ServiceError } from "../services.js";
+import { ServiceError } from "../service-kernel.js";
 import { readRegistration } from "../workflows/store.js";
 import { saveApp, type AppManifest } from "./store.js";
 

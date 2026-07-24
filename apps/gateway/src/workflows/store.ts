@@ -18,7 +18,7 @@
  */
 
 import { getFsStore, type FsEntry, type FsFile } from "../fs-store.js";
-import { ServiceError } from "../services.js";
+import { ServiceError } from "../service-kernel.js";
 
 const WF_PREFIX = ".services/workflows/";
 const RUNS_MAX_RETAINED = 100;

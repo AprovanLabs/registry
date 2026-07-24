@@ -15,9 +15,9 @@ import { isLlmProvider, resolveLlmProvider } from "../llm.js";
 import { getMembership } from "../memberships.js";
 import { getAuthMode } from "../middleware/auth.js";
 import { OAuthExchangeError, resolveToInjectable } from "../oauthTokens.js";
-import { getCoreService, ServiceError } from "../services.js";
+import { getCoreService, ServiceError } from "../service-kernel.js";
 import { listUserGroupIds } from "../userGroups.js";
-import type { ServiceContext } from "../services.js";
+import type { ServiceContext } from "../service-kernel.js";
 
 /**
  * Per-user tool authorization for in-process dispatch — the same gate the

@@ -29,7 +29,7 @@
  */
 
 import { getFsStore, normalizeFsPath, type FsEntry, type FsFile } from "../fs-store.js";
-import { ServiceError } from "../services.js";
+import { ServiceError } from "../service-kernel.js";
 
 const APPS_PREFIX = ".services/apps/";
 const WORKSPACE_CONFIG_PATH = ".services/workspace.json";

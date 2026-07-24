@@ -51,7 +51,7 @@ import {
 } from "../apps/store.js";
 import { getFsStore } from "../fs-store.js";
 import { getAuthMode, readBearerToken, verifyAccessToken } from "../middleware/auth.js";
-import { ServiceError } from "../services.js";
+import { ServiceError } from "../service-kernel.js";
 import { readRegistration } from "../workflows/store.js";
 
 export const liveAppsRouter = new Hono();

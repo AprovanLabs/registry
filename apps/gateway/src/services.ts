@@ -23,59 +23,25 @@ import {
   appFsAllowed,
   readWorkspaceConfig,
   resolveAppPath,
-  type AppPaths,
 } from "./apps/store.js";
 import { getFsStore, isServicePath, normalizeFsPath } from "./fs-store.js";
 import { interfacesService } from "./interfaces-service.js";
+import {
+  installCoreServices,
+  ServiceError,
+  type CoreService,
+  type CoreServiceName,
+  type ServiceContext,
+} from "./service-kernel.js";
 import { syncService } from "./sync.js";
 import { webhooksService } from "./webhooks/service.js";
 import { workflowsService } from "./workflows/service.js";
 import type { ToolEntry } from "./routes/tools.js";
 
-export interface ServiceContext {
-  workspaceId: string;
-  userId: string;
-  /**
-   * Event-cascade depth when the caller is a workflow run (set by the
-   * workflow runner). `events.emit` uses it to cap workflow→event→workflow
-   * chains; absent means a user/API call (depth 0).
-   */
-  workflowDepth?: number;
-  /**
-   * Set when the caller reached the workspace through a published app (see
-   * src/apps). `paths` is the manifest's path binding and the sole authority
-   * for what this session may touch: data is co-located with the app (a
-   * keyvalue key `k` lives at `<paths[0]>/data/<userId>/k`), relative vfs
-   * paths resolve under `paths[0]`, and `~/<path>` reaches any declared
-   * prefix — anything else needs a `.services/workspace.json` share.
-   */
-  appScope?: AppPaths & { userId: string; role: "admin" | "user" };
-  /**
-   * Per-run interface binding overrides (interface id → provider id), set by
-   * the workflow runner from the registration's `bindings`. Interface
-   * dispatch prefers these over the workspace binding.
-   */
-  interfaceBindings?: Record<string, string>;
-  /**
-   * Trace correlation. Every cascade — `events.emit` → workflow, workflow →
-   * workflow, app call → workflow — carries these forward, so a run record
-   * links to the run (or app request) that caused it and `workflows.tree`
-   * can render the whole cascade. Absent means "start a new trace".
-   */
-  traceId?: string;
-  /** The run this context descends from (the parent edge in the trace). */
-  parentRunId?: string;
-}
-
-export interface CoreService {
-  /** Tool entries advertised in discovery (`GET /tools`). */
-  tools: Omit<ToolEntry, "provider">[];
-  call(
-    ctx: ServiceContext,
-    procedure: string,
-    args: Record<string, unknown>,
-  ): Promise<unknown>;
-}
+// The contract lives in service-kernel.ts and is deliberately NOT re-exported
+// here: this module builds CORE_SERVICES from the service modules at init, so
+// anything it imports must never import back. One canonical home for
+// ServiceError / ServiceContext / CoreService is what keeps that true.
 
 /** Keys/channels: dotted-path identifiers, no traversal. */
 const IDENT_RE = /^[\w][\w.\-:]{0,127}$/u;
@@ -85,15 +51,6 @@ function ident(value: unknown, label: string): string {
     throw new ServiceError(`${label} must match ${IDENT_RE}`, 400);
   }
   return value;
-}
-
-export class ServiceError extends Error {
-  constructor(
-    message: string,
-    readonly status: number = 400,
-  ) {
-    super(message);
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -627,7 +584,12 @@ const registry: CoreService = {
 // Registry
 // ---------------------------------------------------------------------------
 
-export const CORE_SERVICES: Record<string, CoreService> = {
+/**
+ * Keyed by {@link CORE_SERVICE_NAMES}, so a namespace named there without a
+ * service wired here (or wired here without being named there) fails the
+ * build instead of surfacing as a missing namespace at runtime.
+ */
+export const CORE_SERVICES: Record<CoreServiceName, CoreService> = {
   keyvalue,
   events,
   vfs,
@@ -639,13 +601,10 @@ export const CORE_SERVICES: Record<string, CoreService> = {
   sync: syncService,
 };
 
-export function getCoreService(namespace: string): CoreService | undefined {
-  return CORE_SERVICES[namespace];
-}
+// Hand the registry to the kernel, so upstream modules (the workflow runner,
+// sync) can dispatch to a sibling namespace without importing this file.
+installCoreServices(CORE_SERVICES);
 
-/** Discovery entries for every core service (always available, no credential). */
-export function coreToolEntries(): ToolEntry[] {
-  return Object.entries(CORE_SERVICES).flatMap(([provider, service]) =>
-    service.tools.map((tool) => ({ ...tool, provider })),
-  );
-}
+// Lookup and discovery are the kernel's; re-exported here so `services.js`
+// stays the import site every route already uses.
+export { coreToolEntries, getCoreService } from "./service-kernel.js";

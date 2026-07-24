@@ -5,7 +5,7 @@
  * dependency; anything fancier should move to EventBridge Scheduler.
  */
 
-import { ServiceError } from "../services.js";
+import { ServiceError } from "../service-kernel.js";
 
 const FIELD_RANGES: Array<[number, number]> = [
   [0, 59], // minute

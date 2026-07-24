@@ -52,7 +52,7 @@ import {
   type QuickJSHandle,
 } from "quickjs-emscripten-core";
 import asyncifyVariant from "@jitl/quickjs-wasmfile-debug-asyncify";
-import { ServiceError } from "../services.js";
+import { ServiceError } from "../service-kernel.js";
 
 const newQuickJSAsyncWASMModule = () =>
   newQuickJSAsyncWASMModuleFromVariant(asyncifyVariant);

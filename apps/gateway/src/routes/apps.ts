@@ -49,7 +49,7 @@ import { countDailyCall } from "../apps/usage.js";
 import { getAuditStore } from "../audit.js";
 import { getMembership } from "../memberships.js";
 import { getAuthMode, readBearerToken, verifyAccessToken } from "../middleware/auth.js";
-import { ServiceError, type ServiceContext } from "../services.js";
+import { ServiceError, type ServiceContext } from "../service-kernel.js";
 import { getCurrentWorkspace } from "../sessions.js";
 import { invokeTool } from "../workflows/invoke.js";
 import { runWorkflow } from "../workflows/runner.js";

@@ -22,7 +22,7 @@
  * pointing at (3).
  */
 
-import { ServiceError } from "../services.js";
+import { ServiceError } from "../service-kernel.js";
 import { DEFAULT_DAILY_CALLS } from "./usage.js";
 import type { AppManifest } from "./store.js";
 

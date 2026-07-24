@@ -21,7 +21,7 @@
 import { getCredentialStore } from "../credentials.js";
 import { getFsStore } from "../fs-store.js";
 import { listInterfaces } from "../interfaces.js";
-import { CORE_SERVICES, ServiceError, type ServiceContext } from "../services.js";
+import { CORE_SERVICE_NAMES, ServiceError, type ServiceContext } from "../service-kernel.js";
 import { invokeTool } from "./invoke.js";
 import { runScriptInSandbox } from "./sandbox.js";
 import {
@@ -213,7 +213,7 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
   // through the alias resolution), plus any registry provider the script
   // references — public APIs (github, …) work without a credential, so a
   // missing credential must not strip the namespace.
-  const namespaces = new Set<string>(Object.keys(CORE_SERVICES));
+  const namespaces = new Set<string>(CORE_SERVICE_NAMES);
   for (const def of listInterfaces()) namespaces.add(def.id);
   const registryProviders = await utdkProviderNames();
   for (const match of scriptFile.content.matchAll(/([A-Za-z_$][\w$]*)\s*\./gu)) {

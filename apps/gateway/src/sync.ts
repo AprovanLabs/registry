@@ -20,12 +20,17 @@
  * `{ data }` wrappers.
  */
 
+import { getCredentialStore } from "./credentials.js";
 import { getFsStore } from "./fs-store.js";
-import { ServiceError, type CoreService, type ServiceContext } from "./services.js";
+import {
+  CORE_SERVICE_NAMES,
+  getCoreService,
+  ServiceError,
+  type CoreService,
+  type ServiceContext,
+} from "./service-kernel.js";
 import { invokeTool } from "./workflows/invoke.js";
 import { runScriptInSandbox } from "./workflows/sandbox.js";
-import { CORE_SERVICES } from "./services.js";
-import { getCredentialStore } from "./credentials.js";
 
 const SYNC_PREFIX = ".services/sync/";
 const SCRIPT_TIMEOUT_MS = 120_000;
@@ -192,7 +197,7 @@ async function runTransform(
   const file = await getFsStore().read(ctx.workspaceId, scriptPath);
   if (!file) throw new ServiceError(`Transform script not found: ${scriptPath}`, 404);
 
-  const namespaces = new Set<string>(Object.keys(CORE_SERVICES));
+  const namespaces = new Set<string>(CORE_SERVICE_NAMES);
   try {
     for (const credential of await getCredentialStore().list(ctx.workspaceId)) {
       namespaces.add(credential.provider);
@@ -290,7 +295,7 @@ async function ensureSchedule(
   ctx: ServiceContext,
   registration: SyncRegistration,
 ): Promise<void> {
-  const workflows = CORE_SERVICES["workflows"]!;
+  const workflows = getCoreService("workflows")!;
   if (!registration.schedule) return;
   const runnerPath = `${SYNC_PREFIX}${registration.name}.run.js`;
   await getFsStore().write(
@@ -440,7 +445,7 @@ export const syncService: CoreService = {
         const store = getFsStore();
         await store.remove(ctx.workspaceId, syncPath(name)).catch(() => {});
         if (registration.schedule) {
-          await CORE_SERVICES["workflows"]!.call(ctx, "remove", {
+          await getCoreService("workflows")!.call(ctx, "remove", {
             name: companionWorkflow(name),
           }).catch(() => {});
           await store.remove(ctx.workspaceId, `${SYNC_PREFIX}${name}.run.js`).catch(() => {});

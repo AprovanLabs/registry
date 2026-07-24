@@ -11,7 +11,7 @@ import {
   resolveInterface,
   writeBinding,
 } from "./interfaces.js";
-import { ServiceError, type CoreService } from "./services.js";
+import { ServiceError, type CoreService } from "./service-kernel.js";
 
 export const interfacesService: CoreService = {
   tools: [

@@ -22,7 +22,7 @@
 import { getFsStore } from "./fs-store.js";
 import { getCredentialStore } from "./credentials.js";
 import { listLlmProviders } from "./llm.js";
-import { ServiceError } from "./services.js";
+import { ServiceError } from "./service-kernel.js";
 
 const BINDINGS_PATH = ".services/bindings.json";
 

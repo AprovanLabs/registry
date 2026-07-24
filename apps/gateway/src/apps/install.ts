@@ -16,7 +16,7 @@
  */
 
 import { getFsStore } from "../fs-store.js";
-import { ServiceError } from "../services.js";
+import { ServiceError } from "../service-kernel.js";
 import { workspacePath, type AppManifest, type AppPaths } from "./store.js";
 
 const INSTALLED_PREFIX = ".services/apps/installed/";

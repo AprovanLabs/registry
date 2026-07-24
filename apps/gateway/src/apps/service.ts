@@ -24,7 +24,7 @@
  * round-trips to render.
  */
 
-import { ServiceError, type CoreService } from "../services.js";
+import { ServiceError, type CoreService } from "../service-kernel.js";
 import { hookPath } from "../workflows/service.js";
 import { listRegistrations, listRuns, type WorkflowRegistration } from "../workflows/store.js";
 import {

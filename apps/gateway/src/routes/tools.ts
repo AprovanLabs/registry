@@ -17,21 +17,21 @@
 import { withSpan } from "@utdk/common/telemetry";
 import { llmToolEntries as llmDiscoveryEntries } from "@utdk/llm";
 import { Hono } from "hono";
-import { mayInvokeTool } from "../authorize.js";
 import { getAuditStore } from "../audit.js";
+import { mayInvokeTool } from "../authorize.js";
 import { getCredentialStore } from "../credentials.js";
-import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
 import { isInterface, listInterfaces, resolveInterfaceForWorkspace } from "../interfaces.js";
+import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
 import { isLlmProvider, resolveLlmProvider } from "../llm.js";
 import { getAuthMode, requireAuth } from "../middleware/auth.js";
+import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
+import { OAuthExchangeError, resolveToInjectable } from "../oauthTokens.js";
+import { ServiceError } from "../service-kernel.js";
 import {
   catalogToolEntries,
   coreToolEntries,
   getCoreService,
-  ServiceError,
 } from "../services.js";
-import { OAuthExchangeError, resolveToInjectable } from "../oauthTokens.js";
-import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import type { ToolCallRequest } from "../contract.js";
 import type { CredentialPayload } from "../credentials.js";
 

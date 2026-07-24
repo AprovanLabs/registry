@@ -11,7 +11,7 @@
  * as the new latest.
  */
 
-import { ServiceError, type CoreService } from "../services.js";
+import { ServiceError, type CoreService } from "../service-kernel.js";
 import { parseCron } from "./cron.js";
 import { runWorkflowByName } from "./runner.js";
 import {
