@@ -98,15 +98,22 @@
  * "container needs a width and a height" warning). Flex stretch gives the
  * child a definite size instead.
  */
+/*
+ * The floor is a custom property so a host pane can hand the graph a real
+ * canvas (the workflow detail pane sets ~420px on desktop, more in `fill`
+ * mode) without this stylesheet knowing about any particular host. TailorFlow
+ * sets the variable from its `canvasMinHeight` prop; the fallback keeps the
+ * old floor for hosts that pass nothing.
+ */
 .tailor-canvas {
   display: flex;
   flex: 1;
-  min-height: 320px;
+  min-height: var(--tailor-canvas-min-h, 320px);
 }
 
 .tailor-canvas > .react-flow {
   flex: 1;
-  min-height: 320px;
+  min-height: var(--tailor-canvas-min-h, 320px);
 }
 
 /*

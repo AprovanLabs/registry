@@ -21,7 +21,10 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
         <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-sm">dataScope</code>
         decides where an app user's data physically lands: the publisher's
         workspace, or the caller's own. Releases pin a channel to an immutable
-        version, so promoting and rolling back are instant.
+        version, so promoting and rolling back are instant. Workflows live
+        here too: each one appears under the app that exports it — permissions
+        ride the app — and workspace workflows no app has bundled sit in the
+        Workspace group of the same panel.
       </p>
     </section>
 

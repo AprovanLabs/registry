@@ -24,6 +24,7 @@ import {
   ConfirmDeleteButton,
   CopyChip,
   DataScopeBadge,
+  DatabaseIcon,
   Empty,
   ErrorLine,
   FIELD,
@@ -32,9 +33,13 @@ import {
   ReleaseChip,
   SMALL_BUTTON,
   SectionHeading,
+  Segmented,
+  Stat,
   StatusDot,
   Tabs,
+  TagsInput,
   TriggerBadges,
+  UserChip,
   VisibilityBadge,
   formatWhen,
   useLoader,
@@ -245,85 +250,141 @@ function WorkflowsTab({
 // Access tab
 // ---------------------------------------------------------------------------
 
-function ReachList({
+/**
+ * Where an app user's data physically lands, as a *path*. The truthfulness
+ * rule: the gateway's `apps.capabilities` `partitioning.path` (carried on the
+ * merged native reaches) wins; a gateway `dataLocation` that is itself a bare
+ * path is next; only then the manifest-derived default.
+ */
+function dataLocationPath(model: CapabilityModel, app: AppSummary): string {
+  const fromReach = model.native.find(
+    (reach) => reach.id !== "events" && reach.location && !/\s/.test(reach.location),
+  )?.location;
+  if (fromReach) return fromReach;
+  if (model.fromGateway && model.dataLocation && !/\s/.test(model.dataLocation)) {
+    return model.dataLocation;
+  }
+  const root = app.paths?.[0] ?? (app.entry ? app.entry.replace(/\/[^/]*$/, "") : app.name);
+  return model.dataScope === "workspace" ? "<install prefix>/data" : `${root}/data/<app user>`;
+}
+
+/** Icon + monospace path + one short line: the data-location callout. */
+function DataLocationCallout({ model, app }: { model: CapabilityModel; app: AppSummary }) {
+  return (
+    <div className="flex items-start gap-2.5 rounded-lg border bg-muted/20 px-3 py-2.5">
+      <DatabaseIcon className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+      <div className="min-w-0 space-y-0.5">
+        <code className="block break-all font-mono text-xs font-medium">
+          {dataLocationPath(model, app)}
+        </code>
+        <p className="text-[0.7rem] text-muted-foreground">
+          {model.dataScope === "workspace"
+            ? "Self-hosted — data lives in each caller's own workspace; the publisher stores nothing and lends no credentials."
+            : "Owner-hosted — one private partition per app user, stored in the publishing workspace."}
+        </p>
+        {!model.fromGateway && (
+          <p className="text-[0.65rem] text-muted-foreground/80">
+            Derived from the manifest — this gateway doesn't report capabilities yet.
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/** One reach: namespace chip, plain-language label, procedure badges, location. */
+function ReachRow({ reach }: { reach: CapabilityReach }) {
+  return (
+    <div className="rounded-md border px-2 py-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <code className="rounded bg-muted px-1.5 py-0.5 font-mono text-[0.7rem] font-medium">
+          {reach.id}
+        </code>
+        {reach.label !== reach.id && <span className="text-xs">{reach.label}</span>}
+        {reach.entries?.map((entry) => (
+          <code className={`${BADGE} border-border font-mono text-muted-foreground`} key={entry}>
+            {entry}
+          </code>
+        ))}
+      </div>
+      {reach.detail && <p className="mt-1 text-[0.7rem] text-muted-foreground">{reach.detail}</p>}
+      {reach.location && (
+        <p className="mt-1 break-all font-mono text-[0.68rem] text-muted-foreground">
+          → {reach.location}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * One of the three reach tiers from the "three ways data is reached" model,
+ * as a distinct numbered card rather than a run of prose.
+ */
+function ReachTier({
+  index,
   title,
   hint,
   reaches,
   empty,
 }: {
+  index: number;
   title: string;
   hint: string;
   reaches: CapabilityReach[];
   empty: string;
 }) {
   return (
-    <div className="space-y-1">
-      <SectionHeading>{title}</SectionHeading>
-      <p className="text-[0.7rem] text-muted-foreground">{hint}</p>
-      {reaches.length === 0 ? (
-        <Empty>{empty}</Empty>
-      ) : (
-        <div className="space-y-1">
-          {reaches.map((reach) => (
-            <div className="rounded-md border px-2.5 py-1.5" key={`${reach.kind}:${reach.id}`}>
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="text-xs font-medium">{reach.label}</span>
-                {reach.entries?.map((entry) => (
-                  <code className={`${BADGE} border-border font-mono text-muted-foreground`} key={entry}>
-                    {entry}
-                  </code>
-                ))}
-              </div>
-              {reach.detail && (
-                <p className="mt-0.5 text-[0.7rem] text-muted-foreground">{reach.detail}</p>
-              )}
-              {reach.location && (
-                <p className="mt-0.5 text-[0.7rem] text-muted-foreground">
-                  Lives at <code className="font-mono">{reach.location}</code>
-                </p>
-              )}
-            </div>
-          ))}
+    <div className="overflow-hidden rounded-lg border">
+      <div className="flex items-start gap-2 border-b bg-muted/30 px-2.5 py-1.5">
+        <span className="mt-px flex h-4 w-4 shrink-0 items-center justify-center rounded-full border bg-background text-[0.62rem] font-semibold text-muted-foreground">
+          {index}
+        </span>
+        <div className="min-w-0">
+          <SectionHeading>{title}</SectionHeading>
+          <p className="text-[0.68rem] text-muted-foreground">{hint}</p>
         </div>
-      )}
+      </div>
+      <div className="space-y-1.5 p-2">
+        {reaches.length === 0 ? (
+          <Empty>{empty}</Empty>
+        ) : (
+          reaches.map((reach) => <ReachRow key={`${reach.kind}:${reach.id}`} reach={reach} />)
+        )}
+      </div>
     </div>
   );
 }
 
-function CapabilitiesView({ model }: { model: CapabilityModel }) {
+function CapabilitiesView({ model, app }: { model: CapabilityModel; app: AppSummary }) {
   return (
-    <div className="space-y-3">
-      <div className="rounded-md border bg-muted/20 px-2.5 py-2">
-        <SectionHeading>Where this app's data lives</SectionHeading>
-        <p className="mt-0.5 text-xs">{model.dataLocation}</p>
-        {!model.fromGateway && (
-          <p className="mt-1 text-[0.65rem] text-muted-foreground">
-            Derived from the manifest — this gateway doesn't report capabilities yet.
-          </p>
-        )}
-      </div>
+    <div className="space-y-2.5">
+      <DataLocationCallout app={app} model={model} />
 
-      <ReachList
+      <ReachTier
         empty="No native namespaces allowed."
         hint="First-party namespaces, automatically partitioned per app user and rate-limited. No credential, no workspace membership."
+        index={1}
         reaches={model.native}
-        title="1 · Native, auto-partitioned"
+        title="Native, auto-partitioned"
       />
-      <ReachList
+      <ReachTier
         empty="No provider is reachable — this app is entirely self-contained."
         hint="Provider namespaces run with the owning workspace's credential. An app session can never call one directly; it goes through an exported workflow, which is where a secret comes near the request."
+        index={2}
         reaches={model.credentialed}
-        title="2 · Workspace-credentialed"
+        title="Workspace-credentialed"
       />
-      <ReachList
+      <ReachTier
         empty="No exported workflows."
         hint="The BFF boundary: allow-listed by name, traced, rate-limited."
+        index={3}
         reaches={model.workflows}
-        title="3 · Exported workflows"
+        title="Exported workflows"
       />
 
       {model.rejected.length > 0 && (
-        <div className="rounded-md border border-red-300 px-2.5 py-2 dark:border-red-900">
+        <div className="rounded-lg border border-red-300 px-2.5 py-2 dark:border-red-900">
           <SectionHeading>Not reachable from an app session</SectionHeading>
           <p className="mt-0.5 text-[0.7rem] text-muted-foreground">
             These allow-list entries name neither a native namespace nor one of this app's
@@ -361,8 +422,8 @@ function AppSettings({
 }) {
   const [visibility, setVisibility] = React.useState(app.visibility);
   const [access, setAccess] = React.useState(app.roles?.access ?? "any");
-  const [users, setUsers] = React.useState((app.roles?.users ?? []).join("\n"));
-  const [tools, setTools] = React.useState((app.allowedTools ?? []).join("\n"));
+  const [users, setUsers] = React.useState<string[]>(app.roles?.users ?? []);
+  const [tools, setTools] = React.useState<string[]>(app.allowedTools ?? []);
   const [rps, setRps] = React.useState(String(app.rateLimit?.rps ?? 5));
   const [daily, setDaily] = React.useState(String(app.rateLimit?.daily ?? 1000));
   const [saving, setSaving] = React.useState(false);
@@ -372,21 +433,15 @@ function AppSettings({
     setSaving(true);
     setStatus(null);
     try {
-      const allowedTools = tools
-        .split("\n")
-        .map((line) => line.trim())
-        .filter(Boolean);
       await invoke("publish", {
         name: app.name,
         entry: app.entry,
         paths: app.paths,
         visibility,
-        allowed_tools: allowedTools,
+        allowed_tools: tools,
         roles: {
           access,
-          ...(access === "listed"
-            ? { users: users.split("\n").map((line) => line.trim()).filter(Boolean) }
-            : {}),
+          ...(access === "listed" ? { users } : {}),
         },
         rate_limit: {
           rps: Number(rps) > 0 ? Number(rps) : 5,
@@ -404,55 +459,53 @@ function AppSettings({
 
   return (
     <div className="space-y-2.5">
-      <div className="grid gap-2.5 sm:grid-cols-2">
-        <div>
+      <div className="flex flex-wrap items-end gap-x-5 gap-y-2.5">
+        <div className="space-y-1">
           <label className={LABEL}>Page visibility</label>
-          <select
-            className={FIELD}
-            onChange={(event) => setVisibility(event.target.value as typeof visibility)}
+          <Segmented
+            ariaLabel="Page visibility"
+            onChange={setVisibility}
+            options={[
+              { value: "private", label: "Private", hint: "An Aprovan account is required" },
+              { value: "public", label: "Public", hint: "Anyone can open the page" },
+            ]}
             value={visibility}
-          >
-            <option value="private">private — Aprovan account required</option>
-            <option value="public">public — anyone can open the page</option>
-          </select>
+          />
         </div>
-        <div>
+        <div className="space-y-1">
           <label className={LABEL}>Who may use it</label>
-          <select
-            className={FIELD}
-            onChange={(event) => setAccess(event.target.value as typeof access)}
+          <Segmented
+            ariaLabel="Who may use it"
+            onChange={setAccess}
+            options={[
+              { value: "any", label: "Any signed-in account" },
+              { value: "listed", label: "Only listed users" },
+            ]}
             value={access}
-          >
-            <option value="any">any signed-in account</option>
-            <option value="listed">only listed users</option>
-          </select>
+          />
         </div>
       </div>
       {access === "listed" && (
-        <div>
-          <label className={LABEL}>Allowed users (Cognito subs, one per line)</label>
-          <textarea
-            className={FIELD}
-            onChange={(event) => setUsers(event.target.value)}
-            rows={2}
-            spellCheck={false}
+        <div className="space-y-1">
+          <label className={LABEL}>Allowed users (Cognito subs)</label>
+          <TagsInput
+            ariaLabel="Allowed users"
+            onChange={setUsers}
+            placeholder="Add a Cognito sub and press Enter…"
             value={users}
           />
         </div>
       )}
-      <div>
-        <label className={LABEL}>
-          Tool allow-list (namespace.procedure or namespace.*, one per line)
-        </label>
-        <textarea
-          className={FIELD}
-          onChange={(event) => setTools(event.target.value)}
-          rows={3}
-          spellCheck={false}
+      <div className="space-y-1">
+        <label className={LABEL}>Tool allow-list</label>
+        <TagsInput
+          ariaLabel="Tool allow-list"
+          onChange={setTools}
+          placeholder="namespace.procedure or namespace.*, press Enter…"
           value={tools}
         />
       </div>
-      <div className="grid gap-2.5 sm:grid-cols-2">
+      <div className="grid max-w-sm gap-2.5 sm:grid-cols-2">
         <div>
           <label className={LABEL}>Requests / second / user</label>
           <input
@@ -517,44 +570,59 @@ function AccessTab({
   const model = data ?? deriveCapabilities(app, workflows);
 
   return (
-    <div className="space-y-4">
-      <CapabilitiesView model={model} />
+    <div className="space-y-3">
+      <CapabilitiesView app={app} model={model} />
 
-      <div className="space-y-1">
-        <SectionHeading>Roles</SectionHeading>
-        <FieldRow label="Access">
-          {app.roles?.access === "listed"
-            ? `only ${app.roles.users?.length ?? 0} listed user(s)`
-            : "any signed-in Aprovan account"}
-        </FieldRow>
-        <FieldRow label="Admins">
-          {app.roles?.admins?.length ? (
-            <span className="flex flex-wrap gap-1.5">
-              {app.roles.admins.map((admin) => (
-                <code className="font-mono text-[0.7rem]" key={admin}>
-                  {admin}
-                </code>
-              ))}
-            </span>
+      {/* Roles as chips, not prose: who may open it, who administers it. */}
+      <div className="grid gap-2 sm:grid-cols-2">
+        <div className="space-y-1.5 rounded-lg border px-2.5 py-2">
+          <SectionHeading>Who may open it</SectionHeading>
+          {app.roles?.access === "listed" ? (
+            app.roles.users?.length ? (
+              <div className="flex flex-wrap gap-1">
+                {app.roles.users.map((user) => (
+                  <UserChip id={user} key={user} />
+                ))}
+              </div>
+            ) : (
+              <Empty>Listed users only — none listed yet.</Empty>
+            )
           ) : (
-            <span className="text-muted-foreground">the publishing workspace's members</span>
+            <span className={`${BADGE} border-border text-muted-foreground`}>
+              Any signed-in account
+            </span>
           )}
-        </FieldRow>
-        <FieldRow label="Rate limit">
-          {app.rateLimit
-            ? [
-                app.rateLimit.rps !== undefined ? `${app.rateLimit.rps} req/s` : null,
-                app.rateLimit.burst !== undefined ? `burst ${app.rateLimit.burst}` : null,
-                app.rateLimit.daily !== undefined ? `${app.rateLimit.daily}/day` : null,
-              ]
-                .filter(Boolean)
-                .join(" · ")
-            : "gateway defaults"}{" "}
-          <span className="text-muted-foreground">per app user</span>
-        </FieldRow>
+        </div>
+        <div className="space-y-1.5 rounded-lg border px-2.5 py-2">
+          <SectionHeading>Admins</SectionHeading>
+          {app.roles?.admins?.length ? (
+            <div className="flex flex-wrap gap-1">
+              {app.roles.admins.map((admin) => (
+                <UserChip id={admin} key={admin} />
+              ))}
+            </div>
+          ) : (
+            <span className={`${BADGE} border-border text-muted-foreground`}>
+              Workspace members
+            </span>
+          )}
+        </div>
       </div>
 
-      <div className="space-y-1 border-t pt-3">
+      {/* Rate limit as a scannable stat row rather than a sentence. */}
+      <div className="space-y-1">
+        <SectionHeading hint="Enforced per app user">Rate limit</SectionHeading>
+        <div className="flex flex-wrap items-center gap-1.5">
+          <Stat label="req / s" value={app.rateLimit?.rps ?? "—"} />
+          <Stat label="burst" value={app.rateLimit?.burst ?? "—"} />
+          <Stat label="per day" value={app.rateLimit?.daily ?? "—"} />
+          <span className="text-[0.65rem] text-muted-foreground">
+            per app user{app.rateLimit ? "" : " · gateway defaults"}
+          </span>
+        </div>
+      </div>
+
+      <div className="space-y-1.5 border-t pt-2.5">
         <SectionHeading>Edit access &amp; limits</SectionHeading>
         <AppSettings app={app} invoke={invoke} onSaved={onChanged} />
       </div>

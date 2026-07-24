@@ -345,6 +345,7 @@ export function AppsPanel({
                   <span className="text-[0.7rem] text-muted-foreground">Workspace</span>
                 )
               }
+              fill={fill}
               invoke={invoke}
               key={selectedWorkflow.workflow.name}
               loadScript={loadScript}

@@ -26,7 +26,7 @@ export const TINY_BUTTON =
   "rounded border px-1.5 py-0.5 text-[0.65rem] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
 
 export const BADGE =
-  "inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[0.65rem] font-medium";
+  "inline-flex items-center gap-1 rounded-full border px-1.5 py-px text-[0.65rem] font-medium leading-4";
 
 export const FIELD =
   "w-full rounded-md border bg-transparent px-2 py-1 font-mono text-xs outline-none focus-visible:border-ring";
@@ -260,6 +260,191 @@ export function ReleaseChip({ app }: { app: AppSummary }) {
       {channel ?? "live"}
       {release && <code className="font-mono">{release.slice(0, 8)}</code>}
     </span>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Structured form controls
+//
+// The Access tab used to communicate everything as prose and bare textareas.
+// These atoms replace that: a segmented control for two-or-three-way choices,
+// a tag-style list editor for line-oriented values (allow-list entries, user
+// subs), and a stat tile for numbers that deserve to be scanned, not read.
+// ---------------------------------------------------------------------------
+
+/** Two-to-four mutually exclusive options as a compact button group. */
+export function Segmented<T extends string>({
+  options,
+  value,
+  onChange,
+  ariaLabel,
+}: {
+  options: ReadonlyArray<{ value: T; label: string; hint?: string }>;
+  value: T;
+  onChange: (next: T) => void;
+  ariaLabel?: string;
+}) {
+  return (
+    <div
+      aria-label={ariaLabel}
+      className="inline-flex overflow-hidden rounded-md border"
+      role="radiogroup"
+    >
+      {options.map((option, index) => (
+        <button
+          aria-checked={option.value === value}
+          className={`px-2.5 py-1 text-xs transition-colors ${
+            index > 0 ? "border-l" : ""
+          } ${
+            option.value === value
+              ? "bg-primary font-medium text-primary-foreground"
+              : "bg-transparent text-muted-foreground hover:bg-muted hover:text-foreground"
+          }`}
+          key={option.value}
+          onClick={() => onChange(option.value)}
+          role="radio"
+          title={option.hint}
+          type="button"
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Tag-style editor for a list of short strings: chips with an inline input.
+ * Enter / comma / paste-with-newlines add; backspace on an empty input (or a
+ * chip's ×) removes. Replaces "one per line" textareas, which read as a blob.
+ */
+export function TagsInput({
+  value,
+  onChange,
+  placeholder,
+  ariaLabel,
+}: {
+  value: string[];
+  onChange: (next: string[]) => void;
+  placeholder?: string;
+  ariaLabel?: string;
+}) {
+  const [draft, setDraft] = React.useState("");
+
+  const commit = (text: string) => {
+    const parts = text
+      .split(/[\n,]+/)
+      .map((part) => part.trim())
+      .filter(Boolean)
+      .filter((part) => !value.includes(part));
+    if (parts.length) onChange([...value, ...parts]);
+    setDraft("");
+  };
+
+  return (
+    <div className="flex min-h-[1.9rem] flex-wrap items-center gap-1 rounded-md border bg-transparent px-1.5 py-1 focus-within:border-ring">
+      {value.map((tag) => (
+        <span
+          className="inline-flex items-center gap-1 rounded border bg-muted/40 px-1.5 py-0.5 font-mono text-[0.7rem]"
+          key={tag}
+        >
+          {tag}
+          <button
+            aria-label={`Remove ${tag}`}
+            className="text-muted-foreground hover:text-foreground"
+            onClick={() => onChange(value.filter((entry) => entry !== tag))}
+            type="button"
+          >
+            ×
+          </button>
+        </span>
+      ))}
+      <input
+        aria-label={ariaLabel}
+        className="min-w-[8rem] flex-1 bg-transparent px-1 py-0.5 font-mono text-xs outline-none placeholder:text-muted-foreground/70"
+        onBlur={() => {
+          if (draft.trim()) commit(draft);
+        }}
+        onChange={(event) => setDraft(event.target.value)}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === ",") {
+            event.preventDefault();
+            commit(draft);
+          } else if (event.key === "Backspace" && draft === "" && value.length > 0) {
+            onChange(value.slice(0, -1));
+          }
+        }}
+        onPaste={(event) => {
+          const text = event.clipboardData.getData("text");
+          if (/[\n,]/.test(text)) {
+            event.preventDefault();
+            commit(draft + text);
+          }
+        }}
+        placeholder={value.length === 0 ? placeholder : undefined}
+        spellCheck={false}
+        value={draft}
+      />
+    </div>
+  );
+}
+
+/** One number worth scanning: a compact labelled tile for the rate-limit row. */
+export function Stat({
+  label,
+  value,
+  hint,
+}: {
+  label: string;
+  value: React.ReactNode;
+  hint?: string;
+}) {
+  return (
+    <div className="rounded-md border px-2 py-1" title={hint}>
+      <div className="text-sm font-semibold leading-5 tabular-nums">{value}</div>
+      <div className="text-[0.62rem] uppercase tracking-wide text-muted-foreground">{label}</div>
+    </div>
+  );
+}
+
+/** Identity chip: initial avatar + shortened id, full value on hover. */
+export function UserChip({ id }: { id: string }) {
+  const short = id.length > 14 ? `${id.slice(0, 12)}…` : id;
+  return (
+    <span
+      className="inline-flex items-center gap-1.5 rounded-full border py-0.5 pl-0.5 pr-2"
+      title={id}
+    >
+      <span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-muted text-[0.6rem] font-semibold uppercase text-muted-foreground">
+        {id.slice(0, 1)}
+      </span>
+      <code className="font-mono text-[0.68rem]">{short}</code>
+    </span>
+  );
+}
+
+/**
+ * Lucide's `database`, inlined (same rationale as {@link RefreshIcon}): the
+ * data-location callout needs an icon and the icon set is the host's
+ * dependency, not this package's.
+ */
+export function DatabaseIcon({ className }: { className?: string }) {
+  return (
+    <svg
+      aria-hidden="true"
+      className={className ?? "h-4 w-4"}
+      fill="none"
+      stroke="currentColor"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      strokeWidth="2"
+      viewBox="0 0 24 24"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <ellipse cx="12" cy="5" rx="9" ry="3" />
+      <path d="M3 5V19A9 3 0 0 0 21 19V5" />
+      <path d="M3 12A9 3 0 0 0 21 12" />
+    </svg>
   );
 }
 

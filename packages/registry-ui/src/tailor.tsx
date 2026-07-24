@@ -16,10 +16,17 @@
  * Host requirements:
  *   - `@import "@aprovan/registry-ui/tailor.css"` in the app's Tailwind entry
  *   - `import "@xyflow/react/dist/style.css"` once per app
+ *
+ * Hosts that skip these still get a usable graph: the component self-injects
+ * React Flow's base stylesheet and the tailor.css variables as a lowest-
+ * priority fallback (see {@link ensureBaseStyles}) — the imports above remain
+ * the supported path and always win by document order.
  */
 
 import { Background, Controls, ReactFlow, type Node } from "@xyflow/react";
+import xyBaseCss from "@xyflow/react/dist/base.css";
 import * as React from "react";
+import tailorCss from "./tailor.css";
 import {
   isWorkflowScript,
   registerRenderer,
@@ -39,6 +46,31 @@ import type { StepNodeData, ParallelNodeData } from "./tailor/node-types";
 import type { FlowAnalysis, FocusView } from "./tailor/types";
 
 const nodeTypes = { step: StepNode, parallel: ParallelNode };
+
+/**
+ * Self-injected critical styles.
+ *
+ * The header contract asks hosts to import `@xyflow/react/dist/style.css` and
+ * `tailor.css` — but a host that forgets gets a 48px letterbox with no pan, no
+ * zoom, and unthemed nodes, which is exactly how the registry's /apps page
+ * shipped. So the graph carries its own floor: React Flow's *base* stylesheet
+ * (layout + interaction, no theming) plus tailor.css with its `@theme` block
+ * demoted to `:root` (browsers ignore the Tailwind at-rule; the variables are
+ * what matter). Injected as the FIRST style in <head>, so any stylesheet the
+ * host actually imports still wins every tie by document order.
+ */
+const injectedCss = `${xyBaseCss}\n${tailorCss.replace(/^@theme\s*\{/m, ":root {")}`;
+
+let stylesInjected = false;
+function ensureBaseStyles() {
+  if (stylesInjected || typeof document === "undefined") return;
+  stylesInjected = true;
+  if (document.head.querySelector("style[data-tailor-base]")) return;
+  const style = document.createElement("style");
+  style.setAttribute("data-tailor-base", "");
+  style.textContent = injectedCss;
+  document.head.prepend(style);
+}
 
 /**
  * React Flow ships its own light/dark variable sets keyed off a `dark` class
@@ -76,6 +108,13 @@ export interface TailorFlowProps {
    * pure preview: no run button, no run overlay.
    */
   run?: WorkflowRunCapability;
+  /**
+   * Minimum height of the graph canvas (any CSS length; numbers are px).
+   * Default 320px from tailor.css. A detail pane that owns real vertical
+   * space should raise this — a graph in a 320px letterbox is decorative,
+   * not usable.
+   */
+  canvasMinHeight?: number | string;
   className?: string;
 }
 
@@ -84,8 +123,13 @@ export function TailorFlow({
   showImports = true,
   showParams = true,
   run,
+  canvasMinHeight,
   className,
 }: TailorFlowProps): React.ReactElement {
+  // Style injection before first paint — layout is unusable without it on
+  // hosts that skipped the stylesheet imports, and a no-op everywhere else.
+  React.useInsertionEffect(() => ensureBaseStyles(), []);
+
   const capabilities = useRendererCapabilities();
   const runCapability = run ?? capabilities.workflowRun;
 
@@ -276,13 +320,49 @@ export function TailorFlow({
     return () => observer.disconnect();
   }, []);
 
-  // A new graph (script change / focus navigation) also needs a fit once
-  // nodes are measured.
+  // A new graph *structure* (script change / focus navigation) needs a fit
+  // once nodes are measured. Keyed on the node ids, NOT the graph object:
+  // hover highlights and run overlays rebuild the same structure, and
+  // refitting on those would yank the viewport out from under a user who has
+  // panned or zoomed — the "can't scroll through the graph" complaint.
+  const structureKey = React.useMemo(
+    () => graph.nodes.map((node) => node.id).join("|"),
+    [graph.nodes],
+  );
   React.useEffect(() => {
-    if (graph.nodes.length === 0) return;
+    if (!structureKey) return;
     const timer = window.setTimeout(() => flowRef.current?.fitView({ padding: 0.15 }), 50);
     return () => window.clearTimeout(timer);
-  }, [graph]);
+  }, [structureKey]);
+
+  // A newly selected/finished run repaints the overlay — refit once so its
+  // status is in view, animated so the jump reads as intentional. Keyed on
+  // the run record's identity: hover/highlight churn never replaces it.
+  React.useEffect(() => {
+    if (!activeRun) return;
+    const timer = window.setTimeout(
+      () => flowRef.current?.fitView({ padding: 0.15, duration: 300 }),
+      60,
+    );
+    return () => window.clearTimeout(timer);
+  }, [activeRun]);
+
+  // Maximize: the same component fixed over the page, because a graph is the
+  // one part of this pane that genuinely wants all the room it can get.
+  const [maximized, setMaximized] = React.useState(false);
+  React.useEffect(() => {
+    // Entering OR leaving changes the canvas size drastically; re-fit either way.
+    const timer = window.setTimeout(() => flowRef.current?.fitView({ padding: 0.15 }), 80);
+    if (!maximized) return () => window.clearTimeout(timer);
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMaximized(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.clearTimeout(timer);
+    };
+  }, [maximized]);
 
   /** Trace row → node: centre the node that produced the hovered/clicked span. */
   const focusNodeForSpan = React.useCallback(
@@ -307,20 +387,83 @@ export function TailorFlow({
     [correlation],
   );
 
+  // Host-tunable canvas floor, carried by the CSS variable tailor.css reads.
+  // When maximized the overlay's own height rules, so the floor is dropped.
+  const rootStyle: React.CSSProperties | undefined = maximized
+    ? ({ "--tailor-canvas-min-h": "0px" } as React.CSSProperties)
+    : canvasMinHeight !== undefined
+      ? ({
+          "--tailor-canvas-min-h":
+            typeof canvasMinHeight === "number" ? `${canvasMinHeight}px` : canvasMinHeight,
+        } as React.CSSProperties)
+      : undefined;
+
   return (
-    <div className={`flex min-h-[380px] flex-col ${className ?? ""}`}>
-      <div className="flex flex-wrap items-center justify-between gap-1.5 border-b bg-muted/50 px-3.5">
+    <div
+      className={
+        maximized
+          ? "fixed inset-3 z-50 flex flex-col overflow-hidden rounded-lg border bg-card shadow-2xl"
+          : `flex min-h-[380px] flex-col ${className ?? ""}`
+      }
+      style={rootStyle}
+    >
+      <div className="flex flex-wrap items-center gap-1.5 border-b bg-muted/50 px-3.5">
         <div className="py-2.5 text-[0.7rem] font-bold uppercase tracking-[0.08em] text-muted-foreground">
           Flow
         </div>
-        {analysis && (
-          <Breadcrumbs
-            focusStack={focusStack}
-            fnName={analysis.fnName}
-            onNavigate={(i) => setFocusStack((prev) => prev.slice(0, i + 1))}
-            onReset={() => setFocusStack([])}
-          />
-        )}
+        <div className="ml-auto flex items-center gap-1.5">
+          {analysis && (
+            <Breadcrumbs
+              focusStack={focusStack}
+              fnName={analysis.fnName}
+              onNavigate={(i) => setFocusStack((prev) => prev.slice(0, i + 1))}
+              onReset={() => setFocusStack([])}
+            />
+          )}
+          <button
+            aria-label={maximized ? "Exit full view" : "Maximize graph"}
+            className="rounded p-1 text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            onClick={() => setMaximized((previous) => !previous)}
+            title={maximized ? "Exit full view (Esc)" : "Maximize graph"}
+            type="button"
+          >
+            {maximized ? (
+              <svg
+                aria-hidden="true"
+                className="h-3.5 w-3.5"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline points="4 14 10 14 10 20" />
+                <polyline points="20 10 14 10 14 4" />
+                <line x1="14" x2="21" y1="10" y2="3" />
+                <line x1="3" x2="10" y1="21" y2="14" />
+              </svg>
+            ) : (
+              <svg
+                aria-hidden="true"
+                className="h-3.5 w-3.5"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <polyline points="15 3 21 3 21 9" />
+                <polyline points="9 21 3 21 3 15" />
+                <line x1="21" x2="14" y1="3" y2="10" />
+                <line x1="3" x2="10" y1="21" y2="14" />
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
 
       {error && (
@@ -334,6 +477,9 @@ export function TailorFlow({
           colorMode={colorMode}
           edges={graph.edges}
           fitView
+          // Default minZoom (0.5) stops fitView from ever framing a long
+          // pipeline — the graph renders pre-clipped and looks unpannable.
+          minZoom={0.1}
           nodes={graph.nodes}
           nodeTypes={nodeTypes}
           onInit={(instance) => {
@@ -349,7 +495,13 @@ export function TailorFlow({
       </div>
 
       {(showImports || showParams || runModel) && analysis && (
-        <div className="flex flex-col gap-3 border-t p-3">
+        <div
+          className={`flex flex-col gap-3 border-t p-3 ${
+            // In the overlay the graph owns the height; the form/trace stack
+            // scrolls within a capped strip instead of squeezing the canvas.
+            maximized ? "max-h-[42%] shrink-0 overflow-y-auto" : ""
+          }`}
+        >
           {showImports && atRoot && analysis.imports.length > 0 && (
             <ImportsPanel imports={analysis.imports} />
           )}

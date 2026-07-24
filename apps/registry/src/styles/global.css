@@ -2,6 +2,12 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 @import "@fontsource-variable/geist";
+/* TailorFlow's graph needs React Flow's layout CSS and its own theme; without
+   these the canvas collapses to a sliver. registry-ui self-injects a runtime
+   fallback, but the static import is the supported path (full theming, no
+   flash when the lazy graph mounts). */
+@import "@xyflow/react/dist/style.css";
+@import "@aprovan/registry-ui/tailor.css";
 
 /* Workspace/shared packages are symlinked under node_modules, which Tailwind's
    automatic source detection skips — register them explicitly so their

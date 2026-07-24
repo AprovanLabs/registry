@@ -17,6 +17,15 @@ export default defineConfig({
   dts: true,
   clean: true,
   external: ["react"],
+  // CSS imports become their text: tailor.tsx bundles the React Flow base
+  // stylesheet (and its own tailor.css) to self-inject at runtime, so the
+  // graph stays usable on hosts that never imported the stylesheets. The
+  // published `./tailor.css` asset is still the copy from onSuccess below.
+  loader: { ".css": "text" },
+  // Dependencies are external by default, which would leave the base.css
+  // import as a bare specifier for the consumer's bundler to guess at —
+  // always inline stylesheets instead, the loader above makes them strings.
+  noExternal: [/\.css$/],
   onSuccess:
     "cp src/tailor.css dist/tailor.css && " +
     "cp node_modules/web-tree-sitter/tree-sitter.wasm dist/ && " +

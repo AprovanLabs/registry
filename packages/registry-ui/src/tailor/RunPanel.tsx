@@ -290,20 +290,42 @@ export function RunPanel({
               )}
             </div>
           ))}
-          {rows.length === 0 && (
-            <p className="px-3.5 py-2 text-[0.74rem] text-muted-foreground">
-              No inputs found in the signature — add a field or edit as JSON.
-            </p>
+          {rows.length === 0 ? (
+            // A workflow with no declared input is still runnable — say so and
+            // keep the optional input tucked away instead of dead-ending on
+            // "no inputs found". The JSON editor is one click for anything ad hoc.
+            <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3.5 py-2">
+              <p className="text-[0.74rem] text-muted-foreground">
+                {onRun
+                  ? "No inputs declared — Run executes with an empty input."
+                  : "No inputs declared."}
+              </p>
+              <button
+                className="text-[0.68rem] text-muted-foreground underline-offset-2 hover:underline"
+                onClick={toJsonMode}
+                type="button"
+              >
+                add optional JSON input
+              </button>
+              <button
+                className="text-[0.68rem] text-muted-foreground underline-offset-2 hover:underline"
+                onClick={addField}
+                type="button"
+              >
+                + add field
+              </button>
+            </div>
+          ) : (
+            <div className="px-3.5 py-1.5">
+              <button
+                className="text-[0.68rem] text-muted-foreground underline-offset-2 hover:underline"
+                onClick={addField}
+                type="button"
+              >
+                + add field
+              </button>
+            </div>
           )}
-          <div className="px-3.5 py-1.5">
-            <button
-              className="text-[0.68rem] text-muted-foreground underline-offset-2 hover:underline"
-              onClick={addField}
-              type="button"
-            >
-              + add field
-            </button>
-          </div>
         </div>
       )}
 

@@ -24,11 +24,9 @@
 
 import * as React from "react";
 import {
-  DataScopeBadge,
   Empty,
   ErrorLine,
   mergeClasses,
-  ReleaseChip,
   SMALL_BUTTON,
   StatusDot,
   TINY_BUTTON,
@@ -185,15 +183,17 @@ function useCatalogLoader({
         };
       });
 
+    // The Workspace group always closes the list, even when it holds nothing:
+    // a stable anatomy (apps, then the workspace tail) reads better than a
+    // group that appears and disappears, and the list renders an inline
+    // "No unbundled workflows" row for the empty case instead of a dead header.
     const unbundled = workflows.filter((workflow) => !bundled.has(workflow.name));
-    if (unbundled.length > 0 || groups.length === 0) {
-      groups.push({
-        id: WORKSPACE_GROUP_ID,
-        kind: "workspace",
-        label: "Workspace",
-        workflows: unbundled,
-      });
-    }
+    groups.push({
+      id: WORKSPACE_GROUP_ID,
+      kind: "workspace",
+      label: "Workspace",
+      workflows: unbundled,
+    });
 
     const lastRunSeed = new Map<string, WorkflowRunSummary | null>();
     for (const workflow of workflows) {
@@ -356,8 +356,9 @@ function WorkflowRow({
           <span className="inline-block h-2 w-2 shrink-0 rounded-full border border-border" />
         )}
         <span className="truncate text-xs">{workflow.name}</span>
-        {!compact && <TriggerBadges workflow={workflow} />}
-        {compact && <TriggerBadges compact workflow={workflow} />}
+        {/* One-glyph trigger marks at both densities: the full badges (cron
+            expressions and all) belong to the detail pane, not a master list. */}
+        <TriggerBadges compact workflow={workflow} />
       </button>
       <span className="flex shrink-0 items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
         <InlineRunButton compact={compact} invoke={invoke} name={workflow.name} />
@@ -379,6 +380,19 @@ function WorkflowRow({
   );
 }
 
+/**
+ * One consistent, explorer-like interaction model in both variants:
+ *
+ *  - the **row** selects. An app row opens the app detail (and, via the
+ *    list's select path, expands the group if it was collapsed — selecting
+ *    never collapses); the Workspace row has nothing to open, so its row
+ *    toggles like a plain folder.
+ *  - the **chevron** toggles expansion alone, never touching the selection.
+ *
+ * Badges stay off the row in both densities (a count plus a "public" marker
+ * at most) — data scope and release pins belong to the detail pane, not a
+ * master list that has to scan.
+ */
 function GroupHeader({
   group,
   expanded,
@@ -400,35 +414,33 @@ function GroupHeader({
   const compact = variant === "sidebar";
   return (
     <div
-      className={`group flex items-center gap-1.5 rounded px-1.5 py-1 transition-colors ${
+      className={`group flex items-center gap-1 rounded px-1 py-1 transition-colors ${
         selected ? "bg-muted" : "hover:bg-muted/60"
       }`}
     >
       <button
         aria-expanded={expanded}
-        className="shrink-0 text-muted-foreground transition-transform"
-        onClick={onToggle}
+        aria-label={expanded ? `Collapse ${group.label}` : `Expand ${group.label}`}
+        className="shrink-0 rounded px-1 text-muted-foreground hover:bg-muted hover:text-foreground"
+        onClick={(event) => {
+          event.stopPropagation();
+          onToggle();
+        }}
         title={expanded ? "Collapse" : "Expand"}
         type="button"
       >
         <span className={`inline-block transition-transform ${expanded ? "rotate-90" : ""}`}>›</span>
       </button>
       <button
-        className="flex min-w-0 flex-1 flex-wrap items-center gap-1.5 text-left"
+        className="flex min-w-0 flex-1 items-center gap-1.5 text-left"
         onClick={app ? onSelect : onToggle}
         type="button"
       >
         <span className="truncate text-xs font-medium">{group.label}</span>
-        <span className="shrink-0 text-[0.65rem] text-muted-foreground">
+        <span className="shrink-0 text-[0.65rem] tabular-nums text-muted-foreground">
           {group.workflows.length}
         </span>
-        {app && !compact && (
-          <>
-            <VisibilityBadge app={app} />
-            <DataScopeBadge app={app} />
-            <ReleaseChip app={app} />
-          </>
-        )}
+        {app && !compact && app.visibility === "public" && <VisibilityBadge app={app} />}
       </button>
       {app && (app.liveUrl || onOpenApp) && (
         <span className="shrink-0 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100">
@@ -553,36 +565,92 @@ export function AppsList({
   const isExpanded = React.useCallback(
     (group: CatalogGroup) => {
       if (query) return true;
+      // An explicit set — the user's, or the host's — always wins, so a
+      // chevron-collapse sticks even while something inside is selected.
+      // Before any toggle materialises one, the group holding the selection
+      // opens itself so the selected row is never invisible.
+      if (expandedList !== null) return expandedList.includes(group.id);
       if (selection?.kind === "workflow" && selection.app === group.id) return true;
       if (selection?.kind === "workflow" && group.id === WORKSPACE_GROUP_ID && !selection.app) {
         return true;
       }
-      return expandedList === null ? expandByDefault : expandedList.includes(group.id);
+      if (selection?.kind === "app" && selection.name === group.id) return true;
+      return expandByDefault;
     },
     [expandByDefault, expandedList, query, selection],
+  );
+
+  /** The current set as a concrete array, materialising the default. */
+  const materialise = React.useCallback(
+    () => expandedList ?? (expandByDefault ? groups.map((group) => group.id) : ([] as string[])),
+    [expandedList, expandByDefault, groups],
+  );
+
+  const applyExpanded = React.useCallback(
+    (next: string[]) => {
+      if (!controlled) setInternalExpanded(next);
+      onExpandedGroupsChange?.(next);
+    },
+    [controlled, onExpandedGroupsChange],
   );
 
   // The first toggle materialises the default into a concrete set, so "open
   // everything, then close one" behaves the way it looks.
   const toggle = (id: string) => {
-    const base =
-      expandedList ?? (expandByDefault ? groups.map((group) => group.id) : ([] as string[]));
-    const next = base.includes(id)
-      ? base.filter((candidate) => candidate !== id)
-      : [...base, id];
-    if (!controlled) setInternalExpanded(next);
-    onExpandedGroupsChange?.(next);
+    const base = materialise();
+    applyExpanded(
+      base.includes(id) ? base.filter((candidate) => candidate !== id) : [...base, id],
+    );
   };
+
+  /**
+   * Selecting must reveal, never hide: clicking an app row (or landing on a
+   * selection made elsewhere — the detail pane, a host tab) expands the group
+   * if it was collapsed and leaves it alone otherwise. Collapsing stays the
+   * chevron's job alone.
+   */
+  const ensureExpanded = React.useCallback(
+    (id: string) => {
+      const base = materialise();
+      if (!base.includes(id)) applyExpanded([...base, id]);
+    },
+    [materialise, applyExpanded],
+  );
+
+  // External selection changes (host tab sync, app-detail → workflow) reveal
+  // their group too. Keyed on the selection identity so a later chevron
+  // collapse of the same group is respected rather than fought.
+  const lastRevealed = React.useRef<string | null>(null);
+  React.useEffect(() => {
+    if (!selection) {
+      lastRevealed.current = null;
+      return;
+    }
+    const key =
+      selection.kind === "app"
+        ? `a:${selection.name}`
+        : `w:${selection.app ?? ""}:${selection.name}`;
+    if (lastRevealed.current === key) return;
+    lastRevealed.current = key;
+    ensureExpanded(selection.kind === "app" ? selection.name : (selection.app ?? WORKSPACE_GROUP_ID));
+  }, [selection, ensureExpanded]);
 
   // Flatten to rows first so the cap counts *rendered rows*, not groups —
   // one app with 400 workflows is exactly as expensive as 400 apps.
   type Row =
     | { key: string; kind: "group"; group: CatalogGroup }
-    | { key: string; kind: "workflow"; group: CatalogGroup; workflow: WorkflowSummary };
+    | { key: string; kind: "workflow"; group: CatalogGroup; workflow: WorkflowSummary }
+    | { key: string; kind: "empty"; group: CatalogGroup };
   const rows: Row[] = [];
   for (const group of filtered) {
     rows.push({ key: `g:${group.id}`, kind: "group", group });
     if (!isExpanded(group)) continue;
+    if (group.workflows.length === 0) {
+      // An expanded, empty group says so inline instead of silently rendering
+      // nothing — the difference between "collapsed?" and "empty".
+      rows.push({ key: `e:${group.id}`, kind: "empty", group });
+      continue;
+    }
     for (const workflow of group.workflows) {
       rows.push({ key: `w:${group.id}:${workflow.name}`, kind: "workflow", group, workflow });
     }
@@ -625,13 +693,26 @@ export function AppsList({
                   group={row.group}
                   key={row.key}
                   onOpenApp={onOpenApp}
-                  onSelect={() =>
-                    row.group.app ? onSelect({ kind: "app", name: row.group.app.name }) : undefined
-                  }
+                  onSelect={() => {
+                    if (!row.group.app) return;
+                    // Row click = select + reveal. The reveal is one-way; the
+                    // chevron is the only thing that collapses.
+                    onSelect({ kind: "app", name: row.group.app.name });
+                    ensureExpanded(row.group.id);
+                  }}
                   onToggle={() => toggle(row.group.id)}
                   selected={selection?.kind === "app" && selection.name === row.group.id}
                   variant={variant}
                 />
+              ) : row.kind === "empty" ? (
+                <p
+                  className={`${compact ? "pl-6" : "pl-8"} py-0.5 text-[0.7rem] italic text-muted-foreground`}
+                  key={row.key}
+                >
+                  {row.group.kind === "workspace"
+                    ? "No unbundled workflows"
+                    : "No exported workflows"}
+                </p>
               ) : (
                 <div className={compact ? "pl-3" : "pl-5"} key={row.key}>
                   <WorkflowRow

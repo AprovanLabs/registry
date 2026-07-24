@@ -241,7 +241,14 @@ The live URL is `url`; the API base is `apiBase`.
 
 ## Surfaces
 
-Apps is a **top-level destination**, alongside Chat and Registry:
+Apps is **the** destination — there is no separate Workflows surface. A
+workflow is managed through the app that exports it, because the app *is* its
+permission boundary: auth, allow-list, rate limit, and data scope all hang off
+the app, and a workflow inherits them by being exported. Workflows no app
+bundles are workspace-internal and appear in the same panel's trailing
+"Workspace" group — runnable by members, exposed to nobody. (2026-07-24: the
+registry's `/workflows` page now redirects to `/apps`; the two rendered the
+same panel and two names for one surface was one too many.)
 
 - `aprovan.com/registry/apps` — the directory: your apps, apps shared with you,
   install/open, and the app detail (pages, workflows, access, data, releases).

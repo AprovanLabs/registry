@@ -1,9 +1,9 @@
 /**
  * Registry host for the shared AppsPanel: wires the panel's transport to the
- * registry's authenticated gateway client. Same panel, same auth path as
- * {@link WorkflowsHost} — the difference is only which surface it renders
- * (`variant="full"`, the master/detail Apps view) and that it can read a
- * workflow's script, so a selected workflow shows its flow graph.
+ * registry's authenticated gateway client. This is the registry's single
+ * apps-and-workflows surface (`variant="full"`, the master/detail Apps view
+ * — /workflows now redirects here); it can also read a workflow's script, so
+ * a selected workflow shows its flow graph.
  *
  * Three transports, all through the one gateway client:
  *   invoke      → POST /tools/workflows/:operation

@@ -186,12 +186,15 @@ function RunSurface({
   trace,
   cascade,
   onRun,
+  graphMinHeight,
 }: {
   workflow: WorkflowSummary;
   script: string | null;
   trace: WorkflowRunTrace | null;
   cascade?: React.ReactNode;
   onRun: (input: unknown) => Promise<WorkflowRunTrace>;
+  /** Canvas floor handed to TailorFlow — the pane, not the graph, knows its room. */
+  graphMinHeight?: string | undefined;
 }) {
   const capabilities = React.useMemo(
     () => ({ workflowRun: { run: onRun, activeRun: trace, storageKey: workflow.name } }),
@@ -212,7 +215,11 @@ function RunSurface({
           <React.Suspense
             fallback={<p className="text-xs text-muted-foreground">Loading flow renderer…</p>}
           >
-            <LazyTailorFlow className="rounded-md border" source={script} />
+            <LazyTailorFlow
+              className="rounded-md border"
+              source={script}
+              {...(graphMinHeight ? { canvasMinHeight: graphMinHeight } : {})}
+            />
           </React.Suspense>
         </RendererCapabilitiesProvider>
       </div>
@@ -395,6 +402,11 @@ export interface WorkflowDetailProps {
   onRemoved?: (() => void) | undefined;
   /** Rendered above the run surface — the app breadcrumb, in AppsPanel. */
   header?: React.ReactNode;
+  /**
+   * The pane hosting this detail owns its height (AppsPanel `fill`): give the
+   * graph a viewport-proportional canvas instead of the fixed desktop floor.
+   */
+  fill?: boolean;
   className?: string;
 }
 
@@ -406,6 +418,7 @@ export function WorkflowDetail({
   onChanged,
   onRemoved,
   header,
+  fill = false,
   className,
 }: WorkflowDetailProps) {
   const [versionsOpen, setVersionsOpen] = React.useState(false);
@@ -510,6 +523,10 @@ export function WorkflowDetail({
             />
           ) : null
         }
+        // A real canvas, not a letterbox: a 420px floor on desktop, growing
+        // to a viewport share when the host pane owns its height (`fill`),
+        // and easing down on short viewports so the form stays reachable.
+        graphMinHeight={fill ? "max(420px, 55vh)" : "min(420px, 60vh)"}
         onRun={triggerRun}
         script={script}
         trace={trace}
