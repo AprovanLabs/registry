@@ -238,9 +238,12 @@ function buildAppShell(app: LiveApp): string {
 const cfg = window.__APP_CONFIG__;
 const status = document.getElementById("status");
 
-// The @aprovan/ui auth client mirrors the access token here for same-origin
-// non-React callers — exactly this case.
+// The @aprovan/ui auth client mirrors the access token into localStorage for
+// same-origin non-React callers — exactly this case. The chat app (same
+// origin) writes "patchwork:authToken"; the older keys are read for safety.
+const AUTH_RETRY_FLAG = "aprovan.appAuthTried";
 const token =
+  localStorage.getItem("patchwork:authToken") ||
   localStorage.getItem("aprovan.accessToken") ||
   localStorage.getItem("patchwork_access_token") ||
   "";
@@ -249,20 +252,26 @@ const authHeaders = token ? { "X-Aprovan-Authorization": "Bearer " + token } : {
 try {
   const projectRes = await fetch(cfg.liveBase + "/__project__", { headers: authHeaders });
   if (projectRes.status === 401 || projectRes.status === 403) {
-    // Any Aprovan account works when the app's role model allows it — the
-    // caller does not need to be a member of the owning workspace. Sign-in
-    // happens on the same origin, so when another tab stores the token this
-    // page picks it up and reloads into the app.
-    const returnTo = encodeURIComponent(location.pathname + location.search);
-    status.innerHTML =
-      'This app requires an Aprovan account — ' +
-      '<a href="https://aprovan.com/?return=' + returnTo + '" target="_blank" rel="noopener">sign in</a>' +
-      ' (this page will continue automatically).';
-    window.addEventListener("storage", (event) => {
-      if (event.key === "aprovan.accessToken" && event.newValue) location.reload();
-    });
+    // Private app, no usable session. Bounce through the chat app's sign-in —
+    // it shares this origin and is an already-registered Cognito callback, and
+    // it writes the same token key this page reads, so on return the token is
+    // here and the app loads. Same-tab (not a popup), and guarded by a per-tab
+    // flag so a still-unauthorized return can't loop.
+    const appPath = location.pathname + location.search;
+    const signInUrl = location.origin + "/chat/?authReturn=" + encodeURIComponent(appPath);
+    if (!sessionStorage.getItem(AUTH_RETRY_FLAG)) {
+      sessionStorage.setItem(AUTH_RETRY_FLAG, "1");
+      location.replace(signInUrl);
+    } else {
+      status.innerHTML =
+        'This app requires an Aprovan account — ' +
+        '<a href="' + signInUrl + '">sign in</a>.';
+    }
     throw new Error("not authorized");
   }
+  // A live session reached the app — clear the retry guard so a later token
+  // expiry gets a fresh sign-in attempt instead of the static prompt.
+  sessionStorage.removeItem(AUTH_RETRY_FLAG);
   if (!projectRes.ok) throw new Error("Failed to load app source (" + projectRes.status + ")");
   const project = await projectRes.json();
 
