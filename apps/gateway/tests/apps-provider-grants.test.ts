@@ -23,24 +23,14 @@ import { resetAppRateLimiters } from "../src/routes/apps.js";
 
 let dataDir: string;
 
-// The credential store is a real on-disk store keyed by workspace, shared
-// across every test file in the run (see interfaces.test.ts's precedent) —
-// track what this file creates so it can clean up after itself rather than
-// leaving test credentials behind in a developer's real credential store.
-const CREATED_PROVIDERS = ["github", "gitlab", "notion", "linear"];
-
 beforeAll(() => {
   dataDir = mkdtempSync(join(tmpdir(), "gateway-apps-grants-"));
   process.env["GATEWAY_DATA_DIR"] = dataDir;
 });
 
-afterAll(async () => {
+afterAll(() => {
   delete process.env["GATEWAY_DATA_DIR"];
   rmSync(dataDir, { recursive: true, force: true });
-  const store = getCredentialStore();
-  for (const record of await store.list("local")) {
-    if (CREATED_PROVIDERS.includes(record.provider)) await store.delete("local", record.id);
-  }
 });
 
 beforeEach(() => {

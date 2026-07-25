@@ -3,6 +3,7 @@ import { defineConfig } from "@aprovan/vitest-config";
 export default {
   test: defineConfig("node", {
     include: ["tests/**/*.test.ts"],
+    setupFiles: ["tests/setup.ts"],
     env: {
       DYNAMO_ENDPOINT: "http://localhost:8000",
       AWS_REGION: "us-east-1",

@@ -355,7 +355,9 @@ export class CredentialStoreSqlite implements ICredentialStore {
   private readonly database: Database.Database;
   private readonly key: Buffer;
 
-  constructor(directory = join(homedir(), ".aprovan")) {
+  constructor(
+    directory = process.env["GATEWAY_DATA_DIR"] ?? join(homedir(), ".aprovan"),
+  ) {
     mkdirSync(directory, { recursive: true, mode: 0o700 });
     const keyPath = join(directory, "key");
     try {
