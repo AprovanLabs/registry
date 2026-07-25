@@ -183,6 +183,51 @@ recording `{ mount, config-hash, versionToken }` snapshot entries is the v2
 follow-up. Mounting refuses prefixes that overlap another mount or contain
 native files.
 
+## The words users see
+
+Users are not Git users and never should be. The API keeps the precise nouns;
+every user-facing surface uses this vocabulary and nothing else — no hashes,
+no branch/commit/merge/stage, no ours/theirs:
+
+| API concept | UI language |
+| --- | --- |
+| `main` / the live tree | **your workspace** |
+| auto session | **chat** — chip: "saves directly". The default; zero ceremony. |
+| staged session | **draft chat** — "keeps its changes until you apply them" |
+| base commit (hash) | **"workspace as of 2h ago"** (`baseAt`, relative time) |
+| overlay change set | **"3 files changed"** (new / edited / removed) |
+| stage to main | **"Apply to workspace"** |
+| sync / rebase | **"Get latest changes"** |
+| conflict | **"Some files changed in two places"** |
+| resolve ours / theirs / merge | **"Keep my draft's version" / "Keep the workspace version" / "Combine with AI"** |
+| status `merged` / `closed` | **Applied** / **Archived** |
+
+Conflicts are resolved by people answering plain questions, with the model
+doing the mechanical work: "Combine with AI" merges both versions and
+surfaces at most three everyday-language notes about judgment calls it made
+("Both versions renamed the button — I kept the draft's name"). Resolutions
+write back into the draft (keep-workspace = `sessions.discard`), so the
+apply that follows is clean. Sub-agents and programmatic chats should create
+**draft chats** (`sessions.create { mode: "staged" }`) — their work rides
+the same review-then-apply path instead of mutating the workspace mid-flight.
+
+## Presence and live sync
+
+Collaboration starts with knowing who's here. `sessions.presence` heartbeats
+land in the record store per (user, window) with a 30s liveness window; the
+chat client beats every 10s while visible and renders live peers ("In
+'Kanban board work' (draft)") as a green chip. File changes propagate across
+windows and collaborators by polling the hash-bearing listing every 8s and
+firing the ordinary watcher machinery — trees refresh and open tabs mark
+stale no matter who edited. Parallel windows on the same chat converge
+transcripts the same way (message-count polling while idle).
+
+Polling is the v1 transport, deliberately: the surface (presence peers,
+watcher events, transcript adoption) is what a push/CRDT feed would also
+feed. The reserved `crdt` mount type plus gateway-brokered signaling (the
+events namespace) is the intended upgrade path to true live P2P editing;
+nothing in the UI vocabulary changes when it lands.
+
 ## What the chat client does with it
 
 - **Boot**: load `sessions.list`, restore the last active session (per

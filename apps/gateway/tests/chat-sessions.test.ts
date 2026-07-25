@@ -197,6 +197,51 @@ describe("chat sessions", () => {
     expect((await getFile("notes/auto.md")).status).toBe(200);
   });
 
+  it("discards staged changes per path (keep-the-workspace resolution)", async () => {
+    const created = await data<SessionPayload>(
+      await call("sessions/create", { title: "Resolvable", mode: "staged" }),
+    );
+    await putFile("widgets/board.tsx", "draft version", created.session.id);
+    await putFile("widgets/extra.tsx", "kept", created.session.id);
+
+    const resolved = await data<{ dropped: string[]; session: SessionPayload["session"] }>(
+      await call("sessions/discard", {
+        id: created.session.id,
+        paths: ["widgets/board.tsx"],
+      }),
+    );
+    expect(resolved.dropped).toEqual(["widgets/board.tsx"]);
+    expect(resolved.session.changes).toEqual({
+      added: ["widgets/extra.tsx"],
+      modified: [],
+      removed: [],
+    });
+
+    // The dropped path reads as the workspace has it again.
+    const view = (await (await getFile("widgets/board.tsx", created.session.id)).json()) as {
+      content: string;
+    };
+    expect(view.content).toBe("export const v = 2;");
+  });
+
+  it("reports live peers via presence heartbeats and expires stale ones", async () => {
+    const beat = (window: string, title: string) =>
+      call("sessions/presence", { window, title, id: stagedId, mode: "auto" });
+
+    await beat("w1", "Window one");
+    const second = await data<{ peers: Array<{ window: string; sessionTitle?: string }> }>(
+      await beat("w2", "Window two"),
+    );
+    expect(second.peers.map((p) => p.window)).toEqual(["w1"]);
+    expect(second.peers[0]?.sessionTitle).toBe("Window one");
+
+    // Same window heartbeating again sees the other, not itself.
+    const again = await data<{ peers: Array<{ window: string }> }>(
+      await beat("w1", "Window one"),
+    );
+    expect(again.peers.map((p) => p.window)).toEqual(["w2"]);
+  });
+
   it("shows the PR-style list with changes", async () => {
     const listing = await data<{ sessions: Array<{ title: string; status: string }> }>(
       await call("sessions/list", { status: "merged" }),

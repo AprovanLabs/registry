@@ -371,6 +371,32 @@ export async function sessionDelete(
   return removed.sort();
 }
 
+/**
+ * Drop overlay entries — the "keep the workspace version" conflict
+ * resolution: the draft simply stops claiming those paths, so a later apply
+ * leaves them exactly as the workspace has them.
+ */
+export async function discardChanges(
+  workspaceId: string,
+  id: string,
+  paths: string[],
+): Promise<string[]> {
+  const session = await requireSession(workspaceId, id);
+  if (session.status !== "open") throw new ServiceError("Session is not open", 400);
+  const dropped: string[] = [];
+  for (const raw of paths) {
+    const path = normalizeFsPath(raw);
+    if (path && path in session.overlay) {
+      delete session.overlay[path];
+      dropped.push(path);
+    }
+  }
+  if (dropped.length === 0) throw new ServiceError("No matching staged changes", 404);
+  session.updatedAt = new Date().toISOString();
+  await save(workspaceId, session);
+  return dropped.sort();
+}
+
 // ---------------------------------------------------------------------------
 // Summaries, sync, close
 // ---------------------------------------------------------------------------
