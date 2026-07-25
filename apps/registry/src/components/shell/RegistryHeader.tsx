@@ -29,7 +29,11 @@ import { HeaderSession } from "./HeaderSession";
  * internal links claim) nothing strips it, so Registry stays current there.
  */
 function registryNav(internal: AppNavLink[]): AppNavLink[] {
-  const family = aprovanApps("Registry");
+  // The nav carries destinations within the working surfaces: the aprovan
+  // Home and patchwork Chat entries are dropped; Apps and Registry stay.
+  const family = aprovanApps("Registry").filter(
+    (link) => link.label !== "Home" && link.label !== "Chat",
+  );
   const overrides = new Map(internal.map((link) => [link.label, link]));
   const merged = [
     ...family.map((link) => overrides.get(link.label) ?? link),
