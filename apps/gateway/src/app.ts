@@ -84,15 +84,24 @@ export function createApp(): Hono {
   // buffered and long completions die at an intermediary timeout instead of
   // streaming — exactly the failure this endpoint makes diagnosable in one
   // curl.
-  app.get("/health/stream", (c) => {
+  // `?ticks=` and `?intervalMs=` shape the stream (capped at 5 minutes
+  // total) so the probe can also impersonate a long LLM completion — e.g.
+  // ticks=8&intervalMs=15000 is exactly the byte cadence of a two-minute
+  // widget edit riding 15s keepalives, which is how we bisect "server
+  // streamed for 124s but the client died" failures to CloudFront vs the
+  // browser.
+  app.on(["GET", "POST"], "/health/stream", (c) => {
+    const ticks = Math.max(1, Math.min(Number(c.req.query("ticks")) || 5, 600));
+    const intervalMs = Math.max(50, Math.min(Number(c.req.query("intervalMs")) || 500, 60_000));
+    const cappedTicks = Math.min(ticks, Math.floor(300_000 / intervalMs));
     const encoder = new TextEncoder();
     const stream = new ReadableStream<Uint8Array>({
       async start(controller) {
-        for (let tick = 1; tick <= 5; tick++) {
+        for (let tick = 1; tick <= cappedTicks; tick++) {
           controller.enqueue(
             encoder.encode(`data: {"tick":${tick},"at":${Date.now()}}\n\n`),
           );
-          await new Promise((resolve) => setTimeout(resolve, 500));
+          await new Promise((resolve) => setTimeout(resolve, intervalMs));
         }
         controller.enqueue(encoder.encode("data: [DONE]\n\n"));
         controller.close();
