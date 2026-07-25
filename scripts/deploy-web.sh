@@ -50,10 +50,20 @@ fi
 log "Syncing $DIST_DIR → s3://$WEB_BUCKET/registry/"
 # Fingerprinted assets: long-cache. Catalog JSON + HTML: always revalidate so a
 # deploy is visible after invalidation (catalog is the SPA's data plane).
+#
+# sw.js / workbox-*.js / manifest.webmanifest are carved out of the
+# fingerprinted-assets pass below (their filenames aren't content-hashed,
+# unlike everything else under _astro/) and get their own no-cache pass
+# further down instead — a stale cached sw.js is how a PWA gets stuck
+# permanently serving an old build, since the browser never re-checks a
+# long-cached service worker file for updates.
 awscli "$WEB_REGION" s3 sync "$DIST_DIR" "s3://$WEB_BUCKET/registry/" \
   --delete \
   --exclude "*.html" \
   --exclude "catalog/*" \
+  --exclude "sw.js" \
+  --exclude "workbox-*.js" \
+  --exclude "manifest.webmanifest" \
   --cache-control "public,max-age=31536000,immutable"
 awscli "$WEB_REGION" s3 sync "$DIST_DIR" "s3://$WEB_BUCKET/registry/" \
   --delete \
@@ -65,6 +75,15 @@ awscli "$WEB_REGION" s3 sync "$DIST_DIR" "s3://$WEB_BUCKET/registry/" \
   --exclude "*" --include "*.html" \
   --cache-control "public,max-age=0,must-revalidate" \
   --content-type "text/html; charset=utf-8"
+awscli "$WEB_REGION" s3 sync "$DIST_DIR" "s3://$WEB_BUCKET/registry/" \
+  --delete \
+  --exclude "*" --include "sw.js" --include "workbox-*.js" \
+  --cache-control "no-cache"
+awscli "$WEB_REGION" s3 sync "$DIST_DIR" "s3://$WEB_BUCKET/registry/" \
+  --delete \
+  --exclude "*" --include "manifest.webmanifest" \
+  --cache-control "no-cache" \
+  --content-type "application/manifest+json"
 
 log "Invalidating CloudFront $CLOUDFRONT_DISTRIBUTION_ID (/registry/*)"
 INVALIDATION_ID="$(awscli "$WEB_REGION" cloudfront create-invalidation \

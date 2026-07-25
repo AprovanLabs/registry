@@ -8,6 +8,14 @@
       "port": 4321
     },
     {
+      "name": "registry-web-preview-prod-base",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["-C", "apps/registry", "exec", "astro", "preview"],
+      "env": { "PUBLIC_SITE_URL": "https://aprovan.com", "PUBLIC_BASE_PATH": "/registry" },
+      "port": 4321,
+      "url": "http://localhost:4321"
+    },
+    {
       "name": "gateway",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "@aprovan/registry-app", "dev"],

@@ -1,5 +1,6 @@
 ---
 import "@/styles/global.css";
+import { pwaInfo } from "virtual:pwa-info";
 import { RegistryHeader } from "@/components/shell/RegistryHeader";
 import { withBasePath } from "@/lib/site";
 
@@ -31,9 +32,33 @@ const links = [
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta content={description} name="description" />
     <title>{title}</title>
+
+    <!-- PWA: manifest link is injected by @vite-pwa/astro (virtual:pwa-info)
+         so its href always matches the actual build output path; it's
+         absent in `astro dev` (devOptions.enabled defaults to off) and in
+         `astro preview`/`astro sync`, which is expected. -->
+    {pwaInfo && <Fragment set:html={pwaInfo.webManifest.linkTag} />}
+    <meta content="#0a0a0a" name="theme-color" />
+
+    <!-- iOS home-screen install: Safari ignores the web manifest's icons
+         and display mode, so these need to be spelled out separately. -->
+    <meta content="yes" name="apple-mobile-web-app-capable" />
+    <meta content="default" name="apple-mobile-web-app-status-bar-style" />
+    <meta content="Registry" name="apple-mobile-web-app-title" />
+    <link href={withBasePath("/apple-touch-icon.png")} rel="apple-touch-icon" />
   </head>
   <body>
     <RegistryHeader client:load homeHref={withBasePath("/")} links={links} />
     <slot />
+    <script>
+      // Registers the Workbox-generated service worker. `registerType:
+      // "autoUpdate"` (astro.config.ts) means the SW itself takes care of
+      // activating new versions and reloading clients — this call just
+      // needs to happen once per page so the browser knows the SW exists.
+      // No-ops outside of `astro build` output / when the SW is disabled.
+      import { registerSW } from "virtual:pwa-register";
+
+      registerSW({ immediate: true });
+    </script>
   </body>
 </html>
