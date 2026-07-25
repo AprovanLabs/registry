@@ -317,10 +317,31 @@ async function discoverConfiguredTools(workspaceId: string): Promise<ToolEntry[]
     }
     try {
       const mod = await getProviderModule(provider);
-      tools.push(...deriveToolEntries(provider, mod));
+      const entries = deriveToolEntries(provider, mod);
+      if (entries.length > 0) {
+        tools.push(...entries);
+        continue;
+      }
     } catch {
-      // Unresolvable module, and configured scope doesn't fall back to the
-      // catalog — this provider just contributes nothing here.
+      // Module unresolvable — fall through to the catalog below.
+    }
+    // A credentialed provider MUST appear in the configured scope — it is
+    // the definition of "configured". The catalog fetch here is bounded by
+    // the workspace's credential count (a handful), not the whole catalog,
+    // so the fast path stays fast; silently dropping a connected provider
+    // (as this branch originally did) made GitHub vanish from chat's
+    // services panel.
+    try {
+      tools.push(...(await catalogToolEntries(provider)));
+    } catch {
+      // Catalog unreachable — surface the namespace at least, so the
+      // provider is visibly connected even without per-tool metadata.
+      tools.push({
+        provider,
+        name: `${provider}.*`,
+        operation: "*",
+        description: `${provider} (connected — tool metadata unavailable)`,
+      });
     }
   }
 

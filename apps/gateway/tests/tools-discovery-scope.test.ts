@@ -75,23 +75,29 @@ describe("GET /tools?scope=configured", () => {
     resetToolListCache();
   });
 
-  it("never falls back to the registry catalog scan", async () => {
+  it("includes every credentialed provider without a full catalog scan", async () => {
     let fetchCalls = 0;
     globalThis.fetch = (async (...args: Parameters<typeof fetch>) => {
       fetchCalls += 1;
-      return originalFetch(...args);
+      // The fake provider isn't in any catalog; let the lookup fail fast
+      // rather than hitting the network.
+      throw new Error("offline");
     }) as typeof fetch;
 
     const res = await createApp().request("/tools?scope=configured");
     expect(res.status).toBe(200);
-    expect(fetchCalls).toBe(0);
+    // Bounded: at most one catalog lookup per credentialed provider —
+    // never the full catalog scan the unscoped path does.
+    expect(fetchCalls).toBeLessThanOrEqual(1);
 
     const body = (await res.json()) as { tools: ToolEntryLike[] };
     // Core services are always present, no credential needed.
     expect(body.tools.some((t) => t.provider === "keyvalue")).toBe(true);
-    // The uninstallable credentialed provider contributes nothing here —
-    // configured scope doesn't chase it through the catalog.
-    expect(body.tools.some((t) => t.provider === FAKE_PROVIDER)).toBe(false);
+    // A credentialed provider MUST appear — "configured" means connected.
+    // With no resolvable module and no catalog, it degrades to a visible
+    // namespace placeholder instead of silently vanishing (which is how
+    // GitHub disappeared from chat's services panel).
+    expect(body.tools.some((t) => t.provider === FAKE_PROVIDER)).toBe(true);
   });
 
   it("an unrecognized scope value falls back to the full (catalog-scanning) list", async () => {

@@ -92,6 +92,14 @@ export default defineConfig({
         // Default 2MB cap is intentionally left as-is: no core-shell asset
         // (index/apps/playground's own JS+CSS, all well under 100KB each)
         // needs it raised.
+        //
+        // CRITICAL: vite-plugin-pwa defaults `navigateFallback` to the
+        // precached index.html — an SPA convention that, on this MULTI-PAGE
+        // site, short-circuited every in-scope navigation to the home page
+        // (curl served /account/credentials fine; browsers rendered home).
+        // A static multi-page site must never SPA-fallback: navigations go
+        // through the NetworkFirst runtime route below instead.
+        navigateFallback: null,
         navigateFallbackDenylist: NETWORK_ONLY_PATTERNS,
         runtimeCaching: [
           {
