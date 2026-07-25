@@ -666,20 +666,34 @@ function createJobResponseStream(
         if (!line.startsWith("data:")) return;
         const data = line.slice(5).trim();
         if (data === "[DONE]" || !data) return;
-        let delta: string | undefined;
+        let delta:
+          | { content?: string | null; reasoning_content?: string | null; reasoning?: string | null }
+          | undefined;
         try {
-          const parsed = JSON.parse(data) as { choices?: Array<{ delta?: { content?: string | null } }> };
-          delta = parsed.choices?.[0]?.delta?.content ?? undefined;
+          const parsed = JSON.parse(data) as {
+            choices?: Array<{
+              delta?: { content?: string | null; reasoning_content?: string | null; reasoning?: string | null };
+            }>;
+          };
+          delta = parsed.choices?.[0]?.delta ?? undefined;
         } catch {
           return; // Malformed upstream chunk — skip it, keep draining.
         }
         if (!delta) return;
-        text += delta;
+        // Reasoning deltas pass through (not persisted — the job record is
+        // the resumable *text*), so a thinking model shows signs of life
+        // instead of long silence before its first visible token.
+        const reasoning = delta.reasoning_content ?? delta.reasoning;
+        if (typeof reasoning === "string" && reasoning.length > 0) {
+          emit({ choices: [{ delta: { reasoning_content: reasoning } }] });
+        }
+        if (typeof delta.content !== "string" || delta.content.length === 0) return;
+        text += delta.content;
         dirty = true;
         // Passthrough in the same OpenAI-compat `{choices[0].delta.content}`
         // shape the upstream used — the client's SSE reader (sse.ts) already
         // knows how to fold that, on both the plain /chat path and here.
-        emit({ choices: [{ delta: { content: delta } }] });
+        emit({ choices: [{ delta: { content: delta.content } }] });
         await maybePersist(false);
       };
 
