@@ -221,6 +221,55 @@ export function appDataDir(app: AppPaths, userId: string): string {
 const underPrefix = (path: string, prefix: string): boolean =>
   path === prefix || path.startsWith(`${prefix}/`);
 
+// ---------------------------------------------------------------------------
+// File-plane hiding — the data-partition prefixes a workspace *listing*
+// should never surface (see docs/app-data.md, "The file plane forgets app
+// data"). Now that `keyvalue` routes through the record store
+// (services.ts/records.ts), nothing new lands under these prefixes, but
+// existing per-user data written before the migration is still readable at
+// its exact path for backward compatibility — only *listings* (vfs.list, the
+// chat file tree at GET /fs) hide it, so a workspace member can no longer
+// browse another user's partition by prefix, but neither surface 404s on a
+// path it already knows.
+//
+// `.personal/data` mirrors apps/personal.ts's PERSONAL_PREFIX literally
+// rather than importing it: personal.ts imports `listApps` from this module,
+// so importing back would recreate the very module-cycle service-kernel.ts's
+// header warns about.
+// ---------------------------------------------------------------------------
+
+const PERSONAL_DATA_PREFIX = ".personal/data";
+const HIDDEN_PREFIX_CACHE_TTL_MS = 30_000;
+const hiddenPrefixCache = new Map<string, { prefixes: string[]; expiresAt: number }>();
+
+/**
+ * Every data-partition prefix hidden from workspace listings: each published
+ * app's `<paths[0]>/data` plus Personal's own `.personal/data`. Cached briefly
+ * per workspace — defense-in-depth hiding can afford to lag a publish by a
+ * few seconds, and every listing call would otherwise re-read every manifest.
+ */
+export async function hiddenDataPrefixes(workspaceId: string): Promise<string[]> {
+  const now = Date.now();
+  const cached = hiddenPrefixCache.get(workspaceId);
+  if (cached && cached.expiresAt > now) return cached.prefixes;
+
+  const manifests = await listApps(workspaceId).catch(() => []);
+  const prefixes = [PERSONAL_DATA_PREFIX, ...manifests.map((manifest) => appDataRoot(manifest))];
+  hiddenPrefixCache.set(workspaceId, { prefixes, expiresAt: now + HIDDEN_PREFIX_CACHE_TTL_MS });
+  return prefixes;
+}
+
+/** Does `path` fall under one of the workspace's hidden data prefixes? */
+export function isHiddenDataPath(path: string, prefixes: readonly string[]): boolean {
+  return prefixes.some((prefix) => underPrefix(path, prefix));
+}
+
+/** Reset the hidden-prefix cache (tests only — publishing an app mid-test
+ * would otherwise read a stale prefix list). */
+export function resetHiddenDataPrefixCache(): void {
+  hiddenPrefixCache.clear();
+}
+
 /**
  * Resolve an app-relative path (as an app session or the live site addresses
  * it) to its absolute workspace path under the app's primary prefix.

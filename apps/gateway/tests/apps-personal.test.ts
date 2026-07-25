@@ -114,7 +114,7 @@ describe("the Personal app", () => {
     expect(caps.app).toBe("personal");
     expect(caps.providers).toEqual([]);
     const keyvalue = caps.native.find((n) => n.namespace === "keyvalue");
-    expect(keyvalue?.partitioning.path).toContain(".personal/data");
+    expect(keyvalue?.partitioning.path).toBe("records: app#personal#u#<you>");
   });
 
   it("rejects apps.publish and apps.remove on personal with a clear 400", async () => {
@@ -149,10 +149,13 @@ describe("the Personal app", () => {
     });
     expect(set.status).toBe(200);
 
-    // Physically partitioned under the documented .personal/data/<user> prefix.
-    const raw = await createApp().request("/fs/.personal/data/local/note");
-    expect(raw.status).toBe(200);
-    expect(((await raw.json()) as { content: string }).content).toBe(JSON.stringify("hi"));
+    // Partitioned in the record store under scope app#personal#u#<user> — no
+    // longer a workspace file (see docs/app-data.md), and invisible to the
+    // file plane: nothing appears at the old .personal/data/<user> path.
+    const got = await appCall("local", "personal/tools/keyvalue/get", { args: { key: "note" } });
+    expect(((await got.json()) as { data: { value: string } }).data.value).toBe("hi");
+    const notOnDisk = await createApp().request("/fs/.personal/data/local/note");
+    expect(notOnDisk.status).toBe(404);
 
     const denied = await appCall("mallory", "personal/tools/keyvalue/set", {
       args: { key: "note", value: "nope" },

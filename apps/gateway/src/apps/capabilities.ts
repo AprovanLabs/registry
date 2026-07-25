@@ -101,9 +101,22 @@ export interface NativeCapability {
 interface NativeSpec {
   description: string;
   procedures: string[];
-  /** `<root>` is substituted with the app's data root at describe time. */
-  ownerPath: string;
-  workspacePath: string;
+  /**
+   * FS-path-shaped partitioning (vfs, events — still file/append-log backed).
+   * `<root>` is substituted with the app's data root at describe time.
+   * Mutually exclusive with `recordsPartition` below.
+   */
+  ownerPath?: string;
+  workspacePath?: string;
+  /**
+   * Record-store partitioning (keyvalue — see records.ts). Unlike the FS
+   * paths above, this string is identical regardless of `dataScope`: an app
+   * session only ever addresses its own `app#<name>#u#<self>` scope: what
+   * `dataScope` changes is which workspace's *tenancy* stores the rows, not
+   * the scope key itself, and the Access pane reports the scope, not the
+   * tenant. `<name>` is substituted with the app's name at describe time.
+   */
+  recordsPartition?: string;
   partitionNote: string;
 }
 
@@ -118,12 +131,12 @@ const NATIVE_SPECS: Record<NativeAppNamespace, NativeSpec> = {
       "Reads and writes are confined to the app's declared prefixes; the data partition is never served over HTTP.",
   },
   keyvalue: {
-    description: "Per-user JSON key/value storage, co-located with the app.",
+    description: "Per-user JSON key/value storage, accumulated in the record store.",
     procedures: ["get", "set", "delete", "list"],
-    ownerPath: "<root>/data/<appUser>/<key>",
-    workspacePath: "<prefix>/data/<key>",
+    recordsPartition: "app#<name>#u#<you>",
     partitionNote:
-      "Keys are transparently namespaced — an app user can only ever read and write their own partition.",
+      "Keys are transparently namespaced — an app user can only ever read and write their own partition. " +
+      "Invisible to the file plane (vfs.list, the chat file tree): records are accumulated, not authored.",
   },
   events: {
     description:
@@ -172,19 +185,23 @@ export function nativeCapabilities(manifest: AppManifest): NativeCapability[] {
       allowListPermits(manifest, namespace, procedure),
     );
     if (procedures.length === 0) continue;
+    const path = spec.recordsPartition
+      ? `records: ${spec.recordsPartition.replace("<name>", manifest.name)}`
+      : workspaceScoped
+        ? spec.workspacePath!.replace("<prefix>", "<installPrefix>")
+        : spec.ownerPath!.replace("<root>", root);
+    const description = spec.recordsPartition
+      ? workspaceScoped
+        ? `Records live in the caller's own workspace's record store. ${spec.partitionNote}`
+        : `Records live in the publishing workspace's record store. ${spec.partitionNote}`
+      : workspaceScoped
+        ? `Data lives in the caller's own workspace under the install prefix. ${spec.partitionNote}`
+        : `Data lives in the publishing workspace, inside the app's folder. ${spec.partitionNote}`;
     capabilities.push({
       namespace,
       description: spec.description,
       procedures,
-      partitioning: {
-        mode: workspaceScoped ? "per-workspace" : "per-app-user",
-        path: workspaceScoped
-          ? spec.workspacePath.replace("<prefix>", "<installPrefix>")
-          : spec.ownerPath.replace("<root>", root),
-        description: workspaceScoped
-          ? `Data lives in the caller's own workspace under the install prefix. ${spec.partitionNote}`
-          : `Data lives in the publishing workspace, inside the app's folder. ${spec.partitionNote}`,
-      },
+      partitioning: { mode: workspaceScoped ? "per-workspace" : "per-app-user", path, description },
       rateLimit,
     });
   }

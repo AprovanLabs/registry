@@ -15,6 +15,7 @@
  */
 
 import { Hono } from "hono";
+import { hiddenDataPrefixes, isHiddenDataPath } from "../apps/store.js";
 import { getFsStore, isServicePath, normalizeFsPath } from "../fs-store.js";
 import { requireAuth } from "../middleware/auth.js";
 
@@ -29,9 +30,17 @@ fsRouter.get("/", async (c) => {
   if (normalized && isServicePath(normalized)) {
     return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
   }
-  const entries = await getFsStore().list(c.get("principal").workspaceId, normalized);
-  // Root listings hide the service subtree entirely.
-  return c.json({ entries: entries.filter((entry) => !isServicePath(entry.path)) });
+  const workspaceId = c.get("principal").workspaceId;
+  const entries = await getFsStore().list(workspaceId, normalized);
+  // Root listings (and the chat file tree, which calls this same route)
+  // hide the service subtree entirely, plus every app/personal data
+  // partition — see docs/app-data.md "The file plane forgets app data".
+  const hidden = await hiddenDataPrefixes(workspaceId);
+  return c.json({
+    entries: entries.filter(
+      (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
+    ),
+  });
 });
 
 fsRouter.get("/:path{.+}", async (c) => {

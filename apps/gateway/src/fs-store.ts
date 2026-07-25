@@ -271,7 +271,12 @@ const UPLOAD_URL_TTL_SECONDS = 900;
 
 let _s3: S3Client | undefined;
 
-function getS3Client(): S3Client {
+/**
+ * Exported so other stores that piggyback on `FS_BUCKET` (records.ts' large-
+ * value spill) share the same client/credentials instead of duplicating the
+ * MinIO path-style + local-credential wiring.
+ */
+export function getS3Client(): S3Client {
   if (!_s3) {
     const endpoint = process.env["S3_ENDPOINT"];
     _s3 = new S3Client({

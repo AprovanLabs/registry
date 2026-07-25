@@ -163,6 +163,25 @@ export class RegistryApp extends Stack {
       exportName: names.regional("fs-bucket-name"),
     });
 
+    // Record store (records.ts) — accumulated state (keyvalue rows, later
+    // queues/queryable collections), split out from the workspace FS so it's
+    // unversioned and invisible to the file plane. See docs/app-data.md.
+    const recordsTable = new Table(this, "RecordsTable", {
+      ...storeTableProps,
+      tableName: names.regional("records"),
+      partitionKey: { name: "PK", type: AttributeType.STRING },
+      sortKey: { name: "SK", type: AttributeType.STRING },
+    });
+
+    new CfnOutput(this, "RECORDS_TABLE_NAME", {
+      value: recordsTable.tableName,
+      exportName: names.regional("records-table-name"),
+    });
+    new CfnOutput(this, "RECORDS_TABLE_ARN", {
+      value: recordsTable.tableArn,
+      exportName: names.regional("records-table-arn"),
+    });
+
     const gateway = new GatewayLambda(this, "Gateway", {
       environmentName,
       names,
@@ -178,6 +197,7 @@ export class RegistryApp extends Stack {
       userGroupsTable,
       fsTable,
       fsBucket,
+      recordsTable,
     });
 
     new CfnOutput(this, "GatewayFunctionUrl", {

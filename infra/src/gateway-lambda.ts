@@ -56,6 +56,8 @@ export interface GatewayLambdaProps {
   fsTable: ITable;
   /** Workspace filesystem content-blob bucket. */
   fsBucket: IBucket;
+  /** Record store — accumulated state (records.ts `RecordStoreDynamodb`). */
+  recordsTable: ITable;
   sharedEnv: Record<string, string>;
 }
 
@@ -82,6 +84,7 @@ export class GatewayLambda extends Construct {
       userGroupsTable,
       fsTable,
       fsBucket,
+      recordsTable,
     } = props;
 
     const environment: Record<string, string> = {
@@ -100,6 +103,7 @@ export class GatewayLambda extends Construct {
       USERGROUPS_TABLE: userGroupsTable.tableName,
       FS_TABLE: fsTable.tableName,
       FS_BUCKET: fsBucket.bucketName,
+      RECORDS_TABLE: recordsTable.tableName,
       GATEWAY_REGISTRY_BASE_URL: "https://aprovan.com/registry",
       ...lambdaEnv(sharedEnv),
     };
@@ -170,6 +174,7 @@ export class GatewayLambda extends Construct {
       groupToolGrantsTable,
       userGroupsTable,
       fsTable,
+      recordsTable,
     ];
     for (const table of registryTables) {
       table.grantReadWriteData(this.function);

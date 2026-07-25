@@ -26,6 +26,7 @@ if (aprovanEnv !== "off") {
 }
 
 const { getFsStore } = await import("../src/fs-store.js");
+const { getRecordStore } = await import("../src/records.js");
 const { CORE_SERVICES } = await import("../src/services.js");
 const { invokeTool } = await import("../src/workflows/invoke.js");
 
@@ -138,9 +139,11 @@ if (alice.value.weights["w1:legs:0:0"] !== 45) throw new Error("alice partition 
 if (bob.value.weeks.length !== 2) throw new Error("bob partition wrong");
 if (owner.value !== null) throw new Error("owner namespace polluted");
 
-const aliceFile = await store.read(workspaceId, "apps/liift4/data/validation-alice/liift4-state");
-if (!aliceFile) throw new Error("alice data not co-located under apps/liift4/data/");
-console.log("✔ per-user partitions isolated and co-located (apps/liift4/data/<user>/)");
+// keyvalue is record-store-backed now (see docs/app-data.md): co-location is
+// a scope string, not a file path — `apps/liift4/data/<user>/` is gone.
+const aliceRecord = await getRecordStore().get(workspaceId!, "app#liift4#u#validation-alice", "liift4-state");
+if (!aliceRecord) throw new Error("alice data not recorded under scope app#liift4#u#validation-alice");
+console.log("✔ per-user partitions isolated (record store scope app#liift4#u#<user>)");
 
 // Clean up validation partitions.
 await invokeTool(asUser("validation-alice"), "keyvalue", "delete", { key: "liift4-state" });

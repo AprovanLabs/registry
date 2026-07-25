@@ -24,7 +24,9 @@
  * round-trips to render.
  */
 
+import { getAuditStore } from "../audit.js";
 import { getCredentialStore } from "../credentials.js";
+import { getRecordStore } from "../records.js";
 import { ServiceError, type CoreService } from "../service-kernel.js";
 import { hookPath } from "../workflows/service.js";
 import { listRegistrations, listRuns, type WorkflowRegistration } from "../workflows/store.js";
@@ -464,6 +466,21 @@ export const appsService: CoreService = {
       },
     },
     {
+      name: "apps.data",
+      operation: "data",
+      description:
+        "Owner-side administration of an app's user data, since keyvalue is no longer browsable through vfs/the file tree: with just 'name', lists the app's users; add 'user' to list that user's keys; add 'key' to read one value. Gated on the app's admin role (workspace membership for 'personal'); every call is audited. Only sees owner-hosted (dataScope 'owner') data — a workspace-scoped install's data lives in the installer's own workspace.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          name: { type: "string" },
+          user: { type: "string", description: "App-user sub — list their keys, or read one with `key`" },
+          key: { type: "string", description: "One key to read (requires `user`)" },
+        },
+        required: ["name"],
+      },
+    },
+    {
       name: "apps.sdk",
       operation: "sdk",
       description:
@@ -823,6 +840,80 @@ export const appsService: CoreService = {
             toolPath: `${apiBase(ctx.workspaceId, manifest.name)}/tools/${APP_WORKFLOW_NAMESPACE}/${workflow.procedure}`,
           })),
         };
+      }
+      case "data": {
+        const name = appName(args["name"]);
+        const manifest = isPersonalApp(name)
+          ? (
+              await describePersonal(
+                ctx.workspaceId,
+                await listApps(ctx.workspaceId),
+                await registrationIndex(ctx.workspaceId),
+              )
+            ).manifest
+          : await requireApp(ctx.workspaceId, name);
+
+        // Owner-side administration is gated on the app's OWN admin role — a
+        // narrower check than "can manage this app's bundle" (any member
+        // reaching apps.* can already do that). A user's data is more
+        // sensitive than the app's code, so it gets its own gate. Personal
+        // has no roles model; workspace membership is the gate there, and
+        // it's already guaranteed by the time a call reaches this dispatch —
+        // apps.* rejects app sessions above, and every core-service call
+        // only ever runs for an authenticated member of `ctx.workspaceId`.
+        if (!isPersonalApp(manifest.name)) {
+          const admins = manifest.roles?.admins ?? [];
+          if (!admins.includes(ctx.userId)) {
+            throw new ServiceError(
+              `Only ${manifest.name}'s admins (roles.admins) can inspect its user data`,
+              403,
+            );
+          }
+        }
+
+        const user = typeof args["user"] === "string" ? args["user"] : undefined;
+        const key = typeof args["key"] === "string" ? args["key"] : undefined;
+        if (key !== undefined && user === undefined) {
+          throw new ServiceError("`key` requires `user`", 400);
+        }
+
+        // Only ever the tenancy this workspace itself owns — a
+        // `dataScope: "workspace"` install's rows live in the installer's
+        // own workspace (their own tenant), unreachable from here by design.
+        const records = getRecordStore();
+        const tenant = ctx.workspaceId;
+        const scopePrefix = `app#${manifest.name}#u#`;
+
+        let result: Record<string, unknown>;
+        if (user !== undefined && key !== undefined) {
+          const entry = await records.get(tenant, `${scopePrefix}${user}`, key);
+          result = {
+            app: manifest.name,
+            user,
+            key,
+            value: entry?.value ?? null,
+            updatedAt: entry?.updatedAt,
+            updatedBy: entry?.updatedBy,
+          };
+        } else if (user !== undefined) {
+          result = { app: manifest.name, user, keys: await records.list(tenant, `${scopePrefix}${user}`) };
+        } else {
+          const scopes = await records.listScopes(tenant, scopePrefix);
+          result = { app: manifest.name, users: scopes.map((scope) => scope.slice(scopePrefix.length)) };
+        }
+
+        // Visible power instead of ambient browsability: owner-side access
+        // to a user's data leaves an audit trail instead of being silently
+        // available through the file plane the way it used to be.
+        getAuditStore().append({
+          requestId: crypto.randomUUID(),
+          workspaceId: tenant,
+          callerId: ctx.userId,
+          provider: "apps",
+          operation: `data:${manifest.name}${user ? `:${user}` : ""}${key ? `:${key}` : ""}`,
+          status: 200,
+        });
+        return result;
       }
       case "sdk": {
         const manifest = await requireApp(ctx.workspaceId, args["name"]);

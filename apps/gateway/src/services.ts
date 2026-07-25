@@ -8,9 +8,10 @@
  *
  * Every call is auto-tenanted by the caller's workspace and attributed to the
  * calling user — callers never see storage, tenancy, or transport. The SDK
- * surface is the stable contract (think WASI): today both services are backed
- * by the workspace FS store, and the backend can be swapped (Valkey/Redis for
- * keyvalue, SNS/Kafka for events) without touching a single caller.
+ * surface is the stable contract (think WASI): `keyvalue` is backed by the
+ * record store (accumulated state — see records.ts and docs/app-data.md),
+ * `vfs`/`events` still ride the workspace FS store, and any of them can swap
+ * backends (Valkey/Redis, SNS/Kafka) without touching a single caller.
  *
  * Dispatch rides the same proxy path as UTDK providers
  * (`POST /tools/:namespace/:procedure`), so clients need no special casing:
@@ -21,11 +22,14 @@ import { appsService } from "./apps/service.js";
 import {
   appDataDir,
   appFsAllowed,
+  hiddenDataPrefixes,
+  isHiddenDataPath,
   readWorkspaceConfig,
   resolveAppPath,
 } from "./apps/store.js";
 import { getFsStore, isServicePath, normalizeFsPath } from "./fs-store.js";
 import { interfacesService } from "./interfaces-service.js";
+import { getRecordStore } from "./records.js";
 import {
   installCoreServices,
   ServiceError,
@@ -54,20 +58,38 @@ function ident(value: unknown, label: string): string {
 }
 
 // ---------------------------------------------------------------------------
-// keyvalue — workspace-scoped KV. Backend: WFS (`.services/keyvalue/<key>`).
+// keyvalue — accumulated per-partition state. Backend: the record store
+// (records.ts) — see docs/app-data.md. Was FS-backed (a key physically lived
+// at `.services/keyvalue/<key>` or `<app root>/data/<user>/<key>`); that made
+// every write a file version, browsable by any workspace member. Records are
+// unversioned and invisible to the file plane by construction.
+//
+// Legacy FS keys from before this migration are handled lazily: a
+// record-store miss falls back to the old file path, and a hit there is
+// migrated in place (written to the record store, then the file deleted) —
+// see `legacyKvPath`/`readLegacy`. `list` still merges in any not-yet-migrated
+// legacy keys so nothing looks lost mid-migration. `scripts/migrate-app-
+// records.ts` does the same sweep eagerly, workspace by workspace.
 // ---------------------------------------------------------------------------
 
-const KV_PREFIX = ".services/keyvalue/";
+const KV_LEGACY_PREFIX = ".services/keyvalue/";
 
-/**
- * Where a keyvalue key physically lives. Workspace callers use the shared
- * `.services/keyvalue/` folder; app sessions read and write a per-(app,
- * user) partition co-located with the app itself
- * (`<paths[0]>/data/<userId>/`), so an app's data travels with its code.
- */
-function kvPath(ctx: ServiceContext, key: string): string {
+/** Record-store scope for this call: "ws" for a workspace caller, always
+ * "app#<name>#u#<userSub>" for an app session — tenancy (which workspace's
+ * rows these are) is `ctx.workspaceId`, already resolved upstream by
+ * `resolveAppSession` per the manifest's `dataScope`. The scope suffix itself
+ * never varies with `dataScope`: a session only ever addresses its own
+ * per-app-user partition. */
+function kvScope(ctx: ServiceContext): string {
   const scope = ctx.appScope;
-  if (!scope) return KV_PREFIX + key;
+  return scope ? `app#${scope.name}#u#${scope.userId}` : "ws";
+}
+
+/** Where this key would have lived under the old FS-backed keyvalue, for the
+ * lazy-migration fallback read and for `list`'s legacy-key merge. */
+function legacyKvPath(ctx: ServiceContext, key: string): string {
+  const scope = ctx.appScope;
+  if (!scope) return KV_LEGACY_PREFIX + key;
   return `${appDataDir(scope, scope.userId)}/${key}`;
 }
 
@@ -104,39 +126,61 @@ const keyvalue: CoreService = {
   ],
 
   async call(ctx, procedure, args) {
-    const store = getFsStore();
+    const records = getRecordStore();
+    const tenant = ctx.workspaceId;
+    const scope = kvScope(ctx);
     switch (procedure) {
       case "get": {
         const key = ident(args["key"], "key");
-        const file = await store.read(ctx.workspaceId, kvPath(ctx, key));
-        return { key, value: file ? (JSON.parse(file.content) as unknown) : null };
+        const hit = await records.get(tenant, scope, key);
+        if (hit) return { key, value: hit.value };
+
+        // Miss: fall back to the legacy FS path. Found → migrate in place
+        // (write-through then delete) so the next read is a plain hit.
+        const legacy = await getFsStore().read(tenant, legacyKvPath(ctx, key));
+        if (!legacy) return { key, value: null };
+        const value = JSON.parse(legacy.content) as unknown;
+        await records.set(tenant, scope, key, value, ctx.userId);
+        await getFsStore().remove(tenant, legacyKvPath(ctx, key));
+        return { key, value };
       }
       case "set": {
         const key = ident(args["key"], "key");
-        await store.write(
-          ctx.workspaceId,
-          kvPath(ctx, key),
-          JSON.stringify(args["value"] ?? null),
-          "application/json",
-        );
+        await records.set(tenant, scope, key, args["value"] ?? null, ctx.userId);
+        // New writes never touch the file plane again; clear a stale legacy
+        // shadow if one exists so a reader can't resurrect an old value
+        // (e.g. after a delete + re-set) by falling through to it. Best
+        // effort — the file may well not exist.
+        await getFsStore()
+          .remove(tenant, legacyKvPath(ctx, key))
+          .catch(() => undefined);
         return { key, ok: true };
       }
       case "delete": {
         const key = ident(args["key"], "key");
-        const deleted = await store.remove(ctx.workspaceId, kvPath(ctx, key));
-        return { key, deleted };
+        const deletedRecord = await records.delete(tenant, scope, key);
+        const deletedLegacy = await getFsStore()
+          .remove(tenant, legacyKvPath(ctx, key))
+          .catch(() => false);
+        return { key, deleted: deletedRecord || deletedLegacy };
       }
       case "list": {
-        // FS listing is directory-style; key-prefix filtering happens here.
-        // App sessions only ever see their own co-located partition.
         const prefix = typeof args["prefix"] === "string" ? args["prefix"] : "";
-        const root = kvPath(ctx, "");
-        const entries = await store.list(ctx.workspaceId, root.replace(/\/$/, ""));
-        const keys = entries
+        const recordKeys = await records.list(tenant, scope, prefix);
+
+        // Merge in not-yet-migrated legacy keys (defense during the
+        // migration window; harmless once the sweep script has run).
+        const root = legacyKvPath(ctx, "");
+        const entries = await getFsStore()
+          .list(tenant, root.replace(/\/$/, ""))
+          .catch(() => []);
+        const legacyKeys = entries
           .map((e) => e.path)
           .filter((p) => p.startsWith(root))
           .map((p) => p.slice(root.length))
           .filter((k) => k.startsWith(prefix));
+
+        const keys = [...new Set([...recordKeys, ...legacyKeys])].sort();
         return { keys };
       }
       default:
@@ -348,7 +392,16 @@ const vfs: CoreService = {
           throw new ServiceError("Service state is managed through its tool namespaces", 403);
         }
         const entries = await store.list(ctx.workspaceId, prefix);
-        return { entries: entries.filter((entry) => !isServicePath(entry.path)) };
+        // A workspace listing never surfaces app/personal data partitions —
+        // keyvalue no longer writes there, but pre-migration files still can
+        // (see records.ts / docs/app-data.md). Reads/writes to a known path
+        // are unaffected; only listings hide it.
+        const hidden = await hiddenDataPrefixes(ctx.workspaceId);
+        return {
+          entries: entries.filter(
+            (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
+          ),
+        };
       }
       case "read": {
         const path = await resolveVfsPath(ctx, args["path"], false);

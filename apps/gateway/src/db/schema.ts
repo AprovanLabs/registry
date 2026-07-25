@@ -312,6 +312,31 @@ export const FsFiles: TableSchema = {
   },
 };
 
+/**
+ * The record store (see src/records.ts) — accumulated state (keyvalue rows,
+ * later queues/queryable collections), as opposed to authored files on the
+ * workspace FS. Every workspace's rows share the partition
+ * `PK = t#<tenantWorkspaceId>#s#<scope>`; the sort key is the literal
+ * unprefixed key, so a prefix listing is a plain `begins_with(SK, prefix)`
+ * query with no unwrapping needed. Large values (>~350KB) spill to the
+ * existing `FS_BUCKET` under a `records/` prefix instead of a Dynamo item.
+ */
+export const Records: TableSchema = {
+  tableName: "Records",
+  createInput: {
+    TableName: "Records",
+    KeySchema: [
+      { AttributeName: "PK", KeyType: "HASH" },
+      { AttributeName: "SK", KeyType: "RANGE" },
+    ],
+    AttributeDefinitions: [
+      { AttributeName: "PK", AttributeType: "S" },
+      { AttributeName: "SK", AttributeType: "S" },
+    ],
+    BillingMode: "PAY_PER_REQUEST",
+  },
+};
+
 export const ALL_TABLES: TableSchema[] = [
   FsFiles,
   Users,
@@ -327,4 +352,5 @@ export const ALL_TABLES: TableSchema[] = [
   GroupToolGrants,
   UserGroups,
   Audit,
+  Records,
 ];

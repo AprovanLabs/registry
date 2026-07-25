@@ -241,18 +241,22 @@ describe("live app pages", () => {
 });
 
 describe("co-located app data", () => {
-  it("stores keyvalue partitions inside the app folder", async () => {
+  it("partitions keyvalue per app user in the record store, invisible to vfs", async () => {
     await publishFolderApp("tracker");
 
     await appCall("alice", "tracker/tools/keyvalue/set", {
       args: { key: "state", value: { weeks: 3 } },
     });
 
-    // The data physically lives next to the app.
-    const raw = await data<{ content: string }>(
-      await manage("vfs/read", { path: "apps/tracker/data/alice/state" }),
+    // keyvalue is record-store-backed (see docs/app-data.md): round-trips
+    // through the tool, not a workspace file — nothing appears on the vfs
+    // at the old apps/tracker/data/alice/state path.
+    const got = await data<{ value: { weeks: number } }>(
+      await appCall("alice", "tracker/tools/keyvalue/get", { args: { key: "state" } }),
     );
-    expect(JSON.parse(raw.content)).toEqual({ weeks: 3 });
+    expect(got.value).toEqual({ weeks: 3 });
+    const onDisk = await manage("vfs/read", { path: "apps/tracker/data/alice/state" });
+    expect(onDisk.status).toBe(404);
   });
 
   it("resolves app vfs paths against the app's primary prefix", async () => {

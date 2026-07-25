@@ -101,7 +101,9 @@ describe("native allow-list", () => {
     const keyvalue = caps.native.find((n) => n.namespace === "keyvalue");
     expect(keyvalue?.procedures.sort()).toEqual(["delete", "get", "list", "set"]);
     expect(keyvalue?.partitioning.mode).toBe("per-app-user");
-    expect(keyvalue?.partitioning.path).toContain("apps/caps/data");
+    // keyvalue is record-store-backed (see docs/app-data.md): a scope
+    // string, not a workspace file path.
+    expect(keyvalue?.partitioning.path).toBe("records: app#caps#u#<you>");
     expect(keyvalue?.rateLimit.rps).toBe(5);
     // vfs is not allow-listed here, so it is not reported as reachable.
     expect(caps.native.some((n) => n.namespace === "vfs")).toBe(false);
@@ -293,25 +295,26 @@ describe("dataScope: workspace", () => {
       rate_limit: { rps: 100, burst: 200 },
     });
 
-    // Before installing: owner-hosted behaviour, partitioned per app user.
+    // Before installing: owner-hosted behaviour, partitioned per app user in
+    // the record store (scope app#tmpl#u#alice — see docs/app-data.md; no
+    // longer a workspace file, so this round-trips through keyvalue itself
+    // rather than peeking at a path).
     await appCall("alice", "tmpl/tools/keyvalue/set", { args: { key: "k", value: 1 } });
-    const owned = await data<{ content: string }>(
-      await manage("vfs/read", { path: "apps/tmpl/data/alice/k" }),
+    const owned = await data<{ value: number }>(
+      await appCall("alice", "tmpl/tools/keyvalue/get", { args: { key: "k" } }),
     );
-    expect(JSON.parse(owned.content)).toBe(1);
+    expect(owned.value).toBe(1);
 
-    // After installing, the caller's own prefix holds the data (no per-user
-    // partition: the workspace is the boundary).
     const install = await data<{ prefix: string; dataPrefix: string }>(
       await manage("apps/install", { owner: "local", name: "tmpl", prefix: "installed/tmpl" }),
     );
     expect(install.dataPrefix).toBe("installed/tmpl/data");
 
     await appCall("alice", "tmpl/tools/keyvalue/set", { args: { key: "k", value: 2 } });
-    const installed = await data<{ content: string }>(
-      await manage("vfs/read", { path: "installed/tmpl/data/k" }),
+    const installed = await data<{ value: number }>(
+      await appCall("alice", "tmpl/tools/keyvalue/get", { args: { key: "k" } }),
     );
-    expect(JSON.parse(installed.content)).toBe(2);
+    expect(installed.value).toBe(2);
 
     const listed = await data<{ apps: Array<{ name: string; owner: string; available: boolean }> }>(
       await manage("apps/installed", {}),
@@ -323,10 +326,10 @@ describe("dataScope: workspace", () => {
     // Uninstalling returns the app to owner-hosted behaviour.
     await manage("apps/uninstall", { owner: "local", name: "tmpl" });
     await appCall("alice", "tmpl/tools/keyvalue/set", { args: { key: "k", value: 3 } });
-    const again = await data<{ content: string }>(
-      await manage("vfs/read", { path: "apps/tmpl/data/alice/k" }),
+    const again = await data<{ value: number }>(
+      await appCall("alice", "tmpl/tools/keyvalue/get", { args: { key: "k" } }),
     );
-    expect(JSON.parse(again.content)).toBe(3);
+    expect(again.value).toBe(3);
   });
 
   it("refuses to install an owner-hosted app", async () => {
