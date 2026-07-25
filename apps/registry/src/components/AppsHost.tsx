@@ -95,6 +95,11 @@ export function AppsHost() {
         window.open(withBasePath(`/playground?file=${encodeURIComponent(path)}`), "_self")
       }
       variant="full"
+      // `createWorkflowHref` is a prop a concurrent registry-ui change is
+      // adding to AppsPanel; the installed @aprovan/registry-ui build may
+      // not expose it in its types yet, so pass it via a cast spread until
+      // the rebuilt package types land (then switch to the typed prop).
+      {...({ createWorkflowHref: "https://aprovan.com/chat/" } as object)}
     />
   );
 }

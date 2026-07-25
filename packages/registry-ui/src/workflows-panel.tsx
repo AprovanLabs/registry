@@ -58,6 +58,10 @@ export interface WorkflowsPanelProps {
    * run form renders alone.
    */
   loadScript?: (path: string) => Promise<string | null>;
+  /** See `AppsPanelProps.onCreateWorkflow` — powers the "no workflows yet" empty states. */
+  onCreateWorkflow?: (appName?: string) => void;
+  /** See `AppsPanelProps.createWorkflowHref`. */
+  createWorkflowHref?: string;
   className?: string;
 }
 
@@ -66,6 +70,8 @@ export function WorkflowsPanel({
   invokeApps,
   onOpenScript,
   loadScript,
+  onCreateWorkflow,
+  createWorkflowHref,
   className,
 }: WorkflowsPanelProps) {
   return (
@@ -76,6 +82,8 @@ export function WorkflowsPanel({
       {...(invokeApps ? { invokeApps } : {})}
       {...(loadScript ? { loadScript } : {})}
       {...(onOpenScript ? { onOpenScript } : {})}
+      {...(onCreateWorkflow ? { onCreateWorkflow } : {})}
+      {...(createWorkflowHref ? { createWorkflowHref } : {})}
     />
   );
 }

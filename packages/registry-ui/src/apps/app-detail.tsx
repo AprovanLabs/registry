@@ -23,6 +23,7 @@ import {
   ConfirmButton,
   ConfirmDeleteButton,
   CopyChip,
+  CreateWorkflowEmpty,
   DataScopeBadge,
   DatabaseIcon,
   Empty,
@@ -219,11 +220,15 @@ function WorkflowsTab({
   workflows,
   invoke,
   onSelectWorkflow,
+  onCreateWorkflow,
+  createWorkflowHref,
 }: {
   app: AppSummary;
   workflows: WorkflowSummary[];
   invoke: ToolsInvoke;
   onSelectWorkflow: (name: string) => void;
+  onCreateWorkflow?: ((appName?: string) => void) | undefined;
+  createWorkflowHref?: string | undefined;
 }) {
   return (
     <div className="space-y-2">
@@ -236,10 +241,13 @@ function WorkflowsTab({
         trace.
       </p>
       {workflows.length === 0 ? (
-        <Empty>
-          This app exports no workflows. Add them with{" "}
-          <code className="font-mono">apps.publish({`{ workflows: [...] }`})</code>.
-        </Empty>
+        <CreateWorkflowEmpty
+          appName={app.name}
+          createWorkflowHref={createWorkflowHref}
+          onCreateWorkflow={onCreateWorkflow}
+        >
+          This app exports no workflows yet.
+        </CreateWorkflowEmpty>
       ) : (
         <div className="space-y-1.5">
           {workflows.map((workflow) => (
@@ -1151,6 +1159,9 @@ export interface AppDetailProps {
   onOpenApp?: ((app: AppSummary) => void) | undefined;
   tab?: AppDetailTab;
   onTabChange?: ((tab: AppDetailTab) => void) | undefined;
+  /** Wired into the Workflows tab's empty state — see {@link AppsPanelProps.onCreateWorkflow}. */
+  onCreateWorkflow?: ((appName?: string) => void) | undefined;
+  createWorkflowHref?: string | undefined;
   className?: string;
 }
 
@@ -1166,6 +1177,8 @@ export function AppDetail({
   onOpenApp,
   tab,
   onTabChange,
+  onCreateWorkflow,
+  createWorkflowHref,
   className,
 }: AppDetailProps) {
   const [localTab, setLocalTab] = React.useState<AppDetailTab>("overview");
@@ -1232,7 +1245,9 @@ export function AppDetail({
       {active === "workflows" && (
         <WorkflowsTab
           app={app}
+          createWorkflowHref={createWorkflowHref}
           invoke={invoke}
+          onCreateWorkflow={onCreateWorkflow}
           onSelectWorkflow={onSelectWorkflow}
           workflows={workflows}
         />

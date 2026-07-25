@@ -1,8 +1,9 @@
 /**
  * WorkflowDetail — everything you can do with one workflow, in one pane:
- * the TailorFlow graph (lazily loaded) with the selected run painted onto it,
- * the derived run form, the run history, the per-run trace, the cascade tree
- * for runs that fanned out to other workflows, and the script's version log.
+ * the TailorFlow graph (lazily loaded) with the selected run painted onto it
+ * or the derived run form, and — always the last thing in the pane — one
+ * "Runs" section ({@link RunsSection}) holding the run history, the per-run
+ * trace, and the cascade tree for runs that fanned out to other workflows.
  *
  * This is the *only* implementation of that machinery in the package — the
  * flat WorkflowsPanel and the master/detail AppsPanel both render this
@@ -12,7 +13,10 @@
  * console: the pane hands the flow renderer a `workflowRun` capability
  * (execute + the selected run to overlay) through the renderer registry. A
  * host that also passes `loadScript` gets the full graph with the run painted
- * onto it; without it the same input form renders on its own.
+ * onto it; without it the same input form renders on its own — either way the
+ * trace itself lives in the Runs section at the bottom, not next to whichever
+ * surface is showing, so picking an old run and reading its trace never
+ * requires jumping between the top and the bottom of the pane.
  */
 
 import * as React from "react";
@@ -28,6 +32,8 @@ import {
   SectionHeading,
   StatusDot,
   TriggerBadges,
+  formatDuration,
+  formatRelativeTime,
   formatWhen,
   useLoader,
 } from "./ui";
@@ -82,28 +88,23 @@ export function RunMeta({ trace }: { trace: WorkflowRunTrace }) {
 }
 
 /**
- * Recent runs as a horizontal strip of pills, immediately above the
- * centerpiece rather than a list stacked far below the graph — the run
- * that's about to open its trace lives right next to the thing it opens. The
- * newest run lands here and highlights itself the instant a manual run
- * starts (`triggerRun` sets the trace and reloads this list together), so
- * starting a run reads as "select the new pill", not "go find it below".
+ * Prior runs as a compact, horizontally-scrolling strip of pills: status
+ * dot, relative time, duration. Selecting a pill opens that run's trace
+ * directly beneath it (see {@link RunsSection}) — picking an old run and
+ * reading what it did are the same gesture, not "click at the top, scroll to
+ * read at the bottom".
  */
 function RunsStrip({
   runs,
   activeId,
   onSelect,
 }: {
-  runs: WorkflowRunSummary[] | null;
+  runs: WorkflowRunSummary[];
   activeId?: string | undefined;
   onSelect: (runId: string) => void;
 }) {
-  if (!runs || runs.length === 0) return null;
   return (
     <div className="flex items-center gap-1.5 overflow-x-auto">
-      <span className="shrink-0 text-[0.65rem] font-medium uppercase tracking-wide text-muted-foreground">
-        Runs
-      </span>
       {runs.map((run) => (
         <button
           className={`flex shrink-0 items-center gap-1.5 rounded-full border px-2 py-0.5 text-[0.7rem] transition-colors hover:bg-muted ${
@@ -115,7 +116,10 @@ function RunsStrip({
           type="button"
         >
           <StatusDot status={run.status} />
-          <span className="text-muted-foreground">{formatWhen(run.startedAt)}</span>
+          <span className="text-muted-foreground">{formatRelativeTime(run.startedAt)}</span>
+          {run.durationMs !== undefined && (
+            <span className="text-muted-foreground">{formatDuration(run.durationMs)}</span>
+          )}
         </button>
       ))}
     </div>
@@ -214,27 +218,80 @@ function CascadeTree({
   );
 }
 
+/**
+ * The Runs section: every prior run as a selectable strip, then the selected
+ * one's trace directly beneath it — always the *last* thing in the pane, so
+ * "pick an old run" and "read what it did" happen in one place instead of a
+ * picker at the top and a trace scattered somewhere below the graph. This is
+ * also where a run started from the button above ends up the instant it
+ * starts (`triggerRun` selects it), and where it keeps updating while it's
+ * still running — the live-poll effect in {@link useWorkflowRun} feeds this
+ * section a new `trace` object roughly every 2s until the run leaves
+ * `"running"`.
+ *
+ * `React.memo`'d against its own props (not the whole detail pane's render)
+ * so an unrelated state change above — toggling the version log, arming the
+ * delete button — doesn't re-render the trace, only an actual new `runs` or
+ * `trace` value does.
+ */
+const RunsSection = React.memo(function RunsSection({
+  invoke,
+  runs,
+  trace,
+  onSelectRun,
+}: {
+  invoke: ToolsInvoke;
+  runs: WorkflowRunSummary[] | null;
+  trace: WorkflowRunTrace | null;
+  onSelectRun: (runId: string, workflowName?: string) => void;
+}) {
+  return (
+    <div className="space-y-3 rounded-md border bg-muted/20 p-3">
+      <SectionHeading>Runs</SectionHeading>
+      {runs === null ? (
+        <Empty>Loading runs…</Empty>
+      ) : runs.length === 0 ? (
+        <Empty>No runs yet — run the workflow above to see its trace here.</Empty>
+      ) : (
+        <RunsStrip activeId={trace?.id} onSelect={(id) => onSelectRun(id)} runs={runs} />
+      )}
+      {trace && (
+        <div className="space-y-3 border-t pt-3 text-xs">
+          <RunMeta trace={trace} />
+          <CascadeTree
+            invoke={invoke}
+            onSelect={(node) => onSelectRun(node.id, node.workflow)}
+            trace={trace}
+          />
+          <RunView model={runViewFromWorkflowRun(trace)} />
+        </div>
+      )}
+    </div>
+  );
+});
+
 // ---------------------------------------------------------------------------
 // Run surface: the workflow's own renderer, granted the ability to run it.
 //
 // With a script in hand this is the flow graph — inputs derived from the
-// signature, the selected run painted onto the nodes. Without one (no
-// `loadScript` from the host) the same input form renders standalone over the
-// shared run-view, so manual runs never depend on the graph.
+// signature, the selected run painted onto the nodes (the overlay hook-up:
+// `activeRun` below). Without one (no `loadScript` from the host) the same
+// input form renders standalone. Either way the trace itself — spans, logs,
+// the cascade — lives in {@link RunsSection} at the bottom of the pane, not
+// here, so it renders in exactly one place regardless of which surface is
+// showing.
 // ---------------------------------------------------------------------------
 
 function RunSurface({
   workflow,
   script,
   trace,
-  cascade,
   onRun,
   graphMinHeight,
 }: {
   workflow: WorkflowSummary;
   script: string | null;
   trace: WorkflowRunTrace | null;
-  cascade?: React.ReactNode;
   onRun: (input: unknown) => Promise<WorkflowRunTrace>;
   /** Canvas floor handed to TailorFlow — the pane, not the graph, knows its room. */
   graphMinHeight?: string | undefined;
@@ -244,60 +301,47 @@ function RunSurface({
     [onRun, trace, workflow.name],
   );
 
-  // Standalone form + trace: everything the graph gives except the graph.
+  // Standalone form: everything the graph's run panel gives except the graph.
   const [values, setValues] = React.useState<RunValues>(() => new Map());
   const [running, setRunning] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
   if (script !== null) {
     return (
-      <div className="space-y-2">
-        {trace && <RunMeta trace={trace} />}
-        {cascade}
-        <RendererCapabilitiesProvider value={capabilities}>
-          <React.Suspense
-            fallback={<p className="text-xs text-muted-foreground">Loading flow renderer…</p>}
-          >
-            <LazyTailorFlow
-              className="rounded-md border"
-              source={script}
-              {...(graphMinHeight ? { canvasMinHeight: graphMinHeight } : {})}
-            />
-          </React.Suspense>
-        </RendererCapabilitiesProvider>
-      </div>
+      <RendererCapabilitiesProvider value={capabilities}>
+        <React.Suspense
+          fallback={<p className="text-xs text-muted-foreground">Loading flow renderer…</p>}
+        >
+          <LazyTailorFlow
+            className="rounded-md border"
+            source={script}
+            {...(graphMinHeight ? { canvasMinHeight: graphMinHeight } : {})}
+          />
+        </React.Suspense>
+      </RendererCapabilitiesProvider>
     );
   }
 
   return (
-    <div className="space-y-2">
-      <RunPanel
-        error={error}
-        onRun={async (input) => {
-          setRunning(true);
-          setError(null);
-          try {
-            await onRun(input);
-          } catch (err) {
-            setError(err instanceof Error ? err.message : "Run failed");
-          } finally {
-            setRunning(false);
-          }
-        }}
-        onValuesChange={setValues}
-        params={[]}
-        running={running}
-        storageKey={workflow.name}
-        values={values}
-      />
-      {trace && (
-        <div className="space-y-3 rounded-md border bg-muted/20 p-3 text-xs">
-          <RunMeta trace={trace} />
-          {cascade}
-          <RunView model={runViewFromWorkflowRun(trace)} />
-        </div>
-      )}
-    </div>
+    <RunPanel
+      error={error}
+      onRun={async (input) => {
+        setRunning(true);
+        setError(null);
+        try {
+          await onRun(input);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : "Run failed");
+        } finally {
+          setRunning(false);
+        }
+      }}
+      onValuesChange={setValues}
+      params={[]}
+      running={running}
+      storageKey={workflow.name}
+      values={values}
+    />
   );
 }
 
@@ -448,7 +492,7 @@ export function useWorkflowRun({
           inFlight = false;
         });
     };
-    const interval = setInterval(poll, 1500);
+    const interval = setInterval(poll, 2000);
     return () => {
       cancelled = true;
       clearInterval(interval);
@@ -502,6 +546,15 @@ export function WorkflowDetail({
   const [deleting, setDeleting] = React.useState(false);
   const controller = useWorkflowRun({ invoke, workflow, loadScript, active: true });
   const { runs, trace, script, running, error, setError, triggerRun, openTrace } = controller;
+
+  // Stable across renders that don't actually change the run being viewed —
+  // `openTrace` itself is already a stable `useCallback` — so `RunsSection`'s
+  // `React.memo` only re-renders on a real `runs`/`trace` change, not e.g. a
+  // `versionsOpen` toggle up here.
+  const selectRun = React.useCallback(
+    (runId: string, workflowName?: string) => void openTrace(runId, workflowName),
+    [openTrace],
+  );
 
   const removeWorkflow = async () => {
     setDeleting(true);
@@ -590,22 +643,7 @@ export function WorkflowDetail({
         </div>
       )}
 
-      {/* One flow from here down: the strip picks a run, the surface below is
-          that run's centerpiece — the graph or form with the trace painted
-          on. Starting a new run from the button above lands here the same
-          way opening an old one from the strip does. */}
-      <RunsStrip activeId={trace?.id} onSelect={(id) => void openTrace(id)} runs={runs} />
-
       <RunSurface
-        cascade={
-          trace ? (
-            <CascadeTree
-              invoke={invoke}
-              onSelect={(node) => void openTrace(node.id, node.workflow)}
-              trace={trace}
-            />
-          ) : null
-        }
         // A real canvas, not a letterbox: a 420px floor on desktop, growing
         // to a viewport share when the host pane owns its height (`fill`),
         // and easing down on short viewports so the form stays reachable.
@@ -615,6 +653,12 @@ export function WorkflowDetail({
         trace={trace}
         workflow={workflow}
       />
+
+      {/* Runs live at the bottom, always: the strip of prior runs and the
+          selected one's trace sit together here, whether that trace came
+          from clicking an old run or from one just started above — and this
+          is the section that keeps redrawing while a run is still going. */}
+      <RunsSection invoke={invoke} onSelectRun={selectRun} runs={runs} trace={trace} />
 
       <div className="flex items-center gap-2 border-t pt-2">
         <span className="text-[0.7rem] text-muted-foreground">

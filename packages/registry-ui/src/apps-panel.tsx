@@ -55,7 +55,7 @@ import {
   type CatalogGroup,
 } from "./apps/catalog";
 import { LastRunProvider } from "./apps/last-runs";
-import { Empty, mergeClasses, RefreshButton } from "./apps/ui";
+import { CreateWorkflowEmpty, Empty, mergeClasses, RefreshButton } from "./apps/ui";
 import { WorkflowDetail as WorkflowDetailView } from "./apps/workflow-detail";
 import type { AppSummary, ToolsInvoke, WorkflowSummary } from "./apps/wire";
 
@@ -123,6 +123,23 @@ export interface AppsPanelProps {
    * page, chat opens the live app. Without it, rows link to `liveUrl`.
    */
   onOpenApp?: (app: AppSummary) => void;
+  /**
+   * Every "no workflows here yet" empty state — the list's own zero-state,
+   * an app group with nothing exported, the Workflows tab — renders a
+   * "Create a workflow in chat" action instead of dev-facing tool-call copy
+   * when this is supplied. Receives the app name when the empty state is
+   * scoped to one (the Workflows tab, an app group), `undefined` for the
+   * catalog-wide zero-state.
+   */
+  onCreateWorkflow?: (appName?: string) => void;
+  /**
+   * Plain-link fallback for the same empty states when the host has a URL
+   * but no in-app affordance to open chat with (the registry web app passes
+   * `https://aprovan.com/chat/`). Ignored when `onCreateWorkflow` is set —
+   * that one wins. Omit both and the empty states fall back to one quiet
+   * line with no action.
+   */
+  createWorkflowHref?: string;
   /** `"full"` is master/detail; `"sidebar"` is the grouped list alone. */
   variant?: "full" | "sidebar";
   /** Controlled selection. Omit for internal state. */
@@ -202,6 +219,8 @@ export function AppsPanel({
   loadScript,
   onOpenScript,
   onOpenApp,
+  onCreateWorkflow,
+  createWorkflowHref,
   variant = "full",
   selection: controlledSelection,
   onSelectionChange,
@@ -259,7 +278,9 @@ export function AppsPanel({
       // In a flex column the list is a flex *item*: without this it sizes to
       // its content and its own scroll area never engages.
       className={variant === "sidebar" || fill ? "min-h-0 flex-1" : undefined}
+      createWorkflowHref={createWorkflowHref}
       invoke={invoke}
+      onCreateWorkflow={onCreateWorkflow}
       onOpenApp={onOpenApp}
       onOpenScript={onOpenScript}
       onSelect={select}
@@ -336,6 +357,7 @@ export function AppsPanel({
           {selectedApp && invokeApps ? (
             <AppDetail
               app={selectedApp}
+              createWorkflowHref={createWorkflowHref}
               invoke={invoke}
               invokeApps={invokeApps}
               invokeRegistry={invokeRegistry}
@@ -343,6 +365,7 @@ export function AppsPanel({
               // An edit reloads the catalog and keeps the app selected; only a
               // delete clears it, and that goes down the `removed` path.
               onChanged={() => catalog.refresh()}
+              onCreateWorkflow={onCreateWorkflow}
               onOpenApp={onOpenApp}
               onRemoved={() => removed({ kind: "app", name: selectedApp.name })}
               onSelectWorkflow={(name) =>
@@ -388,10 +411,18 @@ export function AppsPanel({
             />
           ) : (
             <div className="rounded-lg border border-dashed p-6">
-              <Empty>
-                Select an app to see its pages, exports, access and releases — or a workflow to run
-                it and read its trace.
-              </Empty>
+              {catalog.apps.length === 0 && catalog.workflows.length === 0 ? (
+                // Nothing to select yet — "pick something from the list"
+                // makes no sense when the list has nothing in it either.
+                <CreateWorkflowEmpty createWorkflowHref={createWorkflowHref} onCreateWorkflow={onCreateWorkflow}>
+                  Nothing here yet.
+                </CreateWorkflowEmpty>
+              ) : (
+                <Empty>
+                  Select an app to see its pages, exports, access and releases — or a workflow to
+                  run it and read its trace.
+                </Empty>
+              )}
             </div>
           )}
         </div>

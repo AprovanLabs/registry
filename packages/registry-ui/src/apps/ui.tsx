@@ -152,6 +152,23 @@ export function formatDuration(ms: number): string {
   return ms >= 1000 ? `${(ms / 1000).toFixed(1)}s` : `${Math.round(ms)}ms`;
 }
 
+/** Coarse "how long ago" — the runs strip has no room for a full timestamp,
+ *  and a relative label is what a picker of recent runs actually needs. */
+export function formatRelativeTime(iso: string): string {
+  if (!iso) return "";
+  const then = Date.parse(iso);
+  if (Number.isNaN(then)) return iso;
+  const diffMs = Date.now() - then;
+  const abs = Math.abs(diffMs);
+  const minute = 60_000;
+  const hour = 60 * minute;
+  const day = 24 * hour;
+  if (abs < 45_000) return "just now";
+  if (abs < 90 * minute) return `${Math.max(1, Math.round(abs / minute))}m ago`;
+  if (abs < 36 * hour) return `${Math.round(abs / hour)}h ago`;
+  return `${Math.round(abs / day)}d ago`;
+}
+
 // ---------------------------------------------------------------------------
 // Badges
 // ---------------------------------------------------------------------------
@@ -656,6 +673,52 @@ export function FieldRow({
 
 export function Empty({ children }: { children: React.ReactNode }) {
   return <p className="text-xs text-muted-foreground">{children}</p>;
+}
+
+/**
+ * The friendly, non-dev-jargon empty state for "no workflows here yet" —
+ * used wherever a panel would otherwise point someone at a tool-call syntax
+ * they have no way to run. One line of plain copy, plus an action:
+ *
+ *  - `onCreateWorkflow` present → a button that hands control back to the
+ *    host (the registry opens its chat pane, patchwork opens its own).
+ *  - `createWorkflowHref` present (and no callback) → a plain link, for a
+ *    host that only has a URL to open (the registry's `/chat/` page).
+ *  - neither → the quiet line alone, no action, no jargon.
+ */
+export function CreateWorkflowEmpty({
+  children,
+  onCreateWorkflow,
+  createWorkflowHref,
+  appName,
+}: {
+  /** The line of copy — defaults to a generic "no workflows yet". */
+  children?: React.ReactNode;
+  onCreateWorkflow?: ((appName?: string) => void) | undefined;
+  createWorkflowHref?: string | undefined;
+  /** Passed to `onCreateWorkflow` so a host can pre-fill "for this app". */
+  appName?: string | undefined;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Empty>{children ?? "No workflows yet."}</Empty>
+      {onCreateWorkflow ? (
+        <button
+          className={SMALL_BUTTON}
+          onClick={() => onCreateWorkflow(appName)}
+          type="button"
+        >
+          Create a workflow in chat
+        </button>
+      ) : (
+        createWorkflowHref && (
+          <a className={SMALL_BUTTON} href={createWorkflowHref} rel="noreferrer" target="_blank">
+            Create a workflow in chat
+          </a>
+        )
+      )}
+    </div>
+  );
 }
 
 export function ErrorLine({ error }: { error?: string | null }) {

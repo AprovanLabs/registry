@@ -24,6 +24,7 @@
 
 import * as React from "react";
 import {
+  CreateWorkflowEmpty,
   Empty,
   ErrorLine,
   mergeClasses,
@@ -299,6 +300,14 @@ export interface AppsListProps {
   onExpandedGroupsChange?: (ids: string[]) => void;
   /** Rendered at the right of the search row — e.g. a refresh button. */
   actions?: React.ReactNode;
+  /**
+   * Wired into the top-level "nothing here yet" empty state (a real gateway
+   * with zero apps and zero workflows — rare, but a fresh workspace hits it
+   * on first load). See {@link AppsPanelProps.onCreateWorkflow}.
+   */
+  onCreateWorkflow?: ((appName?: string) => void) | undefined;
+  /** Plain-link fallback for the same empty state when there's no callback. */
+  createWorkflowHref?: string | undefined;
   className?: string;
 }
 
@@ -328,6 +337,8 @@ export function AppsList({
   expandedGroups,
   onExpandedGroupsChange,
   actions,
+  onCreateWorkflow,
+  createWorkflowHref,
   className,
 }: AppsListProps) {
   const [query, setQuery] = React.useState("");
@@ -440,18 +451,15 @@ export function AppsList({
   // one app with 400 workflows is exactly as expensive as 400 apps.
   type Row =
     | { key: string; kind: "group"; group: CatalogGroup }
-    | { key: string; kind: "workflow"; group: CatalogGroup; workflow: WorkflowSummary }
-    | { key: string; kind: "empty"; group: CatalogGroup };
+    | { key: string; kind: "workflow"; group: CatalogGroup; workflow: WorkflowSummary };
   const rows: Row[] = [];
   for (const group of filtered) {
     rows.push({ key: `g:${group.id}`, kind: "group", group });
-    if (group.workflows.length === 0) {
-      // No chevron on a group with nothing to reveal — so there is no
-      // collapsed state to hide behind, and the row always says so inline
-      // rather than silently rendering nothing.
-      rows.push({ key: `e:${group.id}`, kind: "empty", group });
-      continue;
-    }
+    // A group with nothing to reveal renders as a plain selectable row — no
+    // chevron (GroupHeader already omits it), no expansion, and no inline
+    // "no workflows" placeholder either: the detail pane says that, with an
+    // action, once the row is opened (see CreateWorkflowEmpty).
+    if (group.workflows.length === 0) continue;
     if (!isExpanded(group)) continue;
     for (const workflow of group.workflows) {
       rows.push({ key: `w:${group.id}:${workflow.name}`, kind: "workflow", group, workflow });
@@ -481,11 +489,13 @@ export function AppsList({
         {catalog.loading && rows.length === 0 ? (
           <Empty>Loading…</Empty>
         ) : rows.length === 0 ? (
-          <Empty>
-            {query
-              ? "Nothing matches that."
-              : "No apps or workflows yet. Register one from chat (“register a workflow that…”) or publish an app with apps.publish."}
-          </Empty>
+          query ? (
+            <Empty>Nothing matches that.</Empty>
+          ) : (
+            <CreateWorkflowEmpty createWorkflowHref={createWorkflowHref} onCreateWorkflow={onCreateWorkflow}>
+              No apps or workflows yet.
+            </CreateWorkflowEmpty>
+          )
         ) : (
           <div className="space-y-0.5">
             {shown.map((row) =>
@@ -506,13 +516,6 @@ export function AppsList({
                   selected={selection?.kind === "app" && selection.name === row.group.id}
                   variant={variant}
                 />
-              ) : row.kind === "empty" ? (
-                <p
-                  className={`${compact ? "pl-6" : "pl-8"} py-0.5 text-[0.7rem] italic text-muted-foreground`}
-                  key={row.key}
-                >
-                  No workflows yet
-                </p>
               ) : (
                 <div className={compact ? "pl-3" : "pl-5"} key={row.key}>
                   <WorkflowRow

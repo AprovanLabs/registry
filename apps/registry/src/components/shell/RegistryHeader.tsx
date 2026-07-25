@@ -17,16 +17,33 @@ import { HeaderSession } from "./HeaderSession";
  * hosts Apps itself, so that entry should be a same-origin link under this
  * build's base path (and can mark itself current) rather than bouncing
  * through aprovan.com. Everything else is appended after the family.
+ *
+ * Exactly one entry should ever render as current: the most specific match.
+ * `aprovanApps("Registry")` unconditionally marks the family's Registry
+ * entry current, but `internal` links (MCP, Playground, Apps, ...) compute
+ * their own `current` from the active route (see BaseLayout.astro). When one
+ * of those wins, it's strictly more specific than the family entry, so the
+ * Registry entry must yield — otherwise both light up together (e.g. on
+ * /registry/mcp, "Registry" and "MCP" both render current). On pages with no
+ * matching internal link (the registry home page, or any route none of the
+ * internal links claim) nothing strips it, so Registry stays current there.
  */
 function registryNav(internal: AppNavLink[]): AppNavLink[] {
   const family = aprovanApps("Registry");
   const overrides = new Map(internal.map((link) => [link.label, link]));
-  return [
+  const merged = [
     ...family.map((link) => overrides.get(link.label) ?? link),
     ...internal.filter(
       (link) => !family.some((entry) => entry.label === link.label),
     ),
   ];
+
+  const hasMoreSpecificCurrent = internal.some((link) => link.current);
+  return merged.map((link) =>
+    link.label === "Registry" && link.current && hasMoreSpecificCurrent
+      ? { ...link, current: false }
+      : link,
+  );
 }
 
 export function RegistryHeader({
