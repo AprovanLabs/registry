@@ -253,6 +253,17 @@ the workspace is untouched).
 - **New / Archive / Start over**: "New chat" just returns to the main state;
   archive/apply/delete of the current session does too. "New draft chat"
   creates a record immediately — drafts are deliberate.
+- **The widget editor works in a draft.** Opening the edit window creates an
+  ephemeral edit draft ("Edit: <name>") and scopes every editor save to its
+  overlay — the workspace never sees half-finished edits. Closing decides
+  the draft's fate: saved work **applies to the workspace** (after a
+  conflict check — if the workspace moved under the edited files, the draft
+  is kept for review instead of clobbering); the "keep editor changes as
+  drafts" preference (Chats dialog) skips auto-apply; a never-saved draft is
+  deleted silently, after the editor's own unsaved-changes confirm (which
+  now keys on the real project snapshot, so manual edits count too). When
+  the active chat is already an open draft, that draft owns the edits — no
+  extra machinery.
 - **Autosave**: transcript chunks append after each turn (idempotent upsert
   by message id); file writes follow the session mode. Staged scope is
   online-only: the OPFS write-ahead cache and offline journal are bypassed so
