@@ -372,6 +372,18 @@ export async function sessionDelete(
 }
 
 /**
+ * Hard-delete a session: the record, the transcript, and any staged shadow
+ * content — everything under `.services/chat/sessions/<id>`. Any status may
+ * be deleted; unapplied staged changes die with it (the caller confirms).
+ */
+export async function deleteSession(workspaceId: string, id: string): Promise<void> {
+  await requireSession(workspaceId, id);
+  const store = getFsStore();
+  await store.removePrefix(workspaceId, `${SESSIONS_PREFIX}/${id}`);
+  await store.remove(workspaceId, sessionPath(id));
+}
+
+/**
  * Drop overlay entries — the "keep the workspace version" conflict
  * resolution: the draft simply stops claiming those paths, so a later apply
  * leaves them exactly as the workspace has them.

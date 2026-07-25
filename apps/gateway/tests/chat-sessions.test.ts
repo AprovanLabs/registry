@@ -7,8 +7,9 @@
 import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createApp } from "../src/app.js";
+import { resetRateLimiters } from "../src/middleware/rateLimitMiddleware.js";
 
 let dataDir: string;
 
@@ -20,6 +21,10 @@ beforeAll(() => {
 afterAll(() => {
   delete process.env["GATEWAY_DATA_DIR"];
   rmSync(dataDir, { recursive: true, force: true });
+});
+
+beforeEach(() => {
+  resetRateLimiters();
 });
 
 const call = (path: string, args: Record<string, unknown> = {}) =>
@@ -240,6 +245,33 @@ describe("chat sessions", () => {
       await beat("w1", "Window one"),
     );
     expect(again.peers.map((p) => p.window)).toEqual(["w2"]);
+  });
+
+  it("hard-deletes a session: record, transcript, and staged shadows", async () => {
+    const created = await data<SessionPayload>(
+      await call("sessions/create", { title: "Doomed", mode: "staged" }),
+    );
+    const id = created.session.id;
+    await putFile("scratch/doomed.md", "bye", id);
+    await call("sessions/append", {
+      id,
+      messages: [{ id: "m1", role: "user", parts: [{ type: "text", text: "hi" }] }],
+    });
+
+    const deleted = await data<{ deleted: string }>(await call("sessions/delete", { id }));
+    expect(deleted.deleted).toBe(id);
+
+    // Gone from the list, from get, and its staged view no longer resolves.
+    const listing = await data<{ sessions: Array<{ id: string }> }>(
+      await call("sessions/list", {}),
+    );
+    expect(listing.sessions.some((s) => s.id === id)).toBe(false);
+    expect((await call("sessions/get", { id })).status).toBe(404);
+    expect((await getFile("scratch/doomed.md", id)).status).toBe(404);
+
+    // Deleting again 404s; the workspace itself was never touched.
+    expect((await call("sessions/delete", { id })).status).toBe(404);
+    expect((await getFile("scratch/doomed.md")).status).toBe(404);
   });
 
   it("shows the PR-style list with changes", async () => {

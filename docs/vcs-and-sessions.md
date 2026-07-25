@@ -138,6 +138,9 @@ sessions.messages{ id }                             → full transcript
 sessions.update  { id, title? | mode? | tabs? }
 sessions.sync    { id }                             → rebase base onto main head, report conflicts
 sessions.close   { id, stage?: boolean, message? }  → merge-to-main or discard
+sessions.delete  { id }                             → hard delete: record, transcript, staged shadows
+sessions.discard { id, paths }                      → drop staged changes per path
+sessions.presence{ window, id?, title?, mode? }     → heartbeat + live peers
 ```
 
 App sessions (the `/apps/:ws/:name` surface) get **none** of this in v1 —
@@ -230,11 +233,26 @@ nothing in the UI vocabulary changes when it lands.
 
 ## What the chat client does with it
 
-- **Boot**: load `sessions.list`, restore the last active session (per
-  workspace, localStorage), seed `useChat` with its transcript. Reload no
-  longer loses the conversation.
-- **New / Close / Reset**: header controls. Reset = close + create with the
-  same title. Parallel sessions = open another window with `?session=`.
+**The main state is the default and has no session at all.** Landing in the
+chat, the user is simply *in their workspace*: changes sync directly, the
+chip shows one quiet signal ("● Synced" / "Syncing…" / "Offline"), and
+nothing about branches, saves, or records exists on screen. A session
+record is created **lazily, on the first sent message** — seeded with the
+message text as its title, then renamed by the model (a 3–6-word title)
+once the first reply settles. History is therefore exactly "chats where I
+actually said something" — lazily-created records that never got a message
+never appear, and auto chats never show save-state. Drafts (and sub-agent
+sessions) are the explicit, record-backed exception with the full
+base/changes/apply surface. Chats are deletable from the history list
+(`sessions.delete` — transcript, record, and unapplied changes go together;
+the workspace is untouched).
+
+- **Boot**: restore the remembered session (`?session=` first for parallel
+  windows) if it still exists; otherwise the main state. Reload never loses
+  a conversation, and never conjures an empty record either.
+- **New / Archive / Start over**: "New chat" just returns to the main state;
+  archive/apply/delete of the current session does too. "New draft chat"
+  creates a record immediately — drafts are deliberate.
 - **Autosave**: transcript chunks append after each turn (idempotent upsert
   by message id); file writes follow the session mode. Staged scope is
   online-only: the OPFS write-ahead cache and offline journal are bypassed so

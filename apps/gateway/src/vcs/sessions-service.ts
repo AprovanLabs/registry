@@ -14,6 +14,7 @@ import {
   changeSummary,
   closeSession,
   createSession,
+  deleteSession,
   discardChanges,
   listSessions,
   readMessages,
@@ -192,6 +193,17 @@ export const sessionsService: CoreService = {
       },
     },
     {
+      name: "sessions.delete",
+      operation: "delete",
+      description:
+        "Permanently delete a chat session: its transcript, record, and any unapplied staged changes. The workspace itself is untouched.",
+      inputSchema: {
+        type: "object",
+        properties: { id: { type: "string" } },
+        required: ["id"],
+      },
+    },
+    {
       name: "sessions.discard",
       operation: "discard",
       description:
@@ -295,6 +307,11 @@ export const sessionsService: CoreService = {
           ctx.userId,
         );
         return { session: await withChanges(ctx.workspaceId, session), conflicts };
+      }
+      case "delete": {
+        const id = sessionId(args["id"]);
+        await deleteSession(ctx.workspaceId, id);
+        return { deleted: id };
       }
       case "discard": {
         if (!Array.isArray(args["paths"])) {
