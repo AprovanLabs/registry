@@ -96,6 +96,7 @@ export const CORE_SERVICE_NAMES = [
   "webhooks",
   "interfaces",
   "sync",
+  "sessions",
 ] as const;
 
 export type CoreServiceName = (typeof CORE_SERVICE_NAMES)[number];

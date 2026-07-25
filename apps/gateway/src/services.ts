@@ -29,6 +29,23 @@ import {
 } from "./apps/store.js";
 import { getFsStore, isServicePath, normalizeFsPath } from "./fs-store.js";
 import { interfacesService } from "./interfaces-service.js";
+import {
+  commitTree,
+  diffSnapshots,
+  listRefs,
+  logCommits,
+  readSnapshot,
+  resolveCommitish,
+  restoreCommit,
+} from "./vcs/store.js";
+import {
+  addMount,
+  assertNotMounted,
+  mountEntries,
+  mountRead,
+  readMounts,
+  removeMount,
+} from "./vcs/mounts.js";
 import { getRecordStore } from "./records.js";
 import {
   installCoreServices,
@@ -38,6 +55,15 @@ import {
   type ServiceContext,
 } from "./service-kernel.js";
 import { syncService } from "./sync.js";
+import {
+  requireSession,
+  sessionDelete,
+  sessionList,
+  sessionRead,
+  sessionWrite,
+  type ChatSessionRecord,
+} from "./vcs/chat-sessions.js";
+import { sessionsService } from "./vcs/sessions-service.js";
 import { webhooksService } from "./webhooks/service.js";
 import { workflowsService } from "./workflows/service.js";
 import type { ToolEntry } from "./routes/tools.js";
@@ -326,21 +352,69 @@ async function resolveVfsPath(
   return fsPath(resolveAppPath(scope, value));
 }
 
+/**
+ * VCS verbs (and commit-pinned reads) are member-only: an app session's view
+ * of the filesystem is its own partition, and history/refs are a workspace
+ * concern (see docs/vcs-and-sessions.md).
+ */
+function requireWorkspaceCaller(ctx: ServiceContext): void {
+  if (ctx.appScope) {
+    throw new ServiceError("VCS operations are workspace-only", 403);
+  }
+}
+
+/**
+ * Resolve an optional `session` argument to a *staged* session whose overlay
+ * should intercept this FS operation. Auto-mode sessions pass through to the
+ * live tree (that is their contract). Closed staged sessions stay readable —
+ * that's the "peek at what a past chat saw" — but reject writes.
+ */
+async function stagedSession(
+  ctx: ServiceContext,
+  args: Record<string, unknown>,
+  write: boolean,
+): Promise<ChatSessionRecord | undefined> {
+  const raw = args["session"];
+  if (raw === undefined || raw === null || raw === "") return undefined;
+  requireWorkspaceCaller(ctx);
+  if (typeof raw !== "string") throw new ServiceError("session must be a session id", 400);
+  const session = await requireSession(ctx.workspaceId, raw);
+  if (session.mode !== "staged") return undefined;
+  if (write && session.status !== "open") {
+    throw new ServiceError("Session is not open", 400);
+  }
+  return session;
+}
+
 const vfs: CoreService = {
   tools: [
     {
       name: "vfs.list",
       operation: "list",
-      description: "List workspace files (latest version metadata), optionally under a directory prefix.",
-      inputSchema: { type: "object", properties: { prefix: { type: "string" } } },
+      description:
+        "List workspace files (latest version metadata), optionally under a directory prefix. Pass commit (id or ref) to list that snapshot instead.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          prefix: { type: "string" },
+          commit: { type: "string" },
+          session: { type: "string" },
+        },
+      },
     },
     {
       name: "vfs.read",
       operation: "read",
-      description: "Read a workspace file (latest version unless a content hash pins an older one).",
+      description:
+        "Read a workspace file (latest version unless a content hash or a commit pins an older one).",
       inputSchema: {
         type: "object",
-        properties: { path: { type: "string" }, hash: { type: "string" } },
+        properties: {
+          path: { type: "string" },
+          hash: { type: "string" },
+          commit: { type: "string" },
+          session: { type: "string" },
+        },
         required: ["path"],
       },
     },
@@ -354,6 +428,7 @@ const vfs: CoreService = {
           path: { type: "string" },
           content: { type: "string" },
           mimeType: { type: "string" },
+          session: { type: "string" },
         },
         required: ["path", "content"],
       },
@@ -364,8 +439,107 @@ const vfs: CoreService = {
       description: "Delete a workspace file, or a whole subtree with recursive=true.",
       inputSchema: {
         type: "object",
-        properties: { path: { type: "string" }, recursive: { type: "boolean" } },
+        properties: {
+          path: { type: "string" },
+          recursive: { type: "boolean" },
+          session: { type: "string" },
+        },
         required: ["path"],
+      },
+    },
+    {
+      name: "vfs.commit",
+      operation: "commit",
+      description:
+        "Snapshot the current workspace tree as a commit on main (cheap — records content hashes, copies nothing). No-op when nothing changed.",
+      inputSchema: {
+        type: "object",
+        properties: { message: { type: "string" } },
+      },
+    },
+    {
+      name: "vfs.log",
+      operation: "log",
+      description: "Commit history, newest first (ref defaults to main).",
+      inputSchema: {
+        type: "object",
+        properties: { ref: { type: "string" }, limit: { type: "number" } },
+      },
+    },
+    {
+      name: "vfs.show",
+      operation: "show",
+      description:
+        "A commit's metadata, file manifest, and change list vs its parent. Accepts a commit id (or unambiguous prefix) or a ref name.",
+      inputSchema: {
+        type: "object",
+        properties: { commit: { type: "string" } },
+        required: ["commit"],
+      },
+    },
+    {
+      name: "vfs.diff",
+      operation: "diff",
+      description:
+        "Added/modified/removed paths (with content hashes) between two commits or refs. Read either side of a file with vfs.read {path, hash}.",
+      inputSchema: {
+        type: "object",
+        properties: { from: { type: "string" }, to: { type: "string" } },
+        required: ["from", "to"],
+      },
+    },
+    {
+      name: "vfs.branches",
+      operation: "branches",
+      description: "Named refs (main plus any session branches) with their head commits.",
+      inputSchema: { type: "object", properties: {} },
+    },
+    {
+      name: "vfs.mounts",
+      operation: "mounts",
+      description:
+        "List VFS mounts — path prefixes backed by an external store (git repo at a ref, or an S3 bucket). Read-only in v1.",
+      inputSchema: { type: "object", properties: {} },
+    },
+    {
+      name: "vfs.mount",
+      operation: "mount",
+      description:
+        'Mount an external store at a path prefix. type "git": config {repo: "owner/name", ref?, path?} (uses the workspace github credential). type "s3": config {bucket, prefix?, region?} (gateway-role access). Mounted prefixes are read-only and excluded from commits.',
+      inputSchema: {
+        type: "object",
+        properties: {
+          prefix: { type: "string" },
+          type: { type: "string", enum: ["git", "s3", "crdt"] },
+          config: { type: "object" },
+          mode: { type: "string", enum: ["read", "readwrite"] },
+        },
+        required: ["prefix", "type", "config"],
+      },
+    },
+    {
+      name: "vfs.unmount",
+      operation: "unmount",
+      description: "Remove a mount by its prefix (the external store is untouched).",
+      inputSchema: {
+        type: "object",
+        properties: { prefix: { type: "string" } },
+        required: ["prefix"],
+      },
+    },
+    {
+      name: "vfs.restore",
+      operation: "restore",
+      description:
+        "Non-destructively restore a commit's content (optionally one path or a prefix): old content is re-written as the new latest, nothing is erased.",
+      inputSchema: {
+        type: "object",
+        properties: {
+          commit: { type: "string" },
+          path: { type: "string" },
+          prefix: { type: "string" },
+        },
+        required: ["commit"],
       },
     },
   ],
@@ -375,6 +549,31 @@ const vfs: CoreService = {
     switch (procedure) {
       case "list": {
         const raw = typeof args["prefix"] === "string" ? args["prefix"] : "";
+        const staged = await stagedSession(ctx, args, false);
+        if (staged) {
+          const prefix = raw ? normalizeFsPath(raw) : "";
+          if (prefix === null) throw new ServiceError(`Invalid prefix: ${raw}`, 400);
+          return {
+            session: staged.id,
+            entries: await sessionList(ctx.workspaceId, staged, prefix),
+          };
+        }
+        // Listing at a commit returns that snapshot's manifest (member-only).
+        if (typeof args["commit"] === "string" && args["commit"]) {
+          requireWorkspaceCaller(ctx);
+          const commit = await resolveCommitish(ctx.workspaceId, args["commit"]);
+          const snapshot = await readSnapshot(ctx.workspaceId, commit.snapshot);
+          if (!snapshot) throw new ServiceError(`Snapshot missing for commit ${commit.id}`, 404);
+          const prefix = raw ? normalizeFsPath(raw) : "";
+          if (prefix === null) throw new ServiceError(`Invalid prefix: ${raw}`, 400);
+          return {
+            commit: commit.id,
+            entries: snapshot.entries.filter(
+              (entry) =>
+                !prefix || entry.path === prefix || entry.path.startsWith(`${prefix}/`),
+            ),
+          };
+        }
         if (ctx.appScope) {
           // No prefix lists everything the app publishes — all of its
           // declared prefixes, not just its root.
@@ -397,25 +596,56 @@ const vfs: CoreService = {
         // (see records.ts / docs/app-data.md). Reads/writes to a known path
         // are unaffected; only listings hide it.
         const hidden = await hiddenDataPrefixes(ctx.workspaceId);
+        const mounted = await mountEntries(ctx.workspaceId, prefix);
         return {
-          entries: entries.filter(
-            (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
-          ),
+          entries: [
+            ...entries.filter(
+              (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
+            ),
+            ...mounted,
+          ].sort((a, b) => a.path.localeCompare(b.path)),
         };
       }
       case "read": {
         const path = await resolveVfsPath(ctx, args["path"], false);
-        const hash = typeof args["hash"] === "string" ? args["hash"] : undefined;
+        const staged = await stagedSession(ctx, args, false);
+        if (staged) {
+          const file = await sessionRead(ctx.workspaceId, staged, path);
+          if (!file) throw new ServiceError(`Not found: ${path}`, 404);
+          return file;
+        }
+        if (!ctx.appScope) {
+          const viaMount = await mountRead(ctx.workspaceId, path);
+          if (viaMount !== "not-mounted") {
+            if (!viaMount) throw new ServiceError(`Not found: ${path}`, 404);
+            return viaMount;
+          }
+        }
+        let hash = typeof args["hash"] === "string" ? args["hash"] : undefined;
+        // A commit(ish) pins the read to the file's hash in that snapshot.
+        if (!hash && typeof args["commit"] === "string" && args["commit"]) {
+          requireWorkspaceCaller(ctx);
+          const commit = await resolveCommitish(ctx.workspaceId, args["commit"]);
+          const snapshot = await readSnapshot(ctx.workspaceId, commit.snapshot);
+          const entry = snapshot?.entries.find((e) => e.path === path);
+          if (!entry) throw new ServiceError(`Not in commit ${commit.id.slice(0, 8)}: ${path}`, 404);
+          hash = entry.hash;
+        }
         const file = await store.read(ctx.workspaceId, path, hash);
         if (!file) throw new ServiceError(`Not found: ${path}`, 404);
         return file;
       }
       case "write": {
         const path = await resolveVfsPath(ctx, args["path"], true);
+        await assertNotMounted(ctx.workspaceId, path);
         if (typeof args["content"] !== "string") {
           throw new ServiceError("content must be a string", 400);
         }
         const mimeType = typeof args["mimeType"] === "string" ? args["mimeType"] : undefined;
+        const staged = await stagedSession(ctx, args, true);
+        if (staged) {
+          return sessionWrite(ctx.workspaceId, staged, path, args["content"], mimeType);
+        }
         const { content: _content, ...meta } = await store.write(
           ctx.workspaceId,
           path,
@@ -426,12 +656,127 @@ const vfs: CoreService = {
       }
       case "delete": {
         const path = await resolveVfsPath(ctx, args["path"], true);
+        await assertNotMounted(ctx.workspaceId, path);
+        const staged = await stagedSession(ctx, args, true);
+        if (staged) {
+          const removed = await sessionDelete(
+            ctx.workspaceId,
+            staged,
+            path,
+            args["recursive"] === true,
+          );
+          return { deleted: path, staged: removed };
+        }
         const removed =
           args["recursive"] === true
             ? (await store.removePrefix(ctx.workspaceId, path)) > 0
             : await store.remove(ctx.workspaceId, path);
         if (!removed) throw new ServiceError(`Not found: ${path}`, 404);
         return { deleted: path };
+      }
+      case "commit": {
+        requireWorkspaceCaller(ctx);
+        const message =
+          typeof args["message"] === "string" && args["message"] ? args["message"] : "Commit";
+        const { commit, created } = await commitTree(ctx.workspaceId, {
+          message,
+          author: ctx.userId,
+        });
+        return { commit, created };
+      }
+      case "log": {
+        requireWorkspaceCaller(ctx);
+        const head = await resolveCommitish(
+          ctx.workspaceId,
+          typeof args["ref"] === "string" && args["ref"] ? args["ref"] : "main",
+        ).catch(() => undefined);
+        if (!head) return { commits: [] };
+        const limit = Math.min(Number(args["limit"]) || 50, 200);
+        return { commits: await logCommits(ctx.workspaceId, head.id, limit) };
+      }
+      case "show": {
+        requireWorkspaceCaller(ctx);
+        if (typeof args["commit"] !== "string" || !args["commit"]) {
+          throw new ServiceError("commit is required", 400);
+        }
+        const commit = await resolveCommitish(ctx.workspaceId, args["commit"]);
+        const snapshot = await readSnapshot(ctx.workspaceId, commit.snapshot);
+        if (!snapshot) throw new ServiceError(`Snapshot missing for commit ${commit.id}`, 404);
+        const parent = commit.parents[0]
+          ? await resolveCommitish(ctx.workspaceId, commit.parents[0]).catch(() => undefined)
+          : undefined;
+        const parentSnapshot = parent
+          ? await readSnapshot(ctx.workspaceId, parent.snapshot)
+          : undefined;
+        return {
+          commit,
+          entries: snapshot.entries,
+          changes: diffSnapshots(parentSnapshot, snapshot),
+        };
+      }
+      case "diff": {
+        requireWorkspaceCaller(ctx);
+        if (typeof args["from"] !== "string" || typeof args["to"] !== "string") {
+          throw new ServiceError("from and to are required", 400);
+        }
+        const from = await resolveCommitish(ctx.workspaceId, args["from"]);
+        const to = await resolveCommitish(ctx.workspaceId, args["to"]);
+        const [fromSnapshot, toSnapshot] = await Promise.all([
+          readSnapshot(ctx.workspaceId, from.snapshot),
+          readSnapshot(ctx.workspaceId, to.snapshot),
+        ]);
+        if (!fromSnapshot || !toSnapshot) {
+          throw new ServiceError("Snapshot missing for a diff side", 404);
+        }
+        return { from: from.id, to: to.id, ...diffSnapshots(fromSnapshot, toSnapshot) };
+      }
+      case "branches": {
+        requireWorkspaceCaller(ctx);
+        return { refs: await listRefs(ctx.workspaceId) };
+      }
+      case "mounts": {
+        requireWorkspaceCaller(ctx);
+        return { mounts: await readMounts(ctx.workspaceId) };
+      }
+      case "mount": {
+        requireWorkspaceCaller(ctx);
+        if (typeof args["prefix"] !== "string" || typeof args["type"] !== "string") {
+          throw new ServiceError("prefix and type are required", 400);
+        }
+        const config =
+          args["config"] && typeof args["config"] === "object"
+            ? (args["config"] as Record<string, unknown>)
+            : {};
+        const mount = await addMount(ctx.workspaceId, ctx.userId, {
+          prefix: args["prefix"],
+          type: args["type"],
+          config,
+          mode: typeof args["mode"] === "string" ? args["mode"] : undefined,
+        });
+        return { mount };
+      }
+      case "unmount": {
+        requireWorkspaceCaller(ctx);
+        if (typeof args["prefix"] !== "string" || !args["prefix"]) {
+          throw new ServiceError("prefix is required", 400);
+        }
+        const removed = await removeMount(ctx.workspaceId, args["prefix"]);
+        if (!removed) throw new ServiceError(`No mount at ${args["prefix"]}`, 404);
+        return { removed: args["prefix"] };
+      }
+      case "restore": {
+        requireWorkspaceCaller(ctx);
+        if (typeof args["commit"] !== "string" || !args["commit"]) {
+          throw new ServiceError("commit is required", 400);
+        }
+        const commit = await resolveCommitish(ctx.workspaceId, args["commit"]);
+        const filter = {
+          path: typeof args["path"] === "string" ? normalizeFsPath(args["path"]) ?? undefined : undefined,
+          prefix:
+            typeof args["prefix"] === "string" ? normalizeFsPath(args["prefix"]) ?? undefined : undefined,
+        };
+        const result = await restoreCommit(ctx.workspaceId, commit, filter);
+        return { commit: commit.id, ...result };
       }
       default:
         throw new ServiceError(`Unknown vfs procedure: ${procedure}`, 404);
@@ -669,6 +1014,7 @@ export const CORE_SERVICES: Record<CoreServiceName, CoreService> = {
   webhooks: webhooksService,
   interfaces: interfacesService,
   sync: syncService,
+  sessions: sessionsService,
 };
 
 // Hand the registry to the kernel, so upstream modules (the workflow runner,

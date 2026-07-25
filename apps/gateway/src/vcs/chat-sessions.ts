@@ -1,0 +1,492 @@
+/**
+ * Chat sessions — the branch-shaped unit a chat client opens, closes, and
+ * runs in parallel (docs/vcs-and-sessions.md).
+ *
+ * A session records a transcript plus a *file view*: a base commit (the
+ * auto-snapshot of main taken at creation) and, in `staged` mode, an
+ * overlay `{path → hash | null}` over that base. Overlay blobs live as
+ * ordinary content-addressed FS versions under the session's shadow prefix,
+ * so "stage to main" is a read-by-hash + write per touched path — no
+ * content format of its own.
+ *
+ *   .services/chat/sessions/<id>.json            session record
+ *   .services/chat/sessions/<id>/messages.json   transcript (append-only)
+ *   .services/chat/sessions/<id>/files/<path>    staged shadow content
+ *
+ * `auto` mode sessions write straight through to the live tree (exactly the
+ * pre-session behaviour); their base commit still answers "what changed
+ * since this chat started".
+ */
+
+import { getFsStore, normalizeFsPath, type FsEntry, type FsFile } from "../fs-store.js";
+import { ServiceError } from "../service-kernel.js";
+import {
+  commitTree,
+  readCommit,
+  readSnapshot,
+  type VcsCommit,
+  type VcsSnapshot,
+} from "./store.js";
+
+const SESSIONS_PREFIX = ".services/chat/sessions";
+
+export type SessionMode = "auto" | "staged";
+export type SessionStatus = "open" | "merged" | "closed";
+
+export interface ChatSessionRecord {
+  id: string;
+  title: string;
+  status: SessionStatus;
+  mode: SessionMode;
+  /** Base commit — what this session's file view is layered on. */
+  base: string;
+  /** Staged edits: path → shadow content hash, null = deleted. */
+  overlay: Record<string, string | null>;
+  /** Opaque client layout state (open tabs, active path). */
+  tabs?: unknown;
+  messageCount: number;
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  /** The main-branch commit a merged session landed as. */
+  mergeCommit?: string;
+}
+
+export interface SessionChangeSummary {
+  added: string[];
+  modified: string[];
+  removed: string[];
+}
+
+function sessionPath(id: string): string {
+  return `${SESSIONS_PREFIX}/${id}.json`;
+}
+
+function messagesPath(id: string): string {
+  return `${SESSIONS_PREFIX}/${id}/messages.json`;
+}
+
+function shadowPath(id: string, path: string): string {
+  return `${SESSIONS_PREFIX}/${id}/files/${path}`;
+}
+
+const SESSION_ID_RE = /^[0-9a-f-]{8,64}$/u;
+
+export function sessionId(value: unknown): string {
+  if (typeof value !== "string" || !SESSION_ID_RE.test(value)) {
+    throw new ServiceError("id must be a session id", 400);
+  }
+  return value;
+}
+
+async function save(workspaceId: string, record: ChatSessionRecord): Promise<void> {
+  await getFsStore().write(
+    workspaceId,
+    sessionPath(record.id),
+    JSON.stringify(record, null, 2),
+    "application/json",
+  );
+}
+
+export async function readSession(
+  workspaceId: string,
+  id: string,
+): Promise<ChatSessionRecord | undefined> {
+  const file = await getFsStore()
+    .read(workspaceId, sessionPath(id))
+    .catch(() => undefined);
+  return file ? (JSON.parse(file.content) as ChatSessionRecord) : undefined;
+}
+
+export async function requireSession(
+  workspaceId: string,
+  id: string,
+): Promise<ChatSessionRecord> {
+  const session = await readSession(workspaceId, id);
+  if (!session) throw new ServiceError(`Unknown session: ${id}`, 404);
+  return session;
+}
+
+export async function createSession(
+  workspaceId: string,
+  userId: string,
+  options: { title?: string; mode?: SessionMode },
+): Promise<ChatSessionRecord> {
+  const mode: SessionMode = options.mode === "staged" ? "staged" : "auto";
+  // The base is exactly what the user is looking at: reuse the main head if
+  // it matches the current tree, append an auto-snapshot commit otherwise.
+  const { commit } = await commitTree(workspaceId, {
+    message: "Auto snapshot",
+    author: userId,
+  });
+  const now = new Date().toISOString();
+  const record: ChatSessionRecord = {
+    id: crypto.randomUUID(),
+    title: options.title?.trim() || "New chat",
+    status: "open",
+    mode,
+    base: commit.id,
+    overlay: {},
+    messageCount: 0,
+    createdBy: userId,
+    createdAt: now,
+    updatedAt: now,
+  };
+  await save(workspaceId, record);
+  return record;
+}
+
+export async function listSessions(
+  workspaceId: string,
+  status?: SessionStatus,
+): Promise<ChatSessionRecord[]> {
+  const entries = await getFsStore()
+    .list(workspaceId, SESSIONS_PREFIX)
+    .catch(() => []);
+  const records: ChatSessionRecord[] = [];
+  for (const entry of entries) {
+    // Direct children only: `<prefix>/<id>.json` (not messages/files).
+    const rest = entry.path.slice(SESSIONS_PREFIX.length + 1);
+    if (!rest || rest.includes("/") || !rest.endsWith(".json")) continue;
+    const file = await getFsStore()
+      .read(workspaceId, entry.path)
+      .catch(() => undefined);
+    if (!file) continue;
+    const record = JSON.parse(file.content) as ChatSessionRecord;
+    if (!status || record.status === status) records.push(record);
+  }
+  return records.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+}
+
+export async function updateSession(
+  workspaceId: string,
+  id: string,
+  patch: { title?: string; mode?: SessionMode; tabs?: unknown },
+): Promise<ChatSessionRecord> {
+  const session = await requireSession(workspaceId, id);
+  if (patch.mode !== undefined && session.status !== "open") {
+    throw new ServiceError("Only open sessions can change mode", 400);
+  }
+  if (patch.mode === "auto" && Object.keys(session.overlay).length > 0) {
+    throw new ServiceError(
+      "Session has staged changes — stage or discard them before switching to auto",
+      400,
+    );
+  }
+  const next: ChatSessionRecord = {
+    ...session,
+    ...(patch.title !== undefined ? { title: patch.title.trim() || session.title } : {}),
+    ...(patch.mode !== undefined ? { mode: patch.mode } : {}),
+    ...(patch.tabs !== undefined ? { tabs: patch.tabs } : {}),
+    updatedAt: new Date().toISOString(),
+  };
+  await save(workspaceId, next);
+  return next;
+}
+
+// ---------------------------------------------------------------------------
+// Transcript
+// ---------------------------------------------------------------------------
+
+export async function readMessages(workspaceId: string, id: string): Promise<unknown[]> {
+  const file = await getFsStore()
+    .read(workspaceId, messagesPath(id))
+    .catch(() => undefined);
+  if (!file) return [];
+  const parsed = JSON.parse(file.content) as unknown;
+  return Array.isArray(parsed) ? parsed : [];
+}
+
+/**
+ * Append transcript messages. Messages carry client ids (`useChat` message
+ * ids); an incoming id that already exists replaces the stored message, so
+ * clients can re-send the tail of the transcript idempotently.
+ */
+export async function appendMessages(
+  workspaceId: string,
+  id: string,
+  messages: unknown[],
+): Promise<ChatSessionRecord> {
+  const session = await requireSession(workspaceId, id);
+  const existing = (await readMessages(workspaceId, id)) as Array<{ id?: string }>;
+  const byId = new Map<string, number>();
+  existing.forEach((message, index) => {
+    if (message && typeof message.id === "string") byId.set(message.id, index);
+  });
+  for (const raw of messages) {
+    const message = raw as { id?: string };
+    const key = message && typeof message.id === "string" ? message.id : undefined;
+    const index = key ? byId.get(key) : undefined;
+    if (index !== undefined) existing[index] = message;
+    else {
+      existing.push(message);
+      if (key) byId.set(key, existing.length - 1);
+    }
+  }
+  await getFsStore().write(
+    workspaceId,
+    messagesPath(id),
+    JSON.stringify(existing),
+    "application/json",
+  );
+  const next: ChatSessionRecord = {
+    ...session,
+    messageCount: existing.length,
+    updatedAt: new Date().toISOString(),
+  };
+  await save(workspaceId, next);
+  return next;
+}
+
+// ---------------------------------------------------------------------------
+// The overlay — session-scoped FS resolution (staged mode)
+// ---------------------------------------------------------------------------
+
+async function baseSnapshot(
+  workspaceId: string,
+  session: ChatSessionRecord,
+): Promise<VcsSnapshot> {
+  const commit = await readCommit(workspaceId, session.base);
+  const snapshot = commit ? await readSnapshot(workspaceId, commit.snapshot) : undefined;
+  if (!snapshot) throw new ServiceError(`Base snapshot missing for session ${session.id}`, 500);
+  return snapshot;
+}
+
+/** Overlay-over-base listing for a staged session. */
+export async function sessionList(
+  workspaceId: string,
+  session: ChatSessionRecord,
+  prefix = "",
+): Promise<FsEntry[]> {
+  if (session.mode !== "staged") {
+    throw new ServiceError("Session listing applies to staged sessions", 400);
+  }
+  const snapshot = await baseSnapshot(workspaceId, session);
+  const store = getFsStore();
+  const inPrefix = (path: string): boolean =>
+    !prefix || path === prefix || path.startsWith(`${prefix}/`);
+
+  const shadowRoot = `${SESSIONS_PREFIX}/${session.id}/files`;
+  const shadowEntries = await store.list(workspaceId, shadowRoot).catch(() => []);
+  const shadowByPath = new Map(
+    shadowEntries.map((entry) => [entry.path.slice(shadowRoot.length + 1), entry]),
+  );
+
+  const result: FsEntry[] = [];
+  const seen = new Set<string>();
+  for (const entry of snapshot.entries) {
+    if (!inPrefix(entry.path)) continue;
+    seen.add(entry.path);
+    const staged = session.overlay[entry.path];
+    if (staged === null) continue; // Deleted in this session.
+    if (typeof staged === "string") {
+      const shadow = shadowByPath.get(entry.path);
+      result.push({
+        path: entry.path,
+        hash: staged,
+        mimeType: shadow?.mimeType ?? entry.mimeType,
+        size: shadow?.size ?? entry.size,
+        updatedAt: shadow?.updatedAt ?? session.updatedAt,
+      });
+      continue;
+    }
+    result.push({ ...entry, updatedAt: session.createdAt });
+  }
+  for (const [path, staged] of Object.entries(session.overlay)) {
+    if (staged === null || seen.has(path) || !inPrefix(path)) continue;
+    const shadow = shadowByPath.get(path);
+    result.push({
+      path,
+      hash: staged,
+      mimeType: shadow?.mimeType ?? "text/plain",
+      size: shadow?.size ?? 0,
+      updatedAt: shadow?.updatedAt ?? session.updatedAt,
+    });
+  }
+  return result.sort((a, b) => a.path.localeCompare(b.path));
+}
+
+/** Overlay-over-base read for a staged session. */
+export async function sessionRead(
+  workspaceId: string,
+  session: ChatSessionRecord,
+  path: string,
+): Promise<FsFile | undefined> {
+  const store = getFsStore();
+  const staged = session.overlay[path];
+  if (staged === null) return undefined;
+  if (typeof staged === "string") {
+    const file = await store.read(workspaceId, shadowPath(session.id, path), staged);
+    return file ? { ...file, path } : undefined;
+  }
+  const snapshot = await baseSnapshot(workspaceId, session);
+  const entry = snapshot.entries.find((candidate) => candidate.path === path);
+  if (!entry) return undefined;
+  return store.read(workspaceId, path, entry.hash);
+}
+
+/** Staged write: shadow blob + overlay pointer; the live tree is untouched. */
+export async function sessionWrite(
+  workspaceId: string,
+  session: ChatSessionRecord,
+  path: string,
+  content: string,
+  mimeType?: string,
+): Promise<{ path: string; hash: string; mimeType: string; size: number; updatedAt: string }> {
+  const file = await getFsStore().write(
+    workspaceId,
+    shadowPath(session.id, path),
+    content,
+    mimeType,
+  );
+  session.overlay[path] = file.hash;
+  session.updatedAt = new Date().toISOString();
+  await save(workspaceId, session);
+  const { content: _content, ...meta } = file;
+  return { ...meta, path };
+}
+
+/** Staged delete: overlay tombstones for the path (or subtree). */
+export async function sessionDelete(
+  workspaceId: string,
+  session: ChatSessionRecord,
+  path: string,
+  recursive = false,
+): Promise<string[]> {
+  const snapshot = await baseSnapshot(workspaceId, session);
+  const targets = new Set<string>();
+  const matches = (candidate: string): boolean =>
+    candidate === path || (recursive && candidate.startsWith(`${path}/`));
+  for (const entry of snapshot.entries) if (matches(entry.path)) targets.add(entry.path);
+  for (const staged of Object.keys(session.overlay)) if (matches(staged)) targets.add(staged);
+  const removed: string[] = [];
+  for (const target of targets) {
+    if (session.overlay[target] === null) continue;
+    session.overlay[target] = null;
+    removed.push(target);
+  }
+  if (removed.length === 0) throw new ServiceError(`Not found: ${path}`, 404);
+  session.updatedAt = new Date().toISOString();
+  await save(workspaceId, session);
+  return removed.sort();
+}
+
+// ---------------------------------------------------------------------------
+// Summaries, sync, close
+// ---------------------------------------------------------------------------
+
+export async function changeSummary(
+  workspaceId: string,
+  session: ChatSessionRecord,
+): Promise<SessionChangeSummary> {
+  const snapshot = await baseSnapshot(workspaceId, session).catch(() => undefined);
+  const baseHashes = new Map(
+    (snapshot?.entries ?? []).map((entry) => [entry.path, entry.hash]),
+  );
+  const summary: SessionChangeSummary = { added: [], modified: [], removed: [] };
+  for (const [path, staged] of Object.entries(session.overlay)) {
+    const before = baseHashes.get(path);
+    if (staged === null) {
+      if (before !== undefined) summary.removed.push(path);
+    } else if (before === undefined) summary.added.push(path);
+    else if (before !== staged) summary.modified.push(path);
+  }
+  summary.added.sort();
+  summary.modified.sort();
+  summary.removed.sort();
+  return summary;
+}
+
+export interface SessionConflict {
+  path: string;
+  /** This session's staged hash (null = staged delete). */
+  ours: string | null;
+  /** The hash now on main (undefined = deleted on main). */
+  theirs?: string;
+}
+
+/**
+ * Rebase the session's base onto the current main head. The overlay is
+ * preserved; paths where main moved *and* the session staged something are
+ * reported as conflicts (path granularity — the caller picks a side by
+ * re-staging or dropping its overlay entry).
+ */
+export async function syncSession(
+  workspaceId: string,
+  id: string,
+  userId: string,
+): Promise<{ session: ChatSessionRecord; conflicts: SessionConflict[] }> {
+  const session = await requireSession(workspaceId, id);
+  if (session.status !== "open") throw new ServiceError("Session is not open", 400);
+  const oldBase = await baseSnapshot(workspaceId, session);
+  const { commit } = await commitTree(workspaceId, {
+    message: "Auto snapshot",
+    author: userId,
+  });
+  if (commit.id === session.base) return { session, conflicts: [] };
+  const newBase = await readSnapshot(workspaceId, commit.snapshot);
+  if (!newBase) throw new ServiceError("Snapshot missing for main head", 500);
+
+  const oldHashes = new Map(oldBase.entries.map((entry) => [entry.path, entry.hash]));
+  const newHashes = new Map(newBase.entries.map((entry) => [entry.path, entry.hash]));
+  const conflicts: SessionConflict[] = [];
+  for (const [path, staged] of Object.entries(session.overlay)) {
+    const before = oldHashes.get(path);
+    const now = newHashes.get(path);
+    const mainMoved = before !== now;
+    if (mainMoved && staged !== now) {
+      conflicts.push({ path, ours: staged, ...(now !== undefined ? { theirs: now } : {}) });
+    }
+  }
+
+  session.base = commit.id;
+  session.updatedAt = new Date().toISOString();
+  await save(workspaceId, session);
+  return { session, conflicts };
+}
+
+/**
+ * Close a session. `stage: true` applies the overlay to the live tree and
+ * commits main (the merge node, carrying `sessionId`); otherwise the session
+ * is archived untouched — the overlay stays readable for peeking.
+ */
+export async function closeSession(
+  workspaceId: string,
+  id: string,
+  userId: string,
+  options: { stage?: boolean; message?: string },
+): Promise<{ session: ChatSessionRecord; commit?: VcsCommit }> {
+  const session = await requireSession(workspaceId, id);
+  if (session.status !== "open") throw new ServiceError("Session is not open", 400);
+
+  if (!options.stage) {
+    session.status = "closed";
+    session.updatedAt = new Date().toISOString();
+    await save(workspaceId, session);
+    return { session };
+  }
+
+  const store = getFsStore();
+  for (const [path, staged] of Object.entries(session.overlay)) {
+    const normalized = normalizeFsPath(path);
+    if (!normalized) continue;
+    if (staged === null) {
+      await store.remove(workspaceId, normalized).catch(() => undefined);
+      continue;
+    }
+    const shadow = await store.read(workspaceId, shadowPath(session.id, normalized), staged);
+    if (!shadow) throw new ServiceError(`Staged content missing for ${normalized}`, 500);
+    await store.write(workspaceId, normalized, shadow.content, shadow.mimeType);
+  }
+
+  const { commit } = await commitTree(workspaceId, {
+    message: options.message?.trim() || `Merge session: ${session.title}`,
+    author: userId,
+    sessionId: session.id,
+  });
+  session.status = "merged";
+  session.mergeCommit = commit.id;
+  session.updatedAt = new Date().toISOString();
+  await save(workspaceId, session);
+  return { session, commit };
+}

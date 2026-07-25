@@ -38,8 +38,9 @@ Native namespaces (always available):
 - `events` — signals to the host and other consumers.
   `await events.emit({ channel: 'form.submitted', payload: { id } })` → `{ id, channel }`
   `await events.list({ channel: 'form.submitted', limit: 50 })` → `{ channel, events: [{ id, ts, userId, payload }] }`
-- `vfs` — the workspace filesystem.
+- `vfs` — the workspace filesystem (content-hash versioned).
   `await vfs.list({ prefix: 'widgets' })` → `{ entries }`; `await vfs.read({ path })` / `vfs.write({ path, content })` / `vfs.delete({ path })`.
+  Versioning: `await vfs.commit({ message })` snapshots the workspace; `vfs.log({})` / `vfs.diff({ from, to })` / `vfs.restore({ commit, path })` read and restore history; `vfs.read({ path, commit })` pins a read.
 - `registry` — discover available SDKs at runtime.
   `await registry.search({ q: 'create issue' })` → `{ operations: [{ providerPath, sdkPath, summary }] }`; `await registry.providers({ q })` → `{ providers }`.
 

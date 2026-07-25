@@ -144,11 +144,38 @@ describe("llm chat providers", () => {
     expect(text.trimEnd().endsWith("data: [DONE]")).toBe(true);
   });
 
-  it("returns the upstream error when execution fails", async () => {
+  it("streams the upstream error as an error frame when execution fails", async () => {
+    // The executor runs inside the response stream (first byte goes out
+    // before the provider answers — the CloudFront-timeout fix), so an
+    // upstream failure surfaces as an in-stream `error` frame, not a 502.
     stubExecutor(async () => ({ success: false, error: "boom", durationMs: 1 }));
     const response = await chat("openai", { messages: uiMessages });
-    expect(response.status).toBe(502);
-    expect(await response.json()).toMatchObject({ error: "boom" });
+    expect(response.status).toBe(200);
+    const text = await readAll(response);
+    expect(text).toContain('"type":"error"');
+    expect(text).toContain('"errorText":"boom"');
+    expect(text.trimEnd().endsWith("data: [DONE]")).toBe(true);
+  });
+
+  it("exposes the backing job id and persists the text for resume", async () => {
+    stubExecutor(async () => ({
+      success: true,
+      data: sseStream([
+        '{"choices":[{"delta":{"content":"hello"}}]}',
+        "[DONE]",
+      ]),
+      durationMs: 1,
+    }));
+
+    const response = await chat("openai", { messages: uiMessages });
+    expect(response.status).toBe(200);
+    const jobId = response.headers.get("x-llm-job");
+    expect(jobId).toBeTruthy();
+    await readAll(response);
+
+    const job = await createApp().request(`/llm/jobs/${jobId}`);
+    expect(job.status).toBe(200);
+    expect(await job.json()).toMatchObject({ status: "succeeded", text: "hello" });
   });
 });
 

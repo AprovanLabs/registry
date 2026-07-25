@@ -39,7 +39,6 @@ import {
   listLlmProviders,
   resolveLlmProvider,
   toOpenAiMessages,
-  toUiMessageStream,
   UI_MESSAGE_STREAM_HEADERS,
 } from "../llm.js";
 import type { CredentialPayload } from "../credentials.js";
@@ -238,72 +237,233 @@ async function handleChat(
     return c.json({ error: `No credential for ${providerId} in this workspace` }, 403);
   }
 
-  const requestId = crypto.randomUUID();
-  const startTime = Date.now();
-  const executor = await getExecutor();
-  const result = await executor.execute({
-    provider: provider.module,
-    operation: "createChatCompletion",
-    args: {
-      model: body.model || boundModel || provider.defaultModel,
-      messages,
-      stream: true,
-    },
-    credentials,
-    baseUrl: provider.baseUrl,
-    timeout: 120_000,
-  });
+  const model = body.model || boundModel || provider.defaultModel;
 
-  const durationMs = Date.now() - startTime;
-  const status = result.success ? 200 : 502;
-  getAuditStore().append({
-    requestId,
-    workspaceId,
-    callerId: principal.sub,
+  // Job-backed, first-byte-immediately. Reasoning models can sit silent for
+  // 60s+ before their stream opens; CloudFront's origin read timeout (60s)
+  // kills a connection that hasn't sent a byte by then. So the response
+  // stream starts NOW — UI-stream preamble + keepalive comments — and the
+  // upstream executor call happens inside it. The job record makes the
+  // completion recoverable: a client that loses the stream polls
+  // GET /llm/jobs/:id (header `x-llm-job`) and splices in the tail.
+  const jobId = crypto.randomUUID();
+  const now = new Date().toISOString();
+  const job: LlmJobRecord = {
+    id: jobId,
+    status: "running",
     provider: providerId,
-    operation: "createChatCompletion",
-    status,
-    durationMs,
+    model,
+    text: "",
+    createdAt: now,
+    updatedAt: now,
+  };
+  await writeLlmJob(workspaceId, job);
+
+  const persist = async (text: string, terminal: boolean, error?: string): Promise<void> => {
+    job.text = text;
+    job.status = terminal ? (error ? "failed" : "succeeded") : "running";
+    job.error = error;
+    job.updatedAt = new Date().toISOString();
+    await writeLlmJob(workspaceId, job);
+  };
+
+  const execute = async (): Promise<
+    { upstream: ReadableStream<Uint8Array> } | { text: string } | { error: string }
+  > => {
+    const requestId = crypto.randomUUID();
+    const startTime = Date.now();
+    const executor = await getExecutor();
+    const result = await executor.execute({
+      provider: provider.module,
+      operation: "createChatCompletion",
+      args: { model, messages, stream: true },
+      credentials,
+      baseUrl: provider.baseUrl,
+      timeout: 120_000,
+    });
+    getAuditStore().append({
+      requestId,
+      workspaceId,
+      callerId: principal.sub,
+      provider: providerId,
+      operation: "createChatCompletion",
+      status: result.success ? 200 : 502,
+      durationMs: Date.now() - startTime,
+    });
+    if (!result.success) return { error: result.error ?? "Chat completion failed" };
+    if (result.data instanceof ReadableStream) return { upstream: result.data };
+    if (result.data instanceof Response && result.data.body) {
+      return { upstream: result.data.body };
+    }
+    // Non-streaming upstream (some compat servers ignore `stream`): the
+    // completion is already whole — emit it as one delta.
+    const completion = result.data as
+      | { choices?: Array<{ message?: { content?: string } }> }
+      | undefined;
+    return { text: completion?.choices?.[0]?.message?.content ?? "" };
+  };
+
+  return c.newResponse(createChatUiJobStream(jobId, execute, persist), 200, {
+    ...UI_MESSAGE_STREAM_HEADERS,
+    "x-llm-job": jobId,
   });
+}
 
-  if (!result.success) {
-    return c.json({ error: result.error ?? "Chat completion failed" }, 502);
-  }
-
-  if (result.data instanceof ReadableStream) {
-    return c.newResponse(toUiMessageStream(result.data), 200, UI_MESSAGE_STREAM_HEADERS);
-  }
-  if (result.data instanceof Response && result.data.body) {
-    return c.newResponse(toUiMessageStream(result.data.body), 200, UI_MESSAGE_STREAM_HEADERS);
-  }
-
-  // Non-streaming upstream (some compat servers ignore `stream`): return the
-  // completion as a single-shot UI message stream so `useChat` still renders.
-  const completion = result.data as
-    | { choices?: Array<{ message?: { content?: string } }> }
-    | undefined;
-  const text = completion?.choices?.[0]?.message?.content ?? "";
+/**
+ * The UI-message-stream twin of {@link createJobResponseStream}: same
+ * independence property (upstream draining and `persist` run to a terminal
+ * job record whether or not the client is still attached), but the wire
+ * format is the AI SDK UI message stream `useChat` consumes, and the
+ * upstream call itself happens *inside* the stream so the first bytes go
+ * out before the provider has answered.
+ */
+function createChatUiJobStream(
+  jobId: string,
+  execute: () => Promise<
+    { upstream: ReadableStream<Uint8Array> } | { text: string } | { error: string }
+  >,
+  persist: (text: string, terminal: boolean, error?: string) => Promise<void>,
+): ReadableStream<Uint8Array> {
   const encoder = new TextEncoder();
-  const messageId = crypto.randomUUID();
-  const chunks = [
-    { type: "start", messageId },
-    { type: "start-step" },
-    { type: "text-start", id: `${messageId}-text` },
-    { type: "text-delta", id: `${messageId}-text`, delta: text },
-    { type: "text-end", id: `${messageId}-text` },
-    { type: "finish-step" },
-    { type: "finish" },
-  ];
-  const stream = new ReadableStream<Uint8Array>({
-    start(controller) {
-      for (const chunk of chunks) {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`));
+  const decoder = new TextDecoder();
+  // The job id doubles as the UI message id, so a resuming client can match
+  // the polled job back to the message it was building.
+  const messageId = jobId;
+
+  return new ReadableStream<Uint8Array>({
+    async start(controller) {
+      let clientGone = false;
+      const safeEnqueue = (bytes: Uint8Array): void => {
+        if (clientGone) return;
+        try {
+          controller.enqueue(bytes);
+        } catch {
+          clientGone = true;
+        }
+      };
+      const emit = (chunk: Record<string, unknown>): void =>
+        safeEnqueue(encoder.encode(`data: ${JSON.stringify(chunk)}\n\n`));
+
+      emit({ type: "start", messageId });
+      emit({ type: "start-step" });
+      const keepalive = setInterval(
+        () => safeEnqueue(encoder.encode(": keepalive\n\n")),
+        JOB_KEEPALIVE_MS,
+      );
+
+      let text = "";
+      let textOpen = false;
+      let reasoningOpen = false;
+      let dirty = false;
+      let lastPersist = Date.now();
+
+      const maybePersist = async (): Promise<void> => {
+        if (!dirty || Date.now() - lastPersist < JOB_PERSIST_THROTTLE_MS) return;
+        dirty = false;
+        lastPersist = Date.now();
+        await persist(text, false);
+      };
+
+      const closeParts = (): void => {
+        if (reasoningOpen) {
+          emit({ type: "reasoning-end", id: `${messageId}-reasoning` });
+          reasoningOpen = false;
+        }
+        if (textOpen) {
+          emit({ type: "text-end", id: `${messageId}-text` });
+          textOpen = false;
+        }
+      };
+
+      const handleData = async (data: string): Promise<void> => {
+        if (data === "[DONE]" || !data) return;
+        let parsed: {
+          choices?: Array<{
+            delta?: { content?: string | null; reasoning_content?: string | null; reasoning?: string | null };
+          }>;
+        };
+        try {
+          parsed = JSON.parse(data) as typeof parsed;
+        } catch {
+          return; // Malformed upstream chunk — skip it, keep draining.
+        }
+        const delta = parsed.choices?.[0]?.delta;
+        if (!delta) return;
+        const reasoning = delta.reasoning_content ?? delta.reasoning;
+        if (typeof reasoning === "string" && reasoning.length > 0) {
+          if (!reasoningOpen) {
+            emit({ type: "reasoning-start", id: `${messageId}-reasoning` });
+            reasoningOpen = true;
+          }
+          emit({ type: "reasoning-delta", id: `${messageId}-reasoning`, delta: reasoning });
+        }
+        if (typeof delta.content === "string" && delta.content.length > 0) {
+          if (reasoningOpen) {
+            emit({ type: "reasoning-end", id: `${messageId}-reasoning` });
+            reasoningOpen = false;
+          }
+          if (!textOpen) {
+            emit({ type: "text-start", id: `${messageId}-text` });
+            textOpen = true;
+          }
+          emit({ type: "text-delta", id: `${messageId}-text`, delta: delta.content });
+          text += delta.content;
+          dirty = true;
+          await maybePersist();
+        }
+      };
+
+      let failure: string | undefined;
+      try {
+        const started = await execute();
+        if ("error" in started) {
+          failure = started.error;
+        } else if ("text" in started) {
+          text = started.text;
+          if (text) {
+            emit({ type: "text-start", id: `${messageId}-text` });
+            emit({ type: "text-delta", id: `${messageId}-text`, delta: text });
+            textOpen = true;
+          }
+        } else {
+          let buffered = "";
+          const reader = started.upstream.getReader();
+          for (;;) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            buffered += decoder.decode(value, { stream: true });
+            let newlineIndex = buffered.indexOf("\n");
+            while (newlineIndex !== -1) {
+              const line = buffered.slice(0, newlineIndex).replace(/\r$/u, "");
+              buffered = buffered.slice(newlineIndex + 1);
+              if (line.startsWith("data:")) await handleData(line.slice(5).trim());
+              newlineIndex = buffered.indexOf("\n");
+            }
+          }
+        }
+      } catch (err) {
+        failure = err instanceof Error ? err.message : String(err);
+      } finally {
+        clearInterval(keepalive);
+        await persist(text, true, failure);
+        closeParts();
+        if (failure) {
+          // The error chunk is what flips `useChat` into its error state; a
+          // resuming client's poll sees the same terminal record.
+          emit({ type: "error", errorText: failure });
+        } else {
+          emit({ type: "finish-step" });
+          emit({ type: "finish" });
+        }
+        safeEnqueue(encoder.encode("data: [DONE]\n\n"));
+        try {
+          controller.close();
+        } catch {
+          // Already closed by the client dropping — nothing left to do.
+        }
       }
-      controller.enqueue(encoder.encode("data: [DONE]\n\n"));
-      controller.close();
     },
   });
-  return c.newResponse(stream, 200, UI_MESSAGE_STREAM_HEADERS);
 }
 
 // ---------------------------------------------------------------------------

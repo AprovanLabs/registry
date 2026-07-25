@@ -14,14 +14,51 @@
  * elsewhere they answer 501 — inline `PUT /fs/*path` always works.
  */
 
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { hiddenDataPrefixes, isHiddenDataPath } from "../apps/store.js";
 import { getFsStore, isServicePath, normalizeFsPath } from "../fs-store.js";
 import { requireAuth } from "../middleware/auth.js";
+import { ServiceError } from "../service-kernel.js";
+import {
+  requireSession,
+  sessionDelete,
+  sessionList,
+  sessionRead,
+  sessionWrite,
+  type ChatSessionRecord,
+} from "../vcs/chat-sessions.js";
+import { assertNotMounted, mountEntries, mountRead } from "../vcs/mounts.js";
 
 export const fsRouter = new Hono();
 
 fsRouter.use("*", requireAuth);
+
+/**
+ * `?session=<id>` scopes the operation to a *staged* chat session's overlay
+ * view (docs/vcs-and-sessions.md). Auto-mode sessions resolve to undefined —
+ * they write through to the live tree by contract. Closed staged sessions
+ * stay readable (peek) but reject writes.
+ */
+async function stagedSessionParam(
+  c: Context,
+  write: boolean,
+): Promise<ChatSessionRecord | undefined> {
+  const id = c.req.query("session");
+  if (!id) return undefined;
+  const session = await requireSession(c.get("principal").workspaceId, id);
+  if (session.mode !== "staged") return undefined;
+  if (write && session.status !== "open") {
+    throw new ServiceError("Session is not open", 400);
+  }
+  return session;
+}
+
+function serviceErrorResponse(c: Context, err: unknown): Response {
+  if (err instanceof ServiceError) {
+    return c.json({ error: err.message }, err.status as 400);
+  }
+  throw err;
+}
 
 fsRouter.get("/", async (c) => {
   const prefix = c.req.query("prefix") ?? "";
@@ -31,15 +68,30 @@ fsRouter.get("/", async (c) => {
     return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
   }
   const workspaceId = c.get("principal").workspaceId;
+  try {
+    const session = await stagedSessionParam(c, false);
+    if (session) {
+      return c.json({
+        session: session.id,
+        entries: await sessionList(workspaceId, session, normalized),
+      });
+    }
+  } catch (err) {
+    return serviceErrorResponse(c, err);
+  }
   const entries = await getFsStore().list(workspaceId, normalized);
   // Root listings (and the chat file tree, which calls this same route)
   // hide the service subtree entirely, plus every app/personal data
   // partition — see docs/app-data.md "The file plane forgets app data".
   const hidden = await hiddenDataPrefixes(workspaceId);
+  const mounted = await mountEntries(workspaceId, normalized);
   return c.json({
-    entries: entries.filter(
-      (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
-    ),
+    entries: [
+      ...entries.filter(
+        (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
+      ),
+      ...mounted,
+    ].sort((a, b) => a.path.localeCompare(b.path)),
   });
 });
 
@@ -49,11 +101,21 @@ fsRouter.get("/:path{.+}", async (c) => {
   if (isServicePath(path)) {
     return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
   }
-  const file = await getFsStore().read(
-    c.get("principal").workspaceId,
-    path,
-    c.req.query("hash"),
-  );
+  const workspaceId = c.get("principal").workspaceId;
+  try {
+    const session = await stagedSessionParam(c, false);
+    if (session) {
+      const file = await sessionRead(workspaceId, session, path);
+      return file ? c.json(file) : c.json({ error: "Not found" }, 404);
+    }
+    const viaMount = await mountRead(workspaceId, path);
+    if (viaMount !== "not-mounted") {
+      return viaMount ? c.json(viaMount) : c.json({ error: "Not found" }, 404);
+    }
+  } catch (err) {
+    return serviceErrorResponse(c, err);
+  }
+  const file = await getFsStore().read(workspaceId, path, c.req.query("hash"));
   return file ? c.json(file) : c.json({ error: "Not found" }, 404);
 });
 
@@ -67,12 +129,18 @@ fsRouter.put("/:path{.+}", async (c) => {
   if (typeof body.content !== "string") {
     return c.json({ error: "content must be a string" }, 400);
   }
-  const file = await getFsStore().write(
-    c.get("principal").workspaceId,
-    path,
-    body.content,
-    body.mimeType,
-  );
+  const workspaceId = c.get("principal").workspaceId;
+  try {
+    await assertNotMounted(workspaceId, path);
+    const session = await stagedSessionParam(c, true);
+    if (session) {
+      const meta = await sessionWrite(workspaceId, session, path, body.content, body.mimeType);
+      return c.json(meta, 201);
+    }
+  } catch (err) {
+    return serviceErrorResponse(c, err);
+  }
+  const file = await getFsStore().write(workspaceId, path, body.content, body.mimeType);
   return c.json(file, 201);
 });
 
@@ -84,6 +152,16 @@ fsRouter.delete("/:path{.+}", async (c) => {
   }
   const workspaceId = c.get("principal").workspaceId;
   const store = getFsStore();
+  try {
+    await assertNotMounted(workspaceId, path);
+    const session = await stagedSessionParam(c, true);
+    if (session) {
+      await sessionDelete(workspaceId, session, path, c.req.query("recursive") === "1");
+      return c.body(null, 204);
+    }
+  } catch (err) {
+    return serviceErrorResponse(c, err);
+  }
   const removed =
     c.req.query("recursive") === "1"
       ? (await store.removePrefix(workspaceId, path)) > 0

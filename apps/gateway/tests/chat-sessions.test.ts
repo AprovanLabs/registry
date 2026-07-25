@@ -1,0 +1,206 @@
+/**
+ * Chat sessions: branch-shaped chats over the VCS layer — staged overlays,
+ * transcript persistence, sync/conflicts, and close (discard vs stage to
+ * main). See docs/vcs-and-sessions.md.
+ */
+
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { createApp } from "../src/app.js";
+
+let dataDir: string;
+
+beforeAll(() => {
+  dataDir = mkdtempSync(join(tmpdir(), "gateway-chat-sessions-"));
+  process.env["GATEWAY_DATA_DIR"] = dataDir;
+});
+
+afterAll(() => {
+  delete process.env["GATEWAY_DATA_DIR"];
+  rmSync(dataDir, { recursive: true, force: true });
+});
+
+const call = (path: string, args: Record<string, unknown> = {}) =>
+  createApp().request(`/tools/${path}`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ args }),
+  });
+
+const putFile = (path: string, content: string, session?: string) =>
+  createApp().request(`/fs/${path}${session ? `?session=${session}` : ""}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content }),
+  });
+
+const getFile = (path: string, session?: string) =>
+  createApp().request(`/fs/${path}${session ? `?session=${session}` : ""}`);
+
+async function data<T>(res: Response): Promise<T> {
+  const body = (await res.json()) as { data: T };
+  return body.data;
+}
+
+interface SessionPayload {
+  session: {
+    id: string;
+    title: string;
+    status: string;
+    mode: string;
+    base: string;
+    overlay: Record<string, string | null>;
+    messageCount: number;
+    changes?: { added: string[]; modified: string[]; removed: string[] };
+    mergeCommit?: string;
+  };
+  commit?: { id: string; message: string; sessionId?: string };
+  conflicts?: Array<{ path: string }>;
+}
+
+describe("chat sessions", () => {
+  let stagedId: string;
+
+  it("creates a session with an auto-snapshot base", async () => {
+    await putFile("widgets/board.tsx", "export const v = 1;");
+    const created = await data<SessionPayload>(
+      await call("sessions/create", { title: "Kanban work", mode: "staged" }),
+    );
+    stagedId = created.session.id;
+    expect(created.session.mode).toBe("staged");
+    expect(created.session.base).toMatch(/^[0-9a-f]{64}$/);
+
+    // The base commit is on main.
+    const log = await data<{ commits: Array<{ id: string }> }>(await call("vfs/log", {}));
+    expect(log.commits[0]!.id).toBe(created.session.base);
+  });
+
+  it("stages writes in the overlay without touching the live tree", async () => {
+    const write = await putFile("widgets/board.tsx", "export const v = 2;", stagedId);
+    expect(write.status).toBe(201);
+
+    // Live tree still v1.
+    const live = (await (await getFile("widgets/board.tsx")).json()) as { content: string };
+    expect(live.content).toBe("export const v = 1;");
+
+    // Session view sees v2.
+    const sessionView = (await (await getFile("widgets/board.tsx", stagedId)).json()) as {
+      content: string;
+    };
+    expect(sessionView.content).toBe("export const v = 2;");
+
+    // New files exist only in the session; deletes are tombstones.
+    await putFile("widgets/new.tsx", "export const fresh = true;", stagedId);
+    expect((await getFile("widgets/new.tsx")).status).toBe(404);
+    expect((await getFile("widgets/new.tsx", stagedId)).status).toBe(200);
+
+    const summary = await data<SessionPayload>(await call("sessions/get", { id: stagedId }));
+    expect(summary.session.changes).toEqual({
+      added: ["widgets/new.tsx"],
+      modified: ["widgets/board.tsx"],
+      removed: [],
+    });
+  });
+
+  it("lists the overlay view via vfs.list {session}", async () => {
+    const listing = await data<{ entries: Array<{ path: string; hash: string }> }>(
+      await call("vfs/list", { session: stagedId, prefix: "widgets" }),
+    );
+    expect(listing.entries.map((e) => e.path).sort()).toEqual([
+      "widgets/board.tsx",
+      "widgets/new.tsx",
+    ]);
+  });
+
+  it("persists and upserts the transcript", async () => {
+    await call("sessions/append", {
+      id: stagedId,
+      messages: [
+        { id: "m1", role: "user", parts: [{ type: "text", text: "make a board" }] },
+        { id: "m2", role: "assistant", parts: [{ type: "text", text: "draft" }] },
+      ],
+    });
+    // Re-send m2 with the final text — upsert, not duplicate.
+    const after = await data<SessionPayload>(
+      await call("sessions/append", {
+        id: stagedId,
+        messages: [{ id: "m2", role: "assistant", parts: [{ type: "text", text: "final" }] }],
+      }),
+    );
+    expect(after.session.messageCount).toBe(2);
+
+    const transcript = await data<{ messages: Array<{ id: string; parts: Array<{ text: string }> }> }>(
+      await call("sessions/messages", { id: stagedId }),
+    );
+    expect(transcript.messages).toHaveLength(2);
+    expect(transcript.messages[1]!.parts[0]!.text).toBe("final");
+  });
+
+  it("syncs onto a moved main and reports conflicts at path granularity", async () => {
+    // Main moves under the staged edit...
+    await putFile("widgets/board.tsx", "export const v = 99;");
+    // ...and somewhere the session never touched.
+    await putFile("README.md", "hello");
+
+    const synced = await data<SessionPayload>(await call("sessions/sync", { id: stagedId }));
+    expect(synced.conflicts).toEqual([
+      expect.objectContaining({ path: "widgets/board.tsx" }),
+    ]);
+
+    // The rebased base sees main's README through the overlay view.
+    const readme = (await (await getFile("README.md", stagedId)).json()) as { content: string };
+    expect(readme.content).toBe("hello");
+  });
+
+  it("stages the session onto main as a merge commit", async () => {
+    const closed = await data<SessionPayload>(
+      await call("sessions/close", { id: stagedId, stage: true, message: "Ship the board" }),
+    );
+    expect(closed.session.status).toBe("merged");
+    expect(closed.commit?.sessionId).toBe(stagedId);
+    expect(closed.session.mergeCommit).toBe(closed.commit?.id);
+
+    // Overlay content is live now.
+    const live = (await (await getFile("widgets/board.tsx")).json()) as { content: string };
+    expect(live.content).toBe("export const v = 2;");
+    expect((await getFile("widgets/new.tsx")).status).toBe(200);
+
+    // And the merge commit is main's head.
+    const log = await data<{ commits: Array<{ id: string; message: string }> }>(
+      await call("vfs/log", { limit: 1 }),
+    );
+    expect(log.commits[0]!.message).toBe("Ship the board");
+
+    // Writes to a merged session are rejected; peeking still works.
+    expect((await putFile("widgets/board.tsx", "post-close", stagedId)).status).toBe(400);
+    expect((await getFile("widgets/new.tsx", stagedId)).status).toBe(200);
+  });
+
+  it("closes without staging, leaving main untouched", async () => {
+    const created = await data<SessionPayload>(
+      await call("sessions/create", { title: "Scratch", mode: "staged" }),
+    );
+    await putFile("scratch/tmp.md", "throwaway", created.session.id);
+    const closed = await data<SessionPayload>(
+      await call("sessions/close", { id: created.session.id }),
+    );
+    expect(closed.session.status).toBe("closed");
+    expect((await getFile("scratch/tmp.md")).status).toBe(404);
+  });
+
+  it("auto-mode sessions write through to the live tree", async () => {
+    const created = await data<SessionPayload>(await call("sessions/create", {}));
+    expect(created.session.mode).toBe("auto");
+    await putFile("notes/auto.md", "direct", created.session.id);
+    expect((await getFile("notes/auto.md")).status).toBe(200);
+  });
+
+  it("shows the PR-style list with changes", async () => {
+    const listing = await data<{ sessions: Array<{ title: string; status: string }> }>(
+      await call("sessions/list", { status: "merged" }),
+    );
+    expect(listing.sessions.some((s) => s.title === "Kanban work")).toBe(true);
+  });
+});
