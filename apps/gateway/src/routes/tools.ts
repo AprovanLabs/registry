@@ -500,48 +500,121 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   // Execute via Isolate with telemetry
   const executor = await getExecutor();
 
-  const isolateResult = await withSpan<IsolateResult>(
-    { provider, operation, spanName: `gateway ${provider} ${operation}` },
-    async (span) => {
-      span.setAttribute("caller_id", callerId);
-      span.setAttribute("workspace_id", workspaceId);
-      span.setAttribute("request_id", requestId);
+  const runExecute = (): Promise<IsolateResult> =>
+    withSpan<IsolateResult>(
+      { provider, operation, spanName: `gateway ${provider} ${operation}` },
+      async (span) => {
+        span.setAttribute("caller_id", callerId);
+        span.setAttribute("workspace_id", workspaceId);
+        span.setAttribute("request_id", requestId);
 
-      const r = await executor.execute({
-        provider: interfaceModule ?? llmAlias?.module ?? provider,
-        operation,
-        args,
-        credentials,
-        ...(llmAlias?.baseUrl ? { baseUrl: llmAlias.baseUrl } : {}),
-        timeout: interfaceTimeoutMs ?? (llmAlias ? 120_000 : 30_000),
-      });
+        const r = await executor.execute({
+          provider: interfaceModule ?? llmAlias?.module ?? provider,
+          operation,
+          args,
+          credentials,
+          ...(llmAlias?.baseUrl ? { baseUrl: llmAlias.baseUrl } : {}),
+          timeout: interfaceTimeoutMs ?? (llmAlias ? 120_000 : 30_000),
+        });
 
-      span.setAttribute("success", r.success);
-      span.setAttribute("duration_ms", r.durationMs);
-      if (!r.success) {
-        span.setAttribute("error", r.error ?? "unknown");
-      }
-      return r;
-    },
-  );
+        span.setAttribute("success", r.success);
+        span.setAttribute("duration_ms", r.durationMs);
+        if (!r.success) {
+          span.setAttribute("error", r.error ?? "unknown");
+        }
+        return r;
+      },
+    );
 
-  // For streaming operations this measures time to first byte, not the full
-  // stream duration — the response body is still being produced when we log.
+  const finishLog = (result: IsolateResult): void => {
+    // For streaming operations this measures time to first byte, not the full
+    // stream duration — the response body is still being produced when we log.
+    const durationMs = Date.now() - startTime;
+    const status = result.success ? 200 : 500;
+    logMetadata({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
+    getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
+  };
+
+  // Chat completions requested with `stream: true` get their SSE response
+  // OPENED IMMEDIATELY — before the upstream has answered. The gateway owns
+  // client-facing streaming: some providers sit on a large prompt for over a
+  // minute before sending response headers (observed: 79s on a widget-edit
+  // prompt), and every hop between here and the browser has a
+  // time-to-first-byte limit (CloudFront cuts the origin at 60s, the web
+  // client aborts a headerless connect at 30s). Comment keepalives hold the
+  // connection open while the upstream thinks; the upstream's bytes are piped
+  // through when they arrive; a provider that ignored `stream` and answered
+  // with buffered JSON is re-emitted as one SSE event. SSE parsers ignore
+  // `:` comment lines by spec, so keepalives are invisible to clients.
+  if (llmAlias && operation === "createChatCompletion" && args["stream"] === true) {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        const keepalive = setInterval(() => {
+          try {
+            controller.enqueue(encoder.encode(`: keepalive ${Date.now()}\n\n`));
+          } catch {
+            clearInterval(keepalive);
+          }
+        }, 15_000);
+        try {
+          const result = await runExecute();
+          finishLog(result);
+          if (!result.success) {
+            // The 200 is already on the wire — the error travels in-band as
+            // the standard OpenAI-style SSE error chunk clients parse.
+            controller.enqueue(
+              encoder.encode(
+                `data: ${JSON.stringify({ error: { message: result.error ?? "Execution failed" } })}\n\n`,
+              ),
+            );
+            return;
+          }
+          const streamBody = asStreamBody(result.data);
+          if (streamBody) {
+            const reader = streamBody.stream.getReader();
+            for (;;) {
+              const { value, done } = await reader.read();
+              if (done) break;
+              if (value) controller.enqueue(value);
+            }
+            return;
+          }
+          // Upstream ignored `stream`: hand the buffered completion over as
+          // a single SSE event so the client's stream reader still works.
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(result.data)}\n\n`));
+          controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+        } catch (err) {
+          controller.enqueue(
+            encoder.encode(
+              `data: ${JSON.stringify({ error: { message: err instanceof Error ? err.message : String(err) } })}\n\n`,
+            ),
+          );
+        } finally {
+          clearInterval(keepalive);
+          try {
+            controller.close();
+          } catch {
+            // Already closed (client went away mid-stream).
+          }
+        }
+      },
+    });
+    return c.newResponse(stream, 200, { ...SSE_HEADERS });
+  }
+
+  const isolateResult = await runExecute();
   const durationMs = Date.now() - startTime;
-
-  // 5. Log request/response metadata (no bodies)
-  const status = isolateResult.success ? 200 : 500;
-  logMetadata({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
-  getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
+  finishLog(isolateResult);
 
   if (!isolateResult.success) {
     return c.json({ error: isolateResult.error ?? "Execution failed" }, 500);
   }
 
-  // Streaming results (provider chat-completion operations called with
-  // `stream: true`) are passed through as-is — typically SSE — rather than
-  // JSON-buffered. Requires Lambda response streaming to reach the client
-  // incrementally (see src/lambda.ts and infra/src/gateway-lambda.ts).
+  // Streaming results from non-chat operations are passed through as-is —
+  // typically SSE — rather than JSON-buffered. Requires Lambda response
+  // streaming to reach the client incrementally (see src/lambda.ts and
+  // infra/src/gateway-lambda.ts).
   const streamBody = asStreamBody(isolateResult.data);
   if (streamBody) {
     return c.newResponse(streamBody.stream, 200, streamBody.headers);

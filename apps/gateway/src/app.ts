@@ -75,6 +75,34 @@ export function createApp(): Hono {
   // Health check — unauthenticated
   // ---------------------------------------------------------------------------
   app.get("/health", (c) => c.json({ status: "ok", service: "gateway" }));
+
+  // Streaming health check: five SSE ticks, 500ms apart, no auth. Exists to
+  // answer one question from the outside — does the full transport chain
+  // (hono streamHandle → Lambda RESPONSE_STREAM → CloudFront → client)
+  // deliver bytes incrementally, or does something buffer? If the ticks
+  // arrive as one burst, every SSE surface (chat, widget edits) is silently
+  // buffered and long completions die at an intermediary timeout instead of
+  // streaming — exactly the failure this endpoint makes diagnosable in one
+  // curl.
+  app.get("/health/stream", (c) => {
+    const encoder = new TextEncoder();
+    const stream = new ReadableStream<Uint8Array>({
+      async start(controller) {
+        for (let tick = 1; tick <= 5; tick++) {
+          controller.enqueue(
+            encoder.encode(`data: {"tick":${tick},"at":${Date.now()}}\n\n`),
+          );
+          await new Promise((resolve) => setTimeout(resolve, 500));
+        }
+        controller.enqueue(encoder.encode("data: [DONE]\n\n"));
+        controller.close();
+      },
+    });
+    return c.newResponse(stream, 200, {
+      "Content-Type": "text/event-stream; charset=utf-8",
+      "Cache-Control": "no-cache, no-transform",
+    });
+  });
   app.get("/config", (c) => {
     const config: GatewayConfig = {
       mode: getAuthMode(),
