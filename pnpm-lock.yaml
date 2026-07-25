@@ -60,6 +60,9 @@ importers:
       '@aprovan/node':
         specifier: ^0.1.1
         version: 0.1.1
+      '@aprovan/patchwork-compiler':
+        specifier: ^0.2.0
+        version: 0.2.0
       '@aws-sdk/client-cognito-identity-provider':
         specifier: ^3.1077.0
         version: 3.1085.0
@@ -155,8 +158,8 @@ importers:
         specifier: workspace:*
         version: link:../../packages/runtime
       '@aprovan/ui':
-        specifier: ^0.3.0
-        version: 0.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^0.5.0
+        version: 0.5.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@astrojs/react':
         specifier: ^5.0.3
         version: 5.0.4(@types/node@25.6.2)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(jiti@2.7.0)(lightningcss@1.32.0)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(tsx@4.21.0)(yaml@2.8.4)
@@ -448,8 +451,8 @@ importers:
         specifier: 0.1.0-dev.7343775
         version: 0.1.0-dev.7343775
       '@aprovan/ui':
-        specifier: ^0.2.3
-        version: 0.2.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^0.5.0
+        version: 0.5.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@codemirror/autocomplete':
         specifier: ^6.20.3
         version: 6.20.3
@@ -732,6 +735,10 @@ packages:
     resolution: {integrity: sha512-9Mc9NSQXW3DR2TvTdlnOErW5g+BzeAauBRGxXOtX+nsKoi0QUMAAi/bNlecEZSK44Z+78kWTfBq68ROj+xR+UQ==}
     hasBin: true
 
+  '@aprovan/patchwork-compiler@0.2.0':
+    resolution: {integrity: sha512-rRq6ET4dZ6TQoRy8gQDq2YZGLdzYT9gVj4AqZcaksb9LpYvAVeq8Lb8CSxE4LdGcI+FBePB9vb102uIsTeO6oQ==}
+    engines: {node: '>=20.0.0'}
+
   '@aprovan/prettier-config@1.0.0':
     resolution: {integrity: sha512-a/AaF1hfgjanSZfyiblanS0JflVmG4CV6mBGofOFv/NabWQogAzECiGzrrlK91NMdnT/Tie2qF2JyTUe5b1z5g==}
 
@@ -741,13 +748,8 @@ packages:
   '@aprovan/tsconfig@0.1.0':
     resolution: {integrity: sha512-ZiyaLo+3NISdtzOjL9qMz8i2/gSHvoWOyJa0BsEb+++QEOUeVWL1wyVd6/m81JpYCgNQVI+CKQM+YmlRjywmDw==}
 
-  '@aprovan/ui@0.2.3':
-    resolution: {integrity: sha512-yL1Z/Rp7WcwC7MpO0d2RV65LgkI5zCW2nAyX7HzNteji/XBLs7EejwBnE1F/Jox3FWzWj5JEHyN24kuS6m1l6Q==}
-    peerDependencies:
-      react: 19.2.7
-
-  '@aprovan/ui@0.3.0':
-    resolution: {integrity: sha512-A8sJzEXSeMBpI9LmcxUIgy2DeS8zomsKZnaCUXdGPySmSmraPG5OCKGOZnAdeciGsCwSf8kJVPon7uWwbwAycA==}
+  '@aprovan/ui@0.5.0':
+    resolution: {integrity: sha512-gchPNsWPIxOsf/U7WUDGUc5wI0nWuUH3LV+ZkLAhPLZhbilYI+Nbg4K/k9fKRWkSpC0+gnDOQKNzZRzGcUmtoQ==}
     peerDependencies:
       react: 19.2.7
 
@@ -4327,6 +4329,11 @@ packages:
     resolution: {integrity: sha512-CxN9N56HYfd2m/acc/NOFrZQsN9kU4eh+2kk6A707Kz1krH8tKmfrs5RnftB8WNX80T0NS7vSQsDOlg23diR2g==}
     engines: {node: '>= 0.4'}
 
+  esbuild-wasm@0.27.7:
+    resolution: {integrity: sha512-1k03e2/tGz+sLz3/xzoZmUsIqtaGIvJa8k4UqUeqCUry83nHmlxQYZUUES0WBFUYilSQUf7nDUGAciIIklljSg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   esbuild@0.21.5:
     resolution: {integrity: sha512-mg3OPMV4hXywwpoDxu3Qda5xCKQi+vCTZq8S9J/EpkhB2HzKXq4SNFZE3+NK93JYxc8VMSep+lOUSC/RVKaBqw==}
     engines: {node: '>=12'}
@@ -7409,26 +7416,18 @@ snapshots:
     dependencies:
       '@aws-sdk/client-ssm': 3.1085.0
 
+  '@aprovan/patchwork-compiler@0.2.0':
+    dependencies:
+      esbuild-wasm: 0.27.7
+      zod: 3.25.76
+
   '@aprovan/prettier-config@1.0.0': {}
 
   '@aprovan/registry-main@0.1.0-dev.7343775': {}
 
   '@aprovan/tsconfig@0.1.0': {}
 
-  '@aprovan/ui@0.2.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
-    dependencies:
-      class-variance-authority: 0.7.1
-      clsx: 2.1.1
-      oidc-client-ts: 3.5.0
-      radix-ui: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      react: 19.2.7
-      tailwind-merge: 3.5.0
-    transitivePeerDependencies:
-      - '@types/react'
-      - '@types/react-dom'
-      - react-dom
-
-  '@aprovan/ui@0.3.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@aprovan/ui@0.5.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
       class-variance-authority: 0.7.1
       clsx: 2.1.1
@@ -11375,6 +11374,8 @@ snapshots:
       is-callable: 1.2.7
       is-date-object: 1.1.0
       is-symbol: 1.1.1
+
+  esbuild-wasm@0.27.7: {}
 
   esbuild@0.21.5:
     optionalDependencies:
