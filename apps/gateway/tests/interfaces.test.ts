@@ -122,7 +122,7 @@ describe("per-workflow interface binding overrides", () => {
   });
 
   it("stores bindings on workflow registrations", async () => {
-    await manage("vfs/write", { path: "workflows/noop.js", content: "return 1;" });
+    await manage("vfs/write", { path: "workflows/noop.js", content: "export default async () => 1;" });
     const res = await manage("workflows/register", {
       name: "bound-flow",
       script_path: "workflows/noop.js",

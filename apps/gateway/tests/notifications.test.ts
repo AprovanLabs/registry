@@ -94,7 +94,7 @@ describe("notifications (member)", () => {
 describe("notifications (app permission model)", () => {
   beforeAll(async () => {
     await putFile("apps/notify-demo/index.tsx", "export default function App(){return null}");
-    await putFile("workflows/notify-demo-accept.js", "return { ok: true };");
+    await putFile("workflows/notify-demo-accept.js", "export default async () => ({ ok: true });");
     await manage("workflows/register", {
       name: "notify-demo-accept",
       script_path: "workflows/notify-demo-accept.js",

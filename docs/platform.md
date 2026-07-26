@@ -111,11 +111,26 @@ workflows.register({
 })
 ```
 
-Scripts are plain async JavaScript. Globals: every discovered namespace
-(`github.…`, `events.emit`, `keyvalue.get`, even `synthetic.new.createChatCompletion`),
-`console.*` (captured), and `input` (the trigger payload — webhook body, event
-`{channel, payload}`, cron `{firedAt}`, or manual args). A trailing `return`
-becomes the run's result.
+Scripts are ES-module-shaped JavaScript (2026-07-25 contract): namespaces
+are **importable typed modules** — the same convention widgets use — and the
+entrypoint is the **default export**, called with the trigger payload:
+
+```js
+import keyvalue from "keyvalue";
+
+export default async function run(input) {
+  // input: webhook body, event {channel, payload}, cron {firedAt}, manual args
+  await keyvalue.set({ key: "last", value: input });
+  return { ok: true };  // the run's result
+}
+```
+
+The registration's `input` JSON schema types that parameter — it is what the
+run form renders for manual runs and what the generated app SDK uses.
+Injected globals still exist (every discovered namespace, `console.*`), so
+dynamic lookups like a per-task LLM provider remain possible; `import` is
+the typed, analyzable front door. Scripts without a default export fail
+with a clear error.
 
 ### Triggers
 

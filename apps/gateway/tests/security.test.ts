@@ -93,7 +93,7 @@ describe(".services isolation", () => {
     await app.request("/fs/workflows/sec-probe.js", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content: "return 1;" }),
+      body: JSON.stringify({ content: "export default async () => 1;" }),
     });
     await manage("workflows/register", { name: "sec-probe", script_path: "workflows/sec-probe.js" });
     const listing = (await (await app.request("/fs")).json()) as {

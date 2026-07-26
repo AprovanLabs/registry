@@ -1,12 +1,13 @@
 /**
  * Tasks review card — the notification widget the agent runner points at.
- * Rendered inside the notification drawer with the notification's payload
- * available as the `NOTIFICATION` constant (prepended by the host). Content
- * only: the accept / send-back / cancel actions are the notification's own
- * choices, each a one-click call to this app's exported workflows.
+ * The notification's payload arrives as the `notification` module — the
+ * drawer binds `import notification from "notification"` to the payload,
+ * the same import convention as every namespace. Content only: the accept /
+ * send-back / cancel actions are the notification's own choices, each a
+ * one-click call to this app's exported workflows.
  */
 
-declare const NOTIFICATION: unknown;
+import notification from "notification";
 
 interface ReviewData {
   taskId?: string;
@@ -19,8 +20,8 @@ interface ReviewData {
 
 export default function ReviewCard() {
   const data: ReviewData =
-    typeof NOTIFICATION === "object" && NOTIFICATION !== null
-      ? (NOTIFICATION as ReviewData)
+    typeof notification === "object" && notification !== null
+      ? (notification as ReviewData)
       : {};
   return (
     <div className="p-3 text-sm space-y-2 text-slate-900 dark:text-slate-100">

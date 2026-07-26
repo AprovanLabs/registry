@@ -96,7 +96,7 @@ describe("wasm script sandbox", () => {
   });
 
   it("reports script exceptions with their message", async () => {
-    const { options } = harness({ source: `throw new Error("kaboom");` });
+    const { options } = harness({ source: `export default async () => { throw new Error("kaboom"); };` });
     await expect(runScriptInSandbox(options)).rejects.toThrow("kaboom");
   });
 

@@ -63,9 +63,12 @@ describe("workflows service", () => {
   it("registers, lists, runs, and traces a workflow", async () => {
     await writeScript(
       "workflows/echo.js",
-      `console.log("starting", input.n);
-       await keyvalue.set({ key: "wf-last-input", value: input });
-       return { doubled: input.n * 2 };`,
+      `import keyvalue from "keyvalue";
+       export default async function run(input) {
+         console.log("starting", input.n);
+         await keyvalue.set({ key: "wf-last-input", value: input });
+         return { doubled: input.n * 2 };
+       }`,
     );
 
     const reg = await call("workflows/register", {
@@ -111,7 +114,7 @@ describe("workflows service", () => {
   });
 
   it("records failures with the error and partial spans", async () => {
-    await writeScript("workflows/boom.js", `throw new Error("kaboom");`);
+    await writeScript("workflows/boom.js", `export default async () => { throw new Error("kaboom"); };`);
     await call("workflows/register", { name: "boom", script_path: "workflows/boom.js" });
     const run = await data<{ status: string; error: string }>(
       await call("workflows/run", { name: "boom" }),
@@ -121,7 +124,7 @@ describe("workflows service", () => {
   });
 
   it("serves webhook triggers with the hook token", async () => {
-    await writeScript("workflows/hooked.js", `return { got: input.ping };`);
+    await writeScript("workflows/hooked.js", `export default async (input) => ({ got: input.ping });`);
     const reg = await data<{ hookToken: string; webhookPath: string }>(
       await call("workflows/register", {
         name: "hooked",
@@ -157,9 +160,11 @@ describe("workflows service", () => {
     // must stop the cascade instead of looping forever.
     await writeScript(
       "workflows/reactor.js",
-      `await keyvalue.set({ key: "reactor-count", value: (input.payload?.count ?? 0) + 1 });
-       await events.emit({ channel: "wf.chain", payload: { count: (input.payload?.count ?? 0) + 1 } });
-       return "ok";`,
+      `export default async function run(input) {
+         await keyvalue.set({ key: "reactor-count", value: (input.payload?.count ?? 0) + 1 });
+         await events.emit({ channel: "wf.chain", payload: { count: (input.payload?.count ?? 0) + 1 } });
+         return "ok";
+       }`,
     );
     await call("workflows/register", {
       name: "reactor",
@@ -198,11 +203,11 @@ describe("workflows service", () => {
     const hashOf = async (res: Response) =>
       ((await res.json()) as { hash: string }).hash;
 
-    const v1 = await hashOf(await writeScript("workflows/vers.js", "return 1;"));
+    const v1 = await hashOf(await writeScript("workflows/vers.js", "export default async () => 1;"));
     await tick();
-    await writeScript("workflows/vers.js", "return 2;");
+    await writeScript("workflows/vers.js", "export default async () => 2;");
     await tick();
-    const v3 = await hashOf(await writeScript("workflows/vers.js", "return 3;"));
+    const v3 = await hashOf(await writeScript("workflows/vers.js", "export default async () => 3;"));
     await call("workflows/register", { name: "vers", script_path: "workflows/vers.js" });
 
     // versions: newest-first, current flag on the live (v3) version.
@@ -219,7 +224,7 @@ describe("workflows service", () => {
     const old = await data<{ content: string; hash: string }>(
       await call("workflows/version", { name: "vers", hash: v1 }),
     );
-    expect(old.content).toBe("return 1;");
+    expect(old.content).toBe("export default async () => 1;");
 
     // restore: v1 becomes the live version again (append, non-destructive).
     const restored = await data<{ name: string; scriptPath: string }>(
@@ -227,7 +232,7 @@ describe("workflows service", () => {
     );
     expect(restored.name).toBe("vers");
     const script = await createApp().request("/fs/workflows/vers.js");
-    expect(((await script.json()) as { content: string }).content).toBe("return 1;");
+    expect(((await script.json()) as { content: string }).content).toBe("export default async () => 1;");
     const afterRestore = await data<{ versions: Array<{ hash: string; current: boolean }> }>(
       await call("workflows/versions", { name: "vers" }),
     );

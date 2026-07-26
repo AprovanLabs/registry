@@ -231,10 +231,13 @@ describe("app consumption surface", () => {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        content: `const current = await keyvalue.get({ key: "count" });
-const next = (current.value || 0) + 1;
-await keyvalue.set({ key: "count", value: next });
-return { count: next };`,
+        content: `import keyvalue from "keyvalue";
+export default async function run() {
+  const current = await keyvalue.get({ key: "count" });
+  const next = (current.value || 0) + 1;
+  await keyvalue.set({ key: "count", value: next });
+  return { count: next };
+}`,
       }),
     });
     await manage("workflows/register", { name: "counter", script_path: "apps/counter.js" });

@@ -73,6 +73,33 @@ export interface SandboxRunOptions {
 }
 
 const MEMORY_LIMIT_BYTES = 128 * 1024 * 1024;
+
+/**
+ * The workflow module contract (docs/apps-and-workflows.md): a script is an
+ * ES-module-shaped file that `export default`s its entrypoint —
+ *
+ *   import keyvalue from "keyvalue";
+ *   export default async function run(input) { … return result; }
+ *
+ * — exactly the widget SDK convention: namespaces are importable typed
+ * modules, and the input is an explicit, schema-declarable parameter (the
+ * run form renders the registration's `input` schema; the runner passes the
+ * trigger payload as the argument).
+ *
+ * The QuickJS sandbox evaluates function bodies, not modules, so this
+ * transform lowers the module shape onto the injected environment:
+ * namespace default-imports become const bindings against the installed
+ * globals, and `export default` captures the entrypoint the wrapper calls.
+ */
+export function transformWorkflowModule(source: string): string {
+  let out = source.replace(
+    /^[ \t]*import\s+([A-Za-z_$][\w$]*)\s+from\s+["']([^"']+)["'][ \t]*;?[ \t]*$/gm,
+    (_whole, binding: string, specifier: string) =>
+      `const ${binding} = globalThis[${JSON.stringify(specifier)}];`,
+  );
+  out = out.replace(/^[ \t]*export\s+default\s+/m, "globalThis.__workflowMain = ");
+  return out;
+}
 const CONCURRENCY_MAX = (() => {
   const raw = Number(process.env["SANDBOX_POOL_MAX"]);
   return Number.isFinite(raw) && raw > 0 ? raw : 4;
@@ -355,7 +382,13 @@ export async function runScriptInSandbox(options: SandboxRunOptions): Promise<un
       throw new ServiceError(message, 422);
     };
 
-    const wrapped = `(${EPILOGUE})(async () => {\n${options.source}\n})`;
+    const wrapped = `(${EPILOGUE})(async () => {
+${transformWorkflowModule(options.source)}
+if (typeof globalThis.__workflowMain !== "function") {
+  throw new Error("Workflow scripts must \`export default\` a function: export default async function run(input) { ... }");
+}
+return await globalThis.__workflowMain(globalThis.input);
+})`;
     const evalResult = await ctx.evalCodeAsync(wrapped, options.filename ?? "<workflow>");
     if ("error" in evalResult && evalResult.error) {
       const dumped = safeDump(evalResult.error);

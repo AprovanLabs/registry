@@ -67,7 +67,7 @@ interface PersonalAppEntry {
 
 describe("the Personal app", () => {
   it("is synthesized into apps.list in a stable leading position, owning unbundled workflows", async () => {
-    await putFile("workflows/solo.js", "return 'solo';");
+    await putFile("workflows/solo.js", "export default async () => 'solo';");
     await manage("workflows/register", { name: "solo-task", script_path: "workflows/solo.js" });
 
     const first = await data<{ apps: PersonalAppEntry[] }>(await manage("apps/list", {}));
@@ -164,7 +164,7 @@ describe("the Personal app", () => {
   });
 
   it("runs unbundled workflows through the app proxy with the caller's own workspace", async () => {
-    await putFile("workflows/echo.js", "return { seen: input };");
+    await putFile("workflows/echo.js", "export default async (input) => ({ seen: input });");
     await manage("workflows/register", { name: "echo-input", script_path: "workflows/echo.js" });
 
     const run = await appCall("local", "personal/tools/app/echoInput", { args: { hello: "world" } });

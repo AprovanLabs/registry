@@ -77,7 +77,7 @@ describe("native allow-list", () => {
   });
 
   it("reports capabilities: native namespaces, partitioning, and workflows", async () => {
-    await putFile("workflows/summary.js", "return { headline: 'hi' };");
+    await putFile("workflows/summary.js", "export default async () => ({ headline: 'hi' });");
     await manage("workflows/register", {
       name: "weekly-summary",
       script_path: "workflows/summary.js",
@@ -121,8 +121,11 @@ describe("workflows as namespace procedures", () => {
   beforeEach(async () => {
     await putFile(
       "workflows/echo-app.js",
-      `await keyvalue.set({ key: "last", value: input });
-       return { echoed: input && input.n };`,
+      `import keyvalue from "keyvalue";
+       export default async (input) => {
+         await keyvalue.set({ key: "last", value: input });
+         return { echoed: input && input.n };
+       }`,
     );
     await manage("workflows/register", {
       name: "echo-input",
@@ -244,7 +247,7 @@ describe("releases and channels", () => {
 
 describe("generated SDK", () => {
   it("serves a shim and types built from the manifest and workflow schemas", async () => {
-    await putFile("workflows/sdk-wf.js", "return { headline: 'x' };");
+    await putFile("workflows/sdk-wf.js", "export default async () => ({ headline: 'x' });");
     await manage("workflows/register", {
       name: "weekly-report",
       script_path: "workflows/sdk-wf.js",
@@ -346,7 +349,7 @@ describe("dataScope: workspace", () => {
 
 describe("apps.list composition", () => {
   it("returns workflows, triggers, and last run without extra round-trips", async () => {
-    await putFile("workflows/listed.js", "return 1;");
+    await putFile("workflows/listed.js", "export default async () => 1;");
     await manage("workflows/register", {
       name: "listed-wf",
       script_path: "workflows/listed.js",

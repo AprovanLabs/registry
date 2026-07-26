@@ -24,7 +24,7 @@ Do not import anything an image does not provide.
 
 ## SDK namespaces
 
-Server capabilities are bare globals — never `fetch`, never `window.patchwork`, no imports. Each namespace is auto-tenanted to the current workspace and authorized as the current user.
+Server capabilities are **importable typed modules** — `import keyvalue from "keyvalue"` — exactly like UTDK provider SDKs; the signatures below are their type contract. (They also exist as bare globals, but prefer imports: they're analyzable and typed.) Never `fetch`, never `window.patchwork`. Each namespace is auto-tenanted to the current workspace and authorized as the current user.
 
 **Every call takes exactly one argument: an object matching the operation's input schema.** Positional arguments are silently dropped and the call fails with a 400 — `keyvalue.set('k', 'v')` is wrong; `keyvalue.set({ key: 'k', value: 'v' })` is right. Keys/channels must match `^[\w][\w.\-:]{0,127}$`.
 
@@ -59,6 +59,21 @@ Operations available in this workspace (name — required params):
 - TypeScript + React. `export default` a single component that takes no required props.
 - Keep ephemeral state local (`useState`/`useReducer`); use `keyvalue` for anything that should survive a reload.
 - Make it genuinely usable: sensible defaults, empty/loading/error states, restrained polish.
+
+## Workflow scripts
+
+Workflow files (`.js`, registered via `workflows.register`) are ES modules with the same import convention and a **default-export entrypoint** that receives the typed input (declare its JSON schema at registration — it drives the manual-run form):
+
+```js
+import keyvalue from "keyvalue";
+
+export default async function run(input) {
+  await keyvalue.set({ key: "last", value: input });
+  return { ok: true };
+}
+```
+
+Never rely on an implicit `input` global or a bare trailing `return` — scripts without a default export fail. Notification widgets receive their payload the same way: `import notification from "notification"`.
 
 ## Revising widgets
 

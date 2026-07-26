@@ -10,16 +10,10 @@
  */
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-
-declare const keyvalue: {
-  get(args: { key: string }): Promise<{ value: unknown }>;
-  set(args: { key: string; value: unknown }): Promise<unknown>;
-  delete(args: { key: string }): Promise<unknown>;
-  list(args: { prefix?: string }): Promise<{ keys: string[] }>;
-};
-declare const workflows: {
-  run(args: { name: string; input?: unknown }): Promise<unknown>;
-};
+// Native namespaces are importable typed modules — same contract as UTDK
+// provider SDKs (the compiler resolves these to the injected namespaces).
+import keyvalue from "keyvalue";
+import workflows from "workflows";
 
 type Status = "todo" | "in_progress" | "in_review" | "done" | "canceled";
 
