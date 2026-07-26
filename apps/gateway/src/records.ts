@@ -325,7 +325,8 @@ export class RecordStoreSqlite implements IRecordStore {
     const row = this.database
       .prepare(
         `SELECT value, updated_at, updated_by FROM records
-         WHERE tenant = ? AND scope = ? AND key = ?`,
+         WHERE tenant = ? AND scope = ? AND key = ?
+           AND (expires_at IS NULL OR expires_at >= unixepoch())`,
       )
       .get(tenant, scope, key) as
       | { value: string; updated_at: string; updated_by: string }
@@ -379,6 +380,7 @@ export class RecordStoreSqlite implements IRecordStore {
       .prepare(
         `SELECT key FROM records
          WHERE tenant = ? AND scope = ? AND key LIKE ? ESCAPE '\\'
+           AND (expires_at IS NULL OR expires_at >= unixepoch())
          ORDER BY key`,
       )
       .all(tenant, scope, `${prefix.replace(/[%_]/g, (c) => `\\${c}`)}%`) as { key: string }[];
