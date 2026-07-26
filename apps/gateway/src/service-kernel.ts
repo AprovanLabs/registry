@@ -55,6 +55,12 @@ export interface ServiceContext {
   traceId?: string;
   /** The run this context descends from (the parent edge in the trace). */
   parentRunId?: string;
+  /**
+   * Capability bounds for agent-attributed execution (src/grants.ts): tool
+   * patterns checked in the workflow dispatch path, path prefixes checked in
+   * vfs. Absent means unbounded (the executing user's normal reach).
+   */
+  grants?: import("./grants.js").CapabilityGrants;
 }
 
 export interface CoreService {
@@ -98,6 +104,8 @@ export const CORE_SERVICE_NAMES = [
   "sync",
   "sessions",
   "notifications",
+  "telemetry",
+  "agents",
 ] as const;
 
 export type CoreServiceName = (typeof CORE_SERVICE_NAMES)[number];

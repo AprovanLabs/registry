@@ -70,6 +70,8 @@ export interface SandboxRunOptions {
   log: (level: "log" | "info" | "warn" | "error" | "debug", parts: unknown[]) => void;
   /** Wall-clock + interpreter budget for the whole run. */
   timeoutMs: number;
+  /** Resolved agent profile exposed to the script as the `agent` global. */
+  agent?: unknown;
 }
 
 const MEMORY_LIMIT_BYTES = 128 * 1024 * 1024;
@@ -156,6 +158,7 @@ const PRELUDE = String.raw`
     debug: consoleFor("debug"),
   };
   globalThis.input = boot.input;
+  globalThis.agent = boot.agent ?? null;
 
   const mkns = (ns, path) => new Proxy(function () {}, {
     get(_t, prop) {
@@ -354,6 +357,7 @@ export async function runScriptInSandbox(options: SandboxRunOptions): Promise<un
     const bootJson = JSON.stringify({
       input: options.input ?? null,
       namespaces: options.namespaces,
+      agent: options.agent ?? null,
     });
     const bootHandle = ctx.newString(bootJson);
     ctx.setProp(ctx.global, "__boot", bootHandle);

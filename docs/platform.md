@@ -53,7 +53,10 @@ The single dispatch surface. A namespace is either:
 
 - a **core service** — first-party, always available, no credential:
   `vfs`, `keyvalue`, `events`, `registry` (catalog metadata), `workflows`,
-  `webhooks`, `apps`, `interfaces`, `sync`;
+  `webhooks`, `apps`, `interfaces`, `sync`, `sessions`, `notifications`,
+  `telemetry` (workspace debugging evidence — see
+  `docs/telemetry-and-agents.md`), `agents` (named agent profiles with
+  capability grants);
 - a **UTDK provider** — available once a credential exists in the workspace
   (`github`, `linear`, `figma`, `posthog`, …), executed in the isolate with
   credentials injected server-side;

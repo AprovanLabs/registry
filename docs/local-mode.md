@@ -34,10 +34,10 @@ leaves OIDC unset, which puts auth in `none` mode.
 | Store | Deployed | Local | Notes |
 | --- | --- | --- | --- |
 | Workspace FS (`fs-store.ts`) | S3 blobs + DynamoDB index | SQLite | content-hash versions both ways; presigned uploads 501 locally |
-| Records / keyvalue / presence / **notifications** (`records.ts`) | DynamoDB (+S3 spill, TTL attr) | SQLite (`expires_at` column, read-time filtering + lazy purge) | expiry semantics identical |
+| Records / keyvalue / presence / **notifications** / **telemetry** (`records.ts`) | DynamoDB (+S3 spill, TTL attr) | SQLite (`expires_at` column, read-time filtering + lazy purge) | expiry semantics identical |
 | Credentials (`credentials.ts`) | DynamoDB | SQLite | encrypted at rest both ways |
 | Audit (`audit.ts`) | DynamoDB (30-day TTL) | SQLite (30-day lazy purge) | |
-| VCS, chat sessions, workflows, apps, events, llm-jobs, webhooks, prompts | workspace FS | workspace FS | inherit the FS backend |
+| VCS, chat sessions, workflows, apps, **agents**, events, llm-jobs, webhooks, prompts | workspace FS | workspace FS | inherit the FS backend |
 | OAuth token exchange, tool cache | in-memory | in-memory | |
 
 **Deliberately not ported** — the multi-user plane: workspace sessions,

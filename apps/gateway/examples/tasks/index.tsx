@@ -20,6 +20,8 @@ type Status = "todo" | "in_progress" | "in_review" | "done" | "canceled";
 interface Assignee {
   type: "user" | "agent";
   name?: string;
+  /** Named agent profile (agents service) — wins over the inline fields. */
+  agent?: string;
   provider?: string;
   model?: string;
   prompt?: string;
@@ -48,7 +50,7 @@ const COLUMNS: Array<{ id: Status; label: string; tint: string }> = [
 function assigneeLabel(assignee?: Assignee): string {
   if (!assignee) return "Unassigned";
   if (assignee.type === "agent") {
-    return `🤖 ${assignee.model || assignee.provider || "agent"}`;
+    return `🤖 ${assignee.agent || assignee.model || assignee.provider || "agent"}`;
   }
   return assignee.name || "Me";
 }
@@ -118,6 +120,7 @@ export default function Tasks() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [assigneeType, setAssigneeType] = useState<"user" | "agent">("user");
+  const [agentProfile, setAgentProfile] = useState("");
   const [provider, setProvider] = useState("synthetic.new");
   const [model, setModel] = useState("");
   const [prompt, setPrompt] = useState("");
@@ -154,7 +157,13 @@ export default function Tasks() {
       status: "todo",
       assignee:
         assigneeType === "agent"
-          ? { type: "agent", provider, model: model.trim() || undefined, prompt: prompt.trim() || undefined }
+          ? {
+              type: "agent",
+              agent: agentProfile.trim() || undefined,
+              provider,
+              model: model.trim() || undefined,
+              prompt: prompt.trim() || undefined,
+            }
           : { type: "user", name: "Me" },
       createdAt: now,
       updatedAt: now,
@@ -164,7 +173,7 @@ export default function Tasks() {
     setDescription("");
     setPrompt("");
     await load();
-  }, [title, description, assigneeType, provider, model, prompt, load]);
+  }, [title, description, assigneeType, agentProfile, provider, model, prompt, load]);
 
   const moveTask = useCallback(
     (task: Task, status: Status) =>
@@ -267,6 +276,13 @@ export default function Tasks() {
         />
         {assigneeType === "agent" && (
           <div className="flex gap-2 flex-wrap text-xs">
+            <input
+              className="rounded border bg-transparent px-2 py-1"
+              placeholder="Agent profile (optional)"
+              value={agentProfile}
+              onChange={(event) => setAgentProfile(event.target.value)}
+              title="Name of a workspace agent profile — its provider, prompt, and permission grants apply"
+            />
             <input
               className="rounded border bg-transparent px-2 py-1"
               placeholder="Provider (e.g. synthetic.new)"

@@ -98,6 +98,11 @@ export const workflowsService: CoreService = {
           name: { type: "string", description: "Workflow id (kebab-case)" },
           script_path: { type: "string", description: "Workspace path of the script, e.g. workflows/daily-report.js" },
           description: { type: "string" },
+          agent: {
+            type: "string",
+            description:
+              "Agent profile (agents service) every run executes as — its grants bound the run's tools and vfs paths; null clears it",
+          },
           triggers: {
             type: "object",
             description: "How the workflow runs",
@@ -156,10 +161,10 @@ export const workflowsService: CoreService = {
       name: "workflows.run",
       operation: "run",
       description:
-        "Run a workflow now with an optional input payload. Returns the run record: status, result, logs, and one span per tool call.",
+        "Run a workflow now with an optional input payload. Returns the run record: status, result, logs, and one span per tool call. Pass agent to execute as a named agent profile — its grants bound what the run may touch, and the profile is exposed to the script as the `agent` global.",
       inputSchema: {
         type: "object",
-        properties: { name: { type: "string" }, input: {} },
+        properties: { name: { type: "string" }, input: {}, agent: { type: "string" } },
         required: ["name"],
       },
     },
@@ -253,6 +258,12 @@ export const workflowsService: CoreService = {
           scriptPath,
           triggers,
           bindings,
+          agent:
+            typeof args["agent"] === "string" && args["agent"]
+              ? args["agent"]
+              : args["agent"] === null
+                ? undefined
+                : existing?.agent,
           input: parseSchema(args["input"], "input") ?? existing?.input,
           output: parseSchema(args["output"], "output") ?? existing?.output,
           // Webhook token survives re-registration so external callers keep working.
@@ -302,7 +313,9 @@ export const workflowsService: CoreService = {
       }
       case "run": {
         const name = workflowName(args["name"]);
-        return runWorkflowByName(ctx, name, "manual", args["input"], ctx.userId);
+        const agent =
+          typeof args["agent"] === "string" && args["agent"] ? args["agent"] : undefined;
+        return runWorkflowByName(ctx, name, "manual", args["input"], ctx.userId, agent);
       }
       case "runs": {
         const name = workflowName(args["name"]);

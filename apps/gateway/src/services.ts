@@ -64,6 +64,9 @@ import {
   type ChatSessionRecord,
 } from "./vcs/chat-sessions.js";
 import { notificationsService } from "./notifications/service.js";
+import { telemetryService } from "./telemetry/service.js";
+import { agentsService } from "./agents/service.js";
+import { assertPathGranted, pathAccess } from "./grants.js";
 import { sessionsService } from "./vcs/sessions-service.js";
 import { webhooksService } from "./webhooks/service.js";
 import { workflowsService } from "./workflows/service.js";
@@ -604,11 +607,18 @@ const vfs: CoreService = {
               (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
             ),
             ...mounted,
-          ].sort((a, b) => a.path.localeCompare(b.path)),
+          ]
+            // Agent-bounded contexts only see what their path grants cover.
+            .filter(
+              (entry) =>
+                !ctx.grants?.paths || pathAccess(ctx.grants.paths, entry.path) !== "none",
+            )
+            .sort((a, b) => a.path.localeCompare(b.path)),
         };
       }
       case "read": {
         const path = await resolveVfsPath(ctx, args["path"], false);
+        assertPathGranted(ctx.grants, path, false);
         const staged = await stagedSession(ctx, args, false);
         if (staged) {
           const file = await sessionRead(ctx.workspaceId, staged, path);
@@ -638,6 +648,7 @@ const vfs: CoreService = {
       }
       case "write": {
         const path = await resolveVfsPath(ctx, args["path"], true);
+        assertPathGranted(ctx.grants, path, true);
         await assertNotMounted(ctx.workspaceId, path);
         if (typeof args["content"] !== "string") {
           throw new ServiceError("content must be a string", 400);
@@ -657,6 +668,7 @@ const vfs: CoreService = {
       }
       case "delete": {
         const path = await resolveVfsPath(ctx, args["path"], true);
+        assertPathGranted(ctx.grants, path, true);
         await assertNotMounted(ctx.workspaceId, path);
         const staged = await stagedSession(ctx, args, true);
         if (staged) {
@@ -1017,6 +1029,8 @@ export const CORE_SERVICES: Record<CoreServiceName, CoreService> = {
   sync: syncService,
   sessions: sessionsService,
   notifications: notificationsService,
+  telemetry: telemetryService,
+  agents: agentsService,
 };
 
 // Hand the registry to the kernel, so upstream modules (the workflow runner,

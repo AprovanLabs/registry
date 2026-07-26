@@ -12,6 +12,7 @@ import keyvalue from "keyvalue";
 import sessions from "sessions";
 import vfs from "vfs";
 import notifications from "notifications";
+import agents from "agents";
 
 export default async function run() {
   const listing = await keyvalue.list({ prefix: "task:" });
@@ -28,7 +29,19 @@ export default async function run() {
   // Bounded per tick: the script budget is 180s and each task costs LLM calls.
   for (const entry of queue.slice(0, 2)) {
     const task = entry.task;
-    const agent = task.assignee;
+    // The assignee is either inline {provider, model, prompt} or a named
+    // agent profile ({agent: "docs-writer"}, agents service) — the profile
+    // wins where set, inline fields fill the gaps.
+    let agent = task.assignee;
+    if (agent.agent) {
+      try {
+        const resolved = await agents.get({ name: agent.agent });
+        agent = { ...agent, ...resolved.agent, ...(agent.model ? { model: agent.model } : {}) };
+      } catch (err) {
+        results.push({ id: task.id, skipped: "agent profile " + agent.agent + " not found" });
+        continue;
+      }
+    }
     const providerId = String(agent.provider || "synthetic.new");
     // Providers are injected globals; dotted ids also have sanitized aliases.
     const llm =

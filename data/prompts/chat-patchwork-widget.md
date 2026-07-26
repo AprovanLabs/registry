@@ -43,6 +43,9 @@ Native namespaces (always available):
   Versioning: `await vfs.commit({ message })` snapshots the workspace; `vfs.log({})` / `vfs.diff({ from, to })` / `vfs.restore({ commit, path })` read and restore history; `vfs.read({ path, commit })` pins a read.
 - `registry` — discover available SDKs at runtime.
   `await registry.search({ q: 'create issue' })` → `{ operations: [{ providerPath, sdkPath, summary }] }`; `await registry.providers({ q })` → `{ providers }`.
+- `telemetry` — the workspace's debugging evidence: every service call, widget console line, and workflow failure (3-day retention). **When a widget or workflow you built misbehaves, read this before guessing.**
+  `await telemetry.traces({ status: 'error', limit: 10 })` → recent failing traces `{ traceId, name, source: { type, path, runId }, errors }`;
+  `await telemetry.query({ traceId })` (or `{ path }`, `{ runId }`, `{ status: 'error' }`) → the events: error spans carry `{ error: { message, stack } }`, console output arrives as log events. Full workflow run records live behind `workflows.trace({ run: runId })`.
 
 Provider namespaces (connected integrations) are called as nested SDK methods with the same single-object convention: `await github.repos.listForUser({ username })`.
 
@@ -74,6 +77,10 @@ export default async function run(input) {
 ```
 
 Never rely on an implicit `input` global or a bare trailing `return` — scripts without a default export fail. Notification widgets receive their payload the same way: `import notification from "notification"`.
+
+### Agents
+
+Named agent profiles (`agents` namespace) configure autonomous execution: `await agents.create({ name: 'docs-writer', provider: 'synthetic.new', prompt: '…', grants: { tools: ['keyvalue.*', 'vfs.*'], paths: [{ prefix: 'docs/', access: 'rw' }] } })`. Run a workflow as an agent with `workflows.run({ name, agent: 'docs-writer' })` — the profile's grants **bound** what the run may touch (tools not listed and paths not covered are denied with a 403 that lands in telemetry), and the script sees the profile as the `agent` global. Workflow failures raise a warning notification carrying the run/trace ids.
 
 ## Revising widgets
 

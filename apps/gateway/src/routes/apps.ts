@@ -60,6 +60,7 @@ import { getAuditStore } from "../audit.js";
 import { getMembership } from "../memberships.js";
 import { getAuthMode, readBearerToken, verifyAccessToken } from "../middleware/auth.js";
 import { ServiceError, type ServiceContext } from "../service-kernel.js";
+import { parseTelemetrySourceHeader, recordTelemetry } from "../telemetry/service.js";
 import { getCurrentWorkspace } from "../sessions.js";
 import { invokeTool } from "../workflows/invoke.js";
 import { runWorkflow } from "../workflows/runner.js";
@@ -346,6 +347,29 @@ appsRouter.post("/:workspaceId/:name/tools/:namespace/:procedure{.*}", async (c)
     const namespace = c.req.param("namespace")!;
     const procedure = c.req.param("procedure")!;
 
+    // Dispatch span for the workspace telemetry store; the app is the source
+    // (server-stamped — the header only adds widget path/session/trace).
+    const attribution = parseTelemetrySourceHeader(c.req.header("x-telemetry-source"));
+    const recordDispatch = (status: number, errorMessage?: string): void => {
+      if (namespace === "telemetry") return;
+      void recordTelemetry(
+        session.executionWorkspaceId,
+        `app:${session.manifest.name}:${session.sub}`,
+        [
+          {
+            kind: "span",
+            name: `${namespace}.${procedure}`,
+            source: { ...(attribution?.source ?? { type: "app" }), app: session.manifest.name },
+            ...(attribution?.traceId ? { traceId: attribution.traceId } : {}),
+            durationMs: Date.now() - startTime,
+            status: status < 400 ? "ok" : "error",
+            ...(status >= 400 ? { error: { message: errorMessage ?? `HTTP ${status}` } } : {}),
+            attributes: { namespace, procedure, "http.status": status },
+          },
+        ],
+      );
+    };
+
     const rejected = await enforceBudgets(c, session);
     if (rejected) return rejected;
 
@@ -366,6 +390,7 @@ appsRouter.post("/:workspaceId/:name/tools/:namespace/:procedure{.*}", async (c)
         status: response.status,
         durationMs: Date.now() - startTime,
       });
+      recordDispatch(response.status);
       return response;
     }
 
@@ -373,9 +398,19 @@ appsRouter.post("/:workspaceId/:name/tools/:namespace/:procedure{.*}", async (c)
     // caller's own for a workspace-scoped install; the owner's otherwise).
     if (isNativeNamespace(namespace)) {
       if (!toolAllowed(session.manifest, namespace, procedure)) {
+        recordDispatch(403, `Tool ${namespace}.${procedure} is not allowed for this app`);
         return c.json({ error: `Tool ${namespace}.${procedure} is not allowed for this app` }, 403);
       }
-      const data = await invokeTool(session.ctx, namespace, procedure, await readArgs(c));
+      let data: unknown;
+      try {
+        data = await invokeTool(session.ctx, namespace, procedure, await readArgs(c));
+      } catch (err) {
+        recordDispatch(
+          err instanceof ServiceError ? err.status : 500,
+          err instanceof Error ? err.message : String(err),
+        );
+        throw err;
+      }
       const durationMs = Date.now() - startTime;
       getAuditStore().append({
         requestId: crypto.randomUUID(),
@@ -386,6 +421,7 @@ appsRouter.post("/:workspaceId/:name/tools/:namespace/:procedure{.*}", async (c)
         status: 200,
         durationMs,
       });
+      recordDispatch(200);
       return c.json({ data, meta: { app: session.manifest.name, durationMs } });
     }
 
@@ -396,7 +432,16 @@ appsRouter.post("/:workspaceId/:name/tools/:namespace/:procedure{.*}", async (c)
     // grant was only ever a promise the owner could keep).
     if (providerGrantCallable(session.manifest, namespace, procedure)) {
       const grantCtx = { ...session.ctx, workspaceId: session.workspaceId };
-      const data = await invokeTool(grantCtx, namespace, procedure, await readArgs(c));
+      let data: unknown;
+      try {
+        data = await invokeTool(grantCtx, namespace, procedure, await readArgs(c));
+      } catch (err) {
+        recordDispatch(
+          err instanceof ServiceError ? err.status : 500,
+          err instanceof Error ? err.message : String(err),
+        );
+        throw err;
+      }
       const durationMs = Date.now() - startTime;
       getAuditStore().append({
         requestId: crypto.randomUUID(),
@@ -407,9 +452,11 @@ appsRouter.post("/:workspaceId/:name/tools/:namespace/:procedure{.*}", async (c)
         status: 200,
         durationMs,
       });
+      recordDispatch(200);
       return c.json({ data, meta: { app: session.manifest.name, durationMs } });
     }
 
+    recordDispatch(403, `Tool ${namespace}.${procedure} is not allowed for this app`);
     return c.json({ error: `Tool ${namespace}.${procedure} is not allowed for this app` }, 403);
   } catch (err) {
     return errorResponse(c, err);

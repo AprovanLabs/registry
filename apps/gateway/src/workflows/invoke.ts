@@ -8,6 +8,7 @@
  */
 
 import { mayInvokeTool } from "../authorize.js";
+import { assertToolGranted } from "../grants.js";
 import { getCredentialStore, type CredentialPayload } from "../credentials.js";
 import { isInterface, resolveInterfaceForWorkspace } from "../interfaces.js";
 import { getExecutor } from "../isolate.js";
@@ -54,6 +55,10 @@ export async function invokeTool(
   procedure: string,
   args: Record<string, unknown>,
 ): Promise<unknown> {
+  // Agent-attributed runs are bounded by their profile's tool grants —
+  // checked before any dispatch branch so native, interface, and provider
+  // calls all answer to the same list.
+  assertToolGranted(ctx.grants, namespace, procedure);
   const core = getCoreService(namespace);
   if (core) {
     return core.call(ctx, procedure, args);

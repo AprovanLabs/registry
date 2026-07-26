@@ -58,6 +58,11 @@ export interface WorkflowRegistration {
   bindings?: Record<string, string>;
   /** Bearer token external webhook callers must present. */
   hookToken?: string;
+  /**
+   * Agent profile every run of this workflow executes as (agents service):
+   * its grants bound the run; `workflows.run {agent}` overrides per run.
+   */
+  agent?: string;
   createdBy: string;
   createdAt: string;
   updatedAt: string;

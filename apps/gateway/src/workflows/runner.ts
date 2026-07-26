@@ -18,10 +18,12 @@
  * incremented depth; MAX_EVENT_DEPTH caps cascades to prevent loops.
  */
 
+import { readAgentProfile } from "../agents/service.js";
 import { getCredentialStore } from "../credentials.js";
 import { getFsStore } from "../fs-store.js";
 import { listInterfaces } from "../interfaces.js";
 import { CORE_SERVICE_NAMES, ServiceError, type ServiceContext } from "../service-kernel.js";
+import { recordTelemetry, type TelemetryEventInput } from "../telemetry/service.js";
 import { invokeTool } from "./invoke.js";
 import { runScriptInSandbox } from "./sandbox.js";
 import {
@@ -103,6 +105,12 @@ export interface RunWorkflowOptions {
   parentRunId?: string;
   /** App this run was started through, for the trace tree. */
   app?: string;
+  /**
+   * Agent profile to run as (docs/telemetry-and-agents.md): the profile's
+   * grants bound the run's tool + vfs reach, and the profile itself is
+   * exposed to the script as the `agent` global.
+   */
+  agent?: string;
 }
 
 export async function runWorkflow(options: RunWorkflowOptions): Promise<WorkflowRun> {
@@ -121,6 +129,14 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
   } = options;
 
   const traceId = options.traceId ?? newTraceId();
+  // Agent attribution: a run-level agent wins over the registration's.
+  const agentName = options.agent ?? registration.agent;
+  const agentProfile = agentName
+    ? await readAgentProfile(workspaceId, agentName)
+    : undefined;
+  if (agentName && !agentProfile) {
+    throw new ServiceError(`Unknown agent: ${agentName}`, 404);
+  }
   const run: WorkflowRun = {
     id: newRunId(),
     workflow: registration.name,
@@ -164,6 +180,8 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
     // workflows.run) inherits the trace and names THIS run as its parent.
     traceId,
     parentRunId: run.id,
+    // The profile's grants bound every dispatch (invoke.ts) and vfs path.
+    ...(agentProfile?.grants ? { grants: agentProfile.grants } : {}),
   };
 
   const pushLog = (level: WorkflowLogLine["level"], parts: unknown[]) => {
@@ -237,6 +255,14 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
         dispatch: (namespace, path, args) => dispatchFor(namespace)(path, args),
         log: pushLog,
         timeoutMs: SCRIPT_TIMEOUT_MS,
+        agent: agentProfile
+          ? {
+              name: agentProfile.name,
+              provider: agentProfile.provider ?? null,
+              model: agentProfile.model ?? null,
+              prompt: agentProfile.prompt ?? null,
+            }
+          : null,
       })) ?? null;
     run.status = "succeeded";
   } catch (err) {
@@ -246,7 +272,113 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
 
   run.durationMs = Math.round(performance.now() - startMs);
   await saveRun(workspaceId, run);
+  await mirrorRunTelemetry(workspaceId, userId, registration, run);
+  if (run.status === "failed") {
+    await notifyRunFailure(workspaceId, userId, registration, run);
+  }
   return run;
+}
+
+/**
+ * Mirror a run's *outcome* into the workspace telemetry store: root span +
+ * error logs + failed tool spans. The full record (all logs, all spans)
+ * stays on the run itself (`workflows.trace {run}`); telemetry carries the
+ * cross-cutting index — "what failed lately, and why" — next to widget and
+ * dispatch events. Never throws.
+ */
+async function mirrorRunTelemetry(
+  workspaceId: string,
+  userId: string,
+  registration: WorkflowRegistration,
+  run: WorkflowRun,
+): Promise<void> {
+  const source = {
+    type: "workflow" as const,
+    path: registration.scriptPath,
+    runId: run.id,
+    ...(run.app ? { app: run.app } : {}),
+  };
+  const events: TelemetryEventInput[] = [
+    {
+      kind: "span",
+      traceId: run.traceId,
+      spanId: run.id,
+      name: `workflow ${registration.name}`,
+      source,
+      at: run.startedAt,
+      durationMs: run.durationMs ?? 0,
+      status: run.status === "failed" ? "error" : "ok",
+      ...(run.error ? { error: { message: run.error } } : {}),
+      attributes: {
+        workflow: registration.name,
+        trigger: run.trigger,
+        ...(run.triggerDetail ? { triggerDetail: run.triggerDetail } : {}),
+      },
+    },
+  ];
+  for (const span of run.spans.filter((s) => !s.ok).slice(0, 20)) {
+    events.push({
+      kind: "span",
+      traceId: run.traceId,
+      parentSpanId: run.id,
+      name: `${span.namespace}.${span.procedure}`,
+      source,
+      at: span.startedAt,
+      durationMs: span.durationMs,
+      status: "error",
+      error: { message: span.error ?? "error" },
+      attributes: { namespace: span.namespace, procedure: span.procedure },
+    });
+  }
+  for (const line of run.logs.filter((l) => l.level === "error" || l.level === "warn").slice(0, 20)) {
+    events.push({
+      kind: "log",
+      traceId: run.traceId,
+      source,
+      at: line.ts,
+      level: line.level === "warn" ? "warn" : "error",
+      message: line.message,
+    });
+  }
+  await recordTelemetry(workspaceId, userId, events);
+}
+
+/**
+ * A failed run raises a `warning` notification carrying the run/trace ids —
+ * the hook for "an agent investigates and fixes it". Only on the transition
+ * into failure (the previous run succeeded or there is none): a cron
+ * failing every 15 minutes must not fill the drawer. Never throws.
+ */
+async function notifyRunFailure(
+  workspaceId: string,
+  userId: string,
+  registration: WorkflowRegistration,
+  run: WorkflowRun,
+): Promise<void> {
+  try {
+    const { listRuns } = await import("./store.js");
+    const runs = await listRuns(workspaceId, registration.name, 2);
+    const previous = runs.filter((r) => r.id !== run.id)[0];
+    if (previous && previous.status === "failed") return;
+    const { getCoreService } = await import("../service-kernel.js");
+    const notifications = getCoreService("notifications");
+    if (!notifications) return;
+    await notifications.call({ workspaceId, userId }, "emit", {
+      category: "warning",
+      title: `Workflow "${registration.name}" failed`,
+      body: `${run.error ?? "Unknown error"}\n\nTrigger: ${run.trigger}${run.triggerDetail ? ` (${run.triggerDetail})` : ""} · Run ${run.id}`,
+      audience: "workspace",
+      link: {
+        kind: "debug-workflow",
+        workflow: registration.name,
+        scriptPath: registration.scriptPath,
+        runId: run.id,
+        traceId: run.traceId,
+      },
+    });
+  } catch {
+    // Failure notification is best-effort; the run record is the truth.
+  }
 }
 
 /**
@@ -301,6 +433,7 @@ export async function runWorkflowByName(
   trigger: WorkflowRun["trigger"],
   input?: unknown,
   triggerDetail?: string,
+  agent?: string,
 ): Promise<WorkflowRun> {
   if ((ctx.workflowDepth ?? 0) > MAX_EVENT_DEPTH) {
     throw new ServiceError(
@@ -322,5 +455,6 @@ export async function runWorkflowByName(
     traceId: ctx.traceId,
     parentRunId: ctx.parentRunId,
     app: ctx.appScope?.name,
+    agent,
   });
 }

@@ -32,8 +32,9 @@ import type { AppManifest } from "./store.js";
 /** The auto-partitioned first-party namespaces an app session may call.
  *  `notifications` is scoped per (app, user) by construction: an app can
  *  only notify its own current user, and only embed choices whose calls it
- *  could make itself (see notifications/service.ts). */
-export const NATIVE_APP_NAMESPACES = ["vfs", "keyvalue", "events", "notifications"] as const;
+ *  could make itself (see notifications/service.ts). `telemetry` is
+ *  stamped/filtered by app the same way (telemetry/service.ts). */
+export const NATIVE_APP_NAMESPACES = ["vfs", "keyvalue", "events", "notifications", "telemetry"] as const;
 
 export type NativeAppNamespace = (typeof NATIVE_APP_NAMESPACES)[number];
 
@@ -157,6 +158,14 @@ const NATIVE_SPECS: Record<NativeAppNamespace, NativeSpec> = {
     recordsPartition: "notify (record store, per workspace)",
     partitionNote:
       "An app only ever notifies — and lists notifications for — its own current user, stamped with the app as the source. Seen notifications hide and expire after 10 days.",
+  },
+  telemetry: {
+    description:
+      "Debugging telemetry: emit OTel-shaped spans/logs and query them back (errors carry message + stack, spans carry durations). Events expire after 3 days.",
+    procedures: ["emit", "query", "traces"],
+    recordsPartition: "telemetry (record store, per workspace)",
+    partitionNote:
+      "Events emitted through an app session are stamped with the app as the source, and the app only ever reads its own stream.",
   },
 };
 

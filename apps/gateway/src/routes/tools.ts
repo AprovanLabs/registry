@@ -27,6 +27,7 @@ import { getAuthMode, requireAuth } from "../middleware/auth.js";
 import { rateLimitByUserId } from "../middleware/rateLimitMiddleware.js";
 import { OAuthExchangeError, resolveToInjectable } from "../oauthTokens.js";
 import { ServiceError } from "../service-kernel.js";
+import { parseTelemetrySourceHeader, recordTelemetry } from "../telemetry/service.js";
 import {
   catalogToolEntries,
   coreToolEntries,
@@ -390,6 +391,29 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   let provider = c.req.param("provider");
   const operation = c.req.param("operation");
 
+  // Dispatch span for the workspace telemetry store: the server is the single
+  // writer for service-call spans; the optional X-Telemetry-Source header
+  // carries the client's attribution (widget path, session, trace).
+  // Telemetry's own calls are not recorded — observing the observer is noise.
+  const attribution = parseTelemetrySourceHeader(c.req.header("x-telemetry-source"));
+  const recordDispatch = (status: number, durationMs: number, errorMessage?: string): void => {
+    if (provider === "telemetry") return;
+    void recordTelemetry(workspaceId, callerId, [
+      {
+        kind: "span",
+        name: `${provider}.${operation}`,
+        source: attribution?.source ?? { type: "tool" },
+        ...(attribution?.traceId ? { traceId: attribution.traceId } : {}),
+        durationMs,
+        status: status < 400 ? "ok" : "error",
+        ...(status >= 400
+          ? { error: { message: errorMessage ?? `HTTP ${status}` } }
+          : {}),
+        attributes: { namespace: provider ?? "", procedure: operation ?? "", "http.status": status },
+      },
+    ]);
+  };
+
   // Core services (events, keyvalue) are first-party: auto-tenanted by the
   // caller's workspace, open to any authed member, no credential or UTDK
   // module involved.
@@ -411,11 +435,14 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
       );
       const durationMs = Date.now() - startTime;
       getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status: 200, durationMs });
+      recordDispatch(200, durationMs);
       return c.json({ data, meta: { requestId, durationMs } });
     } catch (err) {
       const status = err instanceof ServiceError ? err.status : 500;
+      const message = err instanceof Error ? err.message : String(err);
       getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status });
-      return c.json({ error: err instanceof Error ? err.message : String(err) }, status as 400);
+      recordDispatch(status, Date.now() - startTime, message);
+      return c.json({ error: message }, status as 400);
     }
   }
 
@@ -448,6 +475,7 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
     const requestId = crypto.randomUUID();
     logMetadata({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
     getAuditStore().append({ requestId, workspaceId, callerId, provider: provider!, operation: operation!, status: 403 });
+    recordDispatch(403, 0, "Forbidden: caller does not have permission for this operation");
     return c.json({ error: "Forbidden: caller does not have permission for this operation" }, 403);
   }
 
@@ -554,6 +582,7 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
     const status = result.success ? 200 : 500;
     logMetadata({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
     getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status, durationMs });
+    recordDispatch(status, durationMs, result.success ? undefined : (result.error ?? "Execution failed"));
   };
 
   // Chat completions requested with `stream: true` get their SSE response
