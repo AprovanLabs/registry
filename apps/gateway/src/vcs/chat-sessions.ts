@@ -484,6 +484,39 @@ export async function syncSession(
 }
 
 /**
+ * One-call merge completion — the native function notification choices
+ * invoke (docs/vcs-and-sessions.md "Notifications"). Syncs the draft onto
+ * the current main head, resolves every conflicted path by strategy
+ * ("keep-draft": the overlay wins; "keep-workspace": the draft drops its
+ * claim), then optionally applies the draft as a merge commit.
+ */
+export async function resolveSessionMerge(
+  workspaceId: string,
+  id: string,
+  userId: string,
+  options: { strategy: "keep-draft" | "keep-workspace"; apply?: boolean; message?: string },
+): Promise<{ session: ChatSessionRecord; commit?: VcsCommit; resolved: string[] }> {
+  const { conflicts } = await syncSession(workspaceId, id, userId);
+  const resolved = conflicts.map((conflict) => conflict.path).sort();
+  if (options.strategy === "keep-workspace" && resolved.length > 0) {
+    await discardChanges(workspaceId, id, resolved);
+  }
+  if (options.apply === false) {
+    return { session: await requireSession(workspaceId, id), resolved };
+  }
+  const session = await requireSession(workspaceId, id);
+  const closed = await closeSession(workspaceId, id, userId, {
+    stage: true,
+    message:
+      options.message?.trim() ||
+      `Merge: ${session.title} (${
+        options.strategy === "keep-draft" ? "kept the draft's versions" : "kept the workspace versions"
+      })`,
+  });
+  return { ...closed, resolved };
+}
+
+/**
  * Close a session. `stage: true` applies the overlay to the live tree and
  * commits main (the merge node, carrying `sessionId`); otherwise the session
  * is archived untouched — the overlay stays readable for peeking.

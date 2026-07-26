@@ -19,6 +19,7 @@ import {
   listSessions,
   readMessages,
   requireSession,
+  resolveSessionMerge,
   sessionId,
   syncSession,
   updateSession,
@@ -234,6 +235,22 @@ export const sessionsService: CoreService = {
       },
     },
     {
+      name: "sessions.resolve",
+      operation: "resolve",
+      description:
+        'One-call merge completion: sync the draft, settle every conflicted file by strategy ("keep-draft" or "keep-workspace"), and apply to the workspace (apply=false to only settle). The native function merge-conflict notification choices invoke.',
+      inputSchema: {
+        type: "object",
+        properties: {
+          id: { type: "string" },
+          strategy: { type: "string", enum: ["keep-draft", "keep-workspace"] },
+          apply: { type: "boolean" },
+          message: { type: "string" },
+        },
+        required: ["id", "strategy"],
+      },
+    },
+    {
       name: "sessions.close",
       operation: "close",
       description:
@@ -327,6 +344,23 @@ export const sessionsService: CoreService = {
       }
       case "presence":
         return heartbeatPresence(ctx, args);
+      case "resolve": {
+        const strategy = args["strategy"];
+        if (strategy !== "keep-draft" && strategy !== "keep-workspace") {
+          throw new ServiceError('strategy must be "keep-draft" or "keep-workspace"', 400);
+        }
+        const { session, commit, resolved } = await resolveSessionMerge(
+          ctx.workspaceId,
+          sessionId(args["id"]),
+          ctx.userId,
+          {
+            strategy,
+            apply: args["apply"] !== false,
+            message: typeof args["message"] === "string" ? args["message"] : undefined,
+          },
+        );
+        return { session, resolved, ...(commit ? { commit } : {}) };
+      }
       case "close": {
         const { session, commit } = await closeSession(
           ctx.workspaceId,

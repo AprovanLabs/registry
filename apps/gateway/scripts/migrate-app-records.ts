@@ -38,9 +38,9 @@
  * within one install does not carry forward. Flagged loudly in the log.
  *
  * Usage (from the repo root):
- *   pnpm tsx scripts/migrate-app-records.ts                 # dry run (default)
- *   pnpm tsx scripts/migrate-app-records.ts --execute        # actually migrate
- *   pnpm tsx scripts/migrate-app-records.ts --workspace <id> # limit to one workspace
+ *   pnpm -C apps/gateway exec tsx scripts/migrate-app-records.ts                 # dry run (default)
+ *   pnpm -C apps/gateway exec tsx scripts/migrate-app-records.ts --execute        # actually migrate
+ *   pnpm -C apps/gateway exec tsx scripts/migrate-app-records.ts --workspace <id> # limit to one workspace
  *
  * Do NOT run with --execute against prd without a deliberate, reviewed pass —
  * this walks and deletes files across every workspace.
@@ -64,12 +64,12 @@ const { values: args } = parseArgs({
 
 const dryRun = !args.execute;
 
-const { getDynamoDocClient } = await import("../apps/gateway/src/db/client.js");
-const { getFsStore } = await import("../apps/gateway/src/fs-store.js");
-const { getRecordStore } = await import("../apps/gateway/src/records.js");
-const { listApps, appDataRoot } = await import("../apps/gateway/src/apps/store.js");
-const { listInstalls } = await import("../apps/gateway/src/apps/install.js");
-const { PERSONAL_APP_NAME, PERSONAL_PREFIX } = await import("../apps/gateway/src/apps/personal.js");
+const { getDynamoDocClient } = await import("../src/db/client.js");
+const { getFsStore } = await import("../src/fs-store.js");
+const { getRecordStore } = await import("../src/records.js");
+const { listApps, appDataRoot } = await import("../src/apps/store.js");
+const { listInstalls } = await import("../src/apps/install.js");
+const { PERSONAL_APP_NAME, PERSONAL_PREFIX } = await import("../src/apps/personal.js");
 
 const store = getFsStore();
 const records = getRecordStore();

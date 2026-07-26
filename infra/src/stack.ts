@@ -171,6 +171,9 @@ export class RegistryApp extends Stack {
       tableName: names.regional("records"),
       partitionKey: { name: "PK", type: AttributeType.STRING },
       sortKey: { name: "SK", type: AttributeType.STRING },
+      // Rows that opt into expiry (top-level epoch-seconds `expiresAt`) are
+      // reclaimed by DynamoDB — seen notifications age out after 10 days.
+      timeToLiveAttribute: "expiresAt",
     });
 
     new CfnOutput(this, "RECORDS_TABLE_NAME", {

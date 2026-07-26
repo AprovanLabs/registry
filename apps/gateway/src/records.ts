@@ -64,6 +64,15 @@ export interface RecordEntry {
   updatedBy: string;
 }
 
+export interface RecordSetOptions {
+  /**
+   * Top-level epoch-seconds expiry. On DynamoDB this is the table's TTL
+   * attribute (`expiresAt`) and rows are reclaimed by the service; the
+   * SQLite backend purges lazily on read/list. Omit for no expiry.
+   */
+  expiresAtEpochSeconds?: number;
+}
+
 export interface IRecordStore {
   get(tenant: string, scope: string, key: string): Promise<RecordEntry | undefined>;
   set(
@@ -72,6 +81,7 @@ export interface IRecordStore {
     key: string,
     value: unknown,
     updatedBy: string,
+    options?: RecordSetOptions,
   ): Promise<RecordEntry>;
   delete(tenant: string, scope: string, key: string): Promise<boolean>;
   /** Keys under `scope` whose literal value starts with `prefix` (default ""). */
@@ -139,6 +149,7 @@ export class RecordStoreDynamodb implements IRecordStore {
     key: string,
     value: unknown,
     updatedBy: string,
+    options?: RecordSetOptions,
   ): Promise<RecordEntry> {
     const updatedAt = new Date().toISOString();
     const json = JSON.stringify(value ?? null);
@@ -151,6 +162,9 @@ export class RecordStoreDynamodb implements IRecordStore {
       key,
       updatedAt,
       updatedBy,
+      ...(options?.expiresAtEpochSeconds
+        ? { expiresAt: Math.floor(options.expiresAtEpochSeconds) }
+        : {}),
     };
     if (spill) {
       const bucket = this.requireBucket();
@@ -285,9 +299,20 @@ export class RecordStoreSqlite implements IRecordStore {
         value TEXT NOT NULL,
         updated_at TEXT NOT NULL,
         updated_by TEXT NOT NULL,
+        expires_at INTEGER,
         PRIMARY KEY (tenant, scope, key)
       );
     `);
+    // Pre-expiry dev databases lack the column; add it in place.
+    try {
+      this.database.exec(`ALTER TABLE records ADD COLUMN expires_at INTEGER`);
+    } catch {
+      // Column already exists.
+    }
+    // Lazy reaping stands in for DynamoDB TTL locally.
+    this.database
+      .prepare(`DELETE FROM records WHERE expires_at IS NOT NULL AND expires_at < ?`)
+      .run(Math.floor(Date.now() / 1000));
   }
 
   async get(tenant: string, scope: string, key: string): Promise<RecordEntry | undefined> {
@@ -316,14 +341,23 @@ export class RecordStoreSqlite implements IRecordStore {
     key: string,
     value: unknown,
     updatedBy: string,
+    options?: RecordSetOptions,
   ): Promise<RecordEntry> {
     const updatedAt = new Date().toISOString();
     this.database
       .prepare(
-        `INSERT OR REPLACE INTO records (tenant, scope, key, value, updated_at, updated_by)
-         VALUES (?, ?, ?, ?, ?, ?)`,
+        `INSERT OR REPLACE INTO records (tenant, scope, key, value, updated_at, updated_by, expires_at)
+         VALUES (?, ?, ?, ?, ?, ?, ?)`,
       )
-      .run(tenant, scope, key, JSON.stringify(value ?? null), updatedAt, updatedBy);
+      .run(
+        tenant,
+        scope,
+        key,
+        JSON.stringify(value ?? null),
+        updatedAt,
+        updatedBy,
+        options?.expiresAtEpochSeconds ?? null,
+      );
     return { tenant, scope, key, value: value ?? null, updatedAt, updatedBy };
   }
 

@@ -97,6 +97,7 @@ export const CORE_SERVICE_NAMES = [
   "interfaces",
   "sync",
   "sessions",
+  "notifications",
 ] as const;
 
 export type CoreServiceName = (typeof CORE_SERVICE_NAMES)[number];

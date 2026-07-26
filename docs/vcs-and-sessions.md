@@ -214,6 +214,43 @@ apply that follows is clean. Sub-agents and programmatic chats should create
 **draft chats** (`sessions.create { mode: "staged" }`) — their work rides
 the same review-then-apply path instead of mutating the workspace mid-flight.
 
+## Notifications
+
+Signal over noise, riding the platform's own primitives. A notification is
+a **record** (DynamoDB `RecordsTable`, scope `notify` — accumulated state,
+never the file plane), in one of three categories: **decision** (someone
+must act — always shown), **warning**, **activity** (quiet, off by
+default; per-user preferences persist via keyvalue). Seen notifications
+hide and expire after 10 days (table TTL).
+
+The contract is what makes it powerful:
+
+- **`widget: { path, data }`** — the body renders as a patchwork widget.
+  `builtin:` ids are first-party cards (merge-conflict first); a workspace
+  path compiles in the ordinary sandbox with the payload prepended as a
+  `NOTIFICATION` constant — a workflow ships its own notification UI as a
+  plain file.
+- **`choices[]`** — one-click actions, each a typed tool call
+  `{ namespace, procedure, args }`. capability = namespace: a choice can
+  call `sessions.resolve` (the native one-call merge completion), an app's
+  exported workflow, anything dispatchable.
+- **`link`** — the "get more deeply involved" client action (e.g. open the
+  file-by-file merge dialog with AI combine).
+- **App permission model** — a notification emitted through an app session
+  is stamped `source.app` server-side and its choices are validated at
+  emit time against the app's own callable surface; clients dispatch
+  app-sourced choices back through the app's tool proxy, so the allow-list
+  binds at click time too. An app can never make a user click its way into
+  tools it couldn't call itself. `notifications` is a native app namespace
+  (per-app-user scoped).
+
+First widget: **merge conflicts** — the card lists the files that changed
+in two places and what each resolution does; choices complete the merge
+natively (`sessions.resolve` keep-draft / keep-workspace); the link opens
+the merge dialog. Other candidates on the same rails: workflow run
+failures (link to the trace), release/promote results, cron digests, app
+install requests, provider-webhook delivery errors.
+
 ## Presence and live sync
 
 Collaboration starts with knowing who's here. `sessions.presence` heartbeats

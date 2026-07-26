@@ -63,6 +63,7 @@ import {
   sessionWrite,
   type ChatSessionRecord,
 } from "./vcs/chat-sessions.js";
+import { notificationsService } from "./notifications/service.js";
 import { sessionsService } from "./vcs/sessions-service.js";
 import { webhooksService } from "./webhooks/service.js";
 import { workflowsService } from "./workflows/service.js";
@@ -1015,6 +1016,7 @@ export const CORE_SERVICES: Record<CoreServiceName, CoreService> = {
   interfaces: interfacesService,
   sync: syncService,
   sessions: sessionsService,
+  notifications: notificationsService,
 };
 
 // Hand the registry to the kernel, so upstream modules (the workflow runner,

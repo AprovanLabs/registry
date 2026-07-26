@@ -247,6 +247,48 @@ describe("chat sessions", () => {
     expect(again.peers.map((p) => p.window)).toEqual(["w2"]);
   });
 
+  it("resolves a conflicted merge in one call — keep-workspace", async () => {
+    await putFile("res/a.md", "base");
+    const created = await data<SessionPayload>(
+      await call("sessions/create", { title: "Resolver A", mode: "staged" }),
+    );
+    await putFile("res/a.md", "draft version", created.session.id);
+    await putFile("res/a.md", "workspace moved"); // conflict on main
+
+    const resolved = await data<{
+      session: SessionPayload["session"];
+      resolved: string[];
+      commit?: { message: string };
+    }>(
+      await call("sessions/resolve", {
+        id: created.session.id,
+        strategy: "keep-workspace",
+      }),
+    );
+    expect(resolved.resolved).toEqual(["res/a.md"]);
+    expect(resolved.session.status).toBe("merged");
+
+    const after = (await (await getFile("res/a.md")).json()) as { content: string };
+    expect(after.content).toBe("workspace moved");
+  });
+
+  it("resolves a conflicted merge in one call — keep-draft", async () => {
+    const created = await data<SessionPayload>(
+      await call("sessions/create", { title: "Resolver B", mode: "staged" }),
+    );
+    await putFile("res/a.md", "draft wins", created.session.id);
+    await putFile("res/a.md", "workspace again");
+
+    const resolved = await data<{ resolved: string[]; commit?: { message: string } }>(
+      await call("sessions/resolve", { id: created.session.id, strategy: "keep-draft" }),
+    );
+    expect(resolved.resolved).toEqual(["res/a.md"]);
+    expect(resolved.commit?.message).toContain("kept the draft's versions");
+
+    const after = (await (await getFile("res/a.md")).json()) as { content: string };
+    expect(after.content).toBe("draft wins");
+  });
+
   it("hard-deletes a session: record, transcript, and staged shadows", async () => {
     const created = await data<SessionPayload>(
       await call("sessions/create", { title: "Doomed", mode: "staged" }),

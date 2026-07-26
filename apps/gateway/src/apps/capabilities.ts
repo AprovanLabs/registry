@@ -29,8 +29,11 @@ import { isCoreServiceName, ServiceError } from "../service-kernel.js";
 import { DEFAULT_DAILY_CALLS } from "./usage.js";
 import type { AppManifest } from "./store.js";
 
-/** The auto-partitioned first-party namespaces an app session may call. */
-export const NATIVE_APP_NAMESPACES = ["vfs", "keyvalue", "events"] as const;
+/** The auto-partitioned first-party namespaces an app session may call.
+ *  `notifications` is scoped per (app, user) by construction: an app can
+ *  only notify its own current user, and only embed choices whose calls it
+ *  could make itself (see notifications/service.ts). */
+export const NATIVE_APP_NAMESPACES = ["vfs", "keyvalue", "events", "notifications"] as const;
 
 export type NativeAppNamespace = (typeof NATIVE_APP_NAMESPACES)[number];
 
@@ -146,6 +149,14 @@ const NATIVE_SPECS: Record<NativeAppNamespace, NativeSpec> = {
     workspacePath: ".services/events/<channel>.jsonl (caller workspace)",
     partitionNote:
       "Channels are workspace-wide: emissions are visible to the workspace that hosts the app's data.",
+  },
+  notifications: {
+    description:
+      "Notify the app's current user: title/body, an optional widget that renders the content, and optional one-click choices. Choices may only call tools this app itself can call.",
+    procedures: ["emit", "list", "seen"],
+    recordsPartition: "notify (record store, per workspace)",
+    partitionNote:
+      "An app only ever notifies — and lists notifications for — its own current user, stamped with the app as the source. Seen notifications hide and expire after 10 days.",
   },
 };
 
