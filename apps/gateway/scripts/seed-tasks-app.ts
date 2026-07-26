@@ -163,7 +163,7 @@ await invokeTool(ctx, "vfs", "write", {
 task["status"] = "in_review";
 task["sessionId"] = created.session.id;
 await invokeTool(ctx, "keyvalue", "set", { key: "task:seedcheck", value: task });
-await notifications.call(ctx, "emit", {
+const emitted = (await notifications.call(ctx, "emit", {
   category: "decision",
   title: "Task ready for review: Seed validation task",
   widget: {
@@ -180,7 +180,7 @@ await notifications.call(ctx, "emit", {
       },
     },
   ],
-});
+})) as { notification: { id: string } };
 console.log("✔ review notification emitted");
 
 // Live tree must NOT have the deliverable yet (isolation).
@@ -206,8 +206,18 @@ const doneTask = (await invokeTool(ctx, "keyvalue", "get", { key: "task:seedchec
 if (doneTask.value?.status !== "done") throw new Error("task not marked done");
 console.log("✔ accept merged the draft and closed the task (status: done)");
 
-// Clean up the validation task + deliverable (keep the app).
+// Clean up the validation task + deliverable (keep the app), and mark the
+// validation's own notifications seen so nothing stale lingers in the feed.
 await invokeTool(ctx, "keyvalue", "delete", { key: "task:seedcheck" });
 await store.remove(workspaceId, "apps/tasks/output/seedcheck.md");
+await notifications.call(ctx, "seen", { id: emitted.notification.id }).catch(() => undefined);
+const mine = (await notifications.call(ctx, "list", {})) as {
+  notifications: Array<{ id: string; title: string }>;
+};
+for (const record of mine.notifications) {
+  if (record.title.includes("Seed validation task") || record.title === "Task done: Seed validation task") {
+    await notifications.call(ctx, "seen", { id: record.id }).catch(() => undefined);
+  }
+}
 
 console.log(`✔ done — Tasks app live for ${workspaceId} (chat sidebar → Apps → Tasks; board: apps/tasks/index.tsx)`);

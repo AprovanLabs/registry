@@ -214,11 +214,17 @@ export class RecordStoreDynamodb implements IRecordStore {
     const keys: string[] = [];
     let cursor: Record<string, unknown> | undefined;
     do {
+      // DynamoDB rejects begins_with with an empty string — an empty prefix
+      // means "everything under the partition", so drop the clause.
       const page = await getDynamoDocClient().send(
         new QueryCommand({
           TableName: this.tableName,
-          KeyConditionExpression: "PK = :pk AND begins_with(SK, :prefix)",
-          ExpressionAttributeValues: { ":pk": partitionKey(tenant, scope), ":prefix": prefix },
+          KeyConditionExpression: prefix
+            ? "PK = :pk AND begins_with(SK, :prefix)"
+            : "PK = :pk",
+          ExpressionAttributeValues: prefix
+            ? { ":pk": partitionKey(tenant, scope), ":prefix": prefix }
+            : { ":pk": partitionKey(tenant, scope) },
           ProjectionExpression: "SK",
           ExclusiveStartKey: cursor,
         }),
