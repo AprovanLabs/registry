@@ -12,6 +12,7 @@
   },
   "scripts": {
     "dev": "tsx watch --env-file=.env src/index.ts",
+    "dev:local": "APROVAN_ENV=off STORE_BACKEND=sqlite GATEWAY_PORT=4000 tsx watch src/index.ts",
     "dev:aws": "APROVAN_ENV=off STORE_BACKEND=dynamodb DYNAMO_ENDPOINT=http://localhost:8000 S3_ENDPOINT=http://localhost:9000 FS_BUCKET=aprovan-fs tsx watch src/index.ts",
     "bootstrap:local": "tsx scripts/bootstrap-local.ts",
     "build": "tsc -p tsconfig.json",

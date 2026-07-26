@@ -15,7 +15,7 @@
 
 import { Hono } from "hono";
 import { getMembership, listMembershipsForUser } from "../memberships.js";
-import { readBearerToken, verifyAccessToken } from "../middleware/auth.js";
+import { getAuthMode, readBearerToken, verifyAccessToken } from "../middleware/auth.js";
 import { getCurrentWorkspace, setCurrentWorkspace } from "../sessions.js";
 import { getActiveWorkspaceId, setActiveWorkspaceId } from "../users.js";
 import { getWorkspaces } from "../workspaces.js";
@@ -28,6 +28,9 @@ export const sessionRouter = new Hono();
 
 /** Authenticate via a bare Cognito access token, returning the user sub. */
 async function requireCognitoSub(c: ContextLike): Promise<string | Response> {
+  // Local mode (auth "none"): one implicit user. The whole session surface
+  // short-circuits to the "local" identity — no Cognito, no DynamoDB.
+  if (getAuthMode() === "none") return "local";
   const accessToken = readBearerToken(c);
   if (!accessToken) {
     return c.json({ error: "Missing or invalid Authorization header" }, 401);
@@ -60,6 +63,13 @@ export async function selectActiveWorkspace(
   userId: string,
   workspaceId: string,
 ): Promise<SelectResult | SelectError> {
+  // Local mode: the only workspace is "local" and it's always selected —
+  // nothing to validate, nothing to persist.
+  if (getAuthMode() === "none") {
+    return workspaceId === "local"
+      ? { ok: true, workspaceId }
+      : { ok: false, status: 403, body: { error: "Local mode has one workspace: local" } };
+  }
   let membership;
   try {
     membership = await getMembership(workspaceId, userId);
@@ -99,6 +109,13 @@ interface ContextLike {
 sessionRouter.get("/", async (c) => {
   const sub = await requireCognitoSub(c);
   if (sub instanceof Response) return sub;
+
+  if (getAuthMode() === "none") {
+    return c.json({
+      activeWorkspaceId: "local",
+      workspaces: [{ id: "local", name: "Local workspace", role: "admin" }],
+    });
+  }
 
   let activeWorkspaceId: string | undefined;
   try {

@@ -54,6 +54,11 @@ const WORKSPACES = [
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
+  // These tests simulate the Cognito path; auth mode must be "oidc" or the
+  // session surface short-circuits to the local single-user identity.
+  process.env["OIDC_ISSUER"] =
+    "https://cognito-idp.us-east-2.amazonaws.com/us-east-2_sessiontest";
+  process.env["OIDCAUDIENCE"] = "session-test-client";
   setupAuth({
     mockDdbSend,
     defaultWorkspaceId: "ws-a",
@@ -86,6 +91,8 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  delete process.env["OIDC_ISSUER"];
+  delete process.env["OIDCAUDIENCE"];
   resetCognitoVerifier();
 });
 

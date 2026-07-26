@@ -5,6 +5,10 @@
  * `AuditStoreDynamodb` is now the sole implementation.
  */
 
+import { mkdirSync } from "node:fs";
+import { createRequire } from "node:module";
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { getDynamoDocClient } from "./db/client.js";
 
@@ -157,15 +161,125 @@ export class AuditStoreDynamodb implements IAuditStore {
 }
 
 // ---------------------------------------------------------------------------
+// SQLite backend (local mode) — same contract, one table in gateway.db,
+// with a lazy 30-day purge standing in for DynamoDB's TTL.
+// ---------------------------------------------------------------------------
+
+const loadSqlite = (): typeof import("better-sqlite3") => {
+  const req =
+    typeof require === "function" ? require : createRequire(import.meta.url);
+  return req("better-sqlite3");
+};
+
+export class AuditStoreSqlite implements IAuditStore {
+  private readonly database: import("better-sqlite3").Database;
+
+  constructor(
+    directory = process.env["GATEWAY_DATA_DIR"] ?? join(homedir(), ".aprovan"),
+  ) {
+    mkdirSync(directory, { recursive: true, mode: 0o700 });
+    const SqliteDatabase = loadSqlite();
+    this.database = new SqliteDatabase(join(directory, "gateway.db"));
+    this.database.exec(`
+      CREATE TABLE IF NOT EXISTS audit_log (
+        id TEXT PRIMARY KEY,
+        ts TEXT NOT NULL,
+        request_id TEXT NOT NULL,
+        workspace_id TEXT NOT NULL,
+        caller_id TEXT NOT NULL,
+        provider TEXT NOT NULL,
+        operation TEXT NOT NULL,
+        status INTEGER NOT NULL,
+        duration_ms INTEGER,
+        result TEXT NOT NULL,
+        mcp_tool_name TEXT
+      );
+      CREATE INDEX IF NOT EXISTS audit_log_ws_ts ON audit_log(workspace_id, ts DESC);
+    `);
+    this.database
+      .prepare(`DELETE FROM audit_log WHERE ts < ?`)
+      .run(new Date(Date.now() - TTL_30_DAYS_MS).toISOString());
+  }
+
+  append(entry: Omit<AuditEntry, "id" | "ts" | "result">): void {
+    try {
+      this.database
+        .prepare(
+          `INSERT INTO audit_log
+           (id, ts, request_id, workspace_id, caller_id, provider, operation, status, duration_ms, result, mcp_tool_name)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        )
+        .run(
+          crypto.randomUUID(),
+          new Date().toISOString(),
+          entry.requestId,
+          entry.workspaceId,
+          entry.callerId,
+          entry.provider,
+          entry.operation,
+          entry.status,
+          entry.durationMs ?? null,
+          entry.status === 403 ? "forbidden" : entry.status < 400 ? "success" : "error",
+          entry.mcp_tool_name ?? null,
+        );
+    } catch (err) {
+      console.error("[AuditStoreSqlite] append failed:", err);
+    }
+  }
+
+  async recent(opts: {
+    workspaceId: string;
+    limit?: number;
+    callerId?: string;
+    provider?: string;
+  }): Promise<AuditEntry[]> {
+    const { workspaceId, limit = 100, callerId, provider } = opts;
+    const clauses = ["workspace_id = ?"];
+    const params: unknown[] = [workspaceId];
+    if (callerId !== undefined) {
+      clauses.push("caller_id = ?");
+      params.push(callerId);
+    }
+    if (provider !== undefined) {
+      clauses.push("provider = ?");
+      params.push(provider);
+    }
+    const rows = this.database
+      .prepare(
+        `SELECT * FROM audit_log WHERE ${clauses.join(" AND ")}
+         ORDER BY ts DESC LIMIT ?`,
+      )
+      .all(...params, limit) as Record<string, unknown>[];
+    return rows.map((row) => ({
+      id: String(row["id"]),
+      ts: String(row["ts"]),
+      requestId: String(row["request_id"]),
+      workspaceId: String(row["workspace_id"]),
+      callerId: String(row["caller_id"]),
+      provider: String(row["provider"]),
+      operation: String(row["operation"]),
+      status: Number(row["status"]),
+      durationMs: row["duration_ms"] === null ? undefined : Number(row["duration_ms"]),
+      result: String(row["result"]) as AuditEntry["result"],
+      mcp_tool_name: row["mcp_tool_name"] === null ? undefined : String(row["mcp_tool_name"]),
+    }));
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Singleton factory
 // ---------------------------------------------------------------------------
 
 let _store: IAuditStore | undefined;
 
-/** Resolve the singleton audit store (always DynamoDB). */
+/** Resolve the singleton audit store (STORE_BACKEND switch, like the FS,
+ *  record, and credential stores — SQLite is the local-mode default). */
 export function getAuditStore(): IAuditStore {
   if (!_store) {
-    _store = new AuditStoreDynamodb();
+    const backend =
+      process.env["STORE_BACKEND"] ??
+      (process.env["FS_BUCKET"] ? "dynamodb" : "sqlite");
+    _store = backend === "dynamodb" ? new AuditStoreDynamodb() : new AuditStoreSqlite();
   }
   return _store;
 }
