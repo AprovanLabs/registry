@@ -3,12 +3,12 @@
 # Lambda).
 #
 #   docker compose up -d
-#   cd apps/gateway && STORE_BACKEND=dynamodb \
+#   cd apps/workspace && WORKSPACE_MODE=aws \
 #     DYNAMO_ENDPOINT=http://localhost:8000 \
 #     S3_ENDPOINT=http://localhost:9000 FS_BUCKET=aprovan-fs pnpm dev
 #
 # The gateway auto-creates the FS bucket against MinIO; DynamoDB tables are
-# created by the test/dev bootstrap (see apps/gateway/tests/*dynamodb*).
+# created by the test/dev bootstrap (see apps/workspace/tests/*dynamodb*).
 # MinIO console: http://localhost:9001 (minioadmin / minioadmin).
 
 services:

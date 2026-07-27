@@ -1,4 +1,5 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import path from "node:path";
 import {
   getProviderImportSpecifier,
   getProviderPackageRootName,
@@ -83,6 +84,24 @@ export function createProviderSchemaTypes(document: OpenAPIV3.Document): Provide
           return (current as Record<string, unknown>)[part.replace(/~1/g, "/").replace(/~0/g, "~")];
         }, document);
     },
+  };
+}
+
+/**
+ * Plain render context over the named schemas — no usage tracking. Use where
+ * the output is not a module that needs an import line (docs, the public type
+ * map), and `createTrackedContext` where it is.
+ */
+export function createSchemaRenderContext(
+  schemaTypes: ProviderSchemaTypes | null | undefined,
+): SchemaRenderContext | undefined {
+  if (!schemaTypes) {
+    return undefined;
+  }
+
+  return {
+    refTypeName: (ref) => schemaTypes.refToName.get(ref),
+    resolveRef: schemaTypes.resolveRef,
   };
 }
 
@@ -633,11 +652,11 @@ export function renderProviderTypesIndex(
 export function renderProviderEntry(providerName: string, clientImportPath = "../client.js"): string {
   const providerTypeName = toPascalCase(providerName);
 
-  return `import type { CreateClientOptions } from ${JSON.stringify(clientImportPath)};
+  return `import { readFile } from "node:fs/promises";
+import type { CreateClientOptions } from ${JSON.stringify(clientImportPath)};
 import { createClient, createLazyClient } from ${JSON.stringify(clientImportPath)};
 import type { ${providerTypeName}Client } from "./types/index.js";
 import { toolMetadata } from "./metadata.js";
-import openApiDocument from "./openapi.json" with { type: "json" };
 
 export * from "./types/index.js";
 
@@ -647,7 +666,14 @@ export function create${providerTypeName}Client(
   return createClient<${providerTypeName}Client>({
     ...options,
     name: ${JSON.stringify(providerName)},
-    openApiDocument,
+    // Read + parsed on demand, and deliberately NOT via \`import()\`: either
+    // form of import registers the document in Node's ESM registry, which
+    // pins it for the lifetime of the process. Read from disk, the document
+    // is owned by the client alone, so evicting a cached client actually
+    // returns the memory (12MB for github). \`openapi.json\` ships beside this
+    // module in dist — see copy-assets.mjs — so the module-relative URL holds
+    // wherever the package is staged.
+    openApiDocument: async () => JSON.parse(await readFile(new URL("./openapi.json", import.meta.url), "utf8")),
     toolMetadata,
   });
 }
@@ -685,12 +711,106 @@ export type { CreateClientOptions } from "./client.js";
 `;
 }
 
-export function renderRootPackageJson(providers: RegistryProvider[]): string {
+/**
+ * Providers that actually exist in the output tree.
+ *
+ * A directory is a provider iff it has an `index.ts` — which is what
+ * distinguishes `google/docs` (the Google Docs API) from
+ * `google/calendar/docs` (that provider's documentation).
+ */
+function providersOnDisk(outputRoot: string): Set<string> {
+  const found = new Set<string>();
+  const skipTop = new Set(["dist", "node_modules", "common", "llm", "sql", ".turbo"]);
+  const skipNested = new Set(["dist", "node_modules", "types", "__tests__"]);
+
+  const walk = (relative: string): void => {
+    const absolute = path.join(outputRoot, relative);
+    if (existsSync(path.join(absolute, "index.ts"))) {
+      found.add(relative.split(path.sep).join("/"));
+    }
+    for (const entry of readdirSync(absolute, { withFileTypes: true })) {
+      if (!entry.isDirectory() || skipNested.has(entry.name)) continue;
+      walk(path.join(relative, entry.name));
+    }
+  };
+
+  if (!existsSync(outputRoot)) return found;
+  for (const entry of readdirSync(outputRoot, { withFileTypes: true })) {
+    if (!entry.isDirectory() || skipTop.has(entry.name)) continue;
+    walk(entry.name);
+  }
+
+  return found;
+}
+
+/**
+ * Export entries present in the previous root manifest that this generator does
+ * not produce. Static keys (".", "./client", the JSON wildcards) are emitted
+ * unconditionally, so they are excluded from the carry-over.
+ */
+function getCarriedRootExports(
+  previousPackageJson: string | undefined,
+  providerExports: Record<string, unknown>,
+  outputRoot: string,
+): Record<string, unknown> {
+  if (!previousPackageJson) {
+    return {};
+  }
+
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(previousPackageJson);
+  } catch {
+    return {};
+  }
+
+  const previousExports = (parsed as { exports?: Record<string, unknown> } | null)?.exports;
+
+  if (!previousExports || typeof previousExports !== "object") {
+    return {};
+  }
+
+  const staticKeys = new Set([".", "./client", "./registry.json", "./*/openapi.json", "./*/package.json"]);
+
+  const onDisk = providersOnDisk(outputRoot);
+
+  return Object.fromEntries(
+    Object.entries(previousExports).filter(
+      ([key]) =>
+        !staticKeys.has(key) &&
+        !(key in providerExports) &&
+        key.startsWith("./") &&
+        onDisk.has(key.slice(2)),
+    ),
+  );
+}
+
+export function renderRootPackageJson(
+  providers: RegistryProvider[],
+  previousPackageJson?: string,
+  outputRoot: string = resolveRepoPath("packages", "utdk"),
+): string {
+  // An export must correspond to code that exists. Deriving the map from the
+  // registry alone advertised every one of its ~2,565 source entries, but only
+  // ~50 have ever been generated — so 2,659 subpaths resolved to `dist/...`
+  // files that were never written, and `import("utdk/azure/mysql")` passed
+  // Node's exports check and then failed to load. On-disk presence is the only
+  // honest source of truth, and it covers the hand-written providers
+  // (postgres/snowflake/databricks) for free, since they exist too.
+  //
+  // `justGenerated` exists because the manifest and the provider directory are
+  // written in the same `Promise.all`: a brand-new provider may not be on disk
+  // yet when this runs, and would otherwise be omitted from its own first
+  // manifest.
+  const justGenerated = providers.flatMap((provider) => {
+    const segments = splitProviderName(provider.name);
+    return segments.map((_, index) => segments.slice(0, index + 1).join("/"));
+  });
+  const onDisk = providersOnDisk(outputRoot);
+
   const providerExports = Object.fromEntries(
-    [...new Set(providers.flatMap((provider) => {
-      const segments = splitProviderName(provider.name);
-      return segments.map((_, index) => segments.slice(0, index + 1).join("/"));
-    }))]
+    [...new Set([...onDisk, ...justGenerated.filter((entry) => onDisk.has(entry))])]
       .sort((left, right) => left.localeCompare(right))
       .map((providerPath) => [
         `./${providerPath}`,
@@ -702,23 +822,38 @@ export function renderRootPackageJson(providers: RegistryProvider[]): string {
       ]),
   );
 
+  // Carry over anything the walk cannot see. With on-disk presence driving the
+  // map this should normally be empty; it stays as a safety net rather than a
+  // mechanism, and it deliberately no longer resurrects entries whose code is
+  // absent — that was how the phantoms survived regeneration.
+  const carriedExports = getCarriedRootExports(previousPackageJson, providerExports, outputRoot);
+
   return JSON.stringify(
     {
       name: "utdk",
       version: "0.1.0",
-      private: true,
       type: "module",
       description: "Generated UTDK provider clients",
       files: ["dist"],
+      // `build` is the esbuild path (build.mjs transpiles, emit-client-types.mjs
+      // emits the hand-written client's .d.ts). `tsc` over ~50 provider trees
+      // needs a 4GB heap and minutes, so it is reserved for `build:types` /
+      // `prepublishOnly`, where full declarations are actually required.
       scripts: {
-        build: "tsc -p tsconfig.json && node ./copy-assets.mjs",
-        "check-types": "tsc -p tsconfig.json --noEmit",
-        typecheck: "tsc -p tsconfig.json --noEmit",
+        build: "node ./build.mjs && node ./emit-client-types.mjs && node ./copy-assets.mjs",
+        "check-types": "NODE_OPTIONS=--max-old-space-size=4096 tsc -p tsconfig.json --noEmit",
+        typecheck: "NODE_OPTIONS=--max-old-space-size=4096 tsc -p tsconfig.json --noEmit",
         clean: "rm -rf dist",
+        "build:types": "NODE_OPTIONS=--max-old-space-size=4096 tsc -p tsconfig.json && node ./copy-assets.mjs",
+        prepublishOnly: "pnpm run build:types",
       },
       dependencies: {
         "@utcp/http": "^1.1.1",
         "@utcp/sdk": "^1.1.0",
+        // Hand-written provider packages that live inside this tree but are
+        // excluded from the generated build (see tsconfig `exclude`).
+        "@utdk/sql": "workspace:*",
+        "@utdk/llm": "workspace:*",
       },
       exports: {
         ".": {
@@ -731,14 +866,20 @@ export function renderRootPackageJson(providers: RegistryProvider[]): string {
           import: "./dist/client.js",
           default: "./dist/client.js",
         },
-        // The gateway Lambda resolves the provider catalog at runtime
+        // The workspace resolves the provider catalog at runtime
         // (utdk/registry.json), and mcp-core resolves per-provider
         // openapi.json/package.json for suite providers (utdk/google/books/...).
         "./registry.json": "./dist/registry.json",
         "./*/openapi.json": "./dist/*/openapi.json",
         "./*/package.json": "./dist/*/package.json",
         ...providerExports,
+        ...carriedExports,
       },
+      license: "MIT",
+      publishConfig: {
+        access: "public",
+      },
+      devDependencies: {},
     },
     null,
     2,
@@ -757,6 +898,9 @@ export function renderRootTsconfig(): string {
         sourceMap: true,
       },
       include: ["./**/*.ts"],
+      // `llm` and `sql` are hand-written workspace packages that happen to live
+      // inside this tree; they build themselves. Tests never ship.
+      exclude: ["dist", "node_modules", "llm", "sql", "**/__tests__/**", "**/*.test.ts"],
     },
     null,
     2,
@@ -772,11 +916,19 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(rootDir, "dist");
 const skippedRootFiles = new Set(["package.json", "tsconfig.json"]);
 
+/**
+ * Mirrors build.mjs's SKIP_DIRS. Without it this walk copies \`llm/package.json\`
+ * and \`sql/package.json\` into dist, creating \`dist/llm\` and \`dist/sql\`
+ * directories that contain manifests and no code — enough to look like
+ * providers to anything enumerating dist, and to fail when imported.
+ */
+const skippedDirs = new Set(["dist", "node_modules", "llm", "sql", "__tests__"]);
+
 async function copyAssets(currentDir, relativeDir = '') {
   const entries = await readdir(currentDir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (entry.name === 'dist' || entry.name === 'node_modules') {
+    if (skippedDirs.has(entry.name)) {
       continue;
     }
 

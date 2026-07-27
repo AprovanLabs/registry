@@ -1,9 +1,9 @@
 {
   "name": "@utdk/salesforce",
-  "version": "58.0.0-20260530.1",
+  "version": "58.0.0-20260727.1",
   "type": "module",
   "description": "Generated UTDK provider client for Salesforce REST API. The Salesforce REST API provides programmatic access to Salesforce CRM data including accounts, contacts, leads, opportunities, cases, and custom objects. Use it to build integrations that create and update records, run SOQL queries, manage metadata, and handle event-driven updates via streaming.",
-  "homepage": "https://developer.salesforce.com/docs/atlas.en-us.api_rest.meta/api_rest/intro_what_is_rest_api.htm",
+  "homepage": "https://developer.salesforce.com",
   "keywords": [
     "salesforce",
     "generated",
@@ -14,7 +14,7 @@
   "utdk": {
     "provider": "salesforce",
     "generation": 1,
-    "generatedAt": "2026-05-30T12:24:56.801Z",
+    "generatedAt": "2026-07-27T03:15:32.179Z",
     "auth": {
       "schemes": [
         {
@@ -48,6 +48,13 @@
       "version": "58.0",
       "termsOfService": null,
       "icon": "https://www.salesforce.com/content/dam/sfdc-docs/www/logos/logo-salesforce.svg"
+    },
+    "provenance": {
+      "source": "composio",
+      "originDomain": "developer.salesforce.com"
+    },
+    "branding": {
+      "site": "https://developer.salesforce.com"
     }
   }
 }

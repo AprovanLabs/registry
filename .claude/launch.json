@@ -4,36 +4,71 @@
     {
       "name": "registry-web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@aprovan/registry-web", "dev"],
+      "runtimeArgs": [
+        "--filter",
+        "@aprovan/registry-web",
+        "dev"
+      ],
       "port": 4321
     },
     {
       "name": "registry-web-preview-prod-base",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["-C", "apps/registry", "exec", "astro", "preview"],
-      "env": { "PUBLIC_SITE_URL": "https://aprovan.com", "PUBLIC_BASE_PATH": "/registry" },
+      "runtimeArgs": [
+        "-C",
+        "apps/registry",
+        "exec",
+        "astro",
+        "preview"
+      ],
+      "env": {
+        "PUBLIC_SITE_URL": "https://aprovan.com",
+        "PUBLIC_BASE_PATH": "/registry"
+      },
       "port": 4321,
       "url": "http://localhost:4321"
     },
     {
-      "name": "gateway",
+      "name": "workspace",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@aprovan/registry-app", "dev"],
-      "env": { "APROVAN_ENV": "off", "STORE_BACKEND": "sqlite" },
+      "runtimeArgs": [
+        "--filter",
+        "@aprovan/workspace",
+        "dev"
+      ],
+      "env": {
+        "WORKSPACE_MODE": "local"
+      },
       "port": 4000
     },
     {
-      "name": "gateway-verify",
+      "name": "workspace-verify",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["--filter", "@aprovan/registry-app", "dev"],
-      "env": { "APROVAN_ENV": "off", "STORE_BACKEND": "sqlite", "GATEWAY_PORT": "4001" },
+      "runtimeArgs": [
+        "--filter",
+        "@aprovan/workspace",
+        "dev"
+      ],
+      "env": {
+        "WORKSPACE_MODE": "local",
+        "WORKSPACE_PORT": "4001"
+      },
       "port": 4001
     },
     {
       "name": "patchwork-web",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["-C", "../patchwork/client/web", "dev", "--port", "5175", "--strictPort"],
-      "env": { "APROVAN_ENV": "off", "GATEWAY_URL": "http://localhost:4001" },
+      "runtimeArgs": [
+        "-C",
+        "../patchwork/client/web",
+        "dev",
+        "--port",
+        "5175",
+        "--strictPort"
+      ],
+      "env": {
+        "VITE_GATEWAY_URL": "http://localhost:4001/api/gateway"
+      },
       "port": 5175
     }
   ]

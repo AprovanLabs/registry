@@ -129,6 +129,67 @@ describe("buildPublicTypeMap", () => {
 
     expect(typeMap.get(tool.name)?.outputType).toBe("{ id: string }");
   });
+
+  describe("with a schema render context", () => {
+    // Two components that reference each other, reachable from the response
+    // through several paths. Without the named-ref short-circuit each path
+    // re-expands the whole cycle, which is what makes real cross-referential
+    // specs (stripe) exhaust the heap.
+    const openApiDocument = {
+      openapi: "3.0.0",
+      info: { title: "Cyclic", version: "1.0.0" },
+      paths: {
+        "/customers/{id}": {
+          get: {
+            responses: {
+              "200": {
+                description: "ok",
+                content: { "application/json": { schema: { $ref: "#/components/schemas/customer" } } },
+              },
+            },
+          },
+        },
+      },
+      components: {
+        schemas: {
+          customer: {
+            type: "object",
+            properties: {
+              id: { type: "string" },
+              invoice: { $ref: "#/components/schemas/invoice" },
+              invoices: { type: "array", items: { $ref: "#/components/schemas/invoice" } },
+            },
+            required: ["id"],
+          },
+          invoice: {
+            type: "object",
+            properties: {
+              customer: { $ref: "#/components/schemas/customer" },
+              latest: { $ref: "#/components/schemas/invoice" },
+            },
+          },
+        },
+      },
+    } as const;
+
+    const tool = createTool("acme.getCustomer", "GET", "https://api.acme.com/customers/{id}");
+
+    it("renders response refs as named types instead of expanding them", () => {
+      const typeMap = buildPublicTypeMap(openApiDocument as never, [tool], {
+        refTypeName: (ref) => (ref === "#/components/schemas/customer" ? "Customer" : "Invoice"),
+      });
+
+      expect(typeMap.get(tool.name)?.outputType).toBe("Customer");
+    });
+
+    it("still inlines refs that have no generated name", () => {
+      const typeMap = buildPublicTypeMap(openApiDocument as never, [tool], {
+        refTypeName: () => undefined,
+      });
+
+      expect(typeMap.get(tool.name)?.outputType).toContain("id: string");
+    });
+  });
 });
 
 describe("applyProviderOpenApiOptions", () => {

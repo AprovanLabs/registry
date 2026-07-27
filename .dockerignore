@@ -1,0 +1,29 @@
+# The image builds from the repo root; everything the build actually needs is
+# listed explicitly in apps/workspace/Dockerfile. Keeping the context small is
+# most of the difference between a fast build and a slow one — node_modules
+# alone is ~800MB.
+node_modules
+**/node_modules
+**/dist
+**/.turbo
+**/cdk.out
+
+.git
+.github
+.claude
+data
+docs
+experiments
+skills
+tasks.md
+temp.md
+
+# Note: apps/registry, apps/tailor and infra are deliberately NOT ignored —
+# the Dockerfile copies their package.json files so the workspace's importer
+# set matches the lockfile under --frozen-lockfile. Only their manifests are
+# ever read; no source from them enters the image.
+
+**/*.log
+**/.DS_Store
+**/.env
+**/.env.*

@@ -49,11 +49,35 @@ try {
   // Optional parameter — absent until first configured.
 }
 
+// The workspace container image. Resolved here, at synth, so the tag lands in
+// the template as a literal — `cdk diff` then shows a release as an image
+// change, and CloudFormation registers a new task-definition revision because
+// the property genuinely differs. scripts/deploy-infra.sh writes this
+// parameter when given a tag, which makes release and rollback one command.
+const imageParameterName = `/aprovan/${environmentName}/workspace/image`;
+let workspaceImage: string;
+try {
+  const pinned = await ssm.send(
+    new GetParameterCommand({ Name: imageParameterName }),
+  );
+  workspaceImage = pinned.Parameter?.Value ?? "";
+} catch {
+  workspaceImage = "";
+}
+if (!workspaceImage) {
+  throw new Error(
+    `No workspace image pinned at ${imageParameterName} (${env.region}).\n` +
+      "Publish one with `scripts/image.sh push`, then deploy with " +
+      "`scripts/deploy-infra.sh <tag>`.",
+  );
+}
+
 const stack = new RegistryApp(app, names.regional(), {
   env,
   environmentName,
   names,
   sharedEnv,
+  workspaceImage,
 });
 
 cdk.Tags.of(stack).add("project", "registry");

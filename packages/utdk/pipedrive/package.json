@@ -1,9 +1,9 @@
 {
   "name": "@utdk/pipedrive",
-  "version": "1.0.0-20260530.2",
+  "version": "1.0.0-20260727.1",
   "type": "module",
   "description": "Generated UTDK provider client for Pipedrive API v1. Generated UTDK provider types and OpenAPI-backed client for https://developers.pipedrive.com/docs/api/v1/openapi.yaml.",
-  "homepage": "https://developers.pipedrive.com/docs/api/v1/openapi.yaml",
+  "homepage": "https://developers.pipedrive.com",
   "keywords": [
     "pipedrive",
     "generated",
@@ -12,8 +12,8 @@
   ],
   "utdk": {
     "provider": "pipedrive",
-    "generation": 2,
-    "generatedAt": "2026-05-30T18:16:07.306Z",
+    "generation": 1,
+    "generatedAt": "2026-07-27T03:15:30.994Z",
     "auth": {
       "schemes": [
         {
@@ -77,6 +77,14 @@
       "url": "https://developers.pipedrive.com/docs/api/v1/openapi.yaml",
       "version": "1.0.0",
       "termsOfService": null
+    },
+    "provenance": {
+      "source": "printing-press",
+      "originDomain": "developers.pipedrive.com",
+      "originSpecUrl": "https://developers.pipedrive.com/docs/api/v1/openapi.yaml"
+    },
+    "branding": {
+      "site": "https://developers.pipedrive.com"
     }
   }
 }

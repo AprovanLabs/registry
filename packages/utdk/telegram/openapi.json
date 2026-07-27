@@ -122,7 +122,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_addstickertoset"
       }
     },
     "/answerCallbackQuery": {
@@ -267,7 +268,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_answercallbackquery"
       }
     },
     "/answerInlineQuery": {
@@ -445,7 +447,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_answerinlinequery"
       }
     },
     "/answerPreCheckoutQuery": {
@@ -563,7 +566,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_answerprecheckoutquery"
       }
     },
     "/answerShippingQuery": {
@@ -702,7 +706,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_answershippingquery"
       }
     },
     "/close": {
@@ -746,7 +751,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_close"
       }
     },
     "/copyMessage": {
@@ -1040,7 +1046,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_copymessage"
       }
     },
     "/createNewStickerSet": {
@@ -1139,7 +1146,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_createnewstickerset"
       }
     },
     "/deleteChatPhoto": {
@@ -1251,7 +1259,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_deletechatphoto"
       }
     },
     "/deleteChatStickerSet": {
@@ -1363,7 +1372,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_deletechatstickerset"
       }
     },
     "/deleteMessage": {
@@ -1490,7 +1500,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_deletemessage"
       }
     },
     "/deleteStickerFromSet": {
@@ -1581,7 +1592,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_deletestickerfromset"
       }
     },
     "/deleteWebhook": {
@@ -1663,7 +1675,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_deletewebhook"
       }
     },
     "/editMessageCaption": {
@@ -1851,7 +1864,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_editmessagecaption"
       }
     },
     "/editMessageLiveLocation": {
@@ -2066,7 +2080,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_editmessagelivelocation"
       }
     },
     "/editMessageMedia": {
@@ -2157,7 +2172,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_editmessagemedia"
       }
     },
     "/editMessageReplyMarkup": {
@@ -2300,7 +2316,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_editmessagereplymarkup"
       }
     },
     "/editMessageText": {
@@ -2509,7 +2526,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_editmessagetext"
       }
     },
     "/exportChatInviteLink": {
@@ -2620,7 +2638,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_exportchatinvitelink"
       }
     },
     "/forwardMessage": {
@@ -2794,7 +2813,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_forwardmessage"
       }
     },
     "/getChat": {
@@ -2905,7 +2925,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getchat"
       }
     },
     "/getChatAdministrators": {
@@ -3019,7 +3040,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getchatadministrators"
       }
     },
     "/getChatMember": {
@@ -3145,7 +3167,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getchatmember"
       }
     },
     "/getChatMembersCount": {
@@ -3256,7 +3279,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getchatmemberscount"
       }
     },
     "/getFile": {
@@ -3346,7 +3370,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getfile"
       }
     },
     "/getGameHighScores": {
@@ -3475,7 +3500,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getgamehighscores"
       }
     },
     "/getMe": {
@@ -3518,7 +3544,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getme"
       }
     },
     "/getMyCommands": {
@@ -3564,7 +3591,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getmycommands"
       }
     },
     "/getStickerSet": {
@@ -3654,7 +3682,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getstickerset"
       }
     },
     "/getUpdates": {
@@ -3795,7 +3824,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getupdates"
       }
     },
     "/getUserProfilePhotos": {
@@ -3918,7 +3948,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getuserprofilephotos"
       }
     },
     "/getWebhookInfo": {
@@ -3961,7 +3992,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_getwebhookinfo"
       }
     },
     "/kickChatMember": {
@@ -4100,7 +4132,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_kickchatmember"
       }
     },
     "/leaveChat": {
@@ -4212,7 +4245,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_leavechat"
       }
     },
     "/logOut": {
@@ -4256,7 +4290,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_logout"
       }
     },
     "/pinChatMessage": {
@@ -4395,7 +4430,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_pinchatmessage"
       }
     },
     "/promoteChatMember": {
@@ -4630,7 +4666,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_promotechatmember"
       }
     },
     "/restrictChatMember": {
@@ -4781,7 +4818,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_restrictchatmember"
       }
     },
     "/sendAnimation": {
@@ -4929,7 +4967,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendanimation"
       }
     },
     "/sendAudio": {
@@ -5077,7 +5116,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendaudio"
       }
     },
     "/sendChatAction": {
@@ -5204,7 +5244,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendchataction"
       }
     },
     "/sendContact": {
@@ -5456,7 +5497,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendcontact"
       }
     },
     "/sendDice": {
@@ -5690,7 +5732,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_senddice"
       }
     },
     "/sendDocument": {
@@ -5830,7 +5873,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_senddocument"
       }
     },
     "/sendGame": {
@@ -5980,7 +6024,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendgame"
       }
     },
     "/sendInvoice": {
@@ -6373,7 +6418,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendinvoice"
       }
     },
     "/sendLocation": {
@@ -6649,7 +6695,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendlocation"
       }
     },
     "/sendMediaGroup": {
@@ -6754,7 +6801,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendmediagroup"
       }
     },
     "/sendMessage": {
@@ -7012,7 +7060,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendmessage"
       }
     },
     "/sendPhoto": {
@@ -7137,7 +7186,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendphoto"
       }
     },
     "/sendPoll": {
@@ -7503,7 +7553,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendpoll"
       }
     },
     "/sendSticker": {
@@ -7613,7 +7664,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendsticker"
       }
     },
     "/sendVenue": {
@@ -7919,7 +7971,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendvenue"
       }
     },
     "/sendVideo": {
@@ -8071,7 +8124,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendvideo"
       }
     },
     "/sendVideoNote": {
@@ -8200,7 +8254,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendvideonote"
       }
     },
     "/sendVoice": {
@@ -8329,7 +8384,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_sendvoice"
       }
     },
     "/setChatAdministratorCustomTitle": {
@@ -8471,7 +8527,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setchatadministratorcustomtitle"
       }
     },
     "/setChatDescription": {
@@ -8595,7 +8652,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setchatdescription"
       }
     },
     "/setChatPermissions": {
@@ -8719,7 +8777,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setchatpermissions"
       }
     },
     "/setChatPhoto": {
@@ -8793,7 +8852,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setchatphoto"
       }
     },
     "/setChatStickerSet": {
@@ -8920,7 +8980,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setchatstickerset"
       }
     },
     "/setChatTitle": {
@@ -9047,7 +9108,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setchattitle"
       }
     },
     "/setGameScore": {
@@ -9220,7 +9282,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setgamescore"
       }
     },
     "/setMyCommands": {
@@ -9320,7 +9383,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setmycommands"
       }
     },
     "/setPassportDataErrors": {
@@ -9435,7 +9499,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setpassportdataerrors"
       }
     },
     "/setStickerPositionInSet": {
@@ -9541,7 +9606,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setstickerpositioninset"
       }
     },
     "/setStickerSetThumb": {
@@ -9620,7 +9686,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setstickersetthumb"
       }
     },
     "/setWebhook": {
@@ -9706,7 +9773,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_setwebhook"
       }
     },
     "/stopMessageLiveLocation": {
@@ -9849,7 +9917,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_stopmessagelivelocation"
       }
     },
     "/stopPoll": {
@@ -9984,7 +10053,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_stoppoll"
       }
     },
     "/unbanChatMember": {
@@ -10123,7 +10193,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_unbanchatmember"
       }
     },
     "/unpinAllChatMessages": {
@@ -10235,7 +10306,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_unpinallchatmessages"
       }
     },
     "/unpinChatMessage": {
@@ -10359,7 +10431,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_unpinchatmessage"
       }
     },
     "/uploadStickerFile": {
@@ -10425,7 +10498,8 @@
             },
             "description": ""
           }
-        }
+        },
+        "operationId": "post_uploadstickerfile"
       }
     }
   },

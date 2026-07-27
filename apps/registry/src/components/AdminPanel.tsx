@@ -90,7 +90,7 @@ interface AuditEntry {
 // standard `Authorization` header. The user token rides in this app-specific
 // header instead (matches @aprovan/ui DEFAULT_AUTH_HEADER and the gateway's
 // ACCESS_TOKEN_HEADER); CloudFront forwards it untouched.
-const AUTH_HEADER = "X-Aprovan-Authorization";
+const AUTH_HEADER = "Authorization";
 
 function gatewayFetch(path: string, token: string, opts: RequestInit = {}): Promise<Response> {
   return fetch(`${GATEWAY_URL}${path}`, {

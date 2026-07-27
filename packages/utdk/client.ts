@@ -6,6 +6,18 @@ import type { Tool } from "@utcp/sdk";
 
 type OpenApiDocument = object;
 
+/**
+ * A document, or a thunk that produces one.
+ *
+ * Generated providers pass a thunk (`() => import("./openapi.json", …)`) so
+ * that importing `utdk/<provider>` does not drag the provider's OpenAPI
+ * document — up to 12MB of JSON — into the heap. Node's ESM registry pins
+ * modules for the lifetime of the process, so a statically imported document
+ * is never reclaimed; a thunk defers the parse to the moment a client is
+ * actually constructed.
+ */
+export type OpenApiDocumentSource = OpenApiDocument | (() => OpenApiDocument | Promise<OpenApiDocument>);
+
 type RuntimeMethod = {
   accessPath: string[];
   metadata: ToolRuntimeMetadata;
@@ -14,13 +26,22 @@ type RuntimeMethod = {
 
 export type CreateClientOptions = {
   name: string;
-  openApiDocument: OpenApiDocument;
+  openApiDocument: OpenApiDocumentSource;
   baseUrl?: string;
   headers?: Record<string, string>;
   toolMetadata?: ToolRuntimeMetadataMap;
   /** Optional auth provider applied to every request */
   auth?: AuthProvider;
 };
+
+/** `CreateClientOptions` after `createClient` has resolved any document thunk. */
+type ResolvedClientOptions = Omit<CreateClientOptions, "openApiDocument"> & {
+  openApiDocument: OpenApiDocument;
+};
+
+async function resolveOpenApiDocument(source: OpenApiDocumentSource): Promise<OpenApiDocument> {
+  return typeof source === "function" ? await source() : source;
+}
 
 export type ToolRuntimeMetadata = {
   accessPath: string[];
@@ -430,7 +451,7 @@ async function ensureTelemetryInit(): Promise<void> {
 
 async function executeRequest(
   metadata: ToolRuntimeMetadata,
-  options: CreateClientOptions,
+  options: ResolvedClientOptions,
   input: Record<string, unknown>,
   overrides?: ToolTransportOverrides,
 ): Promise<unknown> {
@@ -513,11 +534,11 @@ function toRuntimeMethods(tools: Tool[], toolMetadata: ToolRuntimeMetadataMap): 
   });
 }
 
-function buildClient<TClient extends object>(tools: Tool[], toolMetadata: ToolRuntimeMetadataMap, options: CreateClientOptions): TClient {
+function buildClient<TClient extends object>(tools: Tool[], toolMetadata: ToolRuntimeMetadataMap, options: ResolvedClientOptions): TClient {
   return buildClientFromMethods<TClient>(toRuntimeMethods(tools, toolMetadata), options);
 }
 
-function buildClientFromMethods<TClient extends object>(methods: RuntimeMethod[], options: CreateClientOptions): TClient {
+function buildClientFromMethods<TClient extends object>(methods: RuntimeMethod[], options: ResolvedClientOptions): TClient {
   const value: Record<string, unknown> = {};
 
   function setPath(target: Record<string, unknown>, path: string[], entry: unknown): void {
@@ -573,23 +594,33 @@ export async function createClient<TClient extends object>(
   // only reads metadata + options. Skip the OpenAPI → manual conversion in
   // that case: on large documents (github: 12MB, 1204 tools) the conversion
   // costs seconds per client — tens of seconds on small Lambdas.
-  const metadataEntries = Object.entries(options.toolMetadata ?? {});
+  // `openApiDocument` may be a thunk (that is what generated providers pass, so
+  // that importing a provider does not parse its document). Resolve it exactly
+  // once, here, and hand the resolved options to everything downstream —
+  // `executeRequest` reads `options.openApiDocument` on every call and must
+  // never see the thunk.
+  const resolvedOptions: ResolvedClientOptions = {
+    ...options,
+    openApiDocument: await resolveOpenApiDocument(options.openApiDocument),
+  };
+
+  const metadataEntries = Object.entries(resolvedOptions.toolMetadata ?? {});
   if (metadataEntries.length > 0) {
     const methods: RuntimeMethod[] = metadataEntries.map(([toolName, metadata]) => ({
       accessPath: metadata.accessPath,
       metadata,
       toolName,
     }));
-    return buildClientFromMethods<TClient>(methods, options);
+    return buildClientFromMethods<TClient>(methods, resolvedOptions);
   }
 
-  const converter = new OpenApiConverter(options.openApiDocument, {
-    callTemplateName: options.name,
-    baseUrl: options.baseUrl,
-    headers: options.headers,
+  const converter = new OpenApiConverter(resolvedOptions.openApiDocument, {
+    callTemplateName: resolvedOptions.name,
+    baseUrl: resolvedOptions.baseUrl,
+    headers: resolvedOptions.headers,
   });
   const manual = converter.convert();
-  return buildClient<TClient>(manual.tools, options.toolMetadata ?? {}, options);
+  return buildClient<TClient>(manual.tools, resolvedOptions.toolMetadata ?? {}, resolvedOptions);
 }
 
 function getPathValue(value: unknown, path: readonly PropertyKey[]): unknown {

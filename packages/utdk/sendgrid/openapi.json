@@ -8734,7 +8734,8 @@
         "summary": "Create Design",
         "tags": [
           "Designs API"
-        ]
+        ],
+        "operationId": "post_designs"
       }
     },
     "/designs/pre-builts": {

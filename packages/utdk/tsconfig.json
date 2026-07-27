@@ -9,5 +9,13 @@
   },
   "include": [
     "./**/*.ts"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "llm",
+    "sql",
+    "**/__tests__/**",
+    "**/*.test.ts"
   ]
 }

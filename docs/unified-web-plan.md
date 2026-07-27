@@ -54,7 +54,7 @@ auth-code with URLs and scopes; PostHog: bearer only). None of that is surfaced.
 The registry web app deploys to GitHub Pages (`registry-pages.yml`); the goal is
 `aprovan.com/registry` and `patchwork.com/chat`. Core already owns the right
 primitives: `core/infra/aws` has the Cognito `MainStack` + a `WebStack` (S3 +
-CloudFront for `aprovan.com`, with `api/gateway/*` proxied to the gateway Lambda
+CloudFront for `aprovan.com`, with `api/gateway/*` proxied to the workspace container
 function URL exported by `registry/infra`). Nothing serves the registry static build
 or patchwork yet, and `patchwork.com` has no distribution at all.
 

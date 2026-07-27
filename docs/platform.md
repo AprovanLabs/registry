@@ -155,8 +155,8 @@ with a clear error.
   (bundler `--phase webhooks`, mirroring auth intel): supported events,
   signature scheme, and setup steps.
 - **Cron** — a minute tick (`POST /hooks/cron/tick`, guarded by
-  `CRON_TICK_SECRET`) matches each registration's expression against the
-  current UTC minute. Long-lived gateways self-tick; on Lambda, point an
+  `WORKSPACE_CRON_SECRET`) matches each registration's expression against the
+  current UTC minute. The workspace self-ticks under a leader lease; to force one, point an
   EventBridge Scheduler rule at the tick route. A `_system` cron index lists
   workspaces with cron registrations so the tick doesn't scan the world.
 - **Events** — `events.emit` fires subscribed workflows. Workflow-context
@@ -269,7 +269,7 @@ outside it use the `~/<path>` form and are allowed only when
 (`{ shares: [{ prefix, apps: [names]|"*", mode: "read"|"readwrite" }] }`).
 Workflows run through an app inherit the same scope.
 
-The LIIFT4 Tracker (`apps/gateway/examples/liift4/index.tsx`) is the
+The LIIFT4 Tracker (`apps/workspace/examples/liift4/index.tsx`) is the
 reference app: a full patchwork widget whose only backend is `keyvalue.*`
 through the app surface (`scripts/seed-example-app.ts` publishes it).
 

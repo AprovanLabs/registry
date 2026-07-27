@@ -4,18 +4,20 @@ import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
 import { Key } from "aws-cdk-lib/aws-kms";
 import { BlockPublicAccess, Bucket, BucketEncryption } from "aws-cdk-lib/aws-s3";
 import { type Construct } from "constructs";
-import { GatewayLambda } from "./gateway-lambda.js";
+import { WorkspaceService } from "./workspace-service.js";
 
 export interface RegistryAppProps extends StackProps {
   environmentName: string;
   names: Namer;
   sharedEnv: Record<string, string>;
+  /** Fully qualified workspace container image, resolved from SSM in app.ts. */
+  workspaceImage: string;
 }
 
 export class RegistryApp extends Stack {
   constructor(scope: Construct, id: string, props: RegistryAppProps) {
     super(scope, id, props);
-    const { environmentName, names, sharedEnv } = props;
+    const { environmentName, names, sharedEnv, workspaceImage } = props;
     const isProd = environmentName === "prd";
 
     const storeTableProps = {
@@ -137,7 +139,7 @@ export class RegistryApp extends Stack {
     });
 
     // Workspace filesystem (WFS): version/pointer index rows in Dynamo,
-    // content-addressed blobs in S3 (see apps/gateway/src/fs-store.ts).
+    // content-addressed blobs in S3 (see apps/workspace/src/fs-store.ts).
     const fsTable = new Table(this, "FsFilesTable", {
       ...storeTableProps,
       tableName: names.regional("fs-files"),
@@ -185,10 +187,11 @@ export class RegistryApp extends Stack {
       exportName: names.regional("records-table-arn"),
     });
 
-    const gateway = new GatewayLambda(this, "Gateway", {
+    const workspace = new WorkspaceService(this, "Workspace", {
       environmentName,
       names,
       sharedEnv,
+      image: workspaceImage,
       credentialsKey,
       credentialsTable,
       permissionsTable,
@@ -203,16 +206,16 @@ export class RegistryApp extends Stack {
       recordsTable,
     });
 
-    new CfnOutput(this, "GatewayFunctionUrl", {
-      value: gateway.functionUrl.url,
-      exportName: names.regional("gateway-function-url"),
+    new CfnOutput(this, "WorkspaceClusterName", {
+      value: workspace.cluster.clusterName,
+      exportName: names.regional("workspace-cluster-name"),
     });
-    new CfnOutput(this, "GatewayFunctionUrlDomain", {
-      value: gateway.functionUrlDomain,
-      exportName: names.regional("gateway-function-url-domain"),
+    new CfnOutput(this, "WorkspaceServiceName", {
+      value: workspace.service.serviceName,
+      exportName: names.regional("workspace-service-name"),
     });
-    new CfnOutput(this, "GatewayFunctionName", {
-      value: gateway.function.functionName,
+    new CfnOutput(this, "WorkspaceLogGroup", {
+      value: workspace.logGroup.logGroupName,
     });
   }
 }

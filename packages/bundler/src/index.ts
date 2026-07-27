@@ -29,6 +29,7 @@ import {
 } from "./provider.js";
 import {
   createProviderSchemaTypes,
+  createSchemaRenderContext,
   renderCopyAssetsScript,
   renderNamespaceEntry,
   renderNamespacePackageJson,
@@ -43,7 +44,8 @@ import {
   renderRootPackageJson,
   renderRootTsconfig,
 } from "./render.js";
-import { loadProviderTools } from "./utcp.js";
+import { loadProviderTools, normalizeOpenApiDocument } from "./utcp.js";
+import type { OpenAPIV3 } from "openapi-types";
 
 export {
   runAuthIntelPhase,
@@ -69,6 +71,13 @@ export {
 export type GenerateRegistryTypesOptions = {
   provider: string;
   outputRoot?: string;
+  /**
+   * Spec to generate from. Defaults to fetching `provider.url`. Pass the
+   * already-shipped `openapi.json` to re-run codegen against the exact document
+   * a provider currently ships, so the diff is codegen-only and does not fold in
+   * whatever upstream changed since the provider was last generated.
+   */
+  openApiDocument?: OpenAPIV3.Document;
 };
 
 export type GenerateRegistryTypesResult = {
@@ -128,8 +137,10 @@ export async function augmentRegistryProviderDocs(
   const providers = await loadRegistryProviders();
   const provider = resolveProvider(providers, options.provider);
   const rawOpenApiDocument = await loadOpenApiDocument(provider);
-  const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
-  const { tools } = await loadProviderTools(provider, rawOpenApiDocument);
+  // Same single-document rule as generateRegistryTypes: docs describe the tools,
+  // so they must be built from the document the tools were converted from.
+  const openApiDocument = normalizeOpenApiDocument(applyProviderOpenApiOptions(rawOpenApiDocument, provider));
+  const { tools } = await loadProviderTools(provider, openApiDocument);
   const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
   const augmented = await augmentProviderDocs({
     provider: provider.name,
@@ -186,10 +197,20 @@ export async function generateRegistryTypes(
 ): Promise<GenerateRegistryTypesResult> {
   const providers = await loadRegistryProviders();
   const provider = resolveProvider(providers, options.provider);
-  const rawOpenApiDocument = await loadOpenApiDocument(provider);
-  const openApiDocument = applyProviderOpenApiOptions(rawOpenApiDocument, provider);
-  const { tools } = await loadProviderTools(provider, rawOpenApiDocument);
-  const publicTypeMap = buildPublicTypeMap(openApiDocument, tools);
+  const rawOpenApiDocument = options.openApiDocument ?? (await loadOpenApiDocument(provider));
+  // One document, used for everything: tool conversion, the public type map,
+  // the client tool map, and the `openapi.json` we ship. The generated provider
+  // entry re-reads that file at runtime and `createClient` will re-convert it
+  // whenever `toolMetadata` is empty, so the shipped artifact has to be the
+  // exact document the build converted — un-normalized, a spec without
+  // `operationId`s converts to zero tools at runtime while converting fine here.
+  const openApiDocument = normalizeOpenApiDocument(applyProviderOpenApiOptions(rawOpenApiDocument, provider));
+  const { tools } = await loadProviderTools(provider, openApiDocument);
+  // Built up front so the public type map shares the renderer's named component
+  // types. Without it, response `$ref`s get inlined here — unbounded work on
+  // specs whose components reference each other heavily.
+  const schemaTypes = createProviderSchemaTypes(openApiDocument);
+  const publicTypeMap = buildPublicTypeMap(openApiDocument, tools, createSchemaRenderContext(schemaTypes));
   const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
 
   const outputRoot = options.outputRoot ?? DEFAULT_OUTPUT_ROOT;
@@ -209,6 +230,7 @@ export async function generateRegistryTypes(
       (entry.name === provider.name ||
         existsSync(path.join(resolveProviderOutputDir(entry.name, outputRoot), "index.ts"))),
   );
+  const previousRootPackageJson = await readOptionalTextFile(path.join(outputRoot, "package.json"));
   const previousProviderPackageJson = await readOptionalTextFile(providerPackageJsonPath);
   const previousLeafPackageJson =
     providerLeafPackageJsonPath === providerPackageJsonPath
@@ -235,7 +257,7 @@ export async function generateRegistryTypes(
       : [];
 
   const outputPaths = await Promise.all([
-    writeTextFile(path.join(outputRoot, "package.json"), renderRootPackageJson(providers)),
+    writeTextFile(path.join(outputRoot, "package.json"), renderRootPackageJson(providers, previousRootPackageJson)),
     writeTextFile(path.join(outputRoot, "tsconfig.json"), renderRootTsconfig()),
     writeTextFile(path.join(outputRoot, "index.ts"), renderRootPackageEntry()),
     writeTextFile(path.join(outputRoot, "client.ts"), renderRootClient()),
@@ -254,7 +276,6 @@ export async function generateRegistryTypes(
     writeTextFile(path.join(providerDir, "index.ts"), renderProviderEntry(provider.name, providerClientImportPath)),
     ...(await (async () => {
       const typesDir = path.join(providerDir, "types");
-      const schemaTypes = createProviderSchemaTypes(openApiDocument);
       const groupTypeFiles = renderProviderGroupTypes(provider, tools, publicTypeMap, clientToolMap, schemaTypes);
       const indexContent = renderProviderTypesIndex(provider, tools, publicTypeMap, clientToolMap, schemaTypes);
       const typePaths = await Promise.all(

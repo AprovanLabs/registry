@@ -8,12 +8,12 @@
  *
  * ## Usage
  *
- *   # Local dev (SQLite at ~/.aprovan/gateway.db, workspace "local")
+ *   # Local dev (SQLite at ~/.aprovan/workspace.db, workspace "local")
  *   pnpm tsx scripts/seed-prompts.ts --workspace local
  *
  *   # Prod (S3/Dynamo — needs AWS credentials)
  *   AWS_REGION=us-east-2 \
- *   STORE_BACKEND=dynamodb \
+ *   WORKSPACE_MODE=aws \
  *   FS_TABLE=registry-prd-use2-fs-files \
  *   FS_BUCKET=registry-prd-use2-workspace-fs \
  *     pnpm tsx scripts/seed-prompts.ts --workspace ws_jacob_personal
@@ -22,7 +22,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
 import { parseArgs } from "node:util";
-import { getFsStore } from "../apps/gateway/src/fs-store.js";
+import { getFsStore } from "../apps/workspace/src/fs-store.js";
 
 const { values: args } = parseArgs({
   options: {

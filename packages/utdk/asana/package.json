@@ -1,9 +1,9 @@
 {
   "name": "@utdk/asana",
-  "version": "1.0.0-20260530.1",
+  "version": "1.0.0-20260727.1",
   "type": "module",
   "description": "Generated UTDK provider client for Asana. This is the interface for interacting with the [Asana Platform](https://developers.asana.com). Our API reference is generated from our [OpenAPI spec] (https://raw.githubusercontent.com/Asana/openapi/master/defs/asana_oas.yaml).",
-  "homepage": "https://asana.com/support",
+  "homepage": "https://developers.asana.com",
   "keywords": [
     "asana",
     "generated",
@@ -14,7 +14,7 @@
   "utdk": {
     "provider": "asana",
     "generation": 1,
-    "generatedAt": "2026-05-30T22:05:31.190Z",
+    "generatedAt": "2026-07-27T03:15:24.535Z",
     "auth": {
       "schemes": [
         {
@@ -35,8 +35,8 @@
               "scopes": {
                 "default": "Provides access to all endpoints documented in our API reference. If no scopes are requested, this scope is assumed by default.",
                 "openid": "Provides access to OpenID Connect ID tokens and the OpenID Connect user info endpoint.",
-                "email": "Provides access to the user\u2019s email through the OpenID Connect user info endpoint.",
-                "profile": "Provides access to the user\u2019s name and profile photo through the OpenID Connect user info endpoint.",
+                "email": "Provides access to the user’s email through the OpenID Connect user info endpoint.",
+                "profile": "Provides access to the user’s name and profile photo through the OpenID Connect user info endpoint.",
                 "attachments:read": "View access to attachments",
                 "attachments:write": "Create and modify access to attachments",
                 "attachments:delete": "Delete access to attachments",
@@ -92,6 +92,14 @@
       "url": "https://raw.githubusercontent.com/Asana/openapi/master/defs/asana_oas.yaml",
       "version": "1.0",
       "termsOfService": "https://asana.com/terms"
+    },
+    "provenance": {
+      "source": "printing-press",
+      "originDomain": "developers.asana.com",
+      "originSpecUrl": "https://raw.githubusercontent.com/Asana/openapi/master/defs/asana_oas.yaml"
+    },
+    "branding": {
+      "site": "https://developers.asana.com"
     }
   }
 }

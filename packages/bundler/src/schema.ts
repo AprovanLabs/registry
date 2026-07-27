@@ -83,7 +83,12 @@ export function schemaToTypeScriptType(
     return "unknown";
   }
 
-  if (schema.enum) {
+  // An empty `enum: []` joins to the empty string, which emits syntactically
+  // invalid TypeScript (`status?: ;`). Specs that do this (Discord's
+  // `GET /guilds/{guild_id}/requests`) carry the real constraint elsewhere —
+  // an `allOf` $ref, or just `type` — so fall through rather than emitting
+  // `never`, which would make the property unusable.
+  if (schema.enum && schema.enum.length > 0) {
     return withNullable(
       schema.enum.map((value) => (typeof value === "string" ? JSON.stringify(value) : String(value))).join(" | "),
       schema,

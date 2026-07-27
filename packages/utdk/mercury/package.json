@@ -1,9 +1,9 @@
 {
   "name": "@utdk/mercury",
-  "version": "1.0.0-20260530.2",
+  "version": "1.0.0-20260727.1",
   "type": "module",
   "description": "Generated UTDK provider client for Mercury API. Streamline financial tasks with secure account management and transaction processing. Enables user registration, balance tracking, and payment handling.",
-  "homepage": "https://dash.readme.com/api/v1/api-registry/ilz81omom1n4vx",
+  "homepage": "https://docs.mercury.com",
   "keywords": [
     "mercury",
     "generated",
@@ -12,8 +12,8 @@
   ],
   "utdk": {
     "provider": "mercury",
-    "generation": 2,
-    "generatedAt": "2026-05-30T18:16:06.744Z",
+    "generation": 1,
+    "generatedAt": "2026-07-27T03:15:30.648Z",
     "auth": {
       "schemes": [
         {
@@ -30,6 +30,14 @@
       "url": "https://dash.readme.com/api/v1/api-registry/ilz81omom1n4vx",
       "version": "1.0.0",
       "termsOfService": null
+    },
+    "provenance": {
+      "source": "printing-press",
+      "originDomain": "docs.mercury.com",
+      "originSpecUrl": "https://dash.readme.com/api/v1/api-registry/ilz81omom1n4vx"
+    },
+    "branding": {
+      "site": "https://docs.mercury.com"
     }
   }
 }

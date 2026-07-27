@@ -1,9 +1,9 @@
 {
   "name": "@utdk/jira",
-  "version": "1001.0.0-SNAPSHOT-500abd49de29b046db51cf0460caa503167075c0-20260530.2",
+  "version": "1001.0.0-SNAPSHOT-500abd49de29b046db51cf0460caa503167075c0-20260727.1",
   "type": "module",
   "description": "Generated UTDK provider client for The Jira Cloud platform REST API. Jira Cloud platform REST API documentation",
-  "homepage": "http://www.atlassian.com",
+  "homepage": "https://developer.atlassian.com",
   "keywords": [
     "jira",
     "generated",
@@ -13,8 +13,8 @@
   "license": "Apache 2.0",
   "utdk": {
     "provider": "jira",
-    "generation": 2,
-    "generatedAt": "2026-05-30T22:05:31.219Z",
+    "generation": 1,
+    "generatedAt": "2026-07-27T03:15:28.823Z",
     "auth": {
       "schemes": [
         {
@@ -230,6 +230,14 @@
       "url": "https://developer.atlassian.com/cloud/jira/platform/swagger-v3.v3.json",
       "version": "1001.0.0-SNAPSHOT-500abd49de29b046db51cf0460caa503167075c0",
       "termsOfService": "https://developer.atlassian.com/platform/marketplace/atlassian-developer-terms/"
+    },
+    "provenance": {
+      "source": "printing-press",
+      "originDomain": "developer.atlassian.com",
+      "originSpecUrl": "https://developer.atlassian.com/cloud/jira/platform/swagger-v3.v3.json"
+    },
+    "branding": {
+      "site": "https://developer.atlassian.com"
     }
   }
 }

@@ -1,16 +1,19 @@
-name: Deploy Registry
+name: Deploy Registry Web
 
-# Automated deployment of the registry, using the exact same scripts you can run
-# locally (scripts/deploy-web.sh, scripts/deploy-infra.sh). CI only supplies AWS
-# credentials via OIDC; bucket / distribution / Cognito config is discovered from
-# SSM parameters published by the core infra (with optional vars.* overrides).
+# Automated deployment of the registry web app, using the exact same script you
+# can run locally (scripts/deploy-web.sh). CI only supplies AWS credentials via
+# OIDC; bucket / distribution / Cognito config is discovered from SSM parameters
+# published by the core infra (with optional vars.* overrides).
+#
+# The backing services are NOT deployed here. They are a container image now,
+# and both building it and rolling the ECS service onto it belong to one
+# workflow (workspace-image.yml) so a release is never split across two runs
+# that could interleave.
 #
 # Required repository configuration:
 #   vars.AWS_DEPLOY_ROLE_ARN  — OIDC role to assume. Needs, at minimum:
-#       web:   ssm:GetParameter on /aprovan/*/{web,env}, s3:PutObject/DeleteObject
-#              + s3:ListBucket on the aprovan.com bucket, cloudfront:CreateInvalidation
-#       infra: the above plus CloudFormation/Lambda/DynamoDB/IAM deploy rights
-#              and access to the CDK bootstrap bucket (only if deploy-infra runs)
+#       ssm:GetParameter on /aprovan/*/{web,env}, s3:PutObject/DeleteObject
+#       + s3:ListBucket on the aprovan.com bucket, cloudfront:CreateInvalidation
 # Optional overrides (otherwise resolved from SSM): vars.WEB_BUCKET,
 #   vars.CLOUDFRONT_DISTRIBUTION_ID, vars.PUBLIC_COGNITO_AUTHORITY,
 #   vars.PUBLIC_COGNITO_CLIENT_ID.
@@ -20,27 +23,19 @@ on:
     branches: [main]
     paths:
       - "apps/registry/**"
-      - "apps/gateway/**"
-      - "infra/**"
-      - "packages/utdk/**"
       - "packages/registry-ui/**"
       - "packages/registry-main/**"
-      - "scripts/deploy*.sh"
+      - "scripts/deploy-web.sh"
+      - "scripts/deploy-lib.sh"
       - ".github/workflows/registry-deploy.yml"
   workflow_dispatch:
-    inputs:
-      target:
-        description: "What to deploy"
-        type: choice
-        default: all
-        options: [web, infra, all]
 
 permissions:
   contents: read
   id-token: write
 
 concurrency:
-  group: registry-deploy
+  group: registry-deploy-web
   cancel-in-progress: false
 
 env:
@@ -53,7 +48,7 @@ env:
 
 jobs:
   deploy:
-    name: Deploy (${{ github.event.inputs.target || 'all' }})
+    name: Deploy web
     runs-on: ubuntu-latest
     if: vars.AWS_DEPLOY_ROLE_ARN != ''
     steps:
@@ -79,4 +74,4 @@ jobs:
           aws-region: us-east-2
 
       - name: Deploy
-        run: ./scripts/deploy.sh "${{ github.event.inputs.target || 'all' }}"
+        run: ./scripts/deploy-web.sh

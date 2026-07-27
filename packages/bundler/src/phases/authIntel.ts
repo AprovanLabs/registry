@@ -26,7 +26,7 @@ import {
 } from "../provider.js";
 import type { OpenAPIV3 } from "openapi-types";
 
-/** Mirrors the gateway credential types (apps/gateway credentials). */
+/** Mirrors the gateway credential types (apps/workspace credentials). */
 export type AuthIntelMethod =
   | "bearer_token"
   | "api_key"

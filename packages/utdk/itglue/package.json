@@ -1,6 +1,6 @@
 {
   "name": "@utdk/itglue",
-  "version": "0.0.1-20260530.2",
+  "version": "0.0.1-20260727.1",
   "type": "module",
   "description": "Generated UTDK provider client for IT Glue / MyGlue API. Focused IT Glue REST API wrapper for MSP automation. The API follows the JSON:API media type and uses an x-api-key header. This spec covers the read surface used by existing read-only integrations plus the non-destructive write endpoints needed for contact sync, password mirroring, configuration creation, and onboarding documentation.",
   "homepage": "https://api.itglue.com/developer/",
@@ -12,8 +12,8 @@
   ],
   "utdk": {
     "provider": "itglue",
-    "generation": 2,
-    "generatedAt": "2026-05-30T18:15:58.629Z",
+    "generation": 1,
+    "generatedAt": "2026-07-27T03:48:31.662Z",
     "auth": {
       "schemes": [
         {

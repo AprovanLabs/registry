@@ -164,7 +164,7 @@ export type RegistryDocPage = {
   html: string;
 };
 
-/** Credential types the gateway can store (mirrors apps/gateway credentials). */
+/** Credential types the gateway can store (mirrors apps/workspace credentials). */
 export type ProviderAuthMethod =
   | "bearer_token"
   | "api_key"

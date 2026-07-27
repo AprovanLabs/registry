@@ -1,9 +1,9 @@
 {
   "name": "@utdk/discord",
-  "version": "10.0.0-20260530.2",
+  "version": "10.0.0-20260727.2",
   "type": "module",
   "description": "Generated UTDK provider client for Discord HTTP API (Preview). Preview of the Discord v10 HTTP API specification. See https://discord.com/developers/docs for more details.",
-  "homepage": "https://discord.com/developers/docs",
+  "homepage": "https://discord.com",
   "keywords": [
     "discord",
     "generated",
@@ -14,7 +14,7 @@
   "utdk": {
     "provider": "discord",
     "generation": 2,
-    "generatedAt": "2026-05-30T18:15:58.644Z",
+    "generatedAt": "2026-07-27T03:35:09.072Z",
     "auth": {
       "schemes": [
         {
@@ -155,6 +155,14 @@
       "url": "https://raw.githubusercontent.com/discord/discord-api-spec/main/specs/openapi.json",
       "version": "10",
       "termsOfService": "https://discord.com/developers/docs/policies-and-agreements/developer-terms-of-service"
+    },
+    "provenance": {
+      "source": "printing-press",
+      "originDomain": "discord.com",
+      "originSpecUrl": "https://raw.githubusercontent.com/discord/discord-api-spec/main/specs/openapi.json"
+    },
+    "branding": {
+      "site": "https://discord.com"
     }
   }
 }

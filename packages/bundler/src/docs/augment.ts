@@ -7,7 +7,7 @@ import {
 } from "../provider.js";
 import { getProviderImportSpecifier, stripProviderToolName, type RegistryProvider } from "../provider.js";
 import { buildPublicTypeMap } from "../openapi.js";
-import { createProviderSchemaTypes, type ProviderSchemaTypes } from "../render.js";
+import { createProviderSchemaTypes, createSchemaRenderContext, type ProviderSchemaTypes } from "../render.js";
 import { schemaToObjectContent, schemaToTypeScriptType, type SchemaRenderContext } from "../schema.js";
 import { groupOpenApiOperations } from "./grouping.js";
 import { getDocsStaleCheckResult } from "./hash.js";
@@ -577,7 +577,11 @@ export async function augmentProviderDocs(
   }
 
   const groups = groupOpenApiOperations(options.openApiDocument);
-  const publicTypeMap = buildPublicTypeMap(options.openApiDocument, options.tools ?? []);
+  const schemaTypes = createProviderSchemaTypes(options.openApiDocument);
+  const schemaContext: SchemaRenderContext | undefined = createSchemaRenderContext(schemaTypes);
+  // Same context the docs render with, so response `$ref`s collapse to names
+  // rather than being materialized (unbounded on cross-referential specs).
+  const publicTypeMap = buildPublicTypeMap(options.openApiDocument, options.tools ?? [], schemaContext);
   const operationLookup = buildOperationLookup(
     options.provider,
     options.providerOptions,
@@ -585,13 +589,6 @@ export async function augmentProviderDocs(
     options.clientToolMap,
     publicTypeMap,
   );
-  const schemaTypes = createProviderSchemaTypes(options.openApiDocument);
-  const schemaContext: SchemaRenderContext | undefined = schemaTypes
-    ? {
-        refTypeName: (ref) => schemaTypes.refToName.get(ref),
-        resolveRef: schemaTypes.resolveRef,
-      }
-    : undefined;
   const packageSpecifier = getClientPackageSpecifier(options.provider);
   const clientVariable = toCamelCase(options.provider.split(/[./]/u).at(-1) ?? options.provider);
   const groupDocOpts: GroupDocOptions = {

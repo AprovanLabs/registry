@@ -32,7 +32,7 @@ function withToken(token: string): GatewayClient {
 }
 
 // ---------------------------------------------------------------------------
-// Credential types (mirrors apps/gateway/src/credentials.ts)
+// Credential types (mirrors apps/workspace/src/credentials.ts)
 // ---------------------------------------------------------------------------
 
 export type CredentialType =

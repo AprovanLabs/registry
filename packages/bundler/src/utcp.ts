@@ -120,6 +120,22 @@ export function addMissingOperationIds(spec: OpenAPIV3.Document): OpenAPIV3.Docu
   return { ...spec, paths: newPaths };
 }
 
+/**
+ * Puts an upstream spec into the shape UTCP's `OpenApiConverter` can actually
+ * consume: every operation carries an `operationId`, and no schema declares the
+ * Swagger 2.0-only `type: "file"`.
+ *
+ * Both transforms are prerequisites for conversion, not conveniences — without
+ * them the converter silently drops operations (missing `operationId`) or
+ * rejects the whole document (`type: "file"`). Callers that persist a document
+ * for later re-conversion must persist *this* document, otherwise the artifact
+ * they ship converts to a different (usually empty) tool set than the one the
+ * build derived. Idempotent, so it is safe to apply more than once.
+ */
+export function normalizeOpenApiDocument(spec: OpenAPIV3.Document): OpenAPIV3.Document {
+  return sanitizeSchemaTypes(addMissingOperationIds(spec)) as OpenAPIV3.Document;
+}
+
 export async function loadProviderTools(
   provider: RegistryProvider,
   openApiDocument?: OpenAPIV3.Document,
@@ -127,8 +143,7 @@ export async function loadProviderTools(
   const auth = getPrimaryProviderAuthOption(provider.options);
 
   const rawSpec = openApiDocument ?? (await loadOpenApiDocument(provider));
-  const specWithIds = addMissingOperationIds(rawSpec);
-  const sanitizedSpec = sanitizeSchemaTypes(specWithIds) as OpenAPIV3.Document;
+  const sanitizedSpec = normalizeOpenApiDocument(rawSpec);
 
   const converter = new OpenApiConverter(sanitizedSpec as unknown as Record<string, unknown>, {
     specUrl: provider.url,

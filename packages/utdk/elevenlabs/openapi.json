@@ -59487,7 +59487,7 @@
         "example": {
           "id": "123",
           "name": "My Knowledge Base",
-          "type": "file",
+          "type": "string",
           "usage_mode": "auto"
         }
       },

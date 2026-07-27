@@ -3,7 +3,7 @@ import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
 import { getDocumentPathItem } from "./openapi-path.js";
 import { resolveRepoPath } from "./provider.js";
-import { schemaToTypeScriptType } from "./schema.js";
+import { schemaToTypeScriptType, type SchemaRenderContext } from "./schema.js";
 import type { RegistryProvider } from "./provider.js";
 import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
@@ -40,16 +40,35 @@ function getRefTarget(document: OpenAPIV3.Document, ref: string): unknown {
     }, document);
 }
 
+type ResolvedSchema = OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject;
+
+/**
+ * Materialize a schema by following `$ref`s. `seen` is copied per branch, which
+ * bounds recursion depth but not total work: a schema reachable through N
+ * distinct paths is expanded N times over. On a densely cross-referential spec
+ * that is exponential — see the `context` short-circuit below.
+ */
 function resolveSchema(
   document: OpenAPIV3.Document,
-  schema: OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject | undefined,
+  schema: ResolvedSchema | undefined,
   seen: Set<string> = new Set(),
-): OpenAPIV3.SchemaObject | undefined {
+  context?: SchemaRenderContext,
+): ResolvedSchema | undefined {
   if (!schema) {
     return undefined;
   }
 
   if (isReferenceObject(schema)) {
+    // A ref that has a generated type name renders as that name, so expanding
+    // it here is pure waste — and it is the waste that makes this function
+    // explode. Stripe's 1,422 component schemas reference each other densely
+    // enough that expanding one response costs >300k recursive calls and OOMs a
+    // 16GB heap; stopping at the name costs one. Keeping the `$ref` node is
+    // what the renderer wants anyway (see `SchemaRenderContext.refTypeName`).
+    if (context?.refTypeName?.(schema.$ref)) {
+      return schema;
+    }
+
     if (seen.has(schema.$ref)) {
       return { type: "object", additionalProperties: true };
     }
@@ -62,14 +81,17 @@ function resolveSchema(
 
     const nextSeen = new Set(seen);
     nextSeen.add(schema.$ref);
-    return resolveSchema(document, target as OpenAPIV3.SchemaObject | OpenAPIV3.ReferenceObject, nextSeen);
+    return resolveSchema(document, target as ResolvedSchema, nextSeen, context);
   }
 
   const resolved: OpenAPIV3.SchemaObject = { ...schema };
 
   if (schema.properties) {
     resolved.properties = Object.fromEntries(
-      Object.entries(schema.properties).map(([key, value]) => [key, resolveSchema(document, value, seen) ?? { type: "object" }]),
+      Object.entries(schema.properties).map(([key, value]) => [
+        key,
+        resolveSchema(document, value, seen, context) ?? { type: "object" },
+      ]),
     );
   }
 
@@ -77,30 +99,32 @@ function resolveSchema(
 
   if (arraySchema.items) {
     (resolved as any).items = Array.isArray(arraySchema.items)
-      ? arraySchema.items.map((item: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject) => resolveSchema(document, item, seen) ?? { type: "object" })
-      : (resolveSchema(document, arraySchema.items, seen) ?? { type: "object" });
+      ? arraySchema.items.map(
+          (item: ResolvedSchema) => resolveSchema(document, item, seen, context) ?? { type: "object" },
+        )
+      : (resolveSchema(document, arraySchema.items, seen, context) ?? { type: "object" });
   }
 
   if (schema.additionalProperties && typeof schema.additionalProperties === "object") {
-    resolved.additionalProperties = resolveSchema(document, schema.additionalProperties, seen);
+    resolved.additionalProperties = resolveSchema(document, schema.additionalProperties, seen, context);
   }
 
   if (schema.allOf) {
     resolved.allOf = schema.allOf
-      .map((item) => resolveSchema(document, item, seen))
-      .filter((item): item is OpenAPIV3.SchemaObject => Boolean(item));
+      .map((item) => resolveSchema(document, item, seen, context))
+      .filter((item): item is ResolvedSchema => Boolean(item));
   }
 
   if (schema.anyOf) {
     resolved.anyOf = schema.anyOf
-      .map((item) => resolveSchema(document, item, seen))
-      .filter((item): item is OpenAPIV3.SchemaObject => Boolean(item));
+      .map((item) => resolveSchema(document, item, seen, context))
+      .filter((item): item is ResolvedSchema => Boolean(item));
   }
 
   if (schema.oneOf) {
     resolved.oneOf = schema.oneOf
-      .map((item) => resolveSchema(document, item, seen))
-      .filter((item): item is OpenAPIV3.SchemaObject => Boolean(item));
+      .map((item) => resolveSchema(document, item, seen, context))
+      .filter((item): item is ResolvedSchema => Boolean(item));
   }
 
   return resolved;
@@ -133,7 +157,8 @@ function getOperation(
 function getResponseSchema(
   document: OpenAPIV3.Document,
   operation: OpenAPIV3.OperationObject | undefined,
-): OpenAPIV3.SchemaObject | undefined {
+  context?: SchemaRenderContext,
+): ResolvedSchema | undefined {
   if (!operation) {
     return undefined;
   }
@@ -158,7 +183,7 @@ function getResponseSchema(
       Object.entries(response.content).find(([contentType]) => contentType.includes("json"))?.[1] ??
       Object.values(response.content)[0];
 
-    const schema = resolveSchema(document, contentEntry?.schema);
+    const schema = resolveSchema(document, contentEntry?.schema, new Set(), context);
 
     if (schema) {
       return schema;
@@ -290,19 +315,34 @@ function getRawResponseSchema(
   return undefined;
 }
 
-export function buildPublicTypeMap(document: OpenAPIV3.Document, tools: Tool[]): Map<string, PublicToolTypes> {
+/**
+ * `context` (from `createProviderSchemaTypes`) makes response schemas render as
+ * named component types instead of being inlined. Pass it whenever the caller
+ * also emits the named declarations — without it, every response `$ref` is
+ * materialized, which is unbounded work on specs whose components reference
+ * each other heavily.
+ */
+export function buildPublicTypeMap(
+  document: OpenAPIV3.Document,
+  tools: Tool[],
+  context?: SchemaRenderContext,
+): Map<string, PublicToolTypes> {
   return new Map(
     tools.map((tool) => {
       const operation = getOperation(document, tool);
-      const responseSchema = getResponseSchema(document, operation);
+      const responseSchema = getResponseSchema(document, operation, context);
       const rawResponseSchema = getRawResponseSchema(document, operation);
       const docsUrl = operation?.externalDocs?.url;
 
       return [
         tool.name,
         {
+          // `tool.inputs`/`tool.outputs` come from the UTCP conversion already
+          // dereferenced, so they are rendered without the context.
           inputType: schemaToTypeScriptType(tool.inputs),
-          outputType: responseSchema ? schemaToTypeScriptType(responseSchema) : schemaToTypeScriptType(tool.outputs),
+          outputType: responseSchema
+            ? schemaToTypeScriptType(responseSchema, context)
+            : schemaToTypeScriptType(tool.outputs),
           ...(rawResponseSchema !== undefined ? { rawResponseSchema } : {}),
           ...(docsUrl ? { docsUrl } : {}),
         },

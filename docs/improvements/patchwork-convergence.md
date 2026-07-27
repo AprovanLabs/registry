@@ -201,7 +201,7 @@ the workspace, not the browser profile.
   generated `@utdk/*` sources and mount them via `extraFiles` for real
   provider IntelliSense; TS-in-worker if main-thread lint ever feels heavy;
   dark CodeMirror theme; adopt in patchwork's EditModal.
-- [x] 7. Gateway WFS (milestone 1) — `apps/gateway/src/fs-store.ts` (SQLite,
+- [x] 7. Gateway WFS (milestone 1) — `apps/workspace/src/fs-store.ts` (SQLite,
   content-hash versioned, prefix ops, `GATEWAY_DATA_DIR` override) +
   `routes/fs.ts` (`GET /fs?prefix=`, `GET/PUT/DELETE /fs/*`, hash-pinned
   reads, recursive delete), mounted in app.ts; `tests/fs.test.ts` (6 cases,

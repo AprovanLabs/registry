@@ -6,11 +6,19 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const distDir = path.join(rootDir, "dist");
 const skippedRootFiles = new Set(["package.json", "tsconfig.json"]);
 
+/**
+ * Mirrors build.mjs's SKIP_DIRS. Without it this walk copies `llm/package.json`
+ * and `sql/package.json` into dist, creating `dist/llm` and `dist/sql`
+ * directories that contain manifests and no code — enough to look like
+ * providers to anything enumerating dist, and to fail when imported.
+ */
+const skippedDirs = new Set(["dist", "node_modules", "llm", "sql", "__tests__"]);
+
 async function copyAssets(currentDir, relativeDir = '') {
   const entries = await readdir(currentDir, { withFileTypes: true });
 
   for (const entry of entries) {
-    if (entry.name === 'dist' || entry.name === 'node_modules') {
+    if (skippedDirs.has(entry.name)) {
       continue;
     }
 

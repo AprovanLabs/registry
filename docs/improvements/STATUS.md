@@ -140,7 +140,7 @@ Kill the "horrific" inline type blobs; a real typing system.
 - [x] **F9. OAuth credential UX + token exchange** — copiable callback URL in
   the auth-code form; scopes as toggle chips (known scopes from the spec) +
   freeform entry. Gateway now actually exchanges/refreshes OAuth tokens
-  (`apps/gateway/src/oauthTokens.ts`): auth-code exchanged at credential
+  (`apps/workspace/src/oauthTokens.ts`): auth-code exchanged at credential
   creation, client-credentials + refresh at call time, form-body → HTTP
   Basic retry (Figma). Root cause of the "Invalid token" 500: OAuth payloads
   were stored but never exchanged, so provider calls went out unauthenticated.

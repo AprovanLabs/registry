@@ -60,8 +60,8 @@ attrs: value (JSON, S3-spilled over 350KB), updatedAt, updatedBy
 - Same key layout either way — `dataScope` only picks the tenant, which is
   exactly the "central service vs self-deployment" distinction and nothing
   more.
-- Local/dev backend: the existing gateway SQLite (`~/.aprovan/gateway.db`)
-  gains a `records` table with the same shape; `STORE_BACKEND` picks, as it
+- Local/dev backend: the existing workspace SQLite (`~/.aprovan/workspace.db`)
+  gains a `records` table with the same shape; `WORKSPACE_MODE` picks, as it
   already does for FS.
 
 ### Privacy defaults
@@ -117,7 +117,7 @@ record store's shape is chosen so these bolt on without remodeling.
    spill, one interface.
 2. `keyvalue` service routes to it (workspace + app scopes); FS fallback
    read with lazy migrate.
-3. Infra: table + grants in `infra/src/gateway-lambda.ts`, deploy.
+3. Infra: table + grants in `infra/src/workspace-service.ts`, deploy.
 4. `vfs.list` data-dir hiding + chat tree verification.
 5. `apps.data` admin procedure (audited) + capabilities partition strings.
 6. Migration script; run against prd after deploy.

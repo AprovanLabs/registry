@@ -19065,7 +19065,7 @@
                         "user": "U2U85N1RV"
                       },
                       "ok": true,
-                      "type": "file"
+                      "type": "string"
                     }
                   }
                 },
@@ -19381,7 +19381,7 @@
                             "user": "U2U85N1RV",
                             "username": ""
                           },
-                          "type": "file"
+                          "type": "string"
                         }
                       ],
                       "ok": true,

@@ -2441,7 +2441,8 @@
               }
             }
           }
-        }
+        },
+        "operationId": "post_export_reporting_data_enqueue"
       }
     },
     "/export/reporting_data/{job_identifier}": {
@@ -2552,7 +2553,8 @@
               }
             }
           }
-        }
+        },
+        "operationId": "get_export_reporting_data_job_identifier"
       }
     },
     "/export/reporting_data/get_datasets": {
@@ -2627,7 +2629,8 @@
               }
             }
           }
-        }
+        },
+        "operationId": "get_export_reporting_data_get_datasets"
       }
     },
     "/download/reporting_data/{job_identifier}": {
@@ -2703,7 +2706,8 @@
               }
             }
           }
-        }
+        },
+        "operationId": "get_download_reporting_data_job_identifier"
       }
     },
     "/fin/start": {
@@ -2961,7 +2965,7 @@
                         "url": "https://example.com/document.pdf"
                       },
                       {
-                        "type": "file",
+                        "type": "string",
                         "name": "screenshot.png",
                         "content_type": "image/png",
                         "data": "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk..."

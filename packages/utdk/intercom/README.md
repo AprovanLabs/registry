@@ -1,7 +1,21 @@
-# intercom
+# Intercom API
 
-Generated UTDK provider types and OpenAPI-backed client for https://raw.githubusercontent.com/intercom/Intercom-OpenAPI/main/descriptions/2.15/api.intercom.io.yaml.
+The intercom API reference.
 
-## Authentication
+- **Provider URL**: https://raw.githubusercontent.com/intercom/Intercom-OpenAPI/main/descriptions/2.15/api.intercom.io.yaml
+- **Operations**: 160
+- **Authentication**: http:bearer
+- **Top capabilities**: Contacts, Conversations, Companies, AI Content, Calls
 
-- `bearerAuth`: http (bearer)
+## Quick start
+
+```ts
+import client from "@utdk/intercom";
+
+// Use the typed client to call provider operations
+const result = await client.someOperation({});
+```
+
+## Documentation
+
+Refer to the typed client interface (`types.ts`) for complete operation signatures with TypeScript types.

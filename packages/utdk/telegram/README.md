@@ -1,7 +1,20 @@
-# telegram
+# Telegram Bot API
 
-Generated UTDK provider types and OpenAPI-backed client for https://api.apis.guru/v2/specs/telegram.org/5.0.0/openapi.json.
+Auto-generated OpenAPI schema
 
-## Authentication
+- **Provider URL**: https://api.apis.guru/v2/specs/telegram.org/5.0.0/openapi.json
+- **Operations**: 74
+- **Authentication**: None
 
-No authentication scheme is declared by the provider specification.
+## Quick start
+
+```ts
+import client from "@utdk/telegram";
+
+// Use the typed client to call provider operations
+const result = await client.someOperation({});
+```
+
+## Documentation
+
+Refer to the typed client interface (`types.ts`) for complete operation signatures with TypeScript types.

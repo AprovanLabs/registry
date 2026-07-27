@@ -32,15 +32,33 @@ jobs:
         run: pnpm install
 
       - name: Build packages
-        run: pnpm --filter @aprovan/registry-main --filter @aprovan/registry-ui build
+        run: |
+          pnpm \
+            --filter @aprovan/registry-main \
+            --filter @aprovan/registry-ui \
+            --filter @aprovan/workspace... \
+            build
 
       # Stable `latest` publish whenever the committed version isn't on npm
       # yet (release flow = bump version, push to main). Runs BEFORE the dev
       # SHA is appended. Patchwork chat pins these by semver range, so a
       # bumped consumer without a published package breaks deploys.
+      #
+      # Order matters: `pnpm publish` rewrites `workspace:*` to the dependency's
+      # real version, so a dependency must exist on npm before its dependents
+      # are published or `npx @aprovan/workspace` installs a broken tree. This
+      # list is in dependency order — leaves first, the CLI last.
+      #
+      # `utdk`'s default build transpiles without type-checking (right for a
+      # container that never reads those types), but a published package owes
+      # external consumers per-provider declarations. Its `prepublishOnly` runs
+      # the full type build, so that cost lands here and nowhere else.
       - name: Publish stable versions (when new)
         run: |
-          for pkg in @aprovan/registry-main @aprovan/registry-ui; do
+          for pkg in \
+            @utdk/common @utdk/sql @utdk/llm @utdk/mcp-core utdk \
+            @aprovan/registry-main @aprovan/registry-ui \
+            @aprovan/workspace; do
             dir=$(pnpm --filter "$pkg" exec pwd 2>/dev/null | tail -1) || continue
             [ -n "$dir" ] || continue
             version=$(node -p "require('$dir/package.json').version")
@@ -59,6 +77,9 @@ jobs:
           SHORT_SHA=$(git rev-parse --short=7 HEAD)
           pnpm --filter @aprovan/registry-main --filter @aprovan/registry-ui exec -- sh -c 'npm pkg set version="$(npm pkg get version | tr -d \")-dev.'"$SHORT_SHA"'"'
 
+      # Only the UI packages get a rolling `dev` tag — patchwork chat pins them
+      # by SHA during development. The workspace CLI has no such consumer: its
+      # moving target is the container image, tagged by commit on GHCR.
       - name: Publish packages
         run: pnpm --filter @aprovan/registry-main --filter @aprovan/registry-ui publish --no-git-checks --access public --tag dev
         env:

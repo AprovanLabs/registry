@@ -1,8 +1,21 @@
-# asana
+# Asana
 
-Generated UTDK provider types and OpenAPI-backed client for https://raw.githubusercontent.com/Asana/openapi/master/defs/asana_oas.yaml.
+This is the interface for interacting with the [Asana Platform](https://developers.asana.com). Our API reference is generated from our [OpenAPI spec] (https://raw.githubusercontent.com/Asana/openapi/master/defs/asana_oas.yaml).
 
-## Authentication
+- **Provider URL**: https://raw.githubusercontent.com/Asana/openapi/master/defs/asana_oas.yaml
+- **Operations**: 247
+- **Authentication**: http:bearer, oauth2
+- **Top capabilities**: Tasks, Projects, Portfolios, Goals, Custom fields
 
-- `personalAccessToken`: http (bearer)
-- `oauth2`: oauth2
+## Quick start
+
+```ts
+import client from "@utdk/asana";
+
+// Use the typed client to call provider operations
+const result = await client.someOperation({});
+```
+
+## Documentation
+
+Refer to the typed client interface (`types.ts`) for complete operation signatures with TypeScript types.
