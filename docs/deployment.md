@@ -214,6 +214,33 @@ scripts/image.sh push
 AWS_PROFILE=aprovan scripts/deploy-infra.sh <tag>
 ```
 
+## Things the first deploy tripped over
+
+Kept because each cost a failed deploy and none is obvious from the error:
+
+- **EC2 rejects non-ASCII in a security group description.** The message names
+  the parameter but not the character. A single em dash failed the stack.
+- **A rolled-back deploy leaves its log group behind.** CloudWatch log groups
+  survive the rollback that created them, and the next attempt then fails
+  CloudFormation's early validation — which reports only
+  `AWS::EarlyValidation::ResourceExistenceCheck` with no event detail. Delete
+  `/aprovan/<env>/workspace` before retrying.
+- **The task role needs `ssm:GetParameter` on `/aprovan/<env>/*`.** The Lambda
+  never did, because every value was baked into its environment at synth; a
+  long-lived process reads the shared bundle itself. Without it the container
+  exits instantly and the circuit breaker rolls the service back.
+- **The execution role needs `kms:Decrypt` for the SecureString.** CDK grants
+  `ssm:GetParameters` when a secret is attached but not the KMS call.
+- **`PROJECT_ID` must be set for core's CDK app** (it lives in
+  `core/infra/aws/.env`, which the Makefile exports). Without it `namer()`
+  drops the `aprovan-` prefix, `cdk` treats the web stack as new, and a deploy
+  would attempt a *second* CloudFront distribution claiming aprovan.com. Use
+  `make`, or source the `.env` first.
+- **Lambda@Edge functions cannot be deleted immediately.** Replicas persist at
+  edge locations for a few hours after the distribution stops referencing
+  them, so the cutover reports "some resources failed to delete". They are
+  inert and free; they can be removed later.
+
 ## Operating it
 
 ```sh

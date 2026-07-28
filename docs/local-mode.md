@@ -34,7 +34,7 @@ app embeds `createWorkspace()` from the same package in its main process.
 The chat UI is a separate artifact. From a checkout:
 
 ```bash
-cd patchwork && VITE_GATEWAY_URL=http://localhost:4000/api/gateway \
+cd aprovan && VITE_GATEWAY_URL=http://localhost:4000/api/gateway \
   pnpm --filter @aprovan/patchwork-web dev
 ```
 

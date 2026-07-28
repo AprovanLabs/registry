@@ -133,7 +133,10 @@ export class WorkspaceService extends Construct {
     // add, and the public IP exists solely so the task can reach the internet.
     const securityGroup = new ec2.SecurityGroup(this, "SecurityGroup", {
       vpc,
-      description: "Workspace task — egress only, ingress via Cloudflare tunnel",
+      // ASCII only: EC2 rejects a GroupDescription containing anything else,
+      // and does so at create time with a message that names the parameter but
+      // not the offending character.
+      description: "Workspace task - egress only, ingress via Cloudflare tunnel",
       allowAllOutbound: true,
     });
 
@@ -350,6 +353,21 @@ export class WorkspaceService extends Construct {
       new iam.PolicyStatement({
         actions: ["ses:SendEmail", "ses:SendRawEmail"],
         resources: ["*"],
+      }),
+    );
+
+    // `loadWorkspaceConfig` reads the shared identity bundle from SSM at boot
+    // in aws mode (runtime/config.ts). The Lambda never needed this because
+    // every value was baked into its environment at synth; a long-lived
+    // process reads the parameter itself, so a config change does not require
+    // a redeploy. Without the grant the container exits immediately with an
+    // AccessDenied and the deployment circuit breaker rolls the service back.
+    taskRole.addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        actions: ["ssm:GetParameter", "ssm:GetParameters"],
+        resources: [
+          `arn:${stack.partition}:ssm:${stack.region}:${stack.account}:parameter/aprovan/${environmentName}/*`,
+        ],
       }),
     );
   }
