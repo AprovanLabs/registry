@@ -54,6 +54,25 @@ import { getAuthMode, readBearerToken, verifyAccessToken } from "../middleware/a
 import { ServiceError } from "../service-kernel.js";
 import { readRegistration } from "../workflows/store.js";
 
+/**
+ * The compiler the app page loads from esm.sh, and the widget image it
+ * compiles against.
+ *
+ * The compiler version MUST track this package's own
+ * `@aprovan/patchwork-compiler` dependency — `tests/live-apps.test.ts` asserts
+ * it, because drift here is silent and severe. A published app imports its
+ * service namespaces as bare specifiers (`import keyvalue from "keyvalue"`),
+ * which only resolve to the injected namespace because the compiler's
+ * namespace-import plugin claims them *before* the CDN transform. A compiler
+ * old enough to predate that plugin sends every one of them to esm.sh instead,
+ * where `keyvalue` 404s (breaking the page outright) and `vfs`, `events` and
+ * `agents` are real, unrelated npm packages that resolve 200 — so the app
+ * loads and then misbehaves. The pin is exact rather than a range because
+ * esm.sh caches the unversioned "latest" redirect for hours.
+ */
+export const APP_SHELL_COMPILER_VERSION = "0.2.0";
+const APP_SHELL_IMAGE_VERSION = "0.1.4";
+
 export const liveAppsRouter = new Hono();
 
 interface LiveApp {
@@ -396,13 +415,14 @@ try {
   if (!projectRes.ok) throw new Error("Failed to load app source (" + projectRes.status + ")");
   const project = await projectRes.json();
 
-  // Version-pinned: esm.sh caches the unversioned "latest" redirect for
-  // hours, so a bare spec can silently serve a stale compiler. esbuild-wasm
-  // is external + import-mapped to its real ESM browser build — esm.sh's
-  // UMD interop drops its named exports ("build is not a function").
-  const { createCompiler } = await import("https://esm.sh/@aprovan/patchwork-compiler@0.1.4?external=esbuild-wasm");
+  // Version-pinned (see APP_SHELL_COMPILER_VERSION): esm.sh caches the
+  // unversioned "latest" redirect for hours, so a bare spec can silently serve
+  // a stale compiler. esbuild-wasm is external + import-mapped to its real ESM
+  // browser build — esm.sh's UMD interop drops its named exports
+  // ("build is not a function").
+  const { createCompiler } = await import("https://esm.sh/@aprovan/patchwork-compiler@${APP_SHELL_COMPILER_VERSION}?external=esbuild-wasm");
   const compiler = await createCompiler({
-    image: "@aprovan/patchwork-image-shadcn@0.1.4",
+    image: "@aprovan/patchwork-image-shadcn@${APP_SHELL_IMAGE_VERSION}",
     cdnBaseUrl: "https://esm.sh",
     widgetCdnBaseUrl: "https://esm.sh",
     proxyUrl: cfg.appBase + "/tools",

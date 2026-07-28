@@ -13,7 +13,11 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 // Native namespaces are importable typed modules — same contract as UTDK
 // provider SDKs (the compiler resolves these to the injected namespaces).
 import keyvalue from "keyvalue";
-import workflows from "workflows";
+// This app's own exported workflows answer on the `app` namespace, one method
+// per export (`tasks-agent-runner` → `app.tasksAgentRunner`). There is no
+// `workflows` namespace — and because `workflows` *is* a real npm package,
+// importing it resolves 200 from the CDN and fails only at the call site.
+import app from "app";
 
 type Status = "todo" | "in_progress" | "in_review" | "done" | "canceled";
 
@@ -198,7 +202,7 @@ export default function Tasks() {
     setBusy(true);
     setNotice(null);
     try {
-      await workflows.run({ name: "tasks-agent-runner" });
+      await app.tasksAgentRunner();
       setNotice("Agents kicked off — todo tasks with an agent assignee are being worked in isolated drafts.");
       await load();
     } catch (err) {
