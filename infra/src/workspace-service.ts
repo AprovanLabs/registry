@@ -231,6 +231,22 @@ export class WorkspaceService extends Construct {
       logging: ecs.LogDrivers.awsLogs({ streamPrefix: "cloudflared", logGroup: this.logGroup }),
     });
 
+    // The tunnel token is a SecureString, so fetching it is two permissions,
+    // not one: CDK grants the execution role `ssm:GetParameters` when the
+    // secret is attached, but decryption is a separate KMS call. Without this
+    // the task fails to start with a ResourceInitializationError that names
+    // the parameter but not the missing permission. Scoped by ViaService so
+    // the role can only decrypt through SSM, and only in this region.
+    this.taskDefinition.obtainExecutionRole().addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        actions: ["kms:Decrypt"],
+        resources: ["*"],
+        conditions: {
+          StringEquals: { "kms:ViaService": `ssm.${stack.region}.amazonaws.com` },
+        },
+      }),
+    );
+
     // Don't open a route to a workspace that isn't serving yet.
     cloudflared.addContainerDependencies({
       container: workspace,

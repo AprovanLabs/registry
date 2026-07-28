@@ -21,7 +21,7 @@ aprovan.com (CloudFront, core WebStack)
   ├─ /                → S3
   ├─ /registry/*      → S3
   └─ /api/*, /apps/*, /.well-known/*
-        → origin.aprovan.com (Cloudflare-proxied, cache bypassed)
+        → origin.aprovan.app (Cloudflare-proxied, cache bypassed)
              └─ Cloudflare Tunnel
                   └─ cloudflared sidecar ─→ workspace :4000
                        (one ECS Fargate Spot ARM64 task, public subnet, no NAT)
@@ -37,6 +37,13 @@ to two minutes and stream. VPC Lattice is internal-only and costs more than the 
 So the task has no inbound path at all; a `cloudflared` sidecar dials out to the
 Cloudflare zone we already own, and CloudFront treats the resulting hostname as an
 ordinary HTTPS origin.
+
+The origin is on **aprovan.app**, not aprovan.com: aprovan.com is served by
+Route53 (its nameservers are `awsdns-*`) and so cannot carry a
+Cloudflare-proxied record, while aprovan.app is the zone this account serves.
+CloudFront does not care — an origin is just a hostname it can reach over
+HTTPS, and Cloudflare's universal certificate covers it. Nothing about the
+public URL surface changes.
 
 That also deleted the transport workarounds the Lambda Function URL required: the
 Origin Access Control, the `oac-body-hash` and `restore-auth-header` Lambda@Edge
