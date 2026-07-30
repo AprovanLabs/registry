@@ -453,6 +453,8 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   let interfaceDefaults: Record<string, unknown> | undefined;
   let interfaceModule: string | undefined;
   let interfaceTimeoutMs: number | undefined;
+  let interfaceBaseUrl: string | undefined;
+  let interfaceModuleSpecifier: string | undefined;
   if (provider && operation && isInterface(provider)) {
     try {
       const resolved = await resolveInterfaceForWorkspace(workspaceId, provider);
@@ -462,6 +464,8 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
       provider = resolved.compat.provider;
       interfaceModule = resolved.compat.module;
       interfaceTimeoutMs = resolved.def.timeoutMs;
+      interfaceBaseUrl = resolved.baseUrl;
+      interfaceModuleSpecifier = resolved.compat.moduleSpecifier;
     } catch (err) {
       const status = err instanceof ServiceError ? err.status : 500;
       return c.json({ error: err instanceof Error ? err.message : String(err) }, status as 400);
@@ -559,10 +563,13 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
 
         const r = await executor.execute({
           provider: interfaceModule ?? llmAlias?.module ?? provider,
+          ...(interfaceModuleSpecifier ? { module: interfaceModuleSpecifier } : {}),
           operation,
           args,
           credentials,
-          ...(llmAlias?.baseUrl ? { baseUrl: llmAlias.baseUrl } : {}),
+          ...(interfaceBaseUrl ?? llmAlias?.baseUrl
+            ? { baseUrl: (interfaceBaseUrl ?? llmAlias?.baseUrl)! }
+            : {}),
           timeout: interfaceTimeoutMs ?? (llmAlias ? 120_000 : 30_000),
         });
 

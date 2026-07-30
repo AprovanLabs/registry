@@ -47,6 +47,7 @@ import {
   removeMount,
 } from "./vcs/mounts.js";
 import { getRecordStore } from "./records.js";
+import { sandboxesService } from "./sandboxes/service.js";
 import {
   installCoreServices,
   ServiceError,
@@ -1031,6 +1032,7 @@ export const CORE_SERVICES: Record<CoreServiceName, CoreService> = {
   notifications: notificationsService,
   telemetry: telemetryService,
   agents: agentsService,
+  sandboxes: sandboxesService,
 };
 
 // Hand the registry to the kernel, so upstream modules (the workflow runner,

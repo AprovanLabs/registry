@@ -20,6 +20,7 @@ import { mcpRouter } from "./routes/mcp.js";
 import { membersRouter } from "./routes/members.js";
 import { oauthRouter } from "./routes/oauth.js";
 import { permissionsRouter } from "./routes/permissions.js";
+import { sandboxHostsRouter } from "./routes/sandbox-hosts.js";
 import { sessionRouter } from "./routes/session.js";
 import { toolsRouter } from "./routes/tools.js";
 import { wellKnownRouter } from "./routes/well-known.js";
@@ -138,6 +139,9 @@ export function createApp(): Hono {
   app.route("/.well-known", wellKnownRouter);
   // Workflow webhooks + cron tick authenticate with their own tokens.
   app.route("/hooks", hooksRouter);
+  // Sandbox host relay: registered machines dial out and lease work with
+  // their own per-registration tokens (see routes/sandbox-hosts.ts).
+  app.route("/sandbox-hosts", sandboxHostsRouter);
   // Published apps: any authenticated user, gated by each app's manifest
   // (roles, tool allow-list, per-user rate limits) — not workspace membership.
   app.route("/apps", appsRouter);

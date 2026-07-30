@@ -17,8 +17,9 @@
   "dependencies": {
     "@utcp/http": "^1.1.1",
     "@utcp/sdk": "^1.1.0",
-    "@utdk/sql": "workspace:*",
-    "@utdk/llm": "workspace:*"
+    "@utdk/llm": "workspace:*",
+    "@utdk/sandbox": "workspace:*",
+    "@utdk/sql": "workspace:*"
   },
   "exports": {
     ".": {
@@ -49,6 +50,16 @@
       "import": "./dist/asana/index.js",
       "default": "./dist/asana/index.js"
     },
+    "./cloudflare": {
+      "types": "./dist/cloudflare/index.d.ts",
+      "import": "./dist/cloudflare/index.js",
+      "default": "./dist/cloudflare/index.js"
+    },
+    "./cloudflare/sandbox": {
+      "types": "./dist/cloudflare/sandbox/index.d.ts",
+      "import": "./dist/cloudflare/sandbox/index.js",
+      "default": "./dist/cloudflare/sandbox/index.js"
+    },
     "./databricks": {
       "types": "./dist/databricks/index.d.ts",
       "import": "./dist/databricks/index.js",
@@ -78,6 +89,16 @@
       "types": "./dist/figma/index.d.ts",
       "import": "./dist/figma/index.js",
       "default": "./dist/figma/index.js"
+    },
+    "./fly": {
+      "types": "./dist/fly/index.d.ts",
+      "import": "./dist/fly/index.js",
+      "default": "./dist/fly/index.js"
+    },
+    "./fly/sprites": {
+      "types": "./dist/fly/sprites/index.d.ts",
+      "import": "./dist/fly/sprites/index.js",
+      "default": "./dist/fly/sprites/index.js"
     },
     "./front": {
       "types": "./dist/front/index.d.ts",

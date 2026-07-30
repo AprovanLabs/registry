@@ -251,6 +251,9 @@ importers:
       '@utdk/mcp-core':
         specifier: workspace:*
         version: link:../../packages/mcp-core
+      '@utdk/sandbox':
+        specifier: workspace:*
+        version: link:../../packages/utdk/sandbox
       aws-jwt-verify:
         specifier: ^4.0.1
         version: 4.0.1
@@ -328,6 +331,22 @@ importers:
       tsconfig-paths:
         specifier: ^4.2.0
         version: 4.2.0
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: 2.1.5
+        version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
+
+  packages/aprovan-cli:
+    dependencies:
+      '@aprovan/sandbox-host':
+        specifier: workspace:*
+        version: link:../sandbox-host
+    devDependencies:
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.6.2
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
@@ -542,6 +561,24 @@ importers:
         specifier: 2.1.5
         version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
 
+  packages/sandbox-host:
+    dependencies:
+      '@utdk/sandbox':
+        specifier: workspace:*
+        version: link:../utdk/sandbox
+    devDependencies:
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.6.2
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: 2.1.5
+        version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
+
+  packages/sandbox-image-node: {}
+
   packages/utdk:
     dependencies:
       '@utcp/http':
@@ -553,6 +590,9 @@ importers:
       '@utdk/llm':
         specifier: workspace:*
         version: link:llm
+      '@utdk/sandbox':
+        specifier: workspace:*
+        version: link:sandbox
       '@utdk/sql':
         specifier: workspace:*
         version: link:sql
@@ -592,6 +632,10 @@ importers:
 
   packages/utdk/asana: {}
 
+  packages/utdk/cloudflare: {}
+
+  packages/utdk/cloudflare/sandbox: {}
+
   packages/utdk/common:
     devDependencies:
       '@opentelemetry/api':
@@ -612,6 +656,10 @@ importers:
   packages/utdk/elevenlabs: {}
 
   packages/utdk/figma: {}
+
+  packages/utdk/fly: {}
+
+  packages/utdk/fly/sprites: {}
 
   packages/utdk/front: {}
 
@@ -686,6 +734,12 @@ importers:
   packages/utdk/producthunt: {}
 
   packages/utdk/salesforce: {}
+
+  packages/utdk/sandbox:
+    devDependencies:
+      vitest:
+        specifier: 2.1.5
+        version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
 
   packages/utdk/sendgrid: {}
 

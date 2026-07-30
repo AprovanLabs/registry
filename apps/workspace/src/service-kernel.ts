@@ -106,6 +106,7 @@ export const CORE_SERVICE_NAMES = [
   "notifications",
   "telemetry",
   "agents",
+  "sandboxes",
 ] as const;
 
 export type CoreServiceName = (typeof CORE_SERVICE_NAMES)[number];

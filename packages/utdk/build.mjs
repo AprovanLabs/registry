@@ -41,15 +41,16 @@ const distDir = path.join(rootDir, "dist");
 // everything dist should contain.
 await rm(distDir, { recursive: true, force: true });
 
-// `@utdk/llm` and `@utdk/sql` physically live inside this directory but build
-// themselves, and nothing in dist resolves into them — the exports map has no
-// `dist/llm` or `dist/sql` entry. `common/` is different and must stay:
-// `client.ts` imports `./common/telemetry.js` by *relative* path, so
-// `dist/common/` is load-bearing for `dist/client.js`.
+// `@utdk/llm`, `@utdk/sql` and `@utdk/sandbox` physically live inside this
+// directory but build themselves, and nothing in dist resolves into them —
+// the exports map has no `dist/llm`, `dist/sql` or `dist/sandbox` entry.
+// `common/` is different and must stay: `client.ts` imports
+// `./common/telemetry.js` by *relative* path, so `dist/common/` is
+// load-bearing for `dist/client.js`.
 //
 // tsconfig.json carries the same exclusions, so `build` and `build:types`
 // produce the same tree.
-const SKIP_DIRS = new Set(["dist", "node_modules", "llm", "sql", "__tests__"]);
+const SKIP_DIRS = new Set(["dist", "node_modules", "llm", "sql", "sandbox", "__tests__"]);
 
 async function collectSources(dir, acc = []) {
   for (const entry of await readdir(dir, { withFileTypes: true })) {

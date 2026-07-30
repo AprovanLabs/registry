@@ -24,3 +24,12 @@ Data sync
 Security
 
 - [x] Audit run (earlier session); DirectExecutor isolation finding resolved by the WASM sandbox; credential envelope encryption via KMS (`credentialCipher.ts`); app sessions get per-(app,user) data partitioning, tool allow-lists, rps/burst + durable daily budgets.
+
+Sandboxes
+
+- [x] `utdk/sandbox` shared contract — `@utdk/sandbox` (driver surface, hash manifests, the npm-package image system) with `local`, `sprites` and `cloudflare-sandbox` provider modules on it; `sandbox` joins `llm`/`sql` as a bound interface.
+- [x] `sandboxes` core service — mounts workspace prefixes into a sandbox, diffs two `{path → sha256}` manifests to find changes, and routes commits to a draft chat's overlay, through a `readwrite` mount, or to the live tree plus a VCS commit. Path grants bound what may be mounted.
+- [x] Machine executor — `@aprovan/sandbox-host` (first-party, *not* in the vendor catalogue) plus `aprovan sandbox host register|run`; the gateway relay (`/sandbox-hosts/:ws/:host`) is the rendezvous for a machine that cannot be dialed, with separate enqueue and lease principals.
+- [x] Scheduled runs — `sandboxes.schedule` queues work keyed by image; a host advertises the images it verified and *claims* rather than being assigned, so a Node run is never offered to a box without Node. Claimed runs execute a workflow in the sandbox and commit into a draft chat.
+- [x] Vendor contracts verified — `fly/sprites` rewritten against the published API schema (name-addressed, query-param exec with binary framing, no expose call); `cloudflare/sandbox` corrected to `persist: false` (eviction destroys the filesystem). Neither vendor returns content hashes, so manifests are hashed in-container via `sha256sum`.
+- [ ] (Later) Sandboxes native surface in chat (spec'd in docs/sandboxes.md), streaming exec output as telemetry, a Deno Deploy provider, a Sprites WebSocket exec path.

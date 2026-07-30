@@ -409,3 +409,82 @@ export async function mountRead(
   if (!mount) return "not-mounted";
   return mount.type === "git" ? gitRead(workspaceId, mount, path) : s3Read(mount, path);
 }
+
+// ---------------------------------------------------------------------------
+// Write-through
+// ---------------------------------------------------------------------------
+//
+// `mode: "readwrite"` was stored but ignored until something needed to write
+// *through* a mount rather than into the native tree. Sandbox commit is that
+// something (docs/sandboxes.md): a sandbox mounting `vendor/charts` and
+// changing a file there has nowhere else for the bytes to go — the workspace
+// FS does not own that prefix, so a commit cannot record them.
+//
+// Only `s3` writes, and only with `mode: "readwrite"`. A `git` mount would
+// need branch/commit/PR semantics, which is a different feature wearing the
+// same word, and it lands with the credential-grant workstream.
+
+function assertWritableMount(mount: VfsMount): void {
+  if (mount.mode !== "readwrite") {
+    throw new ServiceError(
+      `${mount.prefix} is a read-only ${mount.type} mount — remount with mode "readwrite" to write through it`,
+      403,
+    );
+  }
+  if (mount.type !== "s3") {
+    throw new ServiceError(
+      `Writing through a ${mount.type} mount is not supported (${mount.prefix})`,
+      501,
+    );
+  }
+}
+
+function s3Key(mount: VfsMount, path: string): string {
+  const config = mount.config as unknown as S3Config;
+  const root = config.prefix ? `${config.prefix.replace(/\/+$/u, "")}/` : "";
+  return root + path.slice(mount.prefix.length + 1);
+}
+
+/**
+ * Write `path` through its mount. Returns "not-mounted" when the path is
+ * native, so a caller can route with one call instead of two.
+ */
+export async function mountWrite(
+  workspaceId: string,
+  path: string,
+  content: string,
+  mimeType?: string,
+): Promise<"written" | "not-mounted"> {
+  const mounts = await readMounts(workspaceId).catch(() => []);
+  const mount = mountFor(mounts, path);
+  if (!mount) return "not-mounted";
+  assertWritableMount(mount);
+  const config = mount.config as unknown as S3Config;
+  const { client, PutObjectCommand } = await mountS3(config);
+  await client.send(
+    new PutObjectCommand({
+      Bucket: config.bucket,
+      Key: s3Key(mount, path),
+      Body: content,
+      ContentType: mimeType ?? mountMime(path),
+    }),
+  );
+  return "written";
+}
+
+/** Delete `path` through its mount; "not-mounted" when the path is native. */
+export async function mountDelete(
+  workspaceId: string,
+  path: string,
+): Promise<"deleted" | "not-mounted"> {
+  const mounts = await readMounts(workspaceId).catch(() => []);
+  const mount = mountFor(mounts, path);
+  if (!mount) return "not-mounted";
+  assertWritableMount(mount);
+  const config = mount.config as unknown as S3Config;
+  const { client, DeleteObjectCommand } = await mountS3(config);
+  await client.send(
+    new DeleteObjectCommand({ Bucket: config.bucket, Key: s3Key(mount, path) }),
+  );
+  return "deleted";
+}

@@ -21,8 +21,21 @@ import type { CredentialPayload } from "./credentials.js";
 // ---------------------------------------------------------------------------
 
 export interface IsolateExecuteOptions {
-  /** @utdk provider name, e.g. "github" */
+  /** @utdk provider name, e.g. "github" or "google/books". Also decides the
+   *  client-factory export name (`createGithubClient`). */
   provider: string;
+  /**
+   * Import specifier, when the implementation does not live in the UTDK
+   * catalogue. Defaults to `utdk/<provider>`.
+   *
+   * First-party providers are the reason this exists: a registered machine
+   * (`@aprovan/sandbox-host`) implements the public `@utdk/sandbox` contract
+   * but is not a vendor, so it has no business in the vendor namespace. The
+   * factory name still comes from `provider`, so `{ provider: "machine",
+   * module: "@aprovan/sandbox-host" }` imports that package and calls
+   * `createMachineClient`.
+   */
+  module?: string;
   /** Dot-separated operation path, e.g. "repos.list" or "users.getByUsername" */
   operation: string;
   /** Arguments for the operation */
@@ -79,7 +92,10 @@ const providerCache = new Map<string, ProviderModule>();
  * On a miss the module is imported, cached, and the oldest entry is evicted
  * if the cache exceeds its configured max size.
  */
-export async function getProviderModule(provider: string): Promise<ProviderModule> {
+export async function getProviderModule(
+  provider: string,
+  moduleSpecifier?: string,
+): Promise<ProviderModule> {
   const cached = providerCache.get(provider);
   if (cached) {
     // Move to most-recently-used position.
@@ -88,7 +104,14 @@ export async function getProviderModule(provider: string): Promise<ProviderModul
     return cached;
   }
 
-  const mod = (await import(`utdk/${provider}`)) as ProviderModule;
+  // Two import forms, one cache. The template-literal form is what keeps the
+  // 49-provider catalogue out of every consumer's type graph (see the utdk
+  // build notes); a first-party module is imported by its own name.
+  const mod = (
+    moduleSpecifier
+      ? ((await import(/* @vite-ignore */ moduleSpecifier)) as ProviderModule)
+      : ((await import(`utdk/${provider}`)) as ProviderModule)
+  );
   putProviderModule(provider, mod);
   return mod;
 }
@@ -203,7 +226,7 @@ class DirectExecutor implements IsolateExecutor {
       // Load the provider module via the LRU cache. On a cache hit this skips
       // the dynamic import entirely; on a miss the module is imported once
       // and cached for subsequent calls.
-      const mod = await getProviderModule(options.provider);
+      const mod = await getProviderModule(options.provider, options.module);
 
       // Get the named client factory export (e.g. createGithubClient)
       // This allows us to inject credentials at construction time

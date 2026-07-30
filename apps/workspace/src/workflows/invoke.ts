@@ -64,27 +64,12 @@ export async function invokeTool(
     return core.call(ctx, procedure, args);
   }
 
-  // Generic interfaces (llm, sql, …) resolve to their bound implementation
-  // and dispatch as that concrete provider — same call, swappable backend.
+  // Generic interfaces (llm, sql, sandbox, …) resolve to their bound
+  // implementation and dispatch as that concrete provider — same call,
+  // swappable backend.
   if (isInterface(namespace)) {
     await assertProviderAllowed(ctx, namespace, procedure);
-    const resolved = await resolveInterfaceForWorkspace(
-      ctx.workspaceId,
-      namespace,
-      ctx.interfaceBindings?.[namespace],
-    );
-    const withDefaults = resolved.def.defaultsFor.includes(procedure)
-      ? { ...resolved.options, ...args }
-      : args;
-    return dispatchProvider(ctx, {
-      credentialProvider: resolved.compat.provider,
-      module: resolved.compat.module,
-      baseUrl: resolved.compat.baseUrl,
-      procedure,
-      args: withDefaults,
-      timeout: resolved.def.timeoutMs,
-      label: `${namespace}→${resolved.compat.provider}`,
-    });
+    return dispatchInterface(ctx, namespace, procedure, args);
   }
 
   await assertProviderAllowed(ctx, namespace, procedure);
@@ -106,11 +91,55 @@ export async function invokeTool(
   });
 }
 
+/**
+ * Dispatch one operation through a generic interface's bound implementation.
+ *
+ * Split out of {@link invokeTool} because a core service can *be* the caller:
+ * `sandboxes.exec` is authorized as `sandboxes.exec` and then reaches the
+ * bound sandbox driver through here. Routing that back through `invokeTool`
+ * would demand a second grant on the raw `sandbox.*` namespace for a call the
+ * user never made, so the grant check stays with the namespace the caller
+ * actually named.
+ *
+ * `overrideProvider` pins the implementation — a live sandbox must keep
+ * talking to the host that created it even if the workspace rebinds.
+ */
+export async function dispatchInterface(
+  ctx: ServiceContext,
+  interfaceId: string,
+  procedure: string,
+  args: Record<string, unknown>,
+  overrideProvider?: string,
+): Promise<unknown> {
+  const resolved = await resolveInterfaceForWorkspace(
+    ctx.workspaceId,
+    interfaceId,
+    overrideProvider ?? ctx.interfaceBindings?.[interfaceId],
+  );
+  const withDefaults = resolved.def.defaultsFor.includes(procedure)
+    ? { ...resolved.options, ...args }
+    : args;
+  return dispatchProvider(ctx, {
+    credentialProvider: resolved.compat.provider,
+    module: resolved.compat.module,
+    ...(resolved.compat.moduleSpecifier
+      ? { moduleSpecifier: resolved.compat.moduleSpecifier }
+      : {}),
+    baseUrl: resolved.baseUrl,
+    procedure,
+    args: withDefaults,
+    timeout: resolved.def.timeoutMs,
+    label: `${interfaceId}→${resolved.compat.provider}`,
+  });
+}
+
 interface ProviderDispatch {
   /** Credential-store key (the concrete provider id). */
   credentialProvider: string;
-  /** UTDK module executed in the isolate. */
+  /** UTDK module executed in the isolate (also names the client factory). */
   module: string;
+  /** Import specifier, when the module is not in the UTDK catalogue. */
+  moduleSpecifier?: string;
   baseUrl?: string;
   procedure: string;
   args: Record<string, unknown>;
@@ -156,6 +185,7 @@ async function dispatchProvider(
   const executor = await getExecutor();
   const result = await executor.execute({
     provider: dispatch.module,
+    ...(dispatch.moduleSpecifier ? { module: dispatch.moduleSpecifier } : {}),
     operation: dispatch.procedure,
     args: dispatch.args,
     credentials,

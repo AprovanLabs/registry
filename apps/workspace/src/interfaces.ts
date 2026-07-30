@@ -32,6 +32,12 @@ export interface InterfaceCompat {
   label: string;
   /** UTDK module that executes operations for this implementation. */
   module: string;
+  /**
+   * Import specifier when the module is not in the UTDK catalogue — a
+   * first-party implementation of a public contract. `module` still names the
+   * client factory; this only changes where it is loaded from.
+   */
+  moduleSpecifier?: string;
   /** API root override; undefined = the module's own spec server. */
   baseUrl?: string;
   /** Option defaults applied when the call omits them (e.g. model). */
@@ -103,6 +109,38 @@ export function listInterfaces(): InterfaceDef[] {
         { provider: "databricks", label: "Databricks", module: "databricks" },
       ],
     },
+    {
+      id: "sandbox",
+      label: "Sandbox",
+      description:
+        "Execution environments with a filesystem and a shell: create/exec/read/write/list against any connected sandbox host. " +
+        "Each backend is a handwritten UTDK provider module built on @utdk/sandbox. " +
+        "Secrets live in the provider credential (API token, or a local host's client token); " +
+        "the API root, default image and region ride the binding options. " +
+        "Workspace-facing mounting, sync and commit live in the `sandboxes` core service — see docs/sandboxes.md.",
+      // Sandbox work is slow by nature (installs, builds, test suites), and
+      // the driver's own deadline is the caller's `timeoutMs`. This is the
+      // outer bound the gateway will wait for a single operation.
+      timeoutMs: 300_000,
+      // Only `create` takes binding defaults: image, region and resources are
+      // workspace policy, while exec/file args are always the caller's.
+      defaultsFor: ["create"],
+      compat: [
+        {
+          provider: "machine",
+          label: "Registered machine",
+          module: "machine",
+          // First-party: a laptop has no vendor, so it is not in utdk/*.
+          moduleSpecifier: "@aprovan/sandbox-host",
+        },
+        { provider: "fly/sprites", label: "fly.io Sprites", module: "fly/sprites" },
+        {
+          provider: "cloudflare/sandbox",
+          label: "Cloudflare Sandbox",
+          module: "cloudflare/sandbox",
+        },
+      ],
+    },
   ];
 }
 
@@ -148,10 +186,32 @@ export async function writeBinding(
 export interface ResolvedInterface {
   def: InterfaceDef;
   compat: InterfaceCompat;
-  /** compat defaults merged with binding option overrides. */
+  /** compat defaults merged with binding option overrides, minus `baseUrl`. */
   options: Record<string, unknown>;
+  /**
+   * API root for the executing module: the binding's `baseUrl` option, else
+   * the compat entry's. Some implementations have no vendor-hosted endpoint
+   * at all — a Cloudflare sandbox Worker, a local host relay — so where the
+   * API lives is workspace configuration, not a property of the provider.
+   */
+  baseUrl?: string;
   /** Whether an explicit binding chose this implementation. */
   bound: boolean;
+}
+
+/**
+ * Split the merged option bag into the API root and the option defaults that
+ * get folded into call arguments. `baseUrl` is transport, not an argument —
+ * passing it through as one would put it in every `defaultsFor` operation's
+ * args.
+ */
+function splitOptions(
+  compat: InterfaceCompat,
+  merged: Record<string, unknown>,
+): { options: Record<string, unknown>; baseUrl?: string } {
+  const { baseUrl, ...options } = merged;
+  const resolved = typeof baseUrl === "string" && baseUrl ? baseUrl : compat.baseUrl;
+  return { options, ...(resolved ? { baseUrl: resolved } : {}) };
 }
 
 /**
@@ -178,11 +238,11 @@ export async function resolveInterfaceForWorkspace(
     // Workspace binding options still apply when they target the same
     // provider (e.g. a model choice for the overridden provider).
     const workspaceBinding = (await readBindings(workspaceId))[interfaceId];
-    const options =
+    const merged =
       workspaceBinding?.provider === overrideProvider
         ? { ...compat.defaults, ...workspaceBinding.options }
         : { ...compat.defaults };
-    return { def, compat, options, bound: true };
+    return { def, compat, ...splitOptions(compat, merged), bound: true };
   }
 
   const binding = (await readBindings(workspaceId))[interfaceId];
@@ -197,7 +257,7 @@ export async function resolveInterfaceForWorkspace(
     return {
       def,
       compat,
-      options: { ...compat.defaults, ...binding.options },
+      ...splitOptions(compat, { ...compat.defaults, ...binding.options }),
       bound: true,
     };
   }
@@ -212,5 +272,5 @@ export async function resolveInterfaceForWorkspace(
       400,
     );
   }
-  return { def, compat, options: { ...compat.defaults }, bound: false };
+  return { def, compat, ...splitOptions(compat, { ...compat.defaults }), bound: false };
 }

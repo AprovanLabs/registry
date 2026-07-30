@@ -56,13 +56,17 @@ The single dispatch surface. A namespace is either:
   `webhooks`, `apps`, `interfaces`, `sync`, `sessions`, `notifications`,
   `telemetry` (workspace debugging evidence — see
   `docs/telemetry-and-agents.md`), `agents` (named agent profiles with
-  capability grants);
+  capability grants), `sandboxes` (external execution environments mounted
+  from the VFS — see `docs/sandboxes.md`);
 - a **UTDK provider** — available once a credential exists in the workspace
   (`github`, `linear`, `figma`, `posthog`, …), executed in the isolate with
   credentials injected server-side;
 - an **LLM chat-provider alias** (`openai`, `anthropic`, `gemini`,
   `synthetic.new`) — resolves to an OpenAI-compatible module with the alias's
-  base URL; exposes `createChatCompletion` / `listModels`.
+  base URL; exposes `createChatCompletion` / `listModels`;
+- a **generic interface** (`llm`, `sql`, `sandbox`) — a capability with
+  several implementations, dispatched to whichever provider the workspace
+  bound (`interfaces.bind`).
 
 `GET /tools` is discovery: core services always, providers when credentialed,
 LLM aliases when credentialed. Chat's system prompt, the services menu, widget
@@ -82,6 +86,12 @@ they intentionally share the call convention and dispatch path:
 3. **Gateway vm runner** (workflows) — scripts run server-side in a `node:vm`
    context; calls dispatch in-process through `invokeTool` (same credential
    resolution, same isolate execution as the HTTP route).
+
+A fourth runtime is deliberately *not* one of these three: a **sandbox**
+(`docs/sandboxes.md`) is a whole machine somebody else operates — a
+filesystem and a shell, not a namespace-proxied script. It reaches the
+platform the other way round, over the tools proxy from the outside, and its
+changes come back as commits.
 
 A script written in the playground registers unchanged as a workflow; a widget
 prototype's calls behave identically when moved into a script.

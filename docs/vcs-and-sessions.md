@@ -175,8 +175,13 @@ contract is that a CRDT-backed prefix is live and unversioned-by-us — commits
 record the mount's own version token instead of per-file hashes. Implementation
 of a concrete CRDT provider is out of scope for v1.
 
-**v1 deltas.** Mounts are read-only regardless of `mode` (the field is
-stored so `readwrite` s3 can light up without a schema change); `git` mounts
+**v1 deltas.** Mounts are read-only through the `vfs` verbs regardless of
+`mode` (the field is stored so `readwrite` s3 can light up without a schema
+change). **Sandbox commit is the exception and the reason the field exists**:
+a sandbox that changed a file under a `readwrite` s3 mount writes it
+through, because the workspace FS does not own that prefix and a commit
+cannot record what it does not own — see [sandboxes.md](./sandboxes.md).
+`git` mounts
 read through the workspace's `github` credential (anonymous for public
 repos) with the git blob sha as the version token; `s3` mounts use the
 gateway's own role (grant it bucket access by policy) — workspace-credential
