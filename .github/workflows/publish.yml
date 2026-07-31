@@ -57,6 +57,7 @@ jobs:
         run: |
           for pkg in \
             @utdk/common @utdk/sql @utdk/llm @utdk/mcp-core utdk \
+            @aprovan/sandbox-image-node \
             @aprovan/registry-main @aprovan/registry-ui \
             @aprovan/workspace; do
             dir=$(pnpm --filter "$pkg" exec pwd 2>/dev/null | tail -1) || continue
