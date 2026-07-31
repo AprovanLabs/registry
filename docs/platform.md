@@ -66,10 +66,18 @@ The single dispatch surface. A namespace is either:
   base URL; exposes `createChatCompletion` / `listModels`;
 - a **generic interface** (`llm`, `sql`, `sandbox`) — a capability with
   several implementations, dispatched to whichever provider the workspace
-  bound (`interfaces.bind`).
+  bound (`interfaces.bind`);
+- a **named interface instance** (`sql:analytics`, `llm:fast`) — a second
+  binding of the same interface, with its own provider, credential and
+  options, so a workspace can hold a production database and a warehouse at
+  once. See [interfaces.md](./interfaces.md).
 
 `GET /tools` is discovery: core services always, providers when credentialed,
-LLM aliases when credentialed. Chat's system prompt, the services menu, widget
+LLM aliases when credentialed, interfaces when some compatible provider is,
+plus every configured instance. `GET /tools/namespaces` is the companion
+*classification* surface — each namespace's kind, label, icon and (for
+interfaces) its compat list and binding — so a client never keeps its own
+list of which namespaces are first-party. Chat's system prompt, the services menu, widget
 SDK namespaces, and workflow script globals are all projections of this one
 list. **If you add a capability, add it as a namespace** — every surface picks
 it up for free.

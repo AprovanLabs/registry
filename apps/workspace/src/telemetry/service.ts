@@ -315,6 +315,11 @@ interface TraceSummary {
 // ---------------------------------------------------------------------------
 
 export const telemetryService: CoreService = {
+  meta: {
+    label: "Activity",
+    blurb: "Workspace traces with status and source filters",
+    icon: "activity",
+  },
   tools: [
     {
       name: "telemetry.emit",

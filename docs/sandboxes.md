@@ -436,15 +436,13 @@ Everything rides `POST /tools/sandboxes/:procedure`, so chat's tool list, the
 widget SDK, workflow script globals, and the MCP server pick it up with no
 integration code — the platform's standing bargain.
 
-## Planned work
+## The chat surface
 
-### The Sandboxes native surface
-
-`sandboxes` is a native namespace, so it earns a `NativeSurfaceDef` beside
-Data, Agents, Webhooks, Sync and Activity (`native-surfaces.md`). The registry
-entry is the whole integration — the panel is self-contained, fetches through
-`invokeNamespaceTool("sandboxes")`, and owns its own loading/error/empty
-states, per that document's rules.
+`sandboxes` is a native namespace, so it presents itself as a built-in app
+beside Data, Agents, Webhooks, Sync and Activity (`native-surfaces.md`). The
+registry entry is the whole integration: the panel is self-contained, fetches
+through `invokeNamespaceTool("sandboxes")`, and owns its own loading, error and
+empty states.
 
 ```tsx
 { id: "sandboxes", title: "Sandboxes", icon: Box,
@@ -456,21 +454,36 @@ Four views, each a projection of something the service already returns:
 
 | View | Ops | Content |
 | --- | --- | --- |
-| **Environments** | `sandboxes.list/get` | rows per sandbox: host, image, status, per-mount change counts; expand to the file diff, one button to apply |
-| **Console** | `sandboxes.exec` | a command box scoped to a sandbox and a mount, with exit code and output — the "did the tests pass" view |
-| **Runs** | `sandboxes.runs` | scheduled runs with status, claiming host, and a link to the workflow trace |
-| **Hosts** | `sandboxes.hosts` | registered machines: last seen, verified images, the images that were skipped and why |
+| **Environments** | `list` / `tree` / `commit` / `sync` / `destroy` | rows per sandbox: host, image, mounts, and the uncommitted count; expand for the changed paths, one button to apply |
+| **Console** | `exec` | a command box scoped to a sandbox and a mount, with exit code, duration and output |
+| **Runs** | `runs` / `cancelRun` | scheduled runs with status, claiming host, draft chat, and the workflow run id |
+| **Hosts** | `hosts` / `revokeHost` | registered machines: last seen, platform, verified images, and what was skipped |
 
-Two details worth getting right rather than discovering later: the **Hosts**
-view is where a stale `verifiedImages` becomes visible (a machine that lost
-its toolchain silently stops taking work, and the only symptom is a queue that
-never drains), and **change counts belong on the row**, because "this sandbox
-has 3 uncommitted files" is the one thing a user needs before closing a laptop.
+Three decisions in there are load-bearing rather than cosmetic:
 
-`appTab: true` because an app's pane should show the sandboxes working on its
-own paths, scoped by the existing `AppScope` prop rather than a fork.
+- **The uncommitted count is on the row, not behind the expand.** "This sandbox
+  has 3 uncommitted files" is the one thing you need before closing a laptop,
+  and a number you have to go looking for is a number nobody sees.
+- **Counts fill in per row, after the list renders.** A change count costs a
+  real round trip — the host hashes its own tree — so asking for all of them
+  before painting would make the panel as slow as the slowest host. Each check
+  is isolated: an asleep machine marks one row "unknown" instead of failing the
+  view. It also passes an explicit `timeoutMs`, because the service's default
+  deadline is sized for a build, not for a poll; without that a sleeping host
+  holds its row for two minutes.
+- **Hosts distinguishes "declared" from "verified".** This is where a stale
+  capability advert becomes visible. A machine that lost its toolchain stops
+  taking scheduled work silently, and the only other symptom is a queue that
+  never drains — so an image the host registered but could not verify is called
+  out as *not runnable here*, separately from an agent that has never
+  connected at all.
 
-### Other
+`appTab: true` because an app's pane should show the sandboxes touching its own
+paths. Scoping is a filter over the mount sources, not a fork — a sandbox
+belongs to the workspace, not to an app, so the service has no app-scoped
+listing and does not need one.
+
+## Still ahead
 
 - **Streaming exec output** as telemetry logs, so a ten-minute build is
   watchable rather than a wait followed by a wall of text. Both vendors

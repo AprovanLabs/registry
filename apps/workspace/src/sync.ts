@@ -317,6 +317,11 @@ async function ensureSchedule(
 // ---------------------------------------------------------------------------
 
 export const syncService: CoreService = {
+  meta: {
+    label: "Sync",
+    blurb: "source → transform → sink lineage, schedules and last runs",
+    icon: "refresh-cw",
+  },
   tools: [
     {
       name: "sync.register",

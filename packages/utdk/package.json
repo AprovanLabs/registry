@@ -19,7 +19,8 @@
     "@utcp/sdk": "^1.1.0",
     "@utdk/llm": "workspace:*",
     "@utdk/sandbox": "workspace:*",
-    "@utdk/sql": "workspace:*"
+    "@utdk/sql": "workspace:*",
+    "@utdk/vcs": "workspace:*"
   },
   "exports": {
     ".": {
@@ -114,6 +115,11 @@
       "types": "./dist/github/index.d.ts",
       "import": "./dist/github/index.js",
       "default": "./dist/github/index.js"
+    },
+    "./github/vcs": {
+      "types": "./dist/github/vcs/index.d.ts",
+      "import": "./dist/github/vcs/index.js",
+      "default": "./dist/github/vcs/index.js"
     },
     "./google": {
       "types": "./dist/google/index.d.ts",

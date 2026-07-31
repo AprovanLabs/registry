@@ -125,6 +125,11 @@ function legacyKvPath(ctx: ServiceContext, key: string): string {
 }
 
 const keyvalue: CoreService = {
+  meta: {
+    label: "Key value",
+    blurb: "Workspace-scoped records: prefix query, JSON viewer/editor",
+    icon: "database",
+  },
   tools: [
     {
       name: "keyvalue.get",
@@ -238,6 +243,11 @@ interface EventRecord {
 }
 
 const events: CoreService = {
+  meta: {
+    label: "Events",
+    blurb: "Emit + poll workspace event channels",
+    icon: "radio",
+  },
   tools: [
     {
       name: "events.emit",
@@ -392,6 +402,11 @@ async function stagedSession(
 }
 
 const vfs: CoreService = {
+  meta: {
+    label: "VFS",
+    blurb: "Workspace files, commits and mounts",
+    icon: "folder-tree",
+  },
   tools: [
     {
       name: "vfs.list",
@@ -932,6 +947,11 @@ export async function catalogToolEntries(provider: string): Promise<ToolEntry[]>
 }
 
 const registry: CoreService = {
+  meta: {
+    label: "Registry",
+    blurb: "Look up available SDKs and operations",
+    icon: "book-open",
+  },
   tools: [
     {
       name: "registry.providers",
@@ -1041,4 +1061,4 @@ installCoreServices(CORE_SERVICES);
 
 // Lookup and discovery are the kernel's; re-exported here so `services.js`
 // stays the import site every route already uses.
-export { coreToolEntries, getCoreService } from "./service-kernel.js";
+export { coreServiceMeta, coreToolEntries, getCoreService } from "./service-kernel.js";

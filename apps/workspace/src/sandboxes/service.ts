@@ -106,6 +106,19 @@ function str(args: Record<string, unknown>, key: string): string | undefined {
 }
 
 /**
+ * A caller-supplied deadline for a read-only probe.
+ *
+ * The default host timeout is sized for a build, not for a poll. A UI showing
+ * "3 uncommitted files" per sandbox asks every one of them on load, and an
+ * asleep machine would hold that row for two minutes — so the caller that
+ * knows it is polling gets to say so.
+ */
+function timeoutOf(args: Record<string, unknown>): number | undefined {
+  const value = args["timeoutMs"];
+  return typeof value === "number" && value > 0 ? value : undefined;
+}
+
+/**
  * Dispatch into the driver for one sandbox, pinned to the provider — and,
  * where the provider addresses hosts individually, to the exact host holding
  * the files.
@@ -328,6 +341,11 @@ function mountsFor(record: SandboxRecord, name: string | undefined): SandboxMoun
 // ---------------------------------------------------------------------------
 
 export const sandboxesService: CoreService = {
+  meta: {
+    label: "Sandboxes",
+    blurb: "Execution environments mounted from your workspace",
+    icon: "box",
+  },
   tools: [
     {
       name: "sandboxes.create",
@@ -423,10 +441,15 @@ export const sandboxesService: CoreService = {
       operation: "tree",
       description:
         "What has changed inside a sandbox since it was given its files: { added, modified, removed } per mount. " +
-        "Compares content hashes on both sides — no file bodies are read.",
+        "Compares content hashes on both sides — no file bodies are read. " +
+        "Pass a short timeoutMs when polling: an asleep host would otherwise hold the call for the full default.",
       inputSchema: {
         type: "object",
-        properties: { id: { type: "string" }, mount: { type: "string" } },
+        properties: {
+          id: { type: "string" },
+          mount: { type: "string" },
+          timeoutMs: { type: "number" },
+        },
         required: ["id"],
       },
     },
@@ -621,7 +644,7 @@ export const sandboxesService: CoreService = {
         const call = driverFor(ctx, record);
         return {
           ...summarize(record),
-          changes: await treeChanges(record, record.mounts, call),
+          changes: await treeChanges(record, record.mounts, call, timeoutOf(args)),
         };
       }
 
@@ -629,7 +652,12 @@ export const sandboxesService: CoreService = {
         const record = await requireSandbox(ctx.workspaceId, args["id"]);
         const call = driverFor(ctx, record);
         return {
-          changes: await treeChanges(record, mountsFor(record, str(args, "mount")), call),
+          changes: await treeChanges(
+            record,
+            mountsFor(record, str(args, "mount")),
+            call,
+            timeoutOf(args),
+          ),
         };
       }
 
@@ -944,10 +972,17 @@ export async function executeClaimedRun(
       run.agent,
     );
 
-    await sandboxesService.call({ ...ctx }, "commit", {
-      id: sandbox.id,
-      message: `Scheduled run: ${run.workflow}`,
-    });
+    // A run with no tracked mount has nothing to bring back — a build that
+    // only produced logs, say. `commit` refuses that case on purpose (an
+    // explicit commit with nothing to commit is a mistake worth naming), but
+    // here it is ordinary, and reporting the whole run as failed for it would
+    // be a lie about the workflow.
+    if (sandbox.mounts.some((mount) => mount.track)) {
+      await sandboxesService.call({ ...ctx }, "commit", {
+        id: sandbox.id,
+        message: `Scheduled run: ${run.workflow}`,
+      });
+    }
 
     await finishRun(workspaceId, { ...run, sandboxId: sandbox.id, sessionId: session.id }, {
       status: result.status === "failed" ? "failed" : "succeeded",
@@ -988,6 +1023,7 @@ async function treeChanges(
   record: SandboxRecord,
   mounts: SandboxMount[],
   call: SandboxCall,
+  timeoutMs?: number,
 ): Promise<Array<Record<string, unknown>>> {
   const changes: Array<Record<string, unknown>> = [];
   for (const mount of mounts) {
@@ -995,7 +1031,7 @@ async function treeChanges(
       changes.push({ mount: mount.path, source: null, scratch: true });
       continue;
     }
-    const live = await sandboxManifest(record, mount, call);
+    const live = await sandboxManifest(record, mount, call, timeoutMs);
     const diff = diffManifests(mount.base, live);
     changes.push({
       mount: mount.path,

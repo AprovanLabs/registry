@@ -115,6 +115,11 @@ async function heartbeatPresence(
 }
 
 export const sessionsService: CoreService = {
+  meta: {
+    label: "Sessions",
+    blurb: "Chat sessions as branches: staged diffs, presence, resolve",
+    icon: "git-branch",
+  },
   tools: [
     {
       name: "sessions.create",

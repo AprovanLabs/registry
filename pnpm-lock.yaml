@@ -194,6 +194,9 @@ importers:
       '@aprovan/patchwork-compiler':
         specifier: ^0.2.0
         version: 0.2.0
+      '@aprovan/sandbox-bashkit':
+        specifier: workspace:*
+        version: link:../../packages/sandbox-bashkit
       '@aws-sdk/client-cognito-identity-provider':
         specifier: ^3.1077.0
         version: 3.1085.0
@@ -242,6 +245,9 @@ importers:
       '@opentelemetry/semantic-conventions':
         specifier: ^1.28.0
         version: 1.43.0
+      '@utdk/agent':
+        specifier: workspace:*
+        version: link:../../packages/utdk/agent
       '@utdk/common':
         specifier: workspace:*
         version: link:../../packages/utdk/common
@@ -561,6 +567,25 @@ importers:
         specifier: 2.1.5
         version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
 
+  packages/sandbox-bashkit:
+    dependencies:
+      '@everruns/bashkit-wasm':
+        specifier: ^0.14.4
+        version: 0.14.4
+      '@utdk/sandbox':
+        specifier: workspace:*
+        version: link:../utdk/sandbox
+    devDependencies:
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.6.2
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: 2.1.5
+        version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
+
   packages/sandbox-host:
     dependencies:
       '@utdk/sandbox':
@@ -596,6 +621,9 @@ importers:
       '@utdk/sql':
         specifier: workspace:*
         version: link:sql
+      '@utdk/vcs':
+        specifier: workspace:*
+        version: link:vcs
 
   packages/utdk-cli:
     dependencies:
@@ -610,6 +638,31 @@ importers:
         specifier: ^5.7.3
         version: 5.9.3
 
+  packages/utdk-e2e:
+    dependencies:
+      '@utdk/common':
+        specifier: workspace:*
+        version: link:../utdk/common
+      utdk:
+        specifier: workspace:*
+        version: link:../utdk
+    devDependencies:
+      '@aprovan/vitest-config':
+        specifier: ^0.1.0
+        version: 0.1.0(vitest@2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0))
+      '@types/node':
+        specifier: ^25.5.0
+        version: 25.6.2
+      tsx:
+        specifier: ^4.19.2
+        version: 4.21.0
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: 2.1.5
+        version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
+
   packages/utdk-isolate:
     dependencies:
       '@utdk/common':
@@ -622,6 +675,12 @@ importers:
       typescript:
         specifier: ^5.7.3
         version: 5.9.3
+      vitest:
+        specifier: 2.1.5
+        version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
+
+  packages/utdk/agent:
+    devDependencies:
       vitest:
         specifier: 2.1.5
         version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
@@ -771,6 +830,8 @@ importers:
   packages/utdk/telegram: {}
 
   packages/utdk/twilio: {}
+
+  packages/utdk/vcs: {}
 
   packages/utdk/zendesk: {}
 
@@ -2276,6 +2337,9 @@ packages:
   '@eslint/plugin-kit@0.4.1':
     resolution: {integrity: sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
+
+  '@everruns/bashkit-wasm@0.14.4':
+    resolution: {integrity: sha512-lBb3Xm5BbTtL6LzNJHdTL7fuURsMBcO13dRczaFOuwQ4ePM1lDkD9Vqgq+G53h3EvZc8djE6T78FifDUi40cMA==}
 
   '@floating-ui/core@1.7.5':
     resolution: {integrity: sha512-1Ih4WTWyw0+lKyFMcBHGbb5U5FtuHJuujoyyr5zTaWS5EYMeT6Jb2AuDeftsCsEuchO+mM2ij5+q9crhydzLhQ==}
@@ -10197,6 +10261,8 @@ snapshots:
     dependencies:
       '@eslint/core': 0.17.0
       levn: 0.4.1
+
+  '@everruns/bashkit-wasm@0.14.4': {}
 
   '@floating-ui/core@1.7.5':
     dependencies:

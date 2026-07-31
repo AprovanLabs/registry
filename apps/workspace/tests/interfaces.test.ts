@@ -135,3 +135,168 @@ describe("per-workflow interface binding overrides", () => {
     expect(got.bindings).toEqual({ llm: "synthetic.new" });
   });
 });
+
+describe("named interface instances", () => {
+  it("creates a second namespace alongside the default binding", async () => {
+    await manage("interfaces/bind", { interface: "llm", provider: "openai" });
+    const bound = await data<{ namespace: string }>(
+      await manage("interfaces/bind", {
+        interface: "llm",
+        as: "fast",
+        provider: "anthropic",
+        options: { model: "claude-haiku-4-5-20251001" },
+      }),
+    );
+    expect(bound.namespace).toBe("llm:fast");
+
+    const fast = await resolveInterfaceForWorkspace("local", "llm:fast");
+    expect(fast.compat.provider).toBe("anthropic");
+    expect(fast.options["model"]).toBe("claude-haiku-4-5-20251001");
+    expect(fast.instance).toBe("llm:fast");
+
+    // The default instance is untouched by the named one.
+    const base = await resolveInterfaceForWorkspace("local", "llm");
+    expect(base.compat.provider).toBe("openai");
+    expect(base.instance).toBe("llm");
+  });
+
+  it("lists instances as callable namespaces", async () => {
+    const listed = await data<{
+      instances: Array<{ namespace: string; interface: string; provider: string }>;
+    }>(await manage("interfaces/list", {}));
+    const fast = listed.instances.find((entry) => entry.namespace === "llm:fast");
+    expect(fast).toMatchObject({ interface: "llm", provider: "anthropic" });
+  });
+
+  it("surfaces an instance in tool discovery", async () => {
+    const res = await createApp().request("/tools?scope=configured");
+    const body = (await res.json()) as { tools: Array<{ provider: string; name: string }> };
+    expect(body.tools.some((tool) => tool.name === "llm:fast.createChatCompletion")).toBe(true);
+  });
+
+  it("refuses to resolve a named instance that was never bound", async () => {
+    await expect(resolveInterfaceForWorkspace("local", "llm:nope")).rejects.toThrow(
+      /No such interface instance/u,
+    );
+  });
+
+  it("rejects a credential that belongs to another provider", async () => {
+    const created = await createApp().request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        provider: "openai",
+        payload: { type: "api_key", value: "k" },
+      }),
+    });
+    const { id } = (await created.json()) as { id: string };
+    const res = await manage("interfaces/bind", {
+      interface: "llm",
+      as: "wrong",
+      provider: "anthropic",
+      credential: id,
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it("pins an instance to one credential of several on a provider", async () => {
+    const second = await createApp().request("/credentials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        provider: "openai",
+        label: "billing account",
+        payload: { type: "api_key", value: "second-key" },
+      }),
+    });
+    const { id } = (await second.json()) as { id: string };
+    await manage("interfaces/bind", {
+      interface: "llm",
+      as: "billing",
+      provider: "openai",
+      credential: id,
+    });
+    const resolved = await resolveInterfaceForWorkspace("local", "llm:billing");
+    expect(resolved.credentialId).toBe(id);
+  });
+
+  it("rejects an invalid instance name", async () => {
+    const res = await manage("interfaces/bind", {
+      interface: "llm",
+      as: "Not Valid",
+      provider: "openai",
+    });
+    expect(res.status).toBe(400);
+  });
+
+  it("unbinds a named instance without touching the default", async () => {
+    await manage("interfaces/unbind", { interface: "llm", as: "fast" });
+    await expect(resolveInterfaceForWorkspace("local", "llm:fast")).rejects.toThrow(
+      /No such interface instance/u,
+    );
+    expect((await resolveInterfaceForWorkspace("local", "llm")).compat.provider).toBe("openai");
+  });
+});
+
+describe("agents bind an llm interface instance", () => {
+  it("rejects an llm field that names another interface", async () => {
+    const res = await manage("agents/create", { name: "wrong-iface", llm: "sql:analytics" });
+    expect(res.status).toBe(400);
+  });
+
+  it("stores the instance on the profile", async () => {
+    await manage("interfaces/bind", { interface: "llm", as: "cheap", provider: "anthropic" });
+    await manage("agents/create", { name: "researcher", llm: "llm:cheap" });
+    const got = await data<{ agent: { llm?: string } }>(
+      await manage("agents/get", { name: "researcher" }),
+    );
+    expect(got.agent.llm).toBe("llm:cheap");
+  });
+
+  it("redirects the run's plain llm.* calls to the agent's instance", async () => {
+    const { dispatchInterface } = await import("../src/workflows/invoke.js");
+    // Proving the redirect without a network call: point the redirection at
+    // an instance that was never bound. A plain `llm` call resolving through
+    // it can only fail this way if ctx.interfaceInstances was consulted —
+    // the workspace default `llm` is bound and would have dispatched.
+    await expect(
+      dispatchInterface(
+        { workspaceId: "local", userId: "local", interfaceInstances: { llm: "llm:ghost" } },
+        "llm",
+        "listModels",
+        {},
+      ),
+    ).rejects.toThrow(/No such interface instance: llm:ghost/u);
+  });
+
+  it("leaves an explicitly named instance alone", async () => {
+    const { dispatchInterface } = await import("../src/workflows/invoke.js");
+    // A script that said `llm:cheap` meant it, redirection or not.
+    await expect(
+      dispatchInterface(
+        { workspaceId: "local", userId: "local", interfaceInstances: { llm: "llm:ghost" } },
+        "llm:missing",
+        "listModels",
+        {},
+      ),
+    ).rejects.toThrow(/No such interface instance: llm:missing/u);
+  });
+});
+
+describe("chat routes accept an llm instance", () => {
+  it("lists bound instances alongside providers", async () => {
+    const res = await createApp().request("/llm/providers");
+    const body = (await res.json()) as {
+      instances: Array<{ id: string; provider: string }>;
+    };
+    // llm:cheap was bound to anthropic above.
+    expect(body.instances.some((entry) => entry.id === "llm:cheap")).toBe(true);
+  });
+
+  it("reports an unbound instance rather than treating it as a provider", async () => {
+    const res = await createApp().request("/llm/llm:ghost/models");
+    expect(res.status).toBe(404);
+    const body = (await res.json()) as { error: string };
+    expect(body.error).toMatch(/No such interface instance/u);
+  });
+});

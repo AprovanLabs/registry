@@ -15,6 +15,7 @@
  */
 
 import type { CredentialPayload } from "./credentials.js";
+import { getRegistryProviders } from "./toolCache.js";
 
 // ---------------------------------------------------------------------------
 // Public interface
@@ -87,6 +88,28 @@ function getProviderCacheMaxSize(): number {
 const providerCache = new Map<string, ProviderModule>();
 
 /**
+ * Refuse to reach the module loader with a namespace the catalogue does not
+ * contain. Without this, a core-service name that missed its in-process
+ * short-circuit (a stale build, a typo'd namespace) surfaces as the loader's
+ * own error — `Package subpath './sandboxes' is not defined by "exports"` —
+ * which names nothing the caller can act on.
+ *
+ * When the registry manifest is unresolvable (utdk not built, as in unit
+ * tests), the guard stands down rather than rejecting everything.
+ */
+let catalogueProviders: Set<string> | undefined;
+
+function assertCatalogueProvider(provider: string): void {
+  catalogueProviders ??= new Set(getRegistryProviders());
+  if (catalogueProviders.size === 0 || catalogueProviders.has(provider)) return;
+  throw new Error(
+    `Unknown tool namespace "${provider}": not a provider in the UTDK catalogue, ` +
+      `and not a core service or interface this gateway build recognizes. ` +
+      `If it is a newer core service, the gateway needs redeploying.`,
+  );
+}
+
+/**
  * Load a `@utdk/*` provider module by name, caching it in the LRU cache.
  * On a cache hit the cached module reference is reused (no dynamic import).
  * On a miss the module is imported, cached, and the oldest entry is evicted
@@ -107,6 +130,7 @@ export async function getProviderModule(
   // Two import forms, one cache. The template-literal form is what keeps the
   // 49-provider catalogue out of every consumer's type graph (see the utdk
   // build notes); a first-party module is imported by its own name.
+  if (!moduleSpecifier) assertCatalogueProvider(provider);
   const mod = (
     moduleSpecifier
       ? ((await import(/* @vite-ignore */ moduleSpecifier)) as ProviderModule)

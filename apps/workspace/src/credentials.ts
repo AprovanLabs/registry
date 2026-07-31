@@ -125,6 +125,20 @@ export interface ICredentialStore {
     workspaceId: string,
     provider: string,
   ): Promise<{ id: string; payload: CredentialPayload } | undefined>;
+  /**
+   * Resolve one specific credential, provider included.
+   *
+   * `resolveRecordForProvider` answers "a credential for GitHub"; this answers
+   * "*that* credential". The storage layer has always allowed several
+   * credentials per provider (Dynamo keys them `CRED#<provider>#<credId>`),
+   * but with provider-only resolution the second Postgres connection string a
+   * workspace saved was write-only — stored, listed, and never reachable. An
+   * interface instance binds a credential id, so this is how it dispatches.
+   */
+  resolveRecordById(
+    workspaceId: string,
+    credentialId: string,
+  ): Promise<{ id: string; provider: string; payload: CredentialPayload } | undefined>;
   /** Replace a credential's payload in place (OAuth token refresh). */
   updatePayload(workspaceId: string, id: string, payload: CredentialPayload): Promise<void>;
 }
@@ -296,6 +310,17 @@ export class CredentialStoreDynamodb implements ICredentialStore {
         await getCredentialCipher().decrypt(item["payload"] as string),
       ) as CredentialPayload,
     };
+  }
+
+  async resolveRecordById(
+    workspaceId: string,
+    credentialId: string,
+  ): Promise<{ id: string; provider: string; payload: CredentialPayload } | undefined> {
+    const provider = await this.resolveProviderViaPointer(workspaceId, credentialId);
+    if (provider === undefined) return undefined;
+    const payload = await this.getPayload(workspaceId, credentialId);
+    if (!payload) return undefined;
+    return { id: credentialId, provider, payload };
   }
 
   async updatePayload(workspaceId: string, id: string, payload: CredentialPayload): Promise<void> {
@@ -482,6 +507,21 @@ export class CredentialStoreSqlite implements ICredentialStore {
     return { id: row.id, payload: this.decrypt(row.payload) };
   }
 
+  async resolveRecordById(
+    workspaceId: string,
+    credentialId: string,
+  ): Promise<{ id: string; provider: string; payload: CredentialPayload } | undefined> {
+    const row = this.database
+      .prepare(
+        "SELECT id, provider, payload FROM credentials WHERE workspace_id = ? AND id = ?",
+      )
+      .get(workspaceId, credentialId) as
+      | { id?: string; provider?: string; payload?: string }
+      | undefined;
+    if (!row?.id || !row.provider || !row.payload) return undefined;
+    return { id: row.id, provider: row.provider, payload: this.decrypt(row.payload) };
+  }
+
   async updatePayload(
     workspaceId: string,
     id: string,
@@ -548,4 +588,103 @@ export function getCredentialStore(): ICredentialStore {
 /** Reset the singleton (used in tests). */
 export function resetCredentialStore(): void {
   _store = undefined;
+}
+
+/**
+ * The one credential-resolution entry point for the dispatch paths (tool
+ * proxy, workflow invoke, MCP, chat).
+ *
+ * With no `credentialId` this is the historical behaviour — the first
+ * credential the workspace holds for the provider. With one, it is that exact
+ * credential, and a mismatch is reported rather than silently falling back:
+ * an interface instance pointing at a credential that has since been deleted
+ * or re-provisioned must fail loudly, not quietly execute against a different
+ * account.
+ *
+ * A `profile` names a credential by its *label* — the human name the
+ * credentials page already shows ("work", "billing account") — which is what
+ * a script's `getClient({ profile })` carries (docs/interfaces.md). Labels
+ * are the workspace's vocabulary, not stable ids, so a miss or an ambiguity
+ * fails with the labels that actually exist rather than falling back to the
+ * first credential: routing "personal" to the work account is exactly the
+ * mistake the feature exists to prevent.
+ */
+export async function resolveCredentialRecord(
+  workspaceId: string,
+  provider: string,
+  credentialId?: string,
+  profile?: string,
+): Promise<{ id: string; payload: CredentialPayload } | undefined> {
+  const store = getCredentialStore();
+  if (credentialId && profile !== undefined) {
+    // No dispatch path sets both: interfaces turn a profile into an instance
+    // (whose binding carries the id) before reaching here, and provider
+    // dispatch never pins an id. Both arriving means a caller bug.
+    throw new CredentialResolutionError(
+      `Cannot resolve ${provider} by credential id and profile at once`,
+    );
+  }
+  if (profile !== undefined) {
+    return resolveRecordByProfile(workspaceId, provider, profile);
+  }
+  if (!credentialId) return store.resolveRecordForProvider(workspaceId, provider);
+  const record = await store.resolveRecordById(workspaceId, credentialId);
+  if (!record) {
+    throw new CredentialResolutionError(
+      `Credential ${credentialId} does not exist in this workspace`,
+    );
+  }
+  if (record.provider !== provider) {
+    throw new CredentialResolutionError(
+      `Credential ${credentialId} belongs to ${record.provider}, not ${provider}`,
+    );
+  }
+  return { id: record.id, payload: record.payload };
+}
+
+async function resolveRecordByProfile(
+  workspaceId: string,
+  provider: string,
+  profile: string,
+): Promise<{ id: string; payload: CredentialPayload }> {
+  const store = getCredentialStore();
+  const records = (await store.list(workspaceId)).filter(
+    (record) => record.provider === provider,
+  );
+  const matches = records.filter((record) => record.label === profile);
+  if (matches.length === 0) {
+    const labels = records
+      .map((record) => record.label)
+      .filter((label): label is string => typeof label === "string" && label.length > 0);
+    const available =
+      labels.length > 0
+        ? `Available profiles: ${labels.map((label) => `"${label}"`).join(", ")}`
+        : records.length === 0
+          ? `The workspace holds no ${provider} credentials`
+          : `None of the workspace's ${records.length} ${provider} credential(s) carries a label — set one on the credentials page to use it as a profile`;
+    throw new CredentialResolutionError(
+      `No ${provider} credential is labeled "${profile}". ${available}`,
+    );
+  }
+  if (matches.length > 1) {
+    throw new CredentialResolutionError(
+      `${matches.length} ${provider} credentials are labeled "${profile}" — a profile must name exactly one. ` +
+        `Relabel them on the credentials page so each label is unique.`,
+    );
+  }
+  const match = matches[0]!;
+  const record = await store.resolveRecordById(workspaceId, match.id);
+  if (!record) {
+    // Deleted between the listing and the read; the same loud failure a
+    // stale pinned credentialId gets.
+    throw new CredentialResolutionError(
+      `Credential ${match.id} (profile "${profile}") no longer exists in this workspace`,
+    );
+  }
+  return { id: record.id, payload: record.payload };
+}
+
+/** A pinned credential that cannot be honoured — always a configuration bug. */
+export class CredentialResolutionError extends Error {
+  readonly status = 400;
 }

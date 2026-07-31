@@ -47,6 +47,17 @@ export interface ServiceContext {
    */
   interfaceBindings?: Record<string, string>;
   /**
+   * Per-run interface *instance* redirection (interface id → instance
+   * namespace), set from an agent profile's `llm`. An agent bound to
+   * `llm:fast` means its runs' plain `llm.createChatCompletion` calls resolve
+   * through that instance — the agent picks a bound implementation, and the
+   * script it runs stays written against the generic namespace.
+   *
+   * Distinct from {@link interfaceBindings}, which names a *provider* and so
+   * bypasses instance options and credentials entirely.
+   */
+  interfaceInstances?: Record<string, string>;
+  /**
    * Trace correlation. Every cascade — `events.emit` → workflow, workflow →
    * workflow, app call → workflow — carries these forward, so a run record
    * links to the run (or app request) that caused it and `workflows.tree`
@@ -63,7 +74,28 @@ export interface ServiceContext {
   grants?: import("./grants.js").CapabilityGrants;
 }
 
+/**
+ * How a namespace presents itself to a human. Every core service declares its
+ * own, so a client never has to keep a parallel map of labels and blurbs —
+ * that map is what let five shipped namespaces (sessions, notifications,
+ * telemetry, agents, sandboxes) fall through the chat services menu's
+ * "is it native?" test and render as unconnectable third-party providers.
+ *
+ * `icon` is a slug, not an asset: which icon set draws it is the client's
+ * business, but *which concept* it names is the service's.
+ */
+export interface CoreServiceMeta {
+  /** Human label ("Key value"). */
+  label: string;
+  /** One line: what the namespace is for. */
+  blurb: string;
+  /** Icon slug the client maps to its own icon set. */
+  icon: string;
+}
+
 export interface CoreService {
+  /** Identity + one-line description for discovery and UI. */
+  meta: CoreServiceMeta;
   /** Tool entries advertised in discovery (`GET /tools`). */
   tools: Omit<ToolEntry, "provider">[];
   call(
@@ -159,4 +191,18 @@ export function coreToolEntries(): ToolEntry[] {
   return Object.entries(installed).flatMap(([provider, service]) =>
     service.tools.map((tool) => ({ ...tool, provider })),
   );
+}
+
+/**
+ * Each core namespace's identity, for the namespace catalog (`GET
+ * /tools/namespaces`). Separate from {@link coreToolEntries} because a client
+ * that only wants to *classify* namespaces shouldn't have to page through
+ * every operation's JSON schema to do it.
+ */
+export function coreServiceMeta(): Array<CoreServiceMeta & { id: CoreServiceName }> {
+  if (!installed) return [];
+  return Object.entries(installed).map(([id, service]) => ({
+    id: id as CoreServiceName,
+    ...service.meta,
+  }));
 }

@@ -14,13 +14,20 @@
  * - Logs request/response metadata (not bodies)
  */
 
+import { agentToolEntries as agentDiscoveryEntries } from "@utdk/agent";
 import { withSpan } from "@utdk/common/telemetry";
 import { llmToolEntries as llmDiscoveryEntries } from "@utdk/llm";
 import { Hono } from "hono";
 import { getAuditStore } from "../audit.js";
 import { mayInvokeTool } from "../authorize.js";
-import { getCredentialStore } from "../credentials.js";
-import { isInterface, listInterfaces, resolveInterfaceForWorkspace } from "../interfaces.js";
+import { getCredentialStore, resolveCredentialRecord } from "../credentials.js";
+import {
+  listInstances,
+  listInterfaces,
+  parseInterfaceNamespace,
+  readBindings,
+  resolveInterfaceForWorkspace,
+} from "../interfaces.js";
 import { getExecutor, getProviderModule, type IsolateResult, type ProviderModule } from "../isolate.js";
 import { isLlmProvider, resolveLlmProvider } from "../llm.js";
 import { getAuthMode, requireAuth } from "../middleware/auth.js";
@@ -30,6 +37,7 @@ import { ServiceError } from "../service-kernel.js";
 import { parseTelemetrySourceHeader, recordTelemetry } from "../telemetry/service.js";
 import {
   catalogToolEntries,
+  coreServiceMeta,
   coreToolEntries,
   getCoreService,
 } from "../services.js";
@@ -187,15 +195,146 @@ function toLlmToolEntries(
   return entries.map((entry) => ({
     provider,
     name: entry.name,
-    operation: entry.name.slice(entry.name.indexOf(".") + 1),
+    // Strip the namespace by length, not by the first dot: provider ids
+    // contain dots of their own (`synthetic.new.createChatCompletion` would
+    // otherwise yield the operation `new.createChatCompletion`).
+    operation: entry.name.startsWith(`${provider}.`)
+      ? entry.name.slice(provider.length + 1)
+      : entry.name.slice(entry.name.indexOf(".") + 1),
     description: entry.description,
     inputSchema: entry.inputSchema,
   }));
 }
 
-function interfaceToolEntries(interfaceId: string): ToolEntry[] {
-  if (interfaceId !== "llm") return [];
-  return toLlmToolEntries("llm", llmDiscoveryEntries("llm", { interfaceNamespace: true }));
+/** Re-label a contract package's own entries onto an interface namespace. */
+function toContractToolEntries(
+  namespace: string,
+  entries: Array<{ name: string; description: string; inputSchema: Record<string, unknown> }>,
+): ToolEntry[] {
+  return entries.map((entry) => ({
+    provider: namespace,
+    name: entry.name,
+    // Strip the namespace by length, not by the first dot: namespaces contain
+    // dots and colons of their own (`synthetic.new`, `agent:reviewer`).
+    operation: entry.name.startsWith(`${namespace}.`)
+      ? entry.name.slice(namespace.length + 1)
+      : entry.name.slice(entry.name.indexOf(".") + 1),
+    description: entry.description,
+    inputSchema: entry.inputSchema,
+  }));
+}
+
+/**
+ * Discovery entries for an interface namespace.
+ *
+ * `llm` and `agent` have hand-written binding-neutral entry sets: their
+ * contract packages know the whole surface, so they can describe themselves
+ * with no implementation resolvable. For `agent` that is not a convenience but
+ * a requirement — its default implementation is the gateway's own runner,
+ * which has no module to import and no credential to be connected by, so
+ * borrowing schemas from "whatever resolved" would leave the namespace
+ * permanently empty in a workspace that connected no vendor.
+ *
+ * Every other interface borrows the entries of whichever implementation the
+ * workspace resolves to and re-labels them onto the interface namespace —
+ * `postgres.query` becomes `sql.query`. Before this, `sql` and `sandbox`
+ * returned nothing, so two shipped interfaces were callable but invisible to
+ * chat's tool list, the services menu, and workflow script globals.
+ */
+async function interfaceToolEntries(
+  workspaceId: string,
+  namespace: string,
+): Promise<ToolEntry[]> {
+  const parsed = parseInterfaceNamespace(namespace);
+  if (!parsed) return [];
+  // Contract-driven interfaces below describe themselves without loading an
+  // implementation, which is exactly why they need this check: nothing else
+  // on their path would notice that whatever they resolve to cannot run. A
+  // tool the model can see is a tool the model will call.
+  if (!(await interfaceIsExecutable(workspaceId, namespace))) return [];
+  if (parsed.interfaceId === "llm") {
+    return toLlmToolEntries(
+      namespace,
+      llmDiscoveryEntries(namespace, { interfaceNamespace: true }),
+    );
+  }
+  if (parsed.interfaceId === "agent") {
+    // When the namespace resolves to the gateway's own runner, its declared
+    // capabilities trim the advertised surface (no submitToolResults — the
+    // in-process transport never yields tool calls, and no file ops). A
+    // vendor binding keeps the contract's binding-neutral full set.
+    let capabilities;
+    try {
+      const resolved = await resolveInterfaceForWorkspace(workspaceId, namespace);
+      if (resolved.compat.provider === "native") {
+        capabilities = (await import("../agents/runner.js")).NATIVE_AGENT_CAPABILITIES;
+      }
+    } catch {
+      // Unresolvable binding: keep the binding-neutral entries.
+    }
+    return toContractToolEntries(
+      namespace,
+      agentDiscoveryEntries(namespace, capabilities ? { capabilities } : {}),
+    );
+  }
+  try {
+    const resolved = await resolveInterfaceForWorkspace(workspaceId, namespace);
+    const mod = await getProviderModule(resolved.compat.module, resolved.compat.moduleSpecifier);
+    return deriveToolEntries(resolved.compat.provider, mod).map((entry) => ({
+      ...entry,
+      provider: namespace,
+      name: `${namespace}.${entry.operation}`,
+    }));
+  } catch {
+    // Unresolvable binding or module: the interface still dispatches (and
+    // reports its own error there); it just contributes no schemas here.
+    return [];
+  }
+}
+
+/**
+ * Whether this namespace resolves to something that can actually execute.
+ *
+ * Resolution deliberately succeeds for a declared-but-unbuilt entry — that is
+ * what a contract commitment means, and the short-circuit dispatch that skips
+ * the module depends on it. Discovery is the place that has to care, because
+ * advertising operations whose only outcome is a 501 puts them in the model's
+ * tool list, where they get called.
+ */
+async function interfaceIsExecutable(
+  workspaceId: string,
+  namespace: string,
+): Promise<boolean> {
+  try {
+    const resolved = await resolveInterfaceForWorkspace(workspaceId, namespace);
+    return !resolved.compat.unavailable;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Every interface namespace this workspace can call: each interface's default
+ * instance when some compatible provider is connected, plus every named
+ * instance the workspace has bound. `sql:analytics` is a namespace in exactly
+ * the way `sql` is — same discovery, same dispatch, its own credential.
+ */
+async function interfaceNamespaces(
+  workspaceId: string,
+  connected: Set<string>,
+): Promise<string[]> {
+  const namespaces = listInterfaces()
+    .filter((def) =>
+      // A credentialless implementation is always available, so its interface
+      // is always listed — `agent` must appear in a workspace that has
+      // connected nothing, because the gateway's own runner is already there.
+      def.compat.some((entry) => entry.credentialless || connected.has(entry.provider)),
+    )
+    .map((def) => def.id);
+  for (const instance of await listInstances(workspaceId)) {
+    if (!namespaces.includes(instance.instance)) namespaces.push(instance.instance);
+  }
+  return namespaces;
 }
 
 function llmToolEntries(providerId: string): ToolEntry[] {
@@ -230,9 +369,8 @@ async function discoverTools(workspaceId: string): Promise<ToolEntry[]> {
   // connected; calls resolve to the workspace's binding (interfaces.bind) or
   // the first connected implementation.
   const connected = new Set(providers);
-  for (const def of listInterfaces()) {
-    if (!def.compat.some((entry) => connected.has(entry.provider))) continue;
-    tools.push(...interfaceToolEntries(def.id));
+  for (const namespace of await interfaceNamespaces(workspaceId, connected)) {
+    tools.push(...(await interfaceToolEntries(workspaceId, namespace)));
   }
 
   for (const provider of providers) {
@@ -306,9 +444,8 @@ async function discoverConfiguredTools(workspaceId: string): Promise<ToolEntry[]
   const tools: ToolEntry[] = [...coreToolEntries()];
 
   const connected = new Set(providers);
-  for (const def of listInterfaces()) {
-    if (!def.compat.some((entry) => connected.has(entry.provider))) continue;
-    tools.push(...interfaceToolEntries(def.id));
+  for (const namespace of await interfaceNamespaces(workspaceId, connected)) {
+    tools.push(...(await interfaceToolEntries(workspaceId, namespace)));
   }
 
   for (const provider of providers) {
@@ -359,6 +496,95 @@ toolsRouter.get("/", async (c) => {
   return c.json({ tools, workspace_id: workspaceId });
 });
 
+// ---------------------------------------------------------------------------
+// GET /tools/namespaces — what *kind* each namespace is
+// ---------------------------------------------------------------------------
+//
+// `GET /tools` answers "which operations can I call"; it does not answer
+// "is `agents` a first-party service or someone's SaaS?". Clients were
+// deciding that with their own hardcoded name lists, which silently
+// misclassified every namespace shipped after the list was written. This is
+// the server's answer, and it costs no catalog I/O: core services and
+// interfaces are static, providers come from the credential list.
+
+export type NamespaceKind = "core" | "interface" | "provider" | "llm-alias";
+
+export interface NamespaceInfo {
+  id: string;
+  kind: NamespaceKind;
+  label: string;
+  description: string;
+  /** Icon slug for core services and interfaces; providers carry their own art. */
+  icon?: string;
+  /** Interfaces: the compatible implementations and which one is in force. */
+  compat?: Array<{ provider: string; label: string; connected: boolean }>;
+  binding?: { provider: string; options?: Record<string, unknown> } | null;
+  /** LLM aliases: the model used when a call names none. */
+  defaultModel?: string;
+}
+
+async function describeNamespaces(workspaceId: string): Promise<NamespaceInfo[]> {
+  const credentials = await getCredentialStore().list(workspaceId);
+  const connected = new Set(credentials.map((credential) => credential.provider));
+  const bindings = await readBindings(workspaceId);
+
+  const namespaces: NamespaceInfo[] = coreServiceMeta().map((service) => ({
+    id: service.id,
+    kind: "core",
+    label: service.label,
+    description: service.blurb,
+    icon: service.icon,
+  }));
+
+  // An interface is listed only when something can actually execute it —
+  // otherwise every workspace would advertise a `sql` namespace that 400s.
+  // Named instances are always listed: the workspace bound them on purpose.
+  for (const namespace of await interfaceNamespaces(workspaceId, connected)) {
+    const parsed = parseInterfaceNamespace(namespace);
+    const def = parsed && listInterfaces().find((entry) => entry.id === parsed.interfaceId);
+    if (!parsed || !def) continue;
+    namespaces.push({
+      id: namespace,
+      kind: "interface",
+      label: parsed.name ? `${def.label} · ${parsed.name}` : def.label,
+      description: def.description,
+      icon: "plug",
+      compat: def.compat.map((entry) => ({
+        provider: entry.provider,
+        label: entry.label,
+        // A credentialless implementation reads as connected because there is
+        // nothing to connect; showing the gateway's own agent runner as
+        // "not connected" next to the binding that resolves to it is the kind
+        // of contradiction a panel should never render.
+        connected: entry.credentialless === true || connected.has(entry.provider),
+      })),
+      binding: bindings[namespace] ?? null,
+    });
+  }
+
+  for (const provider of connected) {
+    const alias = resolveLlmProvider(provider);
+    namespaces.push(
+      alias
+        ? {
+            id: alias.id,
+            kind: "llm-alias",
+            label: alias.label,
+            description: `OpenAI-compatible chat completions via ${alias.label}`,
+            defaultModel: alias.defaultModel,
+          }
+        : { id: provider, kind: "provider", label: provider, description: "" },
+    );
+  }
+
+  return namespaces;
+}
+
+toolsRouter.get("/namespaces", async (c) => {
+  const workspaceId = c.get("principal").workspaceId;
+  return c.json({ namespaces: await describeNamespaces(workspaceId), workspace_id: workspaceId });
+});
+
 toolsRouter.get("/search", async (c) => {
   const query = (c.req.query("q") ?? "").trim().toLowerCase();
   const tools = await discoverTools(c.get("principal").workspaceId);
@@ -395,6 +621,13 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   // writer for service-call spans; the optional X-Telemetry-Source header
   // carries the client's attribution (widget path, session, trace).
   // Telemetry's own calls are not recorded — observing the observer is noise.
+  //
+  // EVERY exit from this handler must record one. Because the browser skips
+  // shipping its own service-call events (they would double-count against
+  // these), a path that returns without recording is invisible to
+  // `telemetry.query` — so an agent asked to debug a failing widget sees a
+  // gap where the failure was. The early validation and credential-resolution
+  // returns below used to be exactly that gap.
   const attribution = parseTelemetrySourceHeader(c.req.header("x-telemetry-source"));
   const recordDispatch = (status: number, durationMs: number, errorMessage?: string): void => {
     if (provider === "telemetry") return;
@@ -425,6 +658,7 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
     try {
       body = await c.req.json<ToolCallRequest>();
     } catch {
+      recordDispatch(400, 0, "Expected { args }");
       return c.json({ error: "Expected { args }" }, 400);
     }
     try {
@@ -455,9 +689,26 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   let interfaceTimeoutMs: number | undefined;
   let interfaceBaseUrl: string | undefined;
   let interfaceModuleSpecifier: string | undefined;
-  if (provider && operation && isInterface(provider)) {
+  let interfaceCredentialId: string | undefined;
+  // The agent interface's `native` entry is this process: dispatch
+  // short-circuits in-process below (after authz + body validation), the
+  // same way the workflow twin does in workflows/invoke.ts. No module, no
+  // credential, no isolate.
+  let nativeAgentInterface = false;
+  if (provider && operation && parseInterfaceNamespace(provider)) {
     try {
       const resolved = await resolveInterfaceForWorkspace(workspaceId, provider);
+      // An entry with no loadable module must not reach the isolate: the
+      // loader's own error names a package subpath, not the thing that is
+      // actually missing. See InterfaceCompat.unavailable.
+      if (resolved.compat.unavailable) {
+        throw new ServiceError(
+          `${resolved.instance} resolves to ${resolved.compat.provider}: ${resolved.compat.unavailable}`,
+          501,
+        );
+      }
+      nativeAgentInterface =
+        resolved.def.id === "agent" && resolved.compat.provider === "native";
       interfaceDefaults = resolved.def.defaultsFor.includes(operation)
         ? resolved.options
         : undefined;
@@ -466,9 +717,12 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
       interfaceTimeoutMs = resolved.def.timeoutMs;
       interfaceBaseUrl = resolved.baseUrl;
       interfaceModuleSpecifier = resolved.compat.moduleSpecifier;
+      interfaceCredentialId = resolved.credentialId;
     } catch (err) {
       const status = err instanceof ServiceError ? err.status : 500;
-      return c.json({ error: err instanceof Error ? err.message : String(err) }, status as 400);
+      const message = err instanceof Error ? err.message : String(err);
+      recordDispatch(status, 0, message);
+      return c.json({ error: message }, status as 400);
     }
   }
 
@@ -484,6 +738,7 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   }
 
   if (!provider || !operation) {
+    recordDispatch(400, 0, "Missing provider or operation");
     return c.json({ error: "Missing provider or operation" }, 400);
   }
 
@@ -494,14 +749,44 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
   try {
     body = await c.req.json<ToolCallRequest>();
   } catch {
+    recordDispatch(400, Date.now() - startTime, "Expected { args, credential? }");
     return c.json({ error: "Expected { args, credential? }" }, 400);
   }
   if (!body.args || typeof body.args !== "object" || Array.isArray(body.args)) {
+    recordDispatch(400, Date.now() - startTime, "args must be an object");
     return c.json({ error: "args must be an object" }, 400);
+  }
+  // In-process short-circuit for the native agent runtime — the HTTP twin of
+  // the one in workflows/invoke.ts, mirroring the core-service branch above:
+  // no credential resolution (the runner is credentialless) and no isolate.
+  if (nativeAgentInterface) {
+    try {
+      const nativeArgs = {
+        ...(interfaceDefaults ?? {}),
+        ...(body.args as Record<string, unknown>),
+      };
+      const { dispatchNativeAgentOp } = await import("../agents/runner.js");
+      const data = await dispatchNativeAgentOp(
+        { workspaceId, userId: callerId },
+        operation,
+        nativeArgs,
+      );
+      const durationMs = Date.now() - startTime;
+      getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status: 200, durationMs });
+      recordDispatch(200, durationMs);
+      return c.json({ data, meta: { requestId, durationMs } });
+    } catch (err) {
+      const status = err instanceof ServiceError ? err.status : 500;
+      const message = err instanceof Error ? err.message : String(err);
+      getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status });
+      recordDispatch(status, Date.now() - startTime, message);
+      return c.json({ error: message }, status as 400);
+    }
   }
   let credentials: CredentialPayload | undefined;
   if (body.credential) {
     if (process.env["GATEWAY_EPHEMERAL_CREDENTIALS"] === "0") {
+      recordDispatch(403, Date.now() - startTime, "Ephemeral credentials are disabled");
       return c.json({ error: "Ephemeral credentials are disabled" }, 403);
     }
     credentials =
@@ -514,7 +799,19 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
           };
   } else {
     const store = getCredentialStore();
-    const record = await store.resolveRecordForProvider(workspaceId, provider);
+    let record: { id: string; payload: CredentialPayload } | undefined;
+    try {
+      // `interfaceCredentialId` is set when the namespace was an interface
+      // instance pinned to one credential; otherwise this is the provider's
+      // first credential, as it has always been.
+      record = await resolveCredentialRecord(workspaceId, provider, interfaceCredentialId);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      logMetadata({ requestId, workspaceId, callerId, provider, operation, status: 400 });
+      getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status: 400 });
+      recordDispatch(400, Date.now() - startTime, message);
+      return c.json({ error: message }, 400);
+    }
     if (record) {
       // OAuth payloads resolve to live bearer tokens here (client-credentials
       // grant or refresh); the executor only ever sees injectable credentials.
@@ -530,6 +827,7 @@ toolsRouter.post("/:provider/:operation{.*}", rateLimitByUserId, async (c) => {
             : `OAuth token resolution failed for ${provider}`;
         logMetadata({ requestId, workspaceId, callerId, provider, operation, status: 502 });
         getAuditStore().append({ requestId, workspaceId, callerId, provider, operation, status: 502 });
+        recordDispatch(502, Date.now() - startTime, message);
         return c.json({ error: message }, 502);
       }
     }

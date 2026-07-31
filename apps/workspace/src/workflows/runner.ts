@@ -21,7 +21,7 @@
 import { readAgentProfile } from "../agents/service.js";
 import { getCredentialStore } from "../credentials.js";
 import { getFsStore } from "../fs-store.js";
-import { listInterfaces } from "../interfaces.js";
+import { listInstances, listInterfaces } from "../interfaces.js";
 import { CORE_SERVICE_NAMES, ServiceError, type ServiceContext } from "../service-kernel.js";
 import { recordTelemetry, type TelemetryEventInput } from "../telemetry/service.js";
 import { invokeTool } from "./invoke.js";
@@ -38,6 +38,25 @@ import {
 } from "./store.js";
 
 export const MAX_EVENT_DEPTH = 2;
+
+/**
+ * Identifiers the sandbox already gives a meaning, which a namespace global
+ * must never take over.
+ *
+ * `agent` is the live one: it has meant "the profile this run is attributed
+ * to" since agent attribution shipped, and the `agent` *interface* (the raw
+ * runtime driver) would otherwise shadow it with a proxy the moment the
+ * catalog gained that id — `agent.name` silently becoming a namespace path
+ * instead of the profile's name.
+ *
+ * Losing the global costs a script nothing it should have been using. The raw
+ * driver is not the surface here, for the same reason `sandboxes.exec` is the
+ * surface and `sandbox.exec` is not: spawning a sub-agent means `agents.*`,
+ * where the profile, the grants and the run record live. A script that really
+ * wants the bare driver can still reach a named instance (`agent:deep`),
+ * which cannot collide.
+ */
+const RESERVED_SCRIPT_GLOBALS = new Set(["agent", "input", "console"]);
 // Generous enough for a couple of LLM calls (chat-provider dispatch allows
 // 120s per call); the sync spin-loop guard below stays tight.
 const SCRIPT_TIMEOUT_MS = 180_000;
@@ -177,6 +196,10 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
     // Registration-level interface bindings pin e.g. `llm` to a specific
     // provider for this workflow's runs.
     interfaceBindings: registration.bindings,
+    // An agent profile bound to an llm instance redirects its runs' plain
+    // `llm.*` calls there, so the script stays written against the generic
+    // namespace while the agent chooses the implementation.
+    ...(agentProfile?.llm ? { interfaceInstances: { llm: agentProfile.llm } } : {}),
     // Anything this run causes (an emit that fires a workflow, a nested
     // workflows.run) inherits the trace and names THIS run as its parent.
     traceId,
@@ -196,7 +219,7 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
 
   const dispatchFor =
     (namespace: string) =>
-    async (path: string, args: unknown[]): Promise<unknown> => {
+    async (path: string, args: unknown[], profile?: string): Promise<unknown> => {
       const span: WorkflowSpan = {
         namespace,
         procedure: path,
@@ -214,7 +237,7 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
             : args.length === 0
               ? {}
               : { args };
-        const result = await invokeTool(ctx, namespace, path, argObject);
+        const result = await invokeTool(ctx, namespace, path, argObject, profile);
         span.ok = true;
         return result;
       } catch (err) {
@@ -234,6 +257,15 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
   // missing credential must not strip the namespace.
   const namespaces = new Set<string>(CORE_SERVICE_NAMES);
   for (const def of listInterfaces()) namespaces.add(def.id);
+  // Named interface instances (`sql:analytics`) are namespaces in their own
+  // right, so a script reaches a second database the same way it reaches the
+  // first — `import analytics from "sql:analytics"`.
+  try {
+    for (const instance of await listInstances(workspaceId)) namespaces.add(instance.instance);
+  } catch {
+    // A malformed bindings file must not take the whole run down; the
+    // default instances above still resolve.
+  }
   const registryProviders = await utdkProviderNames();
   for (const match of scriptFile.content.matchAll(/([A-Za-z_$][\w$]*)\s*\./gu)) {
     const identifier = match[1]!;
@@ -245,6 +277,7 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
   } catch {
     // Credential listing is best-effort; core namespaces still work.
   }
+  for (const reserved of RESERVED_SCRIPT_GLOBALS) namespaces.delete(reserved);
 
   try {
     run.result =
@@ -253,12 +286,13 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
         filename: registration.scriptPath,
         input: input ?? null,
         namespaces: [...namespaces],
-        dispatch: (namespace, path, args) => dispatchFor(namespace)(path, args),
+        dispatch: (namespace, path, args, profile) => dispatchFor(namespace)(path, args, profile),
         log: pushLog,
         timeoutMs: SCRIPT_TIMEOUT_MS,
         agent: agentProfile
           ? {
               name: agentProfile.name,
+              llm: agentProfile.llm ?? null,
               provider: agentProfile.provider ?? null,
               model: agentProfile.model ?? null,
               prompt: agentProfile.prompt ?? null,

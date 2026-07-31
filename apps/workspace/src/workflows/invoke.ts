@@ -9,8 +9,12 @@
 
 import { mayInvokeTool } from "../authorize.js";
 import { assertToolGranted } from "../grants.js";
-import { getCredentialStore, type CredentialPayload } from "../credentials.js";
-import { isInterface, resolveInterfaceForWorkspace } from "../interfaces.js";
+import {
+  getCredentialStore,
+  resolveCredentialRecord,
+  type CredentialPayload,
+} from "../credentials.js";
+import { parseInterfaceNamespace, resolveInterfaceForWorkspace } from "../interfaces.js";
 import { getExecutor } from "../isolate.js";
 import { isLlmProvider, resolveLlmProvider } from "../llm.js";
 import { getMembership } from "../memberships.js";
@@ -49,11 +53,28 @@ async function assertProviderAllowed(
   }
 }
 
+/**
+ * `profile` is the script-side `getClient({ profile })` pin
+ * (docs/interfaces.md). It means two things, by namespace kind, and the two
+ * vocabularies are deliberately unified rather than a third being invented:
+ *
+ *   - provider namespaces (`github`): a credential *label* — resolved to
+ *     that exact credential, with misses and ambiguity failing loudly
+ *     (see resolveCredentialRecord);
+ *   - interface namespaces (`llm`): an *instance* name — `getClient({
+ *     profile: "fast" })` dispatches through `llm:fast`, because instances
+ *     already are the interface world's profiles (their bindings carry the
+ *     credential pin AND the option overrides a bare label never could).
+ *
+ * Both fail at call time with a ServiceError naming what exists; neither can
+ * reach the module loader, whose errors name nothing the caller can act on.
+ */
 export async function invokeTool(
   ctx: ServiceContext,
   namespace: string,
   procedure: string,
   args: Record<string, unknown>,
+  profile?: string,
 ): Promise<unknown> {
   // Agent-attributed runs are bounded by their profile's tool grants —
   // checked before any dispatch branch so native, interface, and provider
@@ -61,15 +82,33 @@ export async function invokeTool(
   assertToolGranted(ctx.grants, namespace, procedure);
   const core = getCoreService(namespace);
   if (core) {
+    if (profile !== undefined) {
+      throw new ServiceError(
+        `${namespace} is a core service — it has no credential profiles to pin with getClient`,
+        400,
+      );
+    }
     return core.call(ctx, procedure, args);
   }
 
   // Generic interfaces (llm, sql, sandbox, …) resolve to their bound
   // implementation and dispatch as that concrete provider — same call,
   // swappable backend.
-  if (isInterface(namespace)) {
-    await assertProviderAllowed(ctx, namespace, procedure);
-    return dispatchInterface(ctx, namespace, procedure, args);
+  const parsed = parseInterfaceNamespace(namespace);
+  if (parsed) {
+    let target = namespace;
+    if (profile !== undefined) {
+      target = `${parsed.interfaceId}:${profile}`;
+      if (!parseInterfaceNamespace(target)) {
+        throw new ServiceError(
+          `"${profile}" is not a valid ${parsed.interfaceId} instance name — ` +
+            `interface profiles are instance names (lowercase letters, digits, hyphens)`,
+          400,
+        );
+      }
+    }
+    await assertProviderAllowed(ctx, target, procedure);
+    return dispatchInterface(ctx, target, procedure, args);
   }
 
   await assertProviderAllowed(ctx, namespace, procedure);
@@ -82,6 +121,7 @@ export async function invokeTool(
 
   return dispatchProvider(ctx, {
     credentialProvider: namespace,
+    ...(profile !== undefined ? { credentialProfile: profile } : {}),
     module: llmAlias?.module ?? namespace,
     baseUrl: llmAlias?.baseUrl,
     procedure,
@@ -106,21 +146,51 @@ export async function invokeTool(
  */
 export async function dispatchInterface(
   ctx: ServiceContext,
-  interfaceId: string,
+  namespace: string,
   procedure: string,
   args: Record<string, unknown>,
   overrideProvider?: string,
 ): Promise<unknown> {
+  const parsed = parseInterfaceNamespace(namespace);
+  const interfaceId = parsed?.interfaceId ?? namespace;
+  // An agent's instance redirection applies only to the *default* namespace:
+  // a script that explicitly said `llm:billing` meant `llm:billing`.
+  const instance =
+    parsed && parsed.name === undefined
+      ? (ctx.interfaceInstances?.[interfaceId] ?? namespace)
+      : namespace;
   const resolved = await resolveInterfaceForWorkspace(
     ctx.workspaceId,
-    interfaceId,
+    instance,
     overrideProvider ?? ctx.interfaceBindings?.[interfaceId],
   );
+  // A declared-but-unbuilt implementation must not reach the isolate: the
+  // loader's error names a package subpath, not the thing that is actually
+  // missing. Same guard, same text as the HTTP twin (routes/tools.ts) — a
+  // workflow script and a proxied widget call must fail identically.
+  if (resolved.compat.unavailable) {
+    throw new ServiceError(
+      `${resolved.instance} resolves to ${resolved.compat.provider}: ${resolved.compat.unavailable}`,
+      501,
+    );
+  }
   const withDefaults = resolved.def.defaultsFor.includes(procedure)
     ? { ...resolved.options, ...args }
     : args;
+  // The gateway's own agent runtime executes in this process, so dispatch
+  // short-circuits straight into the loop instead of importing a module —
+  // the `machine` sandbox short-circuit (sandboxes/service.ts), for the same
+  // reason: the implementation IS this process, and the compat entry's
+  // `module: "native"` exists only to complete the resolution tuple.
+  // Dynamic import because the runner dispatches its loop's LLM and tool
+  // calls back through this module.
+  if (resolved.def.id === "agent" && resolved.compat.provider === "native") {
+    const { dispatchNativeAgentOp } = await import("../agents/runner.js");
+    return dispatchNativeAgentOp(ctx, procedure, withDefaults);
+  }
   return dispatchProvider(ctx, {
     credentialProvider: resolved.compat.provider,
+    ...(resolved.credentialId ? { credentialId: resolved.credentialId } : {}),
     module: resolved.compat.module,
     ...(resolved.compat.moduleSpecifier
       ? { moduleSpecifier: resolved.compat.moduleSpecifier }
@@ -129,13 +199,17 @@ export async function dispatchInterface(
     procedure,
     args: withDefaults,
     timeout: resolved.def.timeoutMs,
-    label: `${interfaceId}→${resolved.compat.provider}`,
+    label: `${resolved.instance}→${resolved.compat.provider}`,
   });
 }
 
 interface ProviderDispatch {
   /** Credential-store key (the concrete provider id). */
   credentialProvider: string;
+  /** Pin to one specific credential (an interface instance's binding). */
+  credentialId?: string;
+  /** Pin by credential label (a script's `getClient({ profile })`). */
+  credentialProfile?: string;
   /** UTDK module executed in the isolate (also names the client factory). */
   module: string;
   /** Import specifier, when the module is not in the UTDK catalogue. */
@@ -153,9 +227,21 @@ async function resolveProviderCredentials(
   ctx: ServiceContext,
   provider: string,
   label: string,
+  credentialId?: string,
+  credentialProfile?: string,
 ): Promise<CredentialPayload | undefined> {
   const store = getCredentialStore();
-  const record = await store.resolveRecordForProvider(ctx.workspaceId, provider);
+  let record: { id: string; payload: CredentialPayload } | undefined;
+  try {
+    record = await resolveCredentialRecord(
+      ctx.workspaceId,
+      provider,
+      credentialId,
+      credentialProfile,
+    );
+  } catch (err) {
+    throw new ServiceError(err instanceof Error ? err.message : String(err), 400);
+  }
   if (!record) return undefined;
   try {
     return await resolveToInjectable(record.payload, {
@@ -180,6 +266,8 @@ async function dispatchProvider(
     ctx,
     dispatch.credentialProvider,
     dispatch.label,
+    dispatch.credentialId,
+    dispatch.credentialProfile,
   );
 
   const executor = await getExecutor();

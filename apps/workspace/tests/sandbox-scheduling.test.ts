@@ -256,6 +256,37 @@ describe("scheduling", () => {
     expect(second.run).toBeNull();
   });
 
+  /**
+   * A run whose sandbox mounts nothing tracked has nothing to bring back — a
+   * build that only produced logs. `commit` refuses that case on purpose, so
+   * the scheduler must not call it; reporting the run as failed would be a lie
+   * about the workflow, which is what the Runs view would then show.
+   */
+  it("does not fail a run that simply had nothing to commit", async () => {
+    const host = await registerHost("node-box", [NODE_IMAGE]);
+    await asAgent(host, "advert", { tools: ["node", "git"] });
+
+    const scheduled = await data<{ run: { id: string } }>(
+      await call("sandboxes/schedule", { image: NODE_IMAGE, workflow: "no-mounts" }),
+    );
+    await asAgent(host, "claim", { maxWaitMs: 60 });
+
+    // The workflow itself is unregistered here, so the run fails for *that* —
+    // what must not appear is the commit complaint.
+    for (let attempt = 0; attempt < 40; attempt++) {
+      const runs = await data<{ runs: Array<{ id: string; status: string; error?: string }> }>(
+        await call("sandboxes/runs", {}),
+      );
+      const run = runs.runs.find((candidate) => candidate.id === scheduled.run.id);
+      if (run && (run.status === "failed" || run.status === "succeeded")) {
+        expect(run.error ?? "").not.toMatch(/nothing to commit/u);
+        return;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+    throw new Error("run never reached a terminal state");
+  });
+
   it("refuses a schedule with no image, since nothing could be matched", async () => {
     const response = await call("sandboxes/schedule", { workflow: "build" });
     expect(response.status).toBe(400);

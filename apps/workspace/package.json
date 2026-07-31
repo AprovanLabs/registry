@@ -37,6 +37,7 @@
   "dependencies": {
     "@aprovan/node": "^0.1.1",
     "@aprovan/patchwork-compiler": "^0.2.0",
+    "@aprovan/sandbox-bashkit": "workspace:*",
     "@aws-sdk/client-cognito-identity-provider": "^3.1077.0",
     "@aws-sdk/client-dynamodb": "^3.1077.0",
     "@aws-sdk/client-kms": "^3.1077.0",
@@ -53,6 +54,7 @@
     "@opentelemetry/resources": "^1.30.0",
     "@opentelemetry/sdk-trace-node": "^1.30.0",
     "@opentelemetry/semantic-conventions": "^1.28.0",
+    "@utdk/agent": "workspace:*",
     "@utdk/common": "workspace:*",
     "@utdk/llm": "workspace:*",
     "@utdk/mcp-core": "workspace:*",

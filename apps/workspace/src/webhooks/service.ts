@@ -68,6 +68,11 @@ function summarize(registration: WebhookRegistration, workspaceId: string) {
 }
 
 export const webhooksService: CoreService = {
+  meta: {
+    label: "Webhooks",
+    blurb: "Inbound URLs, delivery stats and the workflows they trigger",
+    icon: "webhook",
+  },
   tools: [
     {
       name: "webhooks.register",

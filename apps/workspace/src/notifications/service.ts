@@ -168,6 +168,11 @@ async function writeRecord(
 }
 
 export const notificationsService: CoreService = {
+  meta: {
+    label: "Notifications",
+    blurb: "Workspace feed of decisions, warnings and activity",
+    icon: "bell",
+  },
   tools: [
     {
       name: "notifications.emit",
@@ -296,7 +301,11 @@ export const notificationsService: CoreService = {
           if (!includeSeen && record.seenBy?.[me]) continue;
           notifications.push(record);
         }
-        return { notifications };
+        // `me` comes back so a caller rendering the full feed
+        // (include_seen=true) can tell which `seenBy` entry is its own.
+        // Without it, "seen" is only expressible as "absent from the
+        // default listing", which a full-history view cannot use.
+        return { notifications, userId: me };
       }
 
       case "seen": {

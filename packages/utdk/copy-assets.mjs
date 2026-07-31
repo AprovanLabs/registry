@@ -7,18 +7,25 @@ const distDir = path.join(rootDir, "dist");
 const skippedRootFiles = new Set(["package.json", "tsconfig.json"]);
 
 /**
- * Mirrors build.mjs's SKIP_DIRS. Without it this walk copies `llm/package.json`
- * and `sql/package.json` into dist, creating `dist/llm` and `dist/sql`
- * directories that contain manifests and no code — enough to look like
- * providers to anything enumerating dist, and to fail when imported.
+ * Mirrors build.mjs's SKIP_DIRS / SKIP_TOP_DIRS. Without it this walk copies
+ * the nested workspace packages' manifests (`llm/package.json`,
+ * `sandbox/package.json`, …) into dist, creating directories that contain
+ * manifests and no code — enough to look like providers to anything
+ * enumerating dist, and to fail when imported. The contract names apply at
+ * the top level only, for build.mjs's reason: `github/vcs` is a provider
+ * suite directory, not the `@utdk/vcs` package.
  */
-const skippedDirs = new Set(["dist", "node_modules", "llm", "sql", "__tests__"]);
+const skippedDirs = new Set(["dist", "node_modules", "__tests__"]);
+const skippedTopDirs = new Set(["llm", "sql", "sandbox", "agent", "vcs"]);
 
 async function copyAssets(currentDir, relativeDir = '') {
   const entries = await readdir(currentDir, { withFileTypes: true });
 
   for (const entry of entries) {
     if (skippedDirs.has(entry.name)) {
+      continue;
+    }
+    if (relativeDir === '' && skippedTopDirs.has(entry.name)) {
       continue;
     }
 

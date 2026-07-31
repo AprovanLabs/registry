@@ -76,6 +76,9 @@
       "generatedAt": "2026-07-16T07:04:33.329Z",
       "bundlerVersion": "0.1.1"
     },
+    "github/vcs": {
+      "packageName": "utdk/github/vcs"
+    },
     "google": {
       "packageName": "@utdk/google"
     },

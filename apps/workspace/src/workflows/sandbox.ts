@@ -64,8 +64,12 @@ export interface SandboxRunOptions {
   input: unknown;
   /** Namespace globals to expose (github, keyvalue, …). */
   namespaces: string[];
-  /** Host dispatch for guest namespace calls. Receives raw positional args. */
-  dispatch: (namespace: string, path: string, args: unknown[]) => Promise<unknown>;
+  /**
+   * Host dispatch for guest namespace calls. Receives raw positional args;
+   * `profile` is present when the call came through a `getClient({ profile })`
+   * pinned proxy (see the prelude below).
+   */
+  dispatch: (namespace: string, path: string, args: unknown[], profile?: string) => Promise<unknown>;
   /** Captured console output. Parts arrive pre-stringified. */
   log: (level: "log" | "info" | "warn" | "error" | "debug", parts: unknown[]) => void;
   /** Wall-clock + interpreter budget for the whole run. */
@@ -186,15 +190,30 @@ const PRELUDE = String.raw`
   globalThis.input = boot.input;
   globalThis.agent = boot.agent ?? null;
 
-  const mkns = (ns, path) => new Proxy(function () {}, {
+  // getClient({ profile }) returns a sibling proxy over the same namespace
+  // whose every dispatch carries the pinned profile: a credential label on a
+  // provider namespace, an instance name on an interface one (the host side
+  // unifies the two — see workflows/invoke.ts). RESERVED NAME: "getClient"
+  // on a namespace ROOT is the factory, so a root-level operation with that
+  // name is unreachable; nested segments (ns.x.getClient) are untouched. No
+  // catalogue provider has a root-level getClient operation, and the SDK
+  // call convention (client factories) is why the name is safe to claim.
+  const mkns = (ns, path, profile) => new Proxy(function () {}, {
     get(_t, prop) {
       if (typeof prop !== "string" || prop === "then") return undefined;
-      return mkns(ns, path ? path + "." + prop : prop);
+      if (prop === "getClient" && path === "") {
+        // Async for symmetry with real client factories, so scripts write
+        // "const gh = await github.getClient({ profile: 'work' })".
+        return (options) => Promise.resolve(
+          mkns(ns, "", options && typeof options.profile === "string" ? options.profile : undefined),
+        );
+      }
+      return mkns(ns, path ? path + "." + prop : prop, profile);
     },
     apply(_t, _thisArg, args) {
       let envelope;
       try {
-        envelope = JSON.parse(dispatch(ns, path || "default", JSON.stringify(args)));
+        envelope = JSON.parse(dispatch(ns, path || "default", JSON.stringify(args), profile));
       } catch (err) {
         return Promise.reject(err instanceof Error ? err : new Error(String(err)));
       }
@@ -331,11 +350,15 @@ export async function runScriptInSandbox(options: SandboxRunOptions): Promise<un
     context = runtime.newContext();
     const ctx = context;
 
-    const dispatchFn = ctx.newAsyncifiedFunction("__dispatch", async (nsH, pathH, argsH) => {
+    const dispatchFn = ctx.newAsyncifiedFunction("__dispatch", async (nsH, pathH, argsH, profileH) => {
       // Never throw into the guest from here — an envelope keeps the
       // asyncify resume path simple and error semantics in guest-land.
       const namespace = ctx.getString(nsH);
       const path = ctx.getString(pathH);
+      // The 4th argument is the getClient profile pin; unpinned proxies pass
+      // `undefined`, which must not be read as the string "undefined".
+      const profile =
+        profileH && ctx.typeof(profileH) === "string" ? ctx.getString(profileH) : undefined;
       let envelope: string;
       try {
         const args = JSON.parse(ctx.getString(argsH)) as unknown[];
@@ -346,7 +369,7 @@ export async function runScriptInSandbox(options: SandboxRunOptions): Promise<un
         if (remaining <= 0) throw timeoutError();
         let timer: NodeJS.Timeout | undefined;
         const data = await Promise.race([
-          options.dispatch(namespace, path, args),
+          options.dispatch(namespace, path, args, profile),
           new Promise<never>((_, reject) => {
             timer = setTimeout(() => {
               timedOut = true;

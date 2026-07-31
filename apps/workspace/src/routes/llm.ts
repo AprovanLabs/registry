@@ -27,8 +27,13 @@
 import { Hono, type Context } from "hono";
 import { getAuditStore } from "../audit.js";
 import { expandPromptVars, resolveStoredPrompt } from "../promptStore.js";
-import { getCredentialStore } from "../credentials.js";
-import { readBindings, resolveInterfaceForWorkspace } from "../interfaces.js";
+import { getCredentialStore, resolveCredentialRecord } from "../credentials.js";
+import {
+  listInstances,
+  parseInterfaceNamespace,
+  readBindings,
+  resolveInterfaceForWorkspace,
+} from "../interfaces.js";
 import { getExecutor } from "../isolate.js";
 import { readLlmJob, writeLlmJob, type LlmJobRecord } from "../llm-jobs.js";
 import { requireAuth } from "../middleware/auth.js";
@@ -53,9 +58,10 @@ llmRouter.use("*", requireAuth);
 
 llmRouter.get("/providers", async (c) => {
   const workspaceId = c.get("principal").workspaceId;
-  const [credentials, bindings] = await Promise.all([
+  const [credentials, bindings, instances] = await Promise.all([
     getCredentialStore().list(workspaceId),
     readBindings(workspaceId),
+    listInstances(workspaceId),
   ]);
   const connected = new Set(credentials.map((credential) => credential.provider));
   const binding = bindings["llm"];
@@ -69,6 +75,29 @@ llmRouter.get("/providers", async (c) => {
       bound: binding?.provider === provider.id,
     })),
     binding: binding ?? null,
+    /**
+     * Bound `llm` instances, selectable in chat exactly like a provider —
+     * every route here accepts an instance namespace where it accepts an
+     * alias, so "GPT-5.1" and "llm:fast" are the same kind of choice. The
+     * picker no longer has to model the workspace binding separately from
+     * what the user clicked.
+     */
+    instances: instances
+      .filter((entry) => entry.interfaceId === "llm")
+      .map((entry) => ({
+        id: entry.instance,
+        name: entry.name ?? null,
+        provider: entry.binding.provider,
+        label:
+          entry.name ??
+          listLlmProviders().find((provider) => provider.id === entry.binding.provider)?.label ??
+          entry.binding.provider,
+        model:
+          typeof entry.binding.options?.["model"] === "string"
+            ? (entry.binding.options["model"] as string)
+            : null,
+        connected: connected.has(entry.binding.provider),
+      })),
   });
 });
 
@@ -79,9 +108,15 @@ llmRouter.get("/providers", async (c) => {
 async function resolveCredentials(
   workspaceId: string,
   providerId: string,
+  credentialId?: string,
 ): Promise<{ credentials?: CredentialPayload; error?: string }> {
   const store = getCredentialStore();
-  const record = await store.resolveRecordForProvider(workspaceId, providerId);
+  let record: { id: string; payload: CredentialPayload } | undefined;
+  try {
+    record = await resolveCredentialRecord(workspaceId, providerId, credentialId);
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : String(err) };
+  }
   if (!record) return {};
   try {
     return {
@@ -109,6 +144,7 @@ async function resolveChatCredentials(
   workspaceId: string,
   providerId: string,
   body: { credential?: { type: string; token?: string; value?: string; name?: string } },
+  credentialId?: string,
 ): Promise<{ credentials?: CredentialPayload; error?: string }> {
   if (body.credential && process.env["GATEWAY_EPHEMERAL_CREDENTIALS"] !== "0") {
     return {
@@ -118,7 +154,63 @@ async function resolveChatCredentials(
           : { type: "api_key", value: body.credential.value ?? "", headerName: body.credential.name },
     };
   }
-  return resolveCredentials(workspaceId, providerId);
+  return resolveCredentials(workspaceId, providerId, credentialId);
+}
+
+/**
+ * A chat target: an LLM alias (`anthropic`) or an `llm` interface instance
+ * (`llm`, `llm:fast`).
+ *
+ * Chat used to have its own notion of "which provider am I talking to",
+ * independent of the workspace's `llm` binding — two answers to one question,
+ * and the composer's picker only ever knew the first. Resolving both here
+ * means picking `llm:fast` in chat and calling `llm:fast.createChatCompletion`
+ * from a workflow reach the same implementation, model default, and
+ * credential.
+ */
+interface ChatTarget {
+  provider: NonNullable<ReturnType<typeof resolveLlmProvider>>;
+  /** The instance's bound model, when it names one. */
+  model?: string;
+  /** The instance's pinned credential, when it has one. */
+  credentialId?: string;
+}
+
+async function resolveChatTarget(
+  workspaceId: string,
+  target: string,
+): Promise<ChatTarget | { error: string; status: number }> {
+  const parsed = parseInterfaceNamespace(target);
+  if (!parsed || parsed.interfaceId !== "llm") {
+    const provider = resolveLlmProvider(target);
+    return provider ? { provider } : { error: `Unknown LLM provider: ${target}`, status: 404 };
+  }
+  let resolved;
+  try {
+    resolved = await resolveInterfaceForWorkspace(workspaceId, target);
+  } catch (err) {
+    return {
+      error: err instanceof Error ? err.message : String(err),
+      status: err instanceof ServiceError ? err.status : 500,
+    };
+  }
+  const provider = resolveLlmProvider(resolved.compat.provider);
+  if (!provider) {
+    return { error: `Bound provider unavailable: ${resolved.compat.provider}`, status: 500 };
+  }
+  return {
+    provider,
+    ...(typeof resolved.options["model"] === "string"
+      ? { model: resolved.options["model"] }
+      : {}),
+    ...(resolved.credentialId ? { credentialId: resolved.credentialId } : {}),
+  };
+}
+
+function isTargetError(
+  target: ChatTarget | { error: string; status: number },
+): target is { error: string; status: number } {
+  return "error" in target;
 }
 
 // ---------------------------------------------------------------------------
@@ -126,12 +218,17 @@ async function resolveChatCredentials(
 // ---------------------------------------------------------------------------
 
 llmRouter.get("/:provider/models", rateLimitByUserId, async (c) => {
-  const providerId = c.req.param("provider") ?? "";
-  const provider = resolveLlmProvider(providerId);
-  if (!provider) return c.json({ error: `Unknown LLM provider: ${providerId}` }, 404);
-
   const workspaceId = c.get("principal").workspaceId;
-  const { credentials, error } = await resolveCredentials(workspaceId, providerId);
+  const target = await resolveChatTarget(workspaceId, c.req.param("provider") ?? "");
+  if (isTargetError(target)) return c.json({ error: target.error }, target.status as 404);
+  const { provider } = target;
+  const providerId = provider.id;
+
+  const { credentials, error } = await resolveCredentials(
+    workspaceId,
+    providerId,
+    target.credentialId,
+  );
   if (error) return c.json({ error }, 502);
   if (!credentials) {
     return c.json({ error: `No credential for ${providerId} in this workspace` }, 403);
@@ -157,7 +254,7 @@ llmRouter.get("/:provider/models", rateLimitByUserId, async (c) => {
         .filter((id): id is string => Boolean(id))
         .sort((left, right) => left.localeCompare(right))
     : [];
-  return c.json({ models, defaultModel: provider.defaultModel });
+  return c.json({ models, defaultModel: target.model ?? provider.defaultModel });
 });
 
 // ---------------------------------------------------------------------------
@@ -179,30 +276,23 @@ interface ChatRequestBody {
 // hit one URL; swapping the backing provider is an interfaces.bind call.
 llmRouter.post("/chat", rateLimitByUserId, async (c) => {
   const workspaceId = c.get("principal").workspaceId;
-  let resolved;
-  try {
-    resolved = await resolveInterfaceForWorkspace(workspaceId, "llm");
-  } catch (err) {
-    const status = err instanceof ServiceError ? err.status : 500;
-    return c.json({ error: err instanceof Error ? err.message : String(err) }, status as 400);
-  }
-  const provider = resolveLlmProvider(resolved.compat.provider);
-  if (!provider) return c.json({ error: `Bound provider unavailable: ${resolved.compat.provider}` }, 500);
-  const boundModel = typeof resolved.options["model"] === "string" ? resolved.options["model"] : undefined;
-  return handleChat(c, provider, boundModel);
+  const target = await resolveChatTarget(workspaceId, "llm");
+  if (isTargetError(target)) return c.json({ error: target.error }, target.status as 400);
+  return handleChat(c, target.provider, target.model, target.credentialId);
 });
 
 llmRouter.post("/:provider/chat", rateLimitByUserId, async (c) => {
-  const providerId = c.req.param("provider") ?? "";
-  const provider = resolveLlmProvider(providerId);
-  if (!provider) return c.json({ error: `Unknown LLM provider: ${providerId}` }, 404);
-  return handleChat(c, provider);
+  const workspaceId = c.get("principal").workspaceId;
+  const target = await resolveChatTarget(workspaceId, c.req.param("provider") ?? "");
+  if (isTargetError(target)) return c.json({ error: target.error }, target.status as 404);
+  return handleChat(c, target.provider, target.model, target.credentialId);
 });
 
 async function handleChat(
   c: Context,
   provider: NonNullable<ReturnType<typeof resolveLlmProvider>>,
   boundModel?: string,
+  credentialId?: string,
 ): Promise<Response> {
   const principal = c.get("principal");
   const workspaceId = principal.workspaceId;
@@ -231,7 +321,12 @@ async function handleChat(
     messages.unshift({ role: "system", content: system });
   }
 
-  const { credentials, error: credentialError } = await resolveChatCredentials(workspaceId, providerId, body);
+  const { credentials, error: credentialError } = await resolveChatCredentials(
+    workspaceId,
+    providerId,
+    body,
+    credentialId,
+  );
   if (credentialError) return c.json({ error: credentialError }, 502);
   if (!credentials) {
     return c.json({ error: `No credential for ${providerId} in this workspace` }, 403);
@@ -486,15 +581,17 @@ const JOB_KEEPALIVE_MS = 15_000;
 const JOB_PERSIST_THROTTLE_MS = 3_000;
 
 llmRouter.post("/:provider/completions", rateLimitByUserId, async (c) => {
-  const providerId = c.req.param("provider") ?? "";
-  const provider = resolveLlmProvider(providerId);
-  if (!provider) return c.json({ error: `Unknown LLM provider: ${providerId}` }, 404);
-  return handleCompletionJob(c, provider);
+  const workspaceId = c.get("principal").workspaceId;
+  const target = await resolveChatTarget(workspaceId, c.req.param("provider") ?? "");
+  if (isTargetError(target)) return c.json({ error: target.error }, target.status as 404);
+  return handleCompletionJob(c, target.provider, target.model, target.credentialId);
 });
 
 async function handleCompletionJob(
   c: Context,
   provider: NonNullable<ReturnType<typeof resolveLlmProvider>>,
+  boundModel?: string,
+  credentialId?: string,
 ): Promise<Response> {
   const principal = c.get("principal");
   const workspaceId = principal.workspaceId;
@@ -524,13 +621,18 @@ async function handleCompletionJob(
     messages.unshift({ role: "system", content: system });
   }
 
-  const { credentials, error: credentialError } = await resolveChatCredentials(workspaceId, providerId, body);
+  const { credentials, error: credentialError } = await resolveChatCredentials(
+    workspaceId,
+    providerId,
+    body,
+    credentialId,
+  );
   if (credentialError) return c.json({ error: credentialError }, 502);
   if (!credentials) {
     return c.json({ error: `No credential for ${providerId} in this workspace` }, 403);
   }
 
-  const model = body.model || provider.defaultModel;
+  const model = body.model || boundModel || provider.defaultModel;
   const requestId = crypto.randomUUID();
   const startTime = Date.now();
   const executor = await getExecutor();

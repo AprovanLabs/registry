@@ -46,11 +46,15 @@ Sidebar
 └── APPS             (the entry point)
     ├── <apps & their workflows>   (Personal, published — unchanged rows)
     └── Workspace                  (native surfaces group)
-        ├── Data        → keyvalue browser
-        ├── Agents      → profiles + grants + executions
-        ├── Webhooks    → inbound URLs, delivery stats, triggered workflows
-        ├── Sync        → source→transform→sink lineage + runs
-        └── Activity    → workspace telemetry (traces, filters)
+        ├── Data          → keyvalue browser
+        ├── Agents        → profiles + grants + executions
+        ├── Webhooks      → inbound URLs, delivery stats, triggered workflows
+        ├── Notifications → the full feed, including seen
+        ├── Sessions      → chat sessions as branches: staged diffs, merges
+        ├── Interfaces    → bindings + named instances (llm/sql/sandbox)
+        ├── Sync          → source→transform→sink lineage + runs
+        ├── Sandboxes     → execution environments and their mounts
+        └── Activity      → workspace telemetry (traces, filters)
 ```
 
 - Selecting a **native surface** opens a content tab (`native:<id>`) in the
@@ -114,6 +118,10 @@ Rules that keep it clean:
 | Webhooks | `webhooks.list/get/remove` | registration rows: inbound URL + token copy, HMAC state, delivery count/last event/last error, triggered workflows, remove |
 | Sync | `sync.list/run/delete` | lineage rows (source tool → transform script → sink), schedule, last-run status/count, run-now |
 | Activity | `telemetry.traces/query` | recent traces with status/source filters, expandable to their events (message + stack) |
+| Notifications | `notifications.list/seen` | the whole feed including seen (the bell drawer is the *interrupt*, this is the *record*), filtered by category and — app-scoped — by the server-stamped emitting app |
+| Sessions | `sessions.list/get/sync/close` | PR-style log: mode, status, base commit, message count, expandable staged diff, and the actions that settle a session. `delete` is deliberately absent from the list view |
+| Interfaces | `interfaces.list/bind/unbind` | one card per interface with what it resolves to, an inline provider + credential picker, and an "Add instance" flow for named instances (`sql:analytics`). See [interfaces.md](./interfaces.md) |
+| Sandboxes | `sandboxes.*` | execution environments, their VFS mounts and run history |
 
 `agents` and `telemetry` are native app namespaces (read-only for apps in
 agents' case: `get/list/runs` — a grant is something a member gives, not
@@ -122,8 +130,11 @@ them, which is what feeds the executions view.
 
 ## Extension path
 
-- A new native service ships its panel by adding a `NativeSurfaceDef` —
-  events and notifications history are obvious next entries.
+- A new native service ships its panel by adding a `NativeSurfaceDef` — the
+  panel's *identity* (label, blurb, icon slug) now also comes from the
+  service's own `meta` block server-side, published by
+  `GET /tools/namespaces`, so the chat services menu classifies it correctly
+  without a client-side edit. Events history is the obvious next entry.
 - Published apps could eventually declare *their own* inspector tabs
   (manifest-declared widget paths rendered in the app pane) — the registry
   shape already accommodates it.

@@ -86,6 +86,11 @@ export function summarizeWorkflow(registration: WorkflowRegistration, workspaceI
 }
 
 export const workflowsService: CoreService = {
+  meta: {
+    label: "Workflows",
+    blurb: "Register, run and trace workspace workflows",
+    icon: "workflow",
+  },
   tools: [
     {
       name: "workflows.register",

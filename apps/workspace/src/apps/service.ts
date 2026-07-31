@@ -370,6 +370,11 @@ async function resolveBinding(
 }
 
 export const appsService: CoreService = {
+  meta: {
+    label: "Apps",
+    blurb: "Publish and manage workspace apps",
+    icon: "layout-grid",
+  },
   tools: [
     {
       name: "apps.publish",

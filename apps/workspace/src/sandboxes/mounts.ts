@@ -188,10 +188,12 @@ export async function sandboxManifest(
   record: SandboxRecord,
   mount: SandboxMount,
   call: SandboxCall,
+  timeoutMs?: number,
 ): Promise<Record<string, string>> {
   const entries = (await call("listFiles", {
     id: record.externalId,
     path: mount.path,
+    ...(timeoutMs ? { timeoutMs } : {}),
   })) as DriverFileEntry[] | undefined;
   const manifest: Record<string, string> = {};
   for (const entry of entries ?? []) {

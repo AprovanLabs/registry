@@ -51,7 +51,24 @@ async function createTable(
 }
 
 async function main(): Promise<void> {
-  process.stdout.write(`Creating tables (endpoint=${endpoint ?? "AWS default"})…\n`);
+  // Without DYNAMO_ENDPOINT this points at real AWS with whatever ambient
+  // credentials the shell has, and silently creates the full table set in the
+  // developer's account — the tables are unprefixed ("Users", "Sessions"), so
+  // the mistake is invisible until something reads the wrong data. Local use is
+  // the overwhelmingly common case, so require an explicit opt-in for the
+  // remote one.
+  if (!endpoint && process.env["CREATE_TABLES_ALLOW_AWS"] !== "1") {
+    throw new Error(
+      "DYNAMO_ENDPOINT is not set, which would create tables in real AWS " +
+        `(region ${region}) using ambient credentials.\n` +
+        "For local development, start the compose stack and point at it:\n" +
+        "  docker compose up -d\n" +
+        "  DYNAMO_ENDPOINT=http://localhost:8000 npx tsx bin/create-tables.ts\n" +
+        "If you genuinely mean to provision the account, re-run with CREATE_TABLES_ALLOW_AWS=1.",
+    );
+  }
+
+  process.stdout.write(`Creating tables (endpoint=${endpoint ?? `AWS ${region}`})…\n`);
   for (const schema of ALL_TABLES) {
     await createTable(schema.tableName, schema.createInput, schema.ttlAttribute);
   }

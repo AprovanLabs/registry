@@ -32,6 +32,7 @@ const sha = (content: string): string => createHash("sha256").update(content).di
 const boxes = new Map<string, string>();
 let created = 0;
 let lastExec: { command: string; cwd?: string } | undefined;
+let lastListTimeout: number | undefined;
 
 function key(id: string, path: string): string {
   return `${id}:${path}`;
@@ -70,7 +71,16 @@ function installFakeHost(): void {
       deleteFile: async ({ id, path }: { id: string; path: string }) => ({
         deleted: boxes.delete(key(id, path)),
       }),
-      listFiles: async ({ id, path }: { id: string; path?: string }) => {
+      listFiles: async ({
+        id,
+        path,
+        timeoutMs,
+      }: {
+        id: string;
+        path?: string;
+        timeoutMs?: number;
+      }) => {
+        lastListTimeout = timeoutMs;
         const prefix = `${id}:${path ? `${path}/` : ""}`;
         return [...boxes.entries()]
           .filter(([entry]) => entry.startsWith(prefix))
@@ -105,6 +115,7 @@ afterAll(() => {
 beforeEach(() => {
   boxes.clear();
   lastExec = undefined;
+  lastListTimeout = undefined;
   installFakeHost();
 });
 
@@ -318,6 +329,25 @@ describe("sandboxes", () => {
 
     const response = await call("sandboxes/commit", { id: sandbox.id });
     expect(response.status).toBe(400);
+  });
+
+  /**
+   * The UI asks every sandbox what has changed when its panel opens, and the
+   * default host deadline is sized for a build. Without a caller-supplied
+   * deadline an asleep host holds that row for two minutes.
+   */
+  it("passes a caller deadline through to the driver's listing", async () => {
+    await bindFakeHost();
+    await putFile("apps/poll/index.ts", "x\n");
+    const sandbox = await data<SandboxSummary>(
+      await call("sandboxes/create", { mounts: [{ path: "app", source: "apps/poll" }] }),
+    );
+
+    await call("sandboxes/tree", { id: sandbox.id });
+    expect(lastListTimeout).toBeUndefined();
+
+    await call("sandboxes/tree", { id: sandbox.id, timeoutMs: 15_000 });
+    expect(lastListTimeout).toBe(15_000);
   });
 
   it("proxies exec through the bound driver", async () => {
