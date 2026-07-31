@@ -53,8 +53,12 @@ jobs:
       # container that never reads those types), but a published package owes
       # external consumers per-provider declarations. Its `prepublishOnly` runs
       # the full type build, so that cost lands here and nowhere else.
+      # Each package publishes independently: one rejected name (npm currently
+      # refuses the bare `utdk` name as too similar to utf8/util/uid/cmdk)
+      # must not block the packages after it. Failures still fail the job.
       - name: Publish stable versions (when new)
         run: |
+          failed=""
           for pkg in \
             @utdk/common @utdk/sql @utdk/llm @utdk/mcp-core utdk \
             @aprovan/sandbox-image-node \
@@ -67,9 +71,13 @@ jobs:
               echo "$pkg@$version already published — skipping"
             else
               echo "Publishing $pkg@$version"
-              pnpm --filter "$pkg" publish --no-git-checks --access public
+              pnpm --filter "$pkg" publish --no-git-checks --access public || failed="$failed $pkg"
             fi
           done
+          if [ -n "$failed" ]; then
+            echo "::error::Failed to publish:$failed"
+            exit 1
+          fi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
