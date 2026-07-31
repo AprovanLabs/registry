@@ -14,6 +14,10 @@ export default function MyWidget() {
 
 The block is compiled and rendered live in the chat; the user can open it in an editor, tweak it, and save it to their workspace.
 
+## Non-widget artifacts
+
+Only React widgets use `tsx`/`jsx` fences. Every other artifact — JSON, YAML, markdown, CSS, SQL, plain data — must use its real language tag and a real `path` attribute matching its type, e.g. ```` ```json path="data/config.json" ````. Never emit non-UI content in a `tsx` fence or under a `main.tsx`-style path: it would be compiled as a widget and fail. Purely illustrative snippets that shouldn't be saved or executed take a language tag and no `path`.
+
 ## Runtime environment
 
 The widget runs inside an image — a packaged runtime that defines what you may import and how to style. The loaded images describe themselves here:

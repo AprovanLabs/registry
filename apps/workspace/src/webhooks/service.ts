@@ -8,6 +8,7 @@
 
 import { ServiceError, type CoreService } from "../service-kernel.js";
 import { readRegistration } from "../workflows/store.js";
+import { listProviderWebhookIntel } from "./providerIntel.js";
 import {
   listWebhooks,
   readWebhook,
@@ -128,6 +129,13 @@ export const webhooksService: CoreService = {
         required: ["id"],
       },
     },
+    {
+      name: "webhooks.providers",
+      operation: "providers",
+      description:
+        "List providers with known webhook support (from the generated client catalogue): supported events, signature verification, and setup steps. Informational only — webhooks.register accepts any provider id, catalogued or not.",
+      inputSchema: { type: "object", properties: {} },
+    },
   ],
 
   async call(ctx, procedure, args) {
@@ -196,6 +204,9 @@ export const webhooksService: CoreService = {
         const id = webhookId(args["id"]);
         const removed = await removeWebhook(ctx.workspaceId, id);
         return { id, removed };
+      }
+      case "providers": {
+        return { providers: await listProviderWebhookIntel() };
       }
       default:
         throw new ServiceError(`Unknown webhooks procedure: ${procedure}`, 404);

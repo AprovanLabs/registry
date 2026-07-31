@@ -165,6 +165,115 @@ describe("exec", () => {
   });
 });
 
+describe("cloneRepo", () => {
+  /** A local fixture repository: one commit on the default branch. */
+  async function fixtureRepo(): Promise<string> {
+    const repo = join(outside, "fixture-repo");
+    mkdirSync(repo, { recursive: true });
+    writeFileSync(join(repo, "SKILL.md"), "Always be kind.\n");
+    mkdirSync(join(repo, "review"));
+    writeFileSync(join(repo, "review", "SKILL.md"), "Ask for tests.\n");
+    // Drive git through a scratch sandbox's exec so the test shares the
+    // executor's own spawn plumbing (and its PATH).
+    const gitBox = ((await executor.run("create", {})) as { id: string }).id;
+    const run = async (command: string) => {
+      const result = (await executor.run("exec", {
+        id: gitBox,
+        // Neutralize host-level signing config — a signed tag wants an editor.
+        command: `git -c commit.gpgsign=false -c tag.gpgsign=false -C '${repo}' ${command}`,
+      })) as { exitCode: number; stderr: string };
+      if (result.exitCode !== 0) throw new Error(`git ${command}: ${result.stderr}`);
+    };
+    await run("init -q");
+    await run("config user.email test@example.com");
+    await run("config user.name Test");
+    await run("add -A");
+    await run("commit -q -m fixture");
+    return repo;
+  }
+
+  it("clones into the mount and answers with a sha256 manifest", async () => {
+    const repo = await fixtureRepo();
+    const id = await newSandbox();
+    const result = (await executor.run("cloneRepo", {
+      id,
+      path: "skills",
+      repo: "acme/skills",
+      remote: repo,
+    })) as { path: string; files: Array<{ path: string; hash: string }> };
+
+    expect(result.path).toBe("skills");
+    expect(result.files.map((file) => file.path).sort()).toEqual([
+      "SKILL.md",
+      "review/SKILL.md",
+    ]);
+    expect(result.files.find((file) => file.path === "SKILL.md")?.hash).toBe(
+      createHash("sha256").update("Always be kind.\n").digest("hex"),
+    );
+
+    // A real checkout, not a snapshot: git works inside it.
+    const status = (await executor.run("exec", {
+      id,
+      command: "git status --porcelain && git rev-parse --abbrev-ref HEAD",
+      cwd: "skills",
+    })) as { exitCode: number; stdout: string };
+    expect(status.exitCode).toBe(0);
+
+    // And the agent can branch and commit — the PR flow's local half.
+    const branch = (await executor.run("exec", {
+      id,
+      command:
+        "git checkout -q -b agent/change && echo more >> SKILL.md" +
+        " && git -c user.email=a@b -c user.name=Agent -c commit.gpgsign=false commit -qam change" +
+        " && git log --oneline | wc -l",
+      cwd: "skills",
+    })) as { exitCode: number; stdout: string };
+    expect(branch.exitCode).toBe(0);
+    expect(Number(branch.stdout.trim())).toBe(2);
+  });
+
+  it("checks out the requested ref", async () => {
+    const repo = await fixtureRepo();
+    // Tag the current commit, then move the branch forward.
+    const gitBox = ((await executor.run("create", {})) as { id: string }).id;
+    await executor.run("exec", {
+      id: gitBox,
+      command: `git -c tag.gpgsign=false -C '${repo}' tag v1`,
+    });
+    await executor.run("exec", {
+      id: gitBox,
+      command: `cd '${repo}' && echo later > NEW.md && git add -A && git -c user.email=a@b -c user.name=T -c commit.gpgsign=false commit -qm later`,
+    });
+
+    const id = await newSandbox();
+    const result = (await executor.run("cloneRepo", {
+      id,
+      path: "pinned",
+      repo: "acme/skills",
+      ref: "v1",
+      remote: repo,
+    })) as { files: Array<{ path: string }> };
+    expect(result.files.map((file) => file.path)).not.toContain("NEW.md");
+  });
+
+  it("refuses a malformed repo spec and an escaping subPath", async () => {
+    const id = await newSandbox();
+    await expect(
+      executor.run("cloneRepo", { id, path: "x", repo: "not a repo" }),
+    ).rejects.toThrow(/owner\/name/u);
+    await expect(
+      executor.run("cloneRepo", { id, path: "x", repo: "a/b", subPath: "../up" }),
+    ).rejects.toThrow(/repo-relative/u);
+  });
+
+  it("keeps the mount inside the sandbox", async () => {
+    const id = await newSandbox();
+    await expect(
+      executor.run("cloneRepo", { id, path: "../outside", repo: "a/b" }),
+    ).rejects.toThrow(/escapes the sandbox/u);
+  });
+});
+
 describe("lifecycle", () => {
   it("creates, lists and destroys sandboxes under the root", async () => {
     const id = await newSandbox();

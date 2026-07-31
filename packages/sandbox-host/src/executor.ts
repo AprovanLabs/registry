@@ -36,6 +36,13 @@ const IGNORED = new Set([".git", "node_modules", ".venv", "__pycache__", ".DS_St
 /** Captured output cap, matching the contract. */
 const MAX_OUTPUT_BYTES = 1_000_000;
 
+/**
+ * POSIX single-quoting for the `shell: true` command strings this executor
+ * composes itself (cloneRepo). User-supplied `exec` commands are passed
+ * through untouched, as ever — this is only for arguments we interpolate.
+ */
+const shq = (value: string): string => `'${value.replaceAll("'", "'\\''")}'`;
+
 const MAX_FILE_BYTES = 8_000_000;
 
 export interface ExecutorOptions {
@@ -91,6 +98,8 @@ export class LocalExecutor {
         return this.deleteFile(args);
       case "listFiles":
         return this.listFiles(this.id(args), typeof args["path"] === "string" ? args["path"] : "");
+      case "cloneRepo":
+        return this.cloneRepo(args);
       default:
         throw new ExecutorError(`Unsupported operation: ${op}`);
     }
@@ -317,6 +326,99 @@ export class LocalExecutor {
         });
       });
     });
+  }
+
+  // -------------------------------------------------------------------------
+  // Git
+  // -------------------------------------------------------------------------
+
+  /**
+   * Materialize a repo mount as a real git checkout inside the sandbox.
+   *
+   * This is the machine host's half of the sandbox repo-mount feature: the
+   * gateway asks for `{ repo, ref?, subPath?, token?, remote? }` and this op
+   * clones the repository at the ref into the mount directory, then answers
+   * with a `{path → sha256}` manifest of the checkout (paths relative to the
+   * mount) so the workspace can diff later listings against it.
+   *
+   * The token is embedded in the clone remote (`x-access-token:<token>@`) on
+   * purpose: the checkout must stay pushable so an agent inside the sandbox
+   * can branch, commit, and push. That puts the token in `.git/config` of a
+   * directory under this machine's own root — the same trust the operator
+   * already extended by registering the machine against the workspace.
+   *
+   * `subPath` narrows to a sparse checkout (blobless clone + sparse-checkout
+   * set), keeping git semantics intact: content lands at its full repo path
+   * under the mount, and the working copy remains branch/commit/push-able.
+   */
+  private async cloneRepo(args: Record<string, unknown>): Promise<{
+    path: string;
+    files: Array<{ path: string; hash: string; size: number; updatedAt: string }>;
+  }> {
+    const id = this.id(args);
+    const path = this.path(args);
+    const repo = args["repo"];
+    if (typeof repo !== "string" || !/^[\w.-]+\/[\w.-]+$/u.test(repo)) {
+      throw new ExecutorError('cloneRepo requires { repo: "owner/name" }');
+    }
+    const ref = typeof args["ref"] === "string" && args["ref"] ? args["ref"] : undefined;
+    const subPath =
+      typeof args["subPath"] === "string" && args["subPath"] ? args["subPath"] : undefined;
+    const token = typeof args["token"] === "string" && args["token"] ? args["token"] : undefined;
+    if (subPath && (isAbsolute(subPath) || subPath.split("/").some((s) => s === ".."))) {
+      throw new ExecutorError(`cloneRepo subPath must be repo-relative: ${subPath}`);
+    }
+
+    // `remote` is a test/enterprise seam (a file:// fixture, a GHES root);
+    // the default is github.com because the repo spec is a GitHub reference.
+    let remote =
+      typeof args["remote"] === "string" && args["remote"]
+        ? args["remote"]
+        : `https://github.com/${repo}.git`;
+    if (token && remote.startsWith("https://")) {
+      remote = `https://x-access-token:${encodeURIComponent(token)}@${remote.slice("https://".length)}`;
+    }
+
+    const target = await this.contain(id, path);
+    await mkdir(target, { recursive: true });
+    const timeoutMs = typeof args["timeoutMs"] === "number" ? args["timeoutMs"] : 300_000;
+
+    const steps = subPath
+      ? [
+          `git clone --filter=blob:none --no-checkout ${shq(remote)} ${shq(target)}`,
+          `git -C ${shq(target)} sparse-checkout set ${shq(subPath)}`,
+          `git -C ${shq(target)} checkout ${shq(ref ?? "HEAD")}`,
+        ]
+      : [
+          `git clone ${shq(remote)} ${shq(target)}`,
+          ...(ref ? [`git -C ${shq(target)} checkout ${shq(ref)}`] : []),
+        ];
+
+    this.log(`cloneRepo ${id}: ${repo}${ref ? `#${ref}` : ""} → ${path}`);
+    for (const command of steps) {
+      const result = await this.spawn({ cwd: this.workdir(id), timeoutMs, command });
+      if (result.exitCode !== 0) {
+        // Never echo the command — the remote may carry the token.
+        const step = command.split(" ").slice(0, 2).join(" ");
+        throw new ExecutorError(
+          `${step} failed (${result.exitCode}): ${result.stderr.replaceAll(
+            token ?? "\u0000",
+            "***",
+          ).slice(-2_000)}`,
+        );
+      }
+    }
+
+    // The manifest the workspace diffs against, mount-relative. `.git` is in
+    // IGNORED, so the walk sees only the working tree.
+    const listed = await this.listFiles(id, path);
+    const prefix = `${path.replace(/\/+$/u, "")}/`;
+    return {
+      path,
+      files: listed
+        .filter((entry) => entry.path.startsWith(prefix))
+        .map((entry) => ({ ...entry, path: entry.path.slice(prefix.length) })),
+    };
   }
 
   // -------------------------------------------------------------------------

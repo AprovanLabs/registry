@@ -66,8 +66,11 @@ export interface SandboxRun {
   id: string;
   /** Image spec the run needs — the match key. */
   image: string;
-  /** Workflow executed inside the sandbox. */
-  workflow: string;
+  /**
+   * Workflow executed inside the sandbox. Absent for agent-only runs, where
+   * `agent` names the loop the gateway drives against the sandbox instead.
+   */
+  workflow?: string;
   input?: unknown;
   mounts: SandboxMount[];
   /** Agent profile the run executes as; its grants bound the whole run. */
@@ -81,6 +84,8 @@ export interface SandboxRun {
   sandboxId?: string;
   /** The workflow run this produced, for the trace. */
   workflowRunId?: string;
+  /** The native agent run this produced, for agent-only runs. */
+  agentRunId?: string;
   error?: string;
   createdBy: string;
   createdAt: string;
@@ -150,13 +155,19 @@ export async function updateQueuedRun(workspaceId: string, run: SandboxRun): Pro
 export async function finishRun(
   workspaceId: string,
   run: SandboxRun,
-  outcome: { status: "succeeded" | "failed" | "cancelled"; error?: string; workflowRunId?: string },
+  outcome: {
+    status: "succeeded" | "failed" | "cancelled";
+    error?: string;
+    workflowRunId?: string;
+    agentRunId?: string;
+  },
 ): Promise<SandboxRun> {
   const finished: SandboxRun = {
     ...run,
     status: outcome.status,
     ...(outcome.error ? { error: outcome.error } : {}),
     ...(outcome.workflowRunId ? { workflowRunId: outcome.workflowRunId } : {}),
+    ...(outcome.agentRunId ? { agentRunId: outcome.agentRunId } : {}),
     finishedAt: new Date().toISOString(),
   };
   await getFsStore().write(
@@ -269,7 +280,10 @@ export async function claimRun(
 
 export function requireRunnableWorkflow(name: unknown): string {
   if (typeof name !== "string" || !name.trim()) {
-    throw new ServiceError("schedule requires { workflow } — the work to run in the sandbox", 400);
+    throw new ServiceError(
+      "schedule requires { workflow } or { agent } — the work to run in the sandbox",
+      400,
+    );
   }
   return name;
 }

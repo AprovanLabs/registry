@@ -161,6 +161,25 @@ export async function createGithubVcsClient(
         );
         return clampDiff(await response.text());
       },
+      create: async (args): Promise<VcsPullRequest> => {
+        const title = requireString(args, "title", "pullRequests.create");
+        const head = requireString(args, "sourceBranch", "pullRequests.create");
+        const base = requireString(args, "targetBranch", "pullRequests.create");
+        const data = await json<Record<string, unknown>>(
+          `${repoPath(args, "pullRequests.create")}/pulls`,
+          {
+            method: "POST",
+            body: {
+              title,
+              head,
+              base,
+              ...(typeof args.body === "string" && args.body ? { body: args.body } : {}),
+              ...(args.draft === true ? { draft: true } : {}),
+            },
+          },
+        );
+        return toPullRequest(data);
+      },
       comment: async (args): Promise<VcsComment> => {
         const number = requireNumber(args, "number", "pullRequests.comment");
         const body = requireString(args, "body", "pullRequests.comment");

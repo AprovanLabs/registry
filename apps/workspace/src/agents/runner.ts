@@ -100,6 +100,8 @@ const RUNS_MAX_RETAINED = 100;
 /** A persisted run: the contract's shape plus the profile it ran as. */
 export interface StoredAgentRun extends AgentRun {
   agent?: string;
+  /** The sandbox this run's tool calls executed against, when it had one. */
+  sandboxId?: string;
 }
 
 function runPath(id: string): string {
@@ -312,6 +314,10 @@ async function runNativeAgent(
   const startMs = performance.now();
   const agentName =
     typeof args.metadata?.["agent"] === "string" ? args.metadata["agent"] : undefined;
+  // Set by `agents.run { sandbox }` so the UI can say "running on sandbox X
+  // with agent Y" from the run record alone.
+  const sandboxId =
+    typeof args.metadata?.["sandboxId"] === "string" ? args.metadata["sandboxId"] : undefined;
   const llmInstance = ctx.interfaceInstances?.["llm"] ?? "llm";
 
   const record: StoredAgentRun = {
@@ -319,6 +325,7 @@ async function runNativeAgent(
     status: "running",
     startedAt,
     ...(agentName ? { agent: agentName } : {}),
+    ...(sandboxId ? { sandboxId } : {}),
     ...(args.metadata ? { meta: { ...args.metadata } } : {}),
   };
   await saveRunRecord(ctx.workspaceId, record);

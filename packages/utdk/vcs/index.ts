@@ -167,6 +167,20 @@ export interface VcsClient {
     list(args: VcsRepoRef & { state?: "open" | "closed" | "all" }): Promise<VcsPullRequest[]>;
     /** Unified diff text, cut at {@link MAX_DIFF_BYTES} with the marker appended. */
     diff(args: VcsRepoRef & { number: number }): Promise<string>;
+    /**
+     * Open a pull request from an existing branch. The branch itself is
+     * pushed by whatever holds the checkout (an agent in a machine sandbox,
+     * a script with git); this operation only proposes the merge.
+     */
+    create(
+      args: VcsRepoRef & {
+        title: string;
+        sourceBranch: string;
+        targetBranch: string;
+        body?: string;
+        draft?: boolean;
+      },
+    ): Promise<VcsPullRequest>;
     comment(args: VcsRepoRef & { number: number; body: string }): Promise<VcsComment>;
     review(
       args: VcsRepoRef & { number: number; event: VcsReviewEvent; body?: string },
@@ -279,6 +293,21 @@ export function vcsToolEntries(
       description:
         `Read one pull request's unified diff as text (cut at ${MAX_DIFF_BYTES} bytes with an explicit marker).`,
       inputSchema: repoArgs({ number: PR_NUMBER }, ["number"]),
+    },
+    {
+      name: `${provider}.pullRequests.create`,
+      description:
+        "Open a pull request from an existing branch: { title, sourceBranch (head), targetBranch (base), body?, draft? }. Push the branch first; this only proposes the merge.",
+      inputSchema: repoArgs(
+        {
+          title: { type: "string", description: "Pull request title" },
+          sourceBranch: { type: "string", description: "Head — the branch proposing the change" },
+          targetBranch: { type: "string", description: "Base — the branch the change lands on" },
+          body: { type: "string", description: "Description (markdown)" },
+          draft: { type: "boolean", description: "Open as a draft" },
+        },
+        ["title", "sourceBranch", "targetBranch"],
+      ),
     },
     {
       name: `${provider}.pullRequests.comment`,

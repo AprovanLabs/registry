@@ -27,18 +27,47 @@ const HOSTS_PREFIX = `${SANDBOXES_PREFIX}/hosts`;
 export type SandboxRecordStatus = "running" | "stopped" | "destroyed";
 
 /**
+ * Where a mount's content comes from. `vfs` (the default — absent on records
+ * written before the field existed) is a workspace prefix; `repo` is an
+ * external Git repository named by a `github:owner/repo[#ref[/sub/path]]`
+ * source string, parsed into {@link RepoMountRef} at declaration time.
+ */
+export type SandboxMountKind = "vfs" | "repo";
+
+/** A parsed `github:` mount source. */
+export interface RepoMountRef {
+  /** Credential provider / hosting vendor. Only "github" exists today. */
+  provider: "github";
+  /** `owner/name`. */
+  repo: string;
+  /** Branch, tag, or commit; the repo's default branch when absent. */
+  ref?: string;
+  /** Subdirectory within the repo, when only a slice is wanted. */
+  path?: string;
+}
+
+/**
  * A directory inside the sandbox backed by a workspace prefix.
  *
  * `source: null` is a scratch mount: real inside the box, invisible to the
  * workspace, never committed. That is the "outside VCS" case in its purest
  * form and it costs nothing to support — a mount with no source is simply
  * skipped by every sync and commit pass.
+ *
+ * A `kind: "repo"` mount is backed by a Git repository instead of the
+ * workspace: materialized as a real `git clone` on machine hosts and as a
+ * tree-API snapshot everywhere else, and never committed back through the
+ * workspace (changes leave through git itself — branch, commit, push).
  */
 export interface SandboxMount {
   /** Path inside the sandbox, relative to the image workdir. */
   path: string;
-  /** Workspace VFS prefix, or null for untracked scratch space. */
+  /** Workspace VFS prefix, a `github:` repo spec, or null for scratch. */
   source: string | null;
+  /** Absent means `vfs` — records predate the field. */
+  kind?: SandboxMountKind;
+  /** Parsed repo reference, present exactly when `kind` is "repo". */
+  repo?: RepoMountRef;
   mode: "ro" | "rw";
   /** Whether changes come back to the workspace at all. */
   track: boolean;

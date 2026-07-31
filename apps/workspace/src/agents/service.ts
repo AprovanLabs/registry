@@ -21,7 +21,9 @@ import { getFsStore } from "../fs-store.js";
 import { parseGrants, type CapabilityGrants } from "../grants.js";
 import { parseInterfaceNamespace, resolveInterfaceForWorkspace } from "../interfaces.js";
 import { parseMounts } from "../sandboxes/mounts.js";
+import { requireSandbox, type RepoMountRef } from "../sandboxes/store.js";
 import { ServiceError, type CoreService, type ServiceContext } from "../service-kernel.js";
+import { listRepoFiles, readRepoFile } from "../vcs/mounts.js";
 import { visibleEntries } from "../vcs/store.js";
 import {
   parseLlmTier,
@@ -41,7 +43,12 @@ const NAME_RE = /^[a-z0-9][a-z0-9-]{0,63}$/u;
  */
 export interface AgentMount {
   path: string;
+  /** Workspace VFS prefix, a `github:` repo spec, or null for scratch. */
   source: string | null;
+  /** Absent means `vfs`. */
+  kind?: "vfs" | "repo";
+  /** Parsed repo reference, present exactly when `kind` is "repo". */
+  repo?: RepoMountRef;
   mode: "ro" | "rw";
 }
 
@@ -161,7 +168,12 @@ function parseAgentMounts(
 ): AgentMount[] | undefined {
   const parsed = parseMounts(value, grants);
   if (parsed.length === 0) return undefined;
-  return parsed.map(({ path, source, mode }) => ({ path, source, mode }));
+  return parsed.map(({ path, source, mode, kind, repo }) => ({
+    path,
+    source,
+    mode,
+    ...(kind === "repo" ? { kind, ...(repo ? { repo } : {}) } : {}),
+  }));
 }
 
 function profilePath(name: string): string {
@@ -217,24 +229,47 @@ async function renderMountLayer(
   const store = getFsStore();
   const sections: string[] = [];
   let budget = MOUNT_TOTAL_CAP_BYTES;
+
+  const push = (path: string, size: number, content: string | undefined): void => {
+    if (content === undefined) return;
+    if (size > MOUNT_FILE_CAP_BYTES || size > budget) {
+      sections.push(`### ${path}\n(omitted: ${size} bytes exceeds the inline mount cap)`);
+      return;
+    }
+    budget -= size;
+    sections.push(`### ${path}\n${content}`);
+  };
+
   for (const mount of mounts) {
     // A scratch mount (source: null) is working space; it has no workspace
     // content to render.
     if (!mount.source) continue;
+
+    // A repo mount renders through the same GitHub tree-API read path VFS
+    // git mounts use — this rung of the ladder is a read-only snapshot; a
+    // filesystem runtime (machine sandbox) gets the real clone instead.
+    if (mount.kind === "repo" && mount.repo) {
+      const listing = await listRepoFiles(workspaceId, mount.repo).catch(() => []);
+      for (const entry of listing) {
+        if (entry.size > MOUNT_FILE_CAP_BYTES) {
+          push(`${mount.path}/${entry.path}`, entry.size, "");
+          continue;
+        }
+        const file = await readRepoFile(workspaceId, mount.repo, entry.path).catch(
+          () => undefined,
+        );
+        if (file) push(`${mount.path}/${entry.path}`, file.size, file.content);
+      }
+      continue;
+    }
+
     const entries = await visibleEntries(workspaceId, mount.source).catch(() => []);
     for (const entry of entries) {
       const rel = entry.path === mount.source ? "" : entry.path.slice(mount.source.length + 1);
       if (!rel) continue;
       const file = await store.read(workspaceId, entry.path).catch(() => undefined);
       if (!file) continue;
-      if (file.size > MOUNT_FILE_CAP_BYTES || file.size > budget) {
-        sections.push(
-          `### ${mount.path}/${rel}\n(omitted: ${file.size} bytes exceeds the inline mount cap)`,
-        );
-        continue;
-      }
-      budget -= file.size;
-      sections.push(`### ${mount.path}/${rel}\n${file.content}`);
+      push(`${mount.path}/${rel}`, file.size, file.content);
     }
   }
   if (sections.length === 0) return undefined;
@@ -277,15 +312,54 @@ async function selectRunLlm(
 }
 
 /**
+ * The tool projection a sandbox-bound run gets on top of its profile: enough
+ * to work inside the box (shell, files, change inspection), nothing that
+ * routes changes out of it — commit and destroy stay with the scheduler.
+ */
+const SANDBOX_RUN_TOOLS = [
+  "sandboxes.exec",
+  "sandboxes.read",
+  "sandboxes.write",
+  "sandboxes.tree",
+];
+
+/** What a sandbox-bound run needs to know about its box. */
+export interface RunSandboxContext {
+  id: string;
+  workdir: string;
+  mounts: string[];
+}
+
+function renderSandboxLayer(sandbox: RunSandboxContext): string {
+  const mounts = sandbox.mounts.length > 0 ? sandbox.mounts.join(", ") : "(none)";
+  return [
+    "## Sandbox",
+    `You are working inside sandbox "${sandbox.id}" (workdir ${sandbox.workdir}; mounts: ${mounts}).`,
+    `Run shell commands with call_tool { namespace: "sandboxes", operation: "exec", args: { id: "${sandbox.id}", command, cwd? } } — cwd is relative to the workdir, so a mount path works directly.`,
+    `Read and write files with sandboxes.read / sandboxes.write ({ id: "${sandbox.id}", path, content? }), and inspect what you have changed with sandboxes.tree ({ id: "${sandbox.id}" }).`,
+    "Git-cloned mounts are real checkouts: branch, commit, and push with ordinary git commands through sandboxes.exec.",
+  ].join("\n");
+}
+
+/**
  * Render one run: profile + caller args → `@utdk/agent` run args plus the
  * ServiceContext the loop executes under. The context carries the security
  * side (grants, instance redirection, legacy provider pin); the args carry
  * only contract vocabulary.
+ *
+ * `sandbox` binds the run to an execution environment: the run's tool list
+ * (and its grant boundary) is widened with {@link SANDBOX_RUN_TOOLS}, an
+ * instruction layer tells the model which box it owns, and the run record
+ * carries the sandbox id. The widening is deliberate and bounded: whoever
+ * bound the sandbox held `sandboxes.*` reach himself, and the projection
+ * gives the run a place to *work*, not a way to land changes — commit stays
+ * with the caller.
  */
 async function renderAgentRun(
   ctx: ServiceContext,
   profile: AgentProfile,
   args: Record<string, unknown>,
+  sandbox?: RunSandboxContext,
 ): Promise<{ runArgs: Record<string, unknown>; runCtx: ServiceContext }> {
   // The task: a string or message list passes through; any other JSON
   // payload (the north-star's { diff }) is serialized into one user turn.
@@ -298,9 +372,10 @@ async function renderAgentRun(
         : "";
 
   // Instruction layers, composed in order into the contract's ONE string:
-  // the profile's prompt, then the rendered mounts.
+  // the profile's prompt, the sandbox binding, then the rendered mounts.
   const layers: string[] = [];
   if (profile.prompt) layers.push(profile.prompt);
+  if (sandbox) layers.push(renderSandboxLayer(sandbox));
   const mountLayer = await renderMountLayer(ctx.workspaceId, profile.mounts);
   if (mountLayer) layers.push(mountLayer);
   const instructions = layers.join("\n\n");
@@ -326,9 +401,14 @@ async function renderAgentRun(
   // The tool list is a *projection* of the grants — the explicit pattern
   // list, nothing more. No `grants.tools` means no tools: an absent axis is
   // permissive for a human-authored script, but a model choosing calls gets
-  // nothing it was not explicitly granted.
-  const tools = profile.grants?.tools?.length
-    ? profile.grants.tools.map((pattern) => ({ name: pattern }))
+  // nothing it was not explicitly granted. A sandbox-bound run additionally
+  // gets the sandbox projection, or it could not touch the box it was
+  // bound to.
+  const toolPatterns = sandbox
+    ? [...new Set([...(profile.grants?.tools ?? []), ...SANDBOX_RUN_TOOLS])]
+    : profile.grants?.tools;
+  const tools = toolPatterns?.length
+    ? toolPatterns.map((pattern) => ({ name: pattern }))
     : undefined;
 
   const runArgs: Record<string, unknown> = {
@@ -342,8 +422,15 @@ async function renderAgentRun(
     ...(typeof args["session"] === "string" && args["session"]
       ? { session: args["session"] }
       : {}),
-    metadata: { agent: profile.name },
+    metadata: { agent: profile.name, ...(sandbox ? { sandboxId: sandbox.id } : {}) },
   };
+
+  // The dispatch-side boundary must agree with the tool list above, or the
+  // model would be offered sandbox calls that invokeTool then denies.
+  const grants =
+    sandbox && profile.grants?.tools
+      ? { ...profile.grants, tools: [...new Set([...profile.grants.tools, ...SANDBOX_RUN_TOOLS])] }
+      : profile.grants;
 
   const llmInstance = await selectRunLlm(ctx.workspaceId, profile, effort);
   const runCtx: ServiceContext = {
@@ -351,7 +438,7 @@ async function renderAgentRun(
     // The profile is the run's boundary — it replaces the caller's grants
     // exactly as agent attribution does on a workflow run: a sub-agent runs
     // with its own profile's reach, not its spawner's.
-    ...(profile.grants ? { grants: profile.grants } : {}),
+    ...(grants ? { grants } : {}),
     ...(llmInstance
       ? { interfaceInstances: { ...ctx.interfaceInstances, llm: llmInstance } }
       : {}),
@@ -432,7 +519,7 @@ export const agentsService: CoreService = {
       name: "agents.run",
       operation: "run",
       description:
-        "Run an agent profile's own loop on the workspace's bound agent runtime and return the run record {id, status, output, turns, usage, stopReason}. input is the task (a string, [{role, content}] messages, or any JSON payload). The gateway renders the profile before dispatch — prompt + mounts become the instructions, grants.tools becomes the tool list the model may call (via one generic call_tool function), and the profile's llm instance (or the policy's pick among llmCandidates) does the thinking. Tool calls the model requests are bounded by the profile's grants. effort/limits override the profile's per run.",
+        "Run an agent profile's own loop on the workspace's bound agent runtime and return the run record {id, status, output, turns, usage, stopReason}. input is the task (a string, [{role, content}] messages, or any JSON payload). The gateway renders the profile before dispatch — prompt + mounts become the instructions, grants.tools becomes the tool list the model may call (via one generic call_tool function), and the profile's llm instance (or the policy's pick among llmCandidates) does the thinking. Tool calls the model requests are bounded by the profile's grants. effort/limits override the profile's per run. Pass sandbox (a sandbox id) to bind the run to that box: it gains sandboxes.exec/read/write/tree and works inside it.",
       inputSchema: {
         type: "object",
         properties: {
@@ -446,6 +533,11 @@ export const agentsService: CoreService = {
           limits: {
             type: "object",
             description: "{wallClockMs?, maxTurns?, maxToolCalls?, maxOutputBytes?}",
+          },
+          sandbox: {
+            type: "string",
+            description:
+              "Bind the run to an existing sandbox by id: the run gains sandboxes.exec/read/write/tree for its shell and file work, is told which box it owns, and its record carries the sandbox id",
           },
         },
         required: ["agent", "input"],
@@ -631,7 +723,18 @@ export const agentsService: CoreService = {
         const name = typeof args["agent"] === "string" ? args["agent"] : "";
         const profile = await readAgentProfile(ctx.workspaceId, name);
         if (!profile) throw new ServiceError(`Unknown agent: ${name}`, 404);
-        const { runArgs, runCtx } = await renderAgentRun(ctx, profile, args);
+        // A sandbox binding resolves to a live record now — a run handed a
+        // destroyed or unknown box should fail before a model call is spent.
+        let sandbox: RunSandboxContext | undefined;
+        if (typeof args["sandbox"] === "string" && args["sandbox"]) {
+          const record = await requireSandbox(ctx.workspaceId, args["sandbox"]);
+          sandbox = {
+            id: record.id,
+            workdir: record.workdir,
+            mounts: record.mounts.map((mount) => mount.path),
+          };
+        }
+        const { runArgs, runCtx } = await renderAgentRun(ctx, profile, args, sandbox);
         // One rendering step, one dispatch, one result shape: the interface
         // path short-circuits into the in-process runner for the `native`
         // entry (never touching the isolate — workflows/invoke.ts, the

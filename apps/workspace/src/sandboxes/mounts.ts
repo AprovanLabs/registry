@@ -33,7 +33,7 @@ import { ServiceError, type ServiceContext } from "../service-kernel.js";
 import { sessionDelete, sessionWrite, type ChatSessionRecord } from "../vcs/chat-sessions.js";
 import { mountDelete, mountFor, mountWrite, readMounts } from "../vcs/mounts.js";
 import { visibleEntries } from "../vcs/store.js";
-import type { SandboxMount, SandboxRecord } from "./store.js";
+import type { RepoMountRef, SandboxMount, SandboxRecord } from "./store.js";
 
 /** One dispatch into the bound sandbox driver. */
 export type SandboxCall = (op: string, args: Record<string, unknown>) => Promise<unknown>;
@@ -103,6 +103,41 @@ export function workspacePathFor(mount: SandboxMount, rel: string): string {
 // Declaring mounts
 // ---------------------------------------------------------------------------
 
+/** `github:owner/repo`, `github:owner/repo#ref`, `github:owner/repo#ref/sub/path`. */
+const REPO_SOURCE_RE = /^github:([\w.-]+\/[\w.-]+)(?:#([^/\s]+)(?:\/(.+))?)?$/u;
+
+/** Is this mount source a repo reference rather than a workspace prefix? */
+export function isRepoSource(source: string): boolean {
+  return source.startsWith("github:");
+}
+
+/**
+ * Parse a `github:` mount source. The segment right after `#` is the ref and
+ * everything after its first `/` is a subdirectory — which means a ref that
+ * itself contains slashes (`feature/x`) cannot ride the shorthand; such refs
+ * are rare enough that keeping the syntax unambiguous wins.
+ */
+export function parseRepoSource(source: string): RepoMountRef {
+  const match = REPO_SOURCE_RE.exec(source);
+  if (!match) {
+    throw new ServiceError(
+      `Invalid repo mount source: ${JSON.stringify(source)} — expected "github:owner/repo", ` +
+        '"github:owner/repo#ref", or "github:owner/repo#ref/sub/path"',
+      400,
+    );
+  }
+  const [, repo, ref, path] = match;
+  if (path && (path.includes("..") || path.startsWith("/"))) {
+    throw new ServiceError(`Invalid repo mount path: ${path}`, 400);
+  }
+  return {
+    provider: "github",
+    repo: repo!,
+    ...(ref ? { ref } : {}),
+    ...(path ? { path: path.replace(/\/+$/u, "") } : {}),
+  };
+}
+
 /**
  * Validate a caller's mount declarations.
  *
@@ -131,14 +166,36 @@ export function parseMounts(raw: unknown, grants: CapabilityGrants | undefined):
       );
     }
     const rawSource = entry["source"];
-    const source =
-      typeof rawSource === "string" && rawSource.trim()
-        ? rawSource.replace(/^\/+|\/+$/gu, "")
-        : null;
+    const trimmed = typeof rawSource === "string" ? rawSource.trim() : "";
+    const mode = entry["mode"] === "ro" ? "ro" : "rw";
+    if (mounts.some((existing) => existing.path === path)) {
+      throw new ServiceError(`Duplicate mount path: ${path}`, 400);
+    }
+
+    // A repo source is external content, not workspace reach: path grants
+    // bound the workspace VFS and say nothing about repositories, so the
+    // boundary here is the workspace's own GitHub credential (or a public
+    // repo). Repo mounts are never tracked — their changes leave through git
+    // (branch, commit, push), not through a workspace commit.
+    if (trimmed && isRepoSource(trimmed)) {
+      const repo = parseRepoSource(trimmed);
+      mounts.push({
+        path,
+        source: trimmed,
+        kind: "repo",
+        repo,
+        mode,
+        track: false,
+        base: {},
+        syncedAt: now,
+      });
+      continue;
+    }
+
+    const source = trimmed ? trimmed.replace(/^\/+|\/+$/gu, "") : null;
     if (source && (source.includes("..") || source.startsWith(".services"))) {
       throw new ServiceError(`Invalid mount source: ${source}`, 400);
     }
-    const mode = entry["mode"] === "ro" ? "ro" : "rw";
     if (source) {
       // Read access is required to materialize; write access is required to
       // ever commit back. Check both up front so a sandbox cannot be created
@@ -146,12 +203,10 @@ export function parseMounts(raw: unknown, grants: CapabilityGrants | undefined):
       assertPathGranted(grants, source, false);
       if (mode === "rw") assertPathGranted(grants, source, true);
     }
-    if (mounts.some((existing) => existing.path === path)) {
-      throw new ServiceError(`Duplicate mount path: ${path}`, 400);
-    }
     mounts.push({
       path,
       source,
+      kind: "vfs",
       mode,
       // A scratch mount is untracked by construction; a sourced read-only
       // mount is materialized but never committed back.
@@ -232,12 +287,19 @@ export function diffManifests(
  * it is written from the same listing that produced the bodies — not
  * re-derived afterwards, which would silently absorb a concurrent edit.
  */
+/** Is this a repo-backed mount? (Absent `kind` means a pre-field vfs mount.) */
+export const isRepoMount = (mount: SandboxMount): boolean => mount.kind === "repo";
+
 export async function materializeMount(
   ctx: ServiceContext,
   record: SandboxRecord,
   mount: SandboxMount,
   call: SandboxCall,
 ): Promise<{ files: number; bytes: number }> {
+  if (isRepoMount(mount)) {
+    // Routed in the service (repo-mounts.ts); reaching here is a wiring bug.
+    throw new ServiceError(`Mount ${mount.path} is repo-backed — not a workspace mount`, 500);
+  }
   if (!mount.source) {
     mount.base = {};
     mount.syncedAt = new Date().toISOString();

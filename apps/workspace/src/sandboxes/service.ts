@@ -24,23 +24,25 @@ import {
   resolveSandboxImage,
   type ResolvedSandboxImage,
 } from "@utdk/sandbox";
-import { readAgentProfile } from "../agents/service.js";
+import { agentsService, readAgentProfile } from "../agents/service.js";
 import { resolveInterfaceForWorkspace } from "../interfaces.js";
 import { ServiceError, type CoreService, type ServiceContext } from "../service-kernel.js";
 import { createSession, requireSession, type ChatSessionRecord } from "../vcs/chat-sessions.js";
 import { commitTree } from "../vcs/store.js";
 import { dispatchInterface } from "../workflows/invoke.js";
 import { runWorkflowByName } from "../workflows/runner.js";
+import { applyDefaultMounts, readDefaultMounts, writeDefaultMounts } from "./defaults.js";
 import {
   commitMount,
   diffManifests,
   diffTotal,
+  isRepoMount,
   materializeMount,
-  parseMounts,
   sandboxManifest,
   type MountCommitResult,
   type SandboxCall,
 } from "./mounts.js";
+import { materializeRepoMount } from "./repo-mounts.js";
 import {
   claimRun,
   enqueueRun,
@@ -309,9 +311,24 @@ async function provisionSandbox(
   };
 
   for (const mount of record.mounts) {
-    await materializeMount(ctx, record, mount, call);
+    await materializeAnyMount(ctx, record, mount, call);
   }
   return saveSandbox(ctx.workspaceId, record);
+}
+
+/** Route one mount to its materializer: repo mounts clone or snapshot. */
+async function materializeAnyMount(
+  ctx: ServiceContext,
+  record: SandboxRecord,
+  mount: SandboxMount,
+  call: SandboxCall,
+): Promise<{ files: number; bytes: number }> {
+  if (isRepoMount(mount)) {
+    return materializeRepoMount(ctx, record, mount, call, {
+      machine: record.provider === MACHINE_PROVIDER,
+    });
+  }
+  return materializeMount(ctx, record, mount, call);
 }
 
 /** Public shape of a sandbox: the record plus per-mount change counts. */
@@ -321,6 +338,7 @@ function summarize(record: SandboxRecord): Record<string, unknown> {
     mounts: record.mounts.map((mount) => ({
       path: mount.path,
       source: mount.source,
+      kind: mount.kind ?? "vfs",
       mode: mount.mode,
       track: mount.track,
       files: Object.keys(mount.base).length,
@@ -353,6 +371,9 @@ export const sandboxesService: CoreService = {
       description:
         "Start a sandbox — a filesystem plus a shell on the workspace's bound sandbox host — and mount workspace paths into it. " +
         'mounts: [{ path: "app", source: "apps/liift4", mode: "rw" }]; a mount with no source is scratch space that never comes back. ' +
+        'A source may also be a GitHub repo spec — "github:owner/repo", "github:owner/repo#ref", "github:owner/repo#ref/sub/path" — ' +
+        "materialized as a real git clone on machine hosts (branch/commit/push work inside) and as a read-only snapshot elsewhere; repo mounts never commit back through the workspace. " +
+        "Workspace default mounts (sandboxes.setDefaults) are added unless a mount claims the same path. " +
         "Pass session (a draft chat id) so commits land in that chat's changes instead of the live workspace.",
       inputSchema: {
         type: "object",
@@ -517,14 +538,64 @@ export const sandboxesService: CoreService = {
       operation: "schedule",
       description:
         "Queue work to run in a sandbox as soon as a machine that can run the image becomes available. " +
-        "The run executes a workflow with the sandbox in scope and commits into a draft chat, so unattended work stays reviewable. " +
+        "Pass workflow to execute a workflow script with the sandbox in scope, or just agent to drive that agent profile's loop against the sandbox (its shell and file tool calls execute inside it). " +
+        "Changes commit into a draft chat, so unattended work stays reviewable. Mount sources may be workspace prefixes or GitHub repo specs (github:owner/repo#ref); workspace default mounts apply unless overridden. " +
         "Runs are offered only to hosts registered for their image — a Node workload is never seen by a box without Node.",
       inputSchema: {
         type: "object",
         properties: {
           image: { type: "string", description: "Image the run needs; also the match key" },
-          workflow: { type: "string", description: "Workflow executed inside the sandbox" },
+          workflow: {
+            type: "string",
+            description: "Workflow executed inside the sandbox (omit for an agent-only run)",
+          },
           input: { type: "object" },
+          mounts: {
+            type: "array",
+            items: {
+              type: "object",
+              properties: {
+                path: { type: "string" },
+                source: {
+                  type: "string",
+                  description: 'Workspace prefix or "github:owner/repo[#ref[/sub/path]]"',
+                },
+                mode: { type: "string", enum: ["ro", "rw"] },
+              },
+              required: ["path"],
+            },
+          },
+          agent: {
+            type: "string",
+            description:
+              "Agent profile the run executes as; with no workflow, the run drives this agent's loop inside the sandbox",
+          },
+          session: { type: "string", description: "Draft chat to commit into (one is created if omitted)" },
+          requires: {
+            type: "object",
+            properties: { tools: { type: "array", items: { type: "string" } } },
+            description: "Binaries needed beyond what the image promises",
+          },
+        },
+        required: ["image"],
+      },
+    },
+    {
+      name: "sandboxes.getDefaults",
+      operation: "getDefaults",
+      description:
+        "Read the workspace's default sandbox mounts — declarations applied to every new sandbox and scheduled run unless the caller mounts the same path himself.",
+      inputSchema: { type: "object", properties: {} },
+    },
+    {
+      name: "sandboxes.setDefaults",
+      operation: "setDefaults",
+      description:
+        'Replace the workspace\'s default sandbox mounts: mounts [{ path, source?, mode? }], where source is a workspace prefix or a repo spec like "github:owner/repo#ref". ' +
+        "Pass an empty array to clear. Explicit mounts always win on path collision.",
+      inputSchema: {
+        type: "object",
+        properties: {
           mounts: {
             type: "array",
             items: {
@@ -537,15 +608,8 @@ export const sandboxesService: CoreService = {
               required: ["path"],
             },
           },
-          agent: { type: "string", description: "Agent profile the run executes as" },
-          session: { type: "string", description: "Draft chat to commit into (one is created if omitted)" },
-          requires: {
-            type: "object",
-            properties: { tools: { type: "array", items: { type: "string" } } },
-            description: "Binaries needed beyond what the image promises",
-          },
         },
-        required: ["image", "workflow"],
+        required: ["mounts"],
       },
     },
     {
@@ -616,7 +680,11 @@ export const sandboxesService: CoreService = {
           await provisionSandbox(ctx, {
             name: str(args, "name"),
             image: str(args, "image"),
-            mounts: parseMounts(args["mounts"], await resolveGrants(ctx, str(args, "agent"))),
+            mounts: await applyDefaultMounts(
+              ctx.workspaceId,
+              args["mounts"],
+              await resolveGrants(ctx, str(args, "agent")),
+            ),
             session: await resolveSession(ctx, str(args, "session")),
             agent: str(args, "agent"),
             host: str(args, "host"),
@@ -716,7 +784,7 @@ export const sandboxesService: CoreService = {
         const targets = mountsFor(record, str(args, "mount"));
         const results: Array<{ mount: string; files: number; bytes: number }> = [];
         for (const mount of targets) {
-          const { files, bytes } = await materializeMount(ctx, record, mount, call);
+          const { files, bytes } = await materializeAnyMount(ctx, record, mount, call);
           results.push({ mount: mount.path, files, bytes });
         }
         await saveSandbox(ctx.workspaceId, record);
@@ -816,15 +884,20 @@ export const sandboxesService: CoreService = {
             400,
           );
         }
-        const workflow = requireRunnableWorkflow(args["workflow"]);
         const agent = str(args, "agent");
+        // A run is a workflow script, an agent loop, or a workflow executed
+        // *as* an agent — but it must be one of them, or the host would
+        // claim a sandbox with nothing to do in it.
+        const workflow = agent ? str(args, "workflow") : requireRunnableWorkflow(args["workflow"]);
+        // resolveGrants also verifies the agent profile exists — a schedule
+        // naming a ghost agent fails now, not when a host claims it.
         const grants = await resolveGrants(ctx, agent);
         const requires = args["requires"] as { tools?: unknown } | undefined;
         const run = await enqueueRun(ctx.workspaceId, {
           image,
-          workflow,
+          ...(workflow ? { workflow } : {}),
           input: args["input"],
-          mounts: parseMounts(args["mounts"], grants),
+          mounts: await applyDefaultMounts(ctx.workspaceId, args["mounts"], grants),
           ...(agent ? { agent } : {}),
           ...(str(args, "session")
             ? { sessionId: (await resolveSession(ctx, str(args, "session")))!.id }
@@ -837,6 +910,16 @@ export const sandboxesService: CoreService = {
           createdBy: ctx.userId,
         });
         return { run };
+      }
+
+      // -------------------------------------------------------------- defaults
+      case "getDefaults":
+        return { mounts: await readDefaultMounts(ctx.workspaceId) };
+
+      case "setDefaults": {
+        // Validated against the *setter's* grants; per-caller applicability
+        // is re-checked at create/schedule time (defaults.ts).
+        return { mounts: await writeDefaultMounts(ctx.workspaceId, args["mounts"], ctx.grants) };
       }
 
       case "runs":
@@ -930,6 +1013,7 @@ export async function executeClaimedRun(
     ...(run.agent ? {} : {}),
   };
   let sandbox: SandboxRecord | undefined;
+  const label = run.workflow ?? `agent:${run.agent ?? "?"}`;
   try {
     // A scheduled run is unattended, so it gets a draft chat by default — its
     // changes are reviewable rather than applied to the live workspace by
@@ -937,12 +1021,12 @@ export async function executeClaimedRun(
     const session = run.sessionId
       ? await requireSession(workspaceId, run.sessionId)
       : await createSession(workspaceId, run.createdBy, {
-          title: `Scheduled: ${run.workflow}`,
+          title: `Scheduled: ${label}`,
           mode: "staged",
         });
 
     sandbox = await provisionSandbox(ctx, {
-      name: run.workflow,
+      name: label,
       image: run.image,
       mounts: run.mounts,
       session,
@@ -957,20 +1041,49 @@ export async function executeClaimedRun(
       sessionId: session.id,
     });
 
-    // The script reaches the sandbox the same way any caller does — through
-    // `sandboxes.*` with an id. No new global, no new runtime contract.
-    const result = await runWorkflowByName(
-      ctx,
-      run.workflow,
-      "manual",
-      {
-        ...(typeof run.input === "object" && run.input !== null ? run.input : { input: run.input }),
-        sandbox: { id: sandbox.id, workdir: sandbox.workdir, mounts: run.mounts.map((m) => m.path) },
-        session: session.id,
-      },
-      `sandbox run ${run.id}`,
-      run.agent,
-    );
+    let outcome: {
+      status: "succeeded" | "failed";
+      error?: string;
+      workflowRunId?: string;
+      agentRunId?: string;
+    };
+    if (run.workflow) {
+      // The script reaches the sandbox the same way any caller does — through
+      // `sandboxes.*` with an id. No new global, no new runtime contract.
+      const result = await runWorkflowByName(
+        ctx,
+        run.workflow,
+        "manual",
+        {
+          ...(typeof run.input === "object" && run.input !== null ? run.input : { input: run.input }),
+          sandbox: { id: sandbox.id, workdir: sandbox.workdir, mounts: run.mounts.map((m) => m.path) },
+          session: session.id,
+        },
+        `sandbox run ${run.id}`,
+        run.agent,
+      );
+      outcome = {
+        status: result.status === "failed" ? "failed" : "succeeded",
+        ...(result.error ? { error: String(result.error) } : {}),
+        workflowRunId: result.id,
+      };
+    } else {
+      // Agent-only run: the gateway's native loop runs exactly as it does
+      // for `agents.run`, granted the sandbox-bound tool projection
+      // (agents/service.ts renderAgentRun) so its shell/file work executes
+      // inside this sandbox over the existing relay. The run record carries
+      // both halves — sandboxId here, agent + sandboxId on the agent run.
+      const agentRun = (await agentsService.call(ctx, "run", {
+        agent: run.agent,
+        input: run.input ?? "",
+        sandbox: sandbox.id,
+      })) as { id?: string; status?: string; error?: { message?: string } };
+      outcome = {
+        status: agentRun.status === "succeeded" ? "succeeded" : "failed",
+        ...(agentRun.error?.message ? { error: agentRun.error.message } : {}),
+        ...(agentRun.id ? { agentRunId: agentRun.id } : {}),
+      };
+    }
 
     // A run with no tracked mount has nothing to bring back — a build that
     // only produced logs, say. `commit` refuses that case on purpose (an
@@ -980,15 +1093,11 @@ export async function executeClaimedRun(
     if (sandbox.mounts.some((mount) => mount.track)) {
       await sandboxesService.call({ ...ctx }, "commit", {
         id: sandbox.id,
-        message: `Scheduled run: ${run.workflow}`,
+        message: `Scheduled run: ${label}`,
       });
     }
 
-    await finishRun(workspaceId, { ...run, sandboxId: sandbox.id, sessionId: session.id }, {
-      status: result.status === "failed" ? "failed" : "succeeded",
-      ...(result.error ? { error: String(result.error) } : {}),
-      workflowRunId: result.id,
-    });
+    await finishRun(workspaceId, { ...run, sandboxId: sandbox.id, sessionId: session.id }, outcome);
   } catch (err) {
     await finishRun(workspaceId, run, {
       status: "failed",
@@ -1036,6 +1145,7 @@ async function treeChanges(
     changes.push({
       mount: mount.path,
       source: mount.source,
+      kind: mount.kind ?? "vfs",
       track: mount.track,
       total: diffTotal(diff),
       ...diff,

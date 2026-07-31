@@ -210,4 +210,30 @@ describe("provider webhooks", () => {
     });
     expect(gone.status).toBe(404);
   });
+
+  it("surfaces the UTDK webhook intel catalogue via providers", async () => {
+    const res = await manage("webhooks/providers", {});
+    expect(res.status).toBe(200);
+    const body = await data<{
+      providers: Array<{
+        provider: string;
+        supported: boolean;
+        summary: string;
+        events: Array<{ id: string; description?: string }>;
+        signature?: { header: string; scheme: string };
+        setupSteps: Array<{ title: string; detail: string }>;
+      }>;
+    }>(res);
+
+    // Providers without a bundler-generated webhooks.json are absent, not errored.
+    expect(body.providers.find((p) => p.provider === "asana")).toBeUndefined();
+
+    const github = body.providers.find((p) => p.provider === "github");
+    expect(github).toBeDefined();
+    expect(github?.supported).toBe(true);
+    expect(github?.signature).toEqual({ header: "X-Hub-Signature-256", scheme: "hmac-sha256" });
+    expect(github?.events.length).toBeGreaterThan(0);
+    expect(github?.events[0]).toHaveProperty("id");
+    expect(github?.setupSteps.length).toBeGreaterThan(0);
+  });
 });

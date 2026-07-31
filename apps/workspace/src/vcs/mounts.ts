@@ -157,7 +157,18 @@ const gitTreeCache = new Map<
   { entries: Array<{ path: string; sha: string; size: number }>; expiresAt: number }
 >();
 
-async function githubToken(workspaceId: string): Promise<string | undefined> {
+/** GitHub REST root — overridable so tests can stand in a local server. */
+export function githubApiBase(): string {
+  return (process.env["GITHUB_API_URL"] ?? "https://api.github.com").replace(/\/+$/u, "");
+}
+
+/**
+ * The workspace's stored GitHub token, when one is connected. Exported for
+ * the sandbox repo-mount path, which hands it to a machine host so `git
+ * clone` can reach private repos — the same credential this module's
+ * read-through already uses.
+ */
+export async function githubToken(workspaceId: string): Promise<string | undefined> {
   const record = await getCredentialStore()
     .resolveRecordForProvider(workspaceId, "github")
     .catch(() => undefined);
@@ -201,7 +212,7 @@ async function gitTree(
   if (cached && cached.expiresAt > Date.now()) return cached.entries;
   const response = await githubFetch(
     workspaceId,
-    `https://api.github.com/repos/${config.repo}/git/trees/${encodeURIComponent(ref)}?recursive=1`,
+    `${githubApiBase()}/repos/${config.repo}/git/trees/${encodeURIComponent(ref)}?recursive=1`,
   );
   const body = (await response.json()) as {
     tree?: Array<{ path?: string; type?: string; sha?: string; size?: number }>;
@@ -250,22 +261,18 @@ async function gitList(
     );
 }
 
-async function gitRead(
+/** One file body at `repoPath` in the repo, via the contents API. */
+async function gitReadRepoPath(
   workspaceId: string,
-  mount: VfsMount,
-  path: string,
-): Promise<FsFile | undefined> {
-  const config = mount.config as unknown as GitConfig;
-  const relative = path.slice(mount.prefix.length + 1);
-  const repoPath = config.path
-    ? `${config.path.replace(/\/+$/u, "")}/${relative}`
-    : relative;
+  config: GitConfig,
+  repoPath: string,
+): Promise<{ content: string; sha: string; size: number } | undefined> {
   const ref = config.ref || "main";
   let body: { content?: string; encoding?: string; sha?: string; size?: number };
   try {
     const response = await githubFetch(
       workspaceId,
-      `https://api.github.com/repos/${config.repo}/contents/${repoPath
+      `${githubApiBase()}/repos/${config.repo}/contents/${repoPath
         .split("/")
         .map(encodeURIComponent)
         .join("/")}?ref=${encodeURIComponent(ref)}`,
@@ -280,13 +287,78 @@ async function gitRead(
       ? Buffer.from(body.content, "base64").toString("utf8")
       : body.content;
   return {
-    path,
-    hash: body.sha ?? "",
-    mimeType: mountMime(path),
-    size: body.size ?? Buffer.byteLength(content),
-    updatedAt: mount.createdAt,
     content,
+    sha: body.sha ?? "",
+    size: body.size ?? Buffer.byteLength(content),
   };
+}
+
+async function gitRead(
+  workspaceId: string,
+  mount: VfsMount,
+  path: string,
+): Promise<FsFile | undefined> {
+  const config = mount.config as unknown as GitConfig;
+  const relative = path.slice(mount.prefix.length + 1);
+  const repoPath = config.path
+    ? `${config.path.replace(/\/+$/u, "")}/${relative}`
+    : relative;
+  const file = await gitReadRepoPath(workspaceId, config, repoPath);
+  if (!file) return undefined;
+  return {
+    path,
+    hash: file.sha,
+    mimeType: mountMime(path),
+    size: file.size,
+    updatedAt: mount.createdAt,
+    content: file.content,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Repo snapshots — the tree-API read path, addressable without a VFS mount.
+//
+// Sandbox repo mounts (sandboxes/repo-mounts.ts) and agent-profile repo
+// mounts reuse exactly the machinery the `git` VFS mount runs on: the same
+// tree listing, the same contents reads, the same credential. The only
+// difference is that the caller names the repo directly instead of a mounted
+// prefix.
+// ---------------------------------------------------------------------------
+
+/** What a snapshot caller names: a repo, a ref, optionally a subdirectory. */
+export interface RepoSnapshotRef {
+  repo: string;
+  ref?: string;
+  path?: string;
+}
+
+/**
+ * List a repo slice's files, paths relative to `source.path` (or the repo
+ * root). Blob shas are version tokens, not content hashes.
+ */
+export async function listRepoFiles(
+  workspaceId: string,
+  source: RepoSnapshotRef,
+): Promise<Array<{ path: string; sha: string; size: number }>> {
+  const config: GitConfig = { repo: source.repo, ...(source.ref ? { ref: source.ref } : {}) };
+  const root = source.path ? `${source.path.replace(/\/+$/u, "")}/` : "";
+  const tree = await gitTree(workspaceId, config);
+  return tree
+    .filter((node) => node.path.startsWith(root))
+    .map((node) => ({ path: node.path.slice(root.length), sha: node.sha, size: node.size }));
+}
+
+/** Read one file (path relative to `source.path`) from a repo slice. */
+export async function readRepoFile(
+  workspaceId: string,
+  source: RepoSnapshotRef,
+  relative: string,
+): Promise<{ content: string; sha: string; size: number } | undefined> {
+  const config: GitConfig = { repo: source.repo, ...(source.ref ? { ref: source.ref } : {}) };
+  const repoPath = source.path
+    ? `${source.path.replace(/\/+$/u, "")}/${relative}`
+    : relative;
+  return gitReadRepoPath(workspaceId, config, repoPath);
 }
 
 // ---------------------------------------------------------------------------
