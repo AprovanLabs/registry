@@ -342,6 +342,17 @@ describe("default workspace mounts", () => {
     await call("sandboxes/setDefaults", { mounts: [] });
   });
 
+  it("does not surface defaults.json as a sandbox in list", async () => {
+    await call("sandboxes/setDefaults", {
+      mounts: [{ path: "skills", source: "github:acme/skills", mode: "ro" }],
+    });
+    const listed = await data<{ sandboxes: Array<{ id?: string }> }>(
+      await call("sandboxes/list", {}),
+    );
+    for (const box of listed.sandboxes) expect(typeof box.id).toBe("string");
+    await call("sandboxes/setDefaults", { mounts: [] });
+  });
+
   it("rejects garbage at set time", async () => {
     const res = await call("sandboxes/setDefaults", {
       mounts: [{ path: "skills", source: "github:not-a-spec" }],

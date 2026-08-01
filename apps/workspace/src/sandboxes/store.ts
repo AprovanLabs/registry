@@ -232,7 +232,12 @@ export async function listSandboxes(workspaceId: string): Promise<SandboxRecord[
     if (!entry.path.endsWith(".json")) continue;
     if (entry.path.slice(SANDBOXES_PREFIX.length + 1).includes("/")) continue;
     const file = await getFsStore().read(workspaceId, entry.path).catch(() => undefined);
-    if (file) records.push(JSON.parse(file.content) as SandboxRecord);
+    if (!file) continue;
+    const record = JSON.parse(file.content) as Partial<SandboxRecord>;
+    // The prefix also holds non-record settings files (defaults.json); only
+    // parsed objects that carry a sandbox identity are sandboxes.
+    if (typeof record.id !== "string" || typeof record.createdAt !== "string") continue;
+    records.push(record as SandboxRecord);
   }
   return records.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
