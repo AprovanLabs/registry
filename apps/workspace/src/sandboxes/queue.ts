@@ -75,6 +75,8 @@ export interface SandboxRun {
   mounts: SandboxMount[];
   /** Agent profile the run executes as; its grants bound the whole run. */
   agent?: string;
+  /** Run limits forwarded to the agent loop (maxTurns, wallClockMs, …). */
+  limits?: Record<string, unknown>;
   /** Draft chat the run's changes land in (created if absent). */
   sessionId?: string;
   /** Extra binaries beyond what the image promises. */

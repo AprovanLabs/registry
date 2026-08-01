@@ -571,6 +571,11 @@ export const sandboxesService: CoreService = {
               "Agent profile the run executes as; with no workflow, the run drives this agent's loop inside the sandbox",
           },
           session: { type: "string", description: "Draft chat to commit into (one is created if omitted)" },
+          limits: {
+            type: "object",
+            description:
+              "Agent-only runs: limits forwarded to the loop {maxTurns?, wallClockMs?, maxToolCalls?, maxOutputBytes?}",
+          },
           requires: {
             type: "object",
             properties: { tools: { type: "array", items: { type: "string" } } },
@@ -899,6 +904,9 @@ export const sandboxesService: CoreService = {
           input: args["input"],
           mounts: await applyDefaultMounts(ctx.workspaceId, args["mounts"], grants),
           ...(agent ? { agent } : {}),
+          ...(args["limits"] && typeof args["limits"] === "object" && !Array.isArray(args["limits"])
+            ? { limits: args["limits"] as Record<string, unknown> }
+            : {}),
           ...(str(args, "session")
             ? { sessionId: (await resolveSession(ctx, str(args, "session")))!.id }
             : {}),
@@ -1077,6 +1085,7 @@ export async function executeClaimedRun(
         agent: run.agent,
         input: run.input ?? "",
         sandbox: sandbox.id,
+        ...(run.limits ? { limits: run.limits } : {}),
       })) as { id?: string; status?: string; error?: { message?: string } };
       outcome = {
         status: agentRun.status === "succeeded" ? "succeeded" : "failed",
