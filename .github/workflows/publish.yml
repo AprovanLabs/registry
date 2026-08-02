@@ -31,12 +31,18 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      # The four new contract packages are not in the workspace CLI's
+      # dependency closure, so they are built explicitly for their publishes.
       - name: Build packages
         run: |
           pnpm \
             --filter @aprovan/registry-main \
             --filter @aprovan/registry-ui \
             --filter @aprovan/workspace... \
+            --filter @utdk/keyvalue \
+            --filter @utdk/events \
+            --filter @utdk/vfs \
+            --filter @utdk/telemetry \
             build
 
       # Stable `latest` publish whenever the committed version isn't on npm
@@ -60,7 +66,8 @@ jobs:
         run: |
           failed=""
           for pkg in \
-            @utdk/common @utdk/sql @utdk/llm @utdk/mcp-core utdk \
+            @utdk/common @utdk/sql @utdk/llm @utdk/sandbox @utdk/vcs @utdk/agent \
+            @utdk/keyvalue @utdk/events @utdk/vfs @utdk/telemetry @utdk/mcp-core utdk \
             @aprovan/sandbox-image-node \
             @aprovan/registry-main @aprovan/registry-ui \
             @aprovan/workspace; do
