@@ -45,6 +45,8 @@ import type { CompatDocument, CompatEntry } from "@utdk/common/compat";
 import { getFsStore } from "./fs-store.js";
 import { getCredentialStore } from "./credentials.js";
 import { listLlmProviders } from "./llm.js";
+import { getRegistryStorage } from "./registry-storage.js";
+import { storeBackend } from "./runtime/config.js";
 import { ServiceError } from "./service-kernel.js";
 
 const BINDINGS_PATH = ".services/bindings.json";
@@ -249,7 +251,33 @@ export function isInterface(id: string): boolean {
   return listInterfaces().some((def) => def.id === id);
 }
 
-export async function readBindings(
+/**
+ * The WS-3 dispatch-plane cutover, bindings half: on the durable backends
+ * (sqlite locally, dsql in cloud) a workspace binding IS a registry-server
+ * profile row — `(tenant, targetKind "interface", targetId, name)` with the
+ * default instance stored under the package's reserved name `"default"` and
+ * `sql:analytics` under `"analytics"`. `.services/bindings.json` is a
+ * tombstone: read once, imported into profiles, deleted. Only the interim
+ * dynamo backend still reads the file (the package has no Dynamo driver by
+ * design), and that path dies wholesale when the cutover flips to dsql.
+ */
+const DEFAULT_PROFILE_NAME = "default";
+
+function usesLegacyBindingsFile(): boolean {
+  return storeBackend() === "dynamo";
+}
+
+function splitInstance(instance: string): { interfaceId: string; name: string } {
+  const separator = instance.indexOf(":");
+  if (separator === -1) return { interfaceId: instance, name: DEFAULT_PROFILE_NAME };
+  return { interfaceId: instance.slice(0, separator), name: instance.slice(separator + 1) };
+}
+
+function toInstanceKey(targetId: string, name: string): string {
+  return name === DEFAULT_PROFILE_NAME ? targetId : `${targetId}:${name}`;
+}
+
+async function readLegacyBindingsFile(
   workspaceId: string,
 ): Promise<Record<string, InterfaceBinding>> {
   const file = await getFsStore().read(workspaceId, BINDINGS_PATH);
@@ -259,6 +287,98 @@ export async function readBindings(
   } catch {
     return {};
   }
+}
+
+/**
+ * One-time tombstone import: when the profile store holds nothing for this
+ * workspace but a legacy bindings file exists, carry the bindings over and
+ * delete the file. Best-effort — a failed import leaves the file for the
+ * next read.
+ */
+async function importLegacyBindings(workspaceId: string): Promise<void> {
+  const legacy = await readLegacyBindingsFile(workspaceId).catch(() => ({}));
+  const entries = Object.entries(legacy);
+  if (entries.length > 0) {
+    for (const [instance, binding] of entries) {
+      await writeProfileBinding(workspaceId, instance, binding, "bindings-migration").catch(
+        () => undefined,
+      );
+    }
+  }
+  await getFsStore()
+    .remove(workspaceId, BINDINGS_PATH)
+    .catch(() => undefined);
+}
+
+async function readProfileBindings(
+  workspaceId: string,
+): Promise<Record<string, InterfaceBinding>> {
+  const storage = await getRegistryStorage();
+  await storage.tenants.ensure(workspaceId);
+  let rows = await storage.profiles.list(workspaceId, { targetKind: "interface" });
+  if (rows.length === 0) {
+    // Nothing bound yet — a pre-cutover deployment may have left a legacy
+    // bindings file behind; import it once, then the file is gone.
+    const legacyFile = await getFsStore()
+      .read(workspaceId, BINDINGS_PATH)
+      .catch(() => undefined);
+    if (legacyFile) {
+      await importLegacyBindings(workspaceId);
+      rows = await storage.profiles.list(workspaceId, { targetKind: "interface" });
+    }
+  }
+  const bindings: Record<string, InterfaceBinding> = {};
+  for (const row of rows) {
+    if (!row.provider) continue;
+    bindings[toInstanceKey(row.targetId, row.name)] = {
+      interface: row.targetId,
+      provider: row.provider,
+      ...(row.credentialId ? { credentialId: row.credentialId } : {}),
+      ...(Object.keys(row.options ?? {}).length > 0 ? { options: row.options } : {}),
+    };
+  }
+  return bindings;
+}
+
+async function writeProfileBinding(
+  workspaceId: string,
+  instance: string,
+  binding: InterfaceBinding | null,
+  updatedBy: string,
+): Promise<void> {
+  const storage = await getRegistryStorage();
+  await storage.tenants.ensure(workspaceId);
+  const { interfaceId, name } = splitInstance(instance);
+  const targetId = binding?.interface ?? interfaceId;
+  const existing = await storage.profiles.getByName(workspaceId, "interface", targetId, name);
+  if (!binding) {
+    if (existing) await storage.profiles.delete(workspaceId, existing.id);
+    return;
+  }
+  if (existing) {
+    await storage.profiles.update(workspaceId, existing.id, {
+      provider: binding.provider,
+      credentialId: binding.credentialId,
+      options: binding.options ?? {},
+    });
+    return;
+  }
+  await storage.profiles.create(workspaceId, {
+    name,
+    targetKind: "interface",
+    targetId,
+    provider: binding.provider,
+    ...(binding.credentialId ? { credentialId: binding.credentialId } : {}),
+    options: binding.options ?? {},
+    createdBy: updatedBy,
+  });
+}
+
+export async function readBindings(
+  workspaceId: string,
+): Promise<Record<string, InterfaceBinding>> {
+  if (usesLegacyBindingsFile()) return readLegacyBindingsFile(workspaceId);
+  return readProfileBindings(workspaceId);
 }
 
 /**
@@ -287,8 +407,14 @@ export async function writeBinding(
   workspaceId: string,
   instance: string,
   binding: InterfaceBinding | null,
+  updatedBy = "workspace",
 ): Promise<void> {
-  const bindings = await readBindings(workspaceId);
+  if (!usesLegacyBindingsFile()) {
+    await writeProfileBinding(workspaceId, instance, binding, updatedBy);
+    return;
+  }
+  // Interim dynamo backend: the legacy file, exactly as before the cutover.
+  const bindings = await readLegacyBindingsFile(workspaceId);
   if (binding) {
     bindings[instance] = binding;
   } else {

@@ -33,6 +33,7 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { getCredentialCipher } from "./credentialCipher.js";
 import { dynamo } from "./db/client.js";
+import { getRegistryStorage } from "./registry-storage.js";
 import { storeBackend, workspaceDataDir } from "./runtime/config.js";
 import type Database from "better-sqlite3";
 
@@ -611,46 +612,9 @@ export class CredentialStoreSqlite implements ICredentialStore {
 // as the package's SqlClient so both schemas ride one cluster connection.
 // ---------------------------------------------------------------------------
 
-async function registryDsqlStorage(): Promise<
-  import("@aprovan/registry-server").RegistryStorage
-> {
-  const [{ createSqlStorage }, dsql] = await Promise.all([
-    import("@aprovan/registry-server"),
-    import("./db/dsql.js"),
-  ]);
-  const pool = await dsql.dsqlRegistryPool();
-  const toPg = (sql: string): string => {
-    let index = 0;
-    return sql.replace(/\?/gu, () => `$${++index}`);
-  };
-  return createSqlStorage({
-    async exec(sql) {
-      for (const statement of sql.split(/;\s*(?:\n|$)/u)) {
-        const trimmed = statement.trim();
-        if (trimmed) await pool.query(trimmed);
-      }
-    },
-    async all(sql, params = []) {
-      const result = await dsql.withOccRetry(() => pool.query(toPg(sql), params));
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      return result.rows as any;
-    },
-    async run(sql, params = []) {
-      const result = await dsql.withOccRetry(() => pool.query(toPg(sql), params));
-      return { changes: result.rowCount ?? 0 };
-    },
-    async close() {
-      // The pool is shared with the workspace stores; db/dsql.ts owns it.
-    },
-  });
-}
-
 export class CredentialStoreRegistry implements ICredentialStore {
-  private storage: Promise<import("@aprovan/registry-server").RegistryStorage> | undefined;
-
   private store(): Promise<import("@aprovan/registry-server").RegistryStorage> {
-    this.storage ??= registryDsqlStorage();
-    return this.storage;
+    return getRegistryStorage();
   }
 
   private toRecord(
