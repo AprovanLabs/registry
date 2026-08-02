@@ -77,9 +77,9 @@
       "termsOfService": "https://www.figma.com/developer-terms/"
     },
     "docs": {
-      "manifestPath": "/Users/jsampson/Documents/JacobSampson/registry/.registry/figma/manifest.json",
-      "indexPath": "/Users/jsampson/Documents/JacobSampson/registry/.registry/figma/index.md",
-      "docsPath": "/Users/jsampson/Documents/JacobSampson/registry/packages/utdk/figma/docs",
+      "manifestPath": ".registry/figma/manifest.json",
+      "indexPath": ".registry/figma/index.md",
+      "docsPath": "packages/utdk/figma/docs",
       "generatedAt": "2026-04-08T15:35:29.042Z",
       "sourceCount": 2,
       "openApiHash": "c79ab62edb7cedfd62a719a8c4765844557bbbe1c5a6519da610f3fd11817e72",

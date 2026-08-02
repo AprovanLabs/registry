@@ -78,9 +78,9 @@
       "site": "https://developers.google.com/youtube/"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/youtube/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/youtube/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/google/youtube/docs",
+      "manifestPath": ".registry/google/youtube/manifest.json",
+      "indexPath": ".registry/google/youtube/index.md",
+      "docsPath": "packages/utdk/google/youtube/docs",
       "generatedAt": "2026-07-19T23:51:46.768Z",
       "sourceCount": 0,
       "openApiHash": null,

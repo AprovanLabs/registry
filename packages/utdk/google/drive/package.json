@@ -80,9 +80,9 @@
       "site": "https://developers.google.com/drive/"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/drive/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/drive/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/google/drive/docs",
+      "manifestPath": ".registry/google/drive/manifest.json",
+      "indexPath": ".registry/google/drive/index.md",
+      "docsPath": "packages/utdk/google/drive/docs",
       "generatedAt": "2026-07-19T23:51:32.145Z",
       "sourceCount": 0,
       "openApiHash": null,

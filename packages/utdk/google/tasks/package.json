@@ -68,9 +68,9 @@
       "site": "https://developers.google.com/tasks/"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/tasks/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/tasks/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/google/tasks/docs",
+      "manifestPath": ".registry/google/tasks/manifest.json",
+      "indexPath": ".registry/google/tasks/index.md",
+      "docsPath": "packages/utdk/google/tasks/docs",
       "generatedAt": "2026-07-19T23:49:27.103Z",
       "sourceCount": 0,
       "openApiHash": null,

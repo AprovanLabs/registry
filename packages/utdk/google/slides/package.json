@@ -78,9 +78,9 @@
       "site": "https://developers.google.com/slides/"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/slides/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/slides/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/google/slides/docs",
+      "manifestPath": ".registry/google/slides/manifest.json",
+      "indexPath": ".registry/google/slides/index.md",
+      "docsPath": "packages/utdk/google/slides/docs",
       "generatedAt": "2026-07-19T23:50:00.344Z",
       "sourceCount": 0,
       "openApiHash": null,

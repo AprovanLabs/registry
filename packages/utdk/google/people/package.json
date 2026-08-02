@@ -88,9 +88,9 @@
       "site": "https://developers.google.com/people/"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/people/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/people/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/google/people/docs",
+      "manifestPath": ".registry/google/people/manifest.json",
+      "indexPath": ".registry/google/people/index.md",
+      "docsPath": "packages/utdk/google/people/docs",
       "generatedAt": "2026-07-19T23:50:42.041Z",
       "sourceCount": 0,
       "openApiHash": null,

@@ -26,9 +26,9 @@
       "termsOfService": "https://docs.github.com/articles/github-terms-of-service"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/github/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/github/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/github/docs",
+      "manifestPath": ".registry/github/manifest.json",
+      "indexPath": ".registry/github/index.md",
+      "docsPath": "packages/utdk/github/docs",
       "generatedAt": "2026-07-16T07:09:41.015Z",
       "sourceCount": 0,
       "openApiHash": null,

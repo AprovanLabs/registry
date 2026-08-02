@@ -92,9 +92,9 @@
       "site": "https://developers.google.com/gmail/api/"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/gmail/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/gmail/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/google/gmail/docs",
+      "manifestPath": ".registry/google/gmail/manifest.json",
+      "indexPath": ".registry/google/gmail/index.md",
+      "docsPath": "packages/utdk/google/gmail/docs",
       "generatedAt": "2026-07-19T23:51:16.950Z",
       "sourceCount": 0,
       "openApiHash": null,
