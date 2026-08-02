@@ -70,16 +70,39 @@ attrs: value (JSON, S3-spilled over 350KB), updatedAt, updatedBy
   partition — unchanged in spirit, now unenumerable from the file plane.
 - Workspace members do **not** see app users' records via any file API.
   Owner-side administration goes through an explicit, audited
-  `apps.data({ name, user?, key? })` procedure gated on the app's admin
-  role — visible power instead of ambient browsability.
+  `apps.data({ name, user?, key?, path? })` procedure gated on the app's
+  admin role — visible power instead of ambient browsability. `path?`
+  (mutually exclusive with `key`) extends the same gate + audit trail to the
+  user's *file* partition (`<appRoot>/data/<user>/…`).
+- **Personal has no admin override.** `apps.data` rejects `name: "personal"`
+  with an error saying so; no procedure serves another member's personal
+  data, and the ambient file APIs answer 404 for every caller including
+  workspace admins. Private means private — the lockout escape hatch is
+  membership administration, never a silent read.
 - `apps.capabilities` partitioning strings change from paths to
   `records: app#<name>#u#<you>` so the Access pane stays truthful.
 
-### The file plane forgets app data
+### The file plane enforces per-user partitions
 
-- `vfs.list` hides `**/data/**` under any published app prefix (defense in
-  depth during migration; post-migration nothing is there to hide).
-- The chat file tree and workspace search inherit the fix for free.
+Hiding grew into enforcement (data-auth-model, specs per-user-data):
+
+- Every exact-path FS operation on both planes — `vfs.read/write/delete`
+  (including `hash`-pinned reads) and `GET/PUT/DELETE /fs/*path` — passes the
+  partition guard (`partitionAccess`/`assertPartitionAccess` in
+  `apps/store.ts`) before the store is touched. A path inside **another**
+  user's partition (`.personal/data/<sub>/…` or `<appRoot>/data/<sub>/…`)
+  answers **404 Not found**, byte-identical to a nonexistent path — deny
+  without an existence oracle. Repo convention: any new FS entry point calls
+  the guard.
+- Listings (`vfs.list`, `GET /fs`, the chat file tree) hide only *foreign*
+  partitions now; the caller's **own** partition is listed — "my private
+  files" is a place, not a secret. The chat client renders it as the
+  **Private** section.
+- Snapshots/commits keep excluding **all** partitions, own included
+  (`visibleEntries` unchanged) — commits are workspace-shared artifacts —
+  and `vfs.restore` therefore never writes into any partition.
+- App sessions are untouched: their `appScope` confinement already restricts
+  them to their own per-(app, user) partition.
 
 ### Migration
 

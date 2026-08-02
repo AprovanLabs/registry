@@ -260,9 +260,11 @@ describe("the file plane forgets app data", () => {
     // The app's own file (not under data/) is still listed normally.
     expect(listing.entries.some((e) => e.path === "apps/visible-app/index.tsx")).toBe(true);
 
-    // A direct read by exact path still works — only listings hide it.
+    // Hiding grew into enforcement (specs per-user-data): a direct read of
+    // ANOTHER user's partition by exact path now 404s like a missing file.
+    // The partition owner's own app session still reads it (lazy migration).
     const direct = await manage("vfs/read", { path: "apps/visible-app/data/alice/leftover" });
-    expect(direct.status).toBe(200);
+    expect(direct.status).toBe(404);
   });
 
   it("GET /fs (the chat file tree route) hides the same prefixes", async () => {
@@ -334,12 +336,12 @@ describe("apps.data admin procedure", () => {
     expect(res.status).toBe(403);
   });
 
-  it("works for personal, gated on plain workspace membership", async () => {
+  it("rejects personal outright — personal data has no admin override", async () => {
     await appCall("local", "personal/tools/keyvalue/set", { args: { key: "note", value: "hi" } });
     const res = await manage("apps/data", { name: "personal" });
-    expect(res.status).toBe(200);
-    const users = await data<{ users: string[] }>(res);
-    expect(users.users).toContain("local");
+    expect(res.status).toBe(403);
+    const body = (await res.json()) as { error?: string };
+    expect(body.error).toMatch(/no admin override/i);
   });
 
   it("requires `user` when `key` is given", async () => {

@@ -22,8 +22,9 @@ import { appsService } from "./apps/service.js";
 import {
   appDataDir,
   appFsAllowed,
+  assertPartitionAccess,
   hiddenDataPrefixes,
-  isHiddenDataPath,
+  partitionAccess,
   readWorkspaceConfig,
   resolveAppPath,
 } from "./apps/store.js";
@@ -624,16 +625,19 @@ const vfs: CoreService = {
           throw new ServiceError("Service state is managed through its tool namespaces", 403);
         }
         const entries = await listAll(store, ctx.workspaceId, prefix);
-        // A workspace listing never surfaces app/personal data partitions —
-        // keyvalue no longer writes there, but pre-migration files still can
-        // (see records.ts / docs/app-data.md). Reads/writes to a known path
-        // are unaffected; only listings hide it.
+        // A workspace listing never surfaces OTHER users' data partitions —
+        // the caller's own partition IS listed (their private files are a
+        // place, not a secret; tech-plan data-auth-model D2), and foreign
+        // partitions are invisible AND unreadable (the partition guard 404s
+        // exact-path access below).
         const hidden = await hiddenDataPrefixes(ctx.workspaceId);
         const mounted = await mountEntries(ctx.workspaceId, prefix);
         return {
           entries: [
             ...entries.filter(
-              (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
+              (entry) =>
+                !isServicePath(entry.path) &&
+                partitionAccess(entry.path, ctx.userId, hidden) !== "foreign",
             ),
             ...mounted,
           ]
@@ -648,6 +652,10 @@ const vfs: CoreService = {
       case "read": {
         const path = await resolveVfsPath(ctx, args["path"], false);
         assertPathGranted(ctx.grants, path, false);
+        // Foreign per-user partitions 404 before the store is touched —
+        // covers latest, hash-pinned, and commit-pinned reads alike. App
+        // sessions skip it: their appScope confinement already applies.
+        if (!ctx.appScope) await assertPartitionAccess(ctx.workspaceId, ctx.userId, path);
         const staged = await stagedSession(ctx, args, false);
         if (staged) {
           const file = await sessionRead(ctx.workspaceId, staged, path);
@@ -678,6 +686,7 @@ const vfs: CoreService = {
       case "write": {
         const path = await resolveVfsPath(ctx, args["path"], true);
         assertPathGranted(ctx.grants, path, true);
+        if (!ctx.appScope) await assertPartitionAccess(ctx.workspaceId, ctx.userId, path);
         await assertNotMounted(ctx.workspaceId, path);
         if (typeof args["content"] !== "string") {
           throw new ServiceError("content must be a string", 400);
@@ -698,6 +707,7 @@ const vfs: CoreService = {
       case "delete": {
         const path = await resolveVfsPath(ctx, args["path"], true);
         assertPathGranted(ctx.grants, path, true);
+        if (!ctx.appScope) await assertPartitionAccess(ctx.workspaceId, ctx.userId, path);
         await assertNotMounted(ctx.workspaceId, path);
         const staged = await stagedSession(ctx, args, true);
         if (staged) {
