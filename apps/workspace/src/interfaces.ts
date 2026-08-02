@@ -38,6 +38,10 @@
  * field) reads correctly as-is: it was always describing the default.
  */
 
+import { createRequire } from "node:module";
+import path from "node:path";
+import { loadCompatDocuments } from "@utdk/common/compat";
+import type { CompatDocument, CompatEntry } from "@utdk/common/compat";
 import { getFsStore } from "./fs-store.js";
 import { getCredentialStore } from "./credentials.js";
 import { listLlmProviders } from "./llm.js";
@@ -149,8 +153,8 @@ export interface InterfaceNamespace {
  * names no interface at all.
  *
  * `:` is safe as the separator: no registry provider id contains one (they
- * use dots and slashes — `synthetic.new`, `fly/sprites`), and a namespace is
- * a single path segment on the wire, so `POST /tools/sql:analytics/query`
+ * use dashes and slashes — `synthetic-new`, `fly/sprites`), and a namespace
+ * is a single path segment on the wire, so `POST /tools/sql:analytics/query`
  * needs no routing change.
  */
 export function parseInterfaceNamespace(namespace: string): InterfaceNamespace | undefined {
@@ -165,197 +169,76 @@ export function parseInterfaceNamespace(namespace: string): InterfaceNamespace |
 }
 
 /**
- * The interface catalog. `llm` rides the OpenAI-compatible chat surface —
- * its compat list IS the chat-provider registry (src/llm.ts), so the chat
- * picker and the interface stay in lockstep. Further interfaces
- * (objectstore/S3-compat, sql warehouses) add entries here as their
- * providers land in the registry.
+ * Locate `packages/contracts/` (or, in a deployed install, the `@utdk` scope
+ * directory) by walking up from the resolved `@utdk/agent` entry point — a
+ * declared dependency whose realpath lands inside the contracts directory in
+ * the monorepo and inside `node_modules/@utdk` when installed from tarballs.
+ * The compat loader filters on the `utdk.contract` manifest marker, so
+ * non-contract neighbours (`common`, `mcp-core`) are ignored either way.
+ */
+function resolveContractsDir(): string {
+  const require = createRequire(import.meta.url);
+  // <contracts dir>/agent/dist/index.js → up three.
+  return path.resolve(require.resolve("@utdk/agent"), "..", "..", "..");
+}
+
+/** Pre-instance catalog order; contracts beyond it sort alphabetically after. */
+const INTERFACE_ORDER = ["llm", "sql", "sandbox", "vcs", "agent"];
+
+/**
+ * The compat catalog, loaded once at module init from the contract packages'
+ * `compat.json` documents (build-time data; no hot reload needed). A
+ * malformed document fails loudly here, at import — never as silently
+ * dropped entries.
+ */
+const compatDocuments: CompatDocument[] = [...loadCompatDocuments(resolveContractsDir()).values()].sort(
+  (left, right) => {
+    const l = INTERFACE_ORDER.indexOf(left.interface.id);
+    const r = INTERFACE_ORDER.indexOf(right.interface.id);
+    if (l !== -1 || r !== -1) return (l === -1 ? INTERFACE_ORDER.length : l) - (r === -1 ? INTERFACE_ORDER.length : r);
+    return left.interface.id.localeCompare(right.interface.id);
+  },
+);
+
+function toInterfaceCompat(entry: CompatEntry): InterfaceCompat {
+  return {
+    provider: entry.provider,
+    label: entry.label,
+    module: entry.module,
+    ...(entry.moduleSpecifier !== undefined ? { moduleSpecifier: entry.moduleSpecifier } : {}),
+    ...(entry.baseUrl !== undefined ? { baseUrl: entry.baseUrl } : {}),
+    ...(entry.defaults !== undefined ? { defaults: entry.defaults } : {}),
+    ...(entry.credentialless !== undefined ? { credentialless: entry.credentialless } : {}),
+    ...(entry.unavailable !== undefined ? { unavailable: entry.unavailable } : {}),
+  };
+}
+
+/**
+ * The interface catalog — a consumer of the contract packages' `compat.json`
+ * data (loaded through `@utdk/common/compat`), not its home. `llm` rides the
+ * OpenAI-compatible chat surface — its compat list IS the chat-provider
+ * registry (src/llm.ts), declared via the `compatSource` indirection, so the
+ * chat picker and the interface stay in lockstep. Further interfaces add a
+ * `compat.json` to their contract package; nothing here changes.
  */
 export function listInterfaces(): InterfaceDef[] {
-  return [
-    {
-      id: "llm",
-      label: "LLM",
-      description:
-        "OpenAI-compatible chat completions. Bind to any connected LLM provider; scripts call llm.createChatCompletion / llm.listModels.",
-      timeoutMs: 120_000,
-      defaultsFor: ["createChatCompletion"],
-      compat: listLlmProviders().map((provider) => ({
-        provider: provider.id,
-        label: provider.label,
-        module: provider.module,
-        baseUrl: provider.baseUrl,
-        defaults: { model: provider.defaultModel },
-      })),
-    },
-    {
-      id: "sql",
-      label: "SQL",
-      description:
-        "Uniform SQL queries over relational backends; scripts call sql.query({ sql, params }). " +
-        "Each backend is a handwritten UTDK provider module built on @utdk/sql. " +
-        "Secrets live in the provider credential (Snowflake/Databricks token, Postgres connection string); " +
-        "connection config (account, host, warehouse_id, database) rides the binding options.",
-      timeoutMs: 60_000,
-      defaultsFor: ["query"],
-      compat: [
-        { provider: "postgres", label: "PostgreSQL", module: "postgres" },
-        { provider: "snowflake", label: "Snowflake", module: "snowflake" },
-        { provider: "databricks", label: "Databricks", module: "databricks" },
-      ],
-    },
-    {
-      id: "sandbox",
-      label: "Sandbox",
-      description:
-        "Execution environments with a filesystem and a shell: create/exec/read/write/list against any connected sandbox host. " +
-        "Each backend is a handwritten UTDK provider module built on @utdk/sandbox. " +
-        "Secrets live in the provider credential (API token, or a local host's client token); " +
-        "the API root, default image and region ride the binding options. " +
-        "Workspace-facing mounting, sync and commit live in the `sandboxes` core service — see docs/sandboxes.md.",
-      // Sandbox work is slow by nature (installs, builds, test suites), and
-      // the driver's own deadline is the caller's `timeoutMs`. This is the
-      // outer bound the gateway will wait for a single operation.
-      timeoutMs: 300_000,
-      // Only `create` takes binding defaults: image, region and resources are
-      // workspace policy, while exec/file args are always the caller's.
-      defaultsFor: ["create"],
-      compat: [
-        {
-          // The gateway's own in-process WASM interpreter (bash + a private
-          // virtual filesystem, no toolchain, no network). First-party like
-          // `machine`, but unlike `machine` it needs no registration at all —
-          // so it is `credentialless` and wins the zero-config fallback ahead
-          // of the vendors, the same reasoning as the agent interface's
-          // in-process runner: a workspace holding a fly.io key has not
-          // thereby said "run my sandboxes in fly's cloud", and the free,
-          // fully-isolated interpreter is the conservative default. Anything
-          // needing a real toolchain binds a vendor or registers a machine.
-          provider: "bashkit",
-          label: "Bashkit (WASM)",
-          module: "bashkit",
-          moduleSpecifier: "@aprovan/sandbox-bashkit",
-          credentialless: true,
-        },
-        {
-          provider: "machine",
-          label: "Registered machine",
-          module: "machine",
-          // First-party: a laptop has no vendor, so it is not in utdk/*.
-          moduleSpecifier: "@aprovan/sandbox-host",
-        },
-        { provider: "fly/sprites", label: "fly.io Sprites", module: "fly/sprites" },
-        {
-          provider: "cloudflare/sandbox",
-          label: "Cloudflare Sandbox",
-          module: "cloudflare/sandbox",
-        },
-      ],
-    },
-    {
-      id: "vcs",
-      label: "Git hosting",
-      description:
-        "Git hosting for code review: repos.get, pullRequests.get/list/diff/comment/review, branches.get, files.get " +
-        "against whichever host a workspace's code lives on. " +
-        "Each backend is a handwritten UTDK provider module built on @utdk/vcs. " +
-        "Credentials stay keyed by the concrete provider (github), so a connected GitHub account just works.",
-      // A diff read or a review submission is one REST round trip; a large
-      // monorepo diff is the slow case and a minute bounds it comfortably.
-      timeoutMs: 60_000,
-      // Every operation names its repo and PR explicitly; there is no
-      // workspace-policy argument (like sql's database or agent's model) for
-      // a binding to fill in.
-      defaultsFor: [],
-      compat: [
-        {
-          provider: "github",
-          label: "GitHub",
-          // A suite module, like `google/books`: the vendor's generated
-          // module covers the whole REST surface, and the /vcs subpath is
-          // the thin handwritten adapter that speaks the contract.
-          module: "github/vcs",
-        },
-        {
-          // NOT YET BUILT — a contract commitment, in the `openai/assistants`
-          // sense: the design doc and the bindings UI are written against
-          // this entry, and dispatch refuses it with the reason below rather
-          // than letting the module loader answer.
-          provider: "bitbucket",
-          label: "Bitbucket",
-          module: "bitbucket/vcs",
-          unavailable:
-            "The Bitbucket adapter module is not built yet. The contract is @utdk/vcs; " +
-            "the mapping to Bitbucket's REST API does not exist.",
-        },
-      ],
-    },
-    {
-      id: "agent",
-      label: "Agent runtime",
-      description:
-        "The agent loop itself: run/get/cancel against whichever runtime executes an agent's turns. " +
-        "Each backend is a handwritten UTDK provider module built on @utdk/agent. " +
-        "The default is the gateway's own in-process runner, which needs no credential; vendor runtimes " +
-        "(OpenAI Assistants, a relayed harness) are bound like any other implementation. " +
-        "Profiles, instruction layers, grants, mounts and entrypoints live in the `agents` core service " +
-        "— see docs/agent-interface.md.",
-      // An agent loop is minutes, not seconds: a build, a test suite and a
-      // dozen model turns all fit inside one `run`. This is the outer bound on
-      // a single dispatched operation, not on the run's own budget, which the
-      // caller sets with `limits.wallClockMs`.
-      timeoutMs: 900_000,
-      // Only `run` takes binding defaults: model, effort and limits are
-      // workspace policy, while `get`/`cancel` carry nothing but an id.
-      defaultsFor: ["run"],
-      compat: [
-        {
-          // The gateway's own runner (agents/runner.ts). It is a compat entry
-          // rather than a separate code path so that binding, instances,
-          // discovery and the result shape are the same for it as for
-          // anything else — but dispatch short-circuits straight into the
-          // in-process loop (workflows/invoke.ts and its HTTP twin), exactly
-          // as `sandboxes` does for a `machine` host. The module name below
-          // completes the resolution tuple and is never imported.
-          provider: "native",
-          label: "Aprovan runner (in-process)",
-          module: "native",
-          credentialless: true,
-        },
-        {
-          // NOT YET BUILT — the adapter module is the remaining work. The
-          // vendor surface is verified: `utdk/openai` already generates
-          // createThreadAndRun / getRun / cancelRun / submitToolOuputsToRun
-          // over /v1/threads, which is a durable run resource with the
-          // pause-and-ask (`requires_action`) tool transport this contract
-          // calls `yield`. The operation *names* differ from run/get/cancel,
-          // so a thin handwritten module maps them — the same shape
-          // `utdk/postgres` takes over a query engine.
-          //
-          // The credential is the ordinary `openai` one: an Assistants run and
-          // a chat completion are the same account, and minting a second
-          // provider id for it would make a workspace connect OpenAI twice.
-          provider: "openai",
-          label: "OpenAI Assistants",
-          module: "openai/assistants",
-          unavailable:
-            "The OpenAI Assistants adapter module is not built yet. The vendor surface exists " +
-            "(utdk/openai generates createThreadAndRun/getRun/cancelRun); the run/get/cancel mapping does not.",
-        },
-        {
-          // NOT YET BUILT. A `pi`/Claude-Code-style harness on a machine that
-          // dials out, over the same host relay the `machine` sandbox provider
-          // uses. First-party, so it is not in the vendor catalogue: the
-          // contract is public, the implementation is ours.
-          provider: "harness",
-          label: "Relayed harness",
-          module: "harness",
-          moduleSpecifier: "@aprovan/agent-host",
-          unavailable: "@aprovan/agent-host is not built yet.",
-        },
-      ],
-    },
-  ];
+  return compatDocuments.map((document) => ({
+    id: document.interface.id,
+    label: document.interface.label,
+    description: document.interface.description,
+    timeoutMs: document.interface.timeoutMs,
+    defaultsFor: [...document.interface.defaultsFor],
+    compat:
+      document.compatSource === "chat-provider-registry"
+        ? listLlmProviders().map((provider) => ({
+            provider: provider.id,
+            label: provider.label,
+            module: provider.module,
+            baseUrl: provider.baseUrl,
+            defaults: { model: provider.defaultModel },
+          }))
+        : (document.compat ?? []).map(toInterfaceCompat),
+  }));
 }
 
 export function resolveInterface(id: string): InterfaceDef | undefined {
