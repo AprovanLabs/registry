@@ -79,7 +79,7 @@ CREATE INDEX ASYNC IF NOT EXISTS users_by_email ON users (email);
 CREATE TABLE IF NOT EXISTS workspaces (
   workspace_id text PRIMARY KEY,
   name text,
-  created_by text,
+  plan text,
   created_at text,
   updated_at text
 );
@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS invites (
   email text NOT NULL,
   workspace_id text NOT NULL,
   role text,
+  group_ids text,
   invited_by text,
   created_at text,
   expires_at bigint

@@ -275,6 +275,48 @@ describe.skipIf(!DSQL_URL)("DSQL store backends (contract)", () => {
     },
   );
 
+  it("identity flows behave identically on the DSQL backend", async () => {
+    const { createDsqlIdentityClient, createIdentityStoreSql } = await import(
+      "../src/identity/sql.js"
+    );
+    const store = createIdentityStoreSql(createDsqlIdentityClient());
+    const alice = `alice-${ws}`; // unique per run — the database persists
+
+    await store.workspaces.put({ workspaceId: ws, name: "DSQL WS" });
+    expect((await store.workspaces.get(ws))?.name).toBe("DSQL WS");
+
+    await store.memberships.put({ workspaceId: ws, userId: alice, role: "admin" });
+    expect((await store.memberships.get(ws, alice))?.role).toBe("admin");
+    expect((await store.memberships.listByUser(alice)).length).toBe(1);
+
+    await store.sessions.setCurrentWorkspace(alice, ws);
+    expect(await store.sessions.getCurrentWorkspace(alice)).toBe(ws);
+
+    const invite = await store.invites.create(ws, "d@example.com", "member", [], alice);
+    expect((await store.invites.consume(invite.inviteToken))?.email).toBe("d@example.com");
+
+    const group = await store.groups.create(ws, "dsql-group");
+    await store.groups.members.add(ws, group.groupId, alice);
+    expect(await store.groups.members.listGroupIdsForUser(ws, alice)).toEqual([
+      group.groupId,
+    ]);
+    await store.groups.toolGrants.add(ws, group.groupId, "github", "*");
+    expect(await store.groups.toolGrants.check(ws, [group.groupId], "github", "x")).toBe(true);
+
+    const perm = await store.permissions.grant(ws, {
+      callerId: alice,
+      provider: "github",
+      operation: "issues.create",
+      grantedBy: "admin",
+    });
+    expect(await store.permissions.check(ws, alice, "github", "issues.create")).toBe(true);
+    expect(await store.permissions.revoke(ws, perm.id)).toBe(true);
+
+    const { record, secret } = await store.apiKeys.create(ws, { name: "dsql-key" });
+    expect((await store.apiKeys.verify(secret))?.keyId).toBe(record.keyId);
+    expect(await store.apiKeys.revoke(ws, record.keyId)).toBe(true);
+  });
+
   it("credential store rides registry-server storage with created_by", async () => {
     const { CredentialStoreRegistry } = await import("../src/credentials.js");
     const store = new CredentialStoreRegistry();

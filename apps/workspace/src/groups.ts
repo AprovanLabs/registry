@@ -1,57 +1,24 @@
 /**
- * DynamoDB data layer for workspace Groups and the three grant tables.
- *
- * Tables (from db/schema.ts):
- *   Groups          — PK: workspaceId, SK: groupId
- *   GroupPrefixGrants — PK: workspaceId#groupId, SK: pathPrefix
- *   GroupToolGrants  — PK: workspaceId#groupId, SK: provider#operation
- *   UserGroups       — PK: workspaceId#userId, SK: groupId
+ * Groups facade over the identity store: group CRUD, user-group membership,
+ * tool grants, and the retired prefix grants (Dynamo-only until cutover —
+ * decision record #8 drops them from the relational schema; WS-6 removes
+ * the admin write surface). Auth-cache invalidation on membership mutations
+ * happens inside the store (identity/store.ts).
  */
 
-import { randomBytes } from "crypto";
-import { invalidatePrincipal } from "./auth-cache.js";
-import { dynamo } from "./db/client.js";
+import { getIdentityStore } from "./identity/store.js";
+import type {
+  GroupRecord,
+  PrefixGrantRecord,
+  ToolGrantRecord,
+} from "./identity/types.js";
 
-// ---------------------------------------------------------------------------
-// Table name helpers (env overrides for tests)
-// ---------------------------------------------------------------------------
-
-const GROUPS_TABLE = () => process.env["GROUPS_TABLE"] ?? "Groups";
-const GROUP_PREFIX_GRANTS_TABLE = () => process.env["GROUP_PREFIX_GRANTS_TABLE"] ?? "GroupPrefixGrants";
-const GROUP_TOOL_GRANTS_TABLE = () => process.env["GROUP_TOOL_GRANTS_TABLE"] ?? "GroupToolGrants";
-const USER_GROUPS_TABLE = () => process.env["USER_GROUPS_TABLE"] ?? "UserGroups";
-
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
-
-export interface GroupRecord {
-  workspaceId: string;
-  groupId: string;
-  name: string;
-  description?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface PrefixGrantRecord {
-  workspaceId: string;
-  groupId: string;
-  pathPrefix: string;
-}
-
-export interface ToolGrantRecord {
-  workspaceId: string;
-  groupId: string;
-  provider: string;
-  operation: string;
-}
-
-export interface UserGroupRecord {
-  workspaceId: string;
-  userId: string;
-  groupId: string;
-}
+export type {
+  GroupRecord,
+  PrefixGrantRecord,
+  ToolGrantRecord,
+  UserGroupRecord,
+} from "./identity/types.js";
 
 // ---------------------------------------------------------------------------
 // Groups CRUD
@@ -62,53 +29,18 @@ export async function createGroup(
   name: string,
   description?: string,
 ): Promise<GroupRecord> {
-  const groupId = randomBytes(12).toString("hex");
-  const now = new Date().toISOString();
-  const item: Record<string, unknown> = {
-    workspaceId,
-    groupId,
-    name,
-    createdAt: now,
-    updatedAt: now,
-  };
-  if (description !== undefined) item["description"] = description;
-
-  const { client, PutCommand } = await dynamo();
-  await client.send(
-    new PutCommand({
-      TableName: GROUPS_TABLE(),
-      Item: item,
-      ConditionExpression: "attribute_not_exists(groupId)",
-    }),
-  );
-
-  return { workspaceId, groupId, name, description, createdAt: now, updatedAt: now };
+  return getIdentityStore().groups.create(workspaceId, name, description);
 }
 
 export async function listGroups(workspaceId: string): Promise<GroupRecord[]> {
-  const { client, QueryCommand } = await dynamo();
-  const result = await client.send(
-    new QueryCommand({
-      TableName: GROUPS_TABLE(),
-      KeyConditionExpression: "workspaceId = :ws",
-      ExpressionAttributeValues: { ":ws": workspaceId },
-    }),
-  );
-  return (result.Items ?? []) as GroupRecord[];
+  return getIdentityStore().groups.list(workspaceId);
 }
 
 export async function getGroup(
   workspaceId: string,
   groupId: string,
 ): Promise<GroupRecord | undefined> {
-  const { client, GetCommand } = await dynamo();
-  const result = await client.send(
-    new GetCommand({
-      TableName: GROUPS_TABLE(),
-      Key: { workspaceId, groupId },
-    }),
-  );
-  return result.Item as GroupRecord | undefined;
+  return getIdentityStore().groups.get(workspaceId, groupId);
 }
 
 export async function updateGroup(
@@ -116,75 +48,19 @@ export async function updateGroup(
   groupId: string,
   patch: { name?: string; description?: string },
 ): Promise<GroupRecord | undefined> {
-  const now = new Date().toISOString();
-  const updates: string[] = ["updatedAt = :updatedAt"];
-  const exprValues: Record<string, unknown> = { ":updatedAt": now, ":ws": workspaceId, ":gid": groupId };
-  const exprNames: Record<string, string> = {};
-
-  if (patch.name !== undefined) {
-    updates.push("#nm = :name");
-    exprNames["#nm"] = "name";
-    exprValues[":name"] = patch.name;
-  }
-  if (patch.description !== undefined) {
-    updates.push("#desc = :description");
-    exprNames["#desc"] = "description";
-    exprValues[":description"] = patch.description;
-  }
-
-  try {
-    const { client, UpdateCommand } = await dynamo();
-    const result = await client.send(
-      new UpdateCommand({
-        TableName: GROUPS_TABLE(),
-        Key: { workspaceId, groupId },
-        ConditionExpression: "workspaceId = :ws AND groupId = :gid",
-        UpdateExpression: `SET ${updates.join(", ")}`,
-        ExpressionAttributeValues: exprValues,
-        ...(Object.keys(exprNames).length > 0 ? { ExpressionAttributeNames: exprNames } : {}),
-        ReturnValues: "ALL_NEW",
-      }),
-    );
-    return result.Attributes as GroupRecord | undefined;
-  } catch (err) {
-    // Name check rather than `instanceof ConditionalCheckFailedException`: the
-    // exception class lives in @aws-sdk/client-dynamodb, and importing it just
-    // to compare would undo the lazy load (see db/client.ts).
-    if (err instanceof Error && err.name === "ConditionalCheckFailedException") {
-      return undefined;
-    }
-    throw err;
-  }
+  return getIdentityStore().groups.update(workspaceId, groupId, patch);
 }
 
-/**
- * Delete a group and best-effort clean up its prefix and tool grants.
- * UserGroups cleanup is not performed here (no GSI on groupId); those rows
- * become orphans and will stop resolving once the group record is gone.
- */
+/** Delete a group; its grants (and, relationally, its memberships) go too. */
 export async function deleteGroup(
   workspaceId: string,
   groupId: string,
 ): Promise<boolean> {
-  const existing = await getGroup(workspaceId, groupId);
-  if (!existing) return false;
-
-  const { client, DeleteCommand } = await dynamo();
-  await client.send(
-    new DeleteCommand({
-      TableName: GROUPS_TABLE(),
-      Key: { workspaceId, groupId },
-    }),
-  );
-
-  await deleteAllPrefixGrants(workspaceId, groupId);
-  await deleteAllToolGrants(workspaceId, groupId);
-
-  return true;
+  return getIdentityStore().groups.remove(workspaceId, groupId);
 }
 
 // ---------------------------------------------------------------------------
-// UserGroups (user ↔ group bindings)
+// UserGroups (user <-> group bindings)
 // ---------------------------------------------------------------------------
 
 export async function addUserToGroup(
@@ -192,20 +68,7 @@ export async function addUserToGroup(
   groupId: string,
   userId: string,
 ): Promise<void> {
-  const { client, PutCommand } = await dynamo();
-  await client.send(
-    new PutCommand({
-      TableName: USER_GROUPS_TABLE(),
-      Item: {
-        "workspaceId#userId": `${workspaceId}#${userId}`,
-        groupId,
-        workspaceId,
-        userId,
-      },
-    }),
-  );
-  // principal.groupIds is part of the cached auth principal.
-  invalidatePrincipal(userId);
+  await getIdentityStore().groups.members.add(workspaceId, groupId, userId);
 }
 
 export async function removeUserFromGroup(
@@ -213,33 +76,19 @@ export async function removeUserFromGroup(
   groupId: string,
   userId: string,
 ): Promise<boolean> {
-  const { client, DeleteCommand, GetCommand } = await dynamo();
-  const result = await client.send(
-    new GetCommand({
-      TableName: USER_GROUPS_TABLE(),
-      Key: {
-        "workspaceId#userId": `${workspaceId}#${userId}`,
-        groupId,
-      },
-    }),
-  );
-  if (!result.Item) return false;
+  return getIdentityStore().groups.members.remove(workspaceId, groupId, userId);
+}
 
-  await client.send(
-    new DeleteCommand({
-      TableName: USER_GROUPS_TABLE(),
-      Key: {
-        "workspaceId#userId": `${workspaceId}#${userId}`,
-        groupId,
-      },
-    }),
-  );
-  invalidatePrincipal(userId);
-  return true;
+/** User ids in a group (admin listing). */
+export async function listGroupUserIds(
+  workspaceId: string,
+  groupId: string,
+): Promise<string[]> {
+  return getIdentityStore().groups.members.listUserIdsForGroup(workspaceId, groupId);
 }
 
 // ---------------------------------------------------------------------------
-// GroupPrefixGrants
+// GroupPrefixGrants (retired in the relational schema)
 // ---------------------------------------------------------------------------
 
 export async function addPrefixGrant(
@@ -247,19 +96,7 @@ export async function addPrefixGrant(
   groupId: string,
   pathPrefix: string,
 ): Promise<PrefixGrantRecord> {
-  const { client, PutCommand } = await dynamo();
-  await client.send(
-    new PutCommand({
-      TableName: GROUP_PREFIX_GRANTS_TABLE(),
-      Item: {
-        "workspaceId#groupId": `${workspaceId}#${groupId}`,
-        pathPrefix,
-        workspaceId,
-        groupId,
-      },
-    }),
-  );
-  return { workspaceId, groupId, pathPrefix };
+  return getIdentityStore().groups.prefixGrants.add(workspaceId, groupId, pathPrefix);
 }
 
 export async function removePrefixGrant(
@@ -267,64 +104,14 @@ export async function removePrefixGrant(
   groupId: string,
   pathPrefix: string,
 ): Promise<boolean> {
-  const { client, DeleteCommand, GetCommand } = await dynamo();
-  const result = await client.send(
-    new GetCommand({
-      TableName: GROUP_PREFIX_GRANTS_TABLE(),
-      Key: {
-        "workspaceId#groupId": `${workspaceId}#${groupId}`,
-        pathPrefix,
-      },
-    }),
-  );
-  if (!result.Item) return false;
-
-  await client.send(
-    new DeleteCommand({
-      TableName: GROUP_PREFIX_GRANTS_TABLE(),
-      Key: {
-        "workspaceId#groupId": `${workspaceId}#${groupId}`,
-        pathPrefix,
-      },
-    }),
-  );
-  return true;
+  return getIdentityStore().groups.prefixGrants.remove(workspaceId, groupId, pathPrefix);
 }
 
 export async function listPrefixGrants(
   workspaceId: string,
   groupId: string,
 ): Promise<PrefixGrantRecord[]> {
-  const { client, QueryCommand } = await dynamo();
-  const result = await client.send(
-    new QueryCommand({
-      TableName: GROUP_PREFIX_GRANTS_TABLE(),
-      KeyConditionExpression: "#pk = :pk",
-      ExpressionAttributeNames: { "#pk": "workspaceId#groupId" },
-      ExpressionAttributeValues: { ":pk": `${workspaceId}#${groupId}` },
-    }),
-  );
-  return (result.Items ?? []).map((item) => ({
-    workspaceId: (item as Record<string, unknown>)["workspaceId"] as string,
-    groupId: (item as Record<string, unknown>)["groupId"] as string,
-    pathPrefix: (item as Record<string, unknown>)["pathPrefix"] as string,
-  }));
-}
-
-async function deleteAllPrefixGrants(workspaceId: string, groupId: string): Promise<void> {
-  const grants = await listPrefixGrants(workspaceId, groupId);
-  const { client, DeleteCommand } = await dynamo();
-  for (const grant of grants) {
-    await client.send(
-      new DeleteCommand({
-        TableName: GROUP_PREFIX_GRANTS_TABLE(),
-        Key: {
-          "workspaceId#groupId": `${workspaceId}#${groupId}`,
-          pathPrefix: grant.pathPrefix,
-        },
-      }),
-    );
-  }
+  return getIdentityStore().groups.prefixGrants.list(workspaceId, groupId);
 }
 
 // ---------------------------------------------------------------------------
@@ -337,21 +124,7 @@ export async function addToolGrant(
   provider: string,
   operation: string,
 ): Promise<ToolGrantRecord> {
-  const { client, PutCommand } = await dynamo();
-  await client.send(
-    new PutCommand({
-      TableName: GROUP_TOOL_GRANTS_TABLE(),
-      Item: {
-        "workspaceId#groupId": `${workspaceId}#${groupId}`,
-        "provider#operation": `${provider}#${operation}`,
-        workspaceId,
-        groupId,
-        provider,
-        operation,
-      },
-    }),
-  );
-  return { workspaceId, groupId, provider, operation };
+  return getIdentityStore().groups.toolGrants.add(workspaceId, groupId, provider, operation);
 }
 
 export async function removeToolGrant(
@@ -360,71 +133,19 @@ export async function removeToolGrant(
   provider: string,
   operation: string,
 ): Promise<boolean> {
-  const { client, DeleteCommand, GetCommand } = await dynamo();
-  const result = await client.send(
-    new GetCommand({
-      TableName: GROUP_TOOL_GRANTS_TABLE(),
-      Key: {
-        "workspaceId#groupId": `${workspaceId}#${groupId}`,
-        "provider#operation": `${provider}#${operation}`,
-      },
-    }),
-  );
-  if (!result.Item) return false;
-
-  await client.send(
-    new DeleteCommand({
-      TableName: GROUP_TOOL_GRANTS_TABLE(),
-      Key: {
-        "workspaceId#groupId": `${workspaceId}#${groupId}`,
-        "provider#operation": `${provider}#${operation}`,
-      },
-    }),
-  );
-  return true;
+  return getIdentityStore().groups.toolGrants.remove(workspaceId, groupId, provider, operation);
 }
 
 export async function listToolGrants(
   workspaceId: string,
   groupId: string,
 ): Promise<ToolGrantRecord[]> {
-  const { client, QueryCommand } = await dynamo();
-  const result = await client.send(
-    new QueryCommand({
-      TableName: GROUP_TOOL_GRANTS_TABLE(),
-      KeyConditionExpression: "#pk = :pk",
-      ExpressionAttributeNames: { "#pk": "workspaceId#groupId" },
-      ExpressionAttributeValues: { ":pk": `${workspaceId}#${groupId}` },
-    }),
-  );
-  return (result.Items ?? []).map((item) => ({
-    workspaceId: (item as Record<string, unknown>)["workspaceId"] as string,
-    groupId: (item as Record<string, unknown>)["groupId"] as string,
-    provider: (item as Record<string, unknown>)["provider"] as string,
-    operation: (item as Record<string, unknown>)["operation"] as string,
-  }));
-}
-
-async function deleteAllToolGrants(workspaceId: string, groupId: string): Promise<void> {
-  const grants = await listToolGrants(workspaceId, groupId);
-  const { client, DeleteCommand } = await dynamo();
-  for (const grant of grants) {
-    await client.send(
-      new DeleteCommand({
-        TableName: GROUP_TOOL_GRANTS_TABLE(),
-        Key: {
-          "workspaceId#groupId": `${workspaceId}#${groupId}`,
-          "provider#operation": `${grant.provider}#${grant.operation}`,
-        },
-      }),
-    );
-  }
+  return getIdentityStore().groups.toolGrants.list(workspaceId, groupId);
 }
 
 /**
  * Check whether any of the given groupIds has a tool grant covering
  * (provider, operation). A grant with operation="*" is a wildcard.
- * Used by the tool resolver (APR-283).
  */
 export async function checkToolGrant(
   workspaceId: string,
@@ -432,47 +153,13 @@ export async function checkToolGrant(
   provider: string,
   operation: string,
 ): Promise<boolean> {
-  const { client, GetCommand } = await dynamo();
-  for (const groupId of groupIds) {
-    const exact = await client.send(
-      new GetCommand({
-        TableName: GROUP_TOOL_GRANTS_TABLE(),
-        Key: {
-          "workspaceId#groupId": `${workspaceId}#${groupId}`,
-          "provider#operation": `${provider}#${operation}`,
-        },
-      }),
-    );
-    if (exact.Item) return true;
-
-    if (operation !== "*") {
-      const wildcard = await client.send(
-        new GetCommand({
-          TableName: GROUP_TOOL_GRANTS_TABLE(),
-          Key: {
-            "workspaceId#groupId": `${workspaceId}#${groupId}`,
-            "provider#operation": `${provider}#*`,
-          },
-        }),
-      );
-      if (wildcard.Item) return true;
-    }
-  }
-  return false;
+  return getIdentityStore().groups.toolGrants.check(workspaceId, groupIds, provider, operation);
 }
 
-/**
- * Return all path prefixes granted to any of the given groupIds.
- * Used by the tool resolver (APR-283).
- */
+/** All path prefixes granted to any of the given groupIds. */
 export async function listGrantedPrefixes(
   workspaceId: string,
   groupIds: string[],
 ): Promise<string[]> {
-  const prefixes: string[] = [];
-  for (const groupId of groupIds) {
-    const grants = await listPrefixGrants(workspaceId, groupId);
-    for (const g of grants) prefixes.push(g.pathPrefix);
-  }
-  return [...new Set(prefixes)];
+  return getIdentityStore().groups.prefixGrants.listGranted(workspaceId, groupIds);
 }
