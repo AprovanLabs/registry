@@ -70,6 +70,19 @@ export interface RegistryServerOptions {
   allowInsecure?: boolean;
   /** MCP extension hook — host-attached tools/prompts/resources (product plane). */
   mcp?: { extensions?: McpExtensions };
+  /**
+   * Host hook for compat entries whose module is "native" (the implementation
+   * IS the host process — e.g. the agent contract's native runner), keyed by
+   * interface id. Without a hook such entries refuse with 501.
+   */
+  compatDispatch?: Record<
+    string,
+    (
+      ctx: import("../kernel/index.js").ServiceContext,
+      operation: string,
+      args: Record<string, unknown>,
+    ) => Promise<unknown>
+  >;
 }
 
 export interface RegistryServer {

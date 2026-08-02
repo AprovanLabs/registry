@@ -87,6 +87,7 @@ export async function createRegistryServer(
     telemetry,
     audit: storage.audit,
     oauthCache: createOAuthTokenCache(),
+    ...(options.compatDispatch ? { compatDispatch: options.compatDispatch } : {}),
   });
   const discovery = new DiscoveryService({
     catalog: options.catalog,
