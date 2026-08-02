@@ -3,10 +3,11 @@
  * out is the service-call postMessage protocol.
  *
  * This is the browser twin of the gateway's server-side isolate
- * (`@utdk/isolate`): the script gets its declared namespace proxies as
- * globals and nothing else of the host page. Every proxied call crosses the
- * iframe boundary to the parent, which forwards it to a {@link Transport}
- * (normally the gateway, where credentials are resolved server-side).
+ * (`apps/workspace/src/isolate.ts`): the script gets its declared namespace
+ * proxies as globals and nothing else of the host page. Every proxied call
+ * crosses the iframe boundary to the parent, which forwards it to a
+ * {@link Transport} (normally the gateway, where credentials are resolved
+ * server-side).
  *
  * The postMessage protocol is the same one patchwork's widget iframes speak
  * (`service-call` / `service-result`), so a patchwork host can proxy for a
