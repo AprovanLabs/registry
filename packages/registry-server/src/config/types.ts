@@ -10,6 +10,7 @@ import type { Hono } from "hono";
 import type { AuthAdapter, TenantResolver } from "../auth/types.js";
 import type { InterfaceCatalog } from "../catalog/types.js";
 import type { CoreService } from "../kernel/index.js";
+import type { ProviderExecutor } from "../executor/index.js";
 import type { RegistryStorage } from "../storage/types.js";
 import type { RegistryTelemetry } from "../telemetry/index.js";
 
@@ -86,6 +87,8 @@ export interface RegistryServer {
   runScript(ctx: CallContext, opts: RunScriptOptions): Promise<unknown>;
   stores: RegistryStorage;
   telemetry: RegistryTelemetry;
+  /** The provider-module executor (exposed for host test seams and cache control). */
+  executor: ProviderExecutor;
   close(): Promise<void>;
 }
 

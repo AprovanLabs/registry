@@ -7,6 +7,18 @@
  * over this same constructor.
  */
 
+// The constructor
+export { createRegistryServer } from "./server.js";
+
+// MCP surface
+export {
+  buildMcpServer,
+  createMcpHandler,
+  resetMcpCatalog,
+  setMcpCatalogForTesting,
+  type McpDeps,
+} from "./mcp/server.js";
+
 // Core contexts + construction contract
 export type {
   CallContext,

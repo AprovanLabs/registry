@@ -28,7 +28,16 @@ import type {
   TenantStore,
 } from "./types.js";
 
-const newId = (): string => randomBytes(12).toString("hex");
+/**
+ * Time-then-sequence-prefixed ids: `ORDER BY created_at, id` is exact
+ * insertion order even for same-millisecond writes — "first credential,
+ * creation order" is a semantic the zero-config fallback depends on.
+ */
+let idSequence = 0;
+const newId = (): string =>
+  Date.now().toString(16).padStart(12, "0") +
+  (idSequence = (idSequence + 1) & 0xffff).toString(16).padStart(4, "0") +
+  randomBytes(4).toString("hex");
 const now = (): string => new Date().toISOString();
 
 type Row = Record<string, unknown>;

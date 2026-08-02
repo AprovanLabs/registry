@@ -19,12 +19,21 @@
  * add no runtime edge even though both modules sit downstream of this one.
  */
 
+import type { ServiceContext as RegistryServiceContext } from "@aprovan/registry-server";
 import type { AppPaths } from "./apps/store.js";
 import type { ToolEntry } from "./routes/tools.js";
 
-export interface ServiceContext {
-  workspaceId: string;
-  userId: string;
+/**
+ * The kernel contract's canonical home is now `@aprovan/registry-server`
+ * (tech-plan D6): `ServiceError` here IS the package's class, so status-
+ * carrying errors thrown by the extracted dispatch pipeline and QuickJS
+ * sandbox satisfy this module's `instanceof` checks. The workspace's
+ * `ServiceContext` extends the package's core shape with the product-plane
+ * fields the extracted server never reads.
+ */
+export { ServiceError } from "@aprovan/registry-server";
+
+export interface ServiceContext extends RegistryServiceContext {
   /**
    * Event-cascade depth when the caller is a workflow run (set by the
    * workflow runner). `events.emit` uses it to cap workflow→event→workflow
@@ -103,15 +112,6 @@ export interface CoreService {
     procedure: string,
     args: Record<string, unknown>,
   ): Promise<unknown>;
-}
-
-export class ServiceError extends Error {
-  constructor(
-    message: string,
-    readonly status: number = 400,
-  ) {
-    super(message);
-  }
 }
 
 /**

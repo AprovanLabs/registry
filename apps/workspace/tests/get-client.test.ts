@@ -1,6 +1,7 @@
 /**
- * `getClient({ profile })` — the credential-profile factory on workflow
- * script namespaces (docs/interfaces.md).
+ * `client(name)` — the profile factory on workflow script namespaces
+ * (replaces `getClient({ profile })`; the prelude now lives in
+ * @aprovan/registry-server, sandbox-runtime spec "In-sandbox SDK layer").
  *
  * One vocabulary, two resolutions, and both legs are covered end to end
  * through real QuickJS runs (script → namespace proxy → invokeTool → stubbed
@@ -10,9 +11,8 @@
  *   - provider namespaces: a profile is a credential *label*, so one script
  *     can hold two GitHub accounts side by side;
  *   - interface namespaces: a profile is an *instance* name — instances
- *     already are the interface world's profiles, so `llm.getClient({
- *     profile: "fast" })` dispatches through `llm:fast`, options and
- *     credential pin included.
+ *     already are the interface world's profiles, so `llm.client("fast")`
+ *     dispatches through `llm:fast`, options and credential pin included.
  *
  * Failures must be call-time ServiceErrors naming what exists (labels,
  * instances) — never a loader error, never a silent first-credential
@@ -106,7 +106,7 @@ async function runScript(name: string, source: string): Promise<RunRecord> {
 // Provider namespaces: profile = credential label
 // ---------------------------------------------------------------------------
 
-describe("getClient on a provider namespace", () => {
+describe("client(name) on a provider namespace", () => {
   it("routes two profiles of one provider to their own credentials", async () => {
     expect((await saveCredential("github", "gh-work-token", "work")).status).toBeLessThan(300);
     expect((await saveCredential("github", "gh-personal-token", "personal")).status).toBeLessThan(
@@ -117,8 +117,8 @@ describe("getClient on a provider namespace", () => {
     const run = await runScript(
       "two-accounts",
       `export default async function run() {
-  const work = await github.getClient({ profile: "work" });
-  const personal = await github.getClient({ profile: "personal" });
+  const work = await github.client("work");
+  const personal = await github.client("personal");
   await work.repos.get({ owner: "acme", repo: "api" });
   await personal.repos.get({ owner: "me", repo: "dotfiles" });
   return "done";
@@ -147,7 +147,7 @@ describe("getClient on a provider namespace", () => {
     const run = await runScript(
       "pin-and-default",
       `export default async function run() {
-  const personal = await github.getClient({ profile: "personal" });
+  const personal = await github.client("personal");
   await personal.repos.get({ owner: "me", repo: "dotfiles" });
   await github.repos.get({ owner: "acme", repo: "api" });
   return "done";
@@ -167,7 +167,7 @@ describe("getClient on a provider namespace", () => {
     const run = await runScript(
       "unknown-profile",
       `export default async function run() {
-  const gh = await github.getClient({ profile: "nope" });
+  const gh = await github.client("nope");
   return await gh.repos.get({ owner: "o", repo: "r" });
 }`,
     );
@@ -191,7 +191,7 @@ describe("getClient on a provider namespace", () => {
     const run = await runScript(
       "core-profile",
       `export default async function run() {
-  const kv = await keyvalue.getClient({ profile: "x" });
+  const kv = await keyvalue.client("x");
   return await kv.get({ key: "a" });
 }`,
     );
@@ -204,7 +204,7 @@ describe("getClient on a provider namespace", () => {
 // Interface namespaces: profile = instance name
 // ---------------------------------------------------------------------------
 
-describe("getClient on an interface namespace", () => {
+describe("client(name) on an interface namespace", () => {
   it("resolves the instance llm:fast, options and credential included", async () => {
     await saveCredential("anthropic", "sk-ant-key");
     const bound = await manage("interfaces/bind", {
@@ -219,7 +219,7 @@ describe("getClient on an interface namespace", () => {
     const run = await runScript(
       "fast-llm",
       `export default async function run() {
-  const fast = await llm.getClient({ profile: "fast" });
+  const fast = await llm.client("fast");
   await fast.createChatCompletion({ messages: [{ role: "user", content: "hi" }] });
   return "done";
 }`,
@@ -245,7 +245,7 @@ describe("getClient on an interface namespace", () => {
     const run = await runScript(
       "ghost-llm",
       `export default async function run() {
-  const ghost = await llm.getClient({ profile: "ghost" });
+  const ghost = await llm.client("ghost");
   return await ghost.listModels({});
 }`,
     );
@@ -258,7 +258,7 @@ describe("getClient on an interface namespace", () => {
     const run = await runScript(
       "bad-instance-name",
       `export default async function run() {
-  const c = await llm.getClient({ profile: "Not Valid" });
+  const c = await llm.client("Not Valid");
   return await c.listModels({});
 }`,
     );
