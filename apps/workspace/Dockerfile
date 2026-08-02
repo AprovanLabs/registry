@@ -37,7 +37,6 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json tsconfig.json ./
 # finds on disk, and a missing project makes the lockfile look stale. Manifests
 # only — no source from these ever enters the image.
 COPY apps/registry/package.json ./apps/registry/
-COPY apps/tailor/package.json ./apps/tailor/
 COPY infra/package.json ./infra/
 
 COPY packages/ ./packages/
