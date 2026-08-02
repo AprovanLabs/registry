@@ -35,11 +35,8 @@ import { Construct } from "constructs";
  * Nothing listens: inbound is closed by the security group, and the only
  * reason the address exists is egress to model providers and GHCR.
  */
-export interface WorkspaceServiceProps {
-  environmentName: string;
-  names: Namer;
-  /** Envelope-encryption key for credential payloads (credentialCipher.ts). */
-  credentialsKey: IKey;
+/** The Dynamo store tables — absent once retired by the cleanup deploy. */
+export interface WorkspaceDynamoTables {
   credentialsTable: ITable;
   permissionsTable: ITable;
   auditTable: ITable;
@@ -50,10 +47,21 @@ export interface WorkspaceServiceProps {
   userGroupsTable: ITable;
   /** Workspace filesystem index table (fs-store.ts `FsStoreS3`). */
   fsTable: ITable;
-  /** Workspace filesystem content-blob bucket. */
-  fsBucket: IBucket;
   /** Record store — accumulated state (records.ts `RecordStoreDynamodb`). */
   recordsTable: ITable;
+}
+
+export interface WorkspaceServiceProps {
+  environmentName: string;
+  names: Namer;
+  /** Envelope-encryption key for credential payloads (credentialCipher.ts). */
+  credentialsKey: IKey;
+  /** Workspace filesystem content-blob bucket (retained forever). */
+  fsBucket: IBucket;
+  /** Dynamo store tables; undefined after the cleanup deploy retires them. */
+  dynamoTables?: WorkspaceDynamoTables;
+  /** True on the post-confirmation cleanup deploy (no grants, no env). */
+  dynamoRetired: boolean;
   /** Aurora DSQL cluster ARN (IAM connect grant). */
   dsqlClusterArn: string;
   /** DSQL cluster endpoint hostname (DSQL_ENDPOINT env). */
@@ -105,17 +113,9 @@ export class WorkspaceService extends Construct {
       names,
       sharedEnv,
       credentialsKey,
-      credentialsTable,
-      permissionsTable,
-      auditTable,
-      sessionsTable,
-      groupsTable,
-      groupPrefixGrantsTable,
-      groupToolGrantsTable,
-      userGroupsTable,
-      fsTable,
       fsBucket,
-      recordsTable,
+      dynamoTables,
+      dynamoRetired,
       dsqlClusterArn,
       dsqlEndpoint,
       storeBackend,
@@ -179,22 +179,27 @@ export class WorkspaceService extends Construct {
       WORKSPACE_MODE: "aws",
       APROVAN_ENVIRONMENT: environmentName,
       WORKSPACE_PORT: "4000",
-      CREDENTIALS_TABLE: credentialsTable.tableName,
       CREDENTIALS_KMS_KEY_ID: credentialsKey.keyId,
-      PERMISSIONS_TABLE: permissionsTable.tableName,
-      AUDIT_TABLE: auditTable.tableName,
-      SESSIONS_TABLE: sessionsTable.tableName,
-      GROUPS_TABLE: groupsTable.tableName,
-      GROUP_PREFIX_GRANTS_TABLE: groupPrefixGrantsTable.tableName,
-      GROUP_TOOL_GRANTS_TABLE: groupToolGrantsTable.tableName,
-      USER_GROUPS_TABLE: userGroupsTable.tableName,
-      USERGROUPS_TABLE: userGroupsTable.tableName,
-      FS_TABLE: fsTable.tableName,
       FS_BUCKET: fsBucket.bucketName,
-      RECORDS_TABLE: recordsTable.tableName,
       STORE_BACKEND: storeBackend,
       DSQL_ENDPOINT: dsqlEndpoint,
       GATEWAY_REGISTRY_BASE_URL: "https://aprovan.com/registry",
+      // Table env wiring dies with the tables on the cleanup deploy.
+      ...(dynamoTables
+        ? {
+            CREDENTIALS_TABLE: dynamoTables.credentialsTable.tableName,
+            PERMISSIONS_TABLE: dynamoTables.permissionsTable.tableName,
+            AUDIT_TABLE: dynamoTables.auditTable.tableName,
+            SESSIONS_TABLE: dynamoTables.sessionsTable.tableName,
+            GROUPS_TABLE: dynamoTables.groupsTable.tableName,
+            GROUP_PREFIX_GRANTS_TABLE: dynamoTables.groupPrefixGrantsTable.tableName,
+            GROUP_TOOL_GRANTS_TABLE: dynamoTables.groupToolGrantsTable.tableName,
+            USER_GROUPS_TABLE: dynamoTables.userGroupsTable.tableName,
+            USERGROUPS_TABLE: dynamoTables.userGroupsTable.tableName,
+            FS_TABLE: dynamoTables.fsTable.tableName,
+            RECORDS_TABLE: dynamoTables.recordsTable.tableName,
+          }
+        : {}),
       ...containerEnv(sharedEnv),
     };
 
@@ -298,19 +303,7 @@ export class WorkspaceService extends Construct {
     // -----------------------------------------------------------------------
     const { taskRole } = this.taskDefinition;
 
-    const registryTables = [
-      credentialsTable,
-      permissionsTable,
-      auditTable,
-      sessionsTable,
-      groupsTable,
-      groupPrefixGrantsTable,
-      groupToolGrantsTable,
-      userGroupsTable,
-      fsTable,
-      recordsTable,
-    ];
-    for (const table of registryTables) {
+    for (const table of dynamoTables ? Object.values(dynamoTables) : []) {
       table.grantReadWriteData(taskRole);
     }
 
@@ -325,15 +318,20 @@ export class WorkspaceService extends Construct {
     // `fromTableName` does not know about GSIs, so `grantReadWriteData` would
     // omit `/index/*` ARNs and deny Query on ByUserId / ByEmail / etc.
     // Declare each index explicitly via `fromTableAttributes`.
-    const coreTables: Array<{ envKey: string; globalIndexes?: string[] }> = [
-      { envKey: "DYNAMODB_USERS_TABLE", globalIndexes: ["ByEmail"] },
-      { envKey: "DYNAMODB_WORKSPACES_TABLE" },
-      { envKey: "DYNAMODB_MEMBERSHIPS_TABLE", globalIndexes: ["ByUserId"] },
-      {
-        envKey: "DYNAMODB_INVITES_TABLE",
-        globalIndexes: ["ByEmailWorkspace", "ByWorkspace"],
-      },
-    ];
+    // Once Dynamo is retired here, identity reads come from DSQL and the
+    // core-table imports/grants go too (the tables themselves retire in the
+    // core stack once nothing references them).
+    const coreTables: Array<{ envKey: string; globalIndexes?: string[] }> = dynamoRetired
+      ? []
+      : [
+          { envKey: "DYNAMODB_USERS_TABLE", globalIndexes: ["ByEmail"] },
+          { envKey: "DYNAMODB_WORKSPACES_TABLE" },
+          { envKey: "DYNAMODB_MEMBERSHIPS_TABLE", globalIndexes: ["ByUserId"] },
+          {
+            envKey: "DYNAMODB_INVITES_TABLE",
+            globalIndexes: ["ByEmailWorkspace", "ByWorkspace"],
+          },
+        ];
     for (const { envKey, globalIndexes } of coreTables) {
       const tableName = sharedEnv[envKey];
       if (!tableName) continue;
