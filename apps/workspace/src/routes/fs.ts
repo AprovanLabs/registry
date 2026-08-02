@@ -24,7 +24,7 @@
  */
 
 import { Hono, type Context } from "hono";
-import { hiddenDataPrefixes, isHiddenDataPath } from "../apps/store.js";
+import { hiddenDataPrefixes, partitionAccess } from "../apps/store.js";
 import { changesSince, currentCursor, recordChange } from "../change-journal.js";
 import { listAll, getFsStore, isServicePath, normalizeFsPath } from "../fs-store.js";
 import { requireAuth } from "../middleware/auth.js";
@@ -70,6 +70,25 @@ function serviceErrorResponse(c: Context, err: unknown): Response {
   throw err;
 }
 
+/**
+ * Per-user partition guard for the HTTP plane (specs per-user-data). A path
+ * inside another user's data partition answers exactly the route's own
+ * not-found body — `{ error: "Not found" }`, 404 — so a foreign partition is
+ * byte-identical to a path that does not exist. Returns null when access is
+ * allowed. REPO CONVENTION: every new exact-path /fs verb calls this first.
+ */
+async function foreignPartitionResponse(
+  c: Context,
+  path: string,
+): Promise<Response | null> {
+  const principal = c.get("principal");
+  const hidden = await hiddenDataPrefixes(principal.workspaceId);
+  if (partitionAccess(path, principal.sub, hidden) === "foreign") {
+    return c.json({ error: "Not found" }, 404);
+  }
+  return null;
+}
+
 fsRouter.get("/", async (c) => {
   const prefix = c.req.query("prefix") ?? "";
   const normalized = prefix ? normalizeFsPath(prefix) : "";
@@ -91,14 +110,18 @@ fsRouter.get("/", async (c) => {
   }
   const entries = await listAll(getFsStore(), workspaceId, normalized);
   // Root listings (and the chat file tree, which calls this same route)
-  // hide the service subtree entirely, plus every app/personal data
-  // partition — see docs/app-data.md "The file plane forgets app data".
+  // hide the service subtree entirely, plus every OTHER user's data
+  // partition — the caller's own partition is listed (their private files
+  // are a place, not a secret; see docs/app-data.md).
   const hidden = await hiddenDataPrefixes(workspaceId);
   const mounted = await mountEntries(workspaceId, normalized);
+  const sub = c.get("principal").sub;
   return c.json({
     entries: [
       ...entries.filter(
-        (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
+        (entry) =>
+          !isServicePath(entry.path) &&
+          partitionAccess(entry.path, sub, hidden) !== "foreign",
       ),
       ...mounted,
     ].sort((a, b) => a.path.localeCompare(b.path)),
@@ -152,9 +175,12 @@ fsRouter.get("/changes", async (c) => {
     const entries = await listAll(getFsStore(), workspaceId, "");
     const hidden = await hiddenDataPrefixes(workspaceId);
     const mounted = await mountEntries(workspaceId, "");
+    const sub = c.get("principal").sub;
     paths = [
       ...entries.filter(
-        (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
+        (entry) =>
+          !isServicePath(entry.path) &&
+          partitionAccess(entry.path, sub, hidden) !== "foreign",
       ),
       ...mounted,
     ].map((entry) => entry.path);
@@ -172,6 +198,8 @@ fsRouter.get("/:path{.+}", async (c) => {
   if (isServicePath(path)) {
     return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
   }
+  const denied = await foreignPartitionResponse(c, path);
+  if (denied) return denied;
   const workspaceId = c.get("principal").workspaceId;
   try {
     const session = await stagedSessionParam(c, false);
@@ -196,6 +224,8 @@ fsRouter.put("/:path{.+}", async (c) => {
   if (isServicePath(path)) {
     return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
   }
+  const denied = await foreignPartitionResponse(c, path);
+  if (denied) return denied;
   const body = await c.req.json<{ content?: string; mimeType?: string }>();
   if (typeof body.content !== "string") {
     return c.json({ error: "content must be a string" }, 400);
@@ -223,6 +253,8 @@ fsRouter.delete("/:path{.+}", async (c) => {
   if (isServicePath(path)) {
     return c.json({ error: "Service state is managed through its tool namespaces" }, 403);
   }
+  const denied = await foreignPartitionResponse(c, path);
+  if (denied) return denied;
   const workspaceId = c.get("principal").workspaceId;
   const store = getFsStore();
   try {
@@ -302,6 +334,9 @@ fsUploadsRouter.post("/complete", async (c) => {
   if (!body.hash || !HASH_PATTERN.test(body.hash)) {
     return c.json({ error: "hash must be the hex SHA-256 of the content" }, 400);
   }
+  // Upload completion is a write at an exact path — same partition guard.
+  const denied = await foreignPartitionResponse(c, path);
+  if (denied) return denied;
   const workspaceId = c.get("principal").workspaceId;
   const entry = await store.completeUpload(
     workspaceId,

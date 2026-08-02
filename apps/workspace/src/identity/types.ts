@@ -53,19 +53,6 @@ export interface GroupRecord {
   updatedAt: string;
 }
 
-export interface PrefixGrantRecord {
-  workspaceId: string;
-  groupId: string;
-  pathPrefix: string;
-}
-
-export interface ToolGrantRecord {
-  workspaceId: string;
-  groupId: string;
-  provider: string;
-  operation: string;
-}
-
 export interface UserGroupRecord {
   workspaceId: string;
   userId: string;
@@ -158,39 +145,6 @@ export interface IIdentityStore {
       listGroupIdsForUser(workspaceId: string, userId: string): Promise<string[]>;
       /** User ids in a group (was an inline table Scan in routes/groups.ts). */
       listUserIdsForGroup(workspaceId: string, groupId: string): Promise<string[]>;
-    };
-    toolGrants: {
-      add(
-        workspaceId: string,
-        groupId: string,
-        provider: string,
-        operation: string,
-      ): Promise<ToolGrantRecord>;
-      remove(
-        workspaceId: string,
-        groupId: string,
-        provider: string,
-        operation: string,
-      ): Promise<boolean>;
-      list(workspaceId: string, groupId: string): Promise<ToolGrantRecord[]>;
-      check(
-        workspaceId: string,
-        groupIds: string[],
-        provider: string,
-        operation: string,
-      ): Promise<boolean>;
-    };
-    /**
-     * GroupPrefixGrants are NOT carried into the relational schema (decision
-     * record #8; the admin write surface is removed in WS-6). The Dynamo
-     * backend keeps today's behavior until cutover; relational backends
-     * return empty reads and refuse writes.
-     */
-    prefixGrants: {
-      add(workspaceId: string, groupId: string, pathPrefix: string): Promise<PrefixGrantRecord>;
-      remove(workspaceId: string, groupId: string, pathPrefix: string): Promise<boolean>;
-      list(workspaceId: string, groupId: string): Promise<PrefixGrantRecord[]>;
-      listGranted(workspaceId: string, groupIds: string[]): Promise<string[]>;
     };
   };
   permissions: {

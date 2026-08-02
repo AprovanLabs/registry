@@ -63,8 +63,7 @@ CREATE TABLE IF NOT EXISTS audit_log (
   PRIMARY KEY (workspace_id, ts, id)
 );
 
--- Identity / authz (stream 8): real columns for today's composite keys;
--- GroupPrefixGrants deliberately not carried (decision record #8).
+-- Identity / authz (stream 8): real columns for today's composite keys.
 CREATE TABLE IF NOT EXISTS users (
   sub text PRIMARY KEY,
   email text,
@@ -135,16 +134,6 @@ CREATE TABLE IF NOT EXISTS group_members (
 );
 
 CREATE INDEX ASYNC IF NOT EXISTS group_members_by_user ON group_members (workspace_id, user_id);
-
-CREATE TABLE IF NOT EXISTS group_tool_grants (
-  workspace_id text NOT NULL,
-  group_id text NOT NULL,
-  provider text NOT NULL,
-  operation text NOT NULL,
-  granted_by text,
-  created_at text,
-  PRIMARY KEY (workspace_id, group_id, provider, operation)
-);
 
 CREATE TABLE IF NOT EXISTS permissions (
   workspace_id text NOT NULL,

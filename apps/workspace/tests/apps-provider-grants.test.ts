@@ -12,6 +12,7 @@ import { join } from "node:path";
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { createApp } from "../src/app.js";
 import { getCredentialStore } from "../src/credentials.js";
+import { getRegistryStorage, resetRegistryStorage } from "../src/registry-storage.js";
 import {
   resetExecutor,
   setExecutor,
@@ -28,7 +29,8 @@ beforeAll(() => {
   process.env["WORKSPACE_DATA_DIR"] = dataDir;
 });
 
-afterAll(() => {
+afterAll(async () => {
+  await resetRegistryStorage();
   delete process.env["WORKSPACE_DATA_DIR"];
   rmSync(dataDir, { recursive: true, force: true });
 });
@@ -152,6 +154,35 @@ describe("provider credential grants — publish validation", () => {
         credential: "linear",
         description: expect.stringContaining("linear"),
       },
+    ]);
+  });
+
+  it("names the executing profile on a tier-2 entry when the workspace stores one", async () => {
+    await createCredential("asana", "owner-token");
+    // Bare app dispatch resolves the provider's stored `default` profile, so
+    // that is the profile the Access pane must name (specs
+    // group-profile-grants "Access pane names the executing profile").
+    const storage = await getRegistryStorage();
+    await storage.tenants.ensure("local");
+    const existing = await storage.profiles.getByName("local", "provider", "asana", "default");
+    if (existing) await storage.profiles.delete("local", existing.id);
+    await storage.profiles.create("local", {
+      name: "default",
+      targetKind: "provider",
+      targetId: "asana",
+      options: {},
+      createdBy: "test",
+    });
+
+    await manage("apps/publish", {
+      name: "grant-profile",
+      allowed_tools: ["keyvalue.*", "asana.tasks.get"],
+    });
+    const caps = await data<{
+      providers: Array<{ provider: string; profile?: string; credential: string }>;
+    }>(await manage("apps/capabilities", { name: "grant-profile" }));
+    expect(caps.providers).toEqual([
+      expect.objectContaining({ provider: "asana", credential: "asana", profile: "default" }),
     ]);
   });
 });

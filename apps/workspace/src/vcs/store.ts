@@ -27,6 +27,11 @@
 import { createHash } from "node:crypto";
 import { hiddenDataPrefixes, isHiddenDataPath } from "../apps/store.js";
 import { getFsStore, isServicePath, listAll, type FsEntry } from "../fs-store.js";
+import {
+  collectMountLineage,
+  type MountLineageEntry,
+  type MountProvenance,
+} from "./mounts.js";
 import { ServiceError } from "../service-kernel.js";
 import {
   listSvcKeys,
@@ -57,6 +62,14 @@ export interface VcsSnapshot {
   /** Subtree this snapshot covers ("" = whole visible workspace). */
   prefix: string;
   entries: SnapshotEntry[];
+  /**
+   * Mount lineage at snapshot time (specs/mount-lineage) — deterministic
+   * (no timestamps), sorted by prefix, and part of the canonical snapshot
+   * identity: two snapshots with identical native entries but different
+   * mount tokens are different snapshots. Absent on pre-lineage snapshots
+   * and on workspaces without mounts (wire format is additive).
+   */
+  mounts?: MountLineageEntry[];
 }
 
 export interface CommitStats {
@@ -77,6 +90,13 @@ export interface VcsCommit {
   createdAt: string;
   /** Change counts vs the first parent (all-added for root commits). */
   stats: CommitStats;
+  /**
+   * Per-mount provenance records captured when this commit was created
+   * (specs/mount-lineage): source locator, fetch origin, and the timestamped
+   * `retrievedAt` — the half of lineage that may NOT live in the snapshot
+   * (timestamps would break snapshot dedupe). Absent on pre-lineage commits.
+   */
+  provenance?: MountProvenance[];
 }
 
 export interface VcsRef {
@@ -119,17 +139,38 @@ export async function visibleEntries(
   );
 }
 
-/** Identity: sha256 over the sorted `<hash> <path>` lines — content only. */
-function snapshotId(entries: SnapshotEntry[]): string {
-  const canonical = entries.map((entry) => `${entry.hash} ${entry.path}`).join("\n");
-  return createHash("sha256").update(canonical).digest("hex");
+/**
+ * Identity: sha256 over the sorted `<hash> <path>` lines, plus one
+ * `mount <configHash> <token> <prefix>` line per mount lineage entry —
+ * deterministic content only, so a moved mount changes snapshot identity
+ * (specs/mount-lineage "Upstream movement changes snapshot identity") while
+ * a mountless snapshot hashes exactly as before this change.
+ */
+function snapshotId(entries: SnapshotEntry[], mounts?: MountLineageEntry[]): string {
+  const lines = entries.map((entry) => `${entry.hash} ${entry.path}`);
+  for (const mount of mounts ?? []) {
+    lines.push(`mount ${mount.configHash} ${mount.versionToken ?? "-"} ${mount.prefix}`);
+  }
+  return createHash("sha256").update(lines.join("\n")).digest("hex");
 }
 
-export function buildSnapshot(entries: FsEntry[], prefix = ""): VcsSnapshot {
+export function buildSnapshot(
+  entries: FsEntry[],
+  prefix = "",
+  mounts?: MountLineageEntry[],
+): VcsSnapshot {
   const sorted = [...entries]
     .sort((a, b) => a.path.localeCompare(b.path))
     .map(({ path, hash, mimeType, size }) => ({ path, hash, mimeType, size }));
-  return { id: snapshotId(sorted), prefix, entries: sorted };
+  const sortedMounts = mounts?.length
+    ? [...mounts].sort((a, b) => a.prefix.localeCompare(b.prefix))
+    : undefined;
+  return {
+    id: snapshotId(sorted, sortedMounts),
+    prefix,
+    entries: sorted,
+    ...(sortedMounts ? { mounts: sortedMounts } : {}),
+  };
 }
 
 /**
@@ -199,6 +240,8 @@ export async function createCommit(
     message: string;
     author: string;
     sessionId?: string;
+    /** Mount provenance captured alongside the snapshot's lineage entries. */
+    provenance?: MountProvenance[];
   },
 ): Promise<VcsCommit> {
   const parentCommit = options.parents[0]
@@ -222,6 +265,7 @@ export async function createCommit(
       modified: diff.modified.length,
       removed: diff.removed.length,
     },
+    ...(options.provenance?.length ? { provenance: options.provenance } : {}),
   };
   const id = createHash("sha256").update(JSON.stringify(body)).digest("hex");
   const commit: VcsCommit = { id, ...body };
@@ -315,7 +359,11 @@ export async function commitTree(
   workspaceId: string,
   options: { message: string; author: string; sessionId?: string },
 ): Promise<{ commit: VcsCommit; created: boolean }> {
-  const snapshot = buildSnapshot(await visibleEntries(workspaceId));
+  // Mount lineage rides every snapshot: tokens go INTO the snapshot (and
+  // its identity — the unchanged-head comparison below therefore covers
+  // "native entries AND mount tokens" for free), provenance onto the commit.
+  const lineage = await collectMountLineage(workspaceId);
+  const snapshot = buildSnapshot(await visibleEntries(workspaceId), "", lineage.entries);
   const ref = await readRef(workspaceId, MAIN_REF);
   const head = ref ? await readCommit(workspaceId, ref.commit) : undefined;
   if (head && head.snapshot === snapshot.id) {
@@ -328,6 +376,7 @@ export async function commitTree(
     message: options.message,
     author: options.author,
     sessionId: options.sessionId,
+    provenance: lineage.provenance,
   });
   await writeRef(workspaceId, MAIN_REF, commit.id, options.author);
   return { commit, created: true };

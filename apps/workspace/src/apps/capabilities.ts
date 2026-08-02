@@ -132,15 +132,18 @@ const NATIVE_SPECS: Record<NativeAppNamespace, NativeSpec> = {
     ownerPath: "<root>/",
     workspacePath: "<prefix>/",
     partitionNote:
-      "Reads and writes are confined to the app's declared prefixes; the data partition is never served over HTTP.",
+      "Reads and writes are confined to the app's declared prefixes, and each user's file partition " +
+      "(<root>/data/<user>) is read-enforced: readable and writable only by that user — other members " +
+      "get 404 — with app-admin access only through the audited apps.data procedure. Never served over HTTP.",
   },
   keyvalue: {
     description: "Per-user JSON key/value storage, accumulated in the record store.",
     procedures: ["get", "set", "delete", "list"],
     recordsPartition: "app#<name>#u#<you>",
     partitionNote:
-      "Keys are transparently namespaced — an app user can only ever read and write their own partition. " +
-      "Invisible to the file plane (vfs.list, the chat file tree): records are accumulated, not authored.",
+      "Keys are transparently namespaced and read-enforced — an app user can only ever read and write " +
+      "their own partition, and the app's admins reach a user's data only through the audited apps.data " +
+      "procedure.",
   },
   events: {
     description:
@@ -353,6 +356,13 @@ export interface ProviderGrantCapability {
   tier: "workspace-credentialed";
   /** Provider whose workspace credential executes the calls. */
   credential: string;
+  /**
+   * Name of the profile that executes this grant, when the workspace stores
+   * one for the provider (specs group-profile-grants "Access pane names the
+   * executing profile"). Absent when execution rides the zero-config
+   * fallback — clients fall back to the bare credential string.
+   */
+  profile?: string;
   description: string;
 }
 

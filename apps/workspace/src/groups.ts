@@ -1,24 +1,15 @@
 /**
- * Groups facade over the identity store: group CRUD, user-group membership,
- * tool grants, and the retired prefix grants (Dynamo-only until cutover —
- * decision record #8 drops them from the relational schema; WS-6 removes
- * the admin write surface). Auth-cache invalidation on membership mutations
+ * Groups facade over the identity store: group CRUD and user-group
+ * membership. Capability is granted by attaching profiles to groups
+ * (profile-grants.ts — subject-typed profile grants in the WS-3
+ * registry-server storage). Auth-cache invalidation on membership mutations
  * happens inside the store (identity/store.ts).
  */
 
 import { getIdentityStore } from "./identity/store.js";
-import type {
-  GroupRecord,
-  PrefixGrantRecord,
-  ToolGrantRecord,
-} from "./identity/types.js";
+import type { GroupRecord } from "./identity/types.js";
 
-export type {
-  GroupRecord,
-  PrefixGrantRecord,
-  ToolGrantRecord,
-  UserGroupRecord,
-} from "./identity/types.js";
+export type { GroupRecord, UserGroupRecord } from "./identity/types.js";
 
 // ---------------------------------------------------------------------------
 // Groups CRUD
@@ -87,79 +78,3 @@ export async function listGroupUserIds(
   return getIdentityStore().groups.members.listUserIdsForGroup(workspaceId, groupId);
 }
 
-// ---------------------------------------------------------------------------
-// GroupPrefixGrants (retired in the relational schema)
-// ---------------------------------------------------------------------------
-
-export async function addPrefixGrant(
-  workspaceId: string,
-  groupId: string,
-  pathPrefix: string,
-): Promise<PrefixGrantRecord> {
-  return getIdentityStore().groups.prefixGrants.add(workspaceId, groupId, pathPrefix);
-}
-
-export async function removePrefixGrant(
-  workspaceId: string,
-  groupId: string,
-  pathPrefix: string,
-): Promise<boolean> {
-  return getIdentityStore().groups.prefixGrants.remove(workspaceId, groupId, pathPrefix);
-}
-
-export async function listPrefixGrants(
-  workspaceId: string,
-  groupId: string,
-): Promise<PrefixGrantRecord[]> {
-  return getIdentityStore().groups.prefixGrants.list(workspaceId, groupId);
-}
-
-// ---------------------------------------------------------------------------
-// GroupToolGrants
-// ---------------------------------------------------------------------------
-
-export async function addToolGrant(
-  workspaceId: string,
-  groupId: string,
-  provider: string,
-  operation: string,
-): Promise<ToolGrantRecord> {
-  return getIdentityStore().groups.toolGrants.add(workspaceId, groupId, provider, operation);
-}
-
-export async function removeToolGrant(
-  workspaceId: string,
-  groupId: string,
-  provider: string,
-  operation: string,
-): Promise<boolean> {
-  return getIdentityStore().groups.toolGrants.remove(workspaceId, groupId, provider, operation);
-}
-
-export async function listToolGrants(
-  workspaceId: string,
-  groupId: string,
-): Promise<ToolGrantRecord[]> {
-  return getIdentityStore().groups.toolGrants.list(workspaceId, groupId);
-}
-
-/**
- * Check whether any of the given groupIds has a tool grant covering
- * (provider, operation). A grant with operation="*" is a wildcard.
- */
-export async function checkToolGrant(
-  workspaceId: string,
-  groupIds: string[],
-  provider: string,
-  operation: string,
-): Promise<boolean> {
-  return getIdentityStore().groups.toolGrants.check(workspaceId, groupIds, provider, operation);
-}
-
-/** All path prefixes granted to any of the given groupIds. */
-export async function listGrantedPrefixes(
-  workspaceId: string,
-  groupIds: string[],
-): Promise<string[]> {
-  return getIdentityStore().groups.prefixGrants.listGranted(workspaceId, groupIds);
-}

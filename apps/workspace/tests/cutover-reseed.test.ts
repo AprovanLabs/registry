@@ -81,7 +81,6 @@ async function seedMirrorIdentity(dir: string): Promise<void> {
   await identity.memberships.put({ workspaceId: "ws-seed", userId: "alice", role: "admin" });
   const group = await identity.groups.create("ws-seed", "eng");
   await identity.groups.members.add("ws-seed", group.groupId, "alice");
-  await identity.groups.toolGrants.add("ws-seed", group.groupId, "github", "*");
   await identity.permissions.grant("ws-seed", {
     callerId: "alice",
     provider: "github",

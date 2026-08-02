@@ -26,10 +26,13 @@
 
 import { getAuditStore } from "../audit.js";
 import { getCredentialStore } from "../credentials.js";
+import { getFsStore } from "../fs-store.js";
 import { getRecordStore } from "../records.js";
 import { ServiceError, type CoreService } from "../service-kernel.js";
 import { hookPath } from "../workflows/service.js";
 import { listRegistrations, listRuns, type WorkflowRegistration } from "../workflows/store.js";
+import { profileGrantsAvailable } from "../profile-grants.js";
+import { getRegistryStorage } from "../registry-storage.js";
 import {
   APP_WORKFLOW_NAMESPACE,
   assertAllowedTools,
@@ -38,6 +41,7 @@ import {
   nativeCapabilities,
   providerGrantCapabilities,
   type ProviderGrant,
+  type ProviderGrantCapability,
 } from "./capabilities.js";
 import {
   assertInstallable,
@@ -70,6 +74,7 @@ import { generateAppSdk } from "./sdk.js";
 import {
   ENTRY_CANDIDATES,
   appName,
+  appRoot,
   listApps,
   listEntryVersions,
   pathDir,
@@ -91,6 +96,38 @@ import {
 
 function livePath(workspaceId: string, name: string): string {
   return `/apps/${workspaceId}/${name}`;
+}
+
+/**
+ * Name the profile that executes each tier-2 provider grant (specs
+ * group-profile-grants "Access pane names the executing profile"): bare app
+ * dispatch resolves the provider's stored `default` profile when one exists,
+ * so that is the name reported. Absent (client falls back to the bare
+ * credential string) when execution rides the zero-config fallback or the
+ * backend has no profile storage (interim dynamo).
+ */
+async function withExecutingProfiles(
+  workspaceId: string,
+  grants: ProviderGrantCapability[],
+): Promise<ProviderGrantCapability[]> {
+  if (grants.length === 0 || !profileGrantsAvailable()) return grants;
+  try {
+    const storage = await getRegistryStorage();
+    await storage.tenants.ensure(workspaceId);
+    return await Promise.all(
+      grants.map(async (grant) => {
+        const row = await storage.profiles.getByName(
+          workspaceId,
+          "provider",
+          grant.provider,
+          "default",
+        );
+        return row ? { ...grant, profile: row.name } : grant;
+      }),
+    );
+  } catch {
+    return grants; // Degraded gateways keep the credential-only shape.
+  }
 }
 
 function apiBase(workspaceId: string, name: string): string {
@@ -474,13 +511,14 @@ export const appsService: CoreService = {
       name: "apps.data",
       operation: "data",
       description:
-        "Owner-side administration of an app's user data, since keyvalue is no longer browsable through vfs/the file tree: with just 'name', lists the app's users; add 'user' to list that user's keys; add 'key' to read one value. Gated on the app's admin role (workspace membership for 'personal'); every call is audited. Only sees owner-hosted (dataScope 'owner') data — a workspace-scoped install's data lives in the installer's own workspace.",
+        "Owner-side administration of an app's user data, since per-user partitions are read-enforced (foreign access answers 404): with just 'name', lists the app's users; add 'user' to list that user's keys; add 'key' to read one record, or 'path' to read one file from the user's file partition. Gated on the app's admin role; every call is audited. Rejects 'personal' — personal partitions have no admin override. Only sees owner-hosted (dataScope 'owner') data — a workspace-scoped install's data lives in the installer's own workspace.",
       inputSchema: {
         type: "object",
         properties: {
           name: { type: "string" },
           user: { type: "string", description: "App-user sub — list their keys, or read one with `key`" },
-          key: { type: "string", description: "One key to read (requires `user`)" },
+          key: { type: "string", description: "One record key to read (requires `user`; mutually exclusive with `path`)" },
+          path: { type: "string", description: "One file to read from the user's file partition (requires `user`; mutually exclusive with `key`)" },
         },
         required: ["name"],
       },
@@ -788,7 +826,7 @@ export const appsService: CoreService = {
             capabilities: {
               native: nativeCapabilities(manifest),
               /** Always empty: Personal grants no provider credentials. */
-              providers: providerGrantCapabilities(manifest),
+              providers: await withExecutingProfiles(ctx.workspaceId, providerGrantCapabilities(manifest)),
               workflows: wire.workflows,
             },
           };
@@ -800,7 +838,7 @@ export const appsService: CoreService = {
           ...described,
           capabilities: {
             native: nativeCapabilities(manifest),
-            providers: providerGrantCapabilities(manifest),
+            providers: await withExecutingProfiles(ctx.workspaceId, providerGrantCapabilities(manifest)),
             workflows: described.workflows,
           },
         };
@@ -817,7 +855,7 @@ export const appsService: CoreService = {
             app: manifest.name,
             dataScope: manifest.dataScope ?? "owner",
             native: nativeCapabilities(manifest),
-            providers: providerGrantCapabilities(manifest),
+            providers: await withExecutingProfiles(ctx.workspaceId, providerGrantCapabilities(manifest)),
             workflows: (
               await summarizeWorkflows(ctx.workspaceId, manifest, registrations, false)
             ).map((workflow) => ({
@@ -835,7 +873,7 @@ export const appsService: CoreService = {
           /** Auto-partitioned first-party namespaces, allow-list filtered. */
           native: nativeCapabilities(manifest),
           /** Provider credential grants — tier (2), exact procedures only. */
-          providers: providerGrantCapabilities(manifest),
+          providers: await withExecutingProfiles(ctx.workspaceId, providerGrantCapabilities(manifest)),
           /** Exported workflows — the app's own namespace (`app.<procedure>`). */
           workflows: (
             await summarizeWorkflows(ctx.workspaceId, manifest, registrations, false)
@@ -848,38 +886,41 @@ export const appsService: CoreService = {
       }
       case "data": {
         const name = appName(args["name"]);
-        const manifest = isPersonalApp(name)
-          ? (
-              await describePersonal(
-                ctx.workspaceId,
-                await listApps(ctx.workspaceId),
-                await registrationIndex(ctx.workspaceId),
-              )
-            ).manifest
-          : await requireApp(ctx.workspaceId, name);
+        // Personal partitions have NO admin override (specs per-user-data;
+        // tech-plan data-auth-model D3): no procedure serves another user's
+        // personal data, and ambient reads stay 404 for everyone. The escape
+        // hatch for lockouts is membership administration, not silent reads.
+        if (isPersonalApp(name)) {
+          throw new ServiceError(
+            "Personal data has no admin override — a member's personal partition (records and files) is readable only by that member.",
+            403,
+          );
+        }
+        const manifest = await requireApp(ctx.workspaceId, name);
 
         // Owner-side administration is gated on the app's OWN admin role — a
         // narrower check than "can manage this app's bundle" (any member
         // reaching apps.* can already do that). A user's data is more
-        // sensitive than the app's code, so it gets its own gate. Personal
-        // has no roles model; workspace membership is the gate there, and
-        // it's already guaranteed by the time a call reaches this dispatch —
-        // apps.* rejects app sessions above, and every core-service call
-        // only ever runs for an authenticated member of `ctx.workspaceId`.
-        if (!isPersonalApp(manifest.name)) {
-          const admins = manifest.roles?.admins ?? [];
-          if (!admins.includes(ctx.userId)) {
-            throw new ServiceError(
-              `Only ${manifest.name}'s admins (roles.admins) can inspect its user data`,
-              403,
-            );
-          }
+        // sensitive than the app's code, so it gets its own gate.
+        const admins = manifest.roles?.admins ?? [];
+        if (!admins.includes(ctx.userId)) {
+          throw new ServiceError(
+            `Only ${manifest.name}'s admins (roles.admins) can inspect its user data`,
+            403,
+          );
         }
 
         const user = typeof args["user"] === "string" ? args["user"] : undefined;
         const key = typeof args["key"] === "string" ? args["key"] : undefined;
+        const filePath = typeof args["path"] === "string" ? args["path"] : undefined;
         if (key !== undefined && user === undefined) {
           throw new ServiceError("`key` requires `user`", 400);
+        }
+        if (filePath !== undefined && user === undefined) {
+          throw new ServiceError("`path` requires `user`", 400);
+        }
+        if (filePath !== undefined && key !== undefined) {
+          throw new ServiceError("`path` and `key` are mutually exclusive", 400);
         }
 
         // Only ever the tenancy this workspace itself owns — a
@@ -890,7 +931,25 @@ export const appsService: CoreService = {
         const scopePrefix = `app#${manifest.name}#u#`;
 
         let result: Record<string, unknown>;
-        if (user !== undefined && key !== undefined) {
+        if (user !== undefined && filePath !== undefined) {
+          // File-partition access (tech-plan data-auth-model open question 1:
+          // `path?`, mutually exclusive with `key`): the audited procedure is
+          // the ONLY sanctioned way an app admin reaches a user's file
+          // partition — ambient file APIs answer 404 (partition guard).
+          const partition = `${appRoot(manifest)}/data/${user}`;
+          const resolved = workspacePath(`${partition}/${filePath}`, "path");
+          if (!resolved.startsWith(`${partition}/`)) {
+            throw new ServiceError(`path must stay within the user's partition`, 400);
+          }
+          const file = await getFsStore().read(tenant, resolved);
+          result = {
+            app: manifest.name,
+            user,
+            path: filePath,
+            content: file?.content ?? null,
+            ...(file ? { hash: file.hash, mimeType: file.mimeType, size: file.size } : {}),
+          };
+        } else if (user !== undefined && key !== undefined) {
           const entry = await records.get(tenant, `${scopePrefix}${user}`, key);
           result = {
             app: manifest.name,
@@ -915,7 +974,7 @@ export const appsService: CoreService = {
           workspaceId: tenant,
           callerId: ctx.userId,
           provider: "apps",
-          operation: `data:${manifest.name}${user ? `:${user}` : ""}${key ? `:${key}` : ""}`,
+          operation: `data:${manifest.name}${user ? `:${user}` : ""}${key ? `:${key}` : ""}${filePath ? `:${filePath}` : ""}`,
           status: 200,
         });
         return result;

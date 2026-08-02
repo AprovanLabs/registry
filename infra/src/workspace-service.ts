@@ -42,8 +42,6 @@ export interface WorkspaceDynamoTables {
   auditTable: ITable;
   sessionsTable: ITable;
   groupsTable: ITable;
-  groupPrefixGrantsTable: ITable;
-  groupToolGrantsTable: ITable;
   userGroupsTable: ITable;
   /** Workspace filesystem index table (fs-store.ts `FsStoreS3`). */
   fsTable: ITable;
@@ -192,8 +190,6 @@ export class WorkspaceService extends Construct {
             AUDIT_TABLE: dynamoTables.auditTable.tableName,
             SESSIONS_TABLE: dynamoTables.sessionsTable.tableName,
             GROUPS_TABLE: dynamoTables.groupsTable.tableName,
-            GROUP_PREFIX_GRANTS_TABLE: dynamoTables.groupPrefixGrantsTable.tableName,
-            GROUP_TOOL_GRANTS_TABLE: dynamoTables.groupToolGrantsTable.tableName,
             USER_GROUPS_TABLE: dynamoTables.userGroupsTable.tableName,
             USERGROUPS_TABLE: dynamoTables.userGroupsTable.tableName,
             FS_TABLE: dynamoTables.fsTable.tableName,

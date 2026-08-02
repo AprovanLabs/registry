@@ -39,7 +39,6 @@ export interface ReseedCounts {
   invites: number;
   groups: number;
   groupMembers: number;
-  groupToolGrants: number;
   permissions: number;
 }
 
@@ -77,7 +76,6 @@ export async function reseedDsql(fromDir: string): Promise<ReseedCounts> {
     invites: 0,
     groups: 0,
     groupMembers: 0,
-    groupToolGrants: 0,
     permissions: 0,
   };
 
@@ -297,17 +295,6 @@ export async function reseedDsql(fromDir: string): Promise<ReseedCounts> {
       [row["workspace_id"], row["group_id"], row["user_id"]],
     );
   });
-  counts.groupToolGrants = await seed(
-    tableRows(`SELECT * FROM group_tool_grants`),
-    async (row) => {
-      await dsqlQuery(
-        `INSERT INTO group_tool_grants (workspace_id, group_id, provider, operation)
-         VALUES ($1, $2, $3, $4)
-         ON CONFLICT (workspace_id, group_id, provider, operation) DO NOTHING`,
-        [row["workspace_id"], row["group_id"], row["provider"], row["operation"]],
-      );
-    },
-  );
   counts.permissions = await seed(tableRows(`SELECT * FROM permissions`), async (row) => {
     await dsqlQuery(
       `INSERT INTO permissions

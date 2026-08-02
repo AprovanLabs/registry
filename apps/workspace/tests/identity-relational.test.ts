@@ -21,16 +21,12 @@ import {
   removeMember,
 } from "../src/memberships.js";
 import {
-  addToolGrant,
   addUserToGroup,
-  checkToolGrant,
   createGroup,
   deleteGroup,
   getGroup,
   listGroups,
   listGroupUserIds,
-  listPrefixGrants,
-  listToolGrants,
   removeUserFromGroup,
   updateGroup,
 } from "../src/groups.js";
@@ -116,7 +112,7 @@ describe("relational identity backend (SQLite)", () => {
     expect(await getInvite(second.inviteToken)).toBeUndefined();
   });
 
-  it("groups: CRUD, membership resolution, tool grants incl. wildcard", async () => {
+  it("groups: CRUD and membership resolution", async () => {
     const group = await createGroup(WS, "engineers", "the builders");
     expect((await getGroup(WS, group.groupId))?.name).toBe("engineers");
     expect((await listGroups(WS)).some((g) => g.groupId === group.groupId)).toBe(true);
@@ -127,29 +123,12 @@ describe("relational identity backend (SQLite)", () => {
     expect(await listUserGroupIds(WS, "alice")).toEqual([group.groupId]);
     expect(await listGroupUserIds(WS, group.groupId)).toEqual(["alice"]);
 
-    await addToolGrant(WS, group.groupId, "github", "issues.create");
-    await addToolGrant(WS, group.groupId, "linear", "*");
-    expect((await listToolGrants(WS, group.groupId))).toHaveLength(2);
-    expect(await checkToolGrant(WS, [group.groupId], "github", "issues.create")).toBe(true);
-    expect(await checkToolGrant(WS, [group.groupId], "github", "issues.delete")).toBe(false);
-    expect(await checkToolGrant(WS, [group.groupId], "linear", "anything")).toBe(true);
-    expect(await checkToolGrant(WS, [], "github", "issues.create")).toBe(false);
-
     expect(await removeUserFromGroup(WS, group.groupId, "alice")).toBe(true);
     expect(await listUserGroupIds(WS, "alice")).toEqual([]);
 
-    // Deleting the group takes its grants (app-layer integrity).
+    // Deleting the group takes its memberships (app-layer integrity).
     expect(await deleteGroup(WS, group.groupId)).toBe(true);
-    expect(await listToolGrants(WS, group.groupId)).toEqual([]);
     expect(await deleteGroup(WS, group.groupId)).toBe(false);
-  });
-
-  it("prefix grants are retired on the relational schema", async () => {
-    const group = await createGroup(WS, "prefixless");
-    expect(await listPrefixGrants(WS, group.groupId)).toEqual([]);
-    await expect(
-      getIdentityStore().groups.prefixGrants.add(WS, group.groupId, "/data"),
-    ).rejects.toThrow(/not carried/iu);
   });
 
   it("permissions: grant/check (wildcard)/list/revoke, idempotent re-grant", async () => {

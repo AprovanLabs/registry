@@ -136,8 +136,8 @@ cd infra && pnpm cdk deploy -c storeBackend=dsql -c dynamoRetired=true
 ```
 
 `dynamoRetired=true` removes the retired DynamoDB tables (FsFiles, Records,
-Credentials, Permissions, ApiKeys, Sessions, Groups, GroupPrefixGrants,
-GroupToolGrants, UserGroups, Audit), their PITR specifications, deletion
+Credentials, Permissions, ApiKeys, Sessions, Groups, UserGroups, Audit),
+their PITR specifications, deletion
 protection, and the task role's grants on them. The FS bucket, the KMS
 credentials key, and the DSQL cluster remain. The core identity tables
 (Users/Workspaces/Memberships/Invites) live in the aprovan core stack —

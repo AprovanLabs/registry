@@ -63,7 +63,9 @@ export function personalManifest(workflows: string[]): AppManifest {
     title: "Personal",
     description:
       "The workspace's built-in app: every workflow no published app exports, " +
-      "runnable by members with their own credentials, data partitioned per user.",
+      "runnable by members with their own credentials. Data lives in a private " +
+      "per-user partition readable only by its owner — enforced (foreign access " +
+      "answers 404), with no admin override of any kind.",
     // Personal has no UI; the entry is a placeholder that is never served.
     entry: `${PERSONAL_PREFIX}/index.tsx`,
     paths: [PERSONAL_PREFIX],

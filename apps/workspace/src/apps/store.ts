@@ -279,6 +279,57 @@ export function resetHiddenDataPrefixCache(): void {
   hiddenPrefixCache.clear();
 }
 
+// ---------------------------------------------------------------------------
+// Per-user partition authorization — hiding grown into enforcement
+// (specs per-user-data; tech-plan data-auth-model D1/D2).
+//
+// REPO CONVENTION: every exact-path FS entry point (tool plane, HTTP plane,
+// any future route or verb) MUST call `assertPartitionAccess` (or the pure
+// `partitionAccess`) before touching the store. The store itself carries no
+// principal (WS-5 replaces the backends), so this guard above `IFsStore` is
+// the single place partition policy lives.
+// ---------------------------------------------------------------------------
+
+export type PartitionAccess = "open" | "own" | "foreign";
+
+/**
+ * Pure partition rule: is `path` inside a per-user data partition, and whose?
+ * The owner is the first path segment after the hidden data prefix
+ * (`.personal/data/<sub>/…`, `<appRoot>/data/<sub>/…`). A path that IS a
+ * hidden prefix (the partition container itself) belongs to nobody and is
+ * "open" — enforcement is per-owner, not per-container.
+ */
+export function partitionAccess(
+  path: string,
+  callerSub: string,
+  hiddenPrefixes: readonly string[],
+): PartitionAccess {
+  for (const prefix of hiddenPrefixes) {
+    if (!underPrefix(path, prefix)) continue;
+    if (path === prefix) return "open";
+    const owner = path.slice(prefix.length + 1).split("/", 1)[0];
+    return owner === callerSub ? "own" : "foreign";
+  }
+  return "open";
+}
+
+/**
+ * Throws `ServiceError("Not found: <path>", 404)` when `path` sits inside
+ * another user's data partition — deny-as-404, byte-identical to a
+ * nonexistent path, so foreign partitions are unprobeable (D2). Owners pass;
+ * paths outside every partition pass.
+ */
+export async function assertPartitionAccess(
+  workspaceId: string,
+  callerSub: string,
+  path: string,
+): Promise<void> {
+  const hidden = await hiddenDataPrefixes(workspaceId);
+  if (partitionAccess(path, callerSub, hidden) === "foreign") {
+    throw new ServiceError(`Not found: ${path}`, 404);
+  }
+}
+
 /**
  * Resolve an app-relative path (as an app session or the live site addresses
  * it) to its absolute workspace path under the app's primary prefix.
@@ -337,6 +388,10 @@ export async function resolveAppEntry(workspaceId: string, target: unknown): Pro
 
 export async function saveApp(workspaceId: string, manifest: AppManifest): Promise<void> {
   await writeSvcRecord(workspaceId, APPS_SCOPE, manifest.name, manifest, manifest.createdBy);
+  // The hidden-prefix cache now feeds *enforcement* (partitionAccess), not
+  // just listing cosmetics — a publish must be visible to the very next
+  // guard check in this process, not after the TTL.
+  hiddenPrefixCache.delete(workspaceId);
 }
 
 /**
@@ -384,6 +439,7 @@ export async function removeApp(
 ): Promise<boolean> {
   const manifest = await readApp(workspaceId, name);
   const removed = await deleteSvcRecord(workspaceId, APPS_SCOPE, name);
+  hiddenPrefixCache.delete(workspaceId);
   // Only the primary prefix is purged: secondary prefixes are shared library
   // paths this app doesn't own.
   if (options.purgeData && manifest) {
