@@ -10,9 +10,10 @@
     "lint:fix": "eslint --fix \"**/*.ts?(x)\"",
     "format": "prettier --write .",
     "typecheck": "turbo run typecheck",
-    "deploy": "./scripts/deploy.sh all",
+    "deploy": "pnpm run deploy:lib && pnpm run deploy:web",
     "deploy:web": "./scripts/deploy-web.sh",
-    "deploy:infra": "./scripts/deploy-infra.sh",
+    "deploy:lib": "./scripts/deploy-lib.sh",
+    "update:registry": "./scripts/update-registry.sh",
     "clean": "turbo run clean && rm -rf node_modules packages/*/node_modules packages/*/dist"
   },
   "devDependencies": {
