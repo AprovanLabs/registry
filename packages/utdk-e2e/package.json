@@ -25,12 +25,14 @@
     "env:scaffold": "tsx scripts/write-env.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-ssm": "^3.848.0",
     "@utdk/common": "workspace:*",
     "utdk": "workspace:*"
   },
   "devDependencies": {
     "@aprovan/vitest-config": "^0.1.0",
     "@types/node": "^25.5.0",
+    "aws-sdk-client-mock": "^4.1.0",
     "tsx": "^4.19.2",
     "typescript": "^5.7.3",
     "vitest": "2.1.5"
