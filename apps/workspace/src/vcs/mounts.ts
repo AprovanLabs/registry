@@ -21,10 +21,13 @@
  *   prefix fail with 403 whatever `mode` says; `mode` is stored so
  *   `readwrite` s3 can light up without a schema change.
  * - Mounted content never enters the FS store, so snapshots/commits keep
- *   covering exactly the native tree (a commit can't pin what it doesn't
- *   own — recording mount version tokens in snapshots is the v2 follow-up).
+ *   covering exactly the native tree. What they DO record is mount lineage
+ *   (specs/mount-lineage): a deterministic version token per mount in the
+ *   snapshot and a timestamped provenance record on the commit — see
+ *   {@link collectMountLineage}.
  */
 
+import { createHash } from "node:crypto";
 import { getCredentialStore } from "../credentials.js";
 import { getFsStore, normalizeFsPath, type FsEntry, type FsFile, type S3 } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
@@ -511,6 +514,131 @@ export async function mountRead(
   const mount = mountFor(mounts, path);
   if (!mount) return "not-mounted";
   return mount.type === "git" ? gitRead(workspaceId, mount, path) : s3Read(mount, path);
+}
+
+// ---------------------------------------------------------------------------
+// Mount lineage — what version of the world each mount was at commit time
+// (specs/mount-lineage; tech-plan data-auth-model D4/D5).
+//
+// Two shapes, deliberately split: the SNAPSHOT side is deterministic (no
+// timestamps) so identical trees over identical mount states keep producing
+// identical snapshot ids; the COMMIT side carries the timestamped provenance
+// record (mirroring the bundler's ProvenanceManifest.source). Resolution
+// failure degrades to `versionToken: null` with provenance still recorded —
+// committing never gains a hard dependency on external availability.
+// ---------------------------------------------------------------------------
+
+/** Snapshot-side lineage entry — deterministic, part of snapshot identity. */
+export interface MountLineageEntry {
+  prefix: string;
+  type: "git" | "s3";
+  /** sha256 of the mount's canonical (sorted-key) config JSON. */
+  configHash: string;
+  /** git: resolved commit SHA; s3: sha256 over sorted "<etag> <path>" listing
+   *  lines; null when resolution failed at snapshot time. */
+  versionToken: string | null;
+}
+
+/** Commit-side provenance record — timestamped, never in snapshot identity. */
+export interface MountProvenance {
+  prefix: string;
+  source:
+    | { type: "git"; repo: string; ref: string; path?: string }
+    | { type: "s3"; bucket: string; prefix?: string; region?: string };
+  /** Fetch origin, e.g. "api.github.com" or "<bucket>.s3.<region>.amazonaws.com". */
+  originDomain: string;
+  /** ISO time of resolution — set even when resolution failed. */
+  retrievedAt: string;
+}
+
+/** sha256 over the config with sorted keys, so key order can't change it. */
+function canonicalConfigHash(config: Record<string, unknown>): string {
+  const canonical = JSON.stringify(
+    Object.fromEntries(Object.entries(config).sort(([a], [b]) => a.localeCompare(b))),
+  );
+  return createHash("sha256").update(canonical).digest("hex");
+}
+
+/** Resolve a git mount's ref to the commit SHA it points at right now —
+ *  one commits-API call through the same credentialed fetch reads use. */
+async function resolveGitCommitSha(
+  workspaceId: string,
+  config: GitConfig,
+): Promise<string> {
+  const ref = config.ref || "main";
+  const response = await githubFetch(
+    workspaceId,
+    `${githubApiBase()}/repos/${config.repo}/commits/${encodeURIComponent(ref)}`,
+  );
+  const body = (await response.json()) as { sha?: string };
+  if (!body.sha) throw new ServiceError("GitHub commit resolution returned no sha", 502);
+  return body.sha;
+}
+
+/** Deterministic s3 token: sha256 over the sorted "<etag> <path>" lines of
+ *  the mount's current listing (the same walk reads already run). */
+async function s3ListingToken(mount: VfsMount): Promise<string> {
+  const entries = await s3List(mount, "");
+  const lines = entries.map((entry) => `${entry.hash} ${entry.path}`).sort();
+  return createHash("sha256").update(lines.join("\n")).digest("hex");
+}
+
+/**
+ * Resolve every active mount once: lineage entries (for the snapshot) plus
+ * provenance records (for the commit), sorted by prefix. Per-mount failures
+ * yield `versionToken: null` with provenance still populated — the commit
+ * proceeds (spec "Lineage capture degrades without blocking commits").
+ */
+export async function collectMountLineage(workspaceId: string): Promise<{
+  entries: MountLineageEntry[];
+  provenance: MountProvenance[];
+}> {
+  const all: VfsMount[] = await readMounts(workspaceId).catch(() => []);
+  const mounts = all
+    .filter((mount): mount is VfsMount & { type: "git" | "s3" } =>
+      mount.type === "git" || mount.type === "s3",
+    )
+    .sort((a, b) => a.prefix.localeCompare(b.prefix));
+
+  const entries: MountLineageEntry[] = [];
+  const provenance: MountProvenance[] = [];
+  for (const mount of mounts) {
+    const configHash = canonicalConfigHash(mount.config);
+    let versionToken: string | null = null;
+    let source: MountProvenance["source"];
+    let originDomain: string;
+    if (mount.type === "git") {
+      const config = mount.config as unknown as GitConfig;
+      source = {
+        type: "git",
+        repo: config.repo,
+        ref: config.ref || "main",
+        ...(config.path ? { path: config.path } : {}),
+      };
+      originDomain = new URL(githubApiBase()).hostname;
+      versionToken = await resolveGitCommitSha(workspaceId, config).catch(() => null);
+    } else {
+      const config = mount.config as unknown as S3Config;
+      const region = config.region ?? process.env["AWS_REGION"] ?? "us-east-1";
+      source = {
+        type: "s3",
+        bucket: config.bucket,
+        ...(config.prefix ? { prefix: config.prefix } : {}),
+        ...(config.region ? { region: config.region } : {}),
+      };
+      originDomain = `${config.bucket}.s3.${region}.amazonaws.com`;
+      versionToken = await s3ListingToken(mount).catch(() => null);
+    }
+    entries.push({ prefix: mount.prefix, type: mount.type, configHash, versionToken });
+    provenance.push({
+      prefix: mount.prefix,
+      source,
+      originDomain,
+      // Set even when resolution failed — "we looked at this moment".
+      retrievedAt: new Date().toISOString(),
+    });
+  }
+  return { entries, provenance };
 }
 
 // ---------------------------------------------------------------------------

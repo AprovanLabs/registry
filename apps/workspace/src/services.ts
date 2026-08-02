@@ -763,6 +763,10 @@ const vfs: CoreService = {
         return {
           commit,
           entries: snapshot.entries,
+          // Mount lineage (specs/mount-lineage): the snapshot's deterministic
+          // tokens ride along so history consumers can pair them with the
+          // commit's `provenance`. Absent for pre-lineage commits — no error.
+          ...(snapshot.mounts ? { mounts: snapshot.mounts } : {}),
           changes: diffSnapshots(parentSnapshot, snapshot),
         };
       }

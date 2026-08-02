@@ -186,10 +186,37 @@ read through the workspace's `github` credential (anonymous for public
 repos) with the git blob sha as the version token; `s3` mounts use the
 gateway's own role (grant it bucket access by policy) — workspace-credential
 S3 lands with the credential-grant workstream; `crdt` is rejected with 501.
-Mounted content never enters the FS store, so snapshots simply exclude it —
-recording `{ mount, config-hash, versionToken }` snapshot entries is the v2
-follow-up. Mounting refuses prefixes that overlap another mount or contain
-native files.
+Mounted content never enters the FS store, so snapshots exclude its bytes.
+Mounting refuses prefixes that overlap another mount or contain native
+files.
+
+**Mount lineage (shipped — specs/mount-lineage).** Every commit records what
+mounted content the workspace was looking at, in two places:
+
+- **Snapshot** — `mounts: [{ prefix, type, configHash, versionToken }]`,
+  deterministic (no timestamps) and part of the canonical snapshot identity:
+  `configHash` is a sha256 over the mount's sorted-key config JSON;
+  `versionToken` is the commit SHA the git ref resolved to at snapshot time,
+  or for `s3` a sha256 over the sorted `<etag> <path>` lines of the mount's
+  listing. Identical trees over identical mount states dedupe to the same
+  snapshot; an upstream push alone produces a *new* snapshot (and commit)
+  even with zero native file changes.
+- **Commit** — `provenance: [{ prefix, source, originDomain, retrievedAt }]`
+  (mirroring the bundler's provenance-manifest `source` shape): the locator
+  (`repo`/`ref`/`path` for git, `bucket`/`prefix`/`region` for s3), the
+  fetch origin (e.g. `api.github.com`), and the ISO resolution time.
+
+Lineage capture degrades without blocking commits: if resolution fails at
+commit time the commit still succeeds with `versionToken: null` and the
+provenance records the attempt. Pre-lineage commits parse unchanged (the
+wire format is additive) and render with no mounted-content section.
+
+**Ref tracking vs pinning.** Reads keep following `config.ref` live — a
+branch ref tracks upstream, matching "vendor/charts tracks main" — and the
+resolved SHA is captured per commit, never frozen at mount time. A user who
+wants a frozen view sets `config.ref` to a tag or a full commit SHA
+(`addMount` stores refs verbatim); every subsequent commit then records that
+same resolution as the mount's version token.
 
 ## The words users see
 
