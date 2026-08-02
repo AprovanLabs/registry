@@ -720,24 +720,12 @@ export type { CreateClientOptions } from "./client.js";
  */
 function providersOnDisk(outputRoot: string): Set<string> {
   const found = new Set<string>();
-  // `sandbox`, `agent` and `vcs` are nested workspace packages
-  // (`@utdk/sandbox`, `@utdk/agent`, `@utdk/vcs`), not providers — listing
-  // them here keeps a regenerated exports map from advertising
-  // `utdk/sandbox` while the real import is the scoped package. Mirrors
-  // SKIP_TOP_DIRS in packages/utdk/build.mjs; like there, the skip is
-  // top-level only, so the `github/vcs` adapter suite still counts as a
-  // provider on disk.
-  const skipTop = new Set([
-    "dist",
-    "node_modules",
-    "common",
-    "llm",
-    "sql",
-    "sandbox",
-    "agent",
-    "vcs",
-    ".turbo",
-  ]);
+  // The contract packages (`@utdk/sql`, `@utdk/llm`, …) live in
+  // `packages/contracts/`, so nothing here needs to skip contract names —
+  // the `github/vcs` adapter suite counts as a provider on disk like any
+  // other. `common` stays skipped: it is the nested `@utdk/common` package,
+  // not a provider.
+  const skipTop = new Set(["dist", "node_modules", "common", ".turbo"]);
   const skipNested = new Set(["dist", "node_modules", "types", "__tests__"]);
 
   const walk = (relative: string): void => {

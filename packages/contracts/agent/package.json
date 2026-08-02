@@ -1,6 +1,6 @@
 {
   "name": "@utdk/agent",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Shared agent-runtime contract for UTDK: one run/get/cancel surface over any harness or vendor agent loop, a normalized effort ordinal, declared capabilities, and sandbox-shaped file ops so a workspace mount works unchanged",
   "keywords": [

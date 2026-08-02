@@ -1,6 +1,6 @@
 {
   "name": "@utdk/sandbox",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Shared sandbox contract for UTDK execution providers: one driver surface (exec + files + ports), hash manifests for VFS sync, and the npm-package image system",
   "utdk": {

@@ -41,30 +41,19 @@ const distDir = path.join(rootDir, "dist");
 // everything dist should contain.
 await rm(distDir, { recursive: true, force: true });
 
-// `@utdk/llm`, `@utdk/sql`, `@utdk/sandbox`, `@utdk/agent` and `@utdk/vcs`
-// physically live inside this directory but build themselves, and nothing in
-// dist resolves into them — the exports map has no `dist/llm`, `dist/sql`,
-// `dist/sandbox`, `dist/agent` or `dist/vcs` entry. `common/` is different
-// and must stay: `client.ts` imports `./common/telemetry.js` by *relative*
-// path, so `dist/common/` is load-bearing for `dist/client.js`.
-//
-// tsconfig.json, copy-assets.mjs, and the bundler's `providersOnDisk`
-// (packages/bundler/src/render.ts) carry the same exclusions — the four lists
-// drifting is how `./agent` nearly became an advertised `utdk` subpath while
-// the real package is `@utdk/agent`.
-//
-// The contract names are skipped at the TOP LEVEL ONLY: a contract's name is
-// also a legal suite segment (`github/vcs` is the GitHub adapter *for*
-// `@utdk/vcs`), and a name-anywhere skip would silently drop the adapter
-// from the build while its exports entry kept advertising it.
+// The contract packages (`@utdk/sql`, `@utdk/llm`, `@utdk/sandbox`,
+// `@utdk/agent`, `@utdk/vcs`, …) live in `packages/contracts/` and build
+// themselves — nothing in this directory needs to skip them anymore. A
+// contract's name remains a legal suite segment here (`github/vcs` is the
+// GitHub adapter *for* `@utdk/vcs`) and transpiles like any provider.
+// `common/` must stay in this walk's output: `client.ts` imports
+// `./common/telemetry.js` by *relative* path, so `dist/common/` is
+// load-bearing for `dist/client.js`.
 const SKIP_DIRS = new Set(["dist", "node_modules", "__tests__"]);
-const SKIP_TOP_DIRS = new Set(["llm", "sql", "sandbox", "agent", "vcs"]);
 
 async function collectSources(dir, acc = []) {
-  const isRoot = dir === rootDir;
   for (const entry of await readdir(dir, { withFileTypes: true })) {
     if (SKIP_DIRS.has(entry.name)) continue;
-    if (isRoot && SKIP_TOP_DIRS.has(entry.name)) continue;
     const full = path.join(dir, entry.name);
     if (entry.isDirectory()) {
       await collectSources(full, acc);
