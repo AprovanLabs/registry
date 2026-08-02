@@ -8,6 +8,7 @@
  * reclaim stale rows.
  */
 
+import { invalidatePrincipal } from "./auth-cache.js";
 import { dynamo } from "./db/client.js";
 
 // ---------------------------------------------------------------------------
@@ -81,4 +82,8 @@ export async function setCurrentWorkspace(
       Item: { userId, currentWorkspaceId: workspaceId, expiresAt },
     }),
   );
+  // A request without an explicit X-Aprovan-Workspace header resolves
+  // against "whatever the current workspace is" — that cache slot is now
+  // stale for this user.
+  invalidatePrincipal(userId);
 }

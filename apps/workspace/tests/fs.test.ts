@@ -127,4 +127,37 @@ describe("workspace filesystem", () => {
     // A path with no versions is an empty list, not an error.
     expect(await store.listVersions("verws", "missing.txt")).toEqual([]);
   });
+
+  it("unversioned service-path writes leave no version trail", async () => {
+    const store = getFsStore();
+    const path = ".services/keyvalue/counter.json";
+    for (let i = 0; i < 50; i += 1) {
+      await store.write("svcws", path, JSON.stringify({ i }));
+    }
+    // At most the latest entry — the SQLite backend keeps exactly the one
+    // surviving row (its PK includes hash, so distinct content would
+    // otherwise coexist rather than replace).
+    const versions = await store.listVersions("svcws", path);
+    expect(versions.length).toBeLessThanOrEqual(1);
+    const read = await store.read("svcws", path);
+    expect(read?.content).toBe(JSON.stringify({ i: 49 }));
+  });
+
+  it("authored writes still version even when passed { versioned: true } explicitly", async () => {
+    const store = getFsStore();
+    await store.write("verws2", "widgets/a/index.ts", "v1", undefined, { versioned: true });
+    await store.write("verws2", "widgets/a/index.ts", "v2", undefined, { versioned: true });
+    const versions = await store.listVersions("verws2", "widgets/a/index.ts");
+    expect(versions.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("an explicit { versioned: false } on a non-service path also skips accumulation", async () => {
+    const store = getFsStore();
+    const path = "scratch/live.txt";
+    await store.write("verws3", path, "a", undefined, { versioned: false });
+    await store.write("verws3", path, "b", undefined, { versioned: false });
+    const versions = await store.listVersions("verws3", path);
+    expect(versions.length).toBeLessThanOrEqual(1);
+    expect((await store.read("verws3", path))?.content).toBe("b");
+  });
 });

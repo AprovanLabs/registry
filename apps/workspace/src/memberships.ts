@@ -7,6 +7,7 @@
  * active workspace is one the caller is a member of.
  */
 
+import { invalidatePrincipal } from "./auth-cache.js";
 import { dynamo } from "./db/client.js";
 
 // ---------------------------------------------------------------------------
@@ -96,6 +97,10 @@ export async function putMembership(record: MembershipRecord): Promise<void> {
   await client.send(
     new PutCommand({ TableName: DYNAMODB_MEMBERSHIPS_TABLE(), Item: item }),
   );
+  // A role change (or a brand-new membership) changes what the auth cache
+  // would resolve for this user — drop any cached principal immediately
+  // rather than waiting out the TTL.
+  invalidatePrincipal(record.userId);
 }
 
 /** Remove a membership row. Returns false if it did not exist. */
@@ -112,5 +117,8 @@ export async function removeMember(
       Key: { workspaceId, userId },
     }),
   );
+  // Revocation must take effect immediately, not after the auth-cache TTL —
+  // see specs/identity-store "Revocation takes effect".
+  invalidatePrincipal(userId);
   return true;
 }

@@ -43,13 +43,48 @@ export interface VfsMount {
   createdAt: string;
 }
 
-export async function readMounts(workspaceId: string): Promise<VfsMount[]> {
+/**
+ * `readMounts` used to re-read `.services/vcs/mounts.json` on every FS op
+ * (list, read, write, delete all call `assertNotMounted`/`mountEntries`/
+ * `mountRead`) — a store read per request for state that changes rarely.
+ * Cached per workspace with a 30s TTL (specs/record-store "Cached mounts
+ * read"; the record-backed storage move itself lands in stream 5), and
+ * invalidated synchronously by `addMount`/`removeMount` so a mount change is
+ * visible to the very next read in this process.
+ */
+const MOUNTS_CACHE_TTL_MS = 30_000;
+
+interface MountsCacheEntry {
+  mounts: VfsMount[];
+  expiresAt: number;
+}
+
+const mountsCache = new Map<string, MountsCacheEntry>();
+
+function invalidateMountsCache(workspaceId: string): void {
+  mountsCache.delete(workspaceId);
+}
+
+/** Test hook: drop every cached mounts list. */
+export function resetMountsCache(): void {
+  mountsCache.clear();
+}
+
+async function loadMounts(workspaceId: string): Promise<VfsMount[]> {
   const file = await getFsStore()
     .read(workspaceId, MOUNTS_PATH)
     .catch(() => undefined);
   if (!file) return [];
   const parsed = JSON.parse(file.content) as unknown;
   return Array.isArray(parsed) ? (parsed as VfsMount[]) : [];
+}
+
+export async function readMounts(workspaceId: string): Promise<VfsMount[]> {
+  const cached = mountsCache.get(workspaceId);
+  if (cached && cached.expiresAt > Date.now()) return cached.mounts;
+  const mounts = await loadMounts(workspaceId);
+  mountsCache.set(workspaceId, { mounts, expiresAt: Date.now() + MOUNTS_CACHE_TTL_MS });
+  return mounts;
 }
 
 async function saveMounts(workspaceId: string, mounts: VfsMount[]): Promise<void> {
@@ -59,6 +94,7 @@ async function saveMounts(workspaceId: string, mounts: VfsMount[]): Promise<void
     JSON.stringify(mounts, null, 2),
     "application/json",
   );
+  invalidateMountsCache(workspaceId);
 }
 
 export async function addMount(
