@@ -99,6 +99,32 @@ export type {
   OAuth2AuthCodePayload,
 } from "./credentials/types.js";
 
+// Executor
+export {
+  ProviderExecutor,
+  getRegistryProviders,
+  isCatalogueProvider,
+  resetCatalogueGuard,
+  toClientFactoryName,
+  type ExecuteOptions,
+  type ExecuteResult,
+  type ProviderModule,
+} from "./executor/index.js";
+
+// Dispatch
+export {
+  Dispatcher,
+  type DispatcherDeps,
+  type DispatchOptions,
+  type CompatDispatch,
+} from "./dispatch/index.js";
+export { RateLimiter, RateLimitExceededError } from "./dispatch/limits.js";
+export { asStreamBody, sseFromAsyncIterable, SSE_HEADERS, type StreamBody } from "./dispatch/stream.js";
+
+// HTTP
+export { buildRouter, type HttpDeps } from "./http/router.js";
+export { DiscoveryService, type DiscoveryDeps, type NamespaceInfo } from "./http/discovery.js";
+
 // Sandbox
 export {
   runScriptInSandbox,
