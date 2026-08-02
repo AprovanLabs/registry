@@ -1,21 +1,14 @@
 /**
  * Groups facade over the identity store: group CRUD, user-group membership,
- * tool grants, and the retired prefix grants (Dynamo-only until cutover —
- * decision record #8 drops them from the relational schema; WS-6 removes
- * the admin write surface). Auth-cache invalidation on membership mutations
- * happens inside the store (identity/store.ts).
+ * and tool grants. Auth-cache invalidation on membership mutations happens
+ * inside the store (identity/store.ts).
  */
 
 import { getIdentityStore } from "./identity/store.js";
-import type {
-  GroupRecord,
-  PrefixGrantRecord,
-  ToolGrantRecord,
-} from "./identity/types.js";
+import type { GroupRecord, ToolGrantRecord } from "./identity/types.js";
 
 export type {
   GroupRecord,
-  PrefixGrantRecord,
   ToolGrantRecord,
   UserGroupRecord,
 } from "./identity/types.js";
@@ -88,33 +81,6 @@ export async function listGroupUserIds(
 }
 
 // ---------------------------------------------------------------------------
-// GroupPrefixGrants (retired in the relational schema)
-// ---------------------------------------------------------------------------
-
-export async function addPrefixGrant(
-  workspaceId: string,
-  groupId: string,
-  pathPrefix: string,
-): Promise<PrefixGrantRecord> {
-  return getIdentityStore().groups.prefixGrants.add(workspaceId, groupId, pathPrefix);
-}
-
-export async function removePrefixGrant(
-  workspaceId: string,
-  groupId: string,
-  pathPrefix: string,
-): Promise<boolean> {
-  return getIdentityStore().groups.prefixGrants.remove(workspaceId, groupId, pathPrefix);
-}
-
-export async function listPrefixGrants(
-  workspaceId: string,
-  groupId: string,
-): Promise<PrefixGrantRecord[]> {
-  return getIdentityStore().groups.prefixGrants.list(workspaceId, groupId);
-}
-
-// ---------------------------------------------------------------------------
 // GroupToolGrants
 // ---------------------------------------------------------------------------
 
@@ -154,12 +120,4 @@ export async function checkToolGrant(
   operation: string,
 ): Promise<boolean> {
   return getIdentityStore().groups.toolGrants.check(workspaceId, groupIds, provider, operation);
-}
-
-/** All path prefixes granted to any of the given groupIds. */
-export async function listGrantedPrefixes(
-  workspaceId: string,
-  groupIds: string[],
-): Promise<string[]> {
-  return getIdentityStore().groups.prefixGrants.listGranted(workspaceId, groupIds);
 }

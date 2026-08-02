@@ -215,22 +215,6 @@ export const Groups: TableSchema = {
   },
 };
 
-export const GroupPrefixGrants: TableSchema = {
-  tableName: "GroupPrefixGrants",
-  createInput: {
-    TableName: "GroupPrefixGrants",
-    KeySchema: [
-      { AttributeName: "workspaceId#groupId", KeyType: "HASH" },
-      { AttributeName: "pathPrefix", KeyType: "RANGE" },
-    ],
-    AttributeDefinitions: [
-      { AttributeName: "workspaceId#groupId", AttributeType: "S" },
-      { AttributeName: "pathPrefix", AttributeType: "S" },
-    ],
-    BillingMode: "PAY_PER_REQUEST",
-  },
-};
-
 export const GroupToolGrants: TableSchema = {
   tableName: "GroupToolGrants",
   createInput: {
@@ -348,7 +332,6 @@ export const ALL_TABLES: TableSchema[] = [
   Permissions,
   ApiKeys,
   Groups,
-  GroupPrefixGrants,
   GroupToolGrants,
   UserGroups,
   Audit,

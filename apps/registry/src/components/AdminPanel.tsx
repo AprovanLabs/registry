@@ -5,7 +5,7 @@
  *   - List and remove workspace members
  *   - Manage groups (create, delete, rename)
  *   - Assign members to groups (drag-and-drop or button)
- *   - Edit prefix grants and tool grants per group
+ *   - Edit tool grants per group
  *   - Send invites (email, role, initial groups)
  *   - View and revoke pending invites
  *   - View the audit log
@@ -45,12 +45,6 @@ interface Group {
   description?: string;
   createdAt: string;
   updatedAt: string;
-}
-
-interface PrefixGrant {
-  workspaceId: string;
-  groupId: string;
-  pathPrefix: string;
 }
 
 interface ToolGrant {
@@ -449,7 +443,7 @@ function GroupsTab({ token }: { token: string }) {
 }
 
 // ---------------------------------------------------------------------------
-// GroupDetail — members, prefix grants, tool grants for a single group
+// GroupDetail — members and tool grants for a single group
 // ---------------------------------------------------------------------------
 
 function GroupDetail({ token, group }: { token: string; group: Group }) {
@@ -458,10 +452,6 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
   // Group users
   const [userIds, setUserSubs] = React.useState<string[]>([]);
   const [addUserSub, setAddUserSub] = React.useState("");
-
-  // Prefix grants
-  const [prefixGrants, setPrefixGrants] = React.useState<PrefixGrant[]>([]);
-  const [newPrefix, setNewPrefix] = React.useState("");
 
   // Tool grants
   const [toolGrants, setToolGrants] = React.useState<ToolGrant[]>([]);
@@ -476,9 +466,6 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
       gatewayFetch(`/groups/${groupId}/users`, token)
         .then((r) => r.json() as Promise<{ userIds: string[] }>)
         .then((d) => setUserSubs(d.userIds ?? [])),
-      gatewayFetch(`/groups/${groupId}/prefix-grants`, token)
-        .then((r) => r.json() as Promise<{ grants: PrefixGrant[] }>)
-        .then((d) => setPrefixGrants(d.grants ?? [])),
       gatewayFetch(`/groups/${groupId}/tool-grants`, token)
         .then((r) => r.json() as Promise<{ grants: ToolGrant[] }>)
         .then((d) => setToolGrants(d.grants ?? [])),
@@ -520,42 +507,6 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
       setUserSubs((prev) => prev.filter((s) => s !== sub));
     } catch (err) {
       setLoadError(err instanceof Error ? err.message : "Failed to remove user");
-    }
-  }
-
-  async function addPrefix(e: React.FormEvent) {
-    e.preventDefault();
-    const prefix = newPrefix.trim();
-    try {
-      const res = await gatewayFetch(`/groups/${groupId}/prefix-grants`, token, {
-        method: "POST",
-        body: JSON.stringify({ pathPrefix: prefix }),
-      });
-      if (!res.ok) {
-        const body = (await res.json()) as { error?: string };
-        throw new Error(body.error ?? `${res.status}`);
-      }
-      const grant = (await res.json()) as PrefixGrant;
-      setPrefixGrants((prev) => [...prev.filter((g) => g.pathPrefix !== grant.pathPrefix), grant]);
-      setNewPrefix("");
-    } catch (err) {
-      setLoadError(err instanceof Error ? err.message : "Failed to add prefix grant");
-    }
-  }
-
-  async function removePrefix(pathPrefix: string) {
-    try {
-      const res = await gatewayFetch(`/groups/${groupId}/prefix-grants`, token, {
-        method: "DELETE",
-        body: JSON.stringify({ pathPrefix }),
-      });
-      if (!res.ok) {
-        const body = (await res.json()) as { error?: string };
-        throw new Error(body.error ?? `${res.status}`);
-      }
-      setPrefixGrants((prev) => prev.filter((g) => g.pathPrefix !== pathPrefix));
-    } catch (err) {
-      setLoadError(err instanceof Error ? err.message : "Failed to remove prefix grant");
     }
   }
 
@@ -645,47 +596,6 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
                 >
                   ×
                 </Button>
-              </li>
-            ))}
-          </ul>
-        </CardContent>
-      </Card>
-
-      {/* Prefix grants */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Prefix Grants</CardTitle>
-          <CardDescription>
-            Members of this group can access credentials whose path starts with any of these prefixes.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="flex flex-col gap-3">
-          <form onSubmit={addPrefix} className="flex gap-2">
-            <Input
-              placeholder="/team-a/"
-              value={newPrefix}
-              onChange={(e) => setNewPrefix(e.target.value)}
-              className="flex-1"
-            />
-            <Button type="submit" disabled={!newPrefix.trim().startsWith("/")}>
-              Add
-            </Button>
-          </form>
-          {prefixGrants.length === 0 && (
-            <p className="text-sm text-muted-foreground">No prefix grants.</p>
-          )}
-          <ul className="flex flex-wrap gap-2">
-            {prefixGrants.map((g) => (
-              <li key={g.pathPrefix} className="flex items-center gap-1">
-                <Badge variant="secondary" className="font-mono text-xs">
-                  {g.pathPrefix}
-                </Badge>
-                <button
-                  className="text-xs text-muted-foreground hover:text-destructive"
-                  onClick={() => removePrefix(g.pathPrefix)}
-                >
-                  ×
-                </button>
               </li>
             ))}
           </ul>

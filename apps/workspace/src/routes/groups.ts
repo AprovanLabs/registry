@@ -14,10 +14,6 @@
  * POST   /groups/:id/users               — add a user to a group
  * DELETE /groups/:id/users               — remove a user from a group
  *
- * GET    /groups/:id/prefix-grants       — list prefix grants for a group
- * POST   /groups/:id/prefix-grants       — add a path-prefix grant
- * DELETE /groups/:id/prefix-grants       — remove a path-prefix grant
- *
  * GET    /groups/:id/tool-grants         — list tool grants for a group
  * POST   /groups/:id/tool-grants         — add a tool grant
  * DELETE /groups/:id/tool-grants         — remove a tool grant
@@ -26,16 +22,13 @@
 import { Hono } from "hono";
 import { z } from "zod";
 import { listGroupUserIds,
-  addPrefixGrant,
   addToolGrant,
   addUserToGroup,
   createGroup,
   deleteGroup,
   getGroup,
   listGroups,
-  listPrefixGrants,
   listToolGrants,
-  removePrefixGrant,
   removeToolGrant,
   removeUserFromGroup,
   updateGroup,
@@ -62,8 +55,6 @@ const patchGroupSchema = z.object({
 });
 
 const userSubSchema = z.object({ userId: z.string().min(1) });
-
-const prefixGrantSchema = z.object({ pathPrefix: z.string().startsWith("/") });
 
 const toolGrantSchema = z.object({
   provider: z.string().min(1),
@@ -179,53 +170,6 @@ groupsRouter.delete("/:id/users", validateBody(userSubSchema), async (c) => {
   const removed = await removeUserFromGroup(workspaceId, groupId, userId);
   if (!removed) {
     return c.json({ error: "User not found in group" }, 404);
-  }
-  return c.json({ removed: true });
-});
-
-// ---------------------------------------------------------------------------
-// GET /groups/:id/prefix-grants
-// ---------------------------------------------------------------------------
-
-groupsRouter.get("/:id/prefix-grants", async (c) => {
-  const principal = c.get("principal");
-  const workspaceId = principal.workspaceId;
-  const groupId = c.req.param("id");
-
-  const group = await getGroup(workspaceId, groupId);
-  if (!group) return c.json({ error: "Group not found" }, 404);
-
-  const grants = await listPrefixGrants(workspaceId, groupId);
-  return c.json({ grants });
-});
-
-// ---------------------------------------------------------------------------
-// POST /groups/:id/prefix-grants
-// ---------------------------------------------------------------------------
-
-groupsRouter.post("/:id/prefix-grants", validateBody(prefixGrantSchema), async (c) => {
-  const { workspaceId } = c.get("principal");
-  const groupId = c.req.param("id");
-  const { pathPrefix } = c.req.valid("json");
-
-  const group = await getGroup(workspaceId, groupId);
-  if (!group) return c.json({ error: "Group not found" }, 404);
-
-  const grant = await addPrefixGrant(workspaceId, groupId, pathPrefix);
-  return c.json(grant, 201);
-});
-
-// ---------------------------------------------------------------------------
-// DELETE /groups/:id/prefix-grants
-// ---------------------------------------------------------------------------
-
-groupsRouter.delete("/:id/prefix-grants", validateBody(prefixGrantSchema), async (c) => {
-  const { workspaceId } = c.get("principal");
-  const groupId = c.req.param("id");
-  const { pathPrefix } = c.req.valid("json");
-  const removed = await removePrefixGrant(workspaceId, groupId, pathPrefix);
-  if (!removed) {
-    return c.json({ error: "Prefix grant not found" }, 404);
   }
   return c.json({ removed: true });
 });

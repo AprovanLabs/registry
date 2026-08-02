@@ -19,7 +19,6 @@ import type {
   InviteRecord,
   MembershipRecord,
   Permission,
-  PrefixGrantRecord,
   ToolGrantRecord,
   UserRecord,
   WorkspaceRecord,
@@ -31,8 +30,6 @@ const DYNAMODB_MEMBERSHIPS_TABLE = () => process.env["DYNAMODB_MEMBERSHIPS_TABLE
 const SESSIONS_TABLE = () => process.env["SESSIONS_TABLE"] ?? "Sessions";
 const DYNAMODB_INVITES_TABLE = () => process.env["DYNAMODB_INVITES_TABLE"] ?? "Invites";
 const GROUPS_TABLE = () => process.env["GROUPS_TABLE"] ?? "Groups";
-const GROUP_PREFIX_GRANTS_TABLE = () =>
-  process.env["GROUP_PREFIX_GRANTS_TABLE"] ?? "GroupPrefixGrants";
 const GROUP_TOOL_GRANTS_TABLE = () =>
   process.env["GROUP_TOOL_GRANTS_TABLE"] ?? "GroupToolGrants";
 const USER_GROUPS_TABLE = () => process.env["USER_GROUPS_TABLE"] ?? "UserGroups";
@@ -213,26 +210,6 @@ export class PermissionStoreDynamodb {
 
 export function createIdentityStoreDynamo(): IIdentityStore {
   const permissions = new PermissionStoreDynamodb();
-
-  const listPrefixGrants = async (
-    workspaceId: string,
-    groupId: string,
-  ): Promise<PrefixGrantRecord[]> => {
-    const { client, QueryCommand } = await dynamo();
-    const result = await client.send(
-      new QueryCommand({
-        TableName: GROUP_PREFIX_GRANTS_TABLE(),
-        KeyConditionExpression: "#pk = :pk",
-        ExpressionAttributeNames: { "#pk": "workspaceId#groupId" },
-        ExpressionAttributeValues: { ":pk": `${workspaceId}#${groupId}` },
-      }),
-    );
-    return (result.Items ?? []).map((item) => ({
-      workspaceId: (item as Record<string, unknown>)["workspaceId"] as string,
-      groupId: (item as Record<string, unknown>)["groupId"] as string,
-      pathPrefix: (item as Record<string, unknown>)["pathPrefix"] as string,
-    }));
-  };
 
   const listToolGrants = async (
     workspaceId: string,
@@ -597,17 +574,6 @@ export function createIdentityStoreDynamo(): IIdentityStore {
           new DeleteCommand({ TableName: GROUPS_TABLE(), Key: { workspaceId, groupId } }),
         );
         // Best-effort grant cleanup; UserGroups rows become invisible orphans.
-        for (const grant of await listPrefixGrants(workspaceId, groupId)) {
-          await client.send(
-            new DeleteCommand({
-              TableName: GROUP_PREFIX_GRANTS_TABLE(),
-              Key: {
-                "workspaceId#groupId": `${workspaceId}#${groupId}`,
-                pathPrefix: grant.pathPrefix,
-              },
-            }),
-          );
-        }
         for (const grant of await listToolGrants(workspaceId, groupId)) {
           await client.send(
             new DeleteCommand({
@@ -759,49 +725,6 @@ export function createIdentityStoreDynamo(): IIdentityStore {
         },
       },
 
-      prefixGrants: {
-        async add(workspaceId, groupId, pathPrefix) {
-          const { client, PutCommand } = await dynamo();
-          await client.send(
-            new PutCommand({
-              TableName: GROUP_PREFIX_GRANTS_TABLE(),
-              Item: {
-                "workspaceId#groupId": `${workspaceId}#${groupId}`,
-                pathPrefix,
-                workspaceId,
-                groupId,
-              },
-            }),
-          );
-          return { workspaceId, groupId, pathPrefix };
-        },
-        async remove(workspaceId, groupId, pathPrefix) {
-          const { client, DeleteCommand, GetCommand } = await dynamo();
-          const result = await client.send(
-            new GetCommand({
-              TableName: GROUP_PREFIX_GRANTS_TABLE(),
-              Key: { "workspaceId#groupId": `${workspaceId}#${groupId}`, pathPrefix },
-            }),
-          );
-          if (!result.Item) return false;
-          await client.send(
-            new DeleteCommand({
-              TableName: GROUP_PREFIX_GRANTS_TABLE(),
-              Key: { "workspaceId#groupId": `${workspaceId}#${groupId}`, pathPrefix },
-            }),
-          );
-          return true;
-        },
-        list: listPrefixGrants,
-        async listGranted(workspaceId, groupIds) {
-          const prefixes: string[] = [];
-          for (const groupId of groupIds) {
-            const grants = await listPrefixGrants(workspaceId, groupId);
-            for (const g of grants) prefixes.push(g.pathPrefix);
-          }
-          return [...new Set(prefixes)];
-        },
-      },
     },
 
     permissions: {

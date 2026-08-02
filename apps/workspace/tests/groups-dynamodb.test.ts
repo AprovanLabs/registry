@@ -21,18 +21,14 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { resetDynamoDocClient } from "../src/db/client.js";
 import { resetIdentityStore } from "../src/identity/store.js";
 import {
-  addPrefixGrant,
   addToolGrant,
   addUserToGroup,
   checkToolGrant,
   createGroup,
   deleteGroup,
   getGroup,
-  listGrantedPrefixes,
   listGroups,
-  listPrefixGrants,
   listToolGrants,
-  removePrefixGrant,
   removeToolGrant,
   removeUserFromGroup,
   updateGroup,
@@ -43,7 +39,6 @@ import {
 // ---------------------------------------------------------------------------
 
 const GROUPS_TABLE = process.env["GROUPS_TABLE"] ?? "Groups-test";
-const PREFIX_GRANTS_TABLE = process.env["GROUP_PREFIX_GRANTS_TABLE"] ?? "GroupPrefixGrants-test";
 const TOOL_GRANTS_TABLE = process.env["GROUP_TOOL_GRANTS_TABLE"] ?? "GroupToolGrants-test";
 const USER_GROUPS_TABLE = process.env["USER_GROUPS_TABLE"] ?? "UserGroups-test";
 const ENDPOINT = process.env["DYNAMO_ENDPOINT"];
@@ -119,19 +114,6 @@ async function provisionTables(): Promise<boolean> {
 
   await dropAndCreate(
     client,
-    PREFIX_GRANTS_TABLE,
-    [
-      { AttributeName: "workspaceId#groupId", KeyType: "HASH" },
-      { AttributeName: "pathPrefix", KeyType: "RANGE" },
-    ],
-    [
-      { AttributeName: "workspaceId#groupId", AttributeType: "S" },
-      { AttributeName: "pathPrefix", AttributeType: "S" },
-    ],
-  );
-
-  await dropAndCreate(
-    client,
     TOOL_GRANTS_TABLE,
     [
       { AttributeName: "workspaceId#groupId", KeyType: "HASH" },
@@ -195,7 +177,6 @@ describe.skipIf(!ddbReady)("Groups DynamoDB", () => {
     process.env["STORE_BACKEND"] = "dynamo";
     resetIdentityStore();
     process.env["GROUPS_TABLE"] = GROUPS_TABLE;
-    process.env["GROUP_PREFIX_GRANTS_TABLE"] = PREFIX_GRANTS_TABLE;
     process.env["GROUP_TOOL_GRANTS_TABLE"] = TOOL_GRANTS_TABLE;
     process.env["USER_GROUPS_TABLE"] = USER_GROUPS_TABLE;
     resetDynamoDocClient();
@@ -277,15 +258,13 @@ describe.skipIf(!ddbReady)("Groups DynamoDB", () => {
     expect(await deleteGroup(ws, group.groupId)).toBe(false);
   });
 
-  it("deleteGroup cascades prefix and tool grants", async () => {
+  it("deleteGroup cascades tool grants", async () => {
     const ws = uniqueWs();
     const group = await createGroup(ws, "to-cascade");
-    await addPrefixGrant(ws, group.groupId, "/team-a/");
     await addToolGrant(ws, group.groupId, "github", "*");
 
     await deleteGroup(ws, group.groupId);
 
-    expect(await listPrefixGrants(ws, group.groupId)).toHaveLength(0);
     expect(await listToolGrants(ws, group.groupId)).toHaveLength(0);
   });
 
@@ -312,45 +291,6 @@ describe.skipIf(!ddbReady)("Groups DynamoDB", () => {
     await addUserToGroup(ws, group.groupId, "user-a");
     await addUserToGroup(ws, group.groupId, "user-a");
     expect(await removeUserFromGroup(ws, group.groupId, "user-a")).toBe(true);
-  });
-
-  // -------------------------------------------------------------------------
-  // GroupPrefixGrants
-  // -------------------------------------------------------------------------
-
-  it("adds and lists prefix grants", async () => {
-    const ws = uniqueWs();
-    const group = await createGroup(ws, "prefix-test");
-
-    await addPrefixGrant(ws, group.groupId, "/team-a/");
-    await addPrefixGrant(ws, group.groupId, "/anthropic/");
-
-    const grants = await listPrefixGrants(ws, group.groupId);
-    expect(grants).toHaveLength(2);
-    expect(grants.map((g) => g.pathPrefix).sort()).toEqual(["/anthropic/", "/team-a/"]);
-  });
-
-  it("removes a prefix grant", async () => {
-    const ws = uniqueWs();
-    const group = await createGroup(ws, "rm-prefix");
-
-    await addPrefixGrant(ws, group.groupId, "/team-a/");
-    expect(await removePrefixGrant(ws, group.groupId, "/team-a/")).toBe(true);
-    expect(await removePrefixGrant(ws, group.groupId, "/team-a/")).toBe(false);
-    expect(await listPrefixGrants(ws, group.groupId)).toHaveLength(0);
-  });
-
-  it("listGrantedPrefixes merges prefixes across groups", async () => {
-    const ws = uniqueWs();
-    const g1 = await createGroup(ws, "gp1");
-    const g2 = await createGroup(ws, "gp2");
-
-    await addPrefixGrant(ws, g1.groupId, "/team-a/");
-    await addPrefixGrant(ws, g2.groupId, "/team-b/");
-    await addPrefixGrant(ws, g2.groupId, "/team-a/");
-
-    const prefixes = await listGrantedPrefixes(ws, [g1.groupId, g2.groupId]);
-    expect(prefixes.sort()).toEqual(["/team-a/", "/team-b/"]);
   });
 
   // -------------------------------------------------------------------------

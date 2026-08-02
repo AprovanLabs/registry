@@ -144,13 +144,6 @@ export class RegistryApp extends Stack {
         sortKey: { name: "groupId", type: AttributeType.STRING },
       });
 
-      const groupPrefixGrantsTable = new Table(this, "GroupPrefixGrantsTable", {
-        ...storeTableProps,
-        tableName: names.regional("group-prefix-grants"),
-        partitionKey: { name: "workspaceId#groupId", type: AttributeType.STRING },
-        sortKey: { name: "pathPrefix", type: AttributeType.STRING },
-      });
-
       const groupToolGrantsTable = new Table(this, "GroupToolGrantsTable", {
         ...storeTableProps,
         tableName: names.regional("group-tool-grants"),
@@ -180,7 +173,6 @@ export class RegistryApp extends Stack {
         auditTable,
         sessionsTable,
         groupsTable,
-        groupPrefixGrantsTable,
         groupToolGrantsTable,
         userGroupsTable,
         fsTable,

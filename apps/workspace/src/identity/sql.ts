@@ -2,7 +2,7 @@
  * Relational identity backend — the from-scratch schema (tech-plan D5,
  * specs/identity-store "Relational identity schema"): real columns for
  * yesterday's composite keys, app-layer referential integrity (DSQL has no
- * foreign keys), `GroupPrefixGrants` not carried.
+ * foreign keys).
  *
  * ONE store implementation over a two-method async SQL seam; `sqlite`
  * (better-sqlite3 on workspace.db, local mode) and `dsql` (db/dsql.ts pool,
@@ -229,12 +229,6 @@ export function createIdentityStoreSql(client: IdentitySqlClient): IIdentityStor
       [workspaceId, groupId],
     );
     return rows[0] ? toGroup(rows[0]) : undefined;
-  };
-
-  const prefixGrantsRetired = (): never => {
-    throw new Error(
-      "GroupPrefixGrants are not carried into the relational identity schema (decision record #8) — the grant model is group tool grants + WS-3 profile grants.",
-    );
   };
 
   return {
@@ -554,13 +548,6 @@ export function createIdentityStoreSql(client: IdentitySqlClient): IIdentityStor
           );
           return rows.length > 0;
         },
-      },
-
-      prefixGrants: {
-        add: async () => prefixGrantsRetired(),
-        remove: async () => false,
-        list: async () => [],
-        listGranted: async () => [],
       },
     },
 

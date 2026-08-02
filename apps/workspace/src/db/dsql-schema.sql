@@ -63,8 +63,7 @@ CREATE TABLE IF NOT EXISTS audit_log (
   PRIMARY KEY (workspace_id, ts, id)
 );
 
--- Identity / authz (stream 8): real columns for today's composite keys;
--- GroupPrefixGrants deliberately not carried (decision record #8).
+-- Identity / authz (stream 8): real columns for today's composite keys.
 CREATE TABLE IF NOT EXISTS users (
   sub text PRIMARY KEY,
   email text,

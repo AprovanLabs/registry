@@ -29,7 +29,6 @@ import {
   getGroup,
   listGroups,
   listGroupUserIds,
-  listPrefixGrants,
   listToolGrants,
   removeUserFromGroup,
   updateGroup,
@@ -142,14 +141,6 @@ describe("relational identity backend (SQLite)", () => {
     expect(await deleteGroup(WS, group.groupId)).toBe(true);
     expect(await listToolGrants(WS, group.groupId)).toEqual([]);
     expect(await deleteGroup(WS, group.groupId)).toBe(false);
-  });
-
-  it("prefix grants are retired on the relational schema", async () => {
-    const group = await createGroup(WS, "prefixless");
-    expect(await listPrefixGrants(WS, group.groupId)).toEqual([]);
-    await expect(
-      getIdentityStore().groups.prefixGrants.add(WS, group.groupId, "/data"),
-    ).rejects.toThrow(/not carried/iu);
   });
 
   it("permissions: grant/check (wildcard)/list/revoke, idempotent re-grant", async () => {
