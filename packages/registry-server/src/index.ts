@@ -89,6 +89,15 @@ export type {
   OAuth2AuthCodePayload,
 } from "./credentials/types.js";
 
+// Sandbox
+export {
+  runScriptInSandbox,
+  transformWorkflowModule,
+  configureSandbox,
+  type SandboxRunOptions,
+  type SandboxConfig,
+} from "./sandbox/quickjs.js";
+
 // Profiles
 export {
   ProfileService,
