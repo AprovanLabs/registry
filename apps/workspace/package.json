@@ -2,7 +2,7 @@
   "name": "@aprovan/workspace",
   "version": "0.1.0",
   "type": "module",
-  "description": "The Aprovan workspace — chat, apps, workflows, MCP, and the credential/permission gateway in one process",
+  "description": "The Aprovan workspace \u2014 chat, apps, workflows, MCP, and the credential/permission gateway in one process",
   "license": "MIT",
   "bin": {
     "workspace": "./dist/cli.js"
@@ -38,6 +38,7 @@
   "dependencies": {
     "@aprovan/node": "^0.1.1",
     "@aprovan/patchwork-compiler": "^0.2.0",
+    "@aprovan/registry-server": "workspace:*",
     "@aprovan/sandbox-bashkit": "workspace:*",
     "@aws-sdk/client-cognito-identity-provider": "^3.1077.0",
     "@aws-sdk/client-dynamodb": "^3.1077.0",

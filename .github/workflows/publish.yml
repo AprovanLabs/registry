@@ -39,6 +39,7 @@ jobs:
             --filter @aprovan/registry-main \
             --filter @aprovan/registry-ui \
             --filter @aprovan/workspace... \
+            --filter @aprovan/registry-server... \
             --filter @utdk/keyvalue \
             --filter @utdk/events \
             --filter @utdk/vfs \
@@ -69,6 +70,7 @@ jobs:
             @utdk/common @utdk/sql @utdk/llm @utdk/sandbox @utdk/vcs @utdk/agent \
             @utdk/keyvalue @utdk/events @utdk/vfs @utdk/telemetry @utdk/mcp-core utdk \
             @aprovan/sandbox-image-node \
+            @aprovan/registry-server \
             @aprovan/registry-main @aprovan/registry-ui \
             @aprovan/workspace; do
             dir=$(pnpm --filter "$pkg" exec pwd 2>/dev/null | tail -1) || continue

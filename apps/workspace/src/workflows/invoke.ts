@@ -54,8 +54,9 @@ async function assertProviderAllowed(
 }
 
 /**
- * `profile` is the script-side `getClient({ profile })` pin
- * (docs/interfaces.md). It means two things, by namespace kind, and the two
+ * `profile` is the script-side `client(name)` pin (docs/interfaces.md;
+ * formerly `getClient({ profile })`). It means two things, by namespace
+ * kind, and the two
  * vocabularies are deliberately unified rather than a third being invented:
  *
  *   - provider namespaces (`github`): a credential *label* — resolved to
@@ -84,7 +85,7 @@ export async function invokeTool(
   if (core) {
     if (profile !== undefined) {
       throw new ServiceError(
-        `${namespace} is a core service — it has no credential profiles to pin with getClient`,
+        `${namespace} is a core service — it has no credential profiles to pin with client()`,
         400,
       );
     }
@@ -208,7 +209,7 @@ interface ProviderDispatch {
   credentialProvider: string;
   /** Pin to one specific credential (an interface instance's binding). */
   credentialId?: string;
-  /** Pin by credential label (a script's `getClient({ profile })`). */
+  /** Pin by credential label (a script's `client(name)`). */
   credentialProfile?: string;
   /** UTDK module executed in the isolate (also names the client factory). */
   module: string;
