@@ -1,11 +1,10 @@
 ---
 import { ScriptPlayground } from "@/components/ScriptPlayground";
-import { Badge } from "@/components/ui/badge";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
 <BaseLayout
-  description="Run TypeScript against any registry provider in a sandboxed browser runtime — calls proxy through the gateway with your workspace credentials."
+  description="Run TypeScript against registry providers in a sandboxed browser runtime — the sample uses public endpoints only."
   title="Playground — Aprovan Registry"
 >
   <main class="flex flex-col w-full min-h-screen gap-6 px-4 py-8 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -16,9 +15,9 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
       <p class="max-w-2xl text-base leading-7 text-muted-foreground">
         Write a script that imports providers —
         <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-sm"><span class="text-syntax-keyword">import</span> github <span class="text-syntax-keyword">from</span> <span class="text-syntax-string">'@utdk/github'</span></code>
-        — and run it here. The script executes in a sandboxed isolate; every call
-        proxies to the gateway, which injects your workspace credentials
-        server-side. The sandbox never sees a secret.
+        — and run it here. The script executes in a sandboxed isolate; the sample
+        uses public GitHub data with no saved credentials. For workspace-backed
+        calls, use the product app.
       </p>
     </section>
 

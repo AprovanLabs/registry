@@ -58,16 +58,16 @@ importers:
   apps/registry:
     dependencies:
       '@aprovan/registry-main':
-        specifier: workspace:*
-        version: link:../../packages/registry-main
+        specifier: 0.1.0
+        version: 0.1.0
       '@aprovan/registry-ui':
-        specifier: workspace:*
-        version: link:../../packages/registry-ui
+        specifier: 0.4.0
+        version: 0.4.0(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@aprovan/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
       '@aprovan/ui':
-        specifier: ^0.5.0
+        specifier: 0.5.0
         version: 0.5.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@astrojs/react':
         specifier: ^5.0.3
@@ -120,9 +120,6 @@ importers:
       marked:
         specifier: ^17.0.6
         version: 17.0.6
-      oidc-client-ts:
-        specifier: ^3.1.0
-        version: 3.5.0
       radix-ui:
         specifier: ^1.4.3
         version: 1.4.3(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -976,8 +973,16 @@ packages:
   '@aprovan/prettier-config@1.0.0':
     resolution: {integrity: sha512-a/AaF1hfgjanSZfyiblanS0JflVmG4CV6mBGofOFv/NabWQogAzECiGzrrlK91NMdnT/Tie2qF2JyTUe5b1z5g==}
 
+  '@aprovan/registry-main@0.1.0':
+    resolution: {integrity: sha512-HMi0S6OwR7Eht7NUZ5/GbcuQdBb/9H2dYt25jCDYavmirDZZBO2dkx58+Sl1lORsEDYX8trG4JZOFP8dxKb3Lw==}
+
   '@aprovan/registry-main@0.1.0-dev.7343775':
     resolution: {integrity: sha512-Z4my5ZGDJbNCk3kQ3sFRc2fcJKs6LCo0Ghx08Lw1k9CFawpiKeVXDBcTYNJQuEVq77wl1FbqBO+74zxwgseOPA==}
+
+  '@aprovan/registry-ui@0.4.0':
+    resolution: {integrity: sha512-ZqP89iHPWZiPfKZbGXQZpDUKgQfCxG/jQ7JZUvgZD4eUsqlO/3Hz/phNFF1jxgaT/c+GoYNkiYLdI63rStcBlQ==}
+    peerDependencies:
+      react: 19.2.7
 
   '@aprovan/tsconfig@0.1.0':
     resolution: {integrity: sha512-ZiyaLo+3NISdtzOjL9qMz8i2/gSHvoWOyJa0BsEb+++QEOUeVWL1wyVd6/m81JpYCgNQVI+CKQM+YmlRjywmDw==}
@@ -8656,7 +8661,36 @@ snapshots:
 
   '@aprovan/prettier-config@1.0.0': {}
 
+  '@aprovan/registry-main@0.1.0': {}
+
   '@aprovan/registry-main@0.1.0-dev.7343775': {}
+
+  '@aprovan/registry-ui@0.4.0(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@aprovan/registry-main': 0.1.0-dev.7343775
+      '@aprovan/ui': 0.5.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      '@codemirror/autocomplete': 6.20.3
+      '@codemirror/lang-javascript': 6.2.5
+      '@codemirror/state': 6.7.1
+      '@codemirror/view': 6.43.6
+      '@observablehq/plot': 0.6.17
+      '@typescript/vfs': 1.6.4(typescript@5.9.3)
+      '@valtown/codemirror-ts': 2.3.1(@codemirror/autocomplete@6.20.3)(@codemirror/lint@6.9.7)(@codemirror/state@6.7.1)(@codemirror/view@6.43.6)
+      '@xyflow/react': 12.10.2(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      codemirror: 6.0.2
+      react: 19.2.7
+      tree-sitter-javascript: 0.25.0
+      typescript: 5.9.3
+      web-tree-sitter: 0.25.10
+    transitivePeerDependencies:
+      - '@codemirror/lint'
+      - '@types/emscripten'
+      - '@types/react'
+      - '@types/react-dom'
+      - immer
+      - react-dom
+      - supports-color
+      - tree-sitter
 
   '@aprovan/tsconfig@0.1.0': {}
 

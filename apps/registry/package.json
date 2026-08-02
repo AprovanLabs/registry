@@ -15,10 +15,10 @@
     "node": ">=22.12.0"
   },
   "dependencies": {
-    "@aprovan/registry-main": "workspace:*",
-    "@aprovan/registry-ui": "workspace:*",
+    "@aprovan/registry-main": "0.1.0",
+    "@aprovan/registry-ui": "0.4.0",
     "@aprovan/runtime": "workspace:*",
-    "@aprovan/ui": "^0.5.0",
+    "@aprovan/ui": "0.5.0",
     "@astrojs/react": "^5.0.3",
     "@fontsource-variable/geist": "^5.2.8",
     "@utdk/agent": "workspace:*",
@@ -36,7 +36,6 @@
     "clsx": "^2.1.1",
     "lucide-react": "^1.7.0",
     "marked": "^17.0.6",
-    "oidc-client-ts": "^3.1.0",
     "radix-ui": "^1.4.3",
     "react": "19.2.7",
     "react-dom": "19.2.7",

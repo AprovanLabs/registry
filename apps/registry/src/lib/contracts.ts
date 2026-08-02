@@ -28,10 +28,8 @@ import { telemetryToolEntries } from "@utdk/telemetry";
 import { vcsToolEntries } from "@utdk/vcs";
 import { vfsToolEntries } from "@utdk/vfs";
 // The llm compat list IS the chat-provider registry (compatSource
-// indirection, D5). The registry lives in the workspace app until WS-3
-// relocates it into data; the site build runs inside the monorepo, so this
-// build-time import reads the live list.
-import { listLlmProviders } from "../../../workspace/src/llm";
+// indirection, D5). Snapshot in lib/llm-compat.ts — not the product server.
+import { listLlmProviders } from "./llm-compat";
 
 export type ToolEntry = {
   name: string;
