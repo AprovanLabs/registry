@@ -1,29 +1,22 @@
 /**
  * Registry host for the shared AppsPanel: wires the panel's transport to the
- * registry's authenticated gateway client. This is the registry's single
- * apps-and-workflows surface (`variant="full"`, the master/detail Apps view
- * — /workflows now redirects here); it can also read a workflow's script, so
- * a selected workflow shows its flow graph.
- *
- * Four transports, all through the one gateway client:
- *   invoke         → POST /tools/workflows/:operation
- *   invokeApps     → POST /tools/apps/:operation
- *   invokeRegistry → POST /tools/registry/:operation  (Access tab's provider search)
- *   loadScript     → POST /tools/vfs/read
+ * gateway client. Workspace apps and workflows are managed in the product app;
+ * this surface links there when the gateway is unreachable without a session.
  */
 
 import { createGatewayClient } from "@aprovan/ui/gateway";
 import { AppsPanel } from "@aprovan/registry-ui/apps-panel";
 import * as React from "react";
-import { getAccessToken, isAuthConfigured } from "@/lib/auth";
-import { gatewayBaseUrl, withBasePath } from "@/lib/site";
+import { gatewayBaseUrl } from "@/lib/site";
+
+const PRODUCT_APP_URL = "https://aprovan.com/chat/";
 
 export function AppsHost() {
   const client = React.useMemo(
     () =>
       createGatewayClient({
         baseUrl: gatewayBaseUrl(),
-        getToken: getAccessToken,
+        getToken: async () => undefined,
       }),
     [],
   );
@@ -61,8 +54,6 @@ export function AppsHost() {
     [invokeTool],
   );
 
-  // A script that cannot be read (deleted, or not readable by this session)
-  // is not an error the panel should surface — the run form renders alone.
   const loadScript = React.useCallback(
     async (path: string): Promise<string | null> => {
       try {
@@ -77,29 +68,23 @@ export function AppsHost() {
     [invokeTool],
   );
 
-  if (!isAuthConfigured()) {
-    return (
-      <p className="text-sm text-muted-foreground">
-        Sign in to manage workspace apps.
-      </p>
-    );
-  }
-
   return (
-    <AppsPanel
-      invoke={invoke}
-      invokeApps={invokeApps}
-      invokeRegistry={invokeRegistry}
-      loadScript={loadScript}
-      onOpenScript={(path) =>
-        window.open(withBasePath(`/playground?file=${encodeURIComponent(path)}`), "_self")
-      }
-      variant="full"
-      // `createWorkflowHref` is a prop a concurrent registry-ui change is
-      // adding to AppsPanel; the installed @aprovan/registry-ui build may
-      // not expose it in its types yet, so pass it via a cast spread until
-      // the rebuilt package types land (then switch to the typed prop).
-      {...({ createWorkflowHref: "https://aprovan.com/chat/" } as object)}
-    />
+    <div className="flex flex-col gap-4">
+      <p className="text-sm text-muted-foreground">
+        Manage apps and workflows in the{" "}
+        <a className="font-medium underline underline-offset-2 hover:text-foreground" href={PRODUCT_APP_URL}>
+          product app
+        </a>
+        .
+      </p>
+      <AppsPanel
+        createWorkflowHref={PRODUCT_APP_URL}
+        invoke={invoke}
+        invokeApps={invokeApps}
+        invokeRegistry={invokeRegistry}
+        loadScript={loadScript}
+        variant="full"
+      />
+    </div>
   );
 }

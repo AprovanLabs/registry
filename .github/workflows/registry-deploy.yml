@@ -23,8 +23,6 @@ on:
     branches: [main]
     paths:
       - "apps/registry/**"
-      - "packages/registry-ui/**"
-      - "packages/registry-main/**"
       - "scripts/deploy-web.sh"
       - "scripts/deploy-lib.sh"
       - ".github/workflows/registry-deploy.yml"

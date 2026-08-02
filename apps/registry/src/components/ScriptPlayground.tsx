@@ -3,10 +3,9 @@
  * the browser sandbox.
  *
  * The script executes inside a sandboxed iframe (`@aprovan/runtime`); every
- * namespaced call crosses the iframe boundary and is proxied to the gateway,
- * where workspace credentials are injected server-side. The right panel is a
- * live span view fed by the runtime event stream: call timing bars, retries,
- * console output, and the script result.
+ * namespaced call crosses the iframe boundary and is proxied to the gateway.
+ * The sample script uses public endpoints only — saved credentials and workspace
+ * files live in the product app.
  */
 
 import {
@@ -28,7 +27,6 @@ import {
   runViewFromRuntimeEvents,
   type RunState,
 } from "@aprovan/registry-ui/run-view";
-import { createGatewayClient } from "@aprovan/ui/gateway";
 import { PlayIcon, SquareIcon } from "lucide-react";
 import * as React from "react";
 import { CodeEditor } from "@/components/CodeEditor";
@@ -40,13 +38,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAccessToken, getAuthenticatedUser, isAuthConfigured, signIn } from "@/lib/auth";
 import {
   fetchCatalogProviders,
   fetchProviderTypes,
   type ProviderTypesBundle,
 } from "@/lib/catalog";
-import { loadSession } from "@/lib/gateway";
 import {
   BUILTIN_BY_ID,
   BUILTIN_NAMESPACES,
@@ -68,34 +64,11 @@ const TsScriptEditor = React.lazy(() =>
   })),
 );
 
-type AuthState = "unknown" | "signed-out" | "ready";
-
-/** Loading state for a workspace file passed via `?file=<path>`. */
-type FileLoad =
-  | { status: "idle" }
-  | { status: "loading"; path: string }
-  | { status: "loaded"; path: string }
-  | { status: "error"; path: string; message: string };
-
 export function ScriptPlayground() {
-  // `?file=<workspace path>` (e.g. the workflows panel's "script" button)
-  // opens that file instead of the sample — the sample never shows in that
-  // flow, even while loading or on error.
-  const requestedFile = React.useMemo(
-    () =>
-      typeof window === "undefined"
-        ? null
-        : new URLSearchParams(window.location.search).get("file"),
-    [],
-  );
-  const [source, setSource] = React.useState(requestedFile ? "" : SAMPLE_SCRIPT);
-  const [fileLoad, setFileLoad] = React.useState<FileLoad>(
-    requestedFile ? { status: "loading", path: requestedFile } : { status: "idle" },
-  );
+  const [source, setSource] = React.useState(SAMPLE_SCRIPT);
   const [inputsJson, setInputsJson] = React.useState(
     '{ "username": "octocat" }',
   );
-  const [authState, setAuthState] = React.useState<AuthState>("unknown");
   const [run, setRun] = React.useState<RunState>(INITIAL_RUN);
   const [compileError, setCompileError] = React.useState<string | null>(null);
   const [catalog, setCatalog] = React.useState<
@@ -147,8 +120,6 @@ export function ScriptPlayground() {
         };
         catalogRef.current = merged;
         setCatalog(merged);
-        // A file loaded before the catalog arrived may gain imports for
-        // registry packages it uses (github, …) now that they're known.
         setSource((current) => synthesizeWorkflowImports(current, Object.keys(merged)));
       })
       .catch(() => {
@@ -156,69 +127,7 @@ export function ScriptPlayground() {
       });
   }, [builtinCatalog]);
 
-  // Fetch the requested file once auth has settled: firing at mount races
-  // the OIDC client's session restore, the read 401s, and the flow lands on
-  // the wrong content.
   React.useEffect(() => {
-    const path = requestedFile;
-    if (!path) return;
-    // Wait for session restore, then attempt regardless of sign-in state —
-    // the gateway decides whether the read needs a token (local dev runs
-    // open); a 401 surfaces as a sign-in hint below.
-    if (isAuthConfigured() && authState === "unknown") return;
-    let cancelled = false;
-    setFileLoad({ status: "loading", path });
-    const client = createGatewayClient({
-      baseUrl: gatewayBaseUrl(),
-      getToken: getAccessToken,
-    });
-    client
-      .request<{ data?: { content?: unknown } }>("/tools/vfs/read", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ args: { path } }),
-      })
-      .then((result) => {
-        if (cancelled) return;
-        const content = result.data?.content;
-        if (typeof content === "string") {
-          // Raw workflow scripts use bare namespace globals; the playground
-          // compiles imports into sandbox bindings, so synthesize them from
-          // usage (also lights up editor types for each namespace).
-          setSource(synthesizeWorkflowImports(content, Object.keys(catalogRef.current)));
-          setFileLoad({ status: "loaded", path });
-        } else {
-          setFileLoad({
-            status: "error",
-            path,
-            message: "The file has no readable text content.",
-          });
-        }
-      })
-      .catch((error: unknown) => {
-        if (cancelled) return;
-        const message = error instanceof Error ? error.message : "Request failed";
-        setFileLoad({
-          status: "error",
-          path,
-          message: /401|unauthorized/iu.test(message)
-            ? "Sign in to load workspace files"
-            : message,
-        });
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [requestedFile, authState]);
-
-  React.useEffect(() => {
-    if (!isAuthConfigured()) {
-      setAuthState("unknown");
-      return;
-    }
-    void getAuthenticatedUser().then((user) => {
-      setAuthState(user && !user.expired ? "ready" : "signed-out");
-    });
     return () => sandboxRef.current?.dispose();
   }, []);
 
@@ -313,8 +222,6 @@ export function ScriptPlayground() {
       withPolicy(
         createGatewayTransport({
           baseUrl: gatewayBaseUrl(),
-          getToken: async () => (await getAccessToken()) ?? undefined,
-          getWorkspaceId: () => loadSession()?.workspaceId,
         }),
         { retry: { attempts: 3 } },
         {
@@ -355,8 +262,16 @@ export function ScriptPlayground() {
         <CardHeader>
           <CardTitle className="font-mono text-base">Script</CardTitle>
           <CardDescription>
-            Imports declare the sandbox&apos;s dependencies — each one becomes a
-            namespace proxied through the gateway with your workspace credentials.
+            Imports declare the sandbox&apos;s dependencies — each namespace is
+            proxied through the gateway. The sample uses public GitHub data; for
+            saved credentials,{" "}
+            <a
+              className="font-medium underline underline-offset-2 hover:text-foreground"
+              href="https://aprovan.com/chat/"
+            >
+              open the product app
+            </a>
+            .
           </CardDescription>
           <DependencyPanel
             catalog={catalog}
@@ -366,24 +281,6 @@ export function ScriptPlayground() {
           />
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          {fileLoad.status === "loading" && (
-            <p className="text-xs text-muted-foreground">
-              Loading <code className="font-mono">{fileLoad.path}</code> from your
-              workspace…
-            </p>
-          )}
-          {fileLoad.status === "loaded" && (
-            <p className="text-xs text-muted-foreground">
-              Editing workspace file <code className="font-mono">{fileLoad.path}</code>{" "}
-              (changes here run in the sandbox only — they are not saved back).
-            </p>
-          )}
-          {fileLoad.status === "error" && (
-            <p className="rounded-lg border border-destructive/40 bg-destructive/5 px-3 py-2 text-xs text-destructive">
-              Couldn&apos;t load <code className="font-mono">{fileLoad.path}</code>{" "}
-              from your workspace: {fileLoad.message}.
-            </p>
-          )}
           <React.Suspense
             fallback={
               <CodeEditor ariaLabel="Script source" onChange={setSource} value={source} />
@@ -422,21 +319,6 @@ export function ScriptPlayground() {
                 <SquareIcon className="size-3" />
                 Stop
               </Button>
-            )}
-            {authState === "signed-out" && (
-              <span className="text-xs text-muted-foreground">
-                The sandbox runs locally, but gateway calls need you to{" "}
-                <button
-                  className="font-medium underline underline-offset-2 hover:text-foreground"
-                  onClick={() =>
-                    void signIn(`${window.location.pathname}${window.location.search}`)
-                  }
-                  type="button"
-                >
-                  sign in
-                </button>
-                .
-              </span>
             )}
           </div>
         </CardContent>

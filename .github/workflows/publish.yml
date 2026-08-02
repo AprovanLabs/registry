@@ -31,14 +31,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      # The four new contract packages are not in the workspace CLI's
-      # dependency closure, so they are built explicitly for their publishes.
       - name: Build packages
         run: |
           pnpm \
-            --filter @aprovan/registry-main \
-            --filter @aprovan/registry-ui \
-            --filter @aprovan/workspace... \
             --filter @aprovan/registry-server... \
             --filter @utdk/keyvalue \
             --filter @utdk/events \
@@ -46,23 +41,6 @@ jobs:
             --filter @utdk/telemetry \
             build
 
-      # Stable `latest` publish whenever the committed version isn't on npm
-      # yet (release flow = bump version, push to main). Runs BEFORE the dev
-      # SHA is appended. Patchwork chat pins these by semver range, so a
-      # bumped consumer without a published package breaks deploys.
-      #
-      # Order matters: `pnpm publish` rewrites `workspace:*` to the dependency's
-      # real version, so a dependency must exist on npm before its dependents
-      # are published or `npx @aprovan/workspace` installs a broken tree. This
-      # list is in dependency order — leaves first, the CLI last.
-      #
-      # `utdk`'s default build transpiles without type-checking (right for a
-      # container that never reads those types), but a published package owes
-      # external consumers per-provider declarations. Its `prepublishOnly` runs
-      # the full type build, so that cost lands here and nowhere else.
-      # Each package publishes independently: one rejected name (npm currently
-      # refuses the bare `utdk` name as too similar to utf8/util/uid/cmdk)
-      # must not block the packages after it. Failures still fail the job.
       - name: Publish stable versions (when new)
         run: |
           failed=""
@@ -70,9 +48,7 @@ jobs:
             @utdk/common @utdk/sql @utdk/llm @utdk/sandbox @utdk/vcs @utdk/agent \
             @utdk/keyvalue @utdk/events @utdk/vfs @utdk/telemetry @utdk/mcp-core utdk \
             @aprovan/sandbox-image-node \
-            @aprovan/registry-server \
-            @aprovan/registry-main @aprovan/registry-ui \
-            @aprovan/workspace; do
+            @aprovan/registry-server; do
             dir=$(pnpm --filter "$pkg" exec pwd 2>/dev/null | tail -1) || continue
             [ -n "$dir" ] || continue
             version=$(node -p "require('$dir/package.json').version")
@@ -87,18 +63,5 @@ jobs:
             echo "::error::Failed to publish:$failed"
             exit 1
           fi
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      - name: Append dev SHA to versions
-        run: |
-          SHORT_SHA=$(git rev-parse --short=7 HEAD)
-          pnpm --filter @aprovan/registry-main --filter @aprovan/registry-ui exec -- sh -c 'npm pkg set version="$(npm pkg get version | tr -d \")-dev.'"$SHORT_SHA"'"'
-
-      # Only the UI packages get a rolling `dev` tag — patchwork chat pins them
-      # by SHA during development. The workspace CLI has no such consumer: its
-      # moving target is the container image, tagged by commit on GHCR.
-      - name: Publish packages
-        run: pnpm --filter @aprovan/registry-main --filter @aprovan/registry-ui publish --no-git-checks --access public --tag dev
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
