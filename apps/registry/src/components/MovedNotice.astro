@@ -4,10 +4,20 @@ import BaseLayout from "@/layouts/BaseLayout.astro";
 interface Props {
   title: string;
   description: string;
+  /** Chat native surface to open (`?native=`). */
+  native: "credentials" | "admin";
+  /** Optional provider id forwarded to chat. */
+  provider?: string;
 }
 
-const { title, description } = Astro.props;
-const productAppUrl = "https://aprovan.com/chat/";
+const { title, description, native, provider } = Astro.props;
+
+const params = new URLSearchParams({ native });
+if (provider) params.set("provider", provider);
+const productAppUrl = `https://aprovan.com/chat/?${params.toString()}`;
+
+const ctaLabel =
+  native === "credentials" ? "Open credentials in app" : "Open admin in app";
 ---
 
 <BaseLayout description={description} title={title}>
@@ -18,7 +28,7 @@ const productAppUrl = "https://aprovan.com/chat/";
       class="inline-flex h-9 items-center justify-center rounded-lg border border-input bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-muted"
       href={productAppUrl}
     >
-      Open the app
+      {ctaLabel}
     </a>
   </main>
 </BaseLayout>
