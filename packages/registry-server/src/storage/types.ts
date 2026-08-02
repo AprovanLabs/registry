@@ -19,11 +19,8 @@ export interface TenantRow {
 }
 
 /** Credential types are shared WS-2 vocabulary (@utdk/common/auth). */
-export type CredentialType =
-  | "bearer_token"
-  | "api_key"
-  | "oauth2_client"
-  | "oauth2_authcode";
+export type { CredentialType } from "@utdk/common/auth";
+import type { CredentialType } from "@utdk/common/auth";
 
 export interface CredentialRow {
   id: string;

@@ -56,3 +56,48 @@ export {
   type RegistryTelemetryOptions,
   type DispatchSpanRecord,
 } from "./telemetry/index.js";
+
+// Credentials
+export {
+  getCredentialCipher,
+  resetCredentialCipher,
+  type CredentialCipher,
+} from "./credentials/cipher.js";
+export {
+  OAuthExchangeError,
+  createOAuthTokenCache,
+  resetOAuthTokenCache,
+  resolveToInjectable,
+  exchangeAuthorizationCode,
+  refreshAccessToken,
+  clientCredentialsGrant,
+  type OAuthTokenCache,
+  type OAuthTokenSet,
+  type ResolveOAuthOptions,
+} from "./credentials/oauth.js";
+export {
+  CredentialService,
+  CredentialResolutionError,
+  type CredentialInput,
+} from "./credentials/service.js";
+export type {
+  CredentialPayload,
+  InjectableCredential,
+  BearerTokenPayload,
+  ApiKeyPayload,
+  OAuth2ClientPayload,
+  OAuth2AuthCodePayload,
+} from "./credentials/types.js";
+
+// Profiles
+export {
+  ProfileService,
+  type ProfileCreateInput,
+  type ProfileUpdateInput,
+} from "./profiles/service.js";
+export {
+  resolveProfile,
+  type ResolvedProfile,
+  type ResolveDeps,
+  type ResolvedTarget,
+} from "./profiles/resolve.js";
