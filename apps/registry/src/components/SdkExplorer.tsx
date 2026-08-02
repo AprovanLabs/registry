@@ -10,6 +10,7 @@
 import { PlayIcon, SearchIcon } from "lucide-react";
 import * as React from "react";
 import { CopyButton } from "@/components/CopyButton";
+import { TryItPanel } from "@/components/TryItPanel";
 import { HighlightedCode } from "@/lib/highlight";
 import {
   Card,
@@ -168,16 +169,12 @@ export function SdkExplorer({ provider, packageName, symbols }: SdkExplorerProps
                 </div>
                 <pre className="overflow-x-auto break-all text-xs leading-5"><code><HighlightedCode code={active.snippet} /></code></pre>
               </div>
-              <p className="text-sm text-muted-foreground">
-                Run with workspace credentials in the{" "}
-                <a
-                  className="font-medium underline underline-offset-2 hover:text-foreground"
-                  href="https://aprovan.com/chat/"
-                >
-                  product app
-                </a>
-                .
-              </p>
+              <TryItPanel
+                key={active.sdkPath}
+                fields={active.fields}
+                operation={active.sdkPath}
+                provider={provider}
+              />
             </CardContent>
           ) : null}
         </Card>

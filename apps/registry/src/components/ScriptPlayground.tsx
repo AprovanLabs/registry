@@ -30,6 +30,7 @@ import {
 import { PlayIcon, SquareIcon } from "lucide-react";
 import * as React from "react";
 import { CodeEditor } from "@/components/CodeEditor";
+import { loadSession } from "@/lib/gateway-session";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -222,6 +223,8 @@ export function ScriptPlayground() {
       withPolicy(
         createGatewayTransport({
           baseUrl: gatewayBaseUrl(),
+          getToken: async () => loadSession()?.token,
+          getWorkspaceId: () => loadSession()?.workspaceId,
         }),
         { retry: { attempts: 3 } },
         {
@@ -264,12 +267,12 @@ export function ScriptPlayground() {
           <CardDescription>
             Imports declare the sandbox&apos;s dependencies — each namespace is
             proxied through the gateway. The sample uses public GitHub data; for
-            saved credentials,{" "}
+            credentialed calls,{" "}
             <a
               className="font-medium underline underline-offset-2 hover:text-foreground"
-              href="https://aprovan.com/chat/"
+              href="https://aprovan.com/chat/?native=playground"
             >
-              open the product app
+              open the playground in the product app
             </a>
             .
           </CardDescription>
