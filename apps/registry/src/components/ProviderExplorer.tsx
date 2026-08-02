@@ -4,9 +4,11 @@
  * Routes via ?p=&op= so a single /providers/ shell works on S3.
  */
 
+import type { TryItField } from "@aprovan/registry-ui";
 import { BoxesIcon, SearchIcon, ZapIcon } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { CopyButton } from "@/components/CopyButton";
+import { TryItPanel } from "@/components/TryItPanel";
 import { Badge } from "@/components/ui/badge";
 import {
   Card,
@@ -69,6 +71,29 @@ function navigate(providerPath?: string, operationId?: string): void {
   const href = providersHref(providerPath, operationId);
   window.history.pushState(null, "", href);
   window.dispatchEvent(new PopStateEvent("popstate"));
+}
+
+function toTryItFields(op: CatalogOperation): TryItField[] {
+  return [
+    ...op.parameters.map((param) => ({
+      name: param.name,
+      location: param.location,
+      required: param.required,
+      description: param.description,
+      type: param.schema.type ?? null,
+      enumValues: (param.schema.enum ?? null) as Array<string | number> | null,
+      defaultValue: param.schema.default,
+    })),
+    ...op.requestBodyFields.map((field) => ({
+      name: field.name,
+      location: "body" as const,
+      required: field.required,
+      description: field.description,
+      type: field.schema.type ?? null,
+      enumValues: (field.schema.enum ?? null) as Array<string | number> | null,
+      defaultValue: field.schema.default,
+    })),
+  ];
 }
 
 function buildSnippet(
@@ -586,6 +611,7 @@ function OperationView({
   onBack: () => void;
   onSelectOp: (operationId: string) => void;
 }) {
+  const fields = toTryItFields(operation);
   const snippet = buildSnippet(detail.packageName, detail.id, operation);
   const sameTagOps = operation.tags.length
     ? detail.operations
@@ -743,16 +769,11 @@ function OperationView({
 
           <div>
             <h2 className="mb-4 text-xl font-semibold tracking-tight">Try it</h2>
-            <p className="text-sm text-muted-foreground">
-              Run this operation with your workspace credentials in the{" "}
-              <a
-                className="font-medium underline underline-offset-2 hover:text-foreground"
-                href="https://aprovan.com/chat/"
-              >
-                product app
-              </a>
-              .
-            </p>
+            <TryItPanel
+              fields={fields}
+              operation={operation.sdkPath}
+              provider={detail.id}
+            />
           </div>
 
           {sameTagOps.length > 0 ? (
