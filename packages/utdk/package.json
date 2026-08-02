@@ -20,6 +20,7 @@
     "@utdk/llm": "workspace:*",
     "@utdk/sandbox": "workspace:*",
     "@utdk/sql": "workspace:*",
+    "@utdk/telemetry": "workspace:*",
     "@utdk/vcs": "workspace:*"
   },
   "exports": {
@@ -70,6 +71,11 @@
       "types": "./dist/datadog/index.d.ts",
       "import": "./dist/datadog/index.js",
       "default": "./dist/datadog/index.js"
+    },
+    "./datadog/telemetry": {
+      "types": "./dist/datadog/telemetry/index.d.ts",
+      "import": "./dist/datadog/telemetry/index.js",
+      "default": "./dist/datadog/telemetry/index.js"
     },
     "./digitalocean": {
       "types": "./dist/digitalocean/index.d.ts",

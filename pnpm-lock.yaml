@@ -459,6 +459,9 @@ importers:
       '@utdk/sql':
         specifier: workspace:*
         version: link:../contracts/sql
+      '@utdk/telemetry':
+        specifier: workspace:*
+        version: link:../contracts/telemetry
       '@utdk/vcs':
         specifier: workspace:*
         version: link:../contracts/vcs

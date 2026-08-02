@@ -2,12 +2,13 @@
   "name": "@utdk/telemetry",
   "version": "0.2.0",
   "type": "module",
-  "description": "Shared telemetry-export contract for UTDK observability providers: one export operation over the OTLP/HTTP JSON encoding for spans and logs, with aprovan.* attribution helpers",
+  "description": "Shared telemetry-export contract for UTDK observability providers: one export operation over the OTLP/HTTP JSON encoding for spans, logs, and metrics, with aprovan.* attribution helpers and a zero-dependency SDK",
   "keywords": [
     "telemetry",
     "otlp",
     "spans",
     "logs",
+    "metrics",
     "utdk"
   ],
   "utdk": {
@@ -19,6 +20,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./sdk": {
+      "types": "./dist/sdk/index.d.ts",
+      "import": "./dist/sdk/index.js",
+      "default": "./dist/sdk/index.js"
     }
   },
   "scripts": {
