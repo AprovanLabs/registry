@@ -47,6 +47,7 @@ import {
   removeMount,
 } from "./vcs/mounts.js";
 import { getRecordStore } from "./records.js";
+import { assertCallerScope } from "./svc-records.js";
 import { sandboxesService } from "./sandboxes/service.js";
 import {
   installCoreServices,
@@ -110,10 +111,14 @@ const KV_LEGACY_PREFIX = ".services/keyvalue/";
  * rows these are) is `ctx.workspaceId`, already resolved upstream by
  * `resolveAppSession` per the manifest's `dataScope`. The scope suffix itself
  * never varies with `dataScope`: a session only ever addresses its own
- * per-app-user partition. */
+ * per-app-user partition. The reserved `svc#` system namespace
+ * (svc-records.ts) is rejected outright — callers can never address platform
+ * subsystem state through the keyvalue surface. */
 function kvScope(ctx: ServiceContext): string {
   const scope = ctx.appScope;
-  return scope ? `app#${scope.name}#u#${scope.userId}` : "ws";
+  const resolved = scope ? `app#${scope.name}#u#${scope.userId}` : "ws";
+  assertCallerScope(resolved);
+  return resolved;
 }
 
 /** Where this key would have lived under the old FS-backed keyvalue, for the

@@ -348,3 +348,43 @@ describe("apps.data admin procedure", () => {
     expect(res.status).toBe(400);
   });
 });
+
+// ---------------------------------------------------------------------------
+// The reserved `svc#` system namespace (specs/record-store, "The record rule
+// covers platform subsystems" / "App sessions cannot reach system scopes").
+// ---------------------------------------------------------------------------
+
+describe("reserved svc# scopes", () => {
+  it("rejects svc# scopes at the caller-scope guard", async () => {
+    const { assertCallerScope, isSystemScope, svcScope } = await import("../src/svc-records.js");
+    expect(isSystemScope(svcScope("chat", "sessions"))).toBe(true);
+    expect(isSystemScope("ws")).toBe(false);
+    expect(isSystemScope("app#liift4#u#user-1")).toBe(false);
+    expect(() => assertCallerScope("svc#chat#sessions")).toThrowError(/svc#/);
+    expect(() => assertCallerScope("ws")).not.toThrow();
+    expect(() => assertCallerScope("app#liift4#u#user-1")).not.toThrow();
+  });
+
+  it("orders and parses seq keys so lexical order is append order", async () => {
+    const { seqKey, parseSeqKey } = await import("../src/svc-records.js");
+    const a = seqKey(2, "m2");
+    const b = seqKey(10, "m10");
+    expect(a < b).toBe(true);
+    expect(parseSeqKey(b)).toEqual({ seq: 10, id: "m10" });
+    expect(parseSeqKey("garbage")).toBeUndefined();
+  });
+
+  it("keeps app-session keyvalue confined to its app scope, never svc#", async () => {
+    await publishFolderApp("scope-probe");
+    await appCall("user-1", "scope-probe/tools/keyvalue/set", {
+      args: { key: "state", value: 1 },
+    });
+    const store = getRecordStore();
+    // The write landed in the app partition; the svc# namespace holds no key
+    // an app session could have created.
+    const appKeys = await store.list("local", "app#scope-probe#u#user-1");
+    expect(appKeys).toContain("state");
+    const chatKeys = await store.list("local", "svc#chat#sessions", "state");
+    expect(chatKeys).toEqual([]);
+  });
+});

@@ -9,9 +9,15 @@
  * so "stage to main" is a read-by-hash + write per touched path — no
  * content format of its own.
  *
- *   .services/chat/sessions/<id>.json            session record
- *   .services/chat/sessions/<id>/messages.json   transcript (append-only)
- *   .services/chat/sessions/<id>/files/<path>    staged shadow content
+ *   svc#chat#sessions / <id>                     session record
+ *   svc#chat#session#<id> / <seq10>#<messageId>  one transcript message
+ *   .services/chat/sessions/<id>/files/<path>    staged shadow content (FS,
+ *                                                unversioned — it IS file
+ *                                                content, hash-addressed)
+ *
+ * Transcripts are one record per message (specs/record-store, "Transcripts
+ * append as per-message records"): appends write only the new/replaced rows,
+ * never a full-transcript rewrite; reads reassemble by ordered key listing.
  *
  * `auto` mode sessions write straight through to the live tree (exactly the
  * pre-session behaviour); their base commit still answers "what changed
@@ -21,6 +27,17 @@
 import { getFsStore, normalizeFsPath, type FsEntry, type FsFile } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
 import {
+  deleteSvcRecord,
+  deleteSvcScope,
+  listSvcKeys,
+  listSvcRecords,
+  parseSeqKey,
+  readSvcRecord,
+  seqKey,
+  svcScope,
+  writeSvcRecord,
+} from "../svc-records.js";
+import {
   commitTree,
   readCommit,
   readSnapshot,
@@ -28,7 +45,14 @@ import {
   type VcsSnapshot,
 } from "./store.js";
 
+/** Shadow content keeps its FS home — it is staged file content by nature. */
 const SESSIONS_PREFIX = ".services/chat/sessions";
+
+const SESSIONS_SCOPE = svcScope("chat", "sessions");
+
+function messagesScope(id: string): string {
+  return svcScope("chat", "session", id);
+}
 
 export type SessionMode = "auto" | "staged";
 export type SessionStatus = "open" | "merged" | "closed";
@@ -58,14 +82,6 @@ export interface SessionChangeSummary {
   removed: string[];
 }
 
-function sessionPath(id: string): string {
-  return `${SESSIONS_PREFIX}/${id}.json`;
-}
-
-function messagesPath(id: string): string {
-  return `${SESSIONS_PREFIX}/${id}/messages.json`;
-}
-
 function shadowPath(id: string, path: string): string {
   return `${SESSIONS_PREFIX}/${id}/files/${path}`;
 }
@@ -80,22 +96,14 @@ export function sessionId(value: unknown): string {
 }
 
 async function save(workspaceId: string, record: ChatSessionRecord): Promise<void> {
-  await getFsStore().write(
-    workspaceId,
-    sessionPath(record.id),
-    JSON.stringify(record, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, SESSIONS_SCOPE, record.id, record, record.createdBy);
 }
 
 export async function readSession(
   workspaceId: string,
   id: string,
 ): Promise<ChatSessionRecord | undefined> {
-  const file = await getFsStore()
-    .read(workspaceId, sessionPath(id))
-    .catch(() => undefined);
-  return file ? (JSON.parse(file.content) as ChatSessionRecord) : undefined;
+  return readSvcRecord<ChatSessionRecord>(workspaceId, SESSIONS_SCOPE, id);
 }
 
 export async function requireSession(
@@ -140,22 +148,11 @@ export async function listSessions(
   workspaceId: string,
   status?: SessionStatus,
 ): Promise<ChatSessionRecord[]> {
-  const entries = await getFsStore()
-    .list(workspaceId, SESSIONS_PREFIX)
-    .catch(() => []);
-  const records: ChatSessionRecord[] = [];
-  for (const entry of entries) {
-    // Direct children only: `<prefix>/<id>.json` (not messages/files).
-    const rest = entry.path.slice(SESSIONS_PREFIX.length + 1);
-    if (!rest || rest.includes("/") || !rest.endsWith(".json")) continue;
-    const file = await getFsStore()
-      .read(workspaceId, entry.path)
-      .catch(() => undefined);
-    if (!file) continue;
-    const record = JSON.parse(file.content) as ChatSessionRecord;
-    if (!status || record.status === status) records.push(record);
-  }
-  return records.sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
+  const entries = await listSvcRecords<ChatSessionRecord>(workspaceId, SESSIONS_SCOPE);
+  return entries
+    .map((entry) => entry.value)
+    .filter((record) => !status || record.status === status)
+    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt));
 }
 
 export async function updateSession(
@@ -188,18 +185,20 @@ export async function updateSession(
 // Transcript
 // ---------------------------------------------------------------------------
 
+/**
+ * Reassemble the transcript by ordered key listing: keys are
+ * `<seq10>#<messageId>`, so lexical order is transcript order.
+ */
 export async function readMessages(workspaceId: string, id: string): Promise<unknown[]> {
-  const file = await getFsStore()
-    .read(workspaceId, messagesPath(id))
-    .catch(() => undefined);
-  if (!file) return [];
-  const parsed = JSON.parse(file.content) as unknown;
-  return Array.isArray(parsed) ? parsed : [];
+  const entries = await listSvcRecords<unknown>(workspaceId, messagesScope(id));
+  return entries.map((entry) => entry.value);
 }
 
 /**
- * Append transcript messages. Messages carry client ids (`useChat` message
- * ids); an incoming id that already exists replaces the stored message, so
+ * Append transcript messages — one record per message, so the write cost is
+ * O(messages appended), never a full-transcript rewrite. Messages carry
+ * client ids (`useChat` message ids); an incoming id that already exists
+ * replaces the stored message *at its original position* (its seq key), so
  * clients can re-send the tail of the transcript idempotently.
  */
 export async function appendMessages(
@@ -208,30 +207,37 @@ export async function appendMessages(
   messages: unknown[],
 ): Promise<ChatSessionRecord> {
   const session = await requireSession(workspaceId, id);
-  const existing = (await readMessages(workspaceId, id)) as Array<{ id?: string }>;
-  const byId = new Map<string, number>();
-  existing.forEach((message, index) => {
-    if (message && typeof message.id === "string") byId.set(message.id, index);
-  });
+  const scope = messagesScope(id);
+  // One key listing (no content reads) recovers id → seq for the upsert.
+  const keys = await listSvcKeys(workspaceId, scope);
+  const keyById = new Map<string, string>();
+  let nextSeq = 0;
+  for (const key of keys) {
+    const parsed = parseSeqKey(key);
+    if (!parsed) continue;
+    if (parsed.id) keyById.set(parsed.id, key);
+    if (parsed.seq >= nextSeq) nextSeq = parsed.seq + 1;
+  }
+  let count = keys.length;
   for (const raw of messages) {
     const message = raw as { id?: string };
-    const key = message && typeof message.id === "string" ? message.id : undefined;
-    const index = key ? byId.get(key) : undefined;
-    if (index !== undefined) existing[index] = message;
-    else {
-      existing.push(message);
-      if (key) byId.set(key, existing.length - 1);
+    const messageId =
+      message && typeof message.id === "string" && message.id ? message.id : undefined;
+    const existingKey = messageId ? keyById.get(messageId) : undefined;
+    if (existingKey !== undefined) {
+      // Idempotent re-send: replace in place, position preserved.
+      await writeSvcRecord(workspaceId, scope, existingKey, message, session.createdBy);
+      continue;
     }
+    const key = seqKey(nextSeq, messageId ?? crypto.randomUUID());
+    nextSeq += 1;
+    count += 1;
+    if (messageId) keyById.set(messageId, key);
+    await writeSvcRecord(workspaceId, scope, key, message, session.createdBy);
   }
-  await getFsStore().write(
-    workspaceId,
-    messagesPath(id),
-    JSON.stringify(existing),
-    "application/json",
-  );
   const next: ChatSessionRecord = {
     ...session,
-    messageCount: existing.length,
+    messageCount: count,
     updatedAt: new Date().toISOString(),
   };
   await save(workspaceId, next);
@@ -378,9 +384,10 @@ export async function sessionDelete(
  */
 export async function deleteSession(workspaceId: string, id: string): Promise<void> {
   await requireSession(workspaceId, id);
-  const store = getFsStore();
-  await store.removePrefix(workspaceId, `${SESSIONS_PREFIX}/${id}`);
-  await store.remove(workspaceId, sessionPath(id));
+  // Message records, staged shadow content, then the session record itself.
+  await deleteSvcScope(workspaceId, messagesScope(id));
+  await getFsStore().removePrefix(workspaceId, `${SESSIONS_PREFIX}/${id}`);
+  await deleteSvcRecord(workspaceId, SESSIONS_SCOPE, id);
 }
 
 /**

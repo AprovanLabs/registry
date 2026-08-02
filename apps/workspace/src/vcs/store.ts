@@ -3,14 +3,16 @@
  * docs/vcs-and-sessions.md.
  *
  * The FS already content-addresses every write (`(path, sha256)` version
- * rows, shared blobs), so this module only adds the cheap parts:
+ * rows, shared blobs), so this module only adds the cheap parts, stored as
+ * records (accumulated state — specs/record-store; tech-plan D3):
  *
- *   snapshot  .services/vcs/snapshots/<id>.json   {path → hash} manifest
- *   commit    .services/vcs/commits/<id>.json     snapshot + parents + message
- *   ref       .services/vcs/refs/<name>.json      named pointer (main, …)
+ *   snapshot  svc#vcs#snapshots / <id>   {path → hash} manifest
+ *   commit    svc#vcs#commits   / <id>   snapshot + parents + message
+ *   ref       svc#vcs#refs      / <name> named pointer (main, …)
  *
  * Identities are sha256 of canonical forms, so snapshots and commits are
- * idempotent to re-write. Snapshots always exclude `.services/**` and the
+ * idempotent to re-write. Large snapshot manifests ride the record store's
+ * existing >350KB S3 spill. Snapshots always exclude `.services/**` and the
  * hidden app-data partitions — what a member can see is what gets versioned.
  *
  * Ref advances are read-modify-write without CAS: workspaces are effectively
@@ -26,10 +28,17 @@ import { createHash } from "node:crypto";
 import { hiddenDataPrefixes, isHiddenDataPath } from "../apps/store.js";
 import { getFsStore, isServicePath, type FsEntry } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
+import {
+  listSvcKeys,
+  listSvcRecords,
+  readSvcRecord,
+  svcScope,
+  writeSvcRecord,
+} from "../svc-records.js";
 
-const SNAPSHOTS_PREFIX = ".services/vcs/snapshots";
-const COMMITS_PREFIX = ".services/vcs/commits";
-const REFS_PREFIX = ".services/vcs/refs";
+const SNAPSHOTS_SCOPE = svcScope("vcs", "snapshots");
+const COMMITS_SCOPE = svcScope("vcs", "commits");
+const REFS_SCOPE = svcScope("vcs", "refs");
 
 export const MAIN_REF = "main";
 
@@ -124,30 +133,21 @@ export function buildSnapshot(entries: FsEntry[], prefix = ""): VcsSnapshot {
 }
 
 /**
- * Persist a snapshot. Stored JSON carries no timestamps, so identical trees
- * produce byte-identical files and the FS's content addressing dedupes the
- * write for free.
+ * Persist a snapshot. Content-identified (`id` is a hash of the entries), so
+ * re-saving an identical tree overwrites the same record idempotently.
  */
 export async function saveSnapshot(
   workspaceId: string,
   snapshot: VcsSnapshot,
 ): Promise<void> {
-  await getFsStore().write(
-    workspaceId,
-    `${SNAPSHOTS_PREFIX}/${snapshot.id}.json`,
-    JSON.stringify(snapshot),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, SNAPSHOTS_SCOPE, snapshot.id, snapshot);
 }
 
 export async function readSnapshot(
   workspaceId: string,
   id: string,
 ): Promise<VcsSnapshot | undefined> {
-  const file = await getFsStore()
-    .read(workspaceId, `${SNAPSHOTS_PREFIX}/${id}.json`)
-    .catch(() => undefined);
-  return file ? (JSON.parse(file.content) as VcsSnapshot) : undefined;
+  return readSvcRecord<VcsSnapshot>(workspaceId, SNAPSHOTS_SCOPE, id);
 }
 
 export function diffSnapshots(
@@ -175,28 +175,16 @@ export function diffSnapshots(
 // Commits
 // ---------------------------------------------------------------------------
 
-function commitPath(id: string): string {
-  return `${COMMITS_PREFIX}/${id}.json`;
-}
-
 export async function readCommit(
   workspaceId: string,
   id: string,
 ): Promise<VcsCommit | undefined> {
   if (!id) return undefined;
-  const file = await getFsStore()
-    .read(workspaceId, commitPath(id))
-    .catch(() => undefined);
-  return file ? (JSON.parse(file.content) as VcsCommit) : undefined;
+  return readSvcRecord<VcsCommit>(workspaceId, COMMITS_SCOPE, id);
 }
 
 async function writeCommit(workspaceId: string, commit: VcsCommit): Promise<void> {
-  await getFsStore().write(
-    workspaceId,
-    commitPath(commit.id),
-    JSON.stringify(commit, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, COMMITS_SCOPE, commit.id, commit, commit.author);
 }
 
 /**
@@ -262,18 +250,11 @@ export async function logCommits(
 // Refs
 // ---------------------------------------------------------------------------
 
-function refPath(name: string): string {
-  return `${REFS_PREFIX}/${name}.json`;
-}
-
 export async function readRef(
   workspaceId: string,
   name: string,
 ): Promise<VcsRef | undefined> {
-  const file = await getFsStore()
-    .read(workspaceId, refPath(name))
-    .catch(() => undefined);
-  return file ? (JSON.parse(file.content) as VcsRef) : undefined;
+  return readSvcRecord<VcsRef>(workspaceId, REFS_SCOPE, name);
 }
 
 export async function writeRef(
@@ -283,28 +264,13 @@ export async function writeRef(
   updatedBy: string,
 ): Promise<VcsRef> {
   const ref: VcsRef = { name, commit, updatedAt: new Date().toISOString(), updatedBy };
-  await getFsStore().write(
-    workspaceId,
-    refPath(name),
-    JSON.stringify(ref, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, REFS_SCOPE, name, ref, updatedBy);
   return ref;
 }
 
 export async function listRefs(workspaceId: string): Promise<VcsRef[]> {
-  const entries = await getFsStore()
-    .list(workspaceId, REFS_PREFIX)
-    .catch(() => []);
-  const refs: VcsRef[] = [];
-  for (const entry of entries) {
-    if (!entry.path.endsWith(".json")) continue;
-    const file = await getFsStore()
-      .read(workspaceId, entry.path)
-      .catch(() => undefined);
-    if (file) refs.push(JSON.parse(file.content) as VcsRef);
-  }
-  return refs.sort((a, b) => a.name.localeCompare(b.name));
+  const entries = await listSvcRecords<VcsRef>(workspaceId, REFS_SCOPE);
+  return entries.map((entry) => entry.value).sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /** A commit id (full or unambiguous prefix ≥ 8 chars) or a ref name. */
@@ -322,14 +288,9 @@ export async function resolveCommitish(
     }
   }
   if (/^[0-9a-f]{8,63}$/u.test(value)) {
-    const entries = await getFsStore()
-      .list(workspaceId, COMMITS_PREFIX)
-      .catch(() => []);
-    const matches = entries
-      .map((entry) => entry.path.split("/").pop() ?? "")
-      .filter((file) => file.startsWith(value) && file.endsWith(".json"));
+    const matches = await listSvcKeys(workspaceId, COMMITS_SCOPE, value);
     if (matches.length === 1) {
-      const commit = await readCommit(workspaceId, matches[0]!.slice(0, -".json".length));
+      const commit = await readCommit(workspaceId, matches[0]!);
       if (commit) return commit;
     }
     if (matches.length > 1) {
