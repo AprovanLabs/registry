@@ -283,7 +283,7 @@ describe("nested provider rendering", () => {
   it("adds namespace and leaf exports to the root package", () => {
     const rendered = renderRootPackageJson([
       { name: "github", url: "https://example.com/github.json" },
-      { name: "google.books", url: "https://example.com/google-books.json" },
+      { name: "google/books", url: "https://example.com/google-books.json" },
     ] satisfies RegistryProvider[]);
 
     expect(rendered).toContain('"./github"');
@@ -295,8 +295,8 @@ describe("nested provider rendering", () => {
     const rendered = renderNamespaceEntry(
       ["google"],
       [
-        { name: "google.books", url: "https://example.com/google-books.json" },
-        { name: "google.calendar", url: "https://example.com/google-calendar.json" },
+        { name: "google/books", url: "https://example.com/google-books.json" },
+        { name: "google/calendar", url: "https://example.com/google-calendar.json" },
       ] satisfies RegistryProvider[],
     );
 
@@ -307,8 +307,8 @@ describe("nested provider rendering", () => {
 
   it("renders the namespace package as a private, nameless subpath package", () => {
     const rendered = renderNamespacePackageJson(
-      "google.books",
-      [{ name: "google.books", url: "https://example.com/google-books.json" }] satisfies RegistryProvider[],
+      "google/books",
+      [{ name: "google/books", url: "https://example.com/google-books.json" }] satisfies RegistryProvider[],
       undefined,
       new Date("2026-04-07T00:00:00.000Z"),
     );

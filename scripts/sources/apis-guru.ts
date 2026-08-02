@@ -30,6 +30,12 @@ import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import {
+  HOSTNAME_PACKAGE_MAP,
+  resolveProviderNameFromHostname,
+  sanitizeNameSegment,
+} from "../../packages/bundler/src/naming.js";
+
 const REGISTRY_PATH = path.join(
   fileURLToPath(new URL("../..", import.meta.url)),
   "data",
@@ -94,25 +100,11 @@ function parseArgs(argv: string[]) {
   return args;
 }
 
-/** "github.com" → "github"; "bbci.co.uk" → "bbci"; "1password.com" → "1password". */
-function domainToSlug(domain: string): string {
-  const [first = domain] = domain.split(".");
-  return sanitizeSegment(first);
-}
-
-/** Segments must avoid "." and "/" — the bundler splits provider names on both. */
-function sanitizeSegment(value: string): string {
-  return value
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/gu, "-")
-    .replace(/^-+|-+$/gu, "")
-    .replace(/^(?=\d)/u, "api-");
-}
-
-/** Full domain fallback for slug collisions: "github.io" → "github-io". */
-function domainToFullSlug(domain: string): string {
-  return sanitizeSegment(domain);
-}
+// Provider naming is the bundler naming authority's job
+// (packages/bundler/src/naming.ts): explicit HOSTNAME_PACKAGE_MAP entries
+// win, `.com` domains get the vendor/service default, and everything else
+// collapses to a single full-domain dash slug. This script only adds the
+// APIs.guru service suffix and the cross-catalog collision fallback.
 
 function firstHttpUrl(
   origins: Array<{ url?: string }> | undefined,
@@ -220,15 +212,24 @@ async function main(): Promise<void> {
   const list = (await response.json()) as Record<string, ApisGuruApi>;
   const retrievedAt = new Date().toISOString();
 
-  // First pass: count APIs per domain-slug so colliding domains fall back to
-  // their full-domain slug (github.com → github, github.io → github-io).
-  const slugDomains = new Map<string, Set<string>>();
+  // First pass: count domains per authority-resolved base name so colliding
+  // domains fall back to their full-domain slug. Domains pinned by an
+  // explicit HOSTNAME_PACKAGE_MAP entry keep their reviewed name even in a
+  // collision — the other side of the collision is the one that falls back.
+  const baseNameDomains = new Map<string, Set<string>>();
   for (const apiKey of Object.keys(list)) {
     const [domain = apiKey] = apiKey.split(":");
-    const slug = domainToSlug(domain);
-    if (!slugDomains.has(slug)) slugDomains.set(slug, new Set());
-    slugDomains.get(slug)!.add(domain);
+    const baseName = resolveProviderNameFromHostname(domain).name;
+    if (!baseNameDomains.has(baseName)) baseNameDomains.set(baseName, new Set());
+    baseNameDomains.get(baseName)!.add(domain);
   }
+
+  const baseSlugFor = (domain: string): string => {
+    const baseName = resolveProviderNameFromHostname(domain).name;
+    const colliding = (baseNameDomains.get(baseName)?.size ?? 1) > 1;
+    const pinned = HOSTNAME_PACKAGE_MAP[domain] !== undefined;
+    return colliding && !pinned ? sanitizeNameSegment(domain) : baseName;
+  };
 
   const ingested: RegistryEntry[] = [];
   const ingestedNames = new Set<string>();
@@ -241,11 +242,8 @@ async function main(): Promise<void> {
     if (ingested.length >= args.limit) break;
 
     const [domain = apiKey, service] = apiKey.split(":");
-    const baseSlug =
-      (slugDomains.get(domainToSlug(domain))?.size ?? 1) > 1
-        ? domainToFullSlug(domain)
-        : domainToSlug(domain);
-    let name = service ? `${baseSlug}/${sanitizeSegment(service)}` : baseSlug;
+    const baseSlug = baseSlugFor(domain);
+    let name = service ? `${baseSlug}/${sanitizeNameSegment(service)}` : baseSlug;
 
     if (reservedNames.has(name)) {
       skipped.push(`${apiKey} → ${name} (hand-curated entry wins)`);
