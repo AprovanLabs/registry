@@ -205,3 +205,33 @@ export function resetWorkspaceConfig(): void {
 export function isAwsMode(): boolean {
   return getWorkspaceConfig().data.kind === "aws";
 }
+
+// ---------------------------------------------------------------------------
+// Store backend — the three-way switch (tech-plan §6, specs/fs-metadata-store)
+// ---------------------------------------------------------------------------
+
+export type StoreBackend = "sqlite" | "dynamo" | "dsql";
+
+/**
+ * Which backend the five store factories use (`fs-store`, `records`,
+ * `credentials`, `audit`, `identity`). Replaces `isAwsMode()` at those
+ * factories:
+ *
+ *   STORE_BACKEND = "sqlite" | "dynamo" | "dsql"
+ *     default: sqlite when WORKSPACE_MODE=local; dynamo when aws (interim);
+ *     dsql is set explicitly at cutover.
+ *
+ * Lazy module loading is preserved per backend: sqlite loads no AWS SDK and
+ * no `pg`; dsql loads `pg` (and the DSQL signer) only. `dsql` still rides S3
+ * for FS content blobs and record spill, so aws-mode requirements (FS_BUCKET)
+ * apply there unchanged.
+ *
+ * Deliberately read live from the environment (like {@link resolveAuthMode})
+ * so test suites can flip backends between files without a config reset.
+ */
+export function storeBackend(): StoreBackend {
+  const raw = process.env["STORE_BACKEND"]?.trim().toLowerCase();
+  if (!raw) return isAwsMode() ? "dynamo" : "sqlite";
+  if (raw === "sqlite" || raw === "dynamo" || raw === "dsql") return raw;
+  throw new Error(`STORE_BACKEND must be "sqlite", "dynamo", or "dsql" (got "${raw}")`);
+}

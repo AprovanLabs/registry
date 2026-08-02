@@ -2,12 +2,11 @@
  * Sandbox records and host registrations — the durable half of
  * docs/sandboxes.md.
  *
- * Both live on the workspace FS beside every other service's state, so they
- * inherit tenancy, the SQLite/S3 backend split, and the `.services/**` write
- * fence for free:
+ * Both live in the record store beside every other subsystem's state, so
+ * they inherit tenancy and the backend split for free:
  *
- *   .services/sandboxes/<id>.json          one live environment
- *   .services/sandboxes/hosts/<id>.json    one registered execution endpoint
+ *   svc#sandboxes       / <id>   one live environment
+ *   svc#sandboxes#hosts / <id>   one registered execution endpoint
  *
  * A sandbox record is *durable* rather than request-scoped because the hosts
  * worth using are: a Sprite keeps its filesystem across hibernation, and a
@@ -18,11 +17,17 @@
  */
 
 import { createHash, randomBytes, randomUUID, timingSafeEqual } from "node:crypto";
-import { getFsStore } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
+import {
+  deleteSvcRecord,
+  listSvcRecords,
+  readSvcRecord,
+  svcScope,
+  writeSvcRecord,
+} from "../svc-records.js";
 
-const SANDBOXES_PREFIX = ".services/sandboxes";
-const HOSTS_PREFIX = `${SANDBOXES_PREFIX}/hosts`;
+const SANDBOXES_SCOPE = svcScope("sandboxes");
+const HOSTS_SCOPE = svcScope("sandboxes", "hosts");
 
 export type SandboxRecordStatus = "running" | "stopped" | "destroyed";
 
@@ -183,16 +188,13 @@ export function tokenMatches(token: string, digest: string): boolean {
 // Sandboxes
 // ---------------------------------------------------------------------------
 
-const sandboxPath = (id: string): string => `${SANDBOXES_PREFIX}/${id}.json`;
-
 export async function readSandbox(
   workspaceId: string,
   id: string,
 ): Promise<SandboxRecord | undefined> {
-  const file = await getFsStore()
-    .read(workspaceId, sandboxPath(sandboxIdent(id, "id")))
-    .catch(() => undefined);
-  return file ? (JSON.parse(file.content) as SandboxRecord) : undefined;
+  return readSvcRecord<SandboxRecord>(workspaceId, SANDBOXES_SCOPE, sandboxIdent(id, "id")).catch(
+    () => undefined,
+  );
 }
 
 export async function requireSandbox(
@@ -212,84 +214,55 @@ export async function saveSandbox(
   record: SandboxRecord,
 ): Promise<SandboxRecord> {
   record.updatedAt = new Date().toISOString();
-  await getFsStore().write(
-    workspaceId,
-    sandboxPath(record.id),
-    JSON.stringify(record, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, SANDBOXES_SCOPE, record.id, record, record.createdBy);
   return record;
 }
 
 export async function listSandboxes(workspaceId: string): Promise<SandboxRecord[]> {
-  const entries = await getFsStore()
-    .list(workspaceId, SANDBOXES_PREFIX)
-    .catch(() => []);
-  const records: SandboxRecord[] = [];
-  for (const entry of entries) {
-    // Only direct children are sandboxes: host registrations and run history
-    // live one level down under the same prefix.
-    if (!entry.path.endsWith(".json")) continue;
-    if (entry.path.slice(SANDBOXES_PREFIX.length + 1).includes("/")) continue;
-    const file = await getFsStore().read(workspaceId, entry.path).catch(() => undefined);
-    if (!file) continue;
-    const record = JSON.parse(file.content) as Partial<SandboxRecord>;
-    // The prefix also holds non-record settings files (defaults.json); only
-    // parsed objects that carry a sandbox identity are sandboxes.
-    if (typeof record.id !== "string" || typeof record.createdAt !== "string") continue;
-    records.push(record as SandboxRecord);
-  }
+  const entries = await listSvcRecords<Partial<SandboxRecord>>(workspaceId, SANDBOXES_SCOPE);
+  const records = entries
+    .map((entry) => entry.value)
+    .filter(
+      (record): record is SandboxRecord =>
+        typeof record.id === "string" && typeof record.createdAt === "string",
+    );
   return records.sort((a, b) => b.createdAt.localeCompare(a.createdAt));
 }
 
 export async function deleteSandbox(workspaceId: string, id: string): Promise<void> {
-  await getFsStore().remove(workspaceId, sandboxPath(id));
+  await deleteSvcRecord(workspaceId, SANDBOXES_SCOPE, id);
 }
 
 // ---------------------------------------------------------------------------
 // Hosts
 // ---------------------------------------------------------------------------
 
-const hostPath = (id: string): string => `${HOSTS_PREFIX}/${id}.json`;
-
 export async function readHost(
   workspaceId: string,
   id: string,
 ): Promise<SandboxHostRecord | undefined> {
-  const file = await getFsStore()
-    .read(workspaceId, hostPath(sandboxIdent(id, "host")))
-    .catch(() => undefined);
-  return file ? (JSON.parse(file.content) as SandboxHostRecord) : undefined;
+  return readSvcRecord<SandboxHostRecord>(
+    workspaceId,
+    HOSTS_SCOPE,
+    sandboxIdent(id, "host"),
+  ).catch(() => undefined);
 }
 
 export async function saveHost(
   workspaceId: string,
   record: SandboxHostRecord,
 ): Promise<SandboxHostRecord> {
-  await getFsStore().write(
-    workspaceId,
-    hostPath(record.id),
-    JSON.stringify(record, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, HOSTS_SCOPE, record.id, record, record.createdBy);
   return record;
 }
 
 export async function listHosts(workspaceId: string): Promise<SandboxHostRecord[]> {
-  const entries = await getFsStore()
-    .list(workspaceId, HOSTS_PREFIX)
-    .catch(() => []);
-  const records: SandboxHostRecord[] = [];
-  for (const entry of entries) {
-    if (!entry.path.endsWith(".json")) continue;
-    const file = await getFsStore().read(workspaceId, entry.path).catch(() => undefined);
-    if (file) records.push(JSON.parse(file.content) as SandboxHostRecord);
-  }
-  return records.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  const entries = await listSvcRecords<SandboxHostRecord>(workspaceId, HOSTS_SCOPE);
+  return entries.map((entry) => entry.value).sort((a, b) => a.createdAt.localeCompare(b.createdAt));
 }
 
 export async function deleteHost(workspaceId: string, id: string): Promise<boolean> {
-  return getFsStore().remove(workspaceId, hostPath(sandboxIdent(id, "host")));
+  return deleteSvcRecord(workspaceId, HOSTS_SCOPE, sandboxIdent(id, "host"));
 }
 
 /** Public view of a host — never the digests. */

@@ -1,9 +1,18 @@
 /**
- * Credential storage — DynamoDB single-table backend.
+ * Credential storage — three backends behind `ICredentialStore`, selected by
+ * `storeBackend()` (runtime/config.ts):
  *
- * Uses `CredentialStoreDynamodb` exclusively. Per APR-323, the legacy
- * in-memory/file backend has been removed; DynamoDB SSE handles at-rest
- * encryption (IAM policy must scope the table to the workspace task role).
+ * - `dynamo` — the legacy single-table backend (retired at cutover). DynamoDB
+ *   SSE plus the credential cipher handle at-rest encryption.
+ * - `sqlite` — local mode.
+ * - `dsql` — the WS-3 reconciliation: the credential store of record is
+ *   `@aprovan/registry-server`'s storage (its `credentials` table with
+ *   `created_by`, over its SqlClient seam). The workspace does NOT grow a
+ *   second DSQL credential schema; `CredentialStoreRegistry` adapts the
+ *   package storage to this interface over the shared db/dsql.ts pool.
+ *
+ * Credentials carry a `createdBy` user dimension (tech-plan D5) — the frozen
+ * seam WS-3's Profiles reference.
  *
  * Supported credential types: bearer_token, api_key, oauth2_client, oauth2_authcode
  *
@@ -24,7 +33,8 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { getCredentialCipher } from "./credentialCipher.js";
 import { dynamo } from "./db/client.js";
-import { isAwsMode, workspaceDataDir } from "./runtime/config.js";
+import { getRegistryStorage } from "./registry-storage.js";
+import { storeBackend, workspaceDataDir } from "./runtime/config.js";
 import type Database from "better-sqlite3";
 
 const loadSqlite = (): typeof import("better-sqlite3") => {
@@ -89,6 +99,8 @@ export interface CredentialInput {
   provider: string;
   label?: string;
   payload: CredentialPayload;
+  /** Creating user's sub (tech-plan D5) — the Profiles ownership seam. */
+  createdBy?: string;
 }
 
 export interface CredentialRecord {
@@ -97,6 +109,8 @@ export interface CredentialRecord {
   provider: string;
   label?: string;
   type: CredentialType;
+  /** Creating user's sub; undefined = legacy/tenant-shared row. */
+  createdBy?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -185,6 +199,7 @@ export class CredentialStoreDynamodb implements ICredentialStore {
       updatedAt: now,
     };
     if (input.label !== undefined) item["label"] = input.label;
+    if (input.createdBy !== undefined) item["createdBy"] = input.createdBy;
     const pointer: Record<string, unknown> = {
       PK: `WS#${workspaceId}`,
       SK: `CREDID#${id}`,
@@ -221,7 +236,7 @@ export class CredentialStoreDynamodb implements ICredentialStore {
           ":sk": "CRED#",
         },
         // Exclude the payload from the listing response.
-        ProjectionExpression: "id, workspaceId, provider, #lbl, #tp, createdAt, updatedAt",
+        ProjectionExpression: "id, workspaceId, provider, #lbl, #tp, createdBy, createdAt, updatedAt",
         ExpressionAttributeNames: { "#lbl": "label", "#tp": "type" },
       }),
     );
@@ -369,6 +384,7 @@ export class CredentialStoreDynamodb implements ICredentialStore {
       provider: item["provider"] as string,
       label: item["label"] as string | undefined,
       type: item["type"] as CredentialType,
+      createdBy: item["createdBy"] as string | undefined,
       createdAt: item["createdAt"] as string,
       updatedAt: item["updatedAt"] as string,
     };
@@ -400,12 +416,19 @@ export class CredentialStoreSqlite implements ICredentialStore {
         label TEXT,
         type TEXT NOT NULL,
         payload TEXT NOT NULL,
+        created_by TEXT,
         created_at TEXT NOT NULL,
         updated_at TEXT NOT NULL
       );
       CREATE INDEX IF NOT EXISTS credentials_workspace_provider
       ON credentials(workspace_id, provider);
     `);
+    // Pre-created_by dev databases lack the column; add it in place.
+    try {
+      this.database.exec(`ALTER TABLE credentials ADD COLUMN created_by TEXT`);
+    } catch {
+      // Column already exists.
+    }
   }
 
   async create(
@@ -417,8 +440,8 @@ export class CredentialStoreSqlite implements ICredentialStore {
     this.database
       .prepare(
         `INSERT INTO credentials
-        (id, workspace_id, provider, label, type, payload, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        (id, workspace_id, provider, label, type, payload, created_by, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       )
       .run(
         id,
@@ -427,6 +450,7 @@ export class CredentialStoreSqlite implements ICredentialStore {
         input.label ?? null,
         input.payload.type,
         this.encrypt(input.payload),
+        input.createdBy ?? null,
         now,
         now,
       );
@@ -436,6 +460,7 @@ export class CredentialStoreSqlite implements ICredentialStore {
       provider: input.provider,
       label: input.label,
       type: input.payload.type,
+      createdBy: input.createdBy,
       createdAt: now,
       updatedAt: now,
     };
@@ -444,7 +469,7 @@ export class CredentialStoreSqlite implements ICredentialStore {
   async list(workspaceId: string): Promise<CredentialRecord[]> {
     const rows = this.database
       .prepare(
-        `SELECT id, workspace_id, provider, label, type, created_at, updated_at
+        `SELECT id, workspace_id, provider, label, type, created_by, created_at, updated_at
          FROM credentials WHERE workspace_id = ? ORDER BY provider, created_at`,
       )
       .all(workspaceId) as Record<string, unknown>[];
@@ -457,7 +482,7 @@ export class CredentialStoreSqlite implements ICredentialStore {
   ): Promise<CredentialRecord | undefined> {
     const row = this.database
       .prepare(
-        `SELECT id, workspace_id, provider, label, type, created_at, updated_at
+        `SELECT id, workspace_id, provider, label, type, created_by, created_at, updated_at
          FROM credentials WHERE workspace_id = ? AND id = ?`,
       )
       .get(workspaceId, id);
@@ -568,9 +593,128 @@ export class CredentialStoreSqlite implements ICredentialStore {
       provider: String(row["provider"]),
       label: typeof row["label"] === "string" ? row["label"] : undefined,
       type: row["type"] as CredentialType,
+      createdBy: typeof row["created_by"] === "string" ? row["created_by"] : undefined,
       createdAt: String(row["created_at"]),
       updatedAt: String(row["updated_at"]),
     };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Registry-server-backed store (dsql backend) — the WS-3 reconciliation.
+//
+// On DSQL, the credential store of record is @aprovan/registry-server's
+// storage: its `credentials` table (with `created_by`) over its SqlClient
+// seam. This adapter maps `ICredentialStore` onto that facade — the
+// workspaceId is the tenant, the workspace credential cipher seals payloads
+// (the same envelope the package's own domain layer applies), and the shared
+// db/dsql.ts pool (IAM token auth, OCC retry, 60-min recycling) is wrapped
+// as the package's SqlClient so both schemas ride one cluster connection.
+// ---------------------------------------------------------------------------
+
+export class CredentialStoreRegistry implements ICredentialStore {
+  private store(): Promise<import("@aprovan/registry-server").RegistryStorage> {
+    return getRegistryStorage();
+  }
+
+  private toRecord(
+    workspaceId: string,
+    row: import("@aprovan/registry-server").CredentialRow,
+  ): CredentialRecord {
+    return {
+      id: row.id,
+      workspaceId,
+      provider: row.provider,
+      label: row.label,
+      type: row.type as CredentialType,
+      createdBy: row.createdBy,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+    };
+  }
+
+  async create(workspaceId: string, input: CredentialInput): Promise<CredentialRecord> {
+    const storage = await this.store();
+    await storage.tenants.ensure(workspaceId);
+    const row = await storage.credentials.create(workspaceId, {
+      provider: input.provider,
+      ...(input.label !== undefined ? { label: input.label } : {}),
+      type: input.payload.type,
+      payload: await getCredentialCipher().encrypt(JSON.stringify(input.payload)),
+      ...(input.createdBy !== undefined ? { createdBy: input.createdBy } : {}),
+    });
+    return this.toRecord(workspaceId, row);
+  }
+
+  async list(workspaceId: string): Promise<CredentialRecord[]> {
+    const storage = await this.store();
+    const rows = await storage.credentials.list(workspaceId);
+    return rows.map((row) => this.toRecord(workspaceId, row));
+  }
+
+  async get(workspaceId: string, id: string): Promise<CredentialRecord | undefined> {
+    const storage = await this.store();
+    const row = await storage.credentials.get(workspaceId, id);
+    return row ? this.toRecord(workspaceId, row) : undefined;
+  }
+
+  async delete(workspaceId: string, id: string): Promise<boolean> {
+    const storage = await this.store();
+    return storage.credentials.delete(workspaceId, id);
+  }
+
+  async getPayload(workspaceId: string, id: string): Promise<CredentialPayload | undefined> {
+    const storage = await this.store();
+    const row = await storage.credentials.getWithPayload(workspaceId, id);
+    if (!row) return undefined;
+    return JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload;
+  }
+
+  async resolveForProvider(
+    workspaceId: string,
+    provider: string,
+  ): Promise<CredentialPayload | undefined> {
+    return (await this.resolveRecordForProvider(workspaceId, provider))?.payload;
+  }
+
+  async resolveRecordForProvider(
+    workspaceId: string,
+    provider: string,
+  ): Promise<{ id: string; payload: CredentialPayload } | undefined> {
+    const storage = await this.store();
+    const row = await storage.credentials.firstForProvider(workspaceId, provider);
+    if (!row) return undefined;
+    return {
+      id: row.id,
+      payload: JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload,
+    };
+  }
+
+  async resolveRecordById(
+    workspaceId: string,
+    credentialId: string,
+  ): Promise<{ id: string; provider: string; payload: CredentialPayload } | undefined> {
+    const storage = await this.store();
+    const row = await storage.credentials.getWithPayload(workspaceId, credentialId);
+    if (!row) return undefined;
+    return {
+      id: row.id,
+      provider: row.provider,
+      payload: JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload,
+    };
+  }
+
+  async updatePayload(
+    workspaceId: string,
+    id: string,
+    payload: CredentialPayload,
+  ): Promise<void> {
+    const storage = await this.store();
+    await storage.credentials.updatePayload(
+      workspaceId,
+      id,
+      await getCredentialCipher().encrypt(JSON.stringify(payload)),
+    );
   }
 }
 
@@ -581,7 +725,16 @@ export class CredentialStoreSqlite implements ICredentialStore {
 let _store: ICredentialStore | undefined;
 
 export function getCredentialStore(): ICredentialStore {
-  _store ??= isAwsMode() ? new CredentialStoreDynamodb() : new CredentialStoreSqlite();
+  _store ??= (() => {
+    switch (storeBackend()) {
+      case "dsql":
+        return new CredentialStoreRegistry();
+      case "dynamo":
+        return new CredentialStoreDynamodb();
+      case "sqlite":
+        return new CredentialStoreSqlite();
+    }
+  })();
   return _store;
 }
 

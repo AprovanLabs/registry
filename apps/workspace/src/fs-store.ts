@@ -3,7 +3,7 @@ import { mkdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import { dynamo } from "./db/client.js";
-import { isAwsMode, workspaceDataDir } from "./runtime/config.js";
+import { storeBackend, workspaceDataDir } from "./runtime/config.js";
 import type { S3Client } from "@aws-sdk/client-s3";
 import type Database from "better-sqlite3";
 
@@ -73,9 +73,27 @@ export interface FsWriteOptions {
   versioned?: boolean;
 }
 
+/**
+ * One page of a listing. A returned `cursor` means more entries exist;
+ * feeding it back resumes with no gaps or duplicates (specs/fs-metadata-store
+ * "Cursor-paginated list"). Callers that want everything use {@link listAll}.
+ */
+export interface FsListPage {
+  entries: FsEntry[];
+  cursor?: string;
+}
+
+export interface FsListOptions {
+  cursor?: string;
+  limit?: number;
+}
+
 export interface IFsStore {
-  /** Latest version of every file under `prefix` (metadata only). */
-  list(workspaceId: string, prefix?: string): Promise<FsEntry[]>;
+  /**
+   * Latest version of every file under `prefix` (metadata only), path-ordered.
+   * Without `limit`, the whole listing comes back as one page (no cursor).
+   */
+  list(workspaceId: string, prefix?: string, opts?: FsListOptions): Promise<FsListPage>;
   /**
    * Every stored version of `path`, newest first (updatedAt desc). The first
    * entry's hash is the current {@link read} hash. Empty when `path` has none.
@@ -114,13 +132,38 @@ export interface IFsStore {
   ): Promise<FsEntry | undefined>;
 }
 
-/** Normalize to `a/b/c` form; rejects traversal and empty segments. */
+/**
+ * The DSQL backend's primary key is `(workspace_id, path, hash)` and DSQL
+ * caps combined PK size at 1 KiB — 900 bytes of path leaves comfortable room
+ * for the rest (tech-plan §5; reseed pre-scans for violations).
+ */
+export const MAX_FS_PATH_BYTES = 900;
+
+/** Normalize to `a/b/c` form; rejects traversal, empty segments, and paths
+ *  over {@link MAX_FS_PATH_BYTES} bytes. */
 export function normalizeFsPath(raw: string): string | null {
   const path = raw.replace(/^\/+|\/+$/g, "");
   if (!path) return null;
+  if (Buffer.byteLength(path, "utf8") > MAX_FS_PATH_BYTES) return null;
   const segments = path.split("/");
   if (segments.some((s) => !s || s === "." || s === "..")) return null;
   return segments.join("/");
+}
+
+/** Drain helper: every page of {@link IFsStore.list} concatenated. */
+export async function listAll(
+  store: IFsStore,
+  workspaceId: string,
+  prefix = "",
+): Promise<FsEntry[]> {
+  const entries: FsEntry[] = [];
+  let cursor: string | undefined;
+  do {
+    const page = await store.list(workspaceId, prefix, cursor ? { cursor } : undefined);
+    entries.push(...page.entries);
+    cursor = page.cursor;
+  } while (cursor);
+  return entries;
 }
 
 /**
@@ -167,22 +210,41 @@ export class FsStoreSqlite implements IFsStore {
     `);
   }
 
-  async list(workspaceId: string, prefix = ""): Promise<FsEntry[]> {
-    // SQLite resolves bare columns alongside MAX() to the max row.
+  async list(
+    workspaceId: string,
+    prefix = "",
+    opts?: FsListOptions,
+  ): Promise<FsListPage> {
+    const limit = opts?.limit;
+    const after = opts?.cursor ?? "";
+    // SQLite resolves bare columns alongside MAX() to the max row. The cursor
+    // is the last returned path — `path > cursor` resumes with no gaps or
+    // duplicates since the listing is path-ordered.
     const rows = this.database
       .prepare(
         `SELECT path, hash, mime_type, size, MAX(updated_at) AS updated_at
          FROM fs_files
          WHERE workspace_id = ? AND (? = '' OR path = ? OR path LIKE ? ESCAPE '\\')
-         GROUP BY path ORDER BY path`,
+           AND (? = '' OR path > ?)
+         GROUP BY path ORDER BY path
+         ${limit ? "LIMIT ?" : ""}`,
       )
       .all(
         workspaceId,
         prefix,
         prefix,
         `${prefix.replace(/[%_]/g, (c) => `\\${c}`)}/%`,
+        after,
+        after,
+        ...(limit ? [limit + 1] : []),
       ) as Record<string, unknown>[];
-    return rows.map((row) => this.entry(row));
+    const truncated = limit !== undefined && rows.length > limit;
+    const page = truncated ? rows.slice(0, limit) : rows;
+    const entries = page.map((row) => this.entry(row));
+    return {
+      entries,
+      ...(truncated ? { cursor: entries[entries.length - 1]!.path } : {}),
+    };
   }
 
   async listVersions(workspaceId: string, path: string): Promise<FsEntry[]> {
@@ -370,9 +432,19 @@ export class FsStoreS3 implements IFsStore {
     return `blobs/${workspaceId}/${hash}`;
   }
 
-  async list(workspaceId: string, prefix = ""): Promise<FsEntry[]> {
+  async list(
+    workspaceId: string,
+    prefix = "",
+    opts?: FsListOptions,
+  ): Promise<FsListPage> {
+    const limit = opts?.limit;
     const entries: FsEntry[] = [];
-    let cursor: Record<string, unknown> | undefined;
+    // Cursor: the last returned path, resumed as an exact ExclusiveStartKey
+    // on the `P#<path>` sort key — no gaps, no duplicates (sk order is path
+    // order within the P# range).
+    let cursor: Record<string, unknown> | undefined = opts?.cursor
+      ? { workspaceId, sk: `P#${opts.cursor}` }
+      : undefined;
     const { client, QueryCommand } = await dynamo();
     do {
       const page = await client.send(
@@ -392,10 +464,13 @@ export class FsStoreS3 implements IFsStore {
         // begins_with over-matches partial segments ("wid" → "widgetsfoo").
         if (!inPrefix(path, prefix)) continue;
         entries.push(this.entry(item));
+        if (limit !== undefined && entries.length >= limit) {
+          return { entries, cursor: path };
+        }
       }
       cursor = page.LastEvaluatedKey;
     } while (cursor);
-    return entries.sort((a, b) => a.path.localeCompare(b.path));
+    return { entries };
   }
 
   async listVersions(workspaceId: string, path: string): Promise<FsEntry[]> {
@@ -548,7 +623,7 @@ export class FsStoreS3 implements IFsStore {
   }
 
   async removePrefix(workspaceId: string, prefix: string): Promise<number> {
-    const entries = await this.list(workspaceId, prefix);
+    const entries = await listAll(this, workspaceId, prefix);
     let removed = 0;
     for (const entry of entries) {
       if (await this.remove(workspaceId, entry.path)) removed += 1;
@@ -624,17 +699,275 @@ export class FsStoreS3 implements IFsStore {
 }
 
 // ---------------------------------------------------------------------------
+// Aurora DSQL backend (metadata relational, content blobs on S3 — same
+// `blobs/<workspaceId>/<hash>` layout and presigned flow as FsStoreS3).
+// Tables: fs_latest (hot pointer) + fs_files (version rows) — the two-table
+// shape mirroring today's P#/V# split (tech-plan §5, open question 1).
+// ---------------------------------------------------------------------------
+
+export class FsStoreDsql implements IFsStore {
+  private readonly bucket: string;
+
+  constructor(options?: { bucket?: string }) {
+    const bucket = options?.bucket ?? process.env["FS_BUCKET"];
+    if (!bucket) {
+      throw new Error("FS_BUCKET must be set for the DSQL workspace-fs backend (content blobs)");
+    }
+    this.bucket = bucket;
+  }
+
+  private blobKey(workspaceId: string, hash: string): string {
+    return `blobs/${workspaceId}/${hash}`;
+  }
+
+  private async db(): Promise<typeof import("./db/dsql.js")> {
+    return import("./db/dsql.js");
+  }
+
+  async list(
+    workspaceId: string,
+    prefix = "",
+    opts?: FsListOptions,
+  ): Promise<FsListPage> {
+    const { dsqlQuery } = await this.db();
+    const limit = opts?.limit;
+    const after = opts?.cursor ?? "";
+    const result = await dsqlQuery(
+      `SELECT path, hash, mime_type, size, updated_at FROM fs_latest
+       WHERE workspace_id = $1
+         AND ($2 = '' OR path = $2 OR path LIKE $3)
+         AND ($4 = '' OR path > $4)
+       ORDER BY path
+       ${limit ? `LIMIT ${limit + 1}` : ""}`,
+      [
+        workspaceId,
+        prefix,
+        `${prefix.replace(/([%_\\])/gu, "\\$1")}/%`,
+        after,
+      ],
+    );
+    const truncated = limit !== undefined && result.rows.length > limit;
+    const rows = truncated ? result.rows.slice(0, limit) : result.rows;
+    const entries = rows.map((row) => this.entry(row));
+    return {
+      entries,
+      ...(truncated ? { cursor: entries[entries.length - 1]!.path } : {}),
+    };
+  }
+
+  async listVersions(workspaceId: string, path: string): Promise<FsEntry[]> {
+    const { dsqlQuery } = await this.db();
+    const result = await dsqlQuery(
+      `SELECT path, hash, mime_type, size, updated_at FROM fs_files
+       WHERE workspace_id = $1 AND path = $2
+       ORDER BY updated_at DESC`,
+      [workspaceId, path],
+    );
+    return result.rows.map((row) => this.entry(row));
+  }
+
+  async read(workspaceId: string, path: string, hash?: string): Promise<FsFile | undefined> {
+    const { dsqlQuery } = await this.db();
+    const result = hash
+      ? await dsqlQuery(
+          `SELECT path, hash, mime_type, size, updated_at FROM fs_files
+           WHERE workspace_id = $1 AND path = $2 AND hash = $3`,
+          [workspaceId, path, hash],
+        )
+      : await dsqlQuery(
+          `SELECT path, hash, mime_type, size, updated_at FROM fs_latest
+           WHERE workspace_id = $1 AND path = $2`,
+          [workspaceId, path],
+        );
+    const row = result.rows[0];
+    if (!row) return undefined;
+    const entry = this.entry(row);
+    const { client, GetObjectCommand } = await s3();
+    const blob = await client.send(
+      new GetObjectCommand({ Bucket: this.bucket, Key: this.blobKey(workspaceId, entry.hash) }),
+    );
+    const content = (await blob.Body?.transformToString("utf8")) ?? "";
+    return { ...entry, content };
+  }
+
+  async write(
+    workspaceId: string,
+    path: string,
+    content: string,
+    mimeType = "text/plain",
+    opts?: FsWriteOptions,
+  ): Promise<FsFile> {
+    const versioned = opts?.versioned ?? !isServicePath(path);
+    const hash = createHash("sha256").update(content).digest("hex");
+    const size = Buffer.byteLength(content);
+    const updatedAt = new Date().toISOString();
+    const { client, PutObjectCommand } = await s3();
+    await client.send(
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: this.blobKey(workspaceId, hash),
+        Body: content,
+        ContentType: mimeType,
+      }),
+    );
+    await this.putIndex(workspaceId, path, { hash, mimeType, size, updatedAt }, versioned);
+    return { path, hash, content, mimeType, size, updatedAt };
+  }
+
+  private async putIndex(
+    workspaceId: string,
+    path: string,
+    meta: { hash: string; mimeType: string; size: number; updatedAt: string },
+    versioned: boolean,
+  ): Promise<void> {
+    const { dsqlQuery, withOccRetry } = await this.db();
+    await withOccRetry(async () => {
+      await dsqlQuery(
+        `INSERT INTO fs_latest (workspace_id, path, hash, mime_type, size, updated_at)
+         VALUES ($1, $2, $3, $4, $5, $6)
+         ON CONFLICT (workspace_id, path)
+         DO UPDATE SET hash = $3, mime_type = $4, size = $5, updated_at = $6`,
+        [workspaceId, path, meta.hash, meta.mimeType, meta.size, meta.updatedAt],
+      );
+    });
+    if (versioned) {
+      await withOccRetry(async () => {
+        await dsqlQuery(
+          `INSERT INTO fs_files (workspace_id, path, hash, mime_type, size, updated_at)
+           VALUES ($1, $2, $3, $4, $5, $6)
+           ON CONFLICT (workspace_id, path, hash)
+           DO UPDATE SET mime_type = $4, size = $5, updated_at = $6`,
+          [workspaceId, path, meta.hash, meta.mimeType, meta.size, meta.updatedAt],
+        );
+      });
+    } else {
+      // Unversioned service writes leave at most the latest version row.
+      await withOccRetry(async () => {
+        await dsqlQuery(
+          `DELETE FROM fs_files WHERE workspace_id = $1 AND path = $2`,
+          [workspaceId, path],
+        );
+      });
+    }
+  }
+
+  async remove(workspaceId: string, path: string): Promise<boolean> {
+    const { dsqlQuery, withOccRetry } = await this.db();
+    const removed = await withOccRetry(() =>
+      dsqlQuery(`DELETE FROM fs_latest WHERE workspace_id = $1 AND path = $2`, [
+        workspaceId,
+        path,
+      ]),
+    );
+    await withOccRetry(() =>
+      dsqlQuery(`DELETE FROM fs_files WHERE workspace_id = $1 AND path = $2`, [
+        workspaceId,
+        path,
+      ]),
+    );
+    return (removed.rowCount ?? 0) > 0;
+  }
+
+  async removePrefix(workspaceId: string, prefix: string): Promise<number> {
+    // Chunked delete: collect target paths, then delete in batches whose row
+    // counts stay within DSQL's 3,000-row-per-transaction cap (each path has
+    // 1 latest row + N version rows; deleting per-path batches of 500 keeps
+    // a comfortable margin).
+    const { dsqlQuery, withOccRetry, chunkRows } = await this.db();
+    const entries = await listAll(this, workspaceId, prefix);
+    let removed = 0;
+    for (const batch of chunkRows(entries, { maxRows: 500 })) {
+      await withOccRetry(async () => {
+        const paths = batch.map((entry) => entry.path);
+        await dsqlQuery(
+          `DELETE FROM fs_latest WHERE workspace_id = $1 AND path = ANY($2)`,
+          [workspaceId, paths],
+        );
+        await dsqlQuery(
+          `DELETE FROM fs_files WHERE workspace_id = $1 AND path = ANY($2)`,
+          [workspaceId, paths],
+        );
+      });
+      removed += batch.length;
+    }
+    return removed;
+  }
+
+  async createUpload(
+    workspaceId: string,
+    hash: string,
+    mimeType: string,
+  ): Promise<FsUploadTicket> {
+    const [{ client, PutObjectCommand }, { getSignedUrl }] = await Promise.all([
+      s3(),
+      import("@aws-sdk/s3-request-presigner"),
+    ]);
+    const url = await getSignedUrl(
+      client,
+      new PutObjectCommand({
+        Bucket: this.bucket,
+        Key: this.blobKey(workspaceId, hash),
+        ContentType: mimeType,
+      }),
+      { expiresIn: UPLOAD_URL_TTL_SECONDS },
+    );
+    return { url, headers: { "Content-Type": mimeType }, expiresIn: UPLOAD_URL_TTL_SECONDS };
+  }
+
+  async completeUpload(
+    workspaceId: string,
+    path: string,
+    hash: string,
+    mimeType: string,
+  ): Promise<FsEntry | undefined> {
+    let size: number;
+    try {
+      const { client, HeadObjectCommand } = await s3();
+      const head = await client.send(
+        new HeadObjectCommand({ Bucket: this.bucket, Key: this.blobKey(workspaceId, hash) }),
+      );
+      size = head.ContentLength ?? 0;
+    } catch {
+      return undefined; // Blob was never uploaded.
+    }
+    const updatedAt = new Date().toISOString();
+    await this.putIndex(workspaceId, path, { hash, mimeType, size, updatedAt }, !isServicePath(path));
+    return { path, hash, mimeType, size, updatedAt };
+  }
+
+  private entry(row: Record<string, unknown>): FsEntry {
+    return {
+      path: String(row["path"]),
+      hash: String(row["hash"]),
+      mimeType: String(row["mime_type"]),
+      size: Number(row["size"]),
+      updatedAt: String(row["updated_at"]),
+    };
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Singleton factory (backend chosen by runtime/config.ts, like every store)
 // ---------------------------------------------------------------------------
 
 let store: IFsStore | undefined;
 
 // The WFS is the one store that cannot degrade gracefully — it needs an object
-// store for content blobs. `resolveData` therefore makes FS_BUCKET a hard
-// requirement of aws mode rather than letting a half-configured deploy split
-// the file plane onto SQLite while everything else talks to DynamoDB.
+// store for content blobs on both cloud backends. `resolveData` therefore
+// makes FS_BUCKET a hard requirement of aws mode rather than letting a
+// half-configured deploy split the file plane onto SQLite while everything
+// else talks to DynamoDB or DSQL.
 export function getFsStore(): IFsStore {
-  store ??= isAwsMode() ? new FsStoreS3() : new FsStoreSqlite();
+  store ??= (() => {
+    switch (storeBackend()) {
+      case "dsql":
+        return new FsStoreDsql();
+      case "dynamo":
+        return new FsStoreS3();
+      case "sqlite":
+        return new FsStoreSqlite();
+    }
+  })();
   return store;
 }
 

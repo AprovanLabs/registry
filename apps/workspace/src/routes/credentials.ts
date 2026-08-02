@@ -81,7 +81,9 @@ credentialsRouter.post("/", requireAdmin, validateBody(credentialSchema), async 
   }
 
   const store = getCredentialStore();
-  const record = await store.create(workspaceId, input);
+  // `createdBy` is the user dimension WS-3's Profiles reference (tech-plan
+  // D5) — stamped from the authenticated principal on every create path.
+  const record = await store.create(workspaceId, { ...input, createdBy: principal.sub });
   // A new credential may unlock a provider's tools for this workspace.
   invalidateToolListCache(workspaceId);
   return c.json(record, 201);

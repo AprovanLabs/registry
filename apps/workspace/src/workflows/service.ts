@@ -242,7 +242,14 @@ export const workflowsService: CoreService = {
     switch (procedure) {
       case "register": {
         const name = workflowName(args["name"]);
-        const scriptPath = typeof args["script_path"] === "string" ? args["script_path"] : "";
+        const script =
+          typeof args["script"] === "string" && args["script"] ? args["script"] : undefined;
+        const scriptPath =
+          typeof args["script_path"] === "string" && args["script_path"]
+            ? args["script_path"]
+            : script
+              ? `inline:${name}`
+              : "";
         if (!scriptPath) throw new ServiceError("script_path is required", 400);
         const existing = await readRegistration(ctx.workspaceId, name);
         const triggers = parseTriggers(args["triggers"]);
@@ -261,6 +268,7 @@ export const workflowsService: CoreService = {
           name,
           description: typeof args["description"] === "string" ? args["description"] : existing?.description,
           scriptPath,
+          script,
           triggers,
           bindings,
           agent:

@@ -10,15 +10,14 @@
  * `GET /llm/jobs/:id` lets a client that lost its connection pick the result
  * back up by polling.
  *
- * Records live at `.services/llm-jobs/<id>.json` in the caller's workspace,
- * through the workspace fs (see src/fs-store.ts) — so cross-workspace access
- * is denied for free by the same partitioning every other `.services/**`
- * store relies on (see isServicePath in fs-store.ts).
+ * Records live in the record store under `svc#llm-jobs` in the caller's
+ * workspace tenant — cross-workspace access is denied for free by the record
+ * store's tenancy partitioning (specs/record-store).
  */
 
-import { getFsStore } from "./fs-store.js";
+import { readSvcRecord, svcScope, writeSvcRecord } from "./svc-records.js";
 
-const JOBS_PREFIX = ".services/llm-jobs/";
+const JOBS_SCOPE = svcScope("llm-jobs");
 
 export type LlmJobStatus = "running" | "succeeded" | "failed";
 
@@ -34,20 +33,10 @@ export interface LlmJobRecord {
   updatedAt: string;
 }
 
-function jobPath(id: string): string {
-  return `${JOBS_PREFIX}${id}.json`;
-}
-
 export async function readLlmJob(workspaceId: string, id: string): Promise<LlmJobRecord | undefined> {
-  const file = await getFsStore().read(workspaceId, jobPath(id)).catch(() => undefined);
-  if (!file) return undefined;
-  try {
-    return JSON.parse(file.content) as LlmJobRecord;
-  } catch {
-    return undefined;
-  }
+  return readSvcRecord<LlmJobRecord>(workspaceId, JOBS_SCOPE, id).catch(() => undefined);
 }
 
 export async function writeLlmJob(workspaceId: string, record: LlmJobRecord): Promise<void> {
-  await getFsStore().write(workspaceId, jobPath(record.id), JSON.stringify(record, null, 2), "application/json");
+  await writeSvcRecord(workspaceId, JOBS_SCOPE, record.id, record);
 }

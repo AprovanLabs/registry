@@ -262,6 +262,22 @@ describe.skipIf(!ready)("workspace filesystem (S3+DynamoDB backend)", () => {
     expect(versions.length).toBeGreaterThanOrEqual(2);
   });
 
+  it("pages a listing by cursor with no gaps or duplicates", async () => {
+    const { getFsStore: freshStore } = await import("../src/fs-store.js");
+    const store = freshStore();
+    for (let i = 0; i < 15; i += 1) {
+      await store.write("pagews", `pages/f${String(i).padStart(2, "0")}.txt`, `v${i}`);
+    }
+    const first = await store.list("pagews", "pages", { limit: 10 });
+    expect(first.entries).toHaveLength(10);
+    expect(first.cursor).toBeDefined();
+    const second = await store.list("pagews", "pages", { cursor: first.cursor, limit: 10 });
+    expect(second.entries).toHaveLength(5);
+    const all = [...first.entries, ...second.entries].map((e) => e.path);
+    expect(new Set(all).size).toBe(15);
+    expect(all).toEqual([...all].sort());
+  });
+
   describe("blob garbage collection", () => {
     it("reclaims an orphaned blob (overwritten unversioned write) but spares the referenced one", async () => {
       const store = getFsStore();

@@ -300,3 +300,65 @@ describe("chat routes accept an llm instance", () => {
     expect(body.error).toMatch(/No such interface instance/u);
   });
 });
+
+// ---------------------------------------------------------------------------
+// WS-3 dispatch-plane cutover, bindings half: on the durable backends a
+// workspace binding IS a registry-server profile row, and
+// `.services/bindings.json` is a one-time-import tombstone.
+// ---------------------------------------------------------------------------
+
+describe("bindings live in registry-server profiles", () => {
+  it("interfaces.bind writes a profile row, never a bindings file", async () => {
+    const { resetRateLimiters } = await import("../src/middleware/rateLimitMiddleware.js");
+    resetRateLimiters();
+    const bound = await manage("interfaces/bind", {
+      interface: "llm",
+      provider: "openai",
+      options: { model: "gpt-4o-mini" },
+    });
+    expect(bound.status).toBe(200);
+
+    const { getRegistryStorage } = await import("../src/registry-storage.js");
+    const storage = await getRegistryStorage();
+    const rows = await storage.profiles.list("local", { targetKind: "interface" });
+    const llmDefault = rows.find((row) => row.targetId === "llm" && row.name === "default");
+    expect(llmDefault?.provider).toBe("openai");
+    expect(llmDefault?.options).toMatchObject({ model: "gpt-4o-mini" });
+
+    const { getFsStore } = await import("../src/fs-store.js");
+    expect(await getFsStore().read("local", ".services/bindings.json")).toBeUndefined();
+
+    // Unbind deletes the row.
+    await manage("interfaces/unbind", { interface: "llm" });
+    const after = await storage.profiles.list("local", { targetKind: "interface" });
+    expect(after.some((row) => row.targetId === "llm" && row.name === "default")).toBe(false);
+  });
+
+  it("imports a legacy bindings.json once, then tombstones it", async () => {
+    const { getFsStore } = await import("../src/fs-store.js");
+    const { readBindings } = await import("../src/interfaces.js");
+    // A pre-cutover deployment left the legacy file behind.
+    await getFsStore().write(
+      "legacy-ws",
+      ".services/bindings.json",
+      JSON.stringify({
+        bindings: {
+          llm: { provider: "anthropic", options: { model: "claude-sonnet-4-5" } },
+          "llm:fast": { interface: "llm", provider: "openai", options: { model: "gpt-4o-mini" } },
+        },
+      }),
+      "application/json",
+    );
+
+    const bindings = await readBindings("legacy-ws");
+    expect(bindings["llm"]).toMatchObject({ provider: "anthropic" });
+    expect(bindings["llm:fast"]).toMatchObject({ provider: "openai" });
+
+    // The file is gone; the bindings now live as profile rows.
+    expect(await getFsStore().read("legacy-ws", ".services/bindings.json")).toBeUndefined();
+    const { getRegistryStorage } = await import("../src/registry-storage.js");
+    const storage = await getRegistryStorage();
+    const rows = await storage.profiles.list("legacy-ws", { targetKind: "interface" });
+    expect(rows.map((row) => row.name).sort()).toEqual(["default", "fast"]);
+  });
+});

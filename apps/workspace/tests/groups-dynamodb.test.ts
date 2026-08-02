@@ -19,6 +19,7 @@ import {
 } from "@aws-sdk/client-dynamodb";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { resetDynamoDocClient } from "../src/db/client.js";
+import { resetIdentityStore } from "../src/identity/store.js";
 import {
   addPrefixGrant,
   addToolGrant,
@@ -191,6 +192,8 @@ function uniqueWs(): string {
 
 describe.skipIf(!ddbReady)("Groups DynamoDB", () => {
   beforeAll(() => {
+    process.env["STORE_BACKEND"] = "dynamo";
+    resetIdentityStore();
     process.env["GROUPS_TABLE"] = GROUPS_TABLE;
     process.env["GROUP_PREFIX_GRANTS_TABLE"] = PREFIX_GRANTS_TABLE;
     process.env["GROUP_TOOL_GRANTS_TABLE"] = TOOL_GRANTS_TABLE;
@@ -199,6 +202,8 @@ describe.skipIf(!ddbReady)("Groups DynamoDB", () => {
   });
 
   afterAll(() => {
+    delete process.env["STORE_BACKEND"];
+    resetIdentityStore();
     resetDynamoDocClient();
   });
 

@@ -36,7 +36,7 @@ import { mayInvokeTool } from "../authorize.js";
 import { getCoreService } from "../service-kernel.js";
 import { FS_TOOLS, FS_TOOL_NAMES, handleFsTool } from "./fs-tools.js";
 import { getAuditStore } from "../audit.js";
-import { getFsStore } from "../fs-store.js";
+import { listAll, getFsStore } from "../fs-store.js";
 import { getCredentialStore } from "../credentials.js";
 import { getExecutor } from "../isolate.js";
 import { getAuthMode, type Principal } from "../middleware/auth.js";
@@ -157,7 +157,7 @@ export async function buildMcpServer(principal: Principal): Promise<Server> {
   // Prompts and artifacts are plain workspace-FS files under prompts/ and
   // artifacts/ — the same tree the fs_* tools and /fs routes operate on.
   server.setRequestHandler(ListPromptsRequestSchema, async () => ({
-    prompts: (await getFsStore().list(principal.workspaceId, "prompts/")).map(
+    prompts: (await listAll(getFsStore(), principal.workspaceId, "prompts/")).map(
       (entry) => ({
         name: entry.path.replace(/^prompts\//u, "").replace(/\.md$/u, ""),
       }),
@@ -180,7 +180,7 @@ export async function buildMcpServer(principal: Principal): Promise<Server> {
     };
   });
   server.setRequestHandler(ListResourcesRequestSchema, async () => ({
-    resources: (await getFsStore().list(principal.workspaceId, "artifacts/")).map(
+    resources: (await listAll(getFsStore(), principal.workspaceId, "artifacts/")).map(
       (entry) => ({
         uri: `aprovan://${entry.path}`,
         name: entry.path.replace(/^artifacts\//u, ""),

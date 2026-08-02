@@ -4,9 +4,10 @@
  * An owner-hosted app (`dataScope: "owner"`, the default) needs no install:
  * the publishing workspace stores everyone's partition. A workspace-scoped app
  * is a *template* — the code is published, the workspace is brought by the
- * user — so a caller records an install in their OWN workspace:
+ * user — so a caller records an install in their OWN workspace, under the
+ * `svc#apps#installed` record scope:
  *
- *   .services/apps/installed/<owner>.<name>.json
+ *   svc#apps#installed / <owner>.<name>
  *     { owner, name, release, prefix, installedAt }
  *
  * With that record present, the app session's `appScope` resolves data and the
@@ -15,11 +16,17 @@
  * unchanged: owner-hosted.
  */
 
-import { getFsStore } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
+import {
+  deleteSvcRecord,
+  listSvcRecords,
+  readSvcRecord,
+  svcScope,
+  writeSvcRecord,
+} from "../svc-records.js";
 import { workspacePath, type AppManifest, type AppPaths } from "./store.js";
 
-const INSTALLED_PREFIX = ".services/apps/installed/";
+const INSTALLED_SCOPE = svcScope("apps", "installed");
 
 export interface AppInstall {
   /** Workspace id that published the app. */
@@ -32,13 +39,9 @@ export interface AppInstall {
   installedAt: string;
 }
 
-/** Filesystem-safe key for an (owner, name) pair. */
+/** Stable key for an (owner, name) pair. */
 function installKey(owner: string, name: string): string {
   return `${owner.replace(/[^A-Za-z0-9_-]/gu, "_")}.${name}`;
-}
-
-function installPath(owner: string, name: string): string {
-  return `${INSTALLED_PREFIX}${installKey(owner, name)}.json`;
 }
 
 /** Default install prefix: the app's own folder in the caller's workspace. */
@@ -58,18 +61,17 @@ export async function readInstall(
   owner: string,
   name: string,
 ): Promise<AppInstall | undefined> {
-  const file = await getFsStore()
-    .read(workspaceId, installPath(owner, name))
-    .catch(() => undefined);
-  return file ? (JSON.parse(file.content) as AppInstall) : undefined;
+  return readSvcRecord<AppInstall>(workspaceId, INSTALLED_SCOPE, installKey(owner, name)).catch(
+    () => undefined,
+  );
 }
 
 export async function saveInstall(workspaceId: string, install: AppInstall): Promise<void> {
-  await getFsStore().write(
+  await writeSvcRecord(
     workspaceId,
-    installPath(install.owner, install.name),
-    JSON.stringify(install, null, 2),
-    "application/json",
+    INSTALLED_SCOPE,
+    installKey(install.owner, install.name),
+    install,
   );
 }
 
@@ -78,22 +80,12 @@ export async function removeInstall(
   owner: string,
   name: string,
 ): Promise<boolean> {
-  return getFsStore().remove(workspaceId, installPath(owner, name));
+  return deleteSvcRecord(workspaceId, INSTALLED_SCOPE, installKey(owner, name));
 }
 
 export async function listInstalls(workspaceId: string): Promise<AppInstall[]> {
-  const entries = await getFsStore()
-    .list(workspaceId, INSTALLED_PREFIX.slice(0, -1))
-    .catch(() => []);
-  const files = await Promise.all(
-    entries
-      .map((entry) => entry.path)
-      .filter((path) => path.startsWith(INSTALLED_PREFIX) && path.endsWith(".json"))
-      .map((path) => getFsStore().read(workspaceId, path).catch(() => undefined)),
-  );
-  return files
-    .filter((file): file is NonNullable<typeof file> => Boolean(file))
-    .map((file) => JSON.parse(file.content) as AppInstall);
+  const entries = await listSvcRecords<AppInstall>(workspaceId, INSTALLED_SCOPE);
+  return entries.map((entry) => entry.value);
 }
 
 /**

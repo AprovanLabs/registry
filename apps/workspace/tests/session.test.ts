@@ -10,6 +10,7 @@
 
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { createApp } from "../src/app.js";
+import { resetIdentityStore } from "../src/identity/store.js";
 import { resetCognitoVerifier } from "../src/middleware/auth.js";
 import { setupAuth } from "./helpers.js";
 
@@ -54,6 +55,10 @@ const WORKSPACES = [
 // ---------------------------------------------------------------------------
 
 beforeEach(() => {
+  // These tests exercise the DynamoDB identity backend through the mocked
+  // document client — pin the store switch to it (default would be sqlite).
+  process.env["STORE_BACKEND"] = "dynamo";
+  resetIdentityStore();
   // These tests simulate the Cognito path; auth mode must be "oidc" or the
   // session surface short-circuits to the local single-user identity.
   process.env["OIDC_ISSUER"] =
@@ -93,6 +98,8 @@ beforeEach(() => {
 afterEach(() => {
   delete process.env["OIDC_ISSUER"];
   delete process.env["OIDCAUDIENCE"];
+  delete process.env["STORE_BACKEND"];
+  resetIdentityStore();
   resetCognitoVerifier();
 });
 

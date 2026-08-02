@@ -9,7 +9,7 @@ import { mkdirSync } from "node:fs";
 import { createRequire } from "node:module";
 import { join } from "node:path";
 import { dynamo } from "./db/client.js";
-import { isAwsMode, workspaceDataDir } from "./runtime/config.js";
+import { storeBackend, workspaceDataDir } from "./runtime/config.js";
 
 // ---------------------------------------------------------------------------
 // Types
@@ -270,6 +270,119 @@ export class AuditStoreSqlite implements IAuditStore {
 }
 
 // ---------------------------------------------------------------------------
+// Aurora DSQL backend — same contract on the audit_log table from
+// db/dsql-schema.sql. The 30-day retention is a periodic sweep (leader-leased
+// schedule; also runnable ad hoc) since DSQL has no native TTL; `recent()`
+// additionally filters reads so an overdue sweep can't surface stale rows.
+// ---------------------------------------------------------------------------
+
+export class AuditStoreDsql implements IAuditStore {
+  private async db(): Promise<typeof import("./db/dsql.js")> {
+    return import("./db/dsql.js");
+  }
+
+  append(entry: Omit<AuditEntry, "id" | "ts" | "result">): void {
+    const id = crypto.randomUUID();
+    const ts = new Date().toISOString();
+    const result =
+      entry.status === 403 ? "forbidden" : entry.status < 400 ? "success" : "error";
+    // Fire-and-forget: resolving the driver rides the same detached promise,
+    // so an audit write never blocks (or fails) the request path.
+    void (async () => {
+      const { dsqlQuery, withOccRetry } = await this.db();
+      await withOccRetry(() =>
+        dsqlQuery(
+          `INSERT INTO audit_log
+           (workspace_id, ts, id, request_id, caller_id, provider, operation, status, duration_ms, result, mcp_tool_name)
+           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)`,
+          [
+            entry.workspaceId,
+            ts,
+            id,
+            entry.requestId,
+            entry.callerId,
+            entry.provider,
+            entry.operation,
+            entry.status,
+            entry.durationMs ?? null,
+            result,
+            entry.mcp_tool_name ?? null,
+          ],
+        ),
+      );
+    })().catch((err: unknown) => {
+      console.error("[AuditStoreDsql] append failed:", err);
+    });
+  }
+
+  async recent(opts: {
+    workspaceId: string;
+    limit?: number;
+    callerId?: string;
+    provider?: string;
+  }): Promise<AuditEntry[]> {
+    const { workspaceId, limit = 100, callerId, provider } = opts;
+    const { dsqlQuery } = await this.db();
+    const clauses = ["workspace_id = $1", "ts >= $2"];
+    const params: unknown[] = [
+      workspaceId,
+      new Date(Date.now() - TTL_30_DAYS_MS).toISOString(),
+    ];
+    if (callerId !== undefined) {
+      params.push(callerId);
+      clauses.push(`caller_id = $${params.length}`);
+    }
+    if (provider !== undefined) {
+      params.push(provider);
+      clauses.push(`provider = $${params.length}`);
+    }
+    params.push(limit);
+    const result = await dsqlQuery(
+      `SELECT * FROM audit_log WHERE ${clauses.join(" AND ")}
+       ORDER BY ts DESC LIMIT $${params.length}`,
+      params,
+    );
+    return result.rows.map((row) => ({
+      id: String(row["id"]),
+      ts: String(row["ts"]),
+      requestId: String(row["request_id"]),
+      workspaceId: String(row["workspace_id"]),
+      callerId: String(row["caller_id"]),
+      provider: String(row["provider"]),
+      operation: String(row["operation"]),
+      status: Number(row["status"]),
+      durationMs: row["duration_ms"] === null ? undefined : Number(row["duration_ms"]),
+      result: String(row["result"]) as AuditEntry["result"],
+      mcp_tool_name: row["mcp_tool_name"] === null ? undefined : String(row["mcp_tool_name"]),
+    }));
+  }
+
+  /** Delete rows past the 30-day retention. Chunked to stay inside DSQL's
+   *  3,000-row transaction cap; loops until the backlog is clear. */
+  async sweepExpired(): Promise<number> {
+    const { dsqlQuery, withOccRetry } = await this.db();
+    const cutoff = new Date(Date.now() - TTL_30_DAYS_MS).toISOString();
+    let total = 0;
+    for (;;) {
+      const batch = await dsqlQuery(
+        `SELECT workspace_id, ts, id FROM audit_log WHERE ts < $1 LIMIT 1000`,
+        [cutoff],
+      );
+      if (batch.rows.length === 0) return total;
+      await withOccRetry(async () => {
+        for (const row of batch.rows) {
+          await dsqlQuery(
+            `DELETE FROM audit_log WHERE workspace_id = $1 AND ts = $2 AND id = $3`,
+            [row["workspace_id"], row["ts"], row["id"]],
+          );
+        }
+      });
+      total += batch.rows.length;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Singleton factory
 // ---------------------------------------------------------------------------
 
@@ -278,7 +391,16 @@ let _store: IAuditStore | undefined;
 /** Resolve the singleton audit store (backend chosen by runtime/config.ts,
  *  like the FS, record, and credential stores). */
 export function getAuditStore(): IAuditStore {
-  _store ??= isAwsMode() ? new AuditStoreDynamodb() : new AuditStoreSqlite();
+  _store ??= (() => {
+    switch (storeBackend()) {
+      case "dsql":
+        return new AuditStoreDsql();
+      case "dynamo":
+        return new AuditStoreDynamodb();
+      case "sqlite":
+        return new AuditStoreSqlite();
+    }
+  })();
   return _store;
 }
 

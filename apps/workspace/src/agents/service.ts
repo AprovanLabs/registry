@@ -18,6 +18,13 @@
 
 import { AGENT_EFFORTS, type AgentEffort } from "@utdk/agent";
 import { getFsStore } from "../fs-store.js";
+import {
+  deleteSvcRecord,
+  listSvcRecords,
+  readSvcRecord,
+  svcScope,
+  writeSvcRecord,
+} from "../svc-records.js";
 import { parseGrants, type CapabilityGrants } from "../grants.js";
 import { parseInterfaceNamespace, resolveInterfaceForWorkspace } from "../interfaces.js";
 import { parseMounts } from "../sandboxes/mounts.js";
@@ -32,7 +39,7 @@ import {
   type LlmCandidateMeta,
 } from "./policy.js";
 
-const AGENTS_DIR = ".services/agents";
+const AGENTS_SCOPE = svcScope("agents");
 const NAME_RE = /^[a-z0-9][a-z0-9-]{0,63}$/u;
 
 /**
@@ -176,22 +183,12 @@ function parseAgentMounts(
   }));
 }
 
-function profilePath(name: string): string {
-  return `${AGENTS_DIR}/${name}.json`;
-}
-
 export async function readAgentProfile(
   workspaceId: string,
   name: string,
 ): Promise<AgentProfile | undefined> {
   if (!NAME_RE.test(name)) return undefined;
-  const file = await getFsStore().read(workspaceId, profilePath(name));
-  if (!file) return undefined;
-  try {
-    return JSON.parse(file.content) as AgentProfile;
-  } catch {
-    return undefined;
-  }
+  return readSvcRecord<AgentProfile>(workspaceId, AGENTS_SCOPE, name).catch(() => undefined);
 }
 
 function optionalString(value: unknown, cap: number): string | undefined {
@@ -675,12 +672,7 @@ export const agentsService: CoreService = {
           createdAt: existing?.createdAt ?? now,
           updatedAt: now,
         };
-        await store.write(
-          ctx.workspaceId,
-          profilePath(name),
-          JSON.stringify(profile, null, 2),
-          "application/json",
-        );
+        await writeSvcRecord(ctx.workspaceId, AGENTS_SCOPE, name, profile, profile.createdBy);
         return { agent: profile };
       }
 
@@ -692,21 +684,8 @@ export const agentsService: CoreService = {
       }
 
       case "list": {
-        const entries = await store.list(ctx.workspaceId, AGENTS_DIR);
-        const agents: AgentProfile[] = [];
-        for (const entry of entries) {
-          if (!entry.path.endsWith(".json")) continue;
-          // Nested paths are not profiles: native run records live under
-          // `_runs/` (agents/runner.ts), on the workflow-runs layout.
-          if (entry.path.slice(AGENTS_DIR.length + 1).includes("/")) continue;
-          const file = await store.read(ctx.workspaceId, entry.path);
-          if (!file) continue;
-          try {
-            agents.push(JSON.parse(file.content) as AgentProfile);
-          } catch {
-            // Skip malformed profiles rather than failing the listing.
-          }
-        }
+        const entries = await listSvcRecords<AgentProfile>(ctx.workspaceId, AGENTS_SCOPE);
+        const agents = entries.map((entry) => entry.value);
         agents.sort((a, b) => a.name.localeCompare(b.name));
         return { agents };
       }
@@ -714,7 +693,7 @@ export const agentsService: CoreService = {
       case "delete": {
         const name = typeof args["name"] === "string" ? args["name"] : "";
         if (!NAME_RE.test(name)) throw new ServiceError(`Unknown agent: ${name}`, 404);
-        const removed = await store.remove(ctx.workspaceId, profilePath(name));
+        const removed = await deleteSvcRecord(ctx.workspaceId, AGENTS_SCOPE, name);
         if (!removed) throw new ServiceError(`Unknown agent: ${name}`, 404);
         return { deleted: name };
       }

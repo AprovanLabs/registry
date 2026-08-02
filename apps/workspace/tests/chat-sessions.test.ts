@@ -323,3 +323,81 @@ describe("chat sessions", () => {
     expect(listing.sessions.some((s) => s.title === "Kanban work")).toBe(true);
   });
 });
+
+// ---------------------------------------------------------------------------
+// Record-backed transcripts (specs/record-store, "Transcripts append as
+// per-message records"): append cost is O(messages appended), storage is the
+// svc#chat scopes, and no transcript state rides the file plane.
+// ---------------------------------------------------------------------------
+
+describe("transcript records", () => {
+  it("appends 2 messages to a 500-message session with exactly 3 record writes", async () => {
+    const { getRecordStore } = await import("../src/records.js");
+    const { vi } = await import("vitest");
+    const created = await data<SessionPayload>(
+      await call("sessions/create", { title: "Long haul" }),
+    );
+    const id = created.session.id;
+    const seed = Array.from({ length: 500 }, (_, i) => ({
+      id: `seed-${i}`,
+      role: "user",
+      parts: [{ type: "text", text: `message ${i}` }],
+    }));
+    await call("sessions/append", { id, messages: seed });
+
+    const store = getRecordStore();
+    const spy = vi.spyOn(store, "set");
+    const after = await data<SessionPayload>(
+      await call("sessions/append", {
+        id,
+        messages: [
+          { id: "new-1", role: "user", parts: [{ type: "text", text: "501" }] },
+          { id: "new-2", role: "assistant", parts: [{ type: "text", text: "502" }] },
+        ],
+      }),
+    );
+    // Exactly the 2 message records plus the session record (other scopes —
+    // telemetry counters — are not transcript writes).
+    const chatWrites = spy.mock.calls.filter((c) => String(c[1]).startsWith("svc#chat"));
+    expect(chatWrites.map((c) => String(c[2]))).toEqual([
+      `0000000500#new-1`,
+      `0000000501#new-2`,
+      id,
+    ]);
+    spy.mockRestore();
+    expect(after.session.messageCount).toBe(502);
+
+    const transcript = await data<{ messages: Array<{ id: string }> }>(
+      await call("sessions/messages", { id }),
+    );
+    expect(transcript.messages).toHaveLength(502);
+    expect(transcript.messages[0]!.id).toBe("seed-0");
+    expect(transcript.messages[501]!.id).toBe("new-2");
+  });
+
+  it("stores sessions and messages under svc#chat scopes, not the file plane", async () => {
+    const { getRecordStore } = await import("../src/records.js");
+    const { getFsStore } = await import("../src/fs-store.js");
+    const created = await data<SessionPayload>(
+      await call("sessions/create", { title: "Recorded", mode: "staged" }),
+    );
+    const id = created.session.id;
+    await call("sessions/append", {
+      id,
+      messages: [{ id: "m1", role: "user", parts: [{ type: "text", text: "hi" }] }],
+    });
+    await putFile("scratch/shadowed.md", "shadow", id);
+
+    const store = getRecordStore();
+    expect(await store.list("local", "svc#chat#sessions")).toContain(id);
+    const messageKeys = await store.list("local", `svc#chat#session#${id}`);
+    expect(messageKeys).toHaveLength(1);
+    expect(messageKeys[0]).toMatch(/^\d{10}#m1$/);
+
+    // The only `.services/chat` file-plane residue is staged shadow content.
+    const { listAll } = await import("../src/fs-store.js");
+    const files = await listAll(getFsStore(), "local", ".services/chat");
+    const nonShadow = files.filter((entry) => !/\/files\//.test(entry.path));
+    expect(nonShadow).toEqual([]);
+  });
+});

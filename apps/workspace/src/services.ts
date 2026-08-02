@@ -27,7 +27,7 @@ import {
   readWorkspaceConfig,
   resolveAppPath,
 } from "./apps/store.js";
-import { getFsStore, isServicePath, normalizeFsPath } from "./fs-store.js";
+import { getFsStore, isServicePath, listAll, normalizeFsPath } from "./fs-store.js";
 import { interfacesService } from "./interfaces-service.js";
 import {
   commitTree,
@@ -47,6 +47,7 @@ import {
   removeMount,
 } from "./vcs/mounts.js";
 import { getRecordStore } from "./records.js";
+import { assertCallerScope, parseSeqKey, seqKey, svcScope } from "./svc-records.js";
 import { sandboxesService } from "./sandboxes/service.js";
 import {
   installCoreServices,
@@ -110,10 +111,14 @@ const KV_LEGACY_PREFIX = ".services/keyvalue/";
  * rows these are) is `ctx.workspaceId`, already resolved upstream by
  * `resolveAppSession` per the manifest's `dataScope`. The scope suffix itself
  * never varies with `dataScope`: a session only ever addresses its own
- * per-app-user partition. */
+ * per-app-user partition. The reserved `svc#` system namespace
+ * (svc-records.ts) is rejected outright — callers can never address platform
+ * subsystem state through the keyvalue surface. */
 function kvScope(ctx: ServiceContext): string {
   const scope = ctx.appScope;
-  return scope ? `app#${scope.name}#u#${scope.userId}` : "ws";
+  const resolved = scope ? `app#${scope.name}#u#${scope.userId}` : "ws";
+  assertCallerScope(resolved);
+  return resolved;
 }
 
 /** Where this key would have lived under the old FS-backed keyvalue, for the
@@ -207,9 +212,9 @@ const keyvalue: CoreService = {
         // Merge in not-yet-migrated legacy keys (defense during the
         // migration window; harmless once the sweep script has run).
         const root = legacyKvPath(ctx, "");
-        const entries = await getFsStore()
-          .list(tenant, root.replace(/\/$/, ""))
-          .catch(() => []);
+        const entries = await listAll(getFsStore(), tenant, root.replace(/\/$/, "")).catch(
+          () => [],
+        );
         const legacyKeys = entries
           .map((e) => e.path)
           .filter((p) => p.startsWith(root))
@@ -226,14 +231,19 @@ const keyvalue: CoreService = {
 };
 
 // ---------------------------------------------------------------------------
-// events — workspace-scoped event channels. Backend: WFS append-log
-// (`.services/events/<channel>.jsonl`). Emit is fire-and-forget for callers;
-// consumers poll with `list`. A push backend (SNS/Kafka/WebSocket fan-out)
-// replaces this file without changing the emit/list contract.
+// events — workspace-scoped event channels. Backend: the record store,
+// one record per event under `svc#events#<channel>` with seq keys so lexical
+// order is emission order (specs/record-store; an emit writes exactly one
+// row, never a log rewrite). Emit is fire-and-forget for callers; consumers
+// poll with `list`. A push backend (SNS/Kafka/WebSocket fan-out) replaces
+// this without changing the emit/list contract.
 // ---------------------------------------------------------------------------
 
-const EVENTS_PREFIX = ".services/events/";
 const EVENTS_MAX_RETAINED = 500;
+
+function eventsScope(channel: string): string {
+  return svcScope("events", channel);
+}
 
 interface EventRecord {
   id: string;
@@ -272,26 +282,26 @@ const events: CoreService = {
   ],
 
   async call(ctx, procedure, args) {
-    const store = getFsStore();
+    const records = getRecordStore();
     switch (procedure) {
       case "emit": {
         const channel = ident(args["channel"], "channel");
-        const path = EVENTS_PREFIX + channel + ".jsonl";
+        const scope = eventsScope(channel);
         const record: EventRecord = {
           id: crypto.randomUUID(),
           ts: new Date().toISOString(),
           userId: ctx.userId,
           payload: args["payload"] ?? null,
         };
-        const existing = await store.read(ctx.workspaceId, path);
-        const lines = existing ? existing.content.split("\n").filter(Boolean) : [];
-        lines.push(JSON.stringify(record));
-        await store.write(
-          ctx.workspaceId,
-          path,
-          lines.slice(-EVENTS_MAX_RETAINED).join("\n"),
-          "application/jsonl",
-        );
+        // One key listing to find the next ordinal, one write for the event.
+        const keys = await records.list(ctx.workspaceId, scope);
+        const last = keys.length > 0 ? parseSeqKey(keys[keys.length - 1]!) : undefined;
+        const seq = last ? last.seq + 1 : 0;
+        await records.set(ctx.workspaceId, scope, seqKey(seq, record.id), record, ctx.userId);
+        // Retention: prune the overflow past the cap (best-effort).
+        for (const stale of keys.slice(0, Math.max(0, keys.length + 1 - EVENTS_MAX_RETAINED))) {
+          void records.delete(ctx.workspaceId, scope, stale).catch(() => undefined);
+        }
         // Every emission kicks off subscribed workflows. The runner sets
         // `workflowDepth` on its context, so workflow→event→workflow chains
         // carry an incrementing depth and are capped (loop-safe). Dynamic
@@ -306,11 +316,14 @@ const events: CoreService = {
       case "list": {
         const channel = ident(args["channel"], "channel");
         const limit = Math.min(Number(args["limit"]) || 50, EVENTS_MAX_RETAINED);
-        const file = await store.read(ctx.workspaceId, EVENTS_PREFIX + channel + ".jsonl");
-        const records = (file ? file.content.split("\n").filter(Boolean) : [])
-          .slice(-limit)
-          .map((line) => JSON.parse(line) as EventRecord);
-        return { channel, events: records };
+        const scope = eventsScope(channel);
+        const keys = (await records.list(ctx.workspaceId, scope)).slice(-limit);
+        const events: EventRecord[] = [];
+        for (const key of keys) {
+          const hit = await records.get(ctx.workspaceId, scope, key).catch(() => undefined);
+          if (hit) events.push(hit.value as EventRecord);
+        }
+        return { channel, events };
       }
       default:
         throw new ServiceError(`Unknown events procedure: ${procedure}`, 404);
@@ -601,7 +614,7 @@ const vfs: CoreService = {
             ? [await resolveVfsPath(ctx, raw, false)]
             : ctx.appScope.paths;
           const listings = await Promise.all(
-            roots.map((root) => store.list(ctx.workspaceId, root)),
+            roots.map((root) => listAll(store, ctx.workspaceId, root)),
           );
           return { entries: listings.flat() };
         }
@@ -610,7 +623,7 @@ const vfs: CoreService = {
         if (prefix && isServicePath(prefix)) {
           throw new ServiceError("Service state is managed through its tool namespaces", 403);
         }
-        const entries = await store.list(ctx.workspaceId, prefix);
+        const entries = await listAll(store, ctx.workspaceId, prefix);
         // A workspace listing never surfaces app/personal data partitions —
         // keyvalue no longer writes there, but pre-migration files still can
         // (see records.ts / docs/app-data.md). Reads/writes to a known path

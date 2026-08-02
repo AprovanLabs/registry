@@ -168,12 +168,17 @@ export const interfacesService: CoreService = {
           args["options"] && typeof args["options"] === "object" && !Array.isArray(args["options"])
             ? (args["options"] as Record<string, unknown>)
             : undefined;
-        await writeBinding(ctx.workspaceId, namespace, {
-          interface: interfaceId,
-          provider,
-          ...(credentialId ? { credentialId } : {}),
-          options,
-        });
+        await writeBinding(
+          ctx.workspaceId,
+          namespace,
+          {
+            interface: interfaceId,
+            provider,
+            ...(credentialId ? { credentialId } : {}),
+            options,
+          },
+          ctx.userId,
+        );
         return {
           namespace,
           interface: interfaceId,

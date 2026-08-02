@@ -1,10 +1,10 @@
 /**
- * Workflow registrations + run records, stored on the workspace FS store so
- * they inherit workspace tenancy, versioning, and every existing authz path.
+ * Workflow registrations + run records, stored in the record store
+ * (accumulated state — specs/record-store; tech-plan D3).
  *
  * Layout:
- *   .services/workflows/<name>.json           — registration
- *   .services/workflows/<name>/runs/<id>.json — run record (spans, logs, result)
+ *   svc#workflows            / <name>  — registration
+ *   svc#workflows#runs#<name>/ <id>    — run record (spans, logs, result)
  *
  * A workflow is a workspace script (a VFS path) plus its triggers. The script
  * itself lives wherever the user keeps it (e.g. `workflows/daily-report.js`) —
@@ -19,9 +19,22 @@
 
 import { getFsStore, type FsEntry, type FsFile } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
+import {
+  deleteSvcRecord,
+  deleteSvcScope,
+  listSvcKeys,
+  listSvcRecords,
+  readSvcRecord,
+  svcScope,
+  writeSvcRecord,
+} from "../svc-records.js";
 
-const WF_PREFIX = ".services/workflows/";
+const WF_SCOPE = svcScope("workflows");
 const RUNS_MAX_RETAINED = 100;
+
+function runsScope(name: string): string {
+  return svcScope("workflows", "runs", name);
+}
 
 export interface WorkflowTriggers {
   /** Runnable on demand (always true today; recorded for clarity). */
@@ -39,6 +52,13 @@ export interface WorkflowRegistration {
   description?: string;
   /** Workspace VFS path of the script to run. */
   scriptPath: string;
+  /**
+   * Inline script source — used by platform-generated runners (e.g. the sync
+   * service's scheduled companion workflows) whose one-line scripts are state,
+   * not authored files. When set, runs execute this source and `scriptPath` is
+   * a synthetic label; version-history ops report no versions.
+   */
+  script?: string;
   triggers: WorkflowTriggers;
   /**
    * Optional JSON Schema for the run's `input` — the workflow's declared
@@ -138,23 +158,16 @@ export function workflowName(value: unknown): string {
   return value;
 }
 
-function regPath(name: string): string {
-  return `${WF_PREFIX}${name}.json`;
-}
-
-function runPath(name: string, runId: string): string {
-  return `${WF_PREFIX}${name}/runs/${runId}.json`;
-}
-
 export async function saveRegistration(
   workspaceId: string,
   registration: WorkflowRegistration,
 ): Promise<void> {
-  await getFsStore().write(
+  await writeSvcRecord(
     workspaceId,
-    regPath(registration.name),
-    JSON.stringify(registration, null, 2),
-    "application/json",
+    WF_SCOPE,
+    registration.name,
+    registration,
+    registration.createdBy,
   );
 }
 
@@ -162,32 +175,22 @@ export async function readRegistration(
   workspaceId: string,
   name: string,
 ): Promise<WorkflowRegistration | undefined> {
-  const file = await getFsStore().read(workspaceId, regPath(name));
-  return file ? (JSON.parse(file.content) as WorkflowRegistration) : undefined;
+  return readSvcRecord<WorkflowRegistration>(workspaceId, WF_SCOPE, name);
 }
 
 export async function listRegistrations(
   workspaceId: string,
 ): Promise<WorkflowRegistration[]> {
-  const entries = await getFsStore().list(workspaceId, WF_PREFIX.slice(0, -1));
-  const names = entries
-    .map((entry) => entry.path)
-    .filter((path) => path.startsWith(WF_PREFIX) && path.endsWith(".json") && !path.includes("/runs/"))
-    .map((path) => path.slice(WF_PREFIX.length, -".json".length))
-    .filter((name) => !name.includes("/"));
-  const registrations = await Promise.all(
-    names.map((name) => readRegistration(workspaceId, name)),
-  );
-  return registrations.filter((r): r is WorkflowRegistration => Boolean(r));
+  const entries = await listSvcRecords<WorkflowRegistration>(workspaceId, WF_SCOPE);
+  return entries.map((entry) => entry.value);
 }
 
 export async function removeRegistration(
   workspaceId: string,
   name: string,
 ): Promise<boolean> {
-  const store = getFsStore();
-  const removed = await store.remove(workspaceId, regPath(name));
-  await store.removePrefix(workspaceId, `${WF_PREFIX}${name}/`);
+  const removed = await deleteSvcRecord(workspaceId, WF_SCOPE, name);
+  await deleteSvcScope(workspaceId, runsScope(name));
   return removed;
 }
 
@@ -229,12 +232,7 @@ export async function restoreScriptVersion(
 }
 
 export async function saveRun(workspaceId: string, run: WorkflowRun): Promise<void> {
-  await getFsStore().write(
-    workspaceId,
-    runPath(run.workflow, run.id),
-    JSON.stringify(run),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, runsScope(run.workflow), run.id, run);
   if (run.traceId) await indexTraceNode(workspaceId, run);
 }
 
@@ -244,12 +242,8 @@ export async function saveRun(workspaceId: string, run: WorkflowRun): Promise<vo
 // run folder. Best-effort: a lost index entry costs a tree edge, never a run.
 // ---------------------------------------------------------------------------
 
-const TRACES_PREFIX = `${WF_PREFIX}_traces/`;
+const TRACES_SCOPE = svcScope("workflows", "traces");
 const TRACE_MAX_NODES = 200;
-
-function tracePath(traceId: string): string {
-  return `${TRACES_PREFIX}${traceId}.json`;
-}
 
 function traceNode(run: WorkflowRun): TraceNode {
   return {
@@ -270,15 +264,13 @@ function traceNode(run: WorkflowRun): TraceNode {
 }
 
 async function indexTraceNode(workspaceId: string, run: WorkflowRun): Promise<void> {
-  const path = tracePath(run.traceId!);
-  const store = getFsStore();
   try {
-    const existing = await store.read(workspaceId, path).catch(() => undefined);
-    const nodes = existing ? (JSON.parse(existing.content) as TraceNode[]) : [];
+    const nodes =
+      (await readSvcRecord<TraceNode[]>(workspaceId, TRACES_SCOPE, run.traceId!)) ?? [];
     const next = [...nodes.filter((node) => node.runId !== run.id), traceNode(run)]
       .sort((a, b) => a.startedAt.localeCompare(b.startedAt))
       .slice(0, TRACE_MAX_NODES);
-    await store.write(workspaceId, path, JSON.stringify(next), "application/json");
+    await writeSvcRecord(workspaceId, TRACES_SCOPE, run.traceId!, next);
   } catch {
     // Tracing must never fail a run.
   }
@@ -289,15 +281,10 @@ export async function readTrace(
   workspaceId: string,
   traceId: string,
 ): Promise<TraceNode[]> {
-  const file = await getFsStore()
-    .read(workspaceId, tracePath(traceId))
-    .catch(() => undefined);
-  if (!file) return [];
-  try {
-    return JSON.parse(file.content) as TraceNode[];
-  } catch {
-    return [];
-  }
+  const nodes = await readSvcRecord<TraceNode[]>(workspaceId, TRACES_SCOPE, traceId).catch(
+    () => undefined,
+  );
+  return Array.isArray(nodes) ? nodes : [];
 }
 
 /** Trace ids are opaque correlation ids; keep them path-safe. */
@@ -310,8 +297,7 @@ export async function readRun(
   name: string,
   runId: string,
 ): Promise<WorkflowRun | undefined> {
-  const file = await getFsStore().read(workspaceId, runPath(name, runId));
-  return file ? (JSON.parse(file.content) as WorkflowRun) : undefined;
+  return readSvcRecord<WorkflowRun>(workspaceId, runsScope(name), runId);
 }
 
 export async function listRuns(
@@ -319,19 +305,12 @@ export async function listRuns(
   name: string,
   limit = 20,
 ): Promise<WorkflowRun[]> {
-  const store = getFsStore();
-  const entries = await store.list(workspaceId, `${WF_PREFIX}${name}/runs`);
-  const ids = entries
-    .map((entry) => entry.path.split("/").pop() ?? "")
-    .filter((file) => file.endsWith(".json"))
-    .map((file) => file.slice(0, -".json".length))
-    // Run ids are time-prefixed, so a lexical sort is chronological.
-    .sort()
-    .reverse();
+  // Run ids are time-prefixed, so a lexical sort is chronological.
+  const ids = (await listSvcKeys(workspaceId, runsScope(name))).sort().reverse();
 
   // Retention: prune old runs past the cap (best-effort).
   for (const stale of ids.slice(RUNS_MAX_RETAINED)) {
-    void store.remove(workspaceId, runPath(name, stale));
+    void deleteSvcRecord(workspaceId, runsScope(name), stale);
   }
 
   const runs = await Promise.all(
@@ -348,23 +327,22 @@ export function newRunId(): string {
 // ---------------------------------------------------------------------------
 // Cron index — which workspaces have cron workflows. The scheduler tick reads
 // this instead of scanning every workspace. Lives in a synthetic "_system"
-// workspace of the same FS store.
+// tenant of the same record store.
 // ---------------------------------------------------------------------------
 
 const CRON_INDEX_WORKSPACE = "_system";
-const CRON_INDEX_PATH = ".services/workflows/cron-workspaces.json";
+const CRON_SCOPE = svcScope("workflows", "cron");
+const CRON_INDEX_KEY = "cron-workspaces";
 
 export async function workspacesWithCronWorkflows(): Promise<string[]> {
-  const file = await getFsStore().read(CRON_INDEX_WORKSPACE, CRON_INDEX_PATH);
-  if (!file) return [];
-  try {
-    const parsed = JSON.parse(file.content) as unknown;
-    return Array.isArray(parsed)
-      ? parsed.filter((w): w is string => typeof w === "string")
-      : [];
-  } catch {
-    return [];
-  }
+  const parsed = await readSvcRecord<unknown>(
+    CRON_INDEX_WORKSPACE,
+    CRON_SCOPE,
+    CRON_INDEX_KEY,
+  ).catch(() => undefined);
+  return Array.isArray(parsed)
+    ? parsed.filter((w): w is string => typeof w === "string")
+    : [];
 }
 
 /** Keep the cron index in sync after a registration change. */
@@ -376,10 +354,5 @@ export async function updateCronIndex(workspaceId: string): Promise<void> {
   const next = hasCron
     ? [...workspaces, workspaceId]
     : workspaces.filter((w) => w !== workspaceId);
-  await getFsStore().write(
-    CRON_INDEX_WORKSPACE,
-    CRON_INDEX_PATH,
-    JSON.stringify(next),
-    "application/json",
-  );
+  await writeSvcRecord(CRON_INDEX_WORKSPACE, CRON_SCOPE, CRON_INDEX_KEY, next);
 }

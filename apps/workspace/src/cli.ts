@@ -148,6 +148,7 @@ async function commandCredentials(
       provider,
       label: stringFlag(flags, "label"),
       payload: { type: "bearer_token", token },
+      createdBy: "local",
     });
     process.stderr.write(
       `Added ${record.provider} credential ${record.id} to workspace "${workspaceId}" ` +

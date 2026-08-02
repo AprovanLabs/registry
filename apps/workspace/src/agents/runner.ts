@@ -64,6 +64,13 @@ import {
   type AgentUsage,
 } from "@utdk/agent";
 import { getFsStore } from "../fs-store.js";
+import {
+  deleteSvcRecord,
+  listSvcKeys,
+  readSvcRecord,
+  svcScope,
+  writeSvcRecord,
+} from "../svc-records.js";
 import { toolGranted } from "../grants.js";
 import { ServiceError, type ServiceContext } from "../service-kernel.js";
 import { dispatchInterface, invokeTool } from "../workflows/invoke.js";
@@ -88,13 +95,10 @@ export const NATIVE_AGENT_CAPABILITIES: AgentCapabilities = {
 };
 
 // ---------------------------------------------------------------------------
-// Run store — `.services/agents/_runs/<id>.json`, the workflow-run pattern.
-// The `_runs` segment cannot collide with a profile: profile names must start
-// with [a-z0-9] (agents/service.ts NAME_RE), and the profile listing skips
-// nested paths.
+// Run store — `svc#agents#runs` records, the workflow-run pattern.
 // ---------------------------------------------------------------------------
 
-const RUNS_DIR = ".services/agents/_runs";
+const RUNS_SCOPE = svcScope("agents", "runs");
 const RUNS_MAX_RETAINED = 100;
 
 /** A persisted run: the contract's shape plus the profile it ran as. */
@@ -104,17 +108,13 @@ export interface StoredAgentRun extends AgentRun {
   sandboxId?: string;
 }
 
-function runPath(id: string): string {
-  return `${RUNS_DIR}/${id}.json`;
-}
-
 /** Time-prefixed and path-safe, like workflow run ids. */
 function newAgentRunId(): string {
   return `agr-${Date.now().toString(36)}-${crypto.randomUUID().slice(0, 8)}`;
 }
 
 async function saveRunRecord(workspaceId: string, run: StoredAgentRun): Promise<void> {
-  await getFsStore().write(workspaceId, runPath(run.id), JSON.stringify(run), "application/json");
+  await writeSvcRecord(workspaceId, RUNS_SCOPE, run.id, run);
 }
 
 export async function readNativeAgentRun(
@@ -122,13 +122,7 @@ export async function readNativeAgentRun(
   id: string,
 ): Promise<StoredAgentRun | undefined> {
   if (!/^[\w-]{1,80}$/u.test(id)) return undefined;
-  const file = await getFsStore().read(workspaceId, runPath(id)).catch(() => undefined);
-  if (!file) return undefined;
-  try {
-    return JSON.parse(file.content) as StoredAgentRun;
-  } catch {
-    return undefined;
-  }
+  return readSvcRecord<StoredAgentRun>(workspaceId, RUNS_SCOPE, id).catch(() => undefined);
 }
 
 /** Native runs, newest first; prunes past the retention cap (best-effort). */
@@ -137,17 +131,10 @@ export async function listNativeAgentRuns(
   agent?: string,
   limit = 50,
 ): Promise<StoredAgentRun[]> {
-  const store = getFsStore();
-  const entries = await store.list(workspaceId, RUNS_DIR).catch(() => []);
-  const ids = entries
-    .map((entry) => entry.path.split("/").pop() ?? "")
-    .filter((file) => file.endsWith(".json"))
-    .map((file) => file.slice(0, -".json".length))
-    // Run ids are time-prefixed, so a lexical sort is chronological.
-    .sort()
-    .reverse();
+  // Run ids are time-prefixed, so a lexical sort is chronological.
+  const ids = (await listSvcKeys(workspaceId, RUNS_SCOPE).catch(() => [])).sort().reverse();
   for (const stale of ids.slice(RUNS_MAX_RETAINED)) {
-    void store.remove(workspaceId, runPath(stale));
+    void deleteSvcRecord(workspaceId, RUNS_SCOPE, stale);
   }
   const runs: StoredAgentRun[] = [];
   for (const id of ids) {

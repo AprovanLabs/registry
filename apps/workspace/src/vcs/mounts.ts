@@ -2,7 +2,7 @@
  * VFS mounts — a path prefix backed by an external store
  * (docs/vcs-and-sessions.md). The same read semantics, other backing:
  *
- *   .services/vcs/mounts.json
+ *   record svc#vcs#mounts / mounts
  *   [{ prefix: "vendor/charts", type: "git",
  *      config: { repo: "org/charts", ref: "main", path: "src" }, mode: "read" }]
  *
@@ -28,9 +28,11 @@
 import { getCredentialStore } from "../credentials.js";
 import { getFsStore, normalizeFsPath, type FsEntry, type FsFile, type S3 } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
+import { readSvcRecord, svcScope, writeSvcRecord } from "../svc-records.js";
 import type { S3Client } from "@aws-sdk/client-s3";
 
-const MOUNTS_PATH = ".services/vcs/mounts.json";
+const MOUNTS_SCOPE = svcScope("vcs", "mounts");
+const MOUNTS_KEY = "mounts";
 
 export type MountType = "git" | "s3" | "crdt";
 
@@ -44,13 +46,13 @@ export interface VfsMount {
 }
 
 /**
- * `readMounts` used to re-read `.services/vcs/mounts.json` on every FS op
- * (list, read, write, delete all call `assertNotMounted`/`mountEntries`/
+ * `readMounts` used to re-read the mounts document on every FS op (list,
+ * read, write, delete all call `assertNotMounted`/`mountEntries`/
  * `mountRead`) — a store read per request for state that changes rarely.
  * Cached per workspace with a 30s TTL (specs/record-store "Cached mounts
- * read"; the record-backed storage move itself lands in stream 5), and
- * invalidated synchronously by `addMount`/`removeMount` so a mount change is
- * visible to the very next read in this process.
+ * read"; storage is the `svc#vcs#mounts` record), and invalidated
+ * synchronously by `addMount`/`removeMount` so a mount change is visible to
+ * the very next read in this process.
  */
 const MOUNTS_CACHE_TTL_MS = 30_000;
 
@@ -71,11 +73,9 @@ export function resetMountsCache(): void {
 }
 
 async function loadMounts(workspaceId: string): Promise<VfsMount[]> {
-  const file = await getFsStore()
-    .read(workspaceId, MOUNTS_PATH)
-    .catch(() => undefined);
-  if (!file) return [];
-  const parsed = JSON.parse(file.content) as unknown;
+  const parsed = await readSvcRecord<unknown>(workspaceId, MOUNTS_SCOPE, MOUNTS_KEY).catch(
+    () => undefined,
+  );
   return Array.isArray(parsed) ? (parsed as VfsMount[]) : [];
 }
 
@@ -88,12 +88,7 @@ export async function readMounts(workspaceId: string): Promise<VfsMount[]> {
 }
 
 async function saveMounts(workspaceId: string, mounts: VfsMount[]): Promise<void> {
-  await getFsStore().write(
-    workspaceId,
-    MOUNTS_PATH,
-    JSON.stringify(mounts, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, MOUNTS_SCOPE, MOUNTS_KEY, mounts);
   invalidateMountsCache(workspaceId);
 }
 
@@ -135,10 +130,10 @@ export async function addMount(
   }
   // The mount shadows nothing: native files under the prefix would become
   // unreachable, so refuse while any exist.
-  const native = await getFsStore().list(workspaceId, prefix);
-  if (native.length > 0) {
+  const native = await getFsStore().list(workspaceId, prefix, { limit: 1 });
+  if (native.entries.length > 0) {
     throw new ServiceError(
-      `${prefix} has ${native.length} workspace file(s) — move or delete them before mounting over it`,
+      `${prefix} has workspace file(s) — move or delete them before mounting over it`,
       409,
     );
   }

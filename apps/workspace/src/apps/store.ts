@@ -18,9 +18,10 @@
  * mediated exclusively through the app surface (allow-listed tools, per-user
  * data partitions, per-user rate limits).
  *
- * Manifests are stored at `.services/apps/<name>.json` in the owner
- * workspace FS. Workspace-level sharing of paths *outside* an app's declared
- * prefixes is declared in `.services/workspace.json` (see WorkspaceConfig).
+ * Manifests are stored in the record store under `svc#apps` in the owner
+ * workspace tenant. Workspace-level sharing of paths *outside* an app's
+ * declared prefixes is declared in the `svc#workspace` config record (see
+ * WorkspaceConfig).
  *
  * The UI `entry` is an ordinary FS file, so its content is version history for
  * free (the FS store content-versions every write). The helpers at the bottom
@@ -28,11 +29,19 @@
  * ops — the versioned artifact is the manifest's `entry`.
  */
 
-import { getFsStore, normalizeFsPath, type FsEntry, type FsFile } from "../fs-store.js";
+import { getFsStore, listAll, normalizeFsPath, type FsEntry, type FsFile } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
+import {
+  deleteSvcRecord,
+  listSvcRecords,
+  readSvcRecord,
+  svcScope,
+  writeSvcRecord,
+} from "../svc-records.js";
 
-const APPS_PREFIX = ".services/apps/";
-const WORKSPACE_CONFIG_PATH = ".services/workspace.json";
+const APPS_SCOPE = svcScope("apps");
+const WORKSPACE_SCOPE = svcScope("workspace");
+const WORKSPACE_CONFIG_KEY = "config";
 
 /**
  * Entrypoint file names tried, in order, when a publish points at a folder
@@ -128,7 +137,7 @@ export interface AppManifest {
 }
 
 /**
- * Workspace-level configuration (`.services/workspace.json`). `shares`
+ * Workspace-level configuration (the `svc#workspace` record). `shares`
  * exposes workspace paths outside an app's declared prefixes to app
  * sessions — apps always have automatic access to their own prefixes, so
  * this is only for deliberately shared data.
@@ -307,7 +316,7 @@ export async function resolveAppEntry(workspaceId: string, target: unknown): Pro
   if (await store.read(workspaceId, path)) return path;
 
   const prefix = `${path}/`;
-  const names = (await store.list(workspaceId, path))
+  const names = (await listAll(store, workspaceId, path))
     .map((entry) => entry.path)
     .filter((entry) => entry.startsWith(prefix))
     .map((entry) => entry.slice(prefix.length))
@@ -326,17 +335,8 @@ export async function resolveAppEntry(workspaceId: string, target: unknown): Pro
   );
 }
 
-function manifestPath(name: string): string {
-  return `${APPS_PREFIX}${name}.json`;
-}
-
 export async function saveApp(workspaceId: string, manifest: AppManifest): Promise<void> {
-  await getFsStore().write(
-    workspaceId,
-    manifestPath(manifest.name),
-    JSON.stringify(manifest, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, APPS_SCOPE, manifest.name, manifest, manifest.createdBy);
 }
 
 /**
@@ -350,9 +350,12 @@ export async function readApp(
   workspaceId: string,
   name: string,
 ): Promise<AppManifest | undefined> {
-  const file = await getFsStore().read(workspaceId, manifestPath(name));
-  if (!file) return undefined;
-  const stored = JSON.parse(file.content) as AppManifest & { dir?: string };
+  const stored = await readSvcRecord<AppManifest & { dir?: string }>(
+    workspaceId,
+    APPS_SCOPE,
+    name,
+  );
+  if (!stored) return undefined;
   if (stored.entry && stored.paths?.length) return stored;
 
   const entry = await resolveAppEntry(workspaceId, stored.entry ?? stored.dir);
@@ -363,13 +366,9 @@ export async function readApp(
 }
 
 export async function listApps(workspaceId: string): Promise<AppManifest[]> {
-  const entries = await getFsStore().list(workspaceId, APPS_PREFIX.slice(0, -1));
-  const names = entries
-    .map((entry) => entry.path)
-    .filter((path) => path.startsWith(APPS_PREFIX) && path.endsWith(".json"))
-    .map((path) => path.slice(APPS_PREFIX.length, -".json".length))
-    .filter((name) => !name.includes("/"));
-  const manifests = await Promise.all(names.map((name) => readApp(workspaceId, name)));
+  const entries = await listSvcRecords<AppManifest>(workspaceId, APPS_SCOPE);
+  // Re-resolve through readApp so legacy folder-shaped manifests rebind.
+  const manifests = await Promise.all(entries.map((entry) => readApp(workspaceId, entry.key)));
   return manifests.filter((m): m is AppManifest => Boolean(m));
 }
 
@@ -384,7 +383,7 @@ export async function removeApp(
   options: RemoveAppOptions = {},
 ): Promise<boolean> {
   const manifest = await readApp(workspaceId, name);
-  const removed = await getFsStore().remove(workspaceId, manifestPath(name));
+  const removed = await deleteSvcRecord(workspaceId, APPS_SCOPE, name);
   // Only the primary prefix is purged: secondary prefixes are shared library
   // paths this app doesn't own.
   if (options.purgeData && manifest) {
@@ -431,25 +430,19 @@ export async function restoreEntryVersion(
 }
 
 export async function readWorkspaceConfig(workspaceId: string): Promise<WorkspaceConfig> {
-  const file = await getFsStore().read(workspaceId, WORKSPACE_CONFIG_PATH);
-  if (!file) return {};
-  try {
-    return JSON.parse(file.content) as WorkspaceConfig;
-  } catch {
-    return {};
-  }
+  const config = await readSvcRecord<WorkspaceConfig>(
+    workspaceId,
+    WORKSPACE_SCOPE,
+    WORKSPACE_CONFIG_KEY,
+  ).catch(() => undefined);
+  return config && typeof config === "object" ? config : {};
 }
 
 export async function writeWorkspaceConfig(
   workspaceId: string,
   config: WorkspaceConfig,
 ): Promise<void> {
-  await getFsStore().write(
-    workspaceId,
-    WORKSPACE_CONFIG_PATH,
-    JSON.stringify(config, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, WORKSPACE_SCOPE, WORKSPACE_CONFIG_KEY, config);
 }
 
 /**

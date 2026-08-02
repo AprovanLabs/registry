@@ -32,19 +32,19 @@
  * ## Lifetime
  *
  * The record store holds only work that is *not yet done* — pending, claimed,
- * running. On completion the entry is deleted and the run is written to the
- * workspace FS (`.services/sandboxes/runs/<id>.json`), where history belongs.
+ * running (scope `svc#sandboxes#queue`, TTL'd). On completion the entry is
+ * deleted and the run is written to run history (`svc#sandboxes#runs`).
  * A healthy queue is empty, and a claim scan stays short.
  */
 
 import { randomUUID } from "node:crypto";
-import { getFsStore } from "../fs-store.js";
 import { getRecordStore } from "../records.js";
 import { ServiceError } from "../service-kernel.js";
+import { listSvcRecords, svcScope, writeSvcRecord } from "../svc-records.js";
 import type { SandboxHostRecord, SandboxMount } from "./store.js";
 
-const SCOPE = "sandboxqueue";
-const RUNS_PREFIX = ".services/sandboxes/runs";
+const SCOPE = svcScope("sandboxes", "queue");
+const RUNS_SCOPE = svcScope("sandboxes", "runs");
 
 /** A queued run that nothing ever claims is not a permanent obligation. */
 const QUEUE_TTL_SECONDS = 24 * 60 * 60;
@@ -172,12 +172,7 @@ export async function finishRun(
     ...(outcome.agentRunId ? { agentRunId: outcome.agentRunId } : {}),
     finishedAt: new Date().toISOString(),
   };
-  await getFsStore().write(
-    workspaceId,
-    `${RUNS_PREFIX}/${finished.id}.json`,
-    JSON.stringify(finished, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, RUNS_SCOPE, finished.id, finished, finished.createdBy);
   await getRecordStore()
     .delete(workspaceId, SCOPE, queueKey(run))
     .catch(() => undefined);
@@ -194,14 +189,8 @@ export async function listRuns(
     const entry = await store.get(workspaceId, SCOPE, key);
     if (entry) runs.push(entry.value as SandboxRun);
   }
-  const history = await getFsStore()
-    .list(workspaceId, RUNS_PREFIX)
-    .catch(() => []);
-  for (const entry of history) {
-    if (!entry.path.endsWith(".json")) continue;
-    const file = await getFsStore().read(workspaceId, entry.path).catch(() => undefined);
-    if (file) runs.push(JSON.parse(file.content) as SandboxRun);
-  }
+  const history = await listSvcRecords<SandboxRun>(workspaceId, RUNS_SCOPE).catch(() => []);
+  for (const entry of history) runs.push(entry.value);
   return runs
     .filter((run) => !options.status || run.status === options.status)
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt))

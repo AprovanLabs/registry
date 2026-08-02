@@ -79,5 +79,9 @@
   },
   "engines": {
     "node": ">=20.0.0"
+  },
+  "optionalDependencies": {
+    "pg": "^8.22.0",
+    "@aws-sdk/dsql-signer": "^3.1077.0"
   }
 }

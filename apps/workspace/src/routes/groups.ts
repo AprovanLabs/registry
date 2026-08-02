@@ -25,8 +25,7 @@
 
 import { Hono } from "hono";
 import { z } from "zod";
-import { dynamo } from "../db/client.js";
-import {
+import { listGroupUserIds,
   addPrefixGrant,
   addToolGrant,
   addUserToGroup,
@@ -149,20 +148,7 @@ groupsRouter.get("/:id/users", async (c) => {
   const group = await getGroup(workspaceId, groupId);
   if (!group) return c.json({ error: "Group not found" }, 404);
 
-  const userGroupsTable = process.env["USERGROUPS_TABLE"] ?? "UserGroups";
-  const { client, ScanCommand } = await dynamo();
-  const result = await client.send(
-    new ScanCommand({
-      TableName: userGroupsTable,
-      FilterExpression: "workspaceId = :ws AND groupId = :gid",
-      ExpressionAttributeValues: { ":ws": workspaceId, ":gid": groupId },
-      ProjectionExpression: "userId",
-    }),
-  );
-  const userIds = ((result.Items ?? []) as Array<{ userId?: string }>)
-    .map((i) => i.userId)
-    .filter((s): s is string => typeof s === "string");
-
+  const userIds = await listGroupUserIds(workspaceId, groupId);
   return c.json({ groupId, userIds });
 });
 
