@@ -1,10 +1,16 @@
 {
-  "name": "@utdk/llm",
-  "version": "0.1.0",
+  "name": "@utdk/vfs",
+  "version": "0.2.0",
   "type": "module",
-  "description": "Shared LLM contract for OpenAI-compatible chat providers: one message shape, chat-completion and model-listing engines, and tool-discovery helpers",
+  "description": "Shared file-plane contract for UTDK storage providers: read/write/delete/list/stat over relative paths with etag conditional writes — a minimal driver contract, no sessions/overlays/mounts",
+  "keywords": [
+    "vfs",
+    "files",
+    "storage",
+    "utdk"
+  ],
   "utdk": {
-    "contract": "llm",
+    "contract": "vfs",
     "handwritten": true
   },
   "exports": {
@@ -20,6 +26,10 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "clean": "rm -rf dist",
     "test": "vitest run"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
   },
   "devDependencies": {
     "vitest": "2.1.5"

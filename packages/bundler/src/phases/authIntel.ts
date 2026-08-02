@@ -15,6 +15,7 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import { CREDENTIAL_TYPES, type CredentialType } from "@utdk/common/auth";
 import { createStructuredCompletion } from "../llm.js";
 import { applyProviderOpenApiOptions, loadOpenApiDocument } from "../openapi.js";
 import {
@@ -26,12 +27,12 @@ import {
 } from "../provider.js";
 import type { OpenAPIV3 } from "openapi-types";
 
-/** Mirrors the gateway credential types (apps/workspace credentials). */
-export type AuthIntelMethod =
-  | "bearer_token"
-  | "api_key"
-  | "oauth2_client"
-  | "oauth2_authcode";
+/**
+ * The gateway credential types, imported from `@utdk/common/auth` — the
+ * published single source of truth, so this phase cannot drift from the
+ * workspace credential store.
+ */
+export type AuthIntelMethod = CredentialType;
 
 export type AuthIntelSetupStep = {
   title: string;
@@ -93,7 +94,9 @@ const AUTH_INTEL_SCHEMA = {
         "Gateway credential types the provider supports. bearer_token = paste a token sent as Authorization: Bearer; api_key = static key sent in a header/query; oauth2_client = OAuth2 client-credentials flow; oauth2_authcode = OAuth2 authorization-code (user consent) flow.",
       items: {
         type: "string",
-        enum: ["bearer_token", "api_key", "oauth2_client", "oauth2_authcode"],
+        // Derived from the shared runtime tuple: adding a credential type to
+        // @utdk/common includes it here with no bundler change.
+        enum: [...CREDENTIAL_TYPES],
       },
     },
     api_key_header: {

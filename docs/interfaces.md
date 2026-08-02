@@ -24,8 +24,14 @@ never keep their own list of "which namespaces are ours".
 
 **A native interface** is one tool contract with several implementations:
 `llm`, `sql`, `sandbox`, `vcs`, `agent`. Callers write against the contract
-(`sql.query({ sql })`); a *binding* picks which vendor executes it. Declared
-in `listInterfaces()` (src/interfaces.ts).
+(`sql.query({ sql })`); a *binding* picks which vendor executes it. The
+contract packages live under `packages/contracts/<name>/` (marked
+`utdk.contract` in their manifests), and each contract with committed
+implementations carries a `compat.json` at its package root — interface
+metadata plus the provider compat list, validated and loaded through
+`@utdk/common/compat`. `listInterfaces()` (src/interfaces.ts) is a consumer
+of that data, not its home; the `llm` entry alone stays generated from the
+chat-provider registry via the `compatSource` indirection.
 
 They compose, and `sandboxes` is the reference example: the raw driver
 (create/exec/read/write) is the `sandbox` **interface** — swappable,
@@ -76,7 +82,8 @@ export default async function run() {
 ```
 
 `:` is safe as the separator: no registry provider id contains one (they use
-dots and slashes — `synthetic.new`, `fly/sprites`), and a namespace is a
+dashes and slashes — `synthetic-new`, `fly/sprites`; dots are banned from
+provider identity by the bundler's naming authority), and a namespace is a
 single path segment on the wire, so `POST /tools/sql:analytics/query` needed
 no routing change.
 
@@ -189,12 +196,31 @@ Two things about `vcs` are worth copying into the next interface:
   `unavailable` — a contract commitment the bindings UI and this document are
   written against, which dispatch refuses with a 501 naming what is missing.
 
-One packaging consequence: a contract's name is also a legal suite segment
-(`vcs` the package, `github/vcs` the adapter), so the four aligned exclusion
-lists (`build.mjs` / `copy-assets.mjs` / `tsconfig.json` in packages/utdk,
-`providersOnDisk` in the bundler) skip contract names at the **top level
-only** — a name-anywhere skip would silently drop the adapter from the build
-while its exports entry kept advertising it.
+One packaging note: a contract's name is also a legal suite segment (`vcs`
+the package under `packages/contracts/vcs`, `github/vcs` the adapter inside
+the generated catalogue). The contract packages living outside
+`packages/utdk/` is what makes that unambiguous — the catalogue build needs
+no exclusion lists, and `github/vcs` transpiles like any other provider
+directory.
+
+## Webhooks are generation metadata, not an interface
+
+No contract, compat document, or interface page is ever named `webhooks`.
+What the registry knows about a provider's webhooks is **UTDK generation
+metadata**: the bundler's webhook-intel phase writes a per-provider
+`webhooks.json` (supported flag, summary, event list, subscription-management
+operations, signature scheme, setup steps), exactly as the auth-intel phase
+writes `auth.json`. Both are setup/configuration intel about a vendor,
+produced at generation time and cached by a `sourceHash` of the relevant spec
+content; the catalog site renders them side by side on provider pages. The
+document shape is published, types-only, from `@utdk/common/webhooks`, so
+consumers type it without importing the bundler's LLM machinery.
+
+The workspace-side `webhooks` entry in the native-service list above is the
+other half and unrelated to the catalog: webhook *delivery* is a product-plane
+service (one inbox per workspace, no vendor could implement it), which is
+precisely why webhooks never appear in the interface catalog — there is
+nothing to bind.
 
 ## Native services backed by third parties
 
@@ -307,17 +333,22 @@ connected for chat would silently decide where a workspace's agents execute.
 
 ## Adding an interface
 
-1. Add the `InterfaceDef` to `listInterfaces()`: id, label, description,
-   `timeoutMs`, `defaultsFor` (which operations receive the binding's option
-   defaults as missing args), and the `compat` list.
-2. Each compat entry names the UTDK module that executes it. First-party
+1. Write the contract as a handwritten `@utdk/<contract>` package under
+   `packages/contracts/<name>/` (see `@utdk/sql`, `@utdk/sandbox`): the
+   types, an error class, validators, and a `<contract>ToolEntries` factory
+   each provider module uses for its `tools` export. Mark the manifest with
+   `"utdk": { "contract": "<name>", "handwritten": true }`.
+2. When the first implementation is committed work, add a `compat.json` at
+   the contract's package root: `schemaVersion`, the `interface` block (id,
+   label, description, `timeoutMs`, `defaultsFor` — which operations receive
+   the binding's option defaults as missing args), and the `compat` entries.
+   `listInterfaces()` picks it up through `@utdk/common/compat` with no
+   workspace code change.
+3. Each compat entry names the UTDK module that executes it. First-party
    implementations of a public contract add `moduleSpecifier` — the module
    name still identifies the client factory, the specifier only changes where
-   it loads from.
-3. If the contract is shared across vendors, write it as a handwritten
-   `@utdk/<contract>` package (see `@utdk/sql`, `@utdk/sandbox`) exporting
-   the types and a `<contract>ToolEntries` factory each provider module uses
-   for its `tools` export.
+   it loads from. An entry whose module is not built yet declares
+   `unavailable` with the reason.
 
 Nothing else needs touching: discovery, dispatch, instances, credential
 pinning, the services menu, and the Interfaces panel are all driven off the

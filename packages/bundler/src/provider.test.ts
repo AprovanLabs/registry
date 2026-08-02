@@ -11,21 +11,26 @@ import {
   resolveProviderDocsOutputDir,
   resolveProviderDocsSourcesDir,
   resolveProviderOutputDir,
+  splitProviderName,
   stripProviderToolName,
 } from "./provider.js";
 
 describe("provider naming helpers", () => {
-  it("normalizes dotted provider names to nested paths", () => {
-    expect(normalizeProviderName("google.books")).toBe("google/books");
-    expect(resolveProviderOutputDir("google.books", "/tmp/out")).toBe("/tmp/out/google/books");
-    expect(getProviderPackageName("google.books")).toBe("@utdk/google");
-    expect(getProviderClientImportPath("google.books")).toBe("../../client.js");
+  it("splits provider names on slashes only, never dots", () => {
+    expect(splitProviderName("google/drive")).toEqual(["google", "drive"]);
+    expect(splitProviderName("synthetic-new")).toEqual(["synthetic-new"]);
+    // A hypothetical dotted name is NOT split at the dot — dots are not a
+    // provider-identity separator (the naming authority forbids them).
+    expect(splitProviderName("synthetic.new")).toEqual(["synthetic.new"]);
+    expect(normalizeProviderName("google/books")).toBe("google/books");
+    expect(resolveProviderOutputDir("google/books", "/tmp/out")).toBe("/tmp/out/google/books");
+    expect(getProviderPackageName("google/books")).toBe("@utdk/google");
+    expect(getProviderClientImportPath("google/books")).toBe("../../client.js");
   });
 
-  it("resolves providers by dotted or slash-separated name", () => {
+  it("resolves providers by slash-separated name", () => {
     const providers = [{ name: "google/books", url: "https://example.com/google-books.json" }];
 
-    expect(resolveProvider(providers, "google.books")).toEqual(providers[0]);
     expect(resolveProvider(providers, "google/books")).toEqual(providers[0]);
   });
 
@@ -61,10 +66,10 @@ describe("provider naming helpers", () => {
   });
 
   it("resolves provider docs cache and output paths", () => {
-    expect(resolveProviderDocsCacheDir("google.books", "/tmp/cache")).toBe("/tmp/cache/google/books");
-    expect(resolveProviderDocsManifestPath("google.books", "/tmp/cache")).toBe("/tmp/cache/google/books/manifest.json");
-    expect(resolveProviderDocsSourcesDir("google.books", "/tmp/cache")).toBe("/tmp/cache/google/books/sources");
-    expect(resolveProviderDocsIndexPath("google.books", "/tmp/cache")).toBe("/tmp/cache/google/books/index.md");
-    expect(resolveProviderDocsOutputDir("google.books", "/tmp/out")).toBe("/tmp/out/google/books/docs");
+    expect(resolveProviderDocsCacheDir("google/books", "/tmp/cache")).toBe("/tmp/cache/google/books");
+    expect(resolveProviderDocsManifestPath("google/books", "/tmp/cache")).toBe("/tmp/cache/google/books/manifest.json");
+    expect(resolveProviderDocsSourcesDir("google/books", "/tmp/cache")).toBe("/tmp/cache/google/books/sources");
+    expect(resolveProviderDocsIndexPath("google/books", "/tmp/cache")).toBe("/tmp/cache/google/books/index.md");
+    expect(resolveProviderDocsOutputDir("google/books", "/tmp/out")).toBe("/tmp/out/google/books/docs");
   });
 });

@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getProviderImplementsIndex } from "@/lib/contracts";
 import {
   getDocPage,
   getRegistryCatalog,
@@ -84,6 +85,10 @@ const originDomain = entry.provenance?.originDomain ?? null;
 // Chain-of-ownership rule: link the vendor's original spec, never the
 // aggregator cache we fetched through.
 const specUrl = entry.provenance?.originSpecUrl ?? entry.openApiUrl;
+// Contracts this provider implements (compat entries naming it). Absent for
+// most providers — the section renders only when entries exist.
+const implementsIndex = await getProviderImplementsIndex();
+const implementsEntries = implementsIndex.get(entry.providerPath) ?? [];
 // Webhook intel renders only for providers that can actually deliver hooks.
 const webhookIntel = entry.webhookIntel?.supported ? entry.webhookIntel : null;
 const MAX_WEBHOOK_EVENTS = 12;
@@ -280,6 +285,49 @@ const hiddenWebhookEventCount = webhookIntel
                 symbols={sdkSymbols}
               />
             )}
+
+            {implementsEntries.length > 0 ? (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Implements</CardTitle>
+                  <CardDescription>
+                    Shared UTDK contracts this provider speaks — bind the interface
+                    namespace and the adapter module executes it.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex flex-col gap-3">
+                  {implementsEntries.map(({ contractId, contractPackageName, entry: compat }) => (
+                    <div class="flex flex-col gap-1.5 rounded-xl border bg-muted/40 p-4">
+                      <div class="flex flex-wrap items-center gap-2">
+                        <a
+                          class="font-medium text-primary underline-offset-4 hover:underline"
+                          href={withBasePath(`/interfaces/${contractId}`)}
+                        >
+                          {contractPackageName}
+                        </a>
+                        <span class="font-mono text-xs text-muted-foreground">
+                          via {compat.moduleSpecifier ?? compat.module}
+                        </span>
+                        {compat.available ? (
+                          <Badge>available</Badge>
+                        ) : (
+                          <Badge variant="outline">not yet built</Badge>
+                        )}
+                        {compat.credentialless ? (
+                          <Badge variant="secondary">credentialless</Badge>
+                        ) : null}
+                        {(compat.capabilities ?? []).map((capability) => (
+                          <Badge variant="secondary">{capability}</Badge>
+                        ))}
+                      </div>
+                      {compat.unavailable ? (
+                        <p class="text-xs text-muted-foreground">{compat.unavailable}</p>
+                      ) : null}
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            ) : null}
 
             {entry.authIntel ? (
               <Card>

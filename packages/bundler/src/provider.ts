@@ -2,6 +2,8 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { assertValidProviderName } from "./naming.js";
+
 export type RegistryProvider = {
   name: string;
   options?: RegistryProviderOptions;
@@ -75,9 +77,14 @@ export function resolveRepoPath(...segments: string[]): string {
   return path.join(fileURLToPath(new URL("../../..", import.meta.url)), ...segments);
 }
 
+/**
+ * Provider names split on `/` only. Dots are not a separator in provider
+ * identity — they belong to the tool surface (`github.repos.get`); the
+ * naming authority (naming.ts) guarantees names never contain them.
+ */
 export function splitProviderName(providerName: string): string[] {
   const segments = providerName
-    .split(/[./]/u)
+    .split("/")
     .map((segment) => segment.trim())
     .filter(Boolean);
 
@@ -165,7 +172,13 @@ export function stripProviderToolName(toolName: string, provider: Pick<RegistryP
 
 export async function loadRegistryProviders(): Promise<RegistryProvider[]> {
   const rawRegistry = await readFile(REGISTRY_PATH, "utf8");
-  return JSON.parse(rawRegistry) as RegistryProvider[];
+  const providers = JSON.parse(rawRegistry) as RegistryProvider[];
+  // A hand-edited dotted (or otherwise malformed) name must fail here, at
+  // load time — not later, as a mis-split directory during generation.
+  for (const provider of providers) {
+    assertValidProviderName(provider.name);
+  }
+  return providers;
 }
 
 export function resolveProvider(providers: RegistryProvider[], providerName: string): RegistryProvider {

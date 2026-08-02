@@ -14,6 +14,8 @@ export default {
       "@utdk/common/telemetry": new URL("../../packages/utdk/common/telemetry.ts", import.meta.url).pathname,
       "@utdk/common/rateLimit": new URL("../../packages/utdk/common/rateLimit.ts", import.meta.url).pathname,
       "@utdk/common/auth": new URL("../../packages/utdk/common/auth.ts", import.meta.url).pathname,
+      "@utdk/common/compat": new URL("../../packages/utdk/common/compat.ts", import.meta.url).pathname,
+      "@utdk/common/webhooks": new URL("../../packages/utdk/common/webhooks.ts", import.meta.url).pathname,
       "@utdk/common": new URL("../../packages/utdk/common/index.ts", import.meta.url).pathname,
       "@utdk/mcp-core": new URL("../../packages/mcp-core/src/index.ts", import.meta.url).pathname,
       "utdk/registry.json": new URL("../../packages/utdk/registry.json", import.meta.url).pathname,

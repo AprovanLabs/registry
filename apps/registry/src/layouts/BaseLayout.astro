@@ -20,6 +20,7 @@ const currentPath = Astro.url.pathname;
 // same-origin route this build actually serves (see RegistryHeader).
 const links = [
   { label: "Apps", href: withBasePath("/apps"), current: currentPath.startsWith(withBasePath("/apps")) },
+  { label: "Interfaces", href: withBasePath("/interfaces"), current: currentPath.startsWith(withBasePath("/interfaces")) },
   { label: "MCP", href: withBasePath("/docs/mcp"), current: currentPath.startsWith(withBasePath("/docs/mcp")) },
   { label: "Playground", href: withBasePath("/playground"), current: currentPath.startsWith(withBasePath("/playground")) },
 ];

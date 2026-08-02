@@ -13,11 +13,6 @@
   "exclude": [
     "dist",
     "node_modules",
-    "llm",
-    "sql",
-    "sandbox",
-    "agent",
-    "vcs",
     "**/__tests__/**",
     "**/*.test.ts"
   ]
