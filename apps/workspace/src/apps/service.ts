@@ -31,6 +31,8 @@ import { getRecordStore } from "../records.js";
 import { ServiceError, type CoreService } from "../service-kernel.js";
 import { hookPath } from "../workflows/service.js";
 import { listRegistrations, listRuns, type WorkflowRegistration } from "../workflows/store.js";
+import { profileGrantsAvailable } from "../profile-grants.js";
+import { getRegistryStorage } from "../registry-storage.js";
 import {
   APP_WORKFLOW_NAMESPACE,
   assertAllowedTools,
@@ -39,6 +41,7 @@ import {
   nativeCapabilities,
   providerGrantCapabilities,
   type ProviderGrant,
+  type ProviderGrantCapability,
 } from "./capabilities.js";
 import {
   assertInstallable,
@@ -93,6 +96,38 @@ import {
 
 function livePath(workspaceId: string, name: string): string {
   return `/apps/${workspaceId}/${name}`;
+}
+
+/**
+ * Name the profile that executes each tier-2 provider grant (specs
+ * group-profile-grants "Access pane names the executing profile"): bare app
+ * dispatch resolves the provider's stored `default` profile when one exists,
+ * so that is the name reported. Absent (client falls back to the bare
+ * credential string) when execution rides the zero-config fallback or the
+ * backend has no profile storage (interim dynamo).
+ */
+async function withExecutingProfiles(
+  workspaceId: string,
+  grants: ProviderGrantCapability[],
+): Promise<ProviderGrantCapability[]> {
+  if (grants.length === 0 || !profileGrantsAvailable()) return grants;
+  try {
+    const storage = await getRegistryStorage();
+    await storage.tenants.ensure(workspaceId);
+    return await Promise.all(
+      grants.map(async (grant) => {
+        const row = await storage.profiles.getByName(
+          workspaceId,
+          "provider",
+          grant.provider,
+          "default",
+        );
+        return row ? { ...grant, profile: row.name } : grant;
+      }),
+    );
+  } catch {
+    return grants; // Degraded gateways keep the credential-only shape.
+  }
 }
 
 function apiBase(workspaceId: string, name: string): string {
@@ -791,7 +826,7 @@ export const appsService: CoreService = {
             capabilities: {
               native: nativeCapabilities(manifest),
               /** Always empty: Personal grants no provider credentials. */
-              providers: providerGrantCapabilities(manifest),
+              providers: await withExecutingProfiles(ctx.workspaceId, providerGrantCapabilities(manifest)),
               workflows: wire.workflows,
             },
           };
@@ -803,7 +838,7 @@ export const appsService: CoreService = {
           ...described,
           capabilities: {
             native: nativeCapabilities(manifest),
-            providers: providerGrantCapabilities(manifest),
+            providers: await withExecutingProfiles(ctx.workspaceId, providerGrantCapabilities(manifest)),
             workflows: described.workflows,
           },
         };
@@ -820,7 +855,7 @@ export const appsService: CoreService = {
             app: manifest.name,
             dataScope: manifest.dataScope ?? "owner",
             native: nativeCapabilities(manifest),
-            providers: providerGrantCapabilities(manifest),
+            providers: await withExecutingProfiles(ctx.workspaceId, providerGrantCapabilities(manifest)),
             workflows: (
               await summarizeWorkflows(ctx.workspaceId, manifest, registrations, false)
             ).map((workflow) => ({
@@ -838,7 +873,7 @@ export const appsService: CoreService = {
           /** Auto-partitioned first-party namespaces, allow-list filtered. */
           native: nativeCapabilities(manifest),
           /** Provider credential grants — tier (2), exact procedures only. */
-          providers: providerGrantCapabilities(manifest),
+          providers: await withExecutingProfiles(ctx.workspaceId, providerGrantCapabilities(manifest)),
           /** Exported workflows — the app's own namespace (`app.<procedure>`). */
           workflows: (
             await summarizeWorkflows(ctx.workspaceId, manifest, registrations, false)

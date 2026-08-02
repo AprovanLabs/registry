@@ -356,8 +356,19 @@ function TierTag({ tier }: { tier: ToolEntryTier | null }) {
 }
 
 /** One allow-list entry: an icon by namespace initial, the entry itself,
- *  its tier tag, a credential-grant note where it applies, and a remover. */
-function ToolEntryRow({ info, onRemove }: { info: ToolEntryInfo; onRemove: () => void }) {
+ *  its tier tag, a credential-grant note where it applies, and a remover.
+ *  Provider rows name the executing profile when the gateway reports one
+ *  (`apps.capabilities` tier-2 `profile`); older gateways fall back to the
+ *  bare workspace-credential string. */
+function ToolEntryRow({
+  info,
+  executingProfile,
+  onRemove,
+}: {
+  info: ToolEntryInfo;
+  executingProfile?: string | undefined;
+  onRemove: () => void;
+}) {
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-md border px-2 py-1.5 text-xs">
       <span
@@ -371,9 +382,15 @@ function ToolEntryRow({ info, onRemove }: { info: ToolEntryInfo; onRemove: () =>
       {info.tier === "provider" && (
         <span
           className={`${BADGE} border-dashed text-muted-foreground`}
-          title={`Executes with this workspace's ${info.namespace} credential — never directly from an app session.`}
+          title={
+            executingProfile
+              ? `Executes through profile "${executingProfile}" with this workspace's ${info.namespace} credential — never directly from an app session.`
+              : `Executes with this workspace's ${info.namespace} credential — never directly from an app session.`
+          }
         >
-          uses workspace credential
+          {executingProfile
+            ? `runs with profile ${executingProfile} (${info.namespace} credential)`
+            : "uses workspace credential"}
         </span>
       )}
       {info.reason && (
@@ -606,11 +623,14 @@ function WhatSection({
   tools,
   onChange,
   invokeRegistry,
+  executingProfiles,
 }: {
   app: AppSummary;
   tools: string[];
   onChange: (next: string[]) => void;
   invokeRegistry?: ToolsInvoke | undefined;
+  /** provider → executing profile name, from the gateway's capabilities. */
+  executingProfiles?: Record<string, string> | undefined;
 }) {
   const rows = tools.map((entry) => classifyToolEntry(entry, app));
   return (
@@ -622,6 +642,7 @@ function WhatSection({
         <div className="space-y-1">
           {rows.map((info) => (
             <ToolEntryRow
+              executingProfile={executingProfiles?.[info.namespace]}
               info={info}
               key={info.entry}
               onRemove={() => onChange(tools.filter((entry) => entry !== info.entry))}
@@ -781,14 +802,29 @@ function AccessTab({
   // The data-location line still wants the gateway's own capability read when
   // there is one — everything else in this tab works entirely off the
   // manifest (`classifyToolEntry` needs no round-trip), so a gateway that has
-  // never heard of `apps.capabilities` only loses this one line's precision.
-  const load = React.useCallback(async (): Promise<CapabilityModel> => {
+  // never heard of `apps.capabilities` only loses this one line's precision
+  // and the per-provider executing-profile names.
+  const load = React.useCallback(async (): Promise<{
+    model: CapabilityModel;
+    executingProfiles: Record<string, string>;
+  }> => {
     const base = deriveCapabilities(app, workflows);
     const result = await attempt(() => invoke("capabilities", { name: app.name }));
-    return result.ok ? mergeCapabilities(base, result.value) : base;
+    if (!result.ok) return { model: base, executingProfiles: {} };
+    // Tier-2 entries name the profile that executes each provider grant on
+    // profiles-enabled gateways; older gateways simply omit the field and
+    // the rows fall back to the bare credential string.
+    const executingProfiles: Record<string, string> = {};
+    for (const entry of unwrapList(result.value, "providers")) {
+      const item = asRecord(entry);
+      const provider = asString(item?.["provider"]);
+      const profile = asString(item?.["profile"]);
+      if (provider && profile) executingProfiles[provider] = profile;
+    }
+    return { model: mergeCapabilities(base, result.value), executingProfiles };
   }, [app, invoke, workflows]);
   const { data } = useLoader(load, true, app.name);
-  const model = data ?? deriveCapabilities(app, workflows);
+  const model = data?.model ?? deriveCapabilities(app, workflows);
 
   const [visibility, setVisibility] = React.useState(app.visibility);
   const [access, setAccess] = React.useState(app.roles?.access ?? "any");
@@ -862,7 +898,13 @@ function AccessTab({
 
       <div className="space-y-1.5">
         <SectionHeading>What it can touch</SectionHeading>
-        <WhatSection app={app} invokeRegistry={invokeRegistry} onChange={setTools} tools={tools} />
+        <WhatSection
+          app={app}
+          executingProfiles={data?.executingProfiles}
+          invokeRegistry={invokeRegistry}
+          onChange={setTools}
+          tools={tools}
+        />
       </div>
 
       <div className="space-y-1.5">
