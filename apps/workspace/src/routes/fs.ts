@@ -2,6 +2,7 @@
  * Workspace filesystem routes — the HTTP face of {@link IFsStore}.
  *
  *   GET    /fs?prefix=widgets       list a subtree (metadata only)
+ *   GET    /fs/changes?since=       poll for changes since a cursor (ETag 304 fast path)
  *   GET    /fs/*path[?hash=]        read a file (latest, or a pinned version)
  *   PUT    /fs/*path                write { content, mimeType? }
  *   DELETE /fs/*path[?recursive=]   delete a file, or a subtree with recursive=1
@@ -12,10 +13,19 @@
  * as /prompts and /artifacts (which these paths will eventually absorb).
  * The upload routes exist only on backends with object storage (S3/MinIO);
  * elsewhere they answer 501 — inline `PUT /fs/*path` always works.
+ *
+ * Every mutation below also records itself in the change journal
+ * (change-journal.ts) — the sole source of `/fs/changes` answers. This is
+ * deliberately done here, at the route/service layer, rather than inside the
+ * store backends: the journal only needs to know "this path changed", not
+ * how, and staged-session shadow writes (which the FS store sees as ordinary
+ * `.services/**` paths) must be recorded under the *session-relative* path
+ * so `.services/**` never appears in a change entry.
  */
 
 import { Hono, type Context } from "hono";
 import { hiddenDataPrefixes, isHiddenDataPath } from "../apps/store.js";
+import { changesSince, currentCursor, recordChange } from "../change-journal.js";
 import { getFsStore, isServicePath, normalizeFsPath } from "../fs-store.js";
 import { requireAuth } from "../middleware/auth.js";
 import { ServiceError } from "../service-kernel.js";
@@ -95,6 +105,67 @@ fsRouter.get("/", async (c) => {
   });
 });
 
+/**
+ * Change feed the client polls in place of the old full unprefixed `/fs`
+ * listing (client/web/src/lib/workspace-vfs.ts `startLiveWorkspaceSync`).
+ * Registered before `/:path{.+}` so "changes" is never captured as a path
+ * param.
+ *
+ * The `If-None-Match` check happens before any session resolution or store
+ * read: an idle poll (cursor unchanged) short-circuits to 304 having touched
+ * nothing but the in-memory journal, satisfying "Idle workspace costs no
+ * store reads" regardless of whether `?session=` was supplied.
+ */
+fsRouter.get("/changes", async (c) => {
+  const workspaceId = c.get("principal").workspaceId;
+  const cursor = currentCursor(workspaceId);
+  const etag = `"${cursor}"`;
+  if (c.req.header("If-None-Match") === etag) {
+    c.header("ETag", etag);
+    return c.body(null, 304);
+  }
+
+  let scope = "";
+  let stagedSession: ChatSessionRecord | undefined;
+  try {
+    stagedSession = await stagedSessionParam(c, false);
+    if (stagedSession) scope = stagedSession.id;
+  } catch (err) {
+    return serviceErrorResponse(c, err);
+  }
+
+  const since = c.req.query("since");
+  const result = changesSince(workspaceId, scope, since === undefined ? undefined : Number(since));
+  c.header("ETag", `"${result.cursor}"`);
+  if (!result.reset) {
+    return c.json({ cursor: result.cursor, reset: false, changes: result.changes });
+  }
+
+  // Reset: the journal can't answer (first poll, restart, or ring overflow).
+  // "changes" carries the current full listing, every path reported as
+  // "update" — the client rebaselines against it silently (see
+  // workspace-vfs.ts).
+  let paths: string[];
+  if (stagedSession) {
+    paths = (await sessionList(workspaceId, stagedSession, "")).map((entry) => entry.path);
+  } else {
+    const entries = await getFsStore().list(workspaceId, "");
+    const hidden = await hiddenDataPrefixes(workspaceId);
+    const mounted = await mountEntries(workspaceId, "");
+    paths = [
+      ...entries.filter(
+        (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),
+      ),
+      ...mounted,
+    ].map((entry) => entry.path);
+  }
+  return c.json({
+    cursor: result.cursor,
+    reset: true,
+    changes: paths.map((path) => ({ path, kind: "update" as const })),
+  });
+});
+
 fsRouter.get("/:path{.+}", async (c) => {
   const path = normalizeFsPath(c.req.param("path"));
   if (!path) return c.json({ error: "Invalid path" }, 400);
@@ -135,12 +206,14 @@ fsRouter.put("/:path{.+}", async (c) => {
     const session = await stagedSessionParam(c, true);
     if (session) {
       const meta = await sessionWrite(workspaceId, session, path, body.content, body.mimeType);
+      recordChange(workspaceId, session.id, path, "update");
       return c.json(meta, 201);
     }
   } catch (err) {
     return serviceErrorResponse(c, err);
   }
   const file = await getFsStore().write(workspaceId, path, body.content, body.mimeType);
+  recordChange(workspaceId, "", path, "update");
   return c.json(file, 201);
 });
 
@@ -156,16 +229,33 @@ fsRouter.delete("/:path{.+}", async (c) => {
     await assertNotMounted(workspaceId, path);
     const session = await stagedSessionParam(c, true);
     if (session) {
-      await sessionDelete(workspaceId, session, path, c.req.query("recursive") === "1");
+      const removedPaths = await sessionDelete(
+        workspaceId,
+        session,
+        path,
+        c.req.query("recursive") === "1",
+      );
+      for (const removedPath of removedPaths) {
+        recordChange(workspaceId, session.id, removedPath, "delete");
+      }
       return c.body(null, 204);
     }
   } catch (err) {
     return serviceErrorResponse(c, err);
   }
-  const removed =
-    c.req.query("recursive") === "1"
-      ? (await store.removePrefix(workspaceId, path)) > 0
-      : await store.remove(workspaceId, path);
+  let removed: boolean;
+  if (c.req.query("recursive") === "1") {
+    // Capture the subtree before deleting it — removePrefix only reports a
+    // count, and the journal needs the individual paths.
+    const toRemove = await store.list(workspaceId, path);
+    removed = (await store.removePrefix(workspaceId, path)) > 0;
+    if (removed) {
+      for (const entry of toRemove) recordChange(workspaceId, "", entry.path, "delete");
+    }
+  } else {
+    removed = await store.remove(workspaceId, path);
+    if (removed) recordChange(workspaceId, "", path, "delete");
+  }
   return removed
     ? c.body(null, 204)
     : c.json({ error: "Not found" }, 404);
@@ -212,12 +302,14 @@ fsUploadsRouter.post("/complete", async (c) => {
   if (!body.hash || !HASH_PATTERN.test(body.hash)) {
     return c.json({ error: "hash must be the hex SHA-256 of the content" }, 400);
   }
+  const workspaceId = c.get("principal").workspaceId;
   const entry = await store.completeUpload(
-    c.get("principal").workspaceId,
+    workspaceId,
     path,
     body.hash,
     body.mimeType ?? "application/octet-stream",
   );
+  if (entry) recordChange(workspaceId, "", path, "update");
   return entry
     ? c.json(entry, 201)
     : c.json({ error: "No uploaded blob for that hash" }, 404);
