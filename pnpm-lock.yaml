@@ -75,6 +75,36 @@ importers:
       '@fontsource-variable/geist':
         specifier: ^5.2.8
         version: 5.2.8
+      '@utdk/agent':
+        specifier: workspace:*
+        version: link:../../packages/contracts/agent
+      '@utdk/common':
+        specifier: workspace:*
+        version: link:../../packages/utdk/common
+      '@utdk/events':
+        specifier: workspace:*
+        version: link:../../packages/contracts/events
+      '@utdk/keyvalue':
+        specifier: workspace:*
+        version: link:../../packages/contracts/keyvalue
+      '@utdk/llm':
+        specifier: workspace:*
+        version: link:../../packages/contracts/llm
+      '@utdk/sandbox':
+        specifier: workspace:*
+        version: link:../../packages/contracts/sandbox
+      '@utdk/sql':
+        specifier: workspace:*
+        version: link:../../packages/contracts/sql
+      '@utdk/telemetry':
+        specifier: workspace:*
+        version: link:../../packages/contracts/telemetry
+      '@utdk/vcs':
+        specifier: workspace:*
+        version: link:../../packages/contracts/vcs
+      '@utdk/vfs':
+        specifier: workspace:*
+        version: link:../../packages/contracts/vfs
       astro:
         specifier: ^6.1.4
         version: 6.3.1(@types/node@25.6.2)(jiti@2.7.0)(lightningcss@1.32.0)(rollup@4.60.3)(terser@5.49.0)(tsx@4.21.0)(yaml@2.8.4)

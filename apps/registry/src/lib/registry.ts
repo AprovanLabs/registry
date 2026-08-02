@@ -1,6 +1,7 @@
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
+import type { WebhookIntelResult } from "@utdk/common/webhooks";
 import { marked } from "marked";
 
 type OpenApiDocument = {
@@ -136,26 +137,12 @@ export type RegistryAuthIntel = {
   } | null;
 };
 
-/** LLM-generated webhook intelligence (bundler webhook-intel phase → webhooks.json). */
-export type RegistryWebhookIntel = {
-  supported: boolean;
-  summary: string;
-  configMethods: Array<"console" | "api">;
-  events: Array<{ name: string; description: string }>;
-  managementEndpoints: Array<{
-    method: string;
-    path: string;
-    description: string;
-  }>;
-  signature: {
-    header: string | null;
-    scheme: string | null;
-    detail: string | null;
-  } | null;
-  payloadFormat: string | null;
-  docsUrl: string | null;
-  setupSteps: Array<{ title: string; detail: string }>;
-};
+/**
+ * LLM-generated webhook intelligence (bundler webhook-intel phase →
+ * webhooks.json) — generation metadata, typed by the published
+ * `@utdk/common/webhooks` shape rather than a local mirror.
+ */
+export type RegistryWebhookIntel = WebhookIntelResult;
 
 export type RegistryDocPage = {
   slug: string;
@@ -569,8 +556,11 @@ async function buildRegistryEntry(
   const authIntelFile = await readJson<{ auth?: RegistryAuthIntel }>(
     path.join(absolutePath, "auth.json"),
   );
-  const webhookIntelFile = await readJson<{ webhooks?: RegistryWebhookIntel }>(
+  // Malformed webhook intel must not take the provider page down: warn at
+  // build time naming the provider, and render the page without the section.
+  const webhookIntelFile = await readJsonWarnOnMalformed<{ webhooks?: RegistryWebhookIntel }>(
     path.join(absolutePath, "webhooks.json"),
+    `provider "${relativePath}" webhooks.json`,
   );
   const readmeMarkdown = await readText(path.join(absolutePath, "README.md"));
   const docs = await loadDocs(path.join(absolutePath, "docs"));
@@ -843,6 +833,28 @@ async function readJson<T>(filePath: string): Promise<T | null> {
 
     return JSON.parse(content) as T;
   } catch {
+    return null;
+  }
+}
+
+/**
+ * Like readJson, but a file that exists and fails to parse emits a build
+ * warning naming the source instead of being silently indistinguishable
+ * from an absent file.
+ */
+async function readJsonWarnOnMalformed<T>(filePath: string, label: string): Promise<T | null> {
+  let content: string;
+  try {
+    content = await readFile(filePath, "utf8");
+  } catch {
+    return null;
+  }
+  try {
+    return JSON.parse(content) as T;
+  } catch (error) {
+    console.warn(
+      `[registry] Malformed ${label} (${filePath}): ${error instanceof Error ? error.message : String(error)} — section omitted.`,
+    );
     return null;
   }
 }

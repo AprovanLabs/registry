@@ -1,0 +1,95 @@
+---
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import BaseLayout from "@/layouts/BaseLayout.astro";
+import { getContracts } from "@/lib/contracts";
+import { withBasePath } from "@/lib/site";
+
+const contracts = await getContracts();
+---
+
+<BaseLayout
+  title="Interfaces · Aprovan Registry"
+  description="Browse the UTDK contract interfaces — one stable tool surface per capability, implemented by swappable registry providers."
+>
+  <main class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
+    <section class="flex flex-col gap-3">
+      <h1 class="max-w-3xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+        One contract, many providers.
+      </h1>
+      <p class="max-w-2xl text-muted-foreground">
+        The registry is a set of contracts, not just a pile of providers: scripts write
+        against a stable interface namespace (<code class="font-mono text-sm">sql.query</code>,
+        <code class="font-mono text-sm">vcs.pullRequests.diff</code>) and a binding picks
+        which vendor executes it.
+      </p>
+      <div class="flex gap-3 text-sm">
+        <a
+          class="font-medium text-primary underline-offset-4 hover:underline"
+          href={withBasePath("/providers")}
+        >
+          Browse providers →
+        </a>
+      </div>
+    </section>
+
+    <section class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      {contracts.map((contract) => {
+        const total = contract.compat.length;
+        const zero = total === 0;
+
+        return (
+          <a class="group" href={withBasePath(`/interfaces/${contract.id}`)}>
+            <Card
+              className={`h-full transition-colors group-hover:border-primary/40 ${zero ? "opacity-80" : ""}`}
+            >
+              <CardHeader>
+                <div class="flex flex-wrap items-center gap-2">
+                  <Badge variant="outline" className="font-mono">
+                    {contract.packageName}
+                  </Badge>
+                  {contract.version ? (
+                    <Badge variant="secondary">v{contract.version}</Badge>
+                  ) : null}
+                </div>
+                <CardTitle>{contract.label}</CardTitle>
+                <CardDescription className="line-clamp-3">
+                  {contract.description ?? "UTDK contract package."}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="flex flex-wrap items-center gap-2 text-sm">
+                {zero ? (
+                  <span class="text-xs text-muted-foreground">
+                    0 implementers yet
+                  </span>
+                ) : (
+                  <>
+                    <Badge>
+                      {total} implementer{total === 1 ? "" : "s"}
+                    </Badge>
+                    {contract.plannedCount > 0 ? (
+                      <span class="text-xs text-muted-foreground">
+                        {contract.availableCount} available / {contract.plannedCount} planned
+                      </span>
+                    ) : null}
+                    {contract.compatSource ? (
+                      <span class="text-xs text-muted-foreground">
+                        generated from the chat-provider registry
+                      </span>
+                    ) : null}
+                  </>
+                )}
+              </CardContent>
+            </Card>
+          </a>
+        );
+      })}
+    </section>
+  </main>
+</BaseLayout>
