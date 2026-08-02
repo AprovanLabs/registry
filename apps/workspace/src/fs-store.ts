@@ -58,16 +58,39 @@ export interface FsUploadTicket {
   expiresIn: number;
 }
 
+/**
+ * `versioned: false` skips minting a new version row for the write — only
+ * the latest-pointer is updated. Defaults to `!isServicePath(path)` when
+ * omitted, so ordinary authored writes keep full version history without
+ * every caller having to reason about it; `.services/**` (and staged-session
+ * shadow trees, which live under `.services/chat/sessions/<id>/files/**`)
+ * default to unversioned, which is what stops per-message chat state and
+ * similar accumulated-state subsystems from minting a version row (and an S3
+ * blob) on every write (see specs/fs-metadata-store "Unversioned
+ * service-path writes").
+ */
+export interface FsWriteOptions {
+  versioned?: boolean;
+}
+
 export interface IFsStore {
   /** Latest version of every file under `prefix` (metadata only). */
   list(workspaceId: string, prefix?: string): Promise<FsEntry[]>;
   /**
    * Every stored version of `path`, newest first (updatedAt desc). The first
    * entry's hash is the current {@link read} hash. Empty when `path` has none.
+   * Unversioned writes (see {@link FsWriteOptions}) leave at most the latest
+   * entry here — they never accumulate.
    */
   listVersions(workspaceId: string, path: string): Promise<FsEntry[]>;
   read(workspaceId: string, path: string, hash?: string): Promise<FsFile | undefined>;
-  write(workspaceId: string, path: string, content: string, mimeType?: string): Promise<FsFile>;
+  write(
+    workspaceId: string,
+    path: string,
+    content: string,
+    mimeType?: string,
+    opts?: FsWriteOptions,
+  ): Promise<FsFile>;
   /** Remove a file (all versions). Returns whether anything was deleted. */
   remove(workspaceId: string, path: string): Promise<boolean>;
   /** Remove an entire subtree. Returns the number of files removed. */
@@ -202,10 +225,21 @@ export class FsStoreSqlite implements IFsStore {
     path: string,
     content: string,
     mimeType = "text/plain",
+    opts?: FsWriteOptions,
   ): Promise<FsFile> {
+    const versioned = opts?.versioned ?? !isServicePath(path);
     const hash = createHash("sha256").update(content).digest("hex");
     const size = Buffer.byteLength(content);
     const updatedAt = new Date().toISOString();
+    if (!versioned) {
+      // Unversioned: drop every other version row for this path first, so
+      // the table never accumulates more than the one latest row (the PK
+      // includes hash, so same-content rewrites would otherwise coexist
+      // with — not replace — prior versions).
+      this.database
+        .prepare(`DELETE FROM fs_files WHERE workspace_id = ? AND path = ? AND hash != ?`)
+        .run(workspaceId, path, hash);
+    }
     this.database
       .prepare(
         `INSERT OR REPLACE INTO fs_files
@@ -412,7 +446,9 @@ export class FsStoreS3 implements IFsStore {
     path: string,
     content: string,
     mimeType = "text/plain",
+    opts?: FsWriteOptions,
   ): Promise<FsFile> {
+    const versioned = opts?.versioned ?? !isServicePath(path);
     const hash = createHash("sha256").update(content).digest("hex");
     const size = Buffer.byteLength(content);
     const updatedAt = new Date().toISOString();
@@ -426,31 +462,43 @@ export class FsStoreS3 implements IFsStore {
         ContentType: mimeType,
       }),
     );
-    await this.putIndex(workspaceId, path, { hash, mimeType, size, updatedAt });
+    await this.putIndex(workspaceId, path, { hash, mimeType, size, updatedAt }, versioned);
     return { path, hash, content, mimeType, size, updatedAt };
   }
 
+  /**
+   * Always writes the `P#` latest-pointer row; the `V#` version row is
+   * skipped for unversioned writes, which is what keeps `.services/**`
+   * writes from accumulating index rows (and, downstream, orphaned blobs —
+   * see scripts/gc-blobs.ts) on every rewrite.
+   */
   private async putIndex(
     workspaceId: string,
     path: string,
     meta: { hash: string; mimeType: string; size: number; updatedAt: string },
+    versioned = true,
   ): Promise<void> {
     const { client, PutCommand } = await dynamo();
     const shared = { workspaceId, path, ...meta };
-    await Promise.all([
+    const puts = [
       client.send(
         new PutCommand({
           TableName: this.tableName,
           Item: { ...shared, sk: `P#${path}` },
         }),
       ),
-      client.send(
-        new PutCommand({
-          TableName: this.tableName,
-          Item: { ...shared, sk: `V#${path}#${meta.hash}` },
-        }),
-      ),
-    ]);
+    ];
+    if (versioned) {
+      puts.push(
+        client.send(
+          new PutCommand({
+            TableName: this.tableName,
+            Item: { ...shared, sk: `V#${path}#${meta.hash}` },
+          }),
+        ),
+      );
+    }
+    await Promise.all(puts);
   }
 
   async remove(workspaceId: string, path: string): Promise<boolean> {
@@ -555,7 +603,12 @@ export class FsStoreS3 implements IFsStore {
       return undefined; // Blob was never uploaded.
     }
     const updatedAt = new Date().toISOString();
-    await this.putIndex(workspaceId, path, { hash, mimeType, size, updatedAt });
+    await this.putIndex(
+      workspaceId,
+      path,
+      { hash, mimeType, size, updatedAt },
+      !isServicePath(path),
+    );
     return { path, hash, mimeType, size, updatedAt };
   }
 
