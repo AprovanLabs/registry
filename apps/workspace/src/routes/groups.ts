@@ -14,27 +14,34 @@
  * POST   /groups/:id/users               — add a user to a group
  * DELETE /groups/:id/users               — remove a user from a group
  *
- * GET    /groups/:id/tool-grants         — list tool grants for a group
- * POST   /groups/:id/tool-grants         — add a tool grant
- * DELETE /groups/:id/tool-grants         — remove a tool grant
+ * GET    /groups/:id/profiles            — profiles attached to a group
+ * POST   /groups/:id/profiles            — attach a profile (idempotent)
+ * DELETE /groups/:id/profiles            — detach a profile
+ *
+ * Plus `workspaceProfilesRouter` (mounted at /profiles): the admin picker's
+ * read-only listing of every workspace profile (WS-3 storage).
  */
 
-import { Hono } from "hono";
+import { Hono, type Context } from "hono";
 import { z } from "zod";
 import { listGroupUserIds,
-  addToolGrant,
   addUserToGroup,
   createGroup,
   deleteGroup,
   getGroup,
   listGroups,
-  listToolGrants,
-  removeToolGrant,
   removeUserFromGroup,
   updateGroup,
 } from "../groups.js";
 import { requireAdmin, requireAuth } from "../middleware/auth.js";
 import { validateBody } from "../middleware/validate.js";
+import {
+  attachProfileToGroup,
+  detachProfileFromGroup,
+  listGroupProfiles,
+  listWorkspaceProfiles,
+} from "../profile-grants.js";
+import { ServiceError } from "../service-kernel.js";
 
 export const groupsRouter = new Hono();
 
@@ -56,10 +63,8 @@ const patchGroupSchema = z.object({
 
 const userSubSchema = z.object({ userId: z.string().min(1) });
 
-const toolGrantSchema = z.object({
-  provider: z.string().min(1),
-  operation: z.string().min(1),
-});
+/** Profile reference: a profile id, or a name unique in the workspace. */
+const profileRefSchema = z.object({ profile: z.string().trim().min(1) });
 
 // ---------------------------------------------------------------------------
 // POST /groups
@@ -175,48 +180,83 @@ groupsRouter.delete("/:id/users", validateBody(userSubSchema), async (c) => {
 });
 
 // ---------------------------------------------------------------------------
-// GET /groups/:id/tool-grants
+// Group ↔ profile membership (specs group-profile-grants) — thin HTTP over
+// profile-grants.ts; failures surface as their ServiceError status.
 // ---------------------------------------------------------------------------
 
-groupsRouter.get("/:id/tool-grants", async (c) => {
+function profileErrorResponse(c: Context, err: unknown): Response {
+  if (err instanceof ServiceError) {
+    return c.json({ error: err.message }, err.status as 400);
+  }
+  throw err;
+}
+
+// GET /groups/:id/profiles — profiles attached to the group.
+groupsRouter.get("/:id/profiles", async (c) => {
+  const { workspaceId } = c.get("principal");
+  const groupId = c.req.param("id");
+
+  const group = await getGroup(workspaceId, groupId);
+  if (!group) return c.json({ error: "Group not found" }, 404);
+
+  try {
+    return c.json({ profiles: await listGroupProfiles(workspaceId, groupId) });
+  } catch (err) {
+    return profileErrorResponse(c, err);
+  }
+});
+
+// POST /groups/:id/profiles — attach (idempotent; 404 on unknown profile).
+groupsRouter.post("/:id/profiles", validateBody(profileRefSchema), async (c) => {
   const principal = c.get("principal");
   const workspaceId = principal.workspaceId;
   const groupId = c.req.param("id");
+  const { profile } = c.req.valid("json");
 
   const group = await getGroup(workspaceId, groupId);
   if (!group) return c.json({ error: "Group not found" }, 404);
 
-  const grants = await listToolGrants(workspaceId, groupId);
-  return c.json({ grants });
-});
-
-// ---------------------------------------------------------------------------
-// POST /groups/:id/tool-grants
-// ---------------------------------------------------------------------------
-
-groupsRouter.post("/:id/tool-grants", validateBody(toolGrantSchema), async (c) => {
-  const { workspaceId } = c.get("principal");
-  const groupId = c.req.param("id");
-  const { provider, operation } = c.req.valid("json");
-
-  const group = await getGroup(workspaceId, groupId);
-  if (!group) return c.json({ error: "Group not found" }, 404);
-
-  const grant = await addToolGrant(workspaceId, groupId, provider, operation);
-  return c.json(grant, 201);
-});
-
-// ---------------------------------------------------------------------------
-// DELETE /groups/:id/tool-grants
-// ---------------------------------------------------------------------------
-
-groupsRouter.delete("/:id/tool-grants", validateBody(toolGrantSchema), async (c) => {
-  const { workspaceId } = c.get("principal");
-  const groupId = c.req.param("id");
-  const { provider, operation } = c.req.valid("json");
-  const removed = await removeToolGrant(workspaceId, groupId, provider, operation);
-  if (!removed) {
-    return c.json({ error: "Tool grant not found" }, 404);
+  try {
+    const attached = await attachProfileToGroup(workspaceId, groupId, profile, principal.sub);
+    return c.json(attached, 201);
+  } catch (err) {
+    return profileErrorResponse(c, err);
   }
-  return c.json({ removed: true });
+});
+
+// DELETE /groups/:id/profiles — detach.
+groupsRouter.delete("/:id/profiles", validateBody(profileRefSchema), async (c) => {
+  const { workspaceId } = c.get("principal");
+  const groupId = c.req.param("id");
+  const { profile } = c.req.valid("json");
+
+  const group = await getGroup(workspaceId, groupId);
+  if (!group) return c.json({ error: "Group not found" }, 404);
+
+  try {
+    const removed = await detachProfileFromGroup(workspaceId, groupId, profile);
+    if (!removed) return c.json({ error: "Profile not attached to this group" }, 404);
+    return c.json({ removed: true });
+  } catch (err) {
+    return profileErrorResponse(c, err);
+  }
+});
+
+// ---------------------------------------------------------------------------
+// Workspace profile listing — the attach picker's source (mounted at
+// /profiles). Read-only here; profile CRUD is the WS-3 registry-server
+// surface's job.
+// ---------------------------------------------------------------------------
+
+export const workspaceProfilesRouter = new Hono();
+
+workspaceProfilesRouter.use("*", requireAuth, requireAdmin);
+
+workspaceProfilesRouter.get("/", async (c) => {
+  const { workspaceId } = c.get("principal");
+  try {
+    return c.json({ profiles: await listWorkspaceProfiles(workspaceId) });
+  } catch (err) {
+    return profileErrorResponse(c, err);
+  }
 });

@@ -5,7 +5,7 @@
  *   - List and remove workspace members
  *   - Manage groups (create, delete, rename)
  *   - Assign members to groups (drag-and-drop or button)
- *   - Edit tool grants per group
+ *   - Attach/detach capability profiles per group
  *   - Send invites (email, role, initial groups)
  *   - View and revoke pending invites
  *   - View the audit log
@@ -47,11 +47,13 @@ interface Group {
   updatedAt: string;
 }
 
-interface ToolGrant {
-  workspaceId: string;
-  groupId: string;
-  provider: string;
-  operation: string;
+/** One workspace profile, as the gateway's /profiles + /groups/:id/profiles
+ *  routes report it (name, target, display credential label). */
+interface ProfileSummary {
+  id: string;
+  name: string;
+  target: { kind: "interface" | "provider"; id: string; provider?: string };
+  credentialLabel?: string;
 }
 
 interface Invite {
@@ -277,7 +279,7 @@ function MembersTab({ token }: { token: string }) {
 }
 
 // ---------------------------------------------------------------------------
-// GroupsTab — manage groups, members in groups, prefix + tool grants
+// GroupsTab — manage groups, members in groups, attached profiles
 // ---------------------------------------------------------------------------
 
 function GroupsTab({ token }: { token: string }) {
@@ -443,7 +445,7 @@ function GroupsTab({ token }: { token: string }) {
 }
 
 // ---------------------------------------------------------------------------
-// GroupDetail — members and tool grants for a single group
+// GroupDetail — members and profile grants for a single group
 // ---------------------------------------------------------------------------
 
 function GroupDetail({ token, group }: { token: string; group: Group }) {
@@ -453,26 +455,44 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
   const [userIds, setUserSubs] = React.useState<string[]>([]);
   const [addUserSub, setAddUserSub] = React.useState("");
 
-  // Tool grants
-  const [toolGrants, setToolGrants] = React.useState<ToolGrant[]>([]);
-  const [newProvider, setNewProvider] = React.useState("");
-  const [newOperation, setNewOperation] = React.useState("*");
+  // Attached profiles + the workspace-wide attach picker source.
+  const [attachedProfiles, setAttachedProfiles] = React.useState<ProfileSummary[]>([]);
+  const [workspaceProfiles, setWorkspaceProfiles] = React.useState<ProfileSummary[]>([]);
+  const [profilesError, setProfilesError] = React.useState("");
+  const [selectedProfileId, setSelectedProfileId] = React.useState("");
+  const [profilesReloadKey, setProfilesReloadKey] = React.useState(0);
 
   const [loadError, setLoadError] = React.useState("");
 
   React.useEffect(() => {
     setLoadError("");
-    Promise.all([
-      gatewayFetch(`/groups/${groupId}/users`, token)
-        .then((r) => r.json() as Promise<{ userIds: string[] }>)
-        .then((d) => setUserSubs(d.userIds ?? [])),
-      gatewayFetch(`/groups/${groupId}/tool-grants`, token)
-        .then((r) => r.json() as Promise<{ grants: ToolGrant[] }>)
-        .then((d) => setToolGrants(d.grants ?? [])),
-    ]).catch((err) => {
-      setLoadError(err instanceof Error ? err.message : "Failed to load group details");
-    });
+    gatewayFetch(`/groups/${groupId}/users`, token)
+      .then((r) => r.json() as Promise<{ userIds: string[] }>)
+      .then((d) => setUserSubs(d.userIds ?? []))
+      .catch((err) => {
+        setLoadError(err instanceof Error ? err.message : "Failed to load group details");
+      });
   }, [groupId, token]);
+
+  // Profiles load separately so a failure here leaves Members usable
+  // (inline error + retry, per the groups-screen states).
+  React.useEffect(() => {
+    setProfilesError("");
+    Promise.all([
+      gatewayFetch(`/groups/${groupId}/profiles`, token).then(async (r) => {
+        const body = (await r.json()) as { profiles?: ProfileSummary[]; error?: string };
+        if (!r.ok) throw new Error(body.error ?? `${r.status}`);
+        setAttachedProfiles(body.profiles ?? []);
+      }),
+      gatewayFetch(`/profiles`, token).then(async (r) => {
+        const body = (await r.json()) as { profiles?: ProfileSummary[]; error?: string };
+        if (!r.ok) throw new Error(body.error ?? `${r.status}`);
+        setWorkspaceProfiles(body.profiles ?? []);
+      }),
+    ]).catch((err) => {
+      setProfilesError(err instanceof Error ? err.message : "Failed to load profiles");
+    });
+  }, [groupId, token, profilesReloadKey]);
 
   async function addUser(e: React.FormEvent) {
     e.preventDefault();
@@ -510,48 +530,41 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
     }
   }
 
-  async function addToolGrant(e: React.FormEvent) {
+  async function attachProfile(e: React.FormEvent) {
     e.preventDefault();
-    const provider = newProvider.trim();
-    const operation = newOperation.trim() || "*";
+    const profile = selectedProfileId;
+    if (!profile) return;
     try {
-      const res = await gatewayFetch(`/groups/${groupId}/tool-grants`, token, {
+      const res = await gatewayFetch(`/groups/${groupId}/profiles`, token, {
         method: "POST",
-        body: JSON.stringify({ provider, operation }),
+        body: JSON.stringify({ profile }),
       });
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
         throw new Error(body.error ?? `${res.status}`);
       }
-      const grant = (await res.json()) as ToolGrant;
-      setToolGrants((prev) => [
-        ...prev.filter(
-          (g) => !(g.provider === grant.provider && g.operation === grant.operation),
-        ),
-        grant,
-      ]);
-      setNewProvider("");
-      setNewOperation("*");
+      const attached = (await res.json()) as ProfileSummary;
+      // Idempotent server-side; dedupe by id client-side too.
+      setAttachedProfiles((prev) => [...prev.filter((p) => p.id !== attached.id), attached]);
+      setSelectedProfileId("");
     } catch (err) {
-      setLoadError(err instanceof Error ? err.message : "Failed to add tool grant");
+      setProfilesError(err instanceof Error ? err.message : "Failed to attach profile");
     }
   }
 
-  async function removeToolGrant(provider: string, operation: string) {
+  async function detachProfile(profileId: string) {
     try {
-      const res = await gatewayFetch(`/groups/${groupId}/tool-grants`, token, {
+      const res = await gatewayFetch(`/groups/${groupId}/profiles`, token, {
         method: "DELETE",
-        body: JSON.stringify({ provider, operation }),
+        body: JSON.stringify({ profile: profileId }),
       });
       if (!res.ok) {
         const body = (await res.json()) as { error?: string };
         throw new Error(body.error ?? `${res.status}`);
       }
-      setToolGrants((prev) =>
-        prev.filter((g) => !(g.provider === provider && g.operation === operation)),
-      );
+      setAttachedProfiles((prev) => prev.filter((p) => p.id !== profileId));
     } catch (err) {
-      setLoadError(err instanceof Error ? err.message : "Failed to remove tool grant");
+      setProfilesError(err instanceof Error ? err.message : "Failed to detach profile");
     }
   }
 
@@ -602,48 +615,73 @@ function GroupDetail({ token, group }: { token: string; group: Group }) {
         </CardContent>
       </Card>
 
-      {/* Tool grants */}
+      {/* Profiles — the group's capability, as profile membership. */}
       <Card>
         <CardHeader>
-          <CardTitle>Tool Grants</CardTitle>
+          <CardTitle>Profiles</CardTitle>
           <CardDescription>
-            Members of this group can invoke these provider operations. Use <code>*</code> to grant
-            all operations for a provider.
+            Members of this group can invoke whatever the attached profiles grant — effective on
+            their next call.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          <form onSubmit={addToolGrant} className="flex flex-wrap gap-2">
-            <Input
-              placeholder="Provider (e.g. github)"
-              value={newProvider}
-              onChange={(e) => setNewProvider(e.target.value)}
-              className="w-40"
-            />
-            <Input
-              placeholder="Operation (* = all)"
-              value={newOperation}
-              onChange={(e) => setNewOperation(e.target.value)}
-              className="w-40"
-            />
-            <Button type="submit" disabled={!newProvider.trim()}>
-              Add
-            </Button>
-          </form>
-          {toolGrants.length === 0 && (
-            <p className="text-sm text-muted-foreground">No tool grants.</p>
-          )}
-          <ul className="flex flex-col gap-1">
-            {toolGrants.map((g) => (
-              <li
-                key={`${g.provider}#${g.operation}`}
-                className="flex min-w-0 items-center justify-between gap-2 rounded border px-3 py-1"
+          {profilesError && (
+            <p className="text-sm text-destructive">
+              {profilesError}{" "}
+              <button
+                className="underline hover:text-foreground"
+                onClick={() => setProfilesReloadKey((k) => k + 1)}
               >
-                <span className="min-w-0 flex-1 truncate font-mono text-xs">
-                  {g.provider} / {g.operation === "*" ? <Badge variant="secondary">all</Badge> : g.operation}
-                </span>
+                Retry
+              </button>
+            </p>
+          )}
+          {!profilesError && workspaceProfiles.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              This workspace defines no profiles yet. Create a profile first — profiles are
+              managed on the workspace's Interfaces/Profiles surface.
+            </p>
+          ) : (
+            !profilesError && (
+              <form onSubmit={attachProfile} className="flex flex-wrap gap-2">
+                <select
+                  aria-label="Profile to attach"
+                  value={selectedProfileId}
+                  onChange={(e) => setSelectedProfileId(e.target.value)}
+                  className="h-9 flex-1 min-w-40 rounded-md border bg-transparent px-2 text-sm"
+                >
+                  <option value="">Attach profile…</option>
+                  {workspaceProfiles
+                    .filter((p) => !attachedProfiles.some((a) => a.id === p.id))
+                    .map((p) => (
+                      <option key={p.id} value={p.id}>
+                        {p.name} — {p.target.kind}: {p.target.id}
+                        {p.credentialLabel ? ` (${p.credentialLabel})` : ""}
+                      </option>
+                    ))}
+                </select>
+                <Button type="submit" disabled={!selectedProfileId}>
+                  Attach
+                </Button>
+              </form>
+            )
+          )}
+          {!profilesError && attachedProfiles.length === 0 && (
+            <p className="text-sm text-muted-foreground">
+              No profiles attached. Members get only their direct permissions.
+            </p>
+          )}
+          <ul className="flex flex-wrap gap-2">
+            {attachedProfiles.map((p) => (
+              <li key={p.id} className="flex items-center gap-1">
+                <Badge variant="secondary" className="font-mono text-xs">
+                  {p.name} · {p.target.kind}: {p.target.id}
+                  {p.credentialLabel ? ` · ${p.credentialLabel}` : ""}
+                </Badge>
                 <button
-                  className="ml-2 text-xs text-muted-foreground hover:text-destructive"
-                  onClick={() => removeToolGrant(g.provider, g.operation)}
+                  aria-label={`Detach ${p.name}`}
+                  className="text-xs text-muted-foreground hover:text-destructive"
+                  onClick={() => detachProfile(p.id)}
                 >
                   ×
                 </button>

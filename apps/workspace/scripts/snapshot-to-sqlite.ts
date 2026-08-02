@@ -41,7 +41,6 @@ export interface SnapshotCounts {
   invites: number;
   groups: number;
   groupMembers: number;
-  groupToolGrants: number;
   permissions: number;
 }
 
@@ -118,7 +117,6 @@ export async function snapshotToSqlite(outDir: string): Promise<SnapshotCounts> 
     invites: 0,
     groups: 0,
     groupMembers: 0,
-    groupToolGrants: 0,
     permissions: 0,
   };
   const db = openMirror(outDir);
@@ -313,21 +311,8 @@ export async function snapshotToSqlite(outDir: string): Promise<SnapshotCounts> 
     );
     counts.groupMembers += 1;
   }
-  for await (const item of scan(table("GROUP_TOOL_GRANTS_TABLE", "GroupToolGrants"))) {
-    await identity.run(
-      `INSERT INTO group_tool_grants (workspace_id, group_id, provider, operation)
-       VALUES (?, ?, ?, ?)
-       ON CONFLICT (workspace_id, group_id, provider, operation) DO NOTHING`,
-      [
-        String(item["workspaceId"]),
-        String(item["groupId"]),
-        String(item["provider"]),
-        String(item["operation"]),
-      ],
-    );
-    counts.groupToolGrants += 1;
-  }
-  // GroupPrefixGrants: deliberately dropped (decision record #8).
+  // Group grant tables: dropped — group capability is profile grants
+  // in registry-server storage (data-auth-model; decision record #8).
   for await (const item of scan(table("PERMISSIONS_TABLE", "Permissions"))) {
     const sk = String(item["SK"] ?? "");
     if (!sk.startsWith("PERM#")) continue; // Skip PERMID# pointers.

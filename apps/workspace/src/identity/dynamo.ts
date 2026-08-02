@@ -19,7 +19,6 @@ import type {
   InviteRecord,
   MembershipRecord,
   Permission,
-  ToolGrantRecord,
   UserRecord,
   WorkspaceRecord,
 } from "./types.js";
@@ -30,8 +29,6 @@ const DYNAMODB_MEMBERSHIPS_TABLE = () => process.env["DYNAMODB_MEMBERSHIPS_TABLE
 const SESSIONS_TABLE = () => process.env["SESSIONS_TABLE"] ?? "Sessions";
 const DYNAMODB_INVITES_TABLE = () => process.env["DYNAMODB_INVITES_TABLE"] ?? "Invites";
 const GROUPS_TABLE = () => process.env["GROUPS_TABLE"] ?? "Groups";
-const GROUP_TOOL_GRANTS_TABLE = () =>
-  process.env["GROUP_TOOL_GRANTS_TABLE"] ?? "GroupToolGrants";
 const USER_GROUPS_TABLE = () => process.env["USER_GROUPS_TABLE"] ?? "UserGroups";
 // Both spellings pre-date this module; keep honoring both.
 const USERGROUPS_READ_TABLE = () => process.env["USERGROUPS_TABLE"] ?? "UserGroups";
@@ -210,27 +207,6 @@ export class PermissionStoreDynamodb {
 
 export function createIdentityStoreDynamo(): IIdentityStore {
   const permissions = new PermissionStoreDynamodb();
-
-  const listToolGrants = async (
-    workspaceId: string,
-    groupId: string,
-  ): Promise<ToolGrantRecord[]> => {
-    const { client, QueryCommand } = await dynamo();
-    const result = await client.send(
-      new QueryCommand({
-        TableName: GROUP_TOOL_GRANTS_TABLE(),
-        KeyConditionExpression: "#pk = :pk",
-        ExpressionAttributeNames: { "#pk": "workspaceId#groupId" },
-        ExpressionAttributeValues: { ":pk": `${workspaceId}#${groupId}` },
-      }),
-    );
-    return (result.Items ?? []).map((item) => ({
-      workspaceId: (item as Record<string, unknown>)["workspaceId"] as string,
-      groupId: (item as Record<string, unknown>)["groupId"] as string,
-      provider: (item as Record<string, unknown>)["provider"] as string,
-      operation: (item as Record<string, unknown>)["operation"] as string,
-    }));
-  };
 
   const getGroup = async (
     workspaceId: string,
@@ -573,18 +549,9 @@ export function createIdentityStoreDynamo(): IIdentityStore {
         await client.send(
           new DeleteCommand({ TableName: GROUPS_TABLE(), Key: { workspaceId, groupId } }),
         );
-        // Best-effort grant cleanup; UserGroups rows become invisible orphans.
-        for (const grant of await listToolGrants(workspaceId, groupId)) {
-          await client.send(
-            new DeleteCommand({
-              TableName: GROUP_TOOL_GRANTS_TABLE(),
-              Key: {
-                "workspaceId#groupId": `${workspaceId}#${groupId}`,
-                "provider#operation": `${grant.provider}#${grant.operation}`,
-              },
-            }),
-          );
-        }
+        // UserGroups rows become invisible orphans; profile grants held by
+        // the group live in registry-server storage and simply stop matching
+        // (the group id no longer resolves for any principal).
         return true;
       },
 
@@ -652,79 +619,6 @@ export function createIdentityStoreDynamo(): IIdentityStore {
             .filter((s): s is string => typeof s === "string");
         },
       },
-
-      toolGrants: {
-        async add(workspaceId, groupId, provider, operation) {
-          const { client, PutCommand } = await dynamo();
-          await client.send(
-            new PutCommand({
-              TableName: GROUP_TOOL_GRANTS_TABLE(),
-              Item: {
-                "workspaceId#groupId": `${workspaceId}#${groupId}`,
-                "provider#operation": `${provider}#${operation}`,
-                workspaceId,
-                groupId,
-                provider,
-                operation,
-              },
-            }),
-          );
-          return { workspaceId, groupId, provider, operation };
-        },
-        async remove(workspaceId, groupId, provider, operation) {
-          const { client, DeleteCommand, GetCommand } = await dynamo();
-          const result = await client.send(
-            new GetCommand({
-              TableName: GROUP_TOOL_GRANTS_TABLE(),
-              Key: {
-                "workspaceId#groupId": `${workspaceId}#${groupId}`,
-                "provider#operation": `${provider}#${operation}`,
-              },
-            }),
-          );
-          if (!result.Item) return false;
-          await client.send(
-            new DeleteCommand({
-              TableName: GROUP_TOOL_GRANTS_TABLE(),
-              Key: {
-                "workspaceId#groupId": `${workspaceId}#${groupId}`,
-                "provider#operation": `${provider}#${operation}`,
-              },
-            }),
-          );
-          return true;
-        },
-        list: listToolGrants,
-        async check(workspaceId, groupIds, provider, operation) {
-          const { client, GetCommand } = await dynamo();
-          for (const groupId of groupIds) {
-            const exact = await client.send(
-              new GetCommand({
-                TableName: GROUP_TOOL_GRANTS_TABLE(),
-                Key: {
-                  "workspaceId#groupId": `${workspaceId}#${groupId}`,
-                  "provider#operation": `${provider}#${operation}`,
-                },
-              }),
-            );
-            if (exact.Item) return true;
-            if (operation !== "*") {
-              const wildcard = await client.send(
-                new GetCommand({
-                  TableName: GROUP_TOOL_GRANTS_TABLE(),
-                  Key: {
-                    "workspaceId#groupId": `${workspaceId}#${groupId}`,
-                    "provider#operation": `${provider}#*`,
-                  },
-                }),
-              );
-              if (wildcard.Item) return true;
-            }
-          }
-          return false;
-        },
-      },
-
     },
 
     permissions: {

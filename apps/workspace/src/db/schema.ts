@@ -215,22 +215,6 @@ export const Groups: TableSchema = {
   },
 };
 
-export const GroupToolGrants: TableSchema = {
-  tableName: "GroupToolGrants",
-  createInput: {
-    TableName: "GroupToolGrants",
-    KeySchema: [
-      { AttributeName: "workspaceId#groupId", KeyType: "HASH" },
-      { AttributeName: "provider#operation", KeyType: "RANGE" },
-    ],
-    AttributeDefinitions: [
-      { AttributeName: "workspaceId#groupId", AttributeType: "S" },
-      { AttributeName: "provider#operation", AttributeType: "S" },
-    ],
-    BillingMode: "PAY_PER_REQUEST",
-  },
-};
-
 export const UserGroups: TableSchema = {
   tableName: "UserGroups",
   createInput: {
@@ -332,7 +316,6 @@ export const ALL_TABLES: TableSchema[] = [
   Permissions,
   ApiKeys,
   Groups,
-  GroupToolGrants,
   UserGroups,
   Audit,
   Records,

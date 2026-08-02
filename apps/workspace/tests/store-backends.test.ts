@@ -300,9 +300,6 @@ describe.skipIf(!DSQL_URL)("DSQL store backends (contract)", () => {
     expect(await store.groups.members.listGroupIdsForUser(ws, alice)).toEqual([
       group.groupId,
     ]);
-    await store.groups.toolGrants.add(ws, group.groupId, "github", "*");
-    expect(await store.groups.toolGrants.check(ws, [group.groupId], "github", "x")).toBe(true);
-
     const perm = await store.permissions.grant(ws, {
       callerId: alice,
       provider: "github",

@@ -53,13 +53,6 @@ export interface GroupRecord {
   updatedAt: string;
 }
 
-export interface ToolGrantRecord {
-  workspaceId: string;
-  groupId: string;
-  provider: string;
-  operation: string;
-}
-
 export interface UserGroupRecord {
   workspaceId: string;
   userId: string;
@@ -152,27 +145,6 @@ export interface IIdentityStore {
       listGroupIdsForUser(workspaceId: string, userId: string): Promise<string[]>;
       /** User ids in a group (was an inline table Scan in routes/groups.ts). */
       listUserIdsForGroup(workspaceId: string, groupId: string): Promise<string[]>;
-    };
-    toolGrants: {
-      add(
-        workspaceId: string,
-        groupId: string,
-        provider: string,
-        operation: string,
-      ): Promise<ToolGrantRecord>;
-      remove(
-        workspaceId: string,
-        groupId: string,
-        provider: string,
-        operation: string,
-      ): Promise<boolean>;
-      list(workspaceId: string, groupId: string): Promise<ToolGrantRecord[]>;
-      check(
-        workspaceId: string,
-        groupIds: string[],
-        provider: string,
-        operation: string,
-      ): Promise<boolean>;
     };
   };
   permissions: {

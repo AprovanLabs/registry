@@ -1,17 +1,15 @@
 /**
- * Groups facade over the identity store: group CRUD, user-group membership,
- * and tool grants. Auth-cache invalidation on membership mutations happens
- * inside the store (identity/store.ts).
+ * Groups facade over the identity store: group CRUD and user-group
+ * membership. Capability is granted by attaching profiles to groups
+ * (profile-grants.ts — subject-typed profile grants in the WS-3
+ * registry-server storage). Auth-cache invalidation on membership mutations
+ * happens inside the store (identity/store.ts).
  */
 
 import { getIdentityStore } from "./identity/store.js";
-import type { GroupRecord, ToolGrantRecord } from "./identity/types.js";
+import type { GroupRecord } from "./identity/types.js";
 
-export type {
-  GroupRecord,
-  ToolGrantRecord,
-  UserGroupRecord,
-} from "./identity/types.js";
+export type { GroupRecord, UserGroupRecord } from "./identity/types.js";
 
 // ---------------------------------------------------------------------------
 // Groups CRUD
@@ -80,44 +78,3 @@ export async function listGroupUserIds(
   return getIdentityStore().groups.members.listUserIdsForGroup(workspaceId, groupId);
 }
 
-// ---------------------------------------------------------------------------
-// GroupToolGrants
-// ---------------------------------------------------------------------------
-
-export async function addToolGrant(
-  workspaceId: string,
-  groupId: string,
-  provider: string,
-  operation: string,
-): Promise<ToolGrantRecord> {
-  return getIdentityStore().groups.toolGrants.add(workspaceId, groupId, provider, operation);
-}
-
-export async function removeToolGrant(
-  workspaceId: string,
-  groupId: string,
-  provider: string,
-  operation: string,
-): Promise<boolean> {
-  return getIdentityStore().groups.toolGrants.remove(workspaceId, groupId, provider, operation);
-}
-
-export async function listToolGrants(
-  workspaceId: string,
-  groupId: string,
-): Promise<ToolGrantRecord[]> {
-  return getIdentityStore().groups.toolGrants.list(workspaceId, groupId);
-}
-
-/**
- * Check whether any of the given groupIds has a tool grant covering
- * (provider, operation). A grant with operation="*" is a wildcard.
- */
-export async function checkToolGrant(
-  workspaceId: string,
-  groupIds: string[],
-  provider: string,
-  operation: string,
-): Promise<boolean> {
-  return getIdentityStore().groups.toolGrants.check(workspaceId, groupIds, provider, operation);
-}

@@ -11,7 +11,7 @@ import { auditRouter } from "./routes/audit.js";
 import { authRouter } from "./routes/auth.js";
 import { credentialsRouter } from "./routes/credentials.js";
 import { fsRouter, fsUploadsRouter } from "./routes/fs.js";
-import { groupsRouter } from "./routes/groups.js";
+import { groupsRouter, workspaceProfilesRouter } from "./routes/groups.js";
 import { invitesRouter } from "./routes/invites.js";
 import { appsRouter } from "./routes/apps.js";
 import { hooksRouter } from "./routes/hooks.js";
@@ -152,6 +152,8 @@ export function createApp(): Hono {
   app.route("/oauth", oauthRouter);
   app.route("/credentials", credentialsRouter);
   app.route("/groups", groupsRouter);
+  // Admin picker for group→profile attachment (routes/groups.ts).
+  app.route("/profiles", workspaceProfilesRouter);
   app.route("/invites", invitesRouter);
   app.route("/members", membersRouter);
   app.route("/permissions", permissionsRouter);

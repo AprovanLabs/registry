@@ -84,11 +84,6 @@ CREATE TABLE IF NOT EXISTS group_members (
   PRIMARY KEY (workspace_id, group_id, user_id)
 );
 CREATE INDEX IF NOT EXISTS group_members_by_user ON group_members(workspace_id, user_id);
-CREATE TABLE IF NOT EXISTS group_tool_grants (
-  workspace_id TEXT NOT NULL, group_id TEXT NOT NULL, provider TEXT NOT NULL,
-  operation TEXT NOT NULL, granted_by TEXT, created_at TEXT,
-  PRIMARY KEY (workspace_id, group_id, provider, operation)
-);
 CREATE TABLE IF NOT EXISTS permissions (
   workspace_id TEXT NOT NULL, caller_id TEXT NOT NULL, provider TEXT NOT NULL,
   operation TEXT NOT NULL, perm_id TEXT NOT NULL, granted_by TEXT, created_at TEXT,
@@ -462,13 +457,11 @@ export function createIdentityStoreSql(client: IdentitySqlClient): IIdentityStor
           [workspaceId, groupId],
         );
         if (result.changes === 0) return false;
-        // App-layer integrity: memberships and grants die with the group.
+        // App-layer integrity: memberships die with the group. Profile
+        // grants held by the group live in registry-server storage and stop
+        // matching once the group id no longer resolves for any principal.
         await client.run(
           `DELETE FROM group_members WHERE workspace_id = ? AND group_id = ?`,
-          [workspaceId, groupId],
-        );
-        await client.run(
-          `DELETE FROM group_tool_grants WHERE workspace_id = ? AND group_id = ?`,
           [workspaceId, groupId],
         );
         return true;
@@ -506,49 +499,6 @@ export function createIdentityStoreSql(client: IdentitySqlClient): IIdentityStor
         },
       },
 
-      toolGrants: {
-        async add(workspaceId, groupId, provider, operation) {
-          await client.run(
-            `INSERT INTO group_tool_grants (workspace_id, group_id, provider, operation, created_at)
-             VALUES (?, ?, ?, ?, ?)
-             ON CONFLICT (workspace_id, group_id, provider, operation) DO NOTHING`,
-            [workspaceId, groupId, provider, operation, new Date().toISOString()],
-          );
-          return { workspaceId, groupId, provider, operation };
-        },
-        async remove(workspaceId, groupId, provider, operation) {
-          const result = await client.run(
-            `DELETE FROM group_tool_grants
-             WHERE workspace_id = ? AND group_id = ? AND provider = ? AND operation = ?`,
-            [workspaceId, groupId, provider, operation],
-          );
-          return result.changes > 0;
-        },
-        async list(workspaceId, groupId) {
-          const rows = await client.all(
-            `SELECT * FROM group_tool_grants WHERE workspace_id = ? AND group_id = ?
-             ORDER BY provider, operation`,
-            [workspaceId, groupId],
-          );
-          return rows.map((row) => ({
-            workspaceId: String(row["workspace_id"]),
-            groupId: String(row["group_id"]),
-            provider: String(row["provider"]),
-            operation: String(row["operation"]),
-          }));
-        },
-        async check(workspaceId, groupIds, provider, operation) {
-          if (groupIds.length === 0) return false;
-          const placeholders = groupIds.map(() => "?").join(", ");
-          const rows = await client.all(
-            `SELECT 1 AS hit FROM group_tool_grants
-             WHERE workspace_id = ? AND group_id IN (${placeholders})
-               AND provider = ? AND operation IN (?, '*') LIMIT 1`,
-            [workspaceId, ...groupIds, provider, operation],
-          );
-          return rows.length > 0;
-        },
-      },
     },
 
     permissions: {

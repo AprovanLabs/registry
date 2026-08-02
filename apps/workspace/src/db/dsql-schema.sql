@@ -135,16 +135,6 @@ CREATE TABLE IF NOT EXISTS group_members (
 
 CREATE INDEX ASYNC IF NOT EXISTS group_members_by_user ON group_members (workspace_id, user_id);
 
-CREATE TABLE IF NOT EXISTS group_tool_grants (
-  workspace_id text NOT NULL,
-  group_id text NOT NULL,
-  provider text NOT NULL,
-  operation text NOT NULL,
-  granted_by text,
-  created_at text,
-  PRIMARY KEY (workspace_id, group_id, provider, operation)
-);
-
 CREATE TABLE IF NOT EXISTS permissions (
   workspace_id text NOT NULL,
   caller_id text NOT NULL,
