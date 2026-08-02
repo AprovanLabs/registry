@@ -100,11 +100,14 @@ describe("path binding", () => {
 
   it("binds a manifest that predates entry/paths on read", async () => {
     await putFile("apps/legacy/widget.tsx", "export default () => null;");
-    // Straight to the store: `.services/` is closed to the fs route.
-    await getFsStore().write(
+    // Straight to the record store (manifests live under svc#apps now): a
+    // pre-entry/paths shape as the migration sweep would have carried it.
+    const { getRecordStore } = await import("../src/records.js");
+    await getRecordStore().set(
       "local",
-      ".services/apps/legacy.json",
-      JSON.stringify({
+      "svc#apps",
+      "legacy",
+      {
         name: "legacy",
         dir: "apps/legacy",
         visibility: "public",
@@ -112,8 +115,8 @@ describe("path binding", () => {
         createdBy: "local",
         createdAt: "2026-01-01T00:00:00.000Z",
         updatedAt: "2026-01-01T00:00:00.000Z",
-      }),
-      "application/json",
+      },
+      "system",
     );
     const project = (await (
       await liveAppsRouter.request("/local/legacy/__project__")

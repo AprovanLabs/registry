@@ -2,15 +2,16 @@
  * Per-(app, user) daily usage metering.
  *
  * The rps/burst limiter protects against bursts within one process; this is
- * the durable complement — a per-day call budget that survives Lambda
- * instance churn because it lives in the workspace FS
- * (`.services/apps/<app>/usage/<sub>/<yyyy-mm-dd>.json`).
+ * the durable complement — a per-day call budget that survives instance
+ * churn because it lives in the record store
+ * (`svc#apps#usage#<app>` / `<sub>/<yyyy-mm-dd>`), expiring via record TTL.
  *
  * The read-modify-write is not atomic, so concurrent calls can undercount
  * slightly — fine for a fairness budget, which is what daily limits are.
  */
 
-import { getFsStore } from "../fs-store.js";
+import { getRecordStore } from "../records.js";
+import { svcScope, SVC_SYSTEM_USER } from "../svc-records.js";
 import type { AppManifest } from "./store.js";
 
 /** Daily call budget per user when the manifest doesn't set one. */
@@ -24,10 +25,10 @@ export interface DailyUsage {
   date: string;
 }
 
-function usagePath(app: string, sub: string, date: string): string {
-  // Escape path separators in subs (Cognito subs are uuid-ish, but be safe).
+function usageKey(sub: string, date: string): string {
+  // Escape separators in subs (Cognito subs are uuid-ish, but be safe).
   const safeSub = sub.replace(/[^A-Za-z0-9_-]/gu, "_");
-  return `.services/apps/${app}/usage/${safeSub}/${date}.json`;
+  return `${safeSub}/${date}`;
 }
 
 /**
@@ -41,24 +42,22 @@ export async function countDailyCall(
 ): Promise<DailyUsage> {
   const limit = manifest.rateLimit?.daily ?? DEFAULT_DAILY_CALLS;
   const date = new Date().toISOString().slice(0, 10);
-  const path = usagePath(manifest.name, sub, date);
-  const store = getFsStore();
+  const scope = svcScope("apps", "usage", manifest.name);
+  const key = usageKey(sub, date);
+  const records = getRecordStore();
 
   let used = 0;
-  const existing = await store.read(workspaceId, path).catch(() => undefined);
-  if (existing) {
-    try {
-      const parsed = JSON.parse(existing.content) as { used?: number };
-      if (typeof parsed.used === "number" && parsed.used >= 0) used = parsed.used;
-    } catch {
-      // Corrupt counter: start over rather than lock the user out.
-    }
-  }
+  const existing = await records.get(workspaceId, scope, key).catch(() => undefined);
+  const parsed = existing?.value as { used?: number } | undefined;
+  if (parsed && typeof parsed.used === "number" && parsed.used >= 0) used = parsed.used;
 
   if (used >= limit) {
     return { allowed: false, used, limit, date };
   }
   used += 1;
-  await store.write(workspaceId, path, JSON.stringify({ used }), "application/json");
+  // Counters are daily; let the store reap them two days on.
+  await records.set(workspaceId, scope, key, { used }, SVC_SYSTEM_USER, {
+    expiresAtEpochSeconds: Math.floor(Date.now() / 1000) + 2 * 24 * 3600,
+  });
   return { allowed: true, used, limit, date };
 }

@@ -6,7 +6,7 @@
  * each exported workflow's script already have an immutable hash per revision.
  * A **release** is just a snapshot of those hashes plus a hash of the manifest:
  *
- *   .services/apps/<name>/releases/<id>.json
+ *   svc#apps#releases#<name> / <id>
  *     { id, channel, notes, manifestHash, entryHash, workflows: {name: hash} }
  *
  * A **channel** is a named pointer at a release, stored on the manifest
@@ -20,6 +20,7 @@
 import { createHash } from "node:crypto";
 import { getFsStore } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
+import { listSvcRecords, readSvcRecord, svcScope, writeSvcRecord } from "../svc-records.js";
 import { readRegistration } from "../workflows/store.js";
 import { saveApp, type AppManifest } from "./store.js";
 
@@ -51,12 +52,8 @@ export function channelName(value: unknown, fallback = DEFAULT_CHANNEL): string 
   return value;
 }
 
-function releasesPrefix(name: string): string {
-  return `.services/apps/${name}/releases`;
-}
-
-function releasePath(name: string, id: string): string {
-  return `${releasesPrefix(name)}/${id}.json`;
+function releasesScope(name: string): string {
+  return svcScope("apps", "releases", name);
 }
 
 /** Time-prefixed id: sortable, unique. */
@@ -114,11 +111,12 @@ export async function saveRelease(
   appName: string,
   release: AppRelease,
 ): Promise<void> {
-  await getFsStore().write(
+  await writeSvcRecord(
     workspaceId,
-    releasePath(appName, release.id),
-    JSON.stringify(release, null, 2),
-    "application/json",
+    releasesScope(appName),
+    release.id,
+    release,
+    release.createdBy,
   );
 }
 
@@ -128,10 +126,7 @@ export async function readRelease(
   id: string,
 ): Promise<AppRelease | undefined> {
   if (!id) return undefined;
-  const file = await getFsStore()
-    .read(workspaceId, releasePath(appName, id))
-    .catch(() => undefined);
-  return file ? (JSON.parse(file.content) as AppRelease) : undefined;
+  return readSvcRecord<AppRelease>(workspaceId, releasesScope(appName), id).catch(() => undefined);
 }
 
 /** Every release of an app, newest first (ids are time-prefixed). */
@@ -139,17 +134,8 @@ export async function listReleases(
   workspaceId: string,
   appName: string,
 ): Promise<AppRelease[]> {
-  const entries = await getFsStore()
-    .list(workspaceId, releasesPrefix(appName))
-    .catch(() => []);
-  const ids = entries
-    .map((entry) => entry.path.split("/").pop() ?? "")
-    .filter((file) => file.endsWith(".json"))
-    .map((file) => file.slice(0, -".json".length))
-    .sort()
-    .reverse();
-  const releases = await Promise.all(ids.map((id) => readRelease(workspaceId, appName, id)));
-  return releases.filter((r): r is AppRelease => Boolean(r));
+  const entries = await listSvcRecords<AppRelease>(workspaceId, releasesScope(appName));
+  return entries.map((entry) => entry.value).reverse();
 }
 
 /** Point a channel at a release and persist the manifest. */

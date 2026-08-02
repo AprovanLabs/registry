@@ -2,7 +2,7 @@
  * Default sandbox mounts — a workspace-level setting applied to every new
  * sandbox and scheduled run unless the caller mounts the same path himself.
  *
- *   .services/sandboxes/defaults.json   { "mounts": [{ path, source?, mode? }] }
+ *   record svc#sandboxes#defaults / defaults   { "mounts": [{ path, source?, mode? }] }
  *
  * The classic use is a skills repo every agent sandbox should carry:
  * `{ path: "skills", source: "github:JacobSampson/skills", mode: "ro" }` set
@@ -15,13 +15,14 @@
  * leniently (one the grants deny is skipped, not fatal).
  */
 
-import { getFsStore } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
+import { readSvcRecord, svcScope, writeSvcRecord } from "../svc-records.js";
 import { parseMounts } from "./mounts.js";
 import type { CapabilityGrants } from "../grants.js";
 import type { SandboxMount } from "./store.js";
 
-const DEFAULTS_PATH = ".services/sandboxes/defaults.json";
+const DEFAULTS_SCOPE = svcScope("sandboxes", "defaults");
+const DEFAULTS_KEY = "defaults";
 
 /** A stored default: the declaration vocabulary of `sandboxes.create`. */
 export interface DefaultMount {
@@ -31,16 +32,12 @@ export interface DefaultMount {
 }
 
 export async function readDefaultMounts(workspaceId: string): Promise<DefaultMount[]> {
-  const file = await getFsStore()
-    .read(workspaceId, DEFAULTS_PATH)
-    .catch(() => undefined);
-  if (!file) return [];
-  try {
-    const parsed = JSON.parse(file.content) as { mounts?: unknown };
-    return Array.isArray(parsed.mounts) ? (parsed.mounts as DefaultMount[]) : [];
-  } catch {
-    return [];
-  }
+  const parsed = await readSvcRecord<{ mounts?: unknown }>(
+    workspaceId,
+    DEFAULTS_SCOPE,
+    DEFAULTS_KEY,
+  ).catch(() => undefined);
+  return parsed && Array.isArray(parsed.mounts) ? (parsed.mounts as DefaultMount[]) : [];
 }
 
 /**
@@ -64,12 +61,7 @@ export async function writeDefaultMounts(
     source: mount.source,
     mode: mount.mode,
   }));
-  await getFsStore().write(
-    workspaceId,
-    DEFAULTS_PATH,
-    JSON.stringify({ mounts }, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, DEFAULTS_SCOPE, DEFAULTS_KEY, { mounts });
   return mounts;
 }
 

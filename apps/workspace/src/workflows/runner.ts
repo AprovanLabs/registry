@@ -173,10 +173,10 @@ export async function runWorkflow(options: RunWorkflowOptions): Promise<Workflow
   };
   const startMs = performance.now();
 
-  const scriptFile = await getFsStore().read(
-    scriptWorkspaceId ?? workspaceId,
-    registration.scriptPath,
-  );
+  const scriptFile =
+    registration.script !== undefined
+      ? { content: registration.script }
+      : await getFsStore().read(scriptWorkspaceId ?? workspaceId, registration.scriptPath);
   if (!scriptFile) {
     run.status = "failed";
     run.error = `Script not found: ${registration.scriptPath}`;

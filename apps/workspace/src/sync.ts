@@ -14,7 +14,7 @@
  * `schedule` writes a one-line runner script and registers a companion
  * workflow (`sync--<name>`) with that cron — no second scheduler.
  *
- * Registrations live at `.services/sync/<name>.json`; each run updates
+ * Registrations live in the record store under `svc#sync`; each run updates
  * `lastRun` in place. Record normalization understands the common result
  * shapes: arrays, `{ rows, columns }` (the sql interface), and `{ value }` /
  * `{ data }` wrappers.
@@ -29,10 +29,17 @@ import {
   type CoreService,
   type ServiceContext,
 } from "./service-kernel.js";
+import {
+  deleteSvcRecord,
+  listSvcRecords,
+  readSvcRecord,
+  svcScope,
+  writeSvcRecord,
+} from "./svc-records.js";
 import { invokeTool } from "./workflows/invoke.js";
 import { runScriptInSandbox } from "./workflows/sandbox.js";
 
-const SYNC_PREFIX = ".services/sync/";
+const SYNC_SCOPE = svcScope("sync");
 const SCRIPT_TIMEOUT_MS = 120_000;
 const MAX_RECORDS = 50_000;
 
@@ -73,10 +80,6 @@ export interface SyncRegistration {
     error?: string;
     durationMs: number;
   };
-}
-
-function syncPath(name: string): string {
-  return `${SYNC_PREFIX}${name}.json`;
 }
 
 function syncName(value: unknown): string {
@@ -268,22 +271,11 @@ async function executeSync(
 // ---------------------------------------------------------------------------
 
 async function readSync(workspaceId: string, name: string): Promise<SyncRegistration | undefined> {
-  const file = await getFsStore().read(workspaceId, syncPath(name)).catch(() => undefined);
-  if (!file) return undefined;
-  try {
-    return JSON.parse(file.content) as SyncRegistration;
-  } catch {
-    return undefined;
-  }
+  return readSvcRecord<SyncRegistration>(workspaceId, SYNC_SCOPE, name).catch(() => undefined);
 }
 
 async function writeSync(workspaceId: string, registration: SyncRegistration): Promise<void> {
-  await getFsStore().write(
-    workspaceId,
-    syncPath(registration.name),
-    JSON.stringify(registration, null, 2),
-    "application/json",
-  );
+  await writeSvcRecord(workspaceId, SYNC_SCOPE, registration.name, registration);
 }
 
 /** Companion workflow id for a scheduled sync. */
@@ -297,16 +289,11 @@ async function ensureSchedule(
 ): Promise<void> {
   const workflows = getCoreService("workflows")!;
   if (!registration.schedule) return;
-  const runnerPath = `${SYNC_PREFIX}${registration.name}.run.js`;
-  await getFsStore().write(
-    ctx.workspaceId,
-    runnerPath,
-    `// Auto-generated: scheduled runner for the "${registration.name}" sync.\nreturn await sync.run({ name: ${JSON.stringify(registration.name)} });\n`,
-    "text/javascript",
-  );
+  // The one-line runner is platform-generated state, not an authored file —
+  // registered inline so no `.services/**` file is ever written for it.
   await workflows.call(ctx, "register", {
     name: companionWorkflow(registration.name),
-    script_path: runnerPath,
+    script: `// Auto-generated: scheduled runner for the "${registration.name}" sync.\nreturn await sync.run({ name: ${JSON.stringify(registration.name)} });\n`,
     description: `Scheduled runner for the ${registration.name} sync`,
     triggers: { cron: registration.schedule },
   });
@@ -431,29 +418,18 @@ export const syncService: CoreService = {
         }
       }
       case "list": {
-        // FS listing is directory-style — no trailing slash on the prefix.
-        const files = await getFsStore().list(ctx.workspaceId, SYNC_PREFIX.replace(/\/$/u, ""));
-        const syncs: SyncRegistration[] = [];
-        for (const entry of files) {
-          if (!entry.path.endsWith(".json")) continue;
-          const name = entry.path.slice(SYNC_PREFIX.length, -".json".length);
-          if (name.includes("/")) continue;
-          const registration = await readSync(ctx.workspaceId, name);
-          if (registration) syncs.push(registration);
-        }
-        return { syncs };
+        const entries = await listSvcRecords<SyncRegistration>(ctx.workspaceId, SYNC_SCOPE);
+        return { syncs: entries.map((entry) => entry.value) };
       }
       case "delete": {
         const name = syncName(args["name"]);
         const registration = await readSync(ctx.workspaceId, name);
         if (!registration) throw new ServiceError(`Unknown sync: ${name}`, 404);
-        const store = getFsStore();
-        await store.remove(ctx.workspaceId, syncPath(name)).catch(() => {});
+        await deleteSvcRecord(ctx.workspaceId, SYNC_SCOPE, name).catch(() => {});
         if (registration.schedule) {
           await getCoreService("workflows")!.call(ctx, "remove", {
             name: companionWorkflow(name),
           }).catch(() => {});
-          await store.remove(ctx.workspaceId, `${SYNC_PREFIX}${name}.run.js`).catch(() => {});
         }
         return { deleted: name };
       }
