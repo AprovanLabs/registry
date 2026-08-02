@@ -16,7 +16,7 @@
   },
   "dependencies": {
     "@aprovan/registry-main": "0.1.0",
-    "@aprovan/registry-ui": "0.4.0",
+    "@aprovan/registry-ui": "file:../../vendor/aprovan-registry-ui-0.4.0.tgz",
     "@aprovan/runtime": "workspace:*",
     "@aprovan/ui": "0.5.0",
     "@astrojs/react": "^5.0.3",

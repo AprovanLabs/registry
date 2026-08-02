@@ -61,8 +61,8 @@ importers:
         specifier: 0.1.0
         version: 0.1.0
       '@aprovan/registry-ui':
-        specifier: 0.4.0
-        version: 0.4.0(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: file:../../vendor/aprovan-registry-ui-0.4.0.tgz
+        version: file:vendor/aprovan-registry-ui-0.4.0.tgz(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@aprovan/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
@@ -979,8 +979,9 @@ packages:
   '@aprovan/registry-main@0.1.0-dev.7343775':
     resolution: {integrity: sha512-Z4my5ZGDJbNCk3kQ3sFRc2fcJKs6LCo0Ghx08Lw1k9CFawpiKeVXDBcTYNJQuEVq77wl1FbqBO+74zxwgseOPA==}
 
-  '@aprovan/registry-ui@0.4.0':
-    resolution: {integrity: sha512-ZqP89iHPWZiPfKZbGXQZpDUKgQfCxG/jQ7JZUvgZD4eUsqlO/3Hz/phNFF1jxgaT/c+GoYNkiYLdI63rStcBlQ==}
+  '@aprovan/registry-ui@file:vendor/aprovan-registry-ui-0.4.0.tgz':
+    resolution: {integrity: sha512-hepqBAESlUJq/U2SNemk/s8J1z6hHsh44wRhMzowll0PXZE6alqtgxzkarEXTWQDHM4oS4upJb1v7VTk3FZE2Q==, tarball: file:vendor/aprovan-registry-ui-0.4.0.tgz}
+    version: 0.4.0
     peerDependencies:
       react: 19.2.7
 
@@ -8665,9 +8666,9 @@ snapshots:
 
   '@aprovan/registry-main@0.1.0-dev.7343775': {}
 
-  '@aprovan/registry-ui@0.4.0(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@aprovan/registry-ui@file:vendor/aprovan-registry-ui-0.4.0.tgz(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@aprovan/registry-main': 0.1.0-dev.7343775
+      '@aprovan/registry-main': 0.1.0
       '@aprovan/ui': 0.5.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/lang-javascript': 6.2.5
