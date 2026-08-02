@@ -26,7 +26,7 @@
 
 import { createHash } from "node:crypto";
 import { hiddenDataPrefixes, isHiddenDataPath } from "../apps/store.js";
-import { getFsStore, isServicePath, type FsEntry } from "../fs-store.js";
+import { getFsStore, isServicePath, listAll, type FsEntry } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
 import {
   listSvcKeys,
@@ -112,7 +112,7 @@ export async function visibleEntries(
   workspaceId: string,
   prefix = "",
 ): Promise<FsEntry[]> {
-  const entries = await getFsStore().list(workspaceId, prefix);
+  const entries = await listAll(getFsStore(), workspaceId, prefix);
   const hidden = await hiddenDataPrefixes(workspaceId);
   return entries.filter(
     (entry) => !isServicePath(entry.path) && !isHiddenDataPath(entry.path, hidden),

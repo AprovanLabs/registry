@@ -49,7 +49,7 @@ import {
   workspacePath,
   type AppManifest,
 } from "../apps/store.js";
-import { getFsStore } from "../fs-store.js";
+import { listAll, getFsStore } from "../fs-store.js";
 import { getAuthMode, readBearerToken, verifyAccessToken } from "../middleware/auth.js";
 import { ServiceError } from "../service-kernel.js";
 import { readRegistration } from "../workflows/store.js";
@@ -213,7 +213,7 @@ liveAppsRouter.get("/:workspaceId/:name/__project__", async (c) => {
     const { manifest, workspaceId } = app;
     const store = getFsStore();
     const listings = await Promise.all(
-      manifest.paths.map((prefix) => store.list(workspaceId, prefix)),
+      manifest.paths.map((prefix) => listAll(store, workspaceId, prefix)),
     );
     const paths = [...new Set(listings.flat().map((entry) => entry.path))].filter((path) =>
       appPathServable(manifest, path),

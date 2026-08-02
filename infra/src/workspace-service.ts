@@ -54,6 +54,12 @@ export interface WorkspaceServiceProps {
   fsBucket: IBucket;
   /** Record store — accumulated state (records.ts `RecordStoreDynamodb`). */
   recordsTable: ITable;
+  /** Aurora DSQL cluster ARN (IAM connect grant). */
+  dsqlClusterArn: string;
+  /** DSQL cluster endpoint hostname (DSQL_ENDPOINT env). */
+  dsqlEndpoint: string;
+  /** Active store backend for the workspace task ("dynamo" until cutover). */
+  storeBackend: string;
   sharedEnv: Record<string, string>;
   /**
    * Fully qualified image, e.g. `ghcr.io/aprovanlabs/workspace:1a2b3c4d5e6f`.
@@ -110,6 +116,9 @@ export class WorkspaceService extends Construct {
       fsTable,
       fsBucket,
       recordsTable,
+      dsqlClusterArn,
+      dsqlEndpoint,
+      storeBackend,
       image,
     } = props;
 
@@ -183,6 +192,8 @@ export class WorkspaceService extends Construct {
       FS_TABLE: fsTable.tableName,
       FS_BUCKET: fsBucket.bucketName,
       RECORDS_TABLE: recordsTable.tableName,
+      STORE_BACKEND: storeBackend,
+      DSQL_ENDPOINT: dsqlEndpoint,
       GATEWAY_REGISTRY_BASE_URL: "https://aprovan.com/registry",
       ...containerEnv(sharedEnv),
     };
@@ -353,6 +364,16 @@ export class WorkspaceService extends Construct {
       new iam.PolicyStatement({
         actions: ["ses:SendEmail", "ses:SendRawEmail"],
         resources: ["*"],
+      }),
+    );
+
+    // Aurora DSQL: the task connects with IAM auth tokens (db/dsql.ts signs
+    // them per connection). DbConnectAdmin covers schema DDL + DML on the
+    // default `admin` database role; scoped to this environment's cluster.
+    taskRole.addToPrincipalPolicy(
+      new iam.PolicyStatement({
+        actions: ["dsql:DbConnect", "dsql:DbConnectAdmin"],
+        resources: [dsqlClusterArn],
       }),
     );
 

@@ -27,7 +27,7 @@ import {
   readWorkspaceConfig,
   resolveAppPath,
 } from "./apps/store.js";
-import { getFsStore, isServicePath, normalizeFsPath } from "./fs-store.js";
+import { getFsStore, isServicePath, listAll, normalizeFsPath } from "./fs-store.js";
 import { interfacesService } from "./interfaces-service.js";
 import {
   commitTree,
@@ -212,9 +212,9 @@ const keyvalue: CoreService = {
         // Merge in not-yet-migrated legacy keys (defense during the
         // migration window; harmless once the sweep script has run).
         const root = legacyKvPath(ctx, "");
-        const entries = await getFsStore()
-          .list(tenant, root.replace(/\/$/, ""))
-          .catch(() => []);
+        const entries = await listAll(getFsStore(), tenant, root.replace(/\/$/, "")).catch(
+          () => [],
+        );
         const legacyKeys = entries
           .map((e) => e.path)
           .filter((p) => p.startsWith(root))
@@ -614,7 +614,7 @@ const vfs: CoreService = {
             ? [await resolveVfsPath(ctx, raw, false)]
             : ctx.appScope.paths;
           const listings = await Promise.all(
-            roots.map((root) => store.list(ctx.workspaceId, root)),
+            roots.map((root) => listAll(store, ctx.workspaceId, root)),
           );
           return { entries: listings.flat() };
         }
@@ -623,7 +623,7 @@ const vfs: CoreService = {
         if (prefix && isServicePath(prefix)) {
           throw new ServiceError("Service state is managed through its tool namespaces", 403);
         }
-        const entries = await store.list(ctx.workspaceId, prefix);
+        const entries = await listAll(store, ctx.workspaceId, prefix);
         // A workspace listing never surfaces app/personal data partitions —
         // keyvalue no longer writes there, but pre-migration files still can
         // (see records.ts / docs/app-data.md). Reads/writes to a known path

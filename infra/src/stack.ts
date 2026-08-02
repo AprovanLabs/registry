@@ -1,5 +1,5 @@
 import { type Namer } from "@aprovan/cdk";
-import { CfnOutput, RemovalPolicy, Stack, type StackProps } from "aws-cdk-lib";
+import { CfnOutput, CfnResource, RemovalPolicy, Stack, type StackProps } from "aws-cdk-lib";
 import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
 import { Key } from "aws-cdk-lib/aws-kms";
 import { BlockPublicAccess, Bucket, BucketEncryption } from "aws-cdk-lib/aws-s3";
@@ -187,7 +187,45 @@ export class RegistryApp extends Stack {
       exportName: names.regional("records-table-arn"),
     });
 
+    // -----------------------------------------------------------------------
+    // Aurora DSQL — the relational target every store migrates to (WS-5
+    // tech-plan D4: one single-region cluster per environment). aws-cdk-lib
+    // 2.180 ships no aws-dsql module yet, so this is the L1 resource by type.
+    // Serverless, pay-per-DPU, permanent free tier — safe to keep dark while
+    // STORE_BACKEND stays "dynamo".
+    // -----------------------------------------------------------------------
+    const dsqlCluster = new CfnResource(this, "DsqlCluster", {
+      type: "AWS::DSQL::Cluster",
+      properties: {
+        DeletionProtectionEnabled: isProd,
+        Tags: [{ Key: "Name", Value: names.regional("workspace-dsql") }],
+      },
+    });
+    dsqlCluster.applyRemovalPolicy(isProd ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY);
+    const dsqlEndpoint = `${dsqlCluster.getAtt("Identifier").toString()}.dsql.${this.region}.on.aws`;
+
+    new CfnOutput(this, "DSQL_CLUSTER_ARN", {
+      value: dsqlCluster.getAtt("ResourceArn").toString(),
+      exportName: names.regional("workspace-dsql-arn"),
+    });
+    new CfnOutput(this, "DSQL_ENDPOINT_OUT", {
+      value: dsqlEndpoint,
+      exportName: names.regional("workspace-dsql-endpoint"),
+    });
+
+    // Which backend the workspace stores use. Stays "dynamo" until the
+    // runbook'd cutover flips it (`cdk deploy -c storeBackend=dsql`); flipping
+    // back is the rollback (tables are untouched either side of the flip).
+    const storeBackend =
+      (this.node.tryGetContext("storeBackend") as string | undefined) ?? "dynamo";
+    if (!["dynamo", "dsql"].includes(storeBackend)) {
+      throw new Error(`storeBackend context must be "dynamo" or "dsql" (got "${storeBackend}")`);
+    }
+
     const workspace = new WorkspaceService(this, "Workspace", {
+      dsqlClusterArn: dsqlCluster.getAtt("ResourceArn").toString(),
+      dsqlEndpoint,
+      storeBackend,
       environmentName,
       names,
       sharedEnv,

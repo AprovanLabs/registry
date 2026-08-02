@@ -130,10 +130,10 @@ export async function addMount(
   }
   // The mount shadows nothing: native files under the prefix would become
   // unreachable, so refuse while any exist.
-  const native = await getFsStore().list(workspaceId, prefix);
-  if (native.length > 0) {
+  const native = await getFsStore().list(workspaceId, prefix, { limit: 1 });
+  if (native.entries.length > 0) {
     throw new ServiceError(
-      `${prefix} has ${native.length} workspace file(s) — move or delete them before mounting over it`,
+      `${prefix} has workspace file(s) — move or delete them before mounting over it`,
       409,
     );
   }

@@ -26,7 +26,7 @@
 import { Hono, type Context } from "hono";
 import { hiddenDataPrefixes, isHiddenDataPath } from "../apps/store.js";
 import { changesSince, currentCursor, recordChange } from "../change-journal.js";
-import { getFsStore, isServicePath, normalizeFsPath } from "../fs-store.js";
+import { listAll, getFsStore, isServicePath, normalizeFsPath } from "../fs-store.js";
 import { requireAuth } from "../middleware/auth.js";
 import { ServiceError } from "../service-kernel.js";
 import {
@@ -89,7 +89,7 @@ fsRouter.get("/", async (c) => {
   } catch (err) {
     return serviceErrorResponse(c, err);
   }
-  const entries = await getFsStore().list(workspaceId, normalized);
+  const entries = await listAll(getFsStore(), workspaceId, normalized);
   // Root listings (and the chat file tree, which calls this same route)
   // hide the service subtree entirely, plus every app/personal data
   // partition — see docs/app-data.md "The file plane forgets app data".
@@ -149,7 +149,7 @@ fsRouter.get("/changes", async (c) => {
   if (stagedSession) {
     paths = (await sessionList(workspaceId, stagedSession, "")).map((entry) => entry.path);
   } else {
-    const entries = await getFsStore().list(workspaceId, "");
+    const entries = await listAll(getFsStore(), workspaceId, "");
     const hidden = await hiddenDataPrefixes(workspaceId);
     const mounted = await mountEntries(workspaceId, "");
     paths = [
@@ -247,7 +247,7 @@ fsRouter.delete("/:path{.+}", async (c) => {
   if (c.req.query("recursive") === "1") {
     // Capture the subtree before deleting it — removePrefix only reports a
     // count, and the journal needs the individual paths.
-    const toRemove = await store.list(workspaceId, path);
+    const toRemove = await listAll(store, workspaceId, path);
     removed = (await store.removePrefix(workspaceId, path)) > 0;
     if (removed) {
       for (const entry of toRemove) recordChange(workspaceId, "", entry.path, "delete");

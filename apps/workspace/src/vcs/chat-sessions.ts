@@ -24,7 +24,7 @@
  * since this chat started".
  */
 
-import { getFsStore, normalizeFsPath, type FsEntry, type FsFile } from "../fs-store.js";
+import { getFsStore, listAll, normalizeFsPath, type FsEntry, type FsFile } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
 import {
   deleteSvcRecord,
@@ -273,7 +273,7 @@ export async function sessionList(
     !prefix || path === prefix || path.startsWith(`${prefix}/`);
 
   const shadowRoot = `${SESSIONS_PREFIX}/${session.id}/files`;
-  const shadowEntries = await store.list(workspaceId, shadowRoot).catch(() => []);
+  const shadowEntries = await listAll(store, workspaceId, shadowRoot).catch(() => []);
   const shadowByPath = new Map(
     shadowEntries.map((entry) => [entry.path.slice(shadowRoot.length + 1), entry]),
   );

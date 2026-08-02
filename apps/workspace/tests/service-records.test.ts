@@ -104,7 +104,8 @@ describe("no subsystem writes service files", () => {
 
     // ...and the `.services/**` file namespace holds nothing new: only
     // staged-session shadow content (file content by nature).
-    const files = await getFsStore().list("local", ".services");
+    const { listAll } = await import("../src/fs-store.js");
+    const files = await listAll(getFsStore(), "local", ".services");
     const residue = files
       .map((entry) => entry.path)
       .filter((path) => !/^\.services\/chat\/sessions\/[^/]+\/files\//.test(path))

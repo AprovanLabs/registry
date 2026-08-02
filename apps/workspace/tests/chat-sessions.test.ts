@@ -395,7 +395,8 @@ describe("transcript records", () => {
     expect(messageKeys[0]).toMatch(/^\d{10}#m1$/);
 
     // The only `.services/chat` file-plane residue is staged shadow content.
-    const files = await getFsStore().list("local", ".services/chat");
+    const { listAll } = await import("../src/fs-store.js");
+    const files = await listAll(getFsStore(), "local", ".services/chat");
     const nonShadow = files.filter((entry) => !/\/files\//.test(entry.path));
     expect(nonShadow).toEqual([]);
   });

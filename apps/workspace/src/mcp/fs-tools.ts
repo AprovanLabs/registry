@@ -9,7 +9,7 @@
  * workspace membership grants the whole tree, matching the /fs routes.
  */
 
-import { getFsStore, normalizeFsPath } from "../fs-store.js";
+import { listAll, getFsStore, normalizeFsPath } from "../fs-store.js";
 import type { Principal } from "../middleware/auth.js";
 
 export const FS_TOOLS = [
@@ -101,7 +101,7 @@ export async function handleFsTool(
     const rawPrefix = typeof args["prefix"] === "string" ? args["prefix"] : "";
     const prefix = rawPrefix ? normalizeFsPath(rawPrefix) : "";
     if (prefix === null) return fail(`Invalid prefix: ${rawPrefix}`);
-    return ok({ entries: await store.list(workspaceId, prefix) });
+    return ok({ entries: await listAll(store, workspaceId, prefix) });
   }
 
   const path = typeof args["path"] === "string" ? normalizeFsPath(args["path"]) : null;

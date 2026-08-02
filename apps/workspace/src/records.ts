@@ -41,7 +41,7 @@ import { createRequire } from "node:module";
 import { join } from "node:path";
 import { dynamo } from "./db/client.js";
 import { s3 } from "./fs-store.js";
-import { isAwsMode, workspaceDataDir } from "./runtime/config.js";
+import { storeBackend, workspaceDataDir } from "./runtime/config.js";
 import type Database from "better-sqlite3";
 
 const loadSqlite = (): typeof import("better-sqlite3") => {
@@ -407,13 +407,203 @@ export class RecordStoreSqlite implements IRecordStore {
 }
 
 // ---------------------------------------------------------------------------
+// Aurora DSQL backend (specs/record-store "DSQL record backend"): relational
+// rows, >350KB values spill to S3 under the existing `records/` prefix,
+// `listScopes` is an indexed (tenant, scope) query — no scan exception —
+// and expiry is a read-filter plus a periodic sweep (DSQL has no native TTL).
+// ---------------------------------------------------------------------------
+
+export class RecordStoreDsql implements IRecordStore {
+  private readonly bucket: string | undefined;
+
+  constructor(options?: { bucket?: string }) {
+    this.bucket = options?.bucket ?? process.env["FS_BUCKET"];
+  }
+
+  private async db(): Promise<typeof import("./db/dsql.js")> {
+    return import("./db/dsql.js");
+  }
+
+  private blobKey(tenant: string, scope: string, key: string): string {
+    return `records/${tenant}/${scope}/${key}`;
+  }
+
+  private requireBucket(): string {
+    if (!this.bucket) {
+      throw new Error(
+        "FS_BUCKET must be set for the record store to spill large values (records.ts)",
+      );
+    }
+    return this.bucket;
+  }
+
+  async get(tenant: string, scope: string, key: string): Promise<RecordEntry | undefined> {
+    const { dsqlQuery } = await this.db();
+    const result = await dsqlQuery(
+      `SELECT value, spilled, updated_at, updated_by FROM records
+       WHERE tenant = $1 AND scope = $2 AND key = $3
+         AND (expires_at IS NULL OR expires_at >= $4)`,
+      [tenant, scope, key, Math.floor(Date.now() / 1000)],
+    );
+    const row = result.rows[0];
+    if (!row) return undefined;
+    let value: unknown;
+    if (row["spilled"]) {
+      const bucket = this.requireBucket();
+      const { client, GetObjectCommand } = await s3();
+      const blob = await client.send(
+        new GetObjectCommand({ Bucket: bucket, Key: this.blobKey(tenant, scope, key) }),
+      );
+      value = JSON.parse((await blob.Body?.transformToString("utf8")) ?? "null");
+    } else {
+      value = JSON.parse(String(row["value"] ?? "null"));
+    }
+    return {
+      tenant,
+      scope,
+      key,
+      value,
+      updatedAt: String(row["updated_at"]),
+      updatedBy: String(row["updated_by"]),
+    };
+  }
+
+  async set(
+    tenant: string,
+    scope: string,
+    key: string,
+    value: unknown,
+    updatedBy: string,
+    options?: RecordSetOptions,
+  ): Promise<RecordEntry> {
+    const { dsqlQuery, withOccRetry } = await this.db();
+    const updatedAt = new Date().toISOString();
+    const json = JSON.stringify(value ?? null);
+    const spill = Buffer.byteLength(json, "utf8") > SPILL_THRESHOLD_BYTES;
+    if (spill) {
+      const bucket = this.requireBucket();
+      const { client, PutObjectCommand } = await s3();
+      await client.send(
+        new PutObjectCommand({
+          Bucket: bucket,
+          Key: this.blobKey(tenant, scope, key),
+          Body: json,
+          ContentType: "application/json",
+        }),
+      );
+    }
+    await withOccRetry(() =>
+      dsqlQuery(
+        `INSERT INTO records (tenant, scope, key, value, spilled, updated_at, updated_by, expires_at)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         ON CONFLICT (tenant, scope, key)
+         DO UPDATE SET value = $4, spilled = $5, updated_at = $6, updated_by = $7, expires_at = $8`,
+        [
+          tenant,
+          scope,
+          key,
+          spill ? null : json,
+          spill,
+          updatedAt,
+          updatedBy,
+          options?.expiresAtEpochSeconds ? Math.floor(options.expiresAtEpochSeconds) : null,
+        ],
+      ),
+    );
+    if (!spill && this.bucket) {
+      // A prior write may have spilled this same key; clear the orphan blob.
+      const { client, DeleteObjectCommand } = await s3();
+      await client
+        .send(new DeleteObjectCommand({ Bucket: this.bucket, Key: this.blobKey(tenant, scope, key) }))
+        .catch(() => undefined);
+    }
+    return { tenant, scope, key, value: value ?? null, updatedAt, updatedBy };
+  }
+
+  async delete(tenant: string, scope: string, key: string): Promise<boolean> {
+    const { dsqlQuery, withOccRetry } = await this.db();
+    const spilled = await dsqlQuery(
+      `SELECT spilled FROM records WHERE tenant = $1 AND scope = $2 AND key = $3`,
+      [tenant, scope, key],
+    );
+    const result = await withOccRetry(() =>
+      dsqlQuery(`DELETE FROM records WHERE tenant = $1 AND scope = $2 AND key = $3`, [
+        tenant,
+        scope,
+        key,
+      ]),
+    );
+    if ((result.rowCount ?? 0) === 0) return false;
+    if (spilled.rows[0]?.["spilled"] && this.bucket) {
+      const { client, DeleteObjectCommand } = await s3();
+      await client
+        .send(new DeleteObjectCommand({ Bucket: this.bucket, Key: this.blobKey(tenant, scope, key) }))
+        .catch(() => undefined);
+    }
+    return true;
+  }
+
+  async list(tenant: string, scope: string, prefix = ""): Promise<string[]> {
+    const { dsqlQuery } = await this.db();
+    const result = await dsqlQuery(
+      `SELECT key FROM records
+       WHERE tenant = $1 AND scope = $2 AND ($3 = '' OR key LIKE $4)
+         AND (expires_at IS NULL OR expires_at >= $5)
+       ORDER BY key`,
+      [
+        tenant,
+        scope,
+        prefix,
+        `${prefix.replace(/([%_\\])/gu, "\\$1")}%`,
+        Math.floor(Date.now() / 1000),
+      ],
+    );
+    return result.rows.map((row) => String(row["key"]));
+  }
+
+  async listScopes(tenant: string, scopePrefix: string): Promise<string[]> {
+    // Indexed (tenant, scope) query — removes the Dynamo backend's
+    // full-table-scan exception (specs/record-store "listScopes without a
+    // scan"); served by the records_scopes index.
+    const { dsqlQuery } = await this.db();
+    const result = await dsqlQuery(
+      `SELECT DISTINCT scope FROM records
+       WHERE tenant = $1 AND scope LIKE $2
+       ORDER BY scope`,
+      [tenant, `${scopePrefix.replace(/([%_\\])/gu, "\\$1")}%`],
+    );
+    return result.rows.map((row) => String(row["scope"]));
+  }
+
+  /** Reap expired rows (leader-leased schedule; DSQL has no native TTL). */
+  async sweepExpired(): Promise<number> {
+    const { dsqlQuery, withOccRetry } = await this.db();
+    const result = await withOccRetry(() =>
+      dsqlQuery(`DELETE FROM records WHERE expires_at IS NOT NULL AND expires_at < $1`, [
+        Math.floor(Date.now() / 1000),
+      ]),
+    );
+    return result.rowCount ?? 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Singleton factory (backend chosen by runtime/config.ts, like every store)
 // ---------------------------------------------------------------------------
 
 let store: IRecordStore | undefined;
 
 export function getRecordStore(): IRecordStore {
-  store ??= isAwsMode() ? new RecordStoreDynamodb() : new RecordStoreSqlite();
+  store ??= (() => {
+    switch (storeBackend()) {
+      case "dsql":
+        return new RecordStoreDsql();
+      case "dynamo":
+        return new RecordStoreDynamodb();
+      case "sqlite":
+        return new RecordStoreSqlite();
+    }
+  })();
   return store;
 }
 

@@ -29,7 +29,7 @@
  * ops — the versioned artifact is the manifest's `entry`.
  */
 
-import { getFsStore, normalizeFsPath, type FsEntry, type FsFile } from "../fs-store.js";
+import { getFsStore, listAll, normalizeFsPath, type FsEntry, type FsFile } from "../fs-store.js";
 import { ServiceError } from "../service-kernel.js";
 import {
   deleteSvcRecord,
@@ -316,7 +316,7 @@ export async function resolveAppEntry(workspaceId: string, target: unknown): Pro
   if (await store.read(workspaceId, path)) return path;
 
   const prefix = `${path}/`;
-  const names = (await store.list(workspaceId, path))
+  const names = (await listAll(store, workspaceId, path))
     .map((entry) => entry.path)
     .filter((entry) => entry.startsWith(prefix))
     .map((entry) => entry.slice(prefix.length))
