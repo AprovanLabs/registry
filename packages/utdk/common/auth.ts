@@ -11,6 +11,25 @@ export interface AuthProvider {
 }
 
 // ---------------------------------------------------------------------------
+// Credential-type vocabulary
+// ---------------------------------------------------------------------------
+
+/**
+ * The gateway credential-type vocabulary — the single source of truth shared
+ * by the workspace credential store and the bundler's auth-intel phase
+ * (which derives its LLM output-schema enum from this runtime tuple, so the
+ * two can never diverge).
+ */
+export const CREDENTIAL_TYPES = [
+  "bearer_token",
+  "api_key",
+  "oauth2_client",
+  "oauth2_authcode",
+] as const;
+
+export type CredentialType = (typeof CREDENTIAL_TYPES)[number];
+
+// ---------------------------------------------------------------------------
 // BearerToken
 // ---------------------------------------------------------------------------
 

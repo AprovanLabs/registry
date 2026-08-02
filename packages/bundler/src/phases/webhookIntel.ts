@@ -17,6 +17,14 @@
 import { createHash } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
+import type {
+  ProviderWebhookIntel,
+  WebhookConfigMethod,
+  WebhookIntelEndpoint,
+  WebhookIntelEvent,
+  WebhookIntelResult,
+  WebhookIntelSetupStep,
+} from "@utdk/common/webhooks";
 import { createStructuredCompletion } from "../llm.js";
 import { applyProviderOpenApiOptions, loadOpenApiDocument } from "../openapi.js";
 import {
@@ -28,63 +36,18 @@ import {
 } from "../provider.js";
 import type { OpenAPIV3 } from "openapi-types";
 
-/** How a developer registers a webhook subscription with the provider. */
-export type WebhookConfigMethod = "console" | "api";
-
-export type WebhookIntelEvent = {
-  /** Provider event name exactly as subscribed to (e.g. "pull_request.opened"). */
-  name: string;
-  description: string;
-};
-
-export type WebhookIntelEndpoint = {
-  /** HTTP method of the subscription-management operation. */
-  method: string;
-  /** API path of the operation (e.g. "/repos/{owner}/{repo}/hooks"). */
-  path: string;
-  description: string;
-};
-
-export type WebhookIntelSetupStep = {
-  title: string;
-  detail: string;
-};
-
-export type WebhookIntelResult = {
-  /** Whether the provider supports outbound webhooks at all. */
-  supported: boolean;
-  /** One-paragraph plain-language description of the provider's webhook model. */
-  summary: string;
-  /** Where subscriptions are configured: provider console, API, or both. */
-  configMethods: WebhookConfigMethod[];
-  /** Event types a subscription can listen for (representative, not exhaustive). */
-  events: WebhookIntelEvent[];
-  /** API operations that create/list/delete webhook subscriptions, if any. */
-  managementEndpoints: WebhookIntelEndpoint[];
-  /** Signature verification contract, when documented. */
-  signature: {
-    /** Header carrying the signature (e.g. "X-Hub-Signature-256"). */
-    header: string | null;
-    /** Algorithm/scheme (e.g. "HMAC-SHA256 of the raw body"). */
-    scheme: string | null;
-    detail: string | null;
-  } | null;
-  /** Payload content type (e.g. "application/json"), when documented. */
-  payloadFormat: string | null;
-  /** Provider docs page for webhooks, only when present in source material. */
-  docsUrl: string | null;
-  /** Ordered, concrete steps ending with registering the hook URL in the registry. */
-  setupSteps: WebhookIntelSetupStep[];
-};
-
-export type ProviderWebhookIntel = {
-  provider: string;
-  generatedAt: string;
-  /** Hash of the webhook-relevant spec content this result was derived from. */
-  sourceHash: string;
-  model: string;
-  webhooks: WebhookIntelResult;
-};
+// The result shapes are published, types-only, from `@utdk/common/webhooks`
+// so consumers (catalog site, product plane) can type a `webhooks.json`
+// without importing this LLM-phase machinery. Re-exported here for existing
+// bundler-side importers.
+export type {
+  ProviderWebhookIntel,
+  WebhookConfigMethod,
+  WebhookIntelEndpoint,
+  WebhookIntelEvent,
+  WebhookIntelResult,
+  WebhookIntelSetupStep,
+} from "@utdk/common/webhooks";
 
 export type RunWebhookIntelPhaseOptions = {
   provider: string;
