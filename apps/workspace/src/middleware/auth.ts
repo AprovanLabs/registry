@@ -1,4 +1,5 @@
 import { CognitoJwtVerifier } from "aws-jwt-verify";
+import { getCachedPrincipal, hashToken, setCachedPrincipal } from "../auth-cache.js";
 import { getMembership } from "../memberships.js";
 import { getWorkspaceConfig, resolveAuthMode } from "../runtime/config.js";
 import { getCurrentWorkspace } from "../sessions.js";
@@ -114,21 +115,35 @@ export async function initAuth(): Promise<void> {
   if (getAuthMode() === "oidc") await createVerifier().hydrate();
 }
 
+/**
+ * The per-(token, requested-workspace) cache lives in front of the three
+ * store reads below (Sessions → Memberships → UserGroups). A hit skips
+ * straight to the cached principal without touching any of them — including
+ * skipping token re-verification, which is the accepted trade for a 60s-
+ * default TTL cache (see specs/identity-store "Per-token auth resolution
+ * cache" and tech-plan D6's staleness-window risk note).
+ */
 async function oidcPrincipal(c: Context): Promise<Principal> {
   const token = readBearerToken(c);
   if (!token) throw new Error("missing_token");
+  const requestedHeader = c.req.header("X-Aprovan-Workspace") ?? "";
+  const tokenHash = hashToken(token);
+  const cached = getCachedPrincipal(tokenHash, requestedHeader);
+  if (cached) return cached;
+
   const sub = await verifyAccessToken(token);
-  const requested = c.req.header("X-Aprovan-Workspace");
-  const workspaceId = requested || (await getCurrentWorkspace(sub));
+  const workspaceId = requestedHeader || (await getCurrentWorkspace(sub));
   if (!workspaceId) throw new Error("workspace_not_selected");
   const membership = await getMembership(workspaceId, sub);
   if (!membership) throw new Error("workspace_forbidden");
-  return {
+  const principal: Principal = {
     sub,
     workspaceId,
     role: membership.role ?? "member",
     groupIds: await listUserGroupIds(workspaceId, sub),
   };
+  setCachedPrincipal(tokenHash, requestedHeader, principal);
+  return principal;
 }
 
 export async function resolvePrincipal(c: Context): Promise<Principal> {

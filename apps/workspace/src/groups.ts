@@ -9,6 +9,7 @@
  */
 
 import { randomBytes } from "crypto";
+import { invalidatePrincipal } from "./auth-cache.js";
 import { dynamo } from "./db/client.js";
 
 // ---------------------------------------------------------------------------
@@ -203,6 +204,8 @@ export async function addUserToGroup(
       },
     }),
   );
+  // principal.groupIds is part of the cached auth principal.
+  invalidatePrincipal(userId);
 }
 
 export async function removeUserFromGroup(
@@ -231,6 +234,7 @@ export async function removeUserFromGroup(
       },
     }),
   );
+  invalidatePrincipal(userId);
   return true;
 }
 
