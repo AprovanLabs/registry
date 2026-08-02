@@ -57,6 +57,36 @@ rather than hand-written so it cannot drift from what the flows actually read.
 `.env.example` is the committed copy. Real environment variables override the
 file, so CI can inject secrets without writing one.
 
+#### From SSM
+
+```bash
+aws sso login                                  # authenticate against the test account
+pnpm --filter @utdk/e2e env:scaffold -- --from-ssm            # writes .env from SSM
+pnpm --filter @utdk/e2e env:scaffold -- --from-ssm --force    # ...overwriting an existing .env
+```
+
+Every credential/fixture variable the matrix declares maps 1:1 to an SSM
+`SecureString` at `/aprovan/test/utdk-creds/<ENV_VAR_NAME>` — the parameter
+name is exactly the `.env.example` key, no translation table, so
+`GITHUB_TOKEN` lives at `/aprovan/test/utdk-creds/GITHUB_TOKEN`. Shared
+variables (the twelve `google/*` providers' three `GOOGLE_*` vars) have exactly
+one parameter, not one per provider.
+
+`--from-ssm` fetches via `ssm:GetParameters` (chunked to 10 names per call,
+`WithDecryption: true`) using the default AWS SDK credential chain
+(`SSMClient({})`) — the same code path for a local developer authenticated via
+`aws sso login` and for CI authenticated via the OIDC deploy role
+(`vars.AWS_DEPLOY_ROLE_ARN`, `CiStack`'s `RegistryDeployRole`). A parameter
+with no value degrades to a blank line (same "valid partially-filled state" as
+the manual scaffold); an SSM API/auth failure (expired session, `AccessDenied`,
+exhausted throttling) exits non-zero instead of masquerading as "every
+provider unready". Like `--env`, `--from-ssm` refuses to overwrite an existing
+`.env` unless `--force` is also passed.
+
+Fetching this path requires no CDK/IAM change: `RegistryDeployRole` already
+grants `ssm:GetParameter`/`ssm:GetParameters` on `arn:aws:ssm:*:<account>:parameter/aprovan/*`,
+which covers `/aprovan/test/utdk-creds/*`.
+
 ### Gateway flows
 
 Flows 3 and 4 need `UTDK_E2E_GATEWAY_URL`. Locally:

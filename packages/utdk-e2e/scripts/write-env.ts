@@ -5,8 +5,10 @@
  * var, and the suite skips forever. Generating it means the scaffold is always
  * exactly the set of variables the flows actually read.
  *
- *   pnpm --filter @utdk/e2e env:scaffold            # writes .env.example
- *   pnpm --filter @utdk/e2e env:scaffold -- --env   # also writes .env if absent
+ *   pnpm --filter @utdk/e2e env:scaffold                       # writes .env.example
+ *   pnpm --filter @utdk/e2e env:scaffold -- --env               # also writes .env if absent
+ *   pnpm --filter @utdk/e2e env:scaffold -- --from-ssm           # writes .env from SSM
+ *   pnpm --filter @utdk/e2e env:scaffold -- --from-ssm --force   # ...overwriting .env
  */
 
 import { writeFileSync, existsSync } from "node:fs";
@@ -14,6 +16,7 @@ import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { credentialEnvKeys } from "../src/env.js";
 import { PROVIDERS } from "../src/matrix.js";
+import { fetchFromSsm } from "../src/ssm-env.js";
 
 const packageRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -25,7 +28,29 @@ const SIGNUP_LABEL: Record<string, string> = {
   "not-applicable": "no account needed",
 };
 
-function render(): string {
+/** Every credential/fixture variable name the matrix declares, in scaffold order. */
+function collectVariableNames(): string[] {
+  const names: string[] = ["UTDK_E2E_GATEWAY_URL", "UTDK_E2E_GATEWAY_TOKEN"];
+  const seen = new Set(names);
+
+  for (const entry of [...PROVIDERS].sort((a, b) => a.id.localeCompare(b.id))) {
+    const credentialKeys = credentialEnvKeys(entry.auth);
+    const fixtureKeys = [
+      ...(entry.probe?.needs ?? []),
+      ...(entry.probe?.baseUrlEnv ? [entry.probe.baseUrlEnv] : []),
+    ];
+    for (const key of [...credentialKeys, ...fixtureKeys]) {
+      if (seen.has(key)) continue;
+      seen.add(key);
+      names.push(key);
+    }
+  }
+
+  return names;
+}
+
+/** Render the scaffold. `values` (if given) populates lines instead of leaving them blank. */
+function render(values?: Record<string, string>): string {
   const lines: string[] = [
     "# UTDK provider E2E credentials",
     "#",
@@ -47,13 +72,13 @@ function render(): string {
     "#",
     "# Deployed: set the token to a Cognito access token for the workspace.",
     "# ---------------------------------------------------------------------------",
-    "UTDK_E2E_GATEWAY_URL=",
-    "UTDK_E2E_GATEWAY_TOKEN=",
+    `UTDK_E2E_GATEWAY_URL=${values?.["UTDK_E2E_GATEWAY_URL"] ?? ""}`,
+    `UTDK_E2E_GATEWAY_TOKEN=${values?.["UTDK_E2E_GATEWAY_TOKEN"] ?? ""}`,
     "",
   ];
 
   const sorted = [...PROVIDERS].sort((a, b) => a.id.localeCompare(b.id));
-  const seen = new Set<string>();
+  const seen = new Set<string>(["UTDK_E2E_GATEWAY_URL", "UTDK_E2E_GATEWAY_TOKEN"]);
 
   for (const entry of sorted) {
     const credentialKeys = credentialEnvKeys(entry.auth);
@@ -74,24 +99,58 @@ function render(): string {
     if (entry.credentialHint) lines.push(`# ${entry.credentialHint}`);
     if (entry.unprobed) lines.push(`# NOTE: no live probe yet — ${entry.unprobed.replace(/\s+/g, " ")}`);
     lines.push("# ---------------------------------------------------------------------------");
-    for (const key of keys) lines.push(`${key}=`);
+    for (const key of keys) lines.push(`${key}=${values?.[key] ?? ""}`);
     lines.push("");
   }
 
   return lines.join("\n");
 }
 
-const content = render();
-const examplePath = join(packageRoot, ".env.example");
-writeFileSync(examplePath, content, "utf8");
-console.log(`wrote ${examplePath}`);
+async function main(): Promise<void> {
+  const args = process.argv.slice(2);
+  const fromSsm = args.includes("--from-ssm");
+  const force = args.includes("--force");
 
-if (process.argv.includes("--env")) {
-  const envPath = join(packageRoot, ".env");
-  if (existsSync(envPath)) {
-    console.log(`skipped ${envPath} — already exists (refusing to overwrite credentials)`);
-  } else {
-    writeFileSync(envPath, content, "utf8");
-    console.log(`wrote ${envPath}`);
+  const content = render();
+  const examplePath = join(packageRoot, ".env.example");
+  writeFileSync(examplePath, content, "utf8");
+  console.log(`wrote ${examplePath}`);
+
+  if (fromSsm) {
+    const envPath = join(packageRoot, ".env");
+    if (existsSync(envPath) && !force) {
+      console.log(`skipped ${envPath} — already exists (refusing to overwrite credentials; pass --force to refresh)`);
+      return;
+    }
+
+    const names = collectVariableNames();
+    let values: Record<string, string>;
+    try {
+      values = await fetchFromSsm(names);
+    } catch (error) {
+      console.error(
+        `SSM fetch failed — ${error instanceof Error ? error.message : String(error)}`,
+      );
+      process.exitCode = 1;
+      return;
+    }
+
+    writeFileSync(envPath, render(values), "utf8");
+    console.log(
+      `wrote ${envPath} — ${Object.keys(values).length}/${names.length} variables resolved from SSM`,
+    );
+    return;
+  }
+
+  if (args.includes("--env")) {
+    const envPath = join(packageRoot, ".env");
+    if (existsSync(envPath)) {
+      console.log(`skipped ${envPath} — already exists (refusing to overwrite credentials)`);
+    } else {
+      writeFileSync(envPath, content, "utf8");
+      console.log(`wrote ${envPath}`);
+    }
   }
 }
+
+await main();
