@@ -76,9 +76,9 @@
       "site": "https://developers.google.com/forms/api"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/forms/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/forms/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/google/forms/docs",
+      "manifestPath": ".registry/google/forms/manifest.json",
+      "indexPath": ".registry/google/forms/index.md",
+      "docsPath": "packages/utdk/google/forms/docs",
       "generatedAt": "2026-07-19T23:49:45.288Z",
       "sourceCount": 0,
       "openApiHash": null,

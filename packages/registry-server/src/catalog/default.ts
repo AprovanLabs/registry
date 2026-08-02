@@ -12,6 +12,7 @@
  */
 
 import { createRequire } from "node:module";
+import { existsSync } from "node:fs";
 import path from "node:path";
 import { loadCompatDocuments } from "@utdk/common/compat";
 import type { CompatDocument, CompatEntry } from "@utdk/common/compat";
@@ -77,6 +78,8 @@ export function defaultLlmAliases(): LlmAlias[] {
  * directory) by walking up from the resolved `@utdk/agent` entry point.
  */
 function resolveContractsDir(): string {
+  const monorepoContracts = path.resolve(import.meta.dirname, "..", "..", "..", "..", "packages", "contracts");
+  if (existsSync(monorepoContracts)) return monorepoContracts;
   const require = createRequire(import.meta.url);
   // <contracts dir>/agent/dist/index.js → up three.
   return path.resolve(require.resolve("@utdk/agent"), "..", "..", "..");

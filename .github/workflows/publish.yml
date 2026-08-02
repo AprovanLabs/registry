@@ -32,6 +32,8 @@ jobs:
         run: pnpm install
 
       - name: Build packages
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
         run: |
           pnpm \
             --filter @aprovan/registry-server... \
@@ -39,6 +41,8 @@ jobs:
             --filter @utdk/events \
             --filter @utdk/vfs \
             --filter @utdk/telemetry \
+            --filter utdk \
+            --filter @aprovan/runtime \
             build
 
       - name: Publish stable versions (when new)
@@ -47,7 +51,7 @@ jobs:
           for pkg in \
             @utdk/common @utdk/sql @utdk/llm @utdk/sandbox @utdk/vcs @utdk/agent \
             @utdk/keyvalue @utdk/events @utdk/vfs @utdk/telemetry @utdk/mcp-core utdk \
-            @aprovan/sandbox-image-node \
+            @aprovan/runtime \
             @aprovan/registry-server; do
             dir=$(pnpm --filter "$pkg" exec pwd 2>/dev/null | tail -1) || continue
             [ -n "$dir" ] || continue

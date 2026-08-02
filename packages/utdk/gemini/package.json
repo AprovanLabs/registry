@@ -39,9 +39,9 @@
       "termsOfService": "https://ai.google.dev/gemini-api/terms"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/gemini/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/gemini/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/gemini/docs",
+      "manifestPath": ".registry/gemini/manifest.json",
+      "indexPath": ".registry/gemini/index.md",
+      "docsPath": "packages/utdk/gemini/docs",
       "generatedAt": "2026-07-18T05:49:49.163Z",
       "sourceCount": 0,
       "openApiHash": null,

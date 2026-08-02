@@ -39,9 +39,9 @@
       "termsOfService": "https://www.anthropic.com/legal/consumer-terms"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/anthropic/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/anthropic/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/anthropic/docs",
+      "manifestPath": ".registry/anthropic/manifest.json",
+      "indexPath": ".registry/anthropic/index.md",
+      "docsPath": "packages/utdk/anthropic/docs",
       "generatedAt": "2026-07-18T05:49:25.163Z",
       "sourceCount": 0,
       "openApiHash": null,

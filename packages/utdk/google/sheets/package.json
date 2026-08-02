@@ -74,9 +74,9 @@
       "site": "https://developers.google.com/sheets/"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/sheets/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/sheets/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/google/sheets/docs",
+      "manifestPath": ".registry/google/sheets/manifest.json",
+      "indexPath": ".registry/google/sheets/index.md",
+      "docsPath": "packages/utdk/google/sheets/docs",
       "generatedAt": "2026-07-19T23:51:02.160Z",
       "sourceCount": 0,
       "openApiHash": null,

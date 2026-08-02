@@ -74,9 +74,9 @@
       "site": "https://developers.google.com/google-apps/calendar/firstapp"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/calendar/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/calendar/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/google/calendar/docs",
+      "manifestPath": ".registry/google/calendar/manifest.json",
+      "indexPath": ".registry/google/calendar/index.md",
+      "docsPath": "packages/utdk/google/calendar/docs",
       "generatedAt": "2026-07-19T23:50:27.590Z",
       "sourceCount": 0,
       "openApiHash": null,

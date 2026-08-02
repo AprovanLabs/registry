@@ -66,9 +66,9 @@
       "site": "https://code.google.com/apis/books/docs/v1/getting_started.html"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/books/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/google/books/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/google/books/docs",
+      "manifestPath": ".registry/google/books/manifest.json",
+      "indexPath": ".registry/google/books/index.md",
+      "docsPath": "packages/utdk/google/books/docs",
       "generatedAt": "2026-07-19T23:49:10.281Z",
       "sourceCount": 0,
       "openApiHash": null,

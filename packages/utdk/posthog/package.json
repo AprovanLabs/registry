@@ -31,9 +31,9 @@
       "termsOfService": null
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/posthog/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/.registry/posthog/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/registry/packages/utdk/posthog/docs",
+      "manifestPath": ".registry/posthog/manifest.json",
+      "indexPath": ".registry/posthog/index.md",
+      "docsPath": "packages/utdk/posthog/docs",
       "generatedAt": "2026-07-12T21:26:44.534Z",
       "sourceCount": 1,
       "openApiHash": "07bcb085c8cc4650bbb32f753e534b111653f19687be6df2642bda5c1ec899c7",
