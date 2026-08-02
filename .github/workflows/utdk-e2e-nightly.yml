@@ -1,0 +1,211 @@
+name: UTDK E2E Nightly
+
+# Runs the @utdk/e2e live-probe suite against real provider APIs, unattended.
+# This workflow NEVER gates a merge: it has no `pull_request` trigger and must
+# not be added to the repo's required status checks. A failing probe opens or
+# updates a tracking issue instead of failing a PR.
+#
+# Required repository configuration:
+#   vars.AWS_DEPLOY_ROLE_ARN — the same OIDC role registry-deploy.yml and
+#     workspace-image.yml assume (CiStack's RegistryDeployRole). Its existing
+#     `ssm:GetParameter`/`ssm:GetParameters` grant on
+#     arn:aws:ssm:*:<account>:parameter/aprovan/* already covers this
+#     workflow's reads — no CDK/IAM change needed.
+#
+# Credentials read: `/aprovan/test/utdk-creds/<ENV_VAR_NAME>` (SecureString,
+# one per provider credential/fixture var — see
+# packages/utdk-e2e/README.md#from-ssm). Populating those parameters is a
+# separate, owner-run action; zero populated is a valid state (doctor reports
+# 0 ready, test:live reports all-skip, no issue is opened).
+#
+# `doctor` always runs for visibility; `test:live` always runs afterward too
+# (it self-skips per-provider on missing credentials) — neither is used as a
+# shell-level gate on the other.
+
+on:
+  schedule:
+    # 08:00 UTC daily. No technical constraint drove this time; adjust freely.
+    - cron: "0 8 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+  issues: write
+
+concurrency:
+  group: utdk-e2e-nightly
+  cancel-in-progress: false
+
+env:
+  TRACKING_LABEL: utdk-e2e-nightly
+  TRACKING_TITLE: "UTDK nightly E2E — live probe failures"
+
+jobs:
+  nightly:
+    name: Live probe suite
+    runs-on: ubuntu-latest
+    if: vars.AWS_DEPLOY_ROLE_ARN != ''
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.12.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-2
+
+      # @utdk/e2e's live flows dynamically `import("utdk/<provider>")` at run
+      # time (module resolution through the `utdk` package's built exports,
+      # not source) — without this, every live case that isn't skipped on
+      # missing credentials fails on module resolution instead of probing
+      # anything. `^...` builds @utdk/e2e's workspace dependencies only.
+      - name: Build workspace dependencies
+        run: pnpm turbo run build --filter="@utdk/e2e^..."
+
+      - name: Fetch credentials from SSM
+        run: pnpm --filter @utdk/e2e env:scaffold -- --from-ssm --force
+
+      - name: Doctor (readiness report)
+        run: pnpm --filter @utdk/e2e doctor | tee doctor-output.txt
+
+      - name: Publish doctor output to job summary
+        if: always()
+        run: |
+          {
+            echo "### UTDK doctor readiness report"
+            echo '```'
+            cat doctor-output.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # continue-on-error so the job reaches the reporting step regardless of
+      # outcome — test:live's own per-provider skip-on-missing-credential
+      # behavior is the only gate that matters here.
+      - name: Live probe suite
+        id: test_live
+        continue-on-error: true
+        run: >
+          pnpm --filter @utdk/e2e test:live --
+          --reporter=default --reporter=json --outputFile=live-results.json
+
+      - name: Report results as a tracking issue
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("fs");
+
+            const resultsPath = "packages/utdk-e2e/live-results.json";
+            const failures = [];
+
+            if (fs.existsSync(resultsPath)) {
+              const report = JSON.parse(fs.readFileSync(resultsPath, "utf8"));
+              for (const testFile of report.testResults ?? []) {
+                for (const assertion of testFile.assertionResults ?? []) {
+                  if (assertion.status !== "failed") continue;
+
+                  const fullName = assertion.fullName || assertion.title || "unknown test";
+                  const match = fullName.match(/^live:\s*(.+?)\s*>\s*(.+)$/);
+                  const provider = match ? match[1] : (assertion.ancestorTitles?.[0] ?? "gateway canary");
+                  const flow = match ? match[2] : (assertion.title ?? fullName);
+                  const reason = (assertion.failureMessages ?? []).join(" | ").slice(0, 500) ||
+                    "no failure message captured";
+
+                  failures.push({ provider, flow, reason });
+                }
+              }
+            } else {
+              core.warning(`${resultsPath} not found — treating as no failures to report`);
+            }
+
+            const { owner, repo } = context.repo;
+            const label = process.env.TRACKING_LABEL;
+            const title = process.env.TRACKING_TITLE;
+
+            try {
+              await github.rest.issues.getLabel({ owner, repo, name: label });
+            } catch {
+              await github.rest.issues.createLabel({
+                owner,
+                repo,
+                name: label,
+                color: "b60205",
+                description: "UTDK nightly E2E live-probe failures",
+              });
+            }
+
+            const openIssues = await github.rest.issues.listForRepo({
+              owner,
+              repo,
+              state: "open",
+              labels: label,
+            });
+            const existing = openIssues.data[0];
+
+            const runUrl = `${process.env.GITHUB_SERVER_URL}/${owner}/${repo}/actions/runs/${process.env.GITHUB_RUN_ID}`;
+            const date = new Date().toISOString().slice(0, 10);
+
+            if (failures.length === 0) {
+              if (existing) {
+                await github.rest.issues.createComment({
+                  owner,
+                  repo,
+                  issue_number: existing.number,
+                  body: `✅ green again as of ${date} — closing.`,
+                });
+                await github.rest.issues.update({
+                  owner,
+                  repo,
+                  issue_number: existing.number,
+                  state: "closed",
+                });
+                core.info(`Closed #${existing.number} — suite is green.`);
+              } else {
+                core.info("No failures, no open tracking issue — nothing to do.");
+              }
+              return;
+            }
+
+            const rows = failures
+              .map((f) => {
+                const escape = (value) => String(value).replace(/\|/g, "\\|").replace(/\r?\n/g, " ");
+                return `| ${escape(f.provider)} | ${escape(f.flow)} | ${escape(f.reason)} |`;
+              })
+              .join("\n");
+
+            const body = [
+              `Run: ${date}`,
+              `Workflow run: ${runUrl}`,
+              "",
+              "| provider | flow | reason |",
+              "| --- | --- | --- |",
+              rows,
+            ].join("\n");
+
+            if (existing) {
+              await github.rest.issues.createComment({ owner, repo, issue_number: existing.number, body });
+              core.info(`Commented on existing #${existing.number} with ${failures.length} failure(s).`);
+            } else {
+              const created = await github.rest.issues.create({
+                owner,
+                repo,
+                title,
+                labels: [label],
+                body,
+              });
+              core.info(`Opened #${created.data.number} with ${failures.length} failure(s).`);
+            }
