@@ -49,6 +49,16 @@ export { TenantService, DEFAULT_TENANT_ID } from "./tenancy/index.js";
 
 // Auth
 export { AuthError, type AuthAdapter, type Authn, type TenantResolver } from "./auth/types.js";
+export {
+  NoneAuthAdapter,
+  OidcAuthAdapter,
+  ApiKeyAuthAdapter,
+  createAuthAdapter,
+  mintApiKey,
+  digestApiKey,
+  API_KEY_PREFIX,
+  type OidcConfig,
+} from "./auth/adapters.js";
 
 // Telemetry
 export {
