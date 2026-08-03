@@ -17,9 +17,12 @@
   "dependencies": {
     "@utcp/http": "^1.1.1",
     "@utcp/sdk": "^1.1.0",
+    "@utdk/events": "workspace:*",
     "@utdk/llm": "workspace:*",
+    "@utdk/keyvalue": "workspace:*",
     "@utdk/sandbox": "workspace:*",
     "@utdk/sql": "workspace:*",
+    "@utdk/vfs": "workspace:*",
     "@utdk/telemetry": "workspace:*",
     "@utdk/vcs": "workspace:*"
   },
@@ -66,6 +69,11 @@
       "types": "./dist/databricks/index.d.ts",
       "import": "./dist/databricks/index.js",
       "default": "./dist/databricks/index.js"
+    },
+    "./dynamodb-kv": {
+      "types": "./dist/dynamodb-kv/index.d.ts",
+      "import": "./dist/dynamodb-kv/index.js",
+      "default": "./dist/dynamodb-kv/index.js"
     },
     "./datadog": {
       "types": "./dist/datadog/index.d.ts",
@@ -262,6 +270,11 @@
       "import": "./dist/postgres/index.js",
       "default": "./dist/postgres/index.js"
     },
+    "./s3": {
+      "types": "./dist/s3/index.d.ts",
+      "import": "./dist/s3/index.js",
+      "default": "./dist/s3/index.js"
+    },
     "./posthog": {
       "types": "./dist/posthog/index.d.ts",
       "import": "./dist/posthog/index.js",
@@ -301,6 +314,11 @@
       "types": "./dist/snowflake/index.d.ts",
       "import": "./dist/snowflake/index.js",
       "default": "./dist/snowflake/index.js"
+    },
+    "./sqs": {
+      "types": "./dist/sqs/index.d.ts",
+      "import": "./dist/sqs/index.js",
+      "default": "./dist/sqs/index.js"
     },
     "./spotify": {
       "types": "./dist/spotify/index.d.ts",
