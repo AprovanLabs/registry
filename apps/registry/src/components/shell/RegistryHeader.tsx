@@ -9,7 +9,6 @@
 
 import { AppHeader, aprovanApps, type AppNavLink } from "@aprovan/ui/shell";
 import * as React from "react";
-import { OpenAppLink } from "./OpenAppLink";
 
 /**
  * The family nav with registry-internal links merged in. An internal link
@@ -69,8 +68,6 @@ export function RegistryHeader({
         />
       }
       name="registry"
-    >
-      <OpenAppLink />
-    </AppHeader>
+    />
   );
 }

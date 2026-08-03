@@ -6,7 +6,6 @@
 
 import { AppsPanel } from "@aprovan/registry-ui/apps-panel";
 import * as React from "react";
-import { Button } from "@/components/ui/button";
 import {
   createPlaygroundGatewayClient,
   loadSession,
@@ -75,9 +74,6 @@ export function AppsHost() {
             ? ". Connect a gateway session for local standalone management."
             : "."}
         </p>
-        <Button asChild className="mt-4" variant="outline">
-          <a href={PRODUCT_APP_URL}>Open the app</a>
-        </Button>
       </div>
     );
   }
