@@ -1,8 +1,7 @@
 /**
  * Registry host for the shared AppsPanel: wires the panel's transport to the
- * gateway client. On the public catalog this defers to the product app; local
- * standalone hosts (`PUBLIC_ACCOUNT_HOST=local` or dev) render the live panel
- * when a gateway session is available.
+ * gateway client. Standalone builds render the live panel when a gateway
+ * session is available; hosted builds defer to the product app.
  */
 
 import { AppsPanel } from "@aprovan/registry-ui/apps-panel";
@@ -10,14 +9,14 @@ import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   createPlaygroundGatewayClient,
-  isStandaloneCatalogHost,
   loadSession,
 } from "@/lib/gateway-session";
+import { resolveSessionMode } from "@/lib/session";
 
 const PRODUCT_APP_URL = "https://aprovan.com/chat/";
 
 export function AppsHost() {
-  const standalone = isStandaloneCatalogHost();
+  const standalone = resolveSessionMode() === "standalone";
   const hasSession = Boolean(loadSession());
 
   const client = React.useMemo(() => createPlaygroundGatewayClient(), []);

@@ -1,27 +1,13 @@
 ---
-import { isLocalAccountHost } from "@/lib/account-host";
 import { OAuthCallbackHost } from "@/components/account/OAuthCallbackHost";
-import MovedNotice from "@/components/MovedNotice.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
-
-const local = isLocalAccountHost();
 ---
 
-{
-  local ? (
-    <BaseLayout
-      description="Complete OAuth authorization for a provider credential."
-      title="OAuth callback"
-    >
-      <main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <OAuthCallbackHost client:only="react" />
-      </main>
-    </BaseLayout>
-  ) : (
-    <MovedNotice
-      description="OAuth callback handling has moved to the product app."
-      native="credentials"
-      title="OAuth — moved"
-    />
-  )
-}
+<BaseLayout
+  description="Complete OAuth authorization for a provider credential."
+  title="OAuth callback"
+>
+  <main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <OAuthCallbackHost client:only="react" />
+  </main>
+</BaseLayout>

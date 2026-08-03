@@ -1,47 +1,33 @@
 ---
-import { isLocalAccountHost } from "@/lib/account-host";
 import { AdminHost } from "@/components/account/AdminHost";
-import MovedNotice from "@/components/MovedNotice.astro";
 import BaseLayout from "@/layouts/BaseLayout.astro";
 import { withBasePath } from "@/lib/site";
-
-const local = isLocalAccountHost();
 ---
 
-{
-  local ? (
-    <BaseLayout
-      description="Manage per-user and per-workspace tool permissions for the UTDK gateway."
-      title="Admin — Permissions"
-    >
-      <main class="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
-        <div class="flex flex-col gap-1">
-          <div class="flex items-center gap-2">
-            <a
-              class="text-sm text-muted-foreground transition-colors hover:text-foreground"
-              href={withBasePath("/")}
-            >
-              Registry
-            </a>
-            <span class="text-muted-foreground">/</span>
-            <span class="text-sm font-medium">Admin</span>
-            <span class="text-muted-foreground">/</span>
-            <span class="text-sm font-medium">Permissions</span>
-          </div>
-          <h1 class="text-2xl font-semibold tracking-tight">Permission Management</h1>
-          <p class="text-sm text-muted-foreground">
-            Control which callers can invoke which tools through the UTDK gateway.
-          </p>
-        </div>
+<BaseLayout
+  description="Manage per-user and per-workspace tool permissions for the UTDK gateway."
+  title="Admin — Permissions"
+>
+  <main class="mx-auto flex w-full max-w-7xl flex-col gap-6 px-4 py-8 sm:px-6 lg:px-8">
+    <div class="flex flex-col gap-1">
+      <div class="flex items-center gap-2">
+        <a
+          class="text-sm text-muted-foreground transition-colors hover:text-foreground"
+          href={withBasePath("/")}
+        >
+          Registry
+        </a>
+        <span class="text-muted-foreground">/</span>
+        <span class="text-sm font-medium">Admin</span>
+        <span class="text-muted-foreground">/</span>
+        <span class="text-sm font-medium">Permissions</span>
+      </div>
+      <h1 class="text-2xl font-semibold tracking-tight">Permission Management</h1>
+      <p class="text-sm text-muted-foreground">
+        Control which callers can invoke which tools through the UTDK gateway.
+      </p>
+    </div>
 
-        <AdminHost client:only="react" />
-      </main>
-    </BaseLayout>
-  ) : (
-    <MovedNotice
-      description="Workspace admin and permissions have moved to the product app."
-      native="admin"
-      title="Admin — moved"
-    />
-  )
-}
+    <AdminHost client:only="react" />
+  </main>
+</BaseLayout>

@@ -58,11 +58,11 @@ importers:
   apps/registry:
     dependencies:
       '@aprovan/registry-main':
-        specifier: 0.1.0
-        version: 0.1.0
+        specifier: 0.2.0
+        version: 0.2.0
       '@aprovan/registry-ui':
-        specifier: 0.5.0
-        version: 0.5.0(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: 0.6.0
+        version: 0.6.0(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@aprovan/runtime':
         specifier: workspace:*
         version: link:../../packages/runtime
@@ -148,6 +148,9 @@ importers:
         specifier: ^1.4.0
         version: 1.4.0
     devDependencies:
+      '@aprovan/registry-server':
+        specifier: 0.2.0
+        version: 0.2.0(zod@3.25.76)
       '@astrojs/check':
         specifier: ^0.9.8
         version: 0.9.9(prettier@3.8.3)(typescript@5.9.3)
@@ -666,11 +669,15 @@ packages:
   '@aprovan/prettier-config@1.0.0':
     resolution: {integrity: sha512-a/AaF1hfgjanSZfyiblanS0JflVmG4CV6mBGofOFv/NabWQogAzECiGzrrlK91NMdnT/Tie2qF2JyTUe5b1z5g==}
 
-  '@aprovan/registry-main@0.1.0':
-    resolution: {integrity: sha512-HMi0S6OwR7Eht7NUZ5/GbcuQdBb/9H2dYt25jCDYavmirDZZBO2dkx58+Sl1lORsEDYX8trG4JZOFP8dxKb3Lw==}
+  '@aprovan/registry-main@0.2.0':
+    resolution: {integrity: sha512-AjBCYsZDASNi22VtkRkYDnFRna9Ryqm5/e5C1QZz+T3VPwuAmemEVOIyzpevAzoPpNEX3Li9rVqFsFMBS/s8TQ==}
 
-  '@aprovan/registry-ui@0.5.0':
-    resolution: {integrity: sha512-uw+N5TTPR/No5t7wE3Cf5Acr1SmFvjcjszJvC7ysqC8V6XOSd20ZJlVKEYLT4Ny4ozAVhZJOOgT4MQWxjrcBhg==}
+  '@aprovan/registry-server@0.2.0':
+    resolution: {integrity: sha512-B0FAMUYeEtHjnHcNZRbt/bMbYtsZXuzJuOEHEJTM3/1+EXLgPGboZdqxDyUliEU+Qzy+epvFJwgch+Ns5toQGw==}
+    engines: {node: '>=20.0.0'}
+
+  '@aprovan/registry-ui@0.6.0':
+    resolution: {integrity: sha512-CmTk5g/Hy/bN9889xX2b/iBZ7DKsipJwyDTz0NntuDCW1R4EPnwJxhIb/B5MS+/AVTtxXlaf+CfA0n5KNzaAOg==}
     peerDependencies:
       react: 19.2.7
 
@@ -3871,6 +3878,47 @@ packages:
 
   '@utcp/sdk@1.1.0':
     resolution: {integrity: sha512-JyNG+TdtoaZ19K2v+FSmRzi3YR3Ri0XVI7ntiz8pKDA9ZbNqa5+op2EAmmGIHD9sp0IyTI7pMHeUR+mYqd97PA==}
+
+  '@utdk/agent@0.2.0':
+    resolution: {integrity: sha512-uiLFqBOVUVGNO0NAHIfFEU7XlPQfKjY2Ck0l0ig159bY5KzU9+70/braU8W8RreZYLN8iUwOhBLjZpwc/d0fiw==}
+
+  '@utdk/clients@0.1.1':
+    resolution: {integrity: sha512-22XB10gbsXi66ni6tN9tbiUzTlDtzKU0PCRWfkkYGQdm2MwIlr9ANbUf1BGcHn8bhTxtM8R99xhGwP4f3ZZw7w==}
+
+  '@utdk/common@0.1.0':
+    resolution: {integrity: sha512-jQwhZFW5T3jTycXyu0VChaJbYNMVwP3274KVdhNcSqhxm4ZZTm4t5Q5I9Q4XfIqzQ4x4q5XHn+4IvaGyfO8wuQ==}
+    peerDependencies:
+      '@opentelemetry/api': ^1.0.0
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+
+  '@utdk/common@0.1.1':
+    resolution: {integrity: sha512-e+ac5AP/kv3+GwDLyxDTzlayIkpQrVRWUc4kfkB+5S34AknhrpBgmsVfCQqFxqr+jKgSxJ5Y0pjvhpsRAWLX7w==}
+    peerDependencies:
+      '@opentelemetry/api': ^1.0.0
+    peerDependenciesMeta:
+      '@opentelemetry/api':
+        optional: true
+
+  '@utdk/llm@0.2.0':
+    resolution: {integrity: sha512-eAmwtys+TYgaqpoP8Tmhfm8FZPw4hmNcZC5VY7XSohyS2U0NRmbWcbVoByKfNCcTROkSB7f21J9t+iYWWcei7g==}
+
+  '@utdk/mcp-core@0.1.0':
+    resolution: {integrity: sha512-mv41aZxedt2cNlvVSyJ3fE/Oo8RysqLmhFKsJaYP3V75PIh0bdGF0okY1AvqbCNUsBU0wvT+ch43SQ1ais10Og==}
+    engines: {node: '>=20.0.0'}
+
+  '@utdk/sandbox@0.2.0':
+    resolution: {integrity: sha512-2XFiBwHdWIN0mSEntzWgQCg5YolY3JWFR3A0FP+Al6l2ah+cUvQCCL/0pbvmcUpNtnK8N9SuwHH/mz4+XR2NEw==}
+
+  '@utdk/sql@0.2.0':
+    resolution: {integrity: sha512-lP4OArRGKchKEF4YLtzyz3E1ZRg7py08dTzcn+SUfAvc7/J9t1EScFXEHib1ckKTYkivH0eyVMa7Pv8dJdhXlw==}
+
+  '@utdk/telemetry@0.2.0':
+    resolution: {integrity: sha512-fkLVNNIH96fFJ+TLkcnEzJJinf6ArP8T3K4/S93Q40byjH8QCZwx8yu+z7cwyx7zI7iQ3bkZVrBKkUIskihnBg==}
+
+  '@utdk/vcs@0.2.0':
+    resolution: {integrity: sha512-lVuW1hGovNEUe+XqAD7Wugv9oO8jfULko56sDIDIFhxKs5jgflYXK9YuflDqPL0MmPdnGXiBWNc12KZZvDU/Uw==}
 
   '@valtown/codemirror-ts@2.3.1':
     resolution: {integrity: sha512-v5XiI4WA+bUy0XDgkrqZksqBWgIUeyLZuC94Px/rhXBph8ASmVXaimlGDtt0vH/9t8aDdIZYdr59r9H3oKMFOg==}
@@ -8056,11 +8104,39 @@ snapshots:
 
   '@aprovan/prettier-config@1.0.0': {}
 
-  '@aprovan/registry-main@0.1.0': {}
+  '@aprovan/registry-main@0.2.0': {}
 
-  '@aprovan/registry-ui@0.5.0(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@aprovan/registry-server@0.2.0(zod@3.25.76)':
     dependencies:
-      '@aprovan/registry-main': 0.1.0
+      '@hono/node-server': 1.19.14(hono@4.12.18)
+      '@jitl/quickjs-wasmfile-debug-asyncify': 0.32.0
+      '@modelcontextprotocol/sdk': 1.29.0(zod@3.25.76)
+      '@opentelemetry/api': 1.9.1
+      '@opentelemetry/exporter-trace-otlp-http': 0.57.2(@opentelemetry/api@1.9.1)
+      '@opentelemetry/resources': 1.30.1(@opentelemetry/api@1.9.1)
+      '@opentelemetry/sdk-trace-base': 1.30.1(@opentelemetry/api@1.9.1)
+      '@opentelemetry/sdk-trace-node': 1.30.1(@opentelemetry/api@1.9.1)
+      '@utdk/agent': 0.2.0
+      '@utdk/clients': 0.1.1
+      '@utdk/common': 0.1.1(@opentelemetry/api@1.9.1)
+      '@utdk/llm': 0.2.0
+      '@utdk/mcp-core': 0.1.0(@opentelemetry/api@1.9.1)
+      better-sqlite3: 12.11.1
+      hono: 4.12.18
+      jose: 5.10.0
+      quickjs-emscripten-core: 0.32.0
+    optionalDependencies:
+      '@aws-sdk/client-kms': 3.1090.0
+    transitivePeerDependencies:
+      - '@cfworker/json-schema'
+      - debug
+      - pg-native
+      - supports-color
+      - zod
+
+  '@aprovan/registry-ui@0.6.0(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+    dependencies:
+      '@aprovan/registry-main': 0.2.0
       '@aprovan/ui': 0.5.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/lang-javascript': 6.2.5
@@ -11555,6 +11631,51 @@ snapshots:
     dependencies:
       dotenv: 17.4.2
       zod: 3.25.76
+
+  '@utdk/agent@0.2.0': {}
+
+  '@utdk/clients@0.1.1':
+    dependencies:
+      '@utcp/http': 1.1.1
+      '@utcp/sdk': 1.1.0
+      '@utdk/llm': 0.2.0
+      '@utdk/sandbox': 0.2.0
+      '@utdk/sql': 0.2.0
+      '@utdk/telemetry': 0.2.0
+      '@utdk/vcs': 0.2.0
+    transitivePeerDependencies:
+      - debug
+      - pg-native
+
+  '@utdk/common@0.1.0(@opentelemetry/api@1.9.1)':
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.1
+
+  '@utdk/common@0.1.1(@opentelemetry/api@1.9.1)':
+    optionalDependencies:
+      '@opentelemetry/api': 1.9.1
+
+  '@utdk/llm@0.2.0': {}
+
+  '@utdk/mcp-core@0.1.0(@opentelemetry/api@1.9.1)':
+    dependencies:
+      '@utcp/http': 1.1.1
+      '@utdk/common': 0.1.0(@opentelemetry/api@1.9.1)
+    transitivePeerDependencies:
+      - '@opentelemetry/api'
+      - debug
+
+  '@utdk/sandbox@0.2.0': {}
+
+  '@utdk/sql@0.2.0':
+    dependencies:
+      pg: 8.22.0
+    transitivePeerDependencies:
+      - pg-native
+
+  '@utdk/telemetry@0.2.0': {}
+
+  '@utdk/vcs@0.2.0': {}
 
   '@valtown/codemirror-ts@2.3.1(@codemirror/autocomplete@6.20.3)(@codemirror/lint@6.9.7)(@codemirror/state@6.7.1)(@codemirror/view@6.43.6)':
     dependencies:

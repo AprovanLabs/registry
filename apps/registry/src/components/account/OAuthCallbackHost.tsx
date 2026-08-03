@@ -1,5 +1,5 @@
 /**
- * OAuth redirect handler for local catalog credential flows.
+ * OAuth redirect handler for catalog credential flows (both session modes).
  */
 
 import {

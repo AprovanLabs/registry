@@ -9,19 +9,21 @@
     "build": "astro build",
     "check-types": "astro check",
     "typecheck": "astro check",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "smoke:standalone": "node ./scripts/standalone-smoke.mjs"
   },
   "engines": {
     "node": ">=22.12.0"
   },
   "dependencies": {
-    "@aprovan/registry-main": "0.1.0",
-    "@aprovan/registry-ui": "0.5.0",
+    "@aprovan/registry-main": "0.2.0",
+    "@aprovan/registry-ui": "0.6.0",
     "@aprovan/runtime": "workspace:*",
     "@aprovan/ui": "0.5.0",
     "@astrojs/react": "^5.0.3",
     "@fontsource-variable/geist": "^5.2.8",
     "@utdk/agent": "workspace:*",
+    "@utdk/clients": "workspace:*",
     "@utdk/common": "workspace:*",
     "@utdk/events": "workspace:*",
     "@utdk/keyvalue": "workspace:*",
@@ -43,10 +45,10 @@
     "sucrase": "^3.35.0",
     "tailwind-merge": "^3.5.0",
     "tslib": "^2.8.1",
-    "tw-animate-css": "^1.4.0",
-    "@utdk/clients": "workspace:*"
+    "tw-animate-css": "^1.4.0"
   },
   "devDependencies": {
+    "@aprovan/registry-server": "0.2.0",
     "@astrojs/check": "^0.9.8",
     "@tailwindcss/vite": "^4.2.2",
     "@types/react": "^19.2.7",
