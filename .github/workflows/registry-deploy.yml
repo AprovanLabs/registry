@@ -18,8 +18,8 @@ name: Deploy Registry Web
 #   vars.CLOUDFRONT_DISTRIBUTION_ID, vars.PUBLIC_COGNITO_AUTHORITY,
 #   vars.PUBLIC_COGNITO_CLIENT_ID.
 # Hosted catalog session: PUBLIC_SESSION_MODE=hosted is baked into the static
-# build via ambient env inherited by scripts/deploy-web.sh (Cognito PKCE +
-# product gateway). Self-hosted / local builds leave it unset → standalone.
+# build by scripts/deploy-web.sh (Cognito PKCE + product gateway). Self-hosted /
+# local builds leave it unset → standalone.
 
 on:
   push:

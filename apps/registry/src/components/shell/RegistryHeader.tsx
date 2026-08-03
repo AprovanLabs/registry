@@ -30,7 +30,8 @@ function registryNav(internal: AppNavLink[]): AppNavLink[] {
   // The nav carries destinations within the working surfaces: the aprovan
   // Home and patchwork Chat entries are dropped; Registry stays.
   const family = aprovanApps("Registry").filter(
-    (link) => link.label !== "Home" && link.label !== "Chat",
+    (link) =>
+      link.label !== "Home" && link.label !== "Chat" && link.label !== "Apps",
   );
   const overrides = new Map(internal.map((link) => [link.label, link]));
   const merged = [
