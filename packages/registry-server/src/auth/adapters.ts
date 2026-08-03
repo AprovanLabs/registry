@@ -172,7 +172,7 @@ export function isAuthAdapter(value: unknown): value is AuthAdapter {
 
 export function createAuthAdapter(
   option:
-    | { mode: "oidc"; issuer: string; audience: string }
+    | { mode: "oidc"; issuer: string; audience: string; browserClientId?: string }
     | { mode: "api-key" }
     | { mode: "none" }
     | AuthAdapter,
@@ -183,6 +183,7 @@ export function createAuthAdapter(
     case "none":
       return new NoneAuthAdapter();
     case "oidc":
+      // browserClientId is advertising-only (GET /auth/config); verification uses issuer+audience.
       return new OidcAuthAdapter({ issuer: option.issuer, audience: option.audience });
     case "api-key":
       return new ApiKeyAuthAdapter(apiKeys);

@@ -43,7 +43,13 @@ export function optionsFromEnv(env: NodeJS.ProcessEnv = process.env): Standalone
     if (!issuer || !audience) {
       throw new Error("REGISTRY_AUTH=oidc requires OIDC_ISSUER and OIDC_AUDIENCE");
     }
-    auth = { mode: "oidc", issuer, audience };
+    const browserClientId = env["OIDC_BROWSER_CLIENT_ID"];
+    auth = {
+      mode: "oidc",
+      issuer,
+      audience,
+      ...(browserClientId ? { browserClientId } : {}),
+    };
   } else if (authMode === "api-key") {
     auth = { mode: "api-key" };
   } else if (authMode === "none") {

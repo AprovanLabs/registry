@@ -51,7 +51,7 @@ export interface RegistryServerOptions {
     | { driver: "dsql"; url: string }
     | RegistryStorage; // bring your own
   auth:
-    | { mode: "oidc"; issuer: string; audience: string }
+    | { mode: "oidc"; issuer: string; audience: string; browserClientId?: string }
     | { mode: "api-key" }
     | { mode: "none" }
     | AuthAdapter;
@@ -88,7 +88,7 @@ export interface RegistryServerOptions {
 }
 
 export interface RegistryServer {
-  /** Hono app: /tools, /profiles, /credentials, /mcp, /healthz. Host mounts or serves it. */
+  /** Hono app: /tools, /profiles, /credentials, /mcp, /healthz, /auth/config, /whoami. Host mounts or serves it. */
   router: Hono;
   /** In-process dispatch — the embed hot path. Host has already authenticated. */
   dispatch(
