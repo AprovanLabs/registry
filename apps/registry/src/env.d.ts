@@ -4,7 +4,11 @@
 
 interface ImportMetaEnv {
   readonly PUBLIC_GATEWAY_URL?: string;
-  readonly PUBLIC_ACCOUNT_HOST?: "local" | "chat";
+  /** `hosted` | `standalone` (default `standalone`). */
+  readonly PUBLIC_SESSION_MODE?: "hosted" | "standalone";
+  readonly PUBLIC_COGNITO_AUTHORITY?: string;
+  readonly PUBLIC_COGNITO_CLIENT_ID?: string;
+  readonly PUBLIC_COGNITO_DOMAIN?: string;
   readonly PUBLIC_SITE_URL?: string;
   readonly PUBLIC_BASE_PATH?: string;
 }

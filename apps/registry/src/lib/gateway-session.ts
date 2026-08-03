@@ -1,9 +1,8 @@
 /**
- * Gateway session for local catalog surfaces (playground, try-it, account pages).
+ * Gateway session storage + clients for catalog playground / try-it surfaces.
  *
- * Persists an optional bearer token + workspace id in sessionStorage (legacy
- * keys). No Cognito on the public catalog — local `auth none` gateways accept
- * unauthenticated session calls.
+ * Account pages use `lib/session/*` engines; this module keeps the shared
+ * sessionStorage keys and playground clients. Mode selects transport headers.
  */
 
 import { GatewayClient } from "@aprovan/registry-main";
@@ -15,6 +14,7 @@ import {
   type GatewayClient as UiGatewayClient,
   type SessionStoreKeys,
 } from "@aprovan/ui/gateway";
+import { resolveSessionMode } from "@/lib/session";
 import { gatewayBaseUrl } from "@/lib/site";
 
 export const SESSION_KEYS: SessionStoreKeys = {
@@ -47,44 +47,40 @@ function resolveWorkspaceId(workspaceId?: string): string | undefined {
   return workspaceId ?? loadSession()?.workspaceId;
 }
 
-/** Gateway client for catalog playground / try-it surfaces. */
-export function createPlaygroundGatewayClient(): GatewayClient {
-  return new GatewayClient({
-    baseUrl: gatewayBaseUrl(),
-    getToken: async () => resolveToken(),
-    getWorkspaceId: () => resolveWorkspaceId(),
-  });
-}
-
-/** UI gateway client for session/workspace endpoints (proper CloudFront headers). */
-export function createSessionGatewayClient(
-  workspaceId?: string,
-): UiGatewayClient {
-  return createGatewayClient({
+function modeClientOptions(workspaceId?: string) {
+  const mode = resolveSessionMode();
+  if (mode === "hosted") {
+    return {
+      baseUrl: gatewayBaseUrl(),
+      getToken: async () => resolveToken(),
+      getWorkspaceId: () => resolveWorkspaceId(workspaceId),
+      authHeader: "X-Aprovan-Authorization" as const,
+    };
+  }
+  return {
     baseUrl: gatewayBaseUrl(),
     getToken: async () => resolveToken(),
     getWorkspaceId: () => resolveWorkspaceId(workspaceId),
+    scopeHeader: "X-Registry-Tenant" as const,
+  };
+}
+
+/** Gateway client for catalog playground / try-it surfaces. */
+export function createPlaygroundGatewayClient(): GatewayClient {
+  return new GatewayClient(modeClientOptions());
+}
+
+/** UI gateway client for session/workspace endpoints (hosted CloudFront headers). */
+export function createSessionGatewayClient(): UiGatewayClient {
+  return createGatewayClient({
+    baseUrl: gatewayBaseUrl(),
+    getToken: async () => resolveToken() ?? null,
   });
 }
 
-/** Registry-main client injected into registry-ui credential/admin widgets. */
+/** Registry-main client for ad-hoc use outside the session gate. */
 export function createWidgetGatewayClient(
   workspaceId?: string,
 ): GatewayClient {
-  return new GatewayClient({
-    baseUrl: gatewayBaseUrl(),
-    getToken: async () => resolveToken(),
-    getWorkspaceId: () => resolveWorkspaceId(workspaceId),
-  });
-}
-
-/**
- * Whether the catalog should host live standalone surfaces (account pages,
- * apps panel) instead of deferring to the product app.
- */
-export function isStandaloneCatalogHost(): boolean {
-  const host = import.meta.env.PUBLIC_ACCOUNT_HOST as string | undefined;
-  if (host === "local") return true;
-  if (host === "chat") return false;
-  return import.meta.env.DEV;
+  return new GatewayClient(modeClientOptions(workspaceId));
 }

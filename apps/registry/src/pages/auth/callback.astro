@@ -1,8 +1,13 @@
 ---
-import MovedNotice from "@/components/MovedNotice.astro";
+import { AuthCallback } from "@/components/auth/AuthCallback";
+import BaseLayout from "@/layouts/BaseLayout.astro";
 ---
 
-<MovedNotice
-  description="Sign-in for the catalog has been removed — use the product app."
-  title="Sign in — moved"
-/>
+<BaseLayout
+  description="Completing sign-in."
+  title="Sign in — Aprovan Registry"
+>
+  <main class="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+    <AuthCallback client:only="react" />
+  </main>
+</BaseLayout>
