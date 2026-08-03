@@ -1,6 +1,6 @@
 {
   "name": "@utdk/telemetry",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "type": "module",
   "description": "Shared telemetry-export contract for UTDK observability providers: one export operation over the OTLP/HTTP JSON encoding for spans, logs, and metrics, with aprovan.* attribution helpers and a zero-dependency SDK",
   "keywords": [
