@@ -1,6 +1,6 @@
 {
   "name": "@aprovan/registry-server",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "type": "module",
   "description": "The Aprovan registry server \u2014 multi-tenant execution plane: profiles, credentials, provider dispatch, QuickJS sandbox, MCP surface. Embeddable library + standalone server.",
   "license": "MIT",
