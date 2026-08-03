@@ -15,11 +15,7 @@ const {
 } = Astro.props;
 
 const currentPath = Astro.url.pathname;
-// Registry-internal navigation. "Apps" is also a member of the shared app
-// family, so this entry replaces the family's absolute link with the
-// same-origin route this build actually serves (see RegistryHeader).
 const links = [
-  { label: "Apps", href: withBasePath("/apps"), current: currentPath.startsWith(withBasePath("/apps")) },
   { label: "Interfaces", href: withBasePath("/interfaces"), current: currentPath.startsWith(withBasePath("/interfaces")) },
   { label: "MCP", href: withBasePath("/docs/mcp"), current: currentPath.startsWith(withBasePath("/docs/mcp")) },
   { label: "Playground", href: withBasePath("/playground"), current: currentPath.startsWith(withBasePath("/playground")) },

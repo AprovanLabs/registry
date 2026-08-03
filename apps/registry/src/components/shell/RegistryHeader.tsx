@@ -9,17 +9,16 @@
 
 import { AppHeader, aprovanApps, type AppNavLink } from "@aprovan/ui/shell";
 import * as React from "react";
+import { HeaderSession } from "./HeaderSession";
 
 /**
  * The family nav with registry-internal links merged in. An internal link
- * whose label matches a family entry *replaces* it in place: the registry
- * hosts Apps itself, so that entry should be a same-origin link under this
- * build's base path (and can mark itself current) rather than bouncing
- * through aprovan.com. Everything else is appended after the family.
+ * whose label matches a family entry *replaces* it in place. Everything else
+ * is appended after the family.
  *
  * Exactly one entry should ever render as current: the most specific match.
  * `aprovanApps("Registry")` unconditionally marks the family's Registry
- * entry current, but `internal` links (MCP, Playground, Apps, ...) compute
+ * entry current, but `internal` links (MCP, Playground, ...) compute
  * their own `current` from the active route (see BaseLayout.astro). When one
  * of those wins, it's strictly more specific than the family entry, so the
  * Registry entry must yield — otherwise both light up together (e.g. on
@@ -29,7 +28,7 @@ import * as React from "react";
  */
 function registryNav(internal: AppNavLink[]): AppNavLink[] {
   // The nav carries destinations within the working surfaces: the aprovan
-  // Home and patchwork Chat entries are dropped; Apps and Registry stay.
+  // Home and patchwork Chat entries are dropped; Registry stays.
   const family = aprovanApps("Registry").filter(
     (link) => link.label !== "Home" && link.label !== "Chat",
   );
@@ -60,6 +59,7 @@ export function RegistryHeader({
     <AppHeader
       homeHref={homeHref}
       links={registryNav(links)}
+      children={<HeaderSession />}
       logo={
         <img
           alt=""

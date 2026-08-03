@@ -1,14 +1,11 @@
 ---
 /**
- * Legacy route: the Workflows page was consolidated into Apps — workflows
- * render inside the same AppsPanel, grouped under the app that exports them
- * (or under Workspace when unbundled). This stub only exists so old links
- * and bookmarks to /workflows don't 404 on the static build; it forwards to
- * the apps page under whatever base path this build was made with.
+ * Legacy route: workflows were consolidated out of the catalog Apps surface.
+ * Redirect to the Playground so old links and bookmarks don't 404.
  */
 import { withBasePath } from "@/lib/site";
 
-const target = withBasePath("/apps/");
+const target = withBasePath("/playground/");
 const canonical = Astro.site ? new URL(target, Astro.site).href : target;
 ---
 
@@ -17,15 +14,15 @@ const canonical = Astro.site ? new URL(target, Astro.site).href : target;
   <head>
     <meta charset="UTF-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>Apps — Aprovan Registry</title>
+    <title>Playground — Aprovan Registry</title>
     <meta content="noindex" name="robots" />
     <link href={canonical} rel="canonical" />
     <meta content={`0;url=${target}`} http-equiv="refresh" />
   </head>
   <body>
     <p>
-      Workflows now live on the Apps page.
-      <a href={target}>Continue to Apps</a>.
+      Workflows now live in the Playground.
+      <a href={target}>Continue to Playground</a>.
     </p>
     <script is:inline define:vars={{ target }}>
       window.location.replace(target);
