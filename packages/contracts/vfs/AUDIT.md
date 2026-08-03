@@ -53,3 +53,20 @@ concept (asserted by the package's own tests).
 **Frozen at 0.2.0.** All operations implementable against all three audited
 backends; `ifMatch` proved implementable everywhere (the D6 revisit trigger
 did not fire).
+
+## S3 provider (`@utdk/s3`)
+
+Credential (bearer token): JSON `{"accessKeyId":"…","secretAccessKey":"…","sessionToken":"…"?}`.
+
+Binding options:
+
+| Option | Required | Description |
+| --- | --- | --- |
+| `bucket` | yes | Target bucket name |
+| `prefix` | no | Key prefix prepended to every vfs path (workspace partition) |
+| `region` | no | AWS region (default `us-east-1`) |
+| `endpoint` | no | Custom base URL for MinIO / R2 / local compose (`forcePathStyle` defaults true) |
+
+Etags are S3 object ETags with surrounding quotes stripped. Conditional writes
+use native `If-Match` on PutObject (`ifMatch` value or `"*"` for must-exist);
+412 Precondition Failed maps to contract 409.
