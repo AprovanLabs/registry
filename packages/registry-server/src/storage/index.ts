@@ -10,12 +10,19 @@ import {
   createLibsqlClient,
   createSqliteClient,
 } from "./sql-client.js";
+import { createDynamoStorage } from "./dynamo-storage.js";
 import { createSqlStorage } from "./sql-storage.js";
 import { isRegistryStorage, type RegistryStorage } from "./types.js";
 
 export * from "./types.js";
 export { SCHEMA_DDL } from "./schema.js";
 export { createSqlStorage } from "./sql-storage.js";
+export {
+  createDynamoStorage,
+  type DynamoCommands,
+  type DynamoSend,
+  type DynamoStorageOptions,
+} from "./dynamo-storage.js";
 export { UniqueConstraintError, type SqlClient } from "./sql-client.js";
 
 export type StorageOptions =
