@@ -3,15 +3,15 @@
  * observability providers.
  *
  * One operation, `export`, whose payload IS the OTLP/HTTP JSON encoding
- * (subset) for spans and logs — field names and casing exactly as OTLP JSON
- * (`traceId` hex, `timeUnixNano` as a string), so a payload built for this
- * contract posts to any OTLP collector unmodified (D7). Attribution
+ * (subset) for spans, logs, and metrics — field names and casing exactly as
+ * OTLP JSON (`traceId` hex, `timeUnixNano` as a string), so a payload built
+ * for this contract posts to any OTLP collector unmodified (D7). Attribution
  * (Decision 9) rides resource attributes under the `aprovan.*` key prefix
  * via {@link withAttribution}.
  *
- * Deliberately absent: metrics (`resourceMetrics` is reserved — present ⇒
- * 501 unless a future version accepts it) and any query/read surface, which
- * stays native because it reads the workspace's own store.
+ * Metrics cover gauge, sum, and histogram data shapes only. Deliberately
+ * absent: any query/read surface, which stays native because it reads the
+ * workspace's own store.
  */
 
 export const MAX_EXPORT_BYTES = 4_000_000;
@@ -85,19 +85,70 @@ export interface OtlpResourceLogs {
   scopeLogs: Array<{ scope?: { name: string; version?: string }; logRecords: OtlpLogRecord[] }>;
 }
 
+/** OTLP JSON number data point (gauge / sum). */
+export interface OtlpNumberDataPoint {
+  timeUnixNano: string;
+  startTimeUnixNano?: string;
+  asDouble?: number;
+  /** OTLP JSON: 64-bit ints as strings. */
+  asInt?: string;
+  attributes?: OtlpKeyValue[];
+}
+
+/** OTLP JSON histogram data point. */
+export interface OtlpHistogramDataPoint {
+  timeUnixNano: string;
+  startTimeUnixNano?: string;
+  count: string;
+  sum?: number;
+  bucketCounts: string[];
+  explicitBounds: number[];
+  attributes?: OtlpKeyValue[];
+}
+
 /**
- * At least one of the two, non-empty (400 otherwise). `resourceMetrics` is
- * reserved: present ⇒ 501 unless a future version accepts it.
+ * OTLP JSON metric — exactly one of `gauge`, `sum`, or `histogram`.
+ */
+export interface OtlpMetric {
+  name: string;
+  description?: string;
+  unit?: string;
+  gauge?: { dataPoints: OtlpNumberDataPoint[] };
+  sum?: {
+    dataPoints: OtlpNumberDataPoint[];
+    aggregationTemporality: 1 | 2;
+    isMonotonic?: boolean;
+  };
+  histogram?: {
+    dataPoints: OtlpHistogramDataPoint[];
+    aggregationTemporality: 1 | 2;
+  };
+}
+
+export interface OtlpResourceMetrics {
+  resource?: OtlpResource;
+  scopeMetrics: Array<{
+    scope?: { name: string; version?: string };
+    metrics: OtlpMetric[];
+  }>;
+}
+
+/**
+ * At least one of the three arrays, non-empty (400 otherwise).
  */
 export interface TelemetryExportArgs {
   resourceSpans?: OtlpResourceSpans[];
   resourceLogs?: OtlpResourceLogs[];
+  resourceMetrics?: OtlpResourceMetrics[];
 }
 
-/** Mirrors OTLP partial success: rejected counts + message when not all landed. */
+/**
+ * Mirrors OTLP partial success: rejected counts + message when not all landed.
+ * `metrics` counts are data points (OTLP `rejectedDataPoints`).
+ */
 export interface TelemetryExportResult {
-  accepted: { spans: number; logs: number };
-  rejected?: { spans: number; logs: number; message: string };
+  accepted: { spans: number; logs: number; metrics: number };
+  rejected?: { spans: number; logs: number; metrics: number; message: string };
 }
 
 export interface TelemetryClient {
@@ -170,24 +221,107 @@ function validateLogRecord(record: OtlpLogRecord, field: string): void {
   if (record.spanId !== undefined) requireHex(record.spanId, 8, `${field}.spanId`);
 }
 
+function validateNumberDataPoint(point: OtlpNumberDataPoint, field: string): void {
+  if (!isRecord(point)) throw new TelemetryError(`${field} must be an object`, 400);
+  requireNano(point.timeUnixNano, `${field}.timeUnixNano`);
+  if (point.startTimeUnixNano !== undefined) {
+    requireNano(point.startTimeUnixNano, `${field}.startTimeUnixNano`);
+  }
+  if (point.asInt !== undefined && typeof point.asInt !== "string") {
+    throw new TelemetryError(`${field}.asInt must be a string (OTLP JSON encodes 64-bit ints as strings)`, 400);
+  }
+  if (point.asDouble !== undefined && typeof point.asDouble !== "number") {
+    throw new TelemetryError(`${field}.asDouble must be a number`, 400);
+  }
+}
+
+function validateHistogramDataPoint(point: OtlpHistogramDataPoint, field: string): void {
+  if (!isRecord(point)) throw new TelemetryError(`${field} must be an object`, 400);
+  requireNano(point.timeUnixNano, `${field}.timeUnixNano`);
+  if (point.startTimeUnixNano !== undefined) {
+    requireNano(point.startTimeUnixNano, `${field}.startTimeUnixNano`);
+  }
+  if (typeof point.count !== "string" || !NANO_RE.test(point.count)) {
+    throw new TelemetryError(`${field}.count must be a numeric string`, 400);
+  }
+  if (!Array.isArray(point.bucketCounts)) {
+    throw new TelemetryError(`${field}.bucketCounts must be an array`, 400);
+  }
+  if (!Array.isArray(point.explicitBounds)) {
+    throw new TelemetryError(`${field}.explicitBounds must be an array`, 400);
+  }
+}
+
+function validateMetric(metric: OtlpMetric, field: string): void {
+  if (!isRecord(metric)) throw new TelemetryError(`${field} must be an object`, 400);
+  if (typeof metric.name !== "string" || metric.name === "") {
+    throw new TelemetryError(`${field}.name must be a non-empty string`, 400);
+  }
+  const shapes = [metric.gauge, metric.sum, metric.histogram].filter((shape) => shape !== undefined);
+  if (shapes.length !== 1) {
+    throw new TelemetryError(
+      `${field} must declare exactly one of gauge, sum, or histogram (got ${shapes.length})`,
+      400,
+    );
+  }
+  if (metric.gauge !== undefined) {
+    if (!isRecord(metric.gauge) || !Array.isArray(metric.gauge.dataPoints)) {
+      throw new TelemetryError(`${field}.gauge.dataPoints must be an array`, 400);
+    }
+    metric.gauge.dataPoints.forEach((point, i) =>
+      validateNumberDataPoint(point, `${field}.gauge.dataPoints[${i}]`),
+    );
+  }
+  if (metric.sum !== undefined) {
+    if (!isRecord(metric.sum) || !Array.isArray(metric.sum.dataPoints)) {
+      throw new TelemetryError(`${field}.sum.dataPoints must be an array`, 400);
+    }
+    if (metric.sum.aggregationTemporality !== 1 && metric.sum.aggregationTemporality !== 2) {
+      throw new TelemetryError(`${field}.sum.aggregationTemporality must be 1 or 2`, 400);
+    }
+    metric.sum.dataPoints.forEach((point, i) =>
+      validateNumberDataPoint(point, `${field}.sum.dataPoints[${i}]`),
+    );
+  }
+  if (metric.histogram !== undefined) {
+    if (!isRecord(metric.histogram) || !Array.isArray(metric.histogram.dataPoints)) {
+      throw new TelemetryError(`${field}.histogram.dataPoints must be an array`, 400);
+    }
+    if (
+      metric.histogram.aggregationTemporality !== 1 &&
+      metric.histogram.aggregationTemporality !== 2
+    ) {
+      throw new TelemetryError(`${field}.histogram.aggregationTemporality must be 1 or 2`, 400);
+    }
+    metric.histogram.dataPoints.forEach((point, i) =>
+      validateHistogramDataPoint(point, `${field}.histogram.dataPoints[${i}]`),
+    );
+  }
+}
+
 /**
  * Validate an export payload: OTLP/HTTP JSON shapes pass unmodified; a
- * payload with neither non-empty `resourceSpans` nor `resourceLogs` is 400;
- * a reserved `resourceMetrics` block is 501.
+ * payload with none of `resourceSpans`, `resourceLogs`, or `resourceMetrics`
+ * non-empty is 400.
  */
 export function validateExportArgs(args: TelemetryExportArgs): void {
   if (!isRecord(args)) {
-    throw new TelemetryError("export requires { resourceSpans?, resourceLogs? }", 400);
-  }
-  if ((args as Record<string, unknown>).resourceMetrics !== undefined) {
-    throw new TelemetryError("resourceMetrics is reserved and not accepted by this contract version", 501);
+    throw new TelemetryError(
+      "export requires { resourceSpans?, resourceLogs?, resourceMetrics? }",
+      400,
+    );
   }
   const spans = args.resourceSpans;
   const logs = args.resourceLogs;
+  const metrics = args.resourceMetrics;
   const hasSpans = Array.isArray(spans) && spans.length > 0;
   const hasLogs = Array.isArray(logs) && logs.length > 0;
-  if (!hasSpans && !hasLogs) {
-    throw new TelemetryError("export requires at least one of resourceSpans or resourceLogs, non-empty", 400);
+  const hasMetrics = Array.isArray(metrics) && metrics.length > 0;
+  if (!hasSpans && !hasLogs && !hasMetrics) {
+    throw new TelemetryError(
+      "export requires at least one of resourceSpans, resourceLogs, or resourceMetrics, non-empty",
+      400,
+    );
   }
 
   if (hasSpans) {
@@ -217,6 +351,25 @@ export function validateExportArgs(args: TelemetryExportArgs): void {
         }
         scopeLogs.logRecords.forEach((record, k) =>
           validateLogRecord(record, `resourceLogs[${i}].scopeLogs[${j}].logRecords[${k}]`),
+        );
+      });
+    });
+  }
+
+  if (hasMetrics) {
+    metrics.forEach((resourceMetrics, i) => {
+      if (!isRecord(resourceMetrics) || !Array.isArray(resourceMetrics.scopeMetrics)) {
+        throw new TelemetryError(`resourceMetrics[${i}].scopeMetrics must be an array`, 400);
+      }
+      resourceMetrics.scopeMetrics.forEach((scopeMetrics, j) => {
+        if (!isRecord(scopeMetrics) || !Array.isArray(scopeMetrics.metrics)) {
+          throw new TelemetryError(
+            `resourceMetrics[${i}].scopeMetrics[${j}].metrics must be an array`,
+            400,
+          );
+        }
+        scopeMetrics.metrics.forEach((metric, k) =>
+          validateMetric(metric, `resourceMetrics[${i}].scopeMetrics[${j}].metrics[${k}]`),
         );
       });
     });
@@ -263,8 +416,8 @@ export function telemetryToolEntries(
     {
       name: `${provider}.export`,
       description:
-        "Export spans and/or logs in the OTLP/HTTP JSON encoding (traceId hex, timeUnixNano strings — a payload " +
-        "built for any OTLP collector posts here unmodified). At least one of resourceSpans/resourceLogs, " +
+        "Export spans, logs, and/or metrics in the OTLP/HTTP JSON encoding (traceId hex, timeUnixNano strings — a payload " +
+        "built for any OTLP collector posts here unmodified). At least one of resourceSpans/resourceLogs/resourceMetrics, " +
         `non-empty; total payload ≤ ${MAX_EXPORT_BYTES} bytes. Returns { accepted, rejected? } mirroring OTLP partial success.`,
       inputSchema: {
         type: "object",
@@ -276,6 +429,11 @@ export function telemetryToolEntries(
           resourceLogs: {
             type: "array",
             description: "OTLP JSON ResourceLogs array (resource attributes + scopeLogs[].logRecords[])",
+          },
+          resourceMetrics: {
+            type: "array",
+            description:
+              "OTLP JSON ResourceMetrics array (resource attributes + scopeMetrics[].metrics[] with gauge/sum/histogram)",
           },
         },
       },

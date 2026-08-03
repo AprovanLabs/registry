@@ -31,6 +31,9 @@
     "datadog": {
       "packageName": "@utdk/datadog"
     },
+    "datadog/telemetry": {
+      "packageName": "utdk/datadog/telemetry"
+    },
     "digitalocean": {
       "packageName": "@utdk/digitalocean",
       "provenancePath": "./digitalocean/provenance.json",

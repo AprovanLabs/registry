@@ -3,6 +3,7 @@ import {
   ATTR_PRINCIPAL,
   ATTR_SOURCE,
   ATTR_TENANT,
+  MAX_EXPORT_BYTES,
   TelemetryError,
   telemetryToolEntries,
   validateExportArgs,
@@ -16,6 +17,16 @@ const statusOf = (fn: () => void): number => {
     fn();
   } catch (error) {
     if (error instanceof TelemetryError) return error.status;
+    throw error;
+  }
+  throw new Error("expected a TelemetryError");
+};
+
+const messageOf = (fn: () => void): string => {
+  try {
+    fn();
+  } catch (error) {
+    if (error instanceof TelemetryError) return error.message;
     throw error;
   }
   throw new Error("expected a TelemetryError");
@@ -88,6 +99,65 @@ const otlpSample: TelemetryExportArgs = {
   ],
 };
 
+/** Literal OTLP JSON metrics body (gauge) — posts to `/v1/metrics` unmodified. */
+const otlpMetricsSample: TelemetryExportArgs = {
+  resourceMetrics: [
+    {
+      resource: {
+        attributes: [{ key: "service.name", value: { stringValue: "checkout" } }],
+      },
+      scopeMetrics: [
+        {
+          scope: { name: "example.instrumentation", version: "1.0.0" },
+          metrics: [
+            {
+              name: "http.server.duration",
+              unit: "ms",
+              gauge: {
+                dataPoints: [
+                  {
+                    timeUnixNano: "1544712661000000000",
+                    asDouble: 42.5,
+                    attributes: [{ key: "http.route", value: { stringValue: "/cart" } }],
+                  },
+                ],
+              },
+            },
+            {
+              name: "http.server.request.count",
+              sum: {
+                aggregationTemporality: 1,
+                isMonotonic: true,
+                dataPoints: [
+                  {
+                    timeUnixNano: "1544712661000000000",
+                    asInt: "3",
+                  },
+                ],
+              },
+            },
+            {
+              name: "http.server.latency",
+              histogram: {
+                aggregationTemporality: 1,
+                dataPoints: [
+                  {
+                    timeUnixNano: "1544712661000000000",
+                    count: "2",
+                    sum: 75,
+                    bucketCounts: ["0", "1", "1", "0"],
+                    explicitBounds: [10, 50, 100],
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    },
+  ],
+};
+
 describe("validateExportArgs", () => {
   it("accepts a real OTLP/HTTP JSON sample payload unmodified", () => {
     expect(() => validateExportArgs(otlpSample)).not.toThrow();
@@ -96,17 +166,144 @@ describe("validateExportArgs", () => {
     expect(() => validateExportArgs({ resourceLogs: otlpSample.resourceLogs })).not.toThrow();
   });
 
-  it("rejects a payload with neither spans nor logs (or empty arrays) with 400", () => {
-    expect(statusOf(() => validateExportArgs({}))).toBe(400);
-    expect(statusOf(() => validateExportArgs({ resourceSpans: [], resourceLogs: [] }))).toBe(400);
+  it("accepts a metrics-only payload with a well-formed gauge", () => {
+    expect(() =>
+      validateExportArgs({
+        resourceMetrics: [
+          {
+            scopeMetrics: [
+              {
+                metrics: [
+                  {
+                    name: "queue.depth",
+                    gauge: {
+                      dataPoints: [{ timeUnixNano: "1544712661000000000", asDouble: 7 }],
+                    },
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      }),
+    ).not.toThrow();
   });
 
-  it("rejects the reserved resourceMetrics with 501", () => {
+  it("accepts a mixed three-signal payload", () => {
+    expect(() =>
+      validateExportArgs({
+        ...otlpSample,
+        ...otlpMetricsSample,
+      }),
+    ).not.toThrow();
+  });
+
+  it("accepts a literal OTLP JSON metrics body unmodified", () => {
+    expect(() => validateExportArgs(otlpMetricsSample)).not.toThrow();
+  });
+
+  it("rejects a payload with none of the three arrays non-empty with 400", () => {
+    expect(statusOf(() => validateExportArgs({}))).toBe(400);
+    expect(statusOf(() => validateExportArgs({ resourceMetrics: [] }))).toBe(400);
+    expect(
+      statusOf(() => validateExportArgs({ resourceSpans: [], resourceLogs: [], resourceMetrics: [] })),
+    ).toBe(400);
+  });
+
+  it("rejects a metric with zero or two data shapes naming the field path", () => {
+    const zeroShape = {
+      resourceMetrics: [
+        {
+          scopeMetrics: [{ metrics: [{ name: "broken" }] }],
+        },
+      ],
+    };
+    expect(statusOf(() => validateExportArgs(zeroShape))).toBe(400);
+    expect(messageOf(() => validateExportArgs(zeroShape))).toMatch(
+      /resourceMetrics\[0\]\.scopeMetrics\[0\]\.metrics\[0\]/u,
+    );
+
+    const twoShapes = {
+      resourceMetrics: [
+        {
+          scopeMetrics: [
+            {
+              metrics: [
+                {
+                  name: "broken",
+                  gauge: { dataPoints: [{ timeUnixNano: "1", asDouble: 1 }] },
+                  sum: {
+                    aggregationTemporality: 1 as const,
+                    dataPoints: [{ timeUnixNano: "1", asDouble: 1 }],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    expect(statusOf(() => validateExportArgs(twoShapes))).toBe(400);
+    expect(messageOf(() => validateExportArgs(twoShapes))).toMatch(
+      /resourceMetrics\[0\]\.scopeMetrics\[0\]\.metrics\[0\]/u,
+    );
+  });
+
+  it("rejects a data point whose timeUnixNano is a number, naming the field", () => {
+    const bad = {
+      resourceMetrics: [
+        {
+          scopeMetrics: [
+            {
+              metrics: [
+                {
+                  name: "queue.depth",
+                  gauge: {
+                    dataPoints: [{ timeUnixNano: 1544712661 as unknown as string, asDouble: 1 }],
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    };
+    expect(statusOf(() => validateExportArgs(bad))).toBe(400);
+    expect(messageOf(() => validateExportArgs(bad))).toMatch(
+      /resourceMetrics\[0\]\.scopeMetrics\[0\]\.metrics\[0\]\.gauge\.dataPoints\[0\]\.timeUnixNano/u,
+    );
+  });
+
+  it("rejects oversized payloads including metrics-only ones", () => {
+    const bigValue = "x".repeat(MAX_EXPORT_BYTES);
     expect(
       statusOf(() =>
-        validateExportArgs({ ...otlpSample, resourceMetrics: [] } as unknown as TelemetryExportArgs),
+        validateExportArgs({
+          resourceMetrics: [
+            {
+              scopeMetrics: [
+                {
+                  metrics: [
+                    {
+                      name: "big",
+                      gauge: {
+                        dataPoints: [
+                          {
+                            timeUnixNano: "1",
+                            asDouble: 1,
+                            attributes: [{ key: "pad", value: { stringValue: bigValue } }],
+                          },
+                        ],
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+        }),
       ),
-    ).toBe(501);
+    ).toBe(400);
   });
 
   it("rejects a span without traceId with a contract error", () => {
@@ -121,7 +318,8 @@ describe("validateExportArgs", () => {
     expect(statusOf(() => validateExportArgs(badHex))).toBe(400);
 
     const badNano = JSON.parse(JSON.stringify(otlpSample)) as TelemetryExportArgs;
-    (badNano.resourceSpans![0]!.scopeSpans[0]!.spans[0] as Record<string, unknown>).startTimeUnixNano = 1544712660;
+    (badNano.resourceSpans![0]!.scopeSpans[0]!.spans[0] as Record<string, unknown>).startTimeUnixNano =
+      1544712660;
     expect(statusOf(() => validateExportArgs(badNano))).toBe(400);
   });
 
@@ -171,10 +369,18 @@ describe("secretFromHeaders", () => {
 });
 
 describe("telemetryToolEntries", () => {
-  it("exposes exactly one export operation under the provider prefix", () => {
-    const entries = telemetryToolEntries("otlp");
-    expect(entries.map((entry) => entry.name)).toEqual(["otlp.export"]);
-    expect(entries[0]!.inputSchema).toMatchObject({ type: "object" });
+  it("exposes exactly one export operation naming all three arrays", () => {
+    const entries = telemetryToolEntries("datadog");
+    expect(entries.map((entry) => entry.name)).toEqual(["datadog.export"]);
+    expect(entries[0]!.inputSchema).toMatchObject({
+      type: "object",
+      properties: {
+        resourceSpans: expect.any(Object),
+        resourceLogs: expect.any(Object),
+        resourceMetrics: expect.any(Object),
+      },
+    });
+    expect(entries[0]!.description).toContain("metrics");
     expect(entries[0]!.description).toContain("OTLP");
   });
 });
