@@ -20,6 +20,7 @@
     "@utdk/llm": "workspace:*",
     "@utdk/sandbox": "workspace:*",
     "@utdk/sql": "workspace:*",
+    "@utdk/vfs": "workspace:*",
     "@utdk/telemetry": "workspace:*",
     "@utdk/vcs": "workspace:*"
   },
@@ -261,6 +262,11 @@
       "types": "./dist/postgres/index.d.ts",
       "import": "./dist/postgres/index.js",
       "default": "./dist/postgres/index.js"
+    },
+    "./s3": {
+      "types": "./dist/s3/index.d.ts",
+      "import": "./dist/s3/index.js",
+      "default": "./dist/s3/index.js"
     },
     "./posthog": {
       "types": "./dist/posthog/index.d.ts",

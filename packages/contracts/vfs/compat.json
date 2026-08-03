@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "interface": {
+    "id": "vfs",
+    "label": "Files",
+    "description": "Minimal file-plane driver: read/write/delete/list/stat over relative paths with etag conditional writes. Each backend is a handwritten UTDK provider module built on @utdk/vfs. Secrets live in the provider credential; bucket/prefix/region ride the binding options.",
+    "timeoutMs": 60000,
+    "defaultsFor": []
+  },
+  "compat": [
+    {
+      "provider": "s3",
+      "label": "Amazon S3",
+      "module": "s3",
+      "defaults": { "region": "us-east-1" }
+    }
+  ]
+}
