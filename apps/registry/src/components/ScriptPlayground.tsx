@@ -9,12 +9,14 @@
  */
 
 import {
-  createGatewayTransport,
   instrument,
   runScriptInSandbox,
+  TransportError,
   withPolicy,
   type RuntimeEvent,
   type SandboxRun,
+  type Transport,
+  type TransportCallOptions,
 } from "@aprovan/runtime";
 import {
   DependencyPanel,
@@ -30,7 +32,12 @@ import {
 import { PlayIcon, SquareIcon } from "lucide-react";
 import * as React from "react";
 import { CodeEditor } from "@/components/CodeEditor";
-import { loadSession } from "@/lib/gateway-session";
+import {
+  createPlaygroundGatewayClient,
+  LOCAL_AUTH_SENTINEL,
+  loadSession,
+} from "@/lib/gateway-session";
+import { resolveSessionMode } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -52,7 +59,42 @@ import {
   SAMPLE_SCRIPT,
   synthesizeWorkflowImports,
 } from "@/lib/playground";
-import { gatewayBaseUrl, withBasePath } from "@/lib/site";
+import { withBasePath } from "@/lib/site";
+
+/** Sandbox transport backed by the mode-aware playground gateway client (Try-It parity). */
+function createPlaygroundTransport(): Transport {
+  const client = createPlaygroundGatewayClient();
+  return {
+    async call(provider, operation, args, _options?: TransportCallOptions) {
+      try {
+        const response = await client.callTool<{ data?: unknown }>(
+          provider,
+          operation,
+          { args },
+        );
+        return response && typeof response === "object" && "data" in response
+          ? response.data
+          : response;
+      } catch (error) {
+        throw new TransportError(
+          error instanceof Error ? error.message : String(error),
+        );
+      }
+    },
+  };
+}
+
+function hostedSessionError(): string | null {
+  if (resolveSessionMode() !== "hosted") return null;
+  const session = loadSession();
+  if (!session?.token || session.token === LOCAL_AUTH_SENTINEL) {
+    return "Sign in to run scripts in the hosted catalog.";
+  }
+  if (!session.workspaceId) {
+    return "Select a workspace to run scripts in the hosted catalog.";
+  }
+  return null;
+}
 
 /**
  * The TypeScript-aware editor pulls the `typescript` package into the page;
@@ -212,6 +254,11 @@ export function ScriptPlayground() {
       setCompileError("Inputs must be a JSON object.");
       return;
     }
+    const sessionError = hostedSessionError();
+    if (sessionError) {
+      setCompileError(sessionError);
+      return;
+    }
     setCompileError(null);
     setRun({ events: [], running: true, startTs: Date.now() });
 
@@ -221,11 +268,7 @@ export function ScriptPlayground() {
 
     const transport = instrument(
       withPolicy(
-        createGatewayTransport({
-          baseUrl: gatewayBaseUrl(),
-          getToken: async () => loadSession()?.token,
-          getWorkspaceId: () => loadSession()?.workspaceId,
-        }),
+        createPlaygroundTransport(),
         { retry: { attempts: 3 } },
         {
           onRetry: (info) =>
