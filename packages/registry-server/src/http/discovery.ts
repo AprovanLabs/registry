@@ -102,6 +102,8 @@ export interface NamespaceInfo {
   compat?: Array<{ provider: string; label: string; connected: boolean }>;
   /** Profile names that exist for this target in the tenant. */
   profiles?: string[];
+  /** Name of the stored default profile when one exists (typically `"default"`). */
+  defaultProfile?: string;
   /** LLM aliases: the model used when a call names none. */
   defaultModel?: string;
 }
@@ -110,6 +112,18 @@ export class DiscoveryService {
   private readonly cache = new Map<string, CachedToolList>();
 
   constructor(private readonly deps: DiscoveryDeps) {}
+
+  private async profileMetadata(
+    tenantId: string,
+    kind: "interface" | "provider",
+    id: string,
+  ): Promise<{ profiles: string[]; defaultProfile?: string }> {
+    const profiles = await this.deps.profiles.namesForTarget(tenantId, kind, id);
+    return {
+      profiles,
+      ...(profiles.includes("default") ? { defaultProfile: "default" } : {}),
+    };
+  }
 
   /** Drop a tenant's cached tool list (call on credential/profile change). */
   invalidate(tenantId: string): void {
@@ -247,13 +261,13 @@ export class DiscoveryService {
           label: entry.label,
           connected: entry.credentialless === true || connected.has(entry.provider),
         })),
-        profiles: await this.deps.profiles.namesForTarget(ctx.tenantId, "interface", def.id),
+        ...(await this.profileMetadata(ctx.tenantId, "interface", def.id)),
       });
     }
 
     for (const provider of connected) {
       const alias = findLlmAlias(this.deps.catalog, provider);
-      const profiles = await this.deps.profiles.namesForTarget(ctx.tenantId, "provider", provider);
+      const profileMeta = await this.profileMetadata(ctx.tenantId, "provider", provider);
       infos.push(
         alias
           ? {
@@ -262,9 +276,9 @@ export class DiscoveryService {
               label: alias.label,
               description: `OpenAI-compatible chat completions via ${alias.label}`,
               defaultModel: alias.defaultModel,
-              profiles,
+              ...profileMeta,
             }
-          : { id: provider, kind: "provider", label: provider, description: "", profiles },
+          : { id: provider, kind: "provider", label: provider, description: "", ...profileMeta },
       );
     }
 

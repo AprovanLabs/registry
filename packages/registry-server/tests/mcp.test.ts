@@ -8,6 +8,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import type { ProviderTool } from "@utdk/mcp-core";
 import {
   buildMcpServer,
+  REGISTRY_META_TOOLS,
   resetMcpCatalog,
   setMcpCatalogForTesting,
 } from "../src/mcp/server.js";
@@ -192,5 +193,41 @@ describe("mcp surface", () => {
       "tool_info",
       "call_tool",
     ]);
+  });
+
+  it("call_tool schema documents an optional profile defaulting to implicit default", () => {
+    const callTool = REGISTRY_META_TOOLS.find((tool) => tool.name === "call_tool");
+    expect(callTool).toBeDefined();
+    const profile = callTool!.inputSchema.properties?.["profile"] as
+      | { description?: string; default?: string }
+      | undefined;
+    expect(profile?.default).toBe("default");
+    expect(profile?.description).toMatch(/implicit default profile/iu);
+  });
+
+  it("call_tool forwards profile to dispatch", async () => {
+    env = await makeDispatchEnv({ authMode: "none" });
+    setMcpCatalogForTesting([githubTool]);
+    const { mod, calls } = fakeProviderModule("createGithubClient");
+    env.executor.setModuleForTesting("@utdk/clients/github", mod);
+    await env.credentials.create("t1", "user-1", { provider: "github", payload: bearer("gh-default") });
+    const stagingCred = await env.credentials.create("t1", "user-1", {
+      provider: "github",
+      payload: bearer("gh-staging"),
+    });
+    await env.profiles.create(adminCtx(), {
+      name: "staging",
+      target: { kind: "provider", provider: "github" },
+      credentialId: stagingCred.id,
+    });
+
+    const server = await makeServer(adminCtx({ source: { type: "mcp" } }));
+    const result = await callServerTool(server, "call_tool", {
+      tool_name: "github__repos_get",
+      profile: "staging",
+      arguments: { owner: "o", repo: "r" },
+    });
+    expect(result.isError).toBeFalsy();
+    expect(calls[0]?.headers).toEqual({ Authorization: "Bearer gh-staging" });
   });
 });

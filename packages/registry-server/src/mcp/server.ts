@@ -31,11 +31,33 @@ import {
   type Execute,
   type ProviderTool,
 } from "@utdk/mcp-core";
-import { resolveProfile } from "../profiles/resolve.js";
 import { ServiceError } from "../kernel/index.js";
+import { resolveProfile } from "../profiles/resolve.js";
 import type { CallContext, McpExtensions } from "../config/types.js";
 import type { Dispatcher } from "../dispatch/index.js";
 import type { ResolveDeps } from "../profiles/resolve.js";
+
+/** Registry MCP meta-tools: augments `call_tool` with optional `profile`. */
+export const REGISTRY_META_TOOLS = META_TOOLS.map((tool) => {
+  if (tool.name !== "call_tool") return tool;
+  return {
+    ...tool,
+    description:
+      `${tool.description} Pass an optional profile to select a named credential profile for the tool's namespace; omit for the implicit default.`,
+    inputSchema: {
+      ...tool.inputSchema,
+      properties: {
+        ...tool.inputSchema.properties,
+        profile: {
+          type: "string",
+          description:
+            'Profile name for the tool\'s namespace. Omit to use the implicit default profile (stored "default" profile, or zero-config fallback when none exists).',
+          default: "default",
+        },
+      },
+    },
+  };
+});
 
 // ---------------------------------------------------------------------------
 // Module-level catalog cache (loaded once at first call)
@@ -138,14 +160,16 @@ export async function buildMcpServer(deps: McpDeps, ctx: CallContext): Promise<S
   );
 
   server.setRequestHandler(ListToolsRequestSchema, async () => ({
-    tools: [...extensionTools, ...META_TOOLS],
+    tools: [...extensionTools, ...REGISTRY_META_TOOLS],
   }));
 
-  const execute: Execute = async (input) => {
+  const makeExecute = (profile?: string): Execute => async (input) => {
     const provider = input.tool.providerName;
     const operation = toolOperation(input.tool);
     try {
-      const result = await deps.dispatcher.dispatch(ctx, provider, operation, input.args);
+      const result = await deps.dispatcher.dispatch(ctx, provider, operation, input.args, {
+        ...(profile !== undefined ? { profile } : {}),
+      });
       if (result.kind === "stream") {
         // MCP tool results are buffered text: drain the stream.
         const text = await new Response(result.stream).text();
@@ -184,7 +208,8 @@ export async function buildMcpServer(deps: McpDeps, ctx: CallContext): Promise<S
           ],
         };
       }
-      return handleCallTool(tool, args, execute);
+      const profile = typeof args["profile"] === "string" ? args["profile"] : undefined;
+      return handleCallTool(tool, args, makeExecute(profile));
     }
     return {
       isError: true,
