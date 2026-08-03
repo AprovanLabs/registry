@@ -21,7 +21,7 @@
 import { execSync } from "child_process";
 import { readFileSync } from "fs";
 import { join } from "path";
-import { createClient } from "utdk/client";
+import { createClient } from "@utdk/clients/client";
 import { resolveAuth, authEnvVars } from "./auth.js";
 import { getCognitoConfig, runAuthCodeFlow } from "./cognito.js";
 import {

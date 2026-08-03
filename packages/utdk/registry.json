@@ -23,7 +23,7 @@
       "packageName": "@utdk/cloudflare"
     },
     "cloudflare/sandbox": {
-      "packageName": "utdk/cloudflare/sandbox"
+      "packageName": "@utdk/clients/cloudflare/sandbox"
     },
     "databricks": {
       "packageName": "@utdk/databricks"
@@ -32,7 +32,7 @@
       "packageName": "@utdk/datadog"
     },
     "datadog/telemetry": {
-      "packageName": "utdk/datadog/telemetry"
+      "packageName": "@utdk/clients/datadog/telemetry"
     },
     "digitalocean": {
       "packageName": "@utdk/digitalocean",
@@ -59,7 +59,7 @@
       "packageName": "@utdk/fly"
     },
     "fly/sprites": {
-      "packageName": "utdk/fly/sprites"
+      "packageName": "@utdk/clients/fly/sprites"
     },
     "front": {
       "packageName": "@utdk/front",
@@ -80,7 +80,7 @@
       "bundlerVersion": "0.1.1"
     },
     "github/vcs": {
-      "packageName": "utdk/github/vcs"
+      "packageName": "@utdk/clients/github/vcs"
     },
     "google": {
       "packageName": "@utdk/google"
@@ -92,67 +92,67 @@
       "bundlerVersion": "0.1.1"
     },
     "google/books": {
-      "packageName": "utdk/google/books",
+      "packageName": "@utdk/clients/google/books",
       "provenancePath": "./google/books/provenance.json",
       "generatedAt": "2026-07-19T23:49:25.177Z",
       "bundlerVersion": "0.1.1"
     },
     "google/calendar": {
-      "packageName": "utdk/google/calendar",
+      "packageName": "@utdk/clients/google/calendar",
       "provenancePath": "./google/calendar/provenance.json",
       "generatedAt": "2026-07-19T23:50:39.140Z",
       "bundlerVersion": "0.1.1"
     },
     "google/docs": {
-      "packageName": "utdk/google/docs",
+      "packageName": "@utdk/clients/google/docs",
       "provenancePath": "./google/docs/provenance.json",
       "generatedAt": "2026-07-19T23:50:25.249Z",
       "bundlerVersion": "0.1.1"
     },
     "google/drive": {
-      "packageName": "utdk/google/drive",
+      "packageName": "@utdk/clients/google/drive",
       "provenancePath": "./google/drive/provenance.json",
       "generatedAt": "2026-07-19T23:51:44.005Z",
       "bundlerVersion": "0.1.1"
     },
     "google/forms": {
-      "packageName": "utdk/google/forms",
+      "packageName": "@utdk/clients/google/forms",
       "provenancePath": "./google/forms/provenance.json",
       "generatedAt": "2026-07-19T23:49:57.871Z",
       "bundlerVersion": "0.1.1"
     },
     "google/gmail": {
-      "packageName": "utdk/google/gmail",
+      "packageName": "@utdk/clients/google/gmail",
       "provenancePath": "./google/gmail/provenance.json",
       "generatedAt": "2026-07-19T23:51:29.984Z",
       "bundlerVersion": "0.1.1"
     },
     "google/people": {
-      "packageName": "utdk/google/people",
+      "packageName": "@utdk/clients/google/people",
       "provenancePath": "./google/people/provenance.json",
       "generatedAt": "2026-07-19T23:50:59.205Z",
       "bundlerVersion": "0.1.1"
     },
     "google/sheets": {
-      "packageName": "utdk/google/sheets",
+      "packageName": "@utdk/clients/google/sheets",
       "provenancePath": "./google/sheets/provenance.json",
       "generatedAt": "2026-07-19T23:51:14.591Z",
       "bundlerVersion": "0.1.1"
     },
     "google/slides": {
-      "packageName": "utdk/google/slides",
+      "packageName": "@utdk/clients/google/slides",
       "provenancePath": "./google/slides/provenance.json",
       "generatedAt": "2026-07-19T23:50:11.634Z",
       "bundlerVersion": "0.1.1"
     },
     "google/tasks": {
-      "packageName": "utdk/google/tasks",
+      "packageName": "@utdk/clients/google/tasks",
       "provenancePath": "./google/tasks/provenance.json",
       "generatedAt": "2026-07-19T23:49:43.325Z",
       "bundlerVersion": "0.1.1"
     },
     "google/youtube": {
-      "packageName": "utdk/google/youtube",
+      "packageName": "@utdk/clients/google/youtube",
       "provenancePath": "./google/youtube/provenance.json",
       "generatedAt": "2026-07-19T23:51:58.368Z",
       "bundlerVersion": "0.1.1"

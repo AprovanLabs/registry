@@ -14,7 +14,7 @@
 import { existsSync, readdirSync, readFileSync } from "fs";
 import { dirname, join, resolve } from "path";
 import { fileURLToPath } from "url";
-import type { ToolRuntimeMetadata, ToolRuntimeMetadataMap } from "utdk/client";
+import type { ToolRuntimeMetadata, ToolRuntimeMetadataMap } from "@utdk/clients/client";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 // Compiled to packages/utdk-cli/dist/; navigate to packages/utdk/

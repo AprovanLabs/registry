@@ -3,13 +3,13 @@
  *
  * The transpile-only build (build.mjs) emits no types, but `@utdk/cli` imports
  * `ToolRuntimeMetadata`, `ToolRuntimeMetadataMap` and `createClient` from
- * `utdk/client` — a single 20KB file with no `openapi.json` import, so
+ * `@utdk/clients/client` — a single 20KB file with no `openapi.json` import, so
  * declaring it costs well under a second rather than the 17.9s / 3.66GB the
  * full catalogue costs.
  *
  * Per-provider `.d.ts` files come from `pnpm build:types`, which the publish
  * workflow runs so the published package still gives external consumers types
- * for `import github from "utdk/github"`.
+ * for `import github from "@utdk/clients/github"`.
  */
 
 import { spawnSync } from "node:child_process";

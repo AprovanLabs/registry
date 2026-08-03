@@ -27,7 +27,7 @@
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.848.0",
     "@utdk/common": "workspace:*",
-    "utdk": "workspace:*"
+    "@utdk/clients": "workspace:*"
   },
   "devDependencies": {
     "@aprovan/vitest-config": "^0.1.0",

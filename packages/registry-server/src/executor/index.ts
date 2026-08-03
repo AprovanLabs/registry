@@ -4,7 +4,7 @@
  * apps/workspace/src/isolate.ts:
  *
  * - Provider modules load on first use via dynamic import and live in an LRU
- *   cache keyed by IMPORT SPECIFIER (`utdk/<p>` or the explicit
+ *   cache keyed by IMPORT SPECIFIER (`@utdk/clients/<p>` or the explicit
  *   `moduleSpecifier`) — first-party modules and catalogue providers must
  *   not collide. Cap configurable (default 20).
  * - Client objects are constructed per call with the call's injected
@@ -24,7 +24,7 @@ import type { InjectableCredential } from "../credentials/types.js";
 export interface ExecuteOptions {
   /** Decides the client factory name (createGithubClient). */
   provider: string;
-  /** Import specifier when not utdk/<provider> (first-party). */
+  /** Import specifier when not @utdk/clients/<provider> (first-party). */
   module?: string;
   /** Dot path. */
   operation: string;
@@ -66,7 +66,7 @@ let catalogueProviders: Set<string> | undefined;
  */
 export function getRegistryProviders(): string[] {
   try {
-    const reg = _require("utdk/registry.json") as RegistryJson;
+    const reg = _require("@utdk/clients/registry.json") as RegistryJson;
     return Object.keys(reg.providers ?? {});
   } catch {
     return [];
@@ -133,7 +133,7 @@ export class ProviderExecutor {
 
   /** The cache key for a load: the exact import specifier. */
   static specifierFor(provider: string, moduleSpecifier?: string): string {
-    return moduleSpecifier ?? `utdk/${provider}`;
+    return moduleSpecifier ?? `@utdk/clients/${provider}`;
   }
 
   async getModule(provider: string, moduleSpecifier?: string): Promise<ProviderModule> {
@@ -150,7 +150,7 @@ export class ProviderExecutor {
     if (!moduleSpecifier) assertCatalogueProvider(provider);
     const mod = moduleSpecifier
       ? ((await import(/* @vite-ignore */ moduleSpecifier)) as ProviderModule)
-      : ((await import(`utdk/${provider}`)) as ProviderModule);
+      : ((await import(`@utdk/clients/${provider}`)) as ProviderModule);
     this.put(specifier, mod);
     return mod;
   }

@@ -19,7 +19,7 @@ describe("resolveProviderNameFromHostname", () => {
     expect(resolveProviderNameFromHostname("drive.google.com")).toEqual({
       name: "google/drive",
       packageName: "@utdk/google",
-      importSpecifier: "utdk/google/drive",
+      importSpecifier: "@utdk/clients/google/drive",
     });
   });
 

@@ -94,7 +94,7 @@ describe("mcp surface", () => {
     env = await makeDispatchEnv();
     setMcpCatalogForTesting([githubTool]);
     const { mod, calls } = fakeProviderModule("createGithubClient");
-    env.executor.setModuleForTesting("utdk/github", mod);
+    env.executor.setModuleForTesting("@utdk/clients/github", mod);
     await env.credentials.create("t1", "user-1", { provider: "github", payload: bearer("gh") });
 
     const server = await makeServer(adminCtx({ source: { type: "mcp" } }));
@@ -117,7 +117,7 @@ describe("mcp surface", () => {
     env = await makeDispatchEnv();
     setMcpCatalogForTesting([githubTool]);
     const { mod } = fakeProviderModule("createGithubClient");
-    env.executor.setModuleForTesting("utdk/github", mod);
+    env.executor.setModuleForTesting("@utdk/clients/github", mod);
     // A stored default profile the member is NOT granted.
     await env.credentials.create("t1", "admin", { provider: "github", payload: bearer("gh") });
     await env.profiles.create(adminCtx(), {

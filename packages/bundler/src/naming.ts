@@ -70,7 +70,7 @@ export interface ResolvedProviderName {
   name: string;
   /** `"@utdk/google"` (root of a suite) | `"@utdk/synthetic-new"`. */
   packageName: string;
-  /** `"utdk/google/drive"` | `"@utdk/synthetic-new"`. */
+  /** `"@utdk/clients/google/drive"` | `"@utdk/synthetic-new"`. */
   importSpecifier: string;
 }
 
@@ -127,6 +127,6 @@ export function resolveProviderNameFromHostname(hostname: string): ResolvedProvi
   return {
     name,
     packageName: `@utdk/${root}`,
-    importSpecifier: name.includes("/") ? `utdk/${name}` : `@utdk/${name}`,
+    importSpecifier: name.includes("/") ? `@utdk/clients/${name}` : `@utdk/${name}`,
   };
 }

@@ -35,7 +35,7 @@ describe("dispatch pipeline", () => {
   it("provider dispatch executes with the resolved credential and audits + spans once", async () => {
     env = await makeDispatchEnv();
     const { mod, calls } = fakeProviderModule("createGithubClient");
-    env.executor.setModuleForTesting("utdk/github", mod);
+    env.executor.setModuleForTesting("@utdk/clients/github", mod);
     await env.credentials.create("t1", "user-1", { provider: "github", payload: bearer("tok") });
 
     const result = await env.dispatcher.dispatch(adminCtx(), "github", "repos.get", { owner: "o" });
@@ -54,7 +54,7 @@ describe("dispatch pipeline", () => {
   it("interface dispatch through a named profile carries options, credential, and profile attribution", async () => {
     env = await makeDispatchEnv();
     const { mod, calls } = fakeProviderModule("createPostgresClient");
-    env.executor.setModuleForTesting("utdk/postgres", mod);
+    env.executor.setModuleForTesting("@utdk/clients/postgres", mod);
     const cred = await env.credentials.create("t1", "user-1", {
       provider: "postgres",
       payload: bearer("pg"),
@@ -102,7 +102,7 @@ describe("dispatch pipeline", () => {
       env.dispatcher.dispatch(adminCtx(), "sql", "query", {}, { profile: "ghost" }),
     ).rejects.toThrow(/No sql profile named "ghost"/u);
     // 4. Execution failure.
-    env.executor.setModuleForTesting("utdk/github", { createGithubClient: async () => ({}) });
+    env.executor.setModuleForTesting("@utdk/clients/github", { createGithubClient: async () => ({}) });
     await env.credentials.create("t1", "user-1", { provider: "github", payload: bearer("t") });
     await expect(env.dispatcher.dispatch(adminCtx(), "github", "repos.get", {})).rejects.toThrow();
 
@@ -156,7 +156,7 @@ describe("dispatch pipeline", () => {
   it("llm alias dispatch fills the default model and uses the alias base URL", async () => {
     env = await makeDispatchEnv();
     const { mod, calls } = fakeProviderModule("createOpenaiClient");
-    env.executor.setModuleForTesting("utdk/openai", mod);
+    env.executor.setModuleForTesting("@utdk/clients/openai", mod);
     await env.credentials.create("t1", "user-1", { provider: "anthropic", payload: bearer("k") });
 
     await env.dispatcher.dispatch(adminCtx(), "anthropic", "createChatCompletion", {
@@ -170,7 +170,7 @@ describe("dispatch pipeline", () => {
   it("oauth client-credentials payloads pre-resolve to bearer tokens before execution", async () => {
     env = await makeDispatchEnv();
     const { mod, calls } = fakeProviderModule("createGithubClient");
-    env.executor.setModuleForTesting("utdk/github", mod);
+    env.executor.setModuleForTesting("@utdk/clients/github", mod);
     await env.credentials.create("t1", "user-1", {
       provider: "github",
       payload: {
@@ -195,7 +195,7 @@ describe("dispatch pipeline", () => {
   it("oauth failure fails 502 naming the provider, before the module executes", async () => {
     env = await makeDispatchEnv();
     const { mod, calls } = fakeProviderModule("createGithubClient");
-    env.executor.setModuleForTesting("utdk/github", mod);
+    env.executor.setModuleForTesting("@utdk/clients/github", mod);
     await env.credentials.create("t1", "user-1", {
       provider: "github",
       payload: {
@@ -222,7 +222,7 @@ describe("dispatch pipeline", () => {
   it("ephemeral request credentials execute without touching the store", async () => {
     env = await makeDispatchEnv();
     const { mod, calls } = fakeProviderModule("createGithubClient");
-    env.executor.setModuleForTesting("utdk/github", mod);
+    env.executor.setModuleForTesting("@utdk/clients/github", mod);
     await env.dispatcher.dispatch(
       adminCtx(),
       "github",
@@ -276,7 +276,7 @@ describe("dispatch pipeline", () => {
     it("profile limits throttle with a retryable 429 on the shared pipeline", async () => {
       env = await makeDispatchEnv();
       const { mod } = fakeProviderModule("createPostgresClient");
-      env.executor.setModuleForTesting("utdk/postgres", mod);
+      env.executor.setModuleForTesting("@utdk/clients/postgres", mod);
       await env.credentials.create("t1", "user-1", { provider: "postgres", payload: bearer("p") });
       await env.profiles.create(adminCtx(), {
         name: "docs",
@@ -296,7 +296,7 @@ describe("dispatch pipeline", () => {
     it("tenants do not share buckets", async () => {
       env = await makeDispatchEnv({ limits: { defaultRps: 1, defaultBurst: 1 } });
       const { mod } = fakeProviderModule("createGithubClient");
-      env.executor.setModuleForTesting("utdk/github", mod);
+      env.executor.setModuleForTesting("@utdk/clients/github", mod);
       await env.credentials.create("t1", "user-1", { provider: "github", payload: bearer("a") });
       await env.credentials.create("t2", "user-1", { provider: "github", payload: bearer("b") });
 
@@ -315,7 +315,7 @@ describe("dispatch pipeline", () => {
     it("Response / ReadableStream / async-iterable results normalize to {kind: stream}", async () => {
       env = await makeDispatchEnv();
       const sse = 'data: {"n":1}\n\n';
-      env.executor.setModuleForTesting("utdk/github", {
+      env.executor.setModuleForTesting("@utdk/clients/github", {
         createGithubClient: async () => ({
           streamResp: async () =>
             new Response(sse, { headers: { "content-type": "text/event-stream" } }),
@@ -348,7 +348,7 @@ describe("dispatch pipeline", () => {
     it("stream: true folds into provider args", async () => {
       env = await makeDispatchEnv();
       const { mod, calls } = fakeProviderModule("createOpenaiClient");
-      env.executor.setModuleForTesting("utdk/openai", mod);
+      env.executor.setModuleForTesting("@utdk/clients/openai", mod);
       await env.credentials.create("t1", "user-1", { provider: "openai", payload: bearer("k") });
       await env.dispatcher.dispatch(
         adminCtx(),
