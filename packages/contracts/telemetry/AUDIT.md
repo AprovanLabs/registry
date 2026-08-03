@@ -71,13 +71,14 @@ Findings:
 **0.2.0:** No change. The OTLP-verbatim subset round-trips to all three
 intakes unmodified (the D7 revisit trigger did not fire).
 
-**0.3.0 (pending bump):** Metrics reservation lifted; gauge/sum/histogram
-subset audited above with no translation required. Version bump waits on
-this audit closing (this document) plus streams 1–3 landing.
+**0.3.0:** Metrics reservation lifted; gauge/sum/histogram subset audited
+above with no translation required. Streams 1–3 landed (registry#86); this
+document closes the freeze gate.
 
 ## Verdict
 
-**Frozen at 0.2.0** for the two-signal surface. **Metrics audit closed** for
-the 0.3.0 freeze gate: gauge/sum/histogram map onto OTLP Collector, Datadog
-OTLP, and Honeycomb OTLP with no field renaming. Bump to 0.3.0 proceeds in
-stream 4 after this PR lands.
+**Frozen at 0.3.0** for the three-signal surface (logs / metrics / traces)
+plus `@utdk/telemetry/sdk`. Gauge/sum/histogram map onto OTLP Collector,
+Datadog OTLP, and Honeycomb OTLP with no field renaming. Owner discovery
+unchanged: bare `telemetry` never vendor-egresses; vendor export is always
+a named instance (`telemetry:datadog`).
