@@ -2,6 +2,8 @@
  * The HTTP surface (tech-plan "HTTP surface"):
  *
  *   GET  /healthz
+ *   GET  /auth/config                    public auth-mode advertisement
+ *   GET  /whoami                         authenticated identity projection
  *   GET  /tools                          tenant-scoped discovery
  *   GET  /tools/namespaces               namespace classification
  *   GET  /tools/search
@@ -14,9 +16,10 @@
  * Headers: Authorization: Bearer <jwt|apr_key>; X-Registry-Tenant (multi-
  * tenant callers); X-Registry-Source (telemetry attribution JSON).
  *
- * Every route runs through the same middleware: adapter authentication →
- * tenant resolution → a CallContext — and POST /tools dispatches through the
- * ONE pipeline the embedding API uses.
+ * Every authenticated route runs through the same middleware: adapter
+ * authentication → tenant resolution → a CallContext — and POST /tools
+ * dispatches through the ONE pipeline the embedding API uses. `/healthz` and
+ * `/auth/config` are exempt.
  */
 
 import { Hono } from "hono";
@@ -34,8 +37,16 @@ import type { ProfileService } from "../profiles/service.js";
 import type { TenantService } from "../tenancy/index.js";
 import type { ApiKeyStore, AuditStore, GrantSubjectKind } from "../storage/types.js";
 
+/** Public response of GET /auth/config — no secrets. */
+export type AuthConfigResponse = {
+  mode: "oidc" | "api-key" | "none";
+  oidc?: { issuer: string; audience: string; browserClientId?: string };
+};
+
 export interface HttpDeps {
   adapter: AuthAdapter;
+  /** Advertised by GET /auth/config (built from construction options). */
+  authConfig: AuthConfigResponse;
   tenancy: TenantService;
   dispatcher: Dispatcher;
   discovery: DiscoveryService;
@@ -80,14 +91,18 @@ function errorResponse(c: { json: (body: unknown, status?: number) => Response }
   return c.json({ error: err instanceof Error ? err.message : String(err) }, 500);
 }
 
+const PUBLIC_PATHS = new Set(["/healthz", "/auth/config"]);
+
 export function buildRouter(deps: HttpDeps): Hono {
   const app = new Hono<Env>();
 
   app.get("/healthz", (c) => c.json({ ok: true }));
 
+  app.get("/auth/config", (c) => c.json(deps.authConfig));
+
   // Everything below requires authentication + tenant resolution.
   app.use("*", async (c, next) => {
-    if (c.req.path === "/healthz") return next();
+    if (PUBLIC_PATHS.has(c.req.path)) return next();
     try {
       const authn = await deps.adapter.authenticate({ header: (name) => c.req.header(name) });
       const requested = c.req.header("X-Registry-Tenant");
@@ -112,6 +127,21 @@ export function buildRouter(deps: HttpDeps): Hono {
       throw new ServiceError("Admin role required", 403);
     }
   };
+
+  // -------------------------------------------------------------------------
+  // Identity
+  // -------------------------------------------------------------------------
+
+  app.get("/whoami", (c) => {
+    const ctx = c.get("callCtx");
+    return c.json({
+      principal: ctx.principal,
+      tenantId: ctx.tenantId,
+      role: ctx.role,
+      groupIds: ctx.groupIds,
+      mode: deps.adapter.mode,
+    });
+  });
 
   // -------------------------------------------------------------------------
   // Tools

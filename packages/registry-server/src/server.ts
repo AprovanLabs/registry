@@ -12,7 +12,7 @@ import { Dispatcher } from "./dispatch/index.js";
 import { RateLimiter } from "./dispatch/limits.js";
 import { ProviderExecutor, isCatalogueProvider } from "./executor/index.js";
 import { DiscoveryService } from "./http/discovery.js";
-import { buildRouter } from "./http/router.js";
+import { buildRouter, type AuthConfigResponse } from "./http/router.js";
 import { NativeServiceRegistry, ServiceError } from "./kernel/index.js";
 import { createMcpHandler } from "./mcp/server.js";
 import { ProfileService } from "./profiles/service.js";
@@ -28,6 +28,41 @@ import type {
   RunScriptOptions,
 } from "./config/types.js";
 import type { ResolveDeps } from "./profiles/resolve.js";
+import type { AuthAdapter } from "./auth/types.js";
+
+/** Build the public /auth/config payload from construction options (no secrets). */
+function authConfigFromOptions(
+  auth: RegistryServerOptions["auth"],
+  adapter: AuthAdapter,
+): AuthConfigResponse {
+  if (
+    adapter.mode === "oidc" &&
+    typeof auth === "object" &&
+    auth !== null &&
+    "mode" in auth &&
+    (auth as { mode: string }).mode === "oidc" &&
+    "issuer" in auth &&
+    "audience" in auth
+  ) {
+    const oidc = auth as {
+      mode: "oidc";
+      issuer: string;
+      audience: string;
+      browserClientId?: string;
+    };
+    return {
+      mode: "oidc",
+      oidc: {
+        issuer: oidc.issuer,
+        audience: oidc.audience,
+        ...(oidc.browserClientId !== undefined
+          ? { browserClientId: oidc.browserClientId }
+          : {}),
+      },
+    };
+  }
+  return { mode: adapter.mode };
+}
 
 export async function createRegistryServer(
   options: RegistryServerOptions,
@@ -105,6 +140,7 @@ export async function createRegistryServer(
 
   const router = buildRouter({
     adapter,
+    authConfig: authConfigFromOptions(options.auth, adapter),
     tenancy,
     dispatcher,
     discovery,

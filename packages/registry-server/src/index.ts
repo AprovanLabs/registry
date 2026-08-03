@@ -134,7 +134,7 @@ export { RateLimiter, RateLimitExceededError } from "./dispatch/limits.js";
 export { asStreamBody, sseFromAsyncIterable, SSE_HEADERS, type StreamBody } from "./dispatch/stream.js";
 
 // HTTP
-export { buildRouter, type HttpDeps } from "./http/router.js";
+export { buildRouter, type HttpDeps, type AuthConfigResponse } from "./http/router.js";
 export { DiscoveryService, type DiscoveryDeps, type NamespaceInfo } from "./http/discovery.js";
 
 // Sandbox
