@@ -1,0 +1,20 @@
+{
+  "schemaVersion": 1,
+  "interface": {
+    "id": "keyvalue",
+    "label": "Key-value",
+    "description": "Flat JSON-valued keys with get/set/delete/list. Each backend is a handwritten UTDK provider module built on @utdk/keyvalue. AWS credentials ride the provider credential; table name, region, and workspace partition prefix ride binding options.",
+    "timeoutMs": 30000,
+    "defaultsFor": ["get", "set", "delete", "list"]
+  },
+  "compat": [
+    {
+      "provider": "dynamodb",
+      "label": "Amazon DynamoDB",
+      "module": "dynamodb-kv",
+      "defaults": {
+        "region": "us-east-1"
+      }
+    }
+  ]
+}

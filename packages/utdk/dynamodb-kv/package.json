@@ -1,0 +1,22 @@
+{
+  "name": "@utdk/dynamodb-kv",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Amazon DynamoDB key-value provider. Credential: bearer_token JSON with accessKeyId and secretAccessKey (optional sessionToken). Binding options: tableName (required), region, prefix.",
+  "keywords": ["dynamodb", "aws", "keyvalue", "kv", "utdk"],
+  "utdk": {
+    "provider": "dynamodb",
+    "handwritten": true,
+    "interface": "keyvalue",
+    "auth": {
+      "schemes": [
+        {
+          "id": "aws_keys",
+          "type": "http",
+          "scheme": "bearer",
+          "description": "JSON object with accessKeyId and secretAccessKey (optional sessionToken)"
+        }
+      ]
+    }
+  }
+}

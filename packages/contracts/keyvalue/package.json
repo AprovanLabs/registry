@@ -18,6 +18,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./dynamodb": {
+      "types": "./dist/dynamodb.d.ts",
+      "import": "./dist/dynamodb.js",
+      "default": "./dist/dynamodb.js"
     }
   },
   "scripts": {
@@ -30,6 +35,10 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.1077.0",
+    "@aws-sdk/lib-dynamodb": "^3.1077.0"
   },
   "devDependencies": {
     "vitest": "2.1.5"

@@ -20,6 +20,7 @@
     "@utdk/llm": "workspace:*",
     "@utdk/sandbox": "workspace:*",
     "@utdk/sql": "workspace:*",
+    "@utdk/vfs": "workspace:*",
     "@utdk/telemetry": "workspace:*",
     "@utdk/vcs": "workspace:*"
   },
@@ -66,6 +67,11 @@
       "types": "./dist/databricks/index.d.ts",
       "import": "./dist/databricks/index.js",
       "default": "./dist/databricks/index.js"
+    },
+    "./dynamodb-kv": {
+      "types": "./dist/dynamodb-kv/index.d.ts",
+      "import": "./dist/dynamodb-kv/index.js",
+      "default": "./dist/dynamodb-kv/index.js"
     },
     "./datadog": {
       "types": "./dist/datadog/index.d.ts",
@@ -261,6 +267,11 @@
       "types": "./dist/postgres/index.d.ts",
       "import": "./dist/postgres/index.js",
       "default": "./dist/postgres/index.js"
+    },
+    "./s3": {
+      "types": "./dist/s3/index.d.ts",
+      "import": "./dist/s3/index.js",
+      "default": "./dist/s3/index.js"
     },
     "./posthog": {
       "types": "./dist/posthog/index.d.ts",
