@@ -51,3 +51,15 @@ path (already designed).
 **Frozen at 0.2.0.** All operations implementable against all three audited
 vendors; the one caveat (Redis SCAN ordering) is an adapter implementation
 cost, not a surface change.
+
+## DynamoDB adapter credentials
+
+The `@utdk/dynamodb-kv` provider (`compat.json` → `module: dynamodb-kv`) uses:
+
+- **Credential** (`bearer_token`): JSON
+  `{"accessKeyId":"…","secretAccessKey":"…","sessionToken":"…"?}`.
+- **Binding options**: `tableName` (required), `region` (default `us-east-1`),
+  `prefix` (workspace-scoped partition suffix; default `""`).
+- **Item layout**: `PK = KV#<prefix>`, `SK = KEY#<key>`; `value` JSON attribute;
+  `updatedAt` ISO string; `expiresAt` epoch seconds for DynamoDB TTL when
+  `ttl_seconds` is set on `set`.

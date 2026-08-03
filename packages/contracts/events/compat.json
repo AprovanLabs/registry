@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "interface": {
+    "id": "events",
+    "label": "Events",
+    "description": "Append-only event channels with emit and list. Each backend is a handwritten UTDK provider module built on @utdk/events. Secrets hold AWS credentials (JSON access key pair for SQS); connection config (queue_url, optional topic_arn, region) rides the binding options.",
+    "timeoutMs": 60000,
+    "defaultsFor": ["emit", "list"]
+  },
+  "compat": [
+    {
+      "provider": "sqs",
+      "label": "Amazon SQS",
+      "module": "sqs",
+      "defaults": {
+        "queue_url": "",
+        "region": "us-east-1"
+      }
+    }
+  ]
+}
