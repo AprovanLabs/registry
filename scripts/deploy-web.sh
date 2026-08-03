@@ -38,6 +38,7 @@ if [[ "${SKIP_BUILD:-}" != "1" ]]; then
     PUBLIC_SITE_URL="https://aprovan.com" \
     PUBLIC_BASE_PATH="/registry" \
     PUBLIC_GATEWAY_URL="/api/gateway" \
+    PUBLIC_SESSION_MODE="hosted" \
     PUBLIC_COGNITO_AUTHORITY="$PUBLIC_COGNITO_AUTHORITY" \
     PUBLIC_COGNITO_CLIENT_ID="$PUBLIC_COGNITO_CLIENT_ID" \
       pnpm exec turbo build --filter=@aprovan/registry-web

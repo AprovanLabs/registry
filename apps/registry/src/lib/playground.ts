@@ -40,7 +40,7 @@ export function compileScript(source: string): CompiledScript {
  * credentials: GitHub's public endpoints work unauthenticated, and the
  * `{ chart }` return renders in the run view's viz runtime.
  */
-export const SAMPLE_SCRIPT = `import github from 'github';
+export const SAMPLE_SCRIPT = `import github from '@utdk/github';
 
 export default async function report({ username }) {
   // Public GitHub data — no credential needed
