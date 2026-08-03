@@ -1,33 +1,31 @@
 ---
-import { AppsHost } from "@/components/AppsHost";
-import BaseLayout from "@/layouts/BaseLayout.astro";
+/**
+ * Legacy route: the Apps panel was removed from the catalog. Redirect to the
+ * Playground so old links and bookmarks land on a useful surface.
+ */
+import { withBasePath } from "@/lib/site";
+
+const target = withBasePath("/playground/");
+const canonical = Astro.site ? new URL(target, Astro.site).href : target;
 ---
 
-<BaseLayout
-  description="Publish and operate apps: bundles of pages and workflows, each with its own auth boundary, allow-list, and data scope — plus releases, channels, and a trace of every run."
-  title="Apps — Aprovan Registry"
->
-  <main class="flex flex-col w-full min-h-screen gap-6 px-4 py-8 mx-auto max-w-5xl sm:px-6 lg:px-8">
-    <section class="flex flex-col gap-3">
-      <h1 class="max-w-3xl text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-        Apps
-      </h1>
-      <p class="max-w-2xl text-base leading-7 text-muted-foreground">
-        An app is a bundle: pages plus the workflows it exports, wrapped in its
-        own auth boundary. Its
-        <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-sm">allowedTools</code>
-        allow-list says what an app session may call — the auto-partitioned
-        native namespaces and the app's own workflows, nothing else — and its
-        <code class="rounded bg-muted px-1.5 py-0.5 font-mono text-sm">dataScope</code>
-        decides where an app user's data physically lands: the publisher's
-        workspace, or the caller's own. Releases pin a channel to an immutable
-        version, so promoting and rolling back are instant. Workflows live
-        here too: each one appears under the app that exports it — permissions
-        ride the app — and workspace workflows no app has bundled sit in the
-        Workspace group of the same panel.
-      </p>
-    </section>
-
-    <AppsHost client:only="react" />
-  </main>
-</BaseLayout>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Playground — Aprovan Registry</title>
+    <meta content="noindex" name="robots" />
+    <link href={canonical} rel="canonical" />
+    <meta content={`0;url=${target}`} http-equiv="refresh" />
+  </head>
+  <body>
+    <p>
+      Apps have moved out of the catalog.
+      <a href={target}>Continue to Playground</a>.
+    </p>
+    <script is:inline define:vars={{ target }}>
+      window.location.replace(target);
+    </script>
+  </body>
+</html>

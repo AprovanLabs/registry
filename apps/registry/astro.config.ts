@@ -79,7 +79,6 @@ export default defineConfig({
         // rule below.
         globPatterns: [
           "index.html",
-          "apps/index.html",
           "playground/index.html",
           "_astro/**/*.{js,css,woff2}",
         ],
@@ -90,7 +89,7 @@ export default defineConfig({
         // the CacheFirst _astro/* runtime rule the first time it's loaded.
         globIgnores: ["**/editor.*.js"],
         // Default 2MB cap is intentionally left as-is: no core-shell asset
-        // (index/apps/playground's own JS+CSS, all well under 100KB each)
+        // (index/playground's own JS+CSS, all well under 100KB each)
         // needs it raised.
         //
         // CRITICAL: vite-plugin-pwa defaults `navigateFallback` to the
