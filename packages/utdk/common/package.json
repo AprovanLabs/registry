@@ -1,6 +1,6 @@
 {
   "name": "@utdk/common",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Cross-cutting utilities for @utdk provider packages",
   "scripts": {
