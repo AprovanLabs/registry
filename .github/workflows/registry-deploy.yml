@@ -17,6 +17,9 @@ name: Deploy Registry Web
 # Optional overrides (otherwise resolved from SSM): vars.WEB_BUCKET,
 #   vars.CLOUDFRONT_DISTRIBUTION_ID, vars.PUBLIC_COGNITO_AUTHORITY,
 #   vars.PUBLIC_COGNITO_CLIENT_ID.
+# Hosted catalog session: PUBLIC_SESSION_MODE=hosted is baked into the static
+# build via ambient env inherited by scripts/deploy-web.sh (Cognito PKCE +
+# product gateway). Self-hosted / local builds leave it unset → standalone.
 
 on:
   push:
@@ -43,6 +46,8 @@ env:
   CLOUDFRONT_DISTRIBUTION_ID: ${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}
   PUBLIC_COGNITO_AUTHORITY: ${{ vars.PUBLIC_COGNITO_AUTHORITY }}
   PUBLIC_COGNITO_CLIENT_ID: ${{ vars.PUBLIC_COGNITO_CLIENT_ID }}
+  # aprovan.com/registry uses Cognito + product gateway (not registry-server).
+  PUBLIC_SESSION_MODE: hosted
 
 jobs:
   deploy:
