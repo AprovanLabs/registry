@@ -37,7 +37,7 @@ describe("ProviderExecutor", () => {
     const executor = new ProviderExecutor();
     const captured: Array<Record<string, string>> = [];
     const { mod, builds } = fakeModule(captured);
-    executor.setModuleForTesting("utdk/github", mod);
+    executor.setModuleForTesting("@utdk/clients/github", mod);
 
     const first = await executor.execute({
       provider: "github",
@@ -60,19 +60,19 @@ describe("ProviderExecutor", () => {
 
   it("LRU keyed by import specifier evicts least-recently-used beyond the cap", async () => {
     const executor = new ProviderExecutor({ cacheSize: 2 });
-    executor.setModuleForTesting("utdk/a", {});
-    executor.setModuleForTesting("utdk/b", {});
+    executor.setModuleForTesting("@utdk/clients/a", {});
+    executor.setModuleForTesting("@utdk/clients/b", {});
     // Touch a so b becomes least-recently-used.
     await executor.getModule("a");
-    executor.setModuleForTesting("utdk/c", {});
-    expect(executor.isCached("utdk/a")).toBe(true);
-    expect(executor.isCached("utdk/b")).toBe(false);
-    expect(executor.isCached("utdk/c")).toBe(true);
+    executor.setModuleForTesting("@utdk/clients/c", {});
+    expect(executor.isCached("@utdk/clients/a")).toBe(true);
+    expect(executor.isCached("@utdk/clients/b")).toBe(false);
+    expect(executor.isCached("@utdk/clients/c")).toBe(true);
   });
 
-  it("first-party moduleSpecifier and utdk/<name> do not collide in the cache", async () => {
+  it("first-party moduleSpecifier and @utdk/clients/<name> do not collide in the cache", async () => {
     const executor = new ProviderExecutor();
-    executor.setModuleForTesting("utdk/machine", { catalogVariant: true });
+    executor.setModuleForTesting("@utdk/clients/machine", { catalogVariant: true });
     executor.setModuleForTesting("@aprovan/sandbox-host", { firstParty: true });
     expect(await executor.getModule("machine")).toEqual({ catalogVariant: true });
     expect(await executor.getModule("machine", "@aprovan/sandbox-host")).toEqual({
@@ -84,7 +84,7 @@ describe("ProviderExecutor", () => {
     const executor = new ProviderExecutor();
     const captured: Array<Record<string, string>> = [];
     const { mod } = fakeModule(captured);
-    executor.setModuleForTesting("utdk/github", mod);
+    executor.setModuleForTesting("@utdk/clients/github", mod);
 
     await executor.execute({
       provider: "github",
@@ -115,7 +115,7 @@ describe("ProviderExecutor", () => {
 
   it("missing factory and bad operation paths fail with actionable errors", async () => {
     const executor = new ProviderExecutor();
-    executor.setModuleForTesting("utdk/github", { notAFactory: 1 });
+    executor.setModuleForTesting("@utdk/clients/github", { notAFactory: 1 });
     const noFactory = await executor.execute({
       provider: "github",
       operation: "repos.get",
@@ -125,7 +125,7 @@ describe("ProviderExecutor", () => {
     expect(noFactory.error).toMatch(/does not export "createGithubClient"/u);
 
     const captured: Array<Record<string, string>> = [];
-    executor.setModuleForTesting("utdk/github", fakeModule(captured).mod);
+    executor.setModuleForTesting("@utdk/clients/github", fakeModule(captured).mod);
     const badPath = await executor.execute({
       provider: "github",
       operation: "nope.missing",
@@ -137,7 +137,7 @@ describe("ProviderExecutor", () => {
 
   it("enforces the call timeout", async () => {
     const executor = new ProviderExecutor();
-    executor.setModuleForTesting("utdk/slowpoke", {
+    executor.setModuleForTesting("@utdk/clients/slowpoke", {
       createSlowpokeClient: async () => ({
         wait: () => new Promise((resolve) => setTimeout(resolve, 5_000)),
       }),

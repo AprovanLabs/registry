@@ -41,7 +41,7 @@ jobs:
             --filter @utdk/events \
             --filter @utdk/vfs \
             --filter @utdk/telemetry \
-            --filter utdk \
+            --filter @utdk/clients \
             --filter @aprovan/runtime \
             build
 
@@ -50,7 +50,7 @@ jobs:
           failed=""
           for pkg in \
             @utdk/common @utdk/sql @utdk/llm @utdk/sandbox @utdk/vcs @utdk/agent \
-            @utdk/keyvalue @utdk/events @utdk/vfs @utdk/telemetry @utdk/mcp-core utdk \
+            @utdk/keyvalue @utdk/events @utdk/vfs @utdk/telemetry @utdk/mcp-core @utdk/clients \
             @aprovan/runtime \
             @aprovan/registry-server; do
             dir=$(pnpm --filter "$pkg" exec pwd 2>/dev/null | tail -1) || continue

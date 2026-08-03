@@ -799,7 +799,7 @@ export function renderRootPackageJson(
   // An export must correspond to code that exists. Deriving the map from the
   // registry alone advertised every one of its ~2,565 source entries, but only
   // ~50 have ever been generated — so 2,659 subpaths resolved to `dist/...`
-  // files that were never written, and `import("utdk/azure/mysql")` passed
+  // files that were never written, and `import("@utdk/clients/azure/mysql")` passed
   // Node's exports check and then failed to load. On-disk presence is the only
   // honest source of truth, and it covers the hand-written providers
   // (postgres/snowflake/databricks) for free, since they exist too.
@@ -835,7 +835,7 @@ export function renderRootPackageJson(
 
   return JSON.stringify(
     {
-      name: "utdk",
+      name: "@utdk/clients",
       version: "0.1.0",
       type: "module",
       description: "Generated UTDK provider clients",
@@ -872,8 +872,8 @@ export function renderRootPackageJson(
           default: "./dist/client.js",
         },
         // The workspace resolves the provider catalog at runtime
-        // (utdk/registry.json), and mcp-core resolves per-provider
-        // openapi.json/package.json for suite providers (utdk/google/books/...).
+        // (@utdk/clients/registry.json), and mcp-core resolves per-provider
+        // openapi.json/package.json for suite providers (@utdk/clients/google/books/...).
         "./registry.json": "./dist/registry.json",
         "./*/openapi.json": "./dist/*/openapi.json",
         "./*/package.json": "./dist/*/package.json",
@@ -1068,7 +1068,7 @@ export function renderNamespaceEntry(namespaceSegments: string[], providers: Reg
   // Only re-export each service's default client. Star re-exports would
   // collide at the vendor level — sibling services share type names
   // (e.g. Channel, Comment, Thumbnail across the Google suite). Types stay
-  // importable per service (utdk/<vendor>/<service>).
+  // importable per service (@utdk/clients/<vendor>/<service>).
   return [...childExports.entries()]
     .sort(([left], [right]) => left.localeCompare(right))
     .map(([segment, identifier]) => `export { default as ${identifier} } from "./${segment}/index.js";`)
@@ -1090,7 +1090,7 @@ export function renderNamespacePackageJson(
   return JSON.stringify(
     {
       // Vendor namespaces are subpaths of the root "utdk" package
-      // (utdk/google, utdk/google/books), not standalone workspace packages.
+      // (@utdk/clients/google, @utdk/clients/google/books), not standalone workspace packages.
       private: true,
       version: `0.0.1-${dateStamp}.${generation}`,
       type: "module",

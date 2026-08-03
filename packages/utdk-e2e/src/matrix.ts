@@ -74,7 +74,7 @@ export interface ProviderEntry {
    */
   unprobed?: string;
   /**
-   * Namespace re-export (`utdk/google` → google/*). Has no client factory and
+   * Namespace re-export (`@utdk/clients/google` → google/*). Has no client factory and
    * no operations of its own by design, so the generation test checks only that
    * the namespace resolves.
    */
@@ -698,7 +698,7 @@ export const PROVIDERS: ProviderEntry[] = [
   },
 
   // -------------------------------------------------------------------------
-  // Namespace shims. `utdk/google` etc. only re-export their children; the
+  // Namespace shims. `@utdk/clients/google` etc. only re-export their children; the
   // testable surfaces are the child providers above.
   // -------------------------------------------------------------------------
   {
@@ -798,5 +798,5 @@ export function factoryName(id: string): string {
 
 /** Import specifier for a provider's generated module. */
 export function moduleSpecifier(id: string): string {
-  return `utdk/${id}`;
+  return `@utdk/clients/${id}`;
 }

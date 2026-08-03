@@ -110,7 +110,7 @@ describe("embedded tenancy", () => {
     });
     expect(await server.stores.tenants.get("ws-77")).toBeUndefined();
     const { mod } = fakeProviderModule("createGithubClient");
-    server.executor.setModuleForTesting("utdk/github", mod);
+    server.executor.setModuleForTesting("@utdk/clients/github", mod);
     await server.dispatch(
       adminCtx({ tenantId: "ws-77" }),
       "github",
@@ -128,7 +128,7 @@ describe("standalone and embedded share one pipeline", () => {
     const server = await makeServer({ exporter });
     await server.telemetry.ready();
     const { mod } = fakeProviderModule("createGithubClient");
-    server.executor.setModuleForTesting("utdk/github", mod);
+    server.executor.setModuleForTesting("@utdk/clients/github", mod);
     await server.stores.credentials.create(DEFAULT_TENANT_ID, {
       provider: "github",
       type: "bearer_token",
@@ -184,7 +184,7 @@ describe("uniform limits across surfaces", () => {
   it("a profile rps limit throttles HTTP, embed, and sandbox dispatch alike", async () => {
     const server = await makeServer();
     const { mod } = fakeProviderModule("createPostgresClient");
-    server.executor.setModuleForTesting("utdk/postgres", mod);
+    server.executor.setModuleForTesting("@utdk/clients/postgres", mod);
     await server.stores.credentials.create(DEFAULT_TENANT_ID, {
       provider: "postgres",
       type: "bearer_token",
@@ -255,7 +255,7 @@ describe("dispatch overhead benchmark", () => {
   it("p95 warm dispatch overhead stays under 20ms in sqlite mode", async () => {
     const server = await makeServer();
     const { mod } = fakeProviderModule("createGithubClient");
-    server.executor.setModuleForTesting("utdk/github", mod);
+    server.executor.setModuleForTesting("@utdk/clients/github", mod);
     await server.stores.credentials.create(DEFAULT_TENANT_ID, {
       provider: "github",
       type: "bearer_token",

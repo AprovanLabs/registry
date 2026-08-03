@@ -144,7 +144,7 @@ const LLM_CHAT_ALIASES: CatalogProviderSummary[] = [
     id: "synthetic.new",
     title: "Synthetic.new",
     description: "LLM chat provider — OpenAI-compatible API (api.synthetic.new).",
-    packageName: "utdk/openai",
+    packageName: "@utdk/clients/openai",
     icon: null,
     auth: { methods: ["bearer_token"], declared: true, apiKeyHeader: null, oauth: null },
     webhooks: false,

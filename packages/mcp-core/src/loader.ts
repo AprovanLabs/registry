@@ -71,12 +71,12 @@ function toMcpToolName(utcpName: string): string {
  *
  * Top-level providers ("github") are standalone scoped packages
  * (@utdk/github). Vendor-suite providers ("google/drive") are subpaths of the
- * root "utdk" package (utdk/google/drive) — there is no per-vendor scoped
+ * root "utdk" package (@utdk/clients/google/drive) — there is no per-vendor scoped
  * package. The root package's exports map exposes the per-provider
  * openapi.json/package.json from its built dist.
  */
 function getProviderImportBase(providerName: string): string {
-  return providerName.includes("/") ? `utdk/${providerName}` : `@utdk/${providerName}`;
+  return providerName.includes("/") ? `@utdk/clients/${providerName}` : `@utdk/${providerName}`;
 }
 
 /**

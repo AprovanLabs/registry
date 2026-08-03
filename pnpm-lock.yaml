@@ -78,6 +78,9 @@ importers:
       '@utdk/agent':
         specifier: workspace:*
         version: link:../../packages/contracts/agent
+      '@utdk/clients':
+        specifier: workspace:*
+        version: link:../../packages/utdk
       '@utdk/common':
         specifier: workspace:*
         version: link:../../packages/utdk/common
@@ -144,9 +147,6 @@ importers:
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
-      utdk:
-        specifier: workspace:*
-        version: link:../../packages/utdk
     devDependencies:
       '@astrojs/check':
         specifier: ^0.9.8
@@ -294,6 +294,9 @@ importers:
       '@utdk/airtable':
         specifier: workspace:*
         version: link:../utdk/airtable
+      '@utdk/clients':
+        specifier: workspace:*
+        version: link:../utdk
       '@utdk/datadog':
         specifier: workspace:*
         version: link:../utdk/datadog
@@ -342,9 +345,6 @@ importers:
       '@utdk/zendesk':
         specifier: workspace:*
         version: link:../utdk/zendesk
-      utdk:
-        specifier: workspace:*
-        version: link:../utdk
     devDependencies:
       '@types/node':
         specifier: ^25.5.0
@@ -385,6 +385,9 @@ importers:
       '@utdk/agent':
         specifier: workspace:*
         version: link:../contracts/agent
+      '@utdk/clients':
+        specifier: workspace:*
+        version: link:../utdk
       '@utdk/common':
         specifier: workspace:*
         version: link:../utdk/common
@@ -406,9 +409,6 @@ importers:
       quickjs-emscripten-core:
         specifier: 0.32.0
         version: 0.32.0
-      utdk:
-        specifier: workspace:*
-        version: link:../utdk
     optionalDependencies:
       '@aws-sdk/client-kms':
         specifier: ^3.1077.0
@@ -468,7 +468,7 @@ importers:
 
   packages/utdk-cli:
     dependencies:
-      utdk:
+      '@utdk/clients':
         specifier: workspace:*
         version: link:../utdk
     devDependencies:
@@ -484,12 +484,12 @@ importers:
       '@aws-sdk/client-ssm':
         specifier: ^3.848.0
         version: 3.1085.0
+      '@utdk/clients':
+        specifier: workspace:*
+        version: link:../utdk
       '@utdk/common':
         specifier: workspace:*
         version: link:../utdk/common
-      utdk:
-        specifier: workspace:*
-        version: link:../utdk
     devDependencies:
       '@aprovan/vitest-config':
         specifier: ^0.1.0
