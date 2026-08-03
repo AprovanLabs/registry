@@ -1,6 +1,6 @@
 {
   "name": "@aprovan/registry-server",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "description": "The Aprovan registry server — multi-tenant execution plane: profiles, credentials, provider dispatch, QuickJS sandbox, MCP surface. Embeddable library + standalone server.",
   "license": "MIT",
@@ -47,7 +47,7 @@
     "hono": "^4.6.20",
     "jose": "^5.9.6",
     "quickjs-emscripten-core": "0.32.0",
-    "@utdk/clients": "workspace:*"
+    "@utdk/clients": "^0.1.1"
   },
   "optionalDependencies": {
     "@aws-sdk/client-kms": "^3.1077.0"
