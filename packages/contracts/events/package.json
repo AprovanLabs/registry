@@ -18,6 +18,11 @@
       "types": "./dist/index.d.ts",
       "import": "./dist/index.js",
       "default": "./dist/index.js"
+    },
+    "./sqs": {
+      "types": "./dist/sqs.d.ts",
+      "import": "./dist/sqs.js",
+      "default": "./dist/sqs.js"
     }
   },
   "scripts": {
@@ -30,6 +35,10 @@
   "license": "MIT",
   "publishConfig": {
     "access": "public"
+  },
+  "dependencies": {
+    "@aws-sdk/client-sns": "^3.1077.0",
+    "@aws-sdk/client-sqs": "^3.1077.0"
   },
   "devDependencies": {
     "vitest": "2.1.5"
