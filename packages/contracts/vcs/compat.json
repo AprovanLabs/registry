@@ -3,11 +3,18 @@
   "interface": {
     "id": "vcs",
     "label": "Git hosting",
-    "description": "Git hosting for code review: repos.get, pullRequests.get/list/diff/comment/review, branches.get, files.get against whichever host a workspace's code lives on. Each backend is a handwritten UTDK provider module built on @utdk/vcs. Credentials stay keyed by the concrete provider (github), so a connected GitHub account just works.",
+    "description": "Version control: the Aprovan default serves the workspace commit store (commit/log/show/diff/branches/restore) in-process; third-party hosts (GitHub, …) remain selectable backends built on @utdk/vcs. Credentials stay keyed by the concrete provider (github), so a connected GitHub account just works.",
     "timeoutMs": 60000,
     "defaultsFor": []
   },
   "compat": [
+    {
+      "provider": "aprovan",
+      "label": "Aprovan",
+      "module": "aprovan",
+      "moduleSpecifier": "@aprovan/native",
+      "credentialless": true
+    },
     { "provider": "github", "label": "GitHub", "module": "github/vcs" },
     {
       "provider": "bitbucket",

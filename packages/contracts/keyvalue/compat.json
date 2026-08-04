@@ -3,11 +3,18 @@
   "interface": {
     "id": "keyvalue",
     "label": "Key-value",
-    "description": "Flat JSON-valued keys with get/set/delete/list. Each backend is a handwritten UTDK provider module built on @utdk/keyvalue. AWS credentials ride the provider credential; table name, region, and workspace partition prefix ride binding options.",
+    "description": "Flat JSON-valued keys with get/set/delete/list. Each backend is a handwritten UTDK provider module built on @utdk/keyvalue. The default is the workspace's own record store (credentialless, in-process). AWS credentials ride the provider credential for DynamoDB; table name, region, and workspace partition prefix ride binding options.",
     "timeoutMs": 30000,
     "defaultsFor": ["get", "set", "delete", "list"]
   },
   "compat": [
+    {
+      "provider": "aprovan",
+      "label": "Aprovan",
+      "module": "aprovan",
+      "moduleSpecifier": "@aprovan/native",
+      "credentialless": true
+    },
     {
       "provider": "dynamodb",
       "label": "Amazon DynamoDB",

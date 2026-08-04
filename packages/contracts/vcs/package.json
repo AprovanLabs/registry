@@ -1,6 +1,6 @@
 {
   "name": "@utdk/vcs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "Shared Git-hosting contract for UTDK VCS providers: one repos/pullRequests/branches/files surface over any hosting vendor, normalized PR and review shapes, and unified-diff reads sized for a code-review workflow",
   "keywords": [

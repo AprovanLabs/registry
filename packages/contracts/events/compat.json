@@ -3,11 +3,18 @@
   "interface": {
     "id": "events",
     "label": "Events",
-    "description": "Append-only event channels with emit and list. Each backend is a handwritten UTDK provider module built on @utdk/events. Secrets hold AWS credentials (JSON access key pair for SQS); connection config (queue_url, optional topic_arn, region) rides the binding options.",
+    "description": "Append-only event channels with emit and list. Each backend is a handwritten UTDK provider module built on @utdk/events. The default is the workspace's own store (credentialless, in-process). Secrets hold AWS credentials (JSON access key pair for SQS); connection config (queue_url, optional topic_arn, region) rides the binding options.",
     "timeoutMs": 60000,
     "defaultsFor": ["emit", "list"]
   },
   "compat": [
+    {
+      "provider": "aprovan",
+      "label": "Aprovan",
+      "module": "aprovan",
+      "moduleSpecifier": "@aprovan/native",
+      "credentialless": true
+    },
     {
       "provider": "sqs",
       "label": "Amazon SQS",
