@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
+import {
+  applyProviderOpenApiOptions,
+  buildPublicTypeMap,
+  extractResponse,
+  loadOpenApiDocument,
+} from "./openapi.js";
 import type { RegistryProvider } from "./provider.js";
 import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
@@ -224,5 +229,107 @@ describe("applyProviderOpenApiOptions", () => {
 
     expect(normalizedDocument.paths?.["/volumes"]?.get?.operationId).toBe("volumes.list");
     expect(openApiDocument.paths?.["/volumes"]?.get?.operationId).toBe("books.volumes.list");
+  });
+});
+
+describe("extractResponse", () => {
+  it("does not fall through from 204 into a 400 error body", () => {
+    const document = {
+      openapi: "3.0.0",
+      info: { title: "t", version: "1" },
+      paths: {},
+    } as OpenAPIV3.Document;
+    const operation: OpenAPIV3.OperationObject = {
+      responses: {
+        "204": { description: "deleted" },
+        "400": {
+          description: "bad request",
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: { message: { type: "string" } },
+                required: ["message"],
+              },
+            },
+          },
+        },
+      },
+    };
+
+    expect(extractResponse(document, operation)).toEqual({ kind: "no-content" });
+    const tool = createTool("delete_item", "delete", "https://api.example.com/items/{id}");
+    const typeMap = buildPublicTypeMap(
+      {
+        ...document,
+        paths: {
+          "/items/{id}": {
+            delete: operation,
+          },
+        },
+      } as OpenAPIV3.Document,
+      [tool],
+    );
+    expect(typeMap.get(tool.name)?.outputType).toBe("undefined");
+  });
+
+  it("selects 200 deterministically when multiple 2xx responses have content", () => {
+    const document = {
+      openapi: "3.0.0",
+      info: { title: "t", version: "1" },
+      paths: {},
+    } as OpenAPIV3.Document;
+    const operation: OpenAPIV3.OperationObject = {
+      responses: {
+        "201": {
+          description: "created",
+          content: {
+            "application/json": {
+              schema: { type: "object", properties: { created: { type: "boolean" } } },
+            },
+          },
+        },
+        "200": {
+          description: "ok",
+          content: {
+            "application/json": {
+              schema: { type: "object", properties: { id: { type: "string" } }, required: ["id"] },
+            },
+          },
+        },
+      },
+    };
+
+    const first = extractResponse(document, operation);
+    const second = extractResponse(document, operation);
+    expect(first).toEqual(second);
+    expect(first.kind).toBe("schema");
+    if (first.kind === "schema") {
+      expect(first.schema).toMatchObject({
+        type: "object",
+        properties: { id: { type: "string" } },
+      });
+    }
+  });
+
+  it("marks SSE responses as streaming", () => {
+    const document = {
+      openapi: "3.0.0",
+      info: { title: "t", version: "1" },
+      paths: {},
+    } as OpenAPIV3.Document;
+    const operation: OpenAPIV3.OperationObject = {
+      responses: {
+        "200": {
+          description: "stream",
+          content: {
+            "text/event-stream": {
+              schema: { type: "string" },
+            },
+          },
+        },
+      },
+    };
+    expect(extractResponse(document, operation)).toEqual({ kind: "streaming" });
   });
 });
