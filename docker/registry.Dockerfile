@@ -31,9 +31,8 @@ COPY package.json pnpm-workspace.yaml pnpm-lock.yaml turbo.json tsconfig.json ./
 # Every workspace member's manifest, even the ones this image does not build:
 # `--frozen-lockfile` verifies the lockfile against the set of importers it
 # finds on disk. Manifests only — no source from these ever enters the image.
+# (apps/workspace + infra moved to the aprovan monorepo; only apps/registry remains.)
 COPY apps/registry/package.json ./apps/registry/
-COPY apps/workspace/package.json ./apps/workspace/
-COPY infra/package.json ./infra/
 
 COPY packages/ ./packages/
 
