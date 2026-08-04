@@ -174,6 +174,48 @@ describe("createNamespaceProxy", () => {
     expect(transport.calls[0]?.options?.profile).toBe("work");
   });
 
+  it("accepts client(name) and client({ name, options }) without awaiting", async () => {
+    const transport = recordingTransport();
+    const github = createNamespaceProxy("github", transport);
+
+    const work = (github as any).client("work");
+    const fast = (github as any).client({ name: "fast", options: { effort: "low" } });
+    expect(transport.calls).toEqual([]);
+
+    await work.repos.get({ owner: "o" });
+    await fast.repos.list({});
+    // Reuse the same configured node — profile resolves once per call.
+    await work.repos.get({ owner: "p" });
+
+    expect(transport.calls).toEqual([
+      {
+        provider: "github",
+        operation: "repos.get",
+        args: { owner: "o" },
+        options: { profile: "work" },
+      },
+      {
+        provider: "github",
+        operation: "repos.list",
+        args: {},
+        options: { profile: "fast", callSiteOptions: { effort: "low" } },
+      },
+      {
+        provider: "github",
+        operation: "repos.get",
+        args: { owner: "p" },
+        options: { profile: "work" },
+      },
+    ]);
+  });
+
+  it("pins a string name at depth 0", async () => {
+    const transport = recordingTransport();
+    const github = createNamespaceProxy("github", transport);
+    await (github("work") as any).repos.get({});
+    expect(transport.calls[0]?.options?.profile).toBe("work");
+  });
+
   it("honors path prefixes and treats empty configure as a no-op pin", async () => {
     const transport = recordingTransport();
     const s3 = createNamespaceProxy("aws", transport, "s3");

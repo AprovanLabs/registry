@@ -95,11 +95,17 @@ export interface TransportCallOptions {
   callId?: string;
   signal?: AbortSignal;
   /**
-   * Profile name pinned by a depth-0 configure call
-   * (`tools.github({ name: "work" })`). Travels with subsequent dispatches;
-   * resolution is owned by the host / profiles-unified.
+   * Profile name pinned by a depth-0 configure / `.client(name)` call
+   * (`tools.github({ name: "work" })` or `tools.github.client("work")`).
+   * Travels with subsequent dispatches; resolution is owned by the host /
+   * profiles-unified.
    */
   profile?: string;
+  /**
+   * Call-site options from `client({ name, options })` / depth-0 configure.
+   * Merged over profile options host-side; must not carry transport keys.
+   */
+  callSiteOptions?: Record<string, unknown>;
 }
 
 /** Moves one namespaced call to wherever it actually executes. */

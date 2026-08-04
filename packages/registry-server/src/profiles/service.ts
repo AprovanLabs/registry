@@ -22,8 +22,10 @@ import type {
   ProfileTargetKind,
 } from "../storage/types.js";
 
-/** Same shape as an agent or workflow name; `default` is the reserved name. */
-const NAME_RE = /^[a-z0-9][a-z0-9-]{0,63}$/u;
+/** Any non-empty string; `default` is the reserved name for bare-namespace dispatch. */
+function isValidProfileName(name: string): boolean {
+  return typeof name === "string" && name.length > 0;
+}
 
 export interface ProfileCreateInput {
   name: string;
@@ -57,11 +59,8 @@ export class ProfileService {
   // -------------------------------------------------------------------------
 
   async create(ctx: CallContext, input: ProfileCreateInput): Promise<ProfileRow> {
-    if (!NAME_RE.test(input.name)) {
-      throw new ServiceError(
-        `Invalid profile name "${input.name}" — lowercase letters, digits, and hyphens (max 64).`,
-        400,
-      );
+    if (!isValidProfileName(input.name)) {
+      throw new ServiceError(`Invalid profile name — must be a non-empty string.`, 400);
     }
     const targetKind: ProfileTargetKind = input.target.kind;
     const targetId =

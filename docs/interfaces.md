@@ -54,38 +54,31 @@ Ask what happens when you want a second one.
 
 One binding per interface answers "which LLM does this workspace use" and
 nothing else. A workspace with a production database and an analytics
-warehouse needs both bound to `sql` at once; two accounts on one vendor need
-two credentials on one provider. So a binding is keyed by an **instance
-name**, not by the interface id:
+warehouse needs both configured at once; two accounts on one vendor need two
+credentials on one provider. Configuration is a **profile** keyed by
+`(namespace | path, name?)` — never by a colon path segment:
 
 ```
-sql              the default instance — what `sql.query` reaches
-sql:analytics    a second, independently bound implementation
-sql:warehouse    a third
+sql                 default profile — what `tools.sql.query` reaches
+sql + name=analytics  a second, independently configured profile
+sql + name=warehouse  a third
 ```
 
-An instance is a 4-tuple: **(interface, provider, credential, options)**.
-
-Each instance is a namespace in its own right. `sql:analytics.query` appears
-in `GET /tools`, in the chat model's tool list, in the services menu, and as
-a workflow script import — no separate plumbing, because instances are
-resolved in the same place bare interfaces always were.
+A profile is a 4-tuple: **(namespace|path, provider?, credential?, options?)**.
+Named profiles travel in the request body (`{ args, profile, options }`) or
+via lazy `tools.sql.client("analytics")` — the URL path stays
+`/tools/sql/query`. Colon-addressed namespaces (`sql:analytics`) are not
+routable, not discoverable, and not stored.
 
 ```js
-import prod from "sql";
-import analytics from "sql:analytics";
-
 export default async function run() {
-  const live = await prod.query({ sql: "select count(*) from orders" });
-  await analytics.query({ sql: "insert into snapshots values ($1)", params: [live.rows[0].count] });
+  const live = await tools.sql.query({ sql: "select count(*) from orders" });
+  await tools.sql.client("analytics").query({
+    sql: "insert into snapshots values ($1)",
+    params: [live.rows[0].count],
+  });
 }
 ```
-
-`:` is safe as the separator: no registry provider id contains one (they use
-dashes and slashes — `synthetic-new`, `fly/sprites`; dots are banned from
-provider identity by the bundler's naming authority), and a namespace is a
-single path segment on the wire, so `POST /tools/sql:analytics/query` needed
-no routing change.
 
 ### Resolution order
 
@@ -142,14 +135,14 @@ Everything is `interfaces.*`, so chat, widgets, workflow scripts, and MCP all
 reach it the same way:
 
 ```
-interfaces.list                  catalog + current bindings + instances + credential labels
-interfaces.bind   { interface, provider, as?, credential?, options? }
-interfaces.unbind { interface, as? }
+interfaces.list                 catalog + connected providers + configured profiles
+profiles.set    { namespace? | path?, name?, provider?, credential?, options? }
+profiles.list   { namespace? | path? }
+profiles.remove { namespace? | path?, name? }
 ```
 
-`as` names an instance; omit it for the default. `credential` is a credential
-id from `credentials.list`, validated at bind time so a typo fails where
-someone can see it rather than inside a workflow run three hours later.
+`name` omitted means the default namespace profile; path profiles are
+singly-bound. `credential` is a credential id from `credentials.list`.
 
 The UI is the **Interfaces** native surface
 (`client/web/src/components/panels/InterfacesPanel.tsx` in the patchwork
@@ -256,51 +249,29 @@ The test for readiness is the `agent` interface's: the contract package
 exists, the native short-circuit is designed, and the first vendor mapping is
 named work.
 
-## Credential profiles: `getClient`
+## Profiles: `client(name)`
 
-A namespace global dispatches with the provider's *first* credential — the
-right default, and exactly what makes two accounts on one provider
-indistinguishable from inside a script. `getClient({ profile })` is the pin:
+A workspace can hold several credentials for one provider and several
+profiles for one interface. From script/widget code they look the same:
+`client(name)` (or depth-0 `tools.ns({ name, options })`) pins a profile
+lazily — no await, no round-trip — and the pin travels in the request body.
 
 ```js
-export default async function run() {
-  const work = await github.getClient({ profile: "work" });
-  const personal = await github.getClient({ profile: "personal" });
-  await work.repos.get({ owner: "acme", repo: "api" });
-  await personal.repos.get({ owner: "me", repo: "dotfiles" });
-}
+const work = tools.github.client("work");
+const personal = tools.github.client("personal");
+await work.repos.listForAuthenticatedUser({});
+await personal.repos.listForAuthenticatedUser({});
 ```
 
-It returns a sibling proxy over the same namespace whose every call carries
-the profile; the plain global keeps its default resolution alongside. What a
-profile *names* depends on the namespace kind, and the two vocabularies are
-deliberately unified rather than a third being invented:
+- **Provider namespaces** (`github`): a profile pins a credential id (and
+  optional options) via `profiles.set`.
+- **Interface namespaces** (`llm`, `sql`, `vcs`): a profile pins provider +
+  credential + options. Missing named profiles fail at the first operation
+  with an error naming the profile and listing what exists.
 
-- **Provider namespaces** (`github`, `stripe`): a profile is a credential
-  **label** — the human name the credentials page already shows. Resolution
-  is by exact label among that provider's records; a miss fails listing the
-  labels that exist, and an ambiguous label (two records sharing it) fails
-  telling you to relabel, because routing "personal" through the work account
-  is the exact mistake the feature exists to prevent.
-- **Interface namespaces** (`llm`, `sql`, `vcs`): a profile is an **instance**
-  name — `llm.getClient({ profile: "fast" })` dispatches through `llm:fast`.
-  Instances already are the interface world's profiles, and they carry more
-  than a label could: the binding's provider, credential pin *and* option
-  overrides all travel. An unbound instance fails exactly as
-  `llm:fast.createChatCompletion` would — no zero-config fallback.
-- **Core services** (`keyvalue`, `vfs`): no profiles; a 400 says so.
-
-Every failure is a call-time `ServiceError` naming what exists — never a
-module-loader error, never a silent fallback. `GET /tools` deliberately does
-not enumerate profiles: labels and instances are workspace configuration, and
-the discovery surfaces for them are the credentials page and
-`interfaces.list`.
-
-**Reserved name:** `getClient` on a namespace *root* is the factory, so a
-root-level operation with that name would be unreachable (nested segments
-like `ns.x.getClient` are untouched). No catalogue provider has one — client
-factories are the SDK convention — and the guard lives where the name is
-claimed, in the sandbox prelude (src/workflows/sandbox.ts).
+Configure with `profiles.set` / `profiles.list` / `profiles.remove`.
+`interfaces.list` remains discovery only. The earlier `getClient({ profile })`
+factory and colon-addressed instance namespaces are gone.
 
 ## Agents
 

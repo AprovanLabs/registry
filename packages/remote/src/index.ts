@@ -25,6 +25,7 @@ export {
 export {
   createNamespaceProxy,
   createRuntimeGlobals,
+  extractConfigurePin,
   ROOT_OPERATION,
   type NamespaceProxy,
 } from "./proxy.js";

@@ -8,9 +8,10 @@
  * client code.
  *
  * Depth-0 invocation configures and returns a node (tools-global D2); depth ≥ 1
- * dispatches. Configuration payload shape is owned by profiles-unified; this
- * package only establishes the call-signature seam and optionally pins a
- * profile name onto subsequent calls via {@link TransportCallOptions.profile}.
+ * dispatches. Configuration accepts the former `client(name)` /
+ * `client({ name, options })` shapes — either as a depth-0 call or via the
+ * reserved `.client` property — and pins `profile` / call-site `options` onto
+ * subsequent calls through {@link TransportCallOptions}.
  */
 
 import type { RuntimeDependency, Transport, TransportCallOptions } from "./types.js";
@@ -23,16 +24,53 @@ export type NamespaceProxy = ((
 ) => NamespaceProxy | Promise<unknown>) &
   Record<string, unknown>;
 
-function extractProfile(config: unknown): string | undefined {
-  if (typeof config === "string" && config) return config;
-  if (config && typeof config === "object" && !Array.isArray(config)) {
-    const record = config as Record<string, unknown>;
-    if (typeof record["name"] === "string" && record["name"]) return record["name"];
-    if (typeof record["profile"] === "string" && record["profile"]) {
-      return record["profile"];
-    }
+interface ConfigurePin {
+  profile?: string;
+  options?: Record<string, unknown>;
+}
+
+/**
+ * Parse a depth-0 / `.client` configure argument into a profile pin and
+ * optional call-site options. Accepts `name`, `{ name, options }`, and the
+ * legacy `{ profile }` spelling.
+ */
+export function extractConfigurePin(config: unknown): ConfigurePin {
+  if (config === undefined || config === null) return {};
+  if (typeof config === "string") {
+    return config ? { profile: config } : {};
   }
-  return undefined;
+  if (typeof config !== "object" || Array.isArray(config)) return {};
+  const record = config as Record<string, unknown>;
+  const profile =
+    typeof record["name"] === "string" && record["name"]
+      ? record["name"]
+      : typeof record["profile"] === "string" && record["profile"]
+        ? record["profile"]
+        : undefined;
+  const options =
+    record["options"] &&
+    typeof record["options"] === "object" &&
+    !Array.isArray(record["options"])
+      ? (record["options"] as Record<string, unknown>)
+      : undefined;
+  return {
+    ...(profile !== undefined ? { profile } : {}),
+    ...(options !== undefined ? { options } : {}),
+  };
+}
+
+function mergePin(
+  base: TransportCallOptions | undefined,
+  pin: ConfigurePin,
+): TransportCallOptions | undefined {
+  if (pin.profile === undefined && pin.options === undefined) return base;
+  return {
+    ...base,
+    ...(pin.profile !== undefined ? { profile: pin.profile } : {}),
+    ...(pin.options !== undefined
+      ? { callSiteOptions: { ...base?.callSiteOptions, ...pin.options } }
+      : {}),
+  };
 }
 
 /**
@@ -53,12 +91,7 @@ export function createNamespaceProxy(
     const invoke = (...args: unknown[]) => {
       // Depth-0 configure: return a (possibly profile-pinned) node, no dispatch.
       if (!path) {
-        const pinned = extractProfile(args[0]);
-        const nextOptions =
-          pinned !== undefined
-            ? { ...callOptions, profile: pinned }
-            : callOptions;
-        return nested(pathPrefix, nextOptions);
+        return nested(pathPrefix, mergePin(callOptions, extractConfigurePin(args[0])));
       }
 
       const callArgs =
@@ -74,6 +107,11 @@ export function createNamespaceProxy(
         // Keep promise-detection (`then`) off the root so `await proxy`
         // doesn't recurse; nested `.then` is still reachable as an operation.
         if (path === "" && property === "then") return undefined;
+        // Reserved configure surface — same shapes as depth-0, no await.
+        if (path === "" && property === "client") {
+          return (config?: unknown) =>
+            nested(pathPrefix, mergePin(callOptions, extractConfigurePin(config)));
+        }
         return nested(path ? `${path}.${property}` : property, callOptions);
       },
     }) as NamespaceProxy;

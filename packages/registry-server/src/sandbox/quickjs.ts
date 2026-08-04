@@ -203,21 +203,39 @@ const PRELUDE = String.raw`
 
   // Callable namespace nodes on globalThis.tools. Depth-0 invocation configures
   // (returns a pinned node); depth >= 1 dispatches through __dispatch.
-  const mkns = (ns, path, profile) => {
+  // .client(name | { name, options }) is the same configure surface (no await).
+  // Call-site options are folded into the first args object under __options
+  // so the host can peel them off without a 5th __dispatch parameter.
+  const mkns = (ns, path, profile, callOpts) => {
     const handler = function () {
       const args = Array.prototype.slice.call(arguments);
       if (!path) {
         const config = args[0];
         let pinned = profile;
-        if (config && typeof config === "object" && config !== null) {
+        let nextOpts = callOpts;
+        if (typeof config === "string" && config) {
+          pinned = config;
+        } else if (config && typeof config === "object" && config !== null) {
           if (typeof config.name === "string" && config.name) pinned = config.name;
           else if (typeof config.profile === "string" && config.profile) pinned = config.profile;
+          if (config.options && typeof config.options === "object" && !Array.isArray(config.options)) {
+            nextOpts = Object.assign({}, callOpts || {}, config.options);
+          }
         }
-        return mkns(ns, "", pinned);
+        return mkns(ns, "", pinned, nextOpts);
       }
       let envelope;
       try {
-        envelope = JSON.parse(dispatch(ns, path, JSON.stringify(args), profile));
+        let dispatchArgs = args;
+        if (callOpts && Object.keys(callOpts).length > 0) {
+          const first =
+            args[0] && typeof args[0] === "object" && !Array.isArray(args[0])
+              ? Object.assign({}, args[0])
+              : {};
+          first.__options = callOpts;
+          dispatchArgs = [first].concat(args.slice(1));
+        }
+        envelope = JSON.parse(dispatch(ns, path, JSON.stringify(dispatchArgs), profile));
       } catch (err) {
         return Promise.reject(err instanceof Error ? err : new Error(String(err)));
       }
@@ -228,7 +246,10 @@ const PRELUDE = String.raw`
     return new Proxy(handler, {
       get(_t, prop) {
         if (typeof prop !== "string" || prop === "then") return undefined;
-        return mkns(ns, path ? path + "." + prop : prop, profile);
+        if (!path && prop === "client") {
+          return (config) => mkns(ns, "", profile, callOpts)(config);
+        }
+        return mkns(ns, path ? path + "." + prop : prop, profile, callOpts);
       },
     });
   };
