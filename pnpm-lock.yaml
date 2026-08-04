@@ -448,6 +448,18 @@ importers:
         specifier: 2.1.5
         version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
 
+  packages/remote:
+    devDependencies:
+      tsup:
+        specifier: ^8.5.0
+        version: 8.5.0(jiti@2.7.0)(postcss@8.5.14)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.4)
+      typescript:
+        specifier: ^5.7.3
+        version: 5.9.3
+      vitest:
+        specifier: 2.1.5
+        version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
+
   packages/runtime:
     devDependencies:
       '@aprovan/tsconfig':
