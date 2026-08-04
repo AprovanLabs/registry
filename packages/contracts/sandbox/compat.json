@@ -12,14 +12,14 @@
       "provider": "bashkit",
       "label": "Bashkit (WASM)",
       "module": "bashkit",
-      "moduleSpecifier": "@aprovan/sandbox-bashkit",
+      "moduleSpecifier": "@aprovan/native/bashkit",
       "credentialless": true
     },
     {
       "provider": "machine",
       "label": "Registered machine",
       "module": "machine",
-      "moduleSpecifier": "@aprovan/sandbox-host"
+      "moduleSpecifier": "@aprovan/native/host"
     },
     { "provider": "fly/sprites", "label": "fly.io Sprites", "module": "fly/sprites" },
     {

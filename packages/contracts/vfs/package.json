@@ -1,6 +1,6 @@
 {
   "name": "@utdk/vfs",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "Shared file-plane contract for UTDK storage providers: read/write/delete/list/stat over relative paths with etag conditional writes — a minimal driver contract, no sessions/overlays/mounts",
   "keywords": [

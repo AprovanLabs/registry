@@ -1,6 +1,6 @@
 {
   "name": "@utdk/keyvalue",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "Shared key-value contract for UTDK storage providers: get/set/delete/list over flat JSON-valued keys, TTL semantics, and tool-discovery helpers",
   "keywords": [

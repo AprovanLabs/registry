@@ -1,6 +1,6 @@
 {
   "name": "@utdk/events",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "type": "module",
   "description": "Shared events contract for UTDK event-stream providers: append-only channels with emit/list, at-least-once semantics, and tool-discovery helpers",
   "keywords": [
