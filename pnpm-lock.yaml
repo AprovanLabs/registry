@@ -91,7 +91,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/contracts/llm
       '@utdk/remote':
-        specifier: ^0.1.0
+        specifier: ^0.1.1
         version: 0.1.1
       '@utdk/sandbox':
         specifier: workspace:*

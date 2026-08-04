@@ -27,7 +27,7 @@
     "@utdk/events": "workspace:*",
     "@utdk/keyvalue": "workspace:*",
     "@utdk/llm": "workspace:*",
-    "@utdk/remote": "^0.1.0",
+    "@utdk/remote": "^0.1.1",
     "@utdk/sandbox": "workspace:*",
     "@utdk/sql": "workspace:*",
     "@utdk/telemetry": "workspace:*",
