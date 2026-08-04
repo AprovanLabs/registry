@@ -74,9 +74,9 @@
       "site": "https://developers.google.com/docs/"
     },
     "docs": {
-      "manifestPath": "/Users/jacob/Documents/Code/AprovanLabs/.worktrees/registry-utdk-regen-providers/.registry/google/docs/manifest.json",
-      "indexPath": "/Users/jacob/Documents/Code/AprovanLabs/.worktrees/registry-utdk-regen-providers/.registry/google/docs/index.md",
-      "docsPath": "/Users/jacob/Documents/Code/AprovanLabs/.worktrees/registry-utdk-regen-providers/packages/utdk/google/docs/docs",
+      "manifestPath": ".registry/google/docs/manifest.json",
+      "indexPath": ".registry/google/docs/index.md",
+      "docsPath": "packages/utdk/google/docs/docs",
       "generatedAt": "2026-08-04T03:34:55.537Z",
       "sourceCount": 0,
       "openApiHash": null,

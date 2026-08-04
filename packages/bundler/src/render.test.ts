@@ -12,7 +12,7 @@ import {
   renderRootPackageJson,
 } from "./render.js";
 import type { ClientToolDefinition } from "./client-api.js";
-import type { RegistryProvider } from "./provider.js";
+import { resolveRepoPath, type RegistryProvider } from "./provider.js";
 import type { Tool } from "@utcp/sdk";
 
 function createTool(name: string): Tool {
@@ -533,6 +533,42 @@ describe("nested provider rendering", () => {
     expect(rendered).toContain('"docs": {');
     expect(rendered).toContain('"manifestPath": ".registry/openai/manifest.json"');
     expect(rendered).toContain('"sourceCount": 3');
+  });
+
+  it("scrubs absolute checkout paths from docs metadata to repo-relative form", () => {
+    const repoRoot = resolveRepoPath();
+    const rendered = renderProviderPackageJson(
+      {
+        name: "google/docs",
+        url: "https://example.com/openapi.json",
+      },
+      {
+        openapi: "3.0.0",
+        info: {
+          title: "Google Docs API",
+          version: "1.0.0",
+        },
+      } as never,
+      undefined,
+      new Date("2026-04-07T00:00:00.000Z"),
+      {
+        docsMetadata: {
+          manifestPath: `${repoRoot}/.registry/google/docs/manifest.json`,
+          indexPath: `${repoRoot}/.registry/google/docs/index.md`,
+          docsPath: `${repoRoot}/packages/utdk/google/docs/docs`,
+          generatedAt: "2026-04-07T00:00:00.000Z",
+          sourceCount: 0,
+          openApiHash: null,
+          promptHash: "abc",
+        },
+      },
+    );
+
+    expect(rendered).toContain('"manifestPath": ".registry/google/docs/manifest.json"');
+    expect(rendered).toContain('"indexPath": ".registry/google/docs/index.md"');
+    expect(rendered).toContain('"docsPath": "packages/utdk/google/docs/docs"');
+    expect(rendered).not.toContain(repoRoot);
+    expect(rendered).not.toMatch(/\/Users\//);
   });
 
   it("uses generated readme content when provided", () => {
