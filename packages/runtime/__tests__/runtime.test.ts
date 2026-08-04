@@ -24,27 +24,51 @@ function recordingTransport(
 }
 
 describe("parseScriptDependencies", () => {
-  it("resolves the north-star import forms", () => {
+  it("derives dependencies from tools member access", () => {
     const source = [
-      `import s3 from 'aws/s3';`,
-      `import ffprobe from 'ffprobe';`,
-      `import github from '@utdk/github';`,
-      `import { repos, issues as gh } from '@utdk/github';`,
-      ``,
-      `export default async function run() {}`,
+      `export default async function run() {`,
+      `  await tools.vfs.read({ path: "/x" });`,
+      `  await tools.github.repos.get({ owner: "a", repo: "b" });`,
+      `}`,
     ].join("\n");
 
-    const { dependencies, body } = parseScriptDependencies(source);
+    const { dependencies, body, unresolved } = parseScriptDependencies(source);
 
     expect(dependencies).toEqual([
-      { identifier: "s3", specifier: "aws/s3", provider: "aws", path: "s3" },
-      { identifier: "ffprobe", specifier: "ffprobe", provider: "ffprobe", path: "" },
-      { identifier: "github", specifier: "@utdk/github", provider: "github", path: "" },
-      { identifier: "repos", specifier: "@utdk/github", provider: "github", path: "repos" },
-      { identifier: "gh", specifier: "@utdk/github", provider: "github", path: "issues" },
+      { identifier: "github", specifier: "tools.github", provider: "github", path: "" },
+      { identifier: "vfs", specifier: "tools.vfs", provider: "vfs", path: "" },
     ]);
+    expect(unresolved).toBe(false);
+    expect(body).toBe(source);
+  });
+
+  it("counts configured access once and flags dynamic access", () => {
+    const configured = parseScriptDependencies(
+      `await tools.github({ name: "work" }).repos.get({ owner: "a", repo: "b" });`,
+    );
+    expect(configured.dependencies.map((d) => d.provider)).toEqual(["github"]);
+
+    const dynamic = parseScriptDependencies(`await tools[ns].call();`);
+    expect(dynamic.unresolved).toBe(true);
+  });
+
+  it("ignores shadowed local tools bindings", () => {
+    const source = [
+      `function inner() {`,
+      `  const tools = { local: true };`,
+      `  return tools.local;`,
+      `}`,
+      `await tools.vfs.read({ path: "/x" });`,
+    ].join("\n");
+
+    const { dependencies } = parseScriptDependencies(source);
+    expect(dependencies.map((d) => d.provider)).toEqual(["vfs"]);
+  });
+
+  it("strips legacy imports from the body", () => {
+    const source = `import github from '@utdk/github';\n\nexport default async function run() {}`;
+    const { body } = parseScriptDependencies(source);
     expect(body).not.toContain("import");
-    // Line count preserved for error mapping.
     expect(body.split("\n")).toHaveLength(source.split("\n").length);
   });
 

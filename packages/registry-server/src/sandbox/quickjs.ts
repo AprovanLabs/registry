@@ -128,17 +128,11 @@ function memoryLimitBytes(overrideMb?: number): number {
  *
  * The QuickJS sandbox evaluates function bodies, not modules, so this
  * transform lowers the module shape onto the injected environment:
- * namespace default-imports become const bindings against the installed
- * globals, and `export default` captures the entrypoint the wrapper calls.
+ * `export default` captures the entrypoint the wrapper calls. Service access
+ * is through `globalThis.tools` installed by the prelude.
  */
 export function transformWorkflowModule(source: string): string {
-  let out = source.replace(
-    /^[ \t]*import\s+([A-Za-z_$][\w$]*)\s+from\s+["']([^"']+)["'][ \t]*;?[ \t]*$/gm,
-    (_whole, binding: string, specifier: string) =>
-      `const ${binding} = globalThis[${JSON.stringify(specifier)}];`,
-  );
-  out = out.replace(/^[ \t]*export\s+default\s+/m, "globalThis.__workflowMain = ");
-  return out;
+  return source.replace(/^[ \t]*export\s+default\s+/m, "globalThis.__workflowMain = ");
 }
 /**
  * Concurrent guests. Each live QuickJS instance costs a hard 16 MiB of wasm
@@ -207,44 +201,45 @@ const PRELUDE = String.raw`
   globalThis.input = boot.input;
   globalThis.agent = boot.agent ?? null;
 
-  // client(name) returns a sibling proxy over the same namespace whose every
-  // dispatch carries the pinned Profile name as the 4th __dispatch argument —
-  // the ONE profile vocabulary for provider and interface namespaces alike.
-  // Replaces getClient({ profile }). RESERVED NAME: "client" on a namespace
-  // ROOT is the factory, so a root-level operation with that name is
-  // unreachable; nested segments (ns.x.client) are untouched. client() with
-  // no argument is legal and equivalent to the bare namespace (the
-  // default-named profile).
-  const mkns = (ns, path, profile) => new Proxy(function () {}, {
-    get(_t, prop) {
-      if (typeof prop !== "string" || prop === "then") return undefined;
-      if (prop === "client" && path === "") {
-        // Async for symmetry with real client factories, so scripts write
-        // "const gh = await github.client('work')".
-        return (name) => Promise.resolve(
-          mkns(ns, "", typeof name === "string" && name ? name : undefined),
-        );
+  // Callable namespace nodes on globalThis.tools. Depth-0 invocation configures
+  // (returns a pinned node); depth >= 1 dispatches through __dispatch.
+  const mkns = (ns, path, profile) => {
+    const handler = function () {
+      const args = Array.prototype.slice.call(arguments);
+      if (!path) {
+        const config = args[0];
+        let pinned = profile;
+        if (config && typeof config === "object" && config !== null) {
+          if (typeof config.name === "string" && config.name) pinned = config.name;
+          else if (typeof config.profile === "string" && config.profile) pinned = config.profile;
+        }
+        return mkns(ns, "", pinned);
       }
-      return mkns(ns, path ? path + "." + prop : prop, profile);
-    },
-    apply(_t, _thisArg, args) {
       let envelope;
       try {
-        envelope = JSON.parse(dispatch(ns, path || "default", JSON.stringify(args), profile));
+        envelope = JSON.parse(dispatch(ns, path, JSON.stringify(args), profile));
       } catch (err) {
         return Promise.reject(err instanceof Error ? err : new Error(String(err)));
       }
       return envelope.ok
         ? Promise.resolve(envelope.data === undefined ? null : envelope.data)
         : Promise.reject(new Error(envelope.error || "tool call failed"));
-    },
-  });
+    };
+    return new Proxy(handler, {
+      get(_t, prop) {
+        if (typeof prop !== "string" || prop === "then") return undefined;
+        return mkns(ns, path ? path + "." + prop : prop, profile);
+      },
+    });
+  };
+  const tools = {};
   for (const ns of boot.namespaces) {
     const proxy = mkns(ns, "");
-    globalThis[ns] = proxy;
+    tools[ns] = proxy;
     const alias = ns.replace(/[^A-Za-z0-9_$]/g, "_");
-    if (alias !== ns && !(alias in globalThis)) globalThis[alias] = proxy;
+    if (alias !== ns && !(alias in tools)) tools[alias] = proxy;
   }
+  globalThis.tools = tools;
 
   // ------------------------------------------------------------------
   // Cooperative helpers (ported shapes from packages/runtime). These are

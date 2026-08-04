@@ -20,9 +20,17 @@ export interface CompiledScript {
   dependencies: RuntimeDependency[];
 }
 
-/** Dependencies only — cheap enough to run on every keystroke. */
-export function detectDependencies(source: string): RuntimeDependency[] {
-  return parseScriptDependencies(source).dependencies;
+/** Dependencies and scan completeness — cheap enough to run on every keystroke. */
+export function detectDependencies(source: string): {
+  dependencies: RuntimeDependency[];
+  unresolved: boolean;
+} {
+  const javascript = transform(source, {
+    transforms: ["typescript"],
+    disableESTransforms: true,
+  }).code;
+  const parsed = parseScriptDependencies(javascript);
+  return { dependencies: parsed.dependencies, unresolved: parsed.unresolved };
 }
 
 export function compileScript(source: string): CompiledScript {
@@ -40,12 +48,10 @@ export function compileScript(source: string): CompiledScript {
  * credentials: GitHub's public endpoints work unauthenticated, and the
  * `{ chart }` return renders in the run view's viz runtime.
  */
-export const SAMPLE_SCRIPT = `import github from '@utdk/github';
-
-export default async function report({ username }) {
+export const SAMPLE_SCRIPT = `export default async function report({ username }) {
   // Public GitHub data — no credential needed
-  const user = await github.users.getByUsername({ username });
-  const repos = await github.repos.listForUser({
+  const user = await tools.github.users.getByUsername({ username });
+  const repos = await tools.github.repos.listForUser({
     username,
     per_page: 6,
     sort: 'updated',
@@ -236,7 +242,7 @@ export function synthesizeWorkflowImports(
     }
   }
 
-  const imported = new Set(detectDependencies(source).map((dep) => dep.identifier));
+  const imported = new Set(detectDependencies(source).dependencies.map((dep) => dep.identifier));
   const lines: string[] = [];
   for (const [identifier, specifier] of known) {
     if (imported.has(identifier)) continue;

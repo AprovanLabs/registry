@@ -34,8 +34,8 @@ describe("wasm script sandbox", () => {
     const { logs, calls, options } = harness({
       source: `
         console.log("starting", input.n, { nested: true });
-        const a = await keyvalue.set({ key: "k", value: input.n });
-        const b = await github.repos.get({ owner: "o", repo: "r" });
+        const a = await tools.keyvalue.set({ key: "k", value: input.n });
+        const b = await tools.github.repos.get({ owner: "o", repo: "r" });
         return { doubled: input.n * 2, a, b };
       `,
       input: { n: 21 },
@@ -54,8 +54,8 @@ describe("wasm script sandbox", () => {
   it("supports promise chaining and Promise.all over namespace calls", async () => {
     const { options } = harness({
       source: `
-        const viaThen = await keyvalue.get({ key: "a" }).then((r) => r.echoed.path);
-        const [x, y] = await Promise.all([github.a(), github.b()]);
+        const viaThen = await tools.keyvalue.get({ key: "a" }).then((r) => r.echoed.path);
+        const [x, y] = await Promise.all([tools.github.a(), tools.github.b()]);
         return { viaThen, paths: [x.echoed.path, y.echoed.path] };
       `,
     });
@@ -68,7 +68,7 @@ describe("wasm script sandbox", () => {
     const { options } = harness({
       namespaces: ["synthetic.new"],
       source: `
-        const r = await synthetic_new.createChatCompletion({ model: "m" });
+        const r = await tools.synthetic_new.createChatCompletion({ model: "m" });
         return r.echoed.namespace;
       `,
     });
@@ -78,18 +78,18 @@ describe("wasm script sandbox", () => {
   it("propagates tool errors as catchable guest exceptions", async () => {
     const { options } = harness({
       dispatch: async () => {
-        throw new Error("Forbidden: no grant for github.repos.get");
+        throw new Error("Forbidden: no grant for tools.github.repos.get");
       },
       source: `
         try {
-          await github.repos.get({});
+          await tools.github.repos.get({});
         } catch (err) {
           return "caught: " + err.message;
         }
       `,
     });
     expect(await runScriptInSandbox(options)).toBe(
-      "caught: Forbidden: no grant for github.repos.get",
+      "caught: Forbidden: no grant for tools.github.repos.get",
     );
   });
 
@@ -98,7 +98,7 @@ describe("wasm script sandbox", () => {
       dispatch: async () => {
         throw new Error("upstream 502");
       },
-      source: `await github.repos.get({});`,
+      source: `await tools.github.repos.get({});`,
     });
     await expect(runScriptInSandbox(options)).rejects.toThrow("upstream 502");
   });
@@ -182,7 +182,7 @@ describe("wasm script sandbox", () => {
   it("times out scripts stuck awaiting a slow tool — deadline interrupts the in-flight dispatch", async () => {
     const { options } = harness({
       dispatch: () => new Promise((resolve) => setTimeout(() => resolve("late"), 2_000)),
-      source: `await keyvalue.get({});`,
+      source: `await tools.keyvalue.get({});`,
       timeoutMs: 300,
     });
     const start = Date.now();
@@ -199,7 +199,7 @@ describe("wasm script sandbox", () => {
           await new Promise((resolve) => setTimeout(resolve, 50));
           return label;
         },
-        source: `return await keyvalue.get({});`,
+        source: `return await tools.keyvalue.get({});`,
       }).options;
     const results = await Promise.all([
       runScriptInSandbox(mk("one")),
@@ -218,12 +218,12 @@ describe("wasm script sandbox", () => {
 });
 
 describe("in-sandbox SDK", () => {
-  it("client(name) pins the profile onto every dispatch (4th __dispatch argument)", async () => {
+  it("depth-0 configure pins the profile onto every dispatch (4th __dispatch argument)", async () => {
     const { calls, options } = harness({
       source: `
-        const gh = await github.client("work");
+        const gh = tools.github({ name: "work" });
         await gh.repos.get({ owner: "o" });
-        await github.repos.get({ owner: "o" });
+        await tools.github.repos.get({ owner: "o" });
         return null;
       `,
     });
@@ -234,14 +234,14 @@ describe("in-sandbox SDK", () => {
       args: [{ owner: "o" }],
       profile: "work",
     });
-    // The plain global stays unpinned — no "undefined" string leaks.
+    // The unconfigured namespace stays unpinned — no "undefined" string leaks.
     expect(calls[1]).toEqual({ namespace: "github", path: "repos.get", args: [{ owner: "o" }] });
   });
 
-  it("client() with no argument is legal and equivalent to the bare namespace", async () => {
+  it("depth-0 configure with no argument is legal and equivalent to the bare namespace", async () => {
     const { calls, options } = harness({
       source: `
-        const gh = await github.client();
+        const gh = tools.github();
         await gh.repos.get({});
         return null;
       `,
@@ -250,12 +250,11 @@ describe("in-sandbox SDK", () => {
     expect(calls[0]).toEqual({ namespace: "github", path: "repos.get", args: [{}] });
   });
 
-  it("ES-module-shaped scripts run: imports lower to globals, default export is the entrypoint", async () => {
+  it("ES-module-shaped scripts run: default export is the entrypoint", async () => {
     const { calls, options } = harness({
       source: `
-        import kv from "keyvalue";
         export default async function run(input) {
-          const r = await kv.get({ key: input.key });
+          const r = await tools.keyvalue.get({ key: input.key });
           return { path: r.echoed.path, key: input.key };
         }
       `,
@@ -276,7 +275,7 @@ describe("in-sandbox SDK", () => {
         const request = (args[0] ?? {}) as { cursor?: string };
         return pages[request.cursor ?? "start"];
       },
-      source: `return await paginate((args) => keyvalue.list(args));`,
+      source: `return await paginate((args) => tools.keyvalue.list(args));`,
     });
     expect(await runScriptInSandbox(options)).toEqual([1, 2, 3]);
   });
@@ -289,7 +288,7 @@ describe("in-sandbox SDK", () => {
         if (attempts < 3) throw new Error(`fail ${attempts}`);
         return "ok";
       },
-      source: `return await retry(() => keyvalue.get({}), { attempts: 3, baseDelayMs: 5 });`,
+      source: `return await retry(() => tools.keyvalue.get({}), { attempts: 3, baseDelayMs: 5 });`,
     });
     expect(await runScriptInSandbox(options)).toBe("ok");
     expect(attempts).toBe(3);
@@ -311,9 +310,9 @@ describe("in-sandbox SDK", () => {
 describe("asyncify soak", () => {
   it("200 sequential runs with 3+ suspensions each complete with memory near baseline", async () => {
     const source = `
-      const a = await keyvalue.get({ n: 1 });
-      const b = await github.x.y({ n: 2 });
-      const c = await keyvalue.set({ n: 3 });
+      const a = await tools.keyvalue.get({ n: 1 });
+      const b = await tools.github.x.y({ n: 2 });
+      const c = await tools.keyvalue.set({ n: 3 });
       return [a.echoed.path, b.echoed.path, c.echoed.path];
     `;
     // Warm-up run so the module/dispatch machinery is resident before baseline.

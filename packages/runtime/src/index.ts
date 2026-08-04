@@ -40,7 +40,9 @@ export {
 export {
   parseScriptDependencies,
   rewriteDefaultExport,
+  scanToolsAccess,
   type ParsedScript,
+  type ToolsAccessScan,
 } from "./imports.js";
 
 export { resolvePolicy, withPolicy, type PolicyHooks } from "./policy.js";

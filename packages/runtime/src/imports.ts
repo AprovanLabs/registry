@@ -1,94 +1,44 @@
 /**
- * Script dependency parsing — turn a script's ESM imports into a
- * {@link RuntimeManifest} dependency list, and strip them so the remaining
- * body can run in a sandbox where the bindings are injected as globals.
- *
- * Supported forms (one provider binding per specifier segment):
- *   import github from "@utdk/github";      → github ⇒ provider github
- *   import s3 from "aws/s3";                → s3     ⇒ provider aws, path s3
- *   import slack from "slack";              → slack  ⇒ provider slack
- *   import { repos, issues } from "@utdk/github";
- *                                           → repos/issues ⇒ github.repos / github.issues
- *   import * as github from "@utdk/github"; → github ⇒ provider github
- *
- * Relative specifiers ("./util") are ignored — the sandbox is single-file.
+ * Script dependency parsing — derive a {@link RuntimeManifest} dependency list
+ * from `tools.<namespace>` member access in source, and strip legacy import
+ * statements so the remaining body can run in a sandbox where `tools` is
+ * injected as a global.
  */
 
 import type { RuntimeDependency } from "./types.js";
+import { scanToolsAccess } from "./tools-scan.js";
 
 const IMPORT_PATTERN =
   /import\s+(?:([A-Za-z_$][\w$]*)|\*\s+as\s+([A-Za-z_$][\w$]*)|\{([^}]*)\})?\s*(?:,\s*\{([^}]*)\})?\s*(?:from\s*)?["']([^"']+)["']\s*;?/g;
 
-function specifierToProvider(specifier: string): { provider: string; path: string } | null {
-  if (specifier.startsWith(".") || specifier.startsWith("/")) return null;
-
-  const withoutScope = specifier.startsWith("@utdk/")
-    ? specifier.slice("@utdk/".length)
-    : specifier.startsWith("@")
-      ? specifier.split("/").slice(1).join("/")
-      : specifier;
-
-  const segments = withoutScope.split("/").filter(Boolean);
-  const provider = segments[0];
-  if (!provider) return null;
-
-  return { provider, path: segments.slice(1).join(".") };
-}
-
-function parseNamedBindings(clause: string): Array<{ imported: string; local: string }> {
-  return clause
-    .split(",")
-    .flatMap((binding) => {
-      const asMatch = binding.trim().match(/^([\w$]+)(?:\s+as\s+([\w$]+))?$/);
-      if (!asMatch || !asMatch[1]) return [];
-      return [{ imported: asMatch[1], local: asMatch[2] ?? asMatch[1] }];
-    });
-}
-
 export interface ParsedScript {
   dependencies: RuntimeDependency[];
-  /** Source with all import statements removed (line structure preserved). */
+  /** Source with import statements removed (line structure preserved). */
   body: string;
+  /** True when dynamic `tools[expr]` access makes the dependency list incomplete. */
+  unresolved: boolean;
 }
 
-/** Parse a script's imports into runtime dependencies and strip them. */
+function namespacesToDependencies(namespaces: string[]): RuntimeDependency[] {
+  return namespaces.map((namespace) => ({
+    identifier: namespace,
+    specifier: `tools.${namespace}`,
+    provider: namespace,
+    path: "",
+  }));
+}
+
+/** Parse a script's `tools.` accesses into runtime dependencies and strip imports. */
 export function parseScriptDependencies(source: string): ParsedScript {
-  const dependencies: RuntimeDependency[] = [];
+  const { namespaces, unresolved } = scanToolsAccess(source);
+  const dependencies = namespacesToDependencies(namespaces);
 
   const body = source.replace(
     IMPORT_PATTERN,
-    (match, defaultName: string | undefined, starName: string | undefined, named: string | undefined, namedAfterDefault: string | undefined, specifier: string) => {
-      const resolved = specifierToProvider(specifier);
-      if (!resolved) return match; // leave relative imports in place (will fail loudly)
-
-      const rootIdentifier = defaultName ?? starName;
-      if (rootIdentifier) {
-        dependencies.push({
-          identifier: rootIdentifier,
-          specifier,
-          provider: resolved.provider,
-          path: resolved.path,
-        });
-      }
-
-      for (const clause of [named, namedAfterDefault]) {
-        if (!clause) continue;
-        for (const { imported, local } of parseNamedBindings(clause)) {
-          dependencies.push({
-            identifier: local,
-            specifier,
-            provider: resolved.provider,
-            path: resolved.path ? `${resolved.path}.${imported}` : imported,
-          });
-        }
-      }
-
-      // Preserve newline count so runtime error line numbers stay meaningful.
-      return match.replace(/[^\n]/g, "");
-    },
+    (match) => match.replace(/[^\n]/g, ""),
   );
 
-  return { dependencies, body };
+  return { dependencies, body, unresolved };
 }
 
 /**
@@ -99,3 +49,5 @@ export function parseScriptDependencies(source: string): ParsedScript {
 export function rewriteDefaultExport(body: string, binding = "__default__"): string {
   return body.replace(/export\s+default\s+/, `const ${binding} = `);
 }
+
+export { scanToolsAccess, type ToolsAccessScan } from "./tools-scan.js";
