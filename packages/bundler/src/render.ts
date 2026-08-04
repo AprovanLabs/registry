@@ -1108,6 +1108,25 @@ export function renderNamespacePackageJson(
   ).concat("\n");
 }
 
+/**
+ * Docs metadata paths in generated package.json must be repo-relative
+ * (`.registry/<p>/manifest.json`, `packages/utdk/<p>/docs`). Codegen often
+ * holds absolute filesystem paths for I/O; scrub them before embedding so
+ * regenerations never reintroduce developer checkout leaks.
+ */
+export function toRepoRelativeDocsPath(filePath: string): string {
+  const normalized = path.normalize(filePath);
+  if (!path.isAbsolute(normalized)) {
+    return normalized.split(path.sep).join("/");
+  }
+  const relative = path.relative(resolveRepoPath(), normalized);
+  if (!relative || relative.startsWith("..") || path.isAbsolute(relative)) {
+    // Outside the repo (e.g. temp-dir tests): keep the original absolute path.
+    return normalized.split(path.sep).join("/");
+  }
+  return relative.split(path.sep).join("/");
+}
+
 export function renderProviderPackageJson(
   provider: RegistryProvider,
   openApiDocument: OpenAPIV3.Document,
@@ -1164,9 +1183,9 @@ export function renderProviderPackageJson(
       ...(options.docsMetadata
         ? {
             docs: {
-              manifestPath: options.docsMetadata.manifestPath,
-              indexPath: options.docsMetadata.indexPath,
-              docsPath: options.docsMetadata.docsPath,
+              manifestPath: toRepoRelativeDocsPath(options.docsMetadata.manifestPath),
+              indexPath: toRepoRelativeDocsPath(options.docsMetadata.indexPath),
+              docsPath: toRepoRelativeDocsPath(options.docsMetadata.docsPath),
               generatedAt: options.docsMetadata.generatedAt,
               sourceCount: options.docsMetadata.sourceCount,
               openApiHash: options.docsMetadata.openApiHash,
