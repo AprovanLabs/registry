@@ -174,11 +174,11 @@ export function ScriptPlayground() {
     return () => sandboxRef.current?.dispose();
   }, []);
 
-  const dependencies = React.useMemo(() => {
+  const { dependencies, unresolved } = React.useMemo(() => {
     try {
       return detectDependencies(source);
     } catch {
-      return [];
+      return { dependencies: [], unresolved: false };
     }
   }, [source]);
 
@@ -207,7 +207,7 @@ export function ScriptPlayground() {
       for (const dependency of dependencies) {
         const builtin = BUILTIN_BY_ID.get(dependency.provider);
         if (builtin) {
-          files[`/node_modules/${dependency.specifier}/index.d.ts`] = builtin.types;
+          files[`/node_modules/${dependency.provider}/index.d.ts`] = builtin.types;
           continue;
         }
         const bundle = bundles.find(([p]) => p === dependency.provider)?.[1];
@@ -215,8 +215,8 @@ export function ScriptPlayground() {
         for (const [relative, content] of Object.entries(bundle.files)) {
           files[`/node_modules/${bundle.module}/${relative}`] = content;
         }
-        if (dependency.specifier !== bundle.module) {
-          files[`/node_modules/${dependency.specifier}/index.d.ts`] =
+        if (dependency.provider !== bundle.module) {
+          files[`/node_modules/@utdk/${dependency.provider}/index.d.ts`] =
             `export * from "${bundle.module}";\n` +
             `export { default } from "${bundle.module}";\n`;
         }
@@ -308,8 +308,8 @@ export function ScriptPlayground() {
         <CardHeader>
           <CardTitle className="font-mono text-base">Script</CardTitle>
           <CardDescription>
-            Imports declare the sandbox&apos;s dependencies — each namespace is
-            proxied through the gateway. The sample uses public GitHub data; for
+            Scripts call providers through the global tools root — each namespace
+            is proxied through the gateway. The sample uses public GitHub data; for
             credentialed calls,{" "}
             <a
               className="font-medium underline underline-offset-2 hover:text-foreground"
@@ -323,6 +323,7 @@ export function ScriptPlayground() {
             catalog={catalog}
             className="mt-1"
             dependencies={dependencies}
+            unresolved={unresolved}
             registryBaseUrl={withBasePath("/").replace(/\/$/, "")}
           />
         </CardHeader>

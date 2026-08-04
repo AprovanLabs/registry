@@ -110,6 +110,12 @@ function buildSandboxDocument(
     return nested(pathPrefix || "");
   }
 
+  var providers = ${inlineJson([...new Set(dependencies.map((d) => d.provider))])};
+  var tools = {};
+  providers.forEach(function (p) {
+    tools[p] = createNamespaceProxy(p, "");
+  });
+
   var LEVELS = ["log", "info", "warn", "error", "debug"];
   LEVELS.forEach(function (level) {
     var original = console[level].bind(console);
@@ -123,18 +129,14 @@ function buildSandboxDocument(
     };
   });
 
-  var DEPS = ${inlineJson(dependencies.map((d) => ({ identifier: d.identifier, provider: d.provider, path: d.path })))};
   var INPUTS = ${inlineJson(inputs)};
   var CODE = ${inlineJson(
     `${body}\n;return (typeof __default__ === "function") ? await __default__(inputs) : undefined;`,
   )};
 
   var AsyncFunction = Object.getPrototypeOf(async function () {}).constructor;
-  // Both spellings: exported-function scripts receive "inputs" as their
-  // parameter; bare workflow scripts read the "input" global the workflow
-  // runner provides (the trigger payload).
-  var paramNames = DEPS.map(function (d) { return d.identifier; }).concat(["inputs", "input"]);
-  var paramValues = DEPS.map(function (d) { return createNamespaceProxy(d.provider, d.path); }).concat([INPUTS, INPUTS]);
+  var paramNames = ["tools", "inputs", "input"];
+  var paramValues = [tools, INPUTS, INPUTS];
 
   Promise.resolve()
     .then(function () {
