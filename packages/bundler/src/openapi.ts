@@ -154,44 +154,113 @@ function getOperation(
   return pathItem[method as keyof OpenAPIV3.PathItemObject] as OpenAPIV3.OperationObject | undefined;
 }
 
-function getResponseSchema(
+
+export type ResponseExtraction =
+  | { kind: "schema"; schema: ResolvedSchema; rawSchema: unknown }
+  | { kind: "no-content" }
+  | { kind: "unknown" }
+  | { kind: "streaming" };
+
+function isSuccessStatus(code: string): boolean {
+  return /^2\d\d$/.test(code);
+}
+
+function compareSuccessStatuses(left: string, right: string): number {
+  // Prefer 200, then numeric ascending among other 2xx.
+  if (left === "200" && right !== "200") return -1;
+  if (right === "200" && left !== "200") return 1;
+  return left.localeCompare(right, undefined, { numeric: true });
+}
+
+function resolveResponseObject(
+  document: OpenAPIV3.Document,
+  responseValue: OpenAPIV3.ReferenceObject | OpenAPIV3.ResponseObject,
+): OpenAPIV3.ResponseObject | undefined {
+  if (isReferenceObject(responseValue)) {
+    return getRefTarget(document, responseValue.$ref) as OpenAPIV3.ResponseObject | undefined;
+  }
+  return responseValue;
+}
+
+function pickContentSchema(
+  response: OpenAPIV3.ResponseObject,
+): { schema: OpenAPIV3.ReferenceObject | OpenAPIV3.SchemaObject } | undefined {
+  if (!response.content) return undefined;
+  const contentEntry =
+    response.content["application/json"] ??
+    Object.entries(response.content).find(([contentType]) => contentType.includes("json"))?.[1] ??
+    Object.values(response.content)[0];
+  if (!contentEntry?.schema) return undefined;
+  return { schema: contentEntry.schema };
+}
+
+/**
+ * Select the operation's success response schema.
+ * Only 2xx statuses are considered — non-2xx bodies must never become return types.
+ * Parameterised by whether to dereference `$ref`s in the selected schema.
+ */
+export function extractResponse(
   document: OpenAPIV3.Document,
   operation: OpenAPIV3.OperationObject | undefined,
-  context?: SchemaRenderContext,
-): ResolvedSchema | undefined {
+  options: { dereference: boolean; context?: SchemaRenderContext } = { dereference: true },
+): ResponseExtraction {
   if (!operation) {
-    return undefined;
+    return { kind: "unknown" };
   }
 
-  const responseEntries = Object.entries(operation.responses ?? {}).sort(([left], [right]) => {
-    const leftScore = /^2\d\d$/.test(left) ? 0 : left === "default" ? 2 : 1;
-    const rightScore = /^2\d\d$/.test(right) ? 0 : right === "default" ? 2 : 1;
-    return leftScore - rightScore;
-  });
+  // Streaming: explicit vendor extensions or SSE content types on any 2xx.
+  const successEntries = Object.entries(operation.responses ?? {}).filter(([code]) =>
+    isSuccessStatus(code),
+  );
 
-  for (const [, responseValue] of responseEntries) {
-    const response = isReferenceObject(responseValue)
-      ? (getRefTarget(document, responseValue.$ref) as OpenAPIV3.ResponseObject | undefined)
-      : responseValue;
+  if (successEntries.length === 0) {
+    return { kind: "unknown" };
+  }
 
-    if (!response?.content) {
+  successEntries.sort(([left], [right]) => compareSuccessStatuses(left, right));
+
+  // Detect streaming before schema walk.
+  for (const [, responseValue] of successEntries) {
+    const response = resolveResponseObject(document, responseValue);
+    if (!response?.content) continue;
+    const types = Object.keys(response.content);
+    if (
+      types.some(
+        (t) => t.includes("text/event-stream") || t.includes("application/x-ndjson"),
+      )
+    ) {
+      return { kind: "streaming" };
+    }
+  }
+
+  // Prefer the first 2xx that has a content schema; if every 2xx lacks content → no-content.
+  let sawSuccessWithoutSchema = false;
+  for (const [, responseValue] of successEntries) {
+    const response = resolveResponseObject(document, responseValue);
+    if (!response) continue;
+    const picked = pickContentSchema(response);
+    if (!picked) {
+      sawSuccessWithoutSchema = true;
       continue;
     }
-
-    const contentEntry =
-      response.content["application/json"] ??
-      Object.entries(response.content).find(([contentType]) => contentType.includes("json"))?.[1] ??
-      Object.values(response.content)[0];
-
-    const schema = resolveSchema(document, contentEntry?.schema, new Set(), context);
-
-    if (schema) {
-      return schema;
+    const rawSchema = picked.schema;
+    if (options.dereference) {
+      const schema = resolveSchema(document, rawSchema, new Set(), options.context);
+      if (!schema) {
+        sawSuccessWithoutSchema = true;
+        continue;
+      }
+      return { kind: "schema", schema, rawSchema };
     }
+    return { kind: "schema", schema: rawSchema as ResolvedSchema, rawSchema };
   }
 
-  return undefined;
+  if (sawSuccessWithoutSchema) {
+    return { kind: "no-content" };
+  }
+  return { kind: "unknown" };
 }
+
 
 export async function loadOpenApiDocument(provider: RegistryProvider): Promise<OpenAPIV3.Document> {
   let rawDocument: string;
@@ -279,42 +348,6 @@ export function applyProviderOpenApiOptions(
   };
 }
 
-function getRawResponseSchema(
-  document: OpenAPIV3.Document,
-  operation: OpenAPIV3.OperationObject | undefined,
-): unknown {
-  if (!operation) {
-    return undefined;
-  }
-
-  const responseEntries = Object.entries(operation.responses ?? {}).sort(([left], [right]) => {
-    const leftScore = /^2\d\d$/.test(left) ? 0 : left === "default" ? 2 : 1;
-    const rightScore = /^2\d\d$/.test(right) ? 0 : right === "default" ? 2 : 1;
-    return leftScore - rightScore;
-  });
-
-  for (const [, responseValue] of responseEntries) {
-    const response = isReferenceObject(responseValue)
-      ? (getRefTarget(document, responseValue.$ref) as OpenAPIV3.ResponseObject | undefined)
-      : responseValue;
-
-    if (!response?.content) {
-      continue;
-    }
-
-    const contentEntry =
-      response.content["application/json"] ??
-      Object.entries(response.content).find(([contentType]) => contentType.includes("json"))?.[1] ??
-      Object.values(response.content)[0];
-
-    if (contentEntry?.schema) {
-      return contentEntry.schema;
-    }
-  }
-
-  return undefined;
-}
-
 /**
  * `context` (from `createProviderSchemaTypes`) makes response schemas render as
  * named component types instead of being inlined. Pass it whenever the caller
@@ -330,9 +363,23 @@ export function buildPublicTypeMap(
   return new Map(
     tools.map((tool) => {
       const operation = getOperation(document, tool);
-      const responseSchema = getResponseSchema(document, operation, context);
-      const rawResponseSchema = getRawResponseSchema(document, operation);
+      const extracted = extractResponse(document, operation, { dereference: true, context });
       const docsUrl = operation?.externalDocs?.url;
+
+      let outputType: string;
+      let rawResponseSchema: unknown | undefined;
+      if (extracted.kind === "schema") {
+        outputType = schemaToTypeScriptType(extracted.schema, context);
+        rawResponseSchema = extracted.rawSchema;
+      } else if (extracted.kind === "no-content") {
+        // Match client.ts: 204/205 → undefined
+        outputType = "undefined";
+      } else if (extracted.kind === "streaming") {
+        outputType = "ReadableStream<Uint8Array>";
+      } else {
+        // unknown — fall back to UTCP outputs if present, else unknown
+        outputType = schemaToTypeScriptType(tool.outputs);
+      }
 
       return [
         tool.name,
@@ -340,9 +387,7 @@ export function buildPublicTypeMap(
           // `tool.inputs`/`tool.outputs` come from the UTCP conversion already
           // dereferenced, so they are rendered without the context.
           inputType: schemaToTypeScriptType(tool.inputs),
-          outputType: responseSchema
-            ? schemaToTypeScriptType(responseSchema, context)
-            : schemaToTypeScriptType(tool.outputs),
+          outputType,
           ...(rawResponseSchema !== undefined ? { rawResponseSchema } : {}),
           ...(docsUrl ? { docsUrl } : {}),
         },
