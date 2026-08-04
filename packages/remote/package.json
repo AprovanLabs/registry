@@ -1,9 +1,15 @@
 {
   "name": "@utdk/remote",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Vendor-neutral UTDK remote client: namespace proxies, gateway transport, execution policy, pagination, and specifier parsing",
-  "keywords": ["utdk", "remote", "proxy", "gateway", "transport"],
+  "keywords": [
+    "utdk",
+    "remote",
+    "proxy",
+    "gateway",
+    "transport"
+  ],
   "license": "MIT",
   "exports": {
     ".": {
@@ -11,13 +17,16 @@
       "import": "./dist/index.js"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "check-types": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist",
-    "test": "vitest run"
+    "test": "vitest run",
+    "prepare": "tsup"
   },
   "devDependencies": {
     "tsup": "^8.5.0",
@@ -29,5 +38,7 @@
   },
   "engines": {
     "node": ">=20.0.0"
-  }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts"
 }
