@@ -721,7 +721,7 @@ export type SlackClient = {
     error?: string;
     /** example property to return */
     foo?: string;
-  }) => Promise<{ ok: DefsOkTrue; [key: string]: unknown }>;
+  }) => Promise<{ ok: DefsOkTrue; [key: string]: { [key: string]: unknown } | undefined }>;
 
   /**
    * Get a list of authorizations for the given event context. Each authorization represents an app installation that the event is visible to.

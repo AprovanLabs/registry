@@ -1,4 +1,4 @@
-import type { BaseGist, BasicError, GistComment, GistCommit, GistSimple } from "./schemas.js";
+import type { BaseGist, GistComment, GistCommit, GistSimple } from "./schemas.js";
 
 export type GistsOperations = {
   /**
@@ -81,7 +81,7 @@ export type GistsOperations = {
   delete: (input: {
     /** The unique identifier of the gist. */
     gist_id: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List gist comments
@@ -140,7 +140,7 @@ export type GistsOperations = {
     gist_id: string;
     /** The unique identifier of the comment. */
     comment_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List gist commits
@@ -184,7 +184,7 @@ export type GistsOperations = {
   checkIsStarred: (input: {
     /** The unique identifier of the gist. */
     gist_id: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Star a gist
@@ -193,7 +193,7 @@ export type GistsOperations = {
   star: (input: {
     /** The unique identifier of the gist. */
     gist_id: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Unstar a gist
@@ -202,7 +202,7 @@ export type GistsOperations = {
   unstar: (input: {
     /** The unique identifier of the gist. */
     gist_id: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get a gist revision

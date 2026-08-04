@@ -1,583 +1,122 @@
 # Warehouse Tables
 
-## Operations
-
-### `posthog.environmentsWarehouseTablesList`
-
-- **HTTP**: `GET /api/environments/{environment_id}/warehouse_tables/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `environments_warehouse_tables_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`, `search`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; c...`
-- OpenAPI response codes: `200`
+11 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type EnvironmentsWarehouseTablesListInput = Parameters<typeof posthog.environmentsWarehouseTablesList> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWarehouseTablesListOutput = Awaited<ReturnType<typeof posthog.environmentsWarehouseTablesList>>;
-
-const result: EnvironmentsWarehouseTablesListOutput = await posthog.environmentsWarehouseTablesList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; c...
 ```
 
-### `posthog.environmentsWarehouseTablesCreate`
+## `posthog.warehouseTablesList`
 
-- **HTTP**: `POST /api/environments/{environment_id}/warehouse_tables/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `environments_warehouse_tables_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...`
-- OpenAPI response codes: `201`
+Create, Read, Update and Delete Warehouse Tables.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsWarehouseTablesCreateInput = Parameters<typeof posthog.environmentsWarehouseTablesCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWarehouseTablesCreateOutput = Awaited<ReturnType<typeof posthog.environmentsWarehouseTablesCreate>>;
-
-const result: EnvironmentsWarehouseTablesCreateOutput = await posthog.environmentsWarehouseTablesCreate();
-
-// Result shape (from schema): { id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...
+posthog.warehouseTablesList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; deleted?: boolean | null; name: string; hogql_name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; ...>
 ```
 
-### `posthog.environmentsWarehouseTablesDestroy`
+<sub>`GET /api/projects/{project_id}/warehouse_tables/` · `warehouse_tables_list`</sub>
 
-- **HTTP**: `DELETE /api/environments/{environment_id}/warehouse_tables/{id}/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `environments_warehouse_tables_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.warehouseTablesCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Create, Read, Update and Delete Warehouse Tables.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsWarehouseTablesDestroyInput = Parameters<typeof posthog.environmentsWarehouseTablesDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWarehouseTablesDestroyOutput = Awaited<ReturnType<typeof posthog.environmentsWarehouseTablesDestroy>>;
-
-const result: EnvironmentsWarehouseTablesDestroyOutput = await posthog.environmentsWarehouseTablesDestroy();
-
-// Result shape (from schema): unknown
+posthog.warehouseTablesCreate(): Promise<{ id: string; deleted?: boolean | null; name: string; hogql_name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: ...>
 ```
 
-### `posthog.environmentsWarehouseTablesRetrieve`
+<sub>`POST /api/projects/{project_id}/warehouse_tables/` · `warehouse_tables_create`</sub>
 
-- **HTTP**: `GET /api/environments/{environment_id}/warehouse_tables/{id}/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `environments_warehouse_tables_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.warehouseTablesDestroy`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...`
-- OpenAPI response codes: `200`
+Create, Read, Update and Delete Warehouse Tables.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsWarehouseTablesRetrieveInput = Parameters<typeof posthog.environmentsWarehouseTablesRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWarehouseTablesRetrieveOutput = Awaited<ReturnType<typeof posthog.environmentsWarehouseTablesRetrieve>>;
-
-const result: EnvironmentsWarehouseTablesRetrieveOutput = await posthog.environmentsWarehouseTablesRetrieve();
-
-// Result shape (from schema): { id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...
+posthog.warehouseTablesDestroy(): Promise<unknown>
 ```
 
-### `posthog.environmentsWarehouseTablesPartialUpdate`
+<sub>`DELETE /api/projects/{project_id}/warehouse_tables/{id}/` · `warehouse_tables_destroy`</sub>
 
-- **HTTP**: `PATCH /api/environments/{environment_id}/warehouse_tables/{id}/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `environments_warehouse_tables_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.warehouseTablesRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...`
-- OpenAPI response codes: `200`
+Create, Read, Update and Delete Warehouse Tables.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsWarehouseTablesPartialUpdateInput = Parameters<typeof posthog.environmentsWarehouseTablesPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWarehouseTablesPartialUpdateOutput = Awaited<ReturnType<typeof posthog.environmentsWarehouseTablesPartialUpdate>>;
-
-const result: EnvironmentsWarehouseTablesPartialUpdateOutput = await posthog.environmentsWarehouseTablesPartialUpdate();
-
-// Result shape (from schema): { id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...
+posthog.warehouseTablesRetrieve(): Promise<{ id: string; deleted?: boolean | null; name: string; hogql_name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: ...>
 ```
 
-### `posthog.environmentsWarehouseTablesUpdate`
+<sub>`GET /api/projects/{project_id}/warehouse_tables/{id}/` · `warehouse_tables_retrieve`</sub>
 
-- **HTTP**: `PUT /api/environments/{environment_id}/warehouse_tables/{id}/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `environments_warehouse_tables_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.warehouseTablesPartialUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...`
-- OpenAPI response codes: `200`
+Create, Read, Update and Delete Warehouse Tables.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsWarehouseTablesUpdateInput = Parameters<typeof posthog.environmentsWarehouseTablesUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWarehouseTablesUpdateOutput = Awaited<ReturnType<typeof posthog.environmentsWarehouseTablesUpdate>>;
-
-const result: EnvironmentsWarehouseTablesUpdateOutput = await posthog.environmentsWarehouseTablesUpdate();
-
-// Result shape (from schema): { id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...
+posthog.warehouseTablesPartialUpdate(): Promise<{ id: string; deleted?: boolean | null; name: string; hogql_name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: ...>
 ```
 
-### `posthog.environmentsWarehouseTablesRefreshSchemaCreate`
+<sub>`PATCH /api/projects/{project_id}/warehouse_tables/{id}/` · `warehouse_tables_partial_update`</sub>
 
-- **HTTP**: `POST /api/environments/{environment_id}/warehouse_tables/{id}/refresh_schema/`
-- **What it does**: Refresh table schema from source
-- **OpenAPI operationId**: `environments_warehouse_tables_refresh_schema_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.warehouseTablesUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+Create, Read, Update and Delete Warehouse Tables.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsWarehouseTablesRefreshSchemaCreateInput = Parameters<typeof posthog.environmentsWarehouseTablesRefreshSchemaCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWarehouseTablesRefreshSchemaCreateOutput = Awaited<ReturnType<typeof posthog.environmentsWarehouseTablesRefreshSchemaCreate>>;
-
-const result: EnvironmentsWarehouseTablesRefreshSchemaCreateOutput = await posthog.environmentsWarehouseTablesRefreshSchemaCreate();
-
-// Result shape (from schema): unknown
+posthog.warehouseTablesUpdate(): Promise<{ id: string; deleted?: boolean | null; name: string; hogql_name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: ...>
 ```
 
-### `posthog.environmentsWarehouseTablesUpdateSchemaCreate`
+<sub>`PUT /api/projects/{project_id}/warehouse_tables/{id}/` · `warehouse_tables_update`</sub>
 
-- **HTTP**: `POST /api/environments/{environment_id}/warehouse_tables/{id}/update_schema/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `environments_warehouse_tables_update_schema_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.warehouseTablesRefreshSchemaCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+Refresh table schema from source
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsWarehouseTablesUpdateSchemaCreateInput = Parameters<typeof posthog.environmentsWarehouseTablesUpdateSchemaCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWarehouseTablesUpdateSchemaCreateOutput = Awaited<ReturnType<typeof posthog.environmentsWarehouseTablesUpdateSchemaCreate>>;
-
-const result: EnvironmentsWarehouseTablesUpdateSchemaCreateOutput = await posthog.environmentsWarehouseTablesUpdateSchemaCreate();
-
-// Result shape (from schema): unknown
+posthog.warehouseTablesRefreshSchemaCreate(): Promise<unknown>
 ```
 
-### `posthog.environmentsWarehouseTablesFileCreate`
+<sub>`POST /api/projects/{project_id}/warehouse_tables/{id}/refresh_schema/` · `warehouse_tables_refresh_schema_create`</sub>
 
-- **HTTP**: `POST /api/environments/{environment_id}/warehouse_tables/file/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `environments_warehouse_tables_file_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.warehouseTablesUpdateSchemaCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+Create, Read, Update and Delete Warehouse Tables.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsWarehouseTablesFileCreateInput = Parameters<typeof posthog.environmentsWarehouseTablesFileCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWarehouseTablesFileCreateOutput = Awaited<ReturnType<typeof posthog.environmentsWarehouseTablesFileCreate>>;
-
-const result: EnvironmentsWarehouseTablesFileCreateOutput = await posthog.environmentsWarehouseTablesFileCreate();
-
-// Result shape (from schema): unknown
+posthog.warehouseTablesUpdateSchemaCreate(): Promise<unknown>
 ```
 
-### `posthog.warehouseTablesList`
+<sub>`POST /api/projects/{project_id}/warehouse_tables/{id}/update_schema/` · `warehouse_tables_update_schema_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/warehouse_tables/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `warehouse_tables_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`, `search`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.warehouseTablesCreateFromUploadCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; c...`
-- OpenAPI response codes: `200`
+Create a self-managed warehouse table from an uploaded file
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type WarehouseTablesListInput = Parameters<typeof posthog.warehouseTablesList> extends [infer T, ...unknown[]] ? T : undefined;
-type WarehouseTablesListOutput = Awaited<ReturnType<typeof posthog.warehouseTablesList>>;
-
-const result: WarehouseTablesListOutput = await posthog.warehouseTablesList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; c...
+posthog.warehouseTablesCreateFromUploadCreate(): Promise<{ id: string; deleted?: boolean | null; name: string; hogql_name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: ...>
 ```
 
-### `posthog.warehouseTablesCreate`
+<sub>`POST /api/projects/{project_id}/warehouse_tables/create_from_upload/` · `warehouse_tables_create_from_upload_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/warehouse_tables/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `warehouse_tables_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.warehouseTablesFileCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...`
-- OpenAPI response codes: `201`
+Create, Read, Update and Delete Warehouse Tables.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type WarehouseTablesCreateInput = Parameters<typeof posthog.warehouseTablesCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type WarehouseTablesCreateOutput = Awaited<ReturnType<typeof posthog.warehouseTablesCreate>>;
-
-const result: WarehouseTablesCreateOutput = await posthog.warehouseTablesCreate();
-
-// Result shape (from schema): { id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...
+posthog.warehouseTablesFileCreate(): Promise<unknown>
 ```
 
-### `posthog.warehouseTablesDestroy`
+<sub>`POST /api/projects/{project_id}/warehouse_tables/file/` · `warehouse_tables_file_create`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/warehouse_tables/{id}/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `warehouse_tables_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.warehouseTablesUploadFileCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Upload a file for a new self-managed warehouse table
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type WarehouseTablesDestroyInput = Parameters<typeof posthog.warehouseTablesDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type WarehouseTablesDestroyOutput = Awaited<ReturnType<typeof posthog.warehouseTablesDestroy>>;
-
-const result: WarehouseTablesDestroyOutput = await posthog.warehouseTablesDestroy();
-
-// Result shape (from schema): unknown
+posthog.warehouseTablesUploadFileCreate(): Promise<{ upload_id: string; filename: string; file_format: string; size_bytes: number }>
 ```
 
-### `posthog.warehouseTablesRetrieve`
+<sub>`POST /api/projects/{project_id}/warehouse_tables/upload_file/` · `warehouse_tables_upload_file_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/warehouse_tables/{id}/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `warehouse_tables_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type WarehouseTablesRetrieveInput = Parameters<typeof posthog.warehouseTablesRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type WarehouseTablesRetrieveOutput = Awaited<ReturnType<typeof posthog.warehouseTablesRetrieve>>;
-
-const result: WarehouseTablesRetrieveOutput = await posthog.warehouseTablesRetrieve();
-
-// Result shape (from schema): { id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...
-```
-
-### `posthog.warehouseTablesPartialUpdate`
-
-- **HTTP**: `PATCH /api/projects/{project_id}/warehouse_tables/{id}/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `warehouse_tables_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type WarehouseTablesPartialUpdateInput = Parameters<typeof posthog.warehouseTablesPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type WarehouseTablesPartialUpdateOutput = Awaited<ReturnType<typeof posthog.warehouseTablesPartialUpdate>>;
-
-const result: WarehouseTablesPartialUpdateOutput = await posthog.warehouseTablesPartialUpdate();
-
-// Result shape (from schema): { id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...
-```
-
-### `posthog.warehouseTablesUpdate`
-
-- **HTTP**: `PUT /api/projects/{project_id}/warehouse_tables/{id}/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `warehouse_tables_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type WarehouseTablesUpdateInput = Parameters<typeof posthog.warehouseTablesUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type WarehouseTablesUpdateOutput = Awaited<ReturnType<typeof posthog.warehouseTablesUpdate>>;
-
-const result: WarehouseTablesUpdateOutput = await posthog.warehouseTablesUpdate();
-
-// Result shape (from schema): { id: string; deleted?: boolean | null; name: string; format: "CSV" | "CSVWithNames" | "Parquet" | "JSONEachRow" | "Delta" | "DeltaS3Wrapper"; created_by: { id: number; uuid: string; distinct_id?: string | null; first_n...
-```
-
-### `posthog.warehouseTablesRefreshSchemaCreate`
-
-- **HTTP**: `POST /api/projects/{project_id}/warehouse_tables/{id}/refresh_schema/`
-- **What it does**: Refresh table schema from source
-- **OpenAPI operationId**: `warehouse_tables_refresh_schema_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type WarehouseTablesRefreshSchemaCreateInput = Parameters<typeof posthog.warehouseTablesRefreshSchemaCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type WarehouseTablesRefreshSchemaCreateOutput = Awaited<ReturnType<typeof posthog.warehouseTablesRefreshSchemaCreate>>;
-
-const result: WarehouseTablesRefreshSchemaCreateOutput = await posthog.warehouseTablesRefreshSchemaCreate();
-
-// Result shape (from schema): unknown
-```
-
-### `posthog.warehouseTablesUpdateSchemaCreate`
-
-- **HTTP**: `POST /api/projects/{project_id}/warehouse_tables/{id}/update_schema/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `warehouse_tables_update_schema_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type WarehouseTablesUpdateSchemaCreateInput = Parameters<typeof posthog.warehouseTablesUpdateSchemaCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type WarehouseTablesUpdateSchemaCreateOutput = Awaited<ReturnType<typeof posthog.warehouseTablesUpdateSchemaCreate>>;
-
-const result: WarehouseTablesUpdateSchemaCreateOutput = await posthog.warehouseTablesUpdateSchemaCreate();
-
-// Result shape (from schema): unknown
-```
-
-### `posthog.warehouseTablesFileCreate`
-
-- **HTTP**: `POST /api/projects/{project_id}/warehouse_tables/file/`
-- **What it does**: Create, Read, Update and Delete Warehouse Tables.
-- **OpenAPI operationId**: `warehouse_tables_file_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type WarehouseTablesFileCreateInput = Parameters<typeof posthog.warehouseTablesFileCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type WarehouseTablesFileCreateOutput = Awaited<ReturnType<typeof posthog.warehouseTablesFileCreate>>;
-
-const result: WarehouseTablesFileCreateOutput = await posthog.warehouseTablesFileCreate();
-
-// Result shape (from schema): unknown
-```
-
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

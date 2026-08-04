@@ -137,7 +137,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets the specified draft.
@@ -357,7 +357,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets the specified label.
@@ -613,7 +613,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Modifies the labels on the specified messages.
@@ -649,7 +649,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Imports a message into only this user's mailbox, with standard email delivery scanning and classification similar to receiving via SMTP. This method doesn't perform SPF checks, so it might not work for some spam messages, such as those attempting to perform domain spoofing. This method does not send a message. Note: This function doesn't trigger forwarding rules or filters set up by the user.
@@ -785,7 +785,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets the specified message.
@@ -1151,7 +1151,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a client-side encryption identity configuration.
@@ -1426,7 +1426,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Lists the delegates for the specified account. This method is only available to service account clients that have been delegated domain-wide authority.
@@ -1522,7 +1522,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets the specified delegate. Note that a delegate user must be referred to by their primary email address, and not an email alias. This method is only available to service account clients that have been delegated domain-wide authority.
@@ -1652,7 +1652,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets a filter.
@@ -1780,7 +1780,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets the specified forwarding address.
@@ -2116,7 +2116,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets the specified send-as alias. Fails with an HTTP 404 error if the specified address is not a member of the collection.
@@ -2356,7 +2356,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets the specified S/MIME config for the specified send-as alias.
@@ -2424,7 +2424,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Sends a verification email to the specified send-as alias address. The verification status must be `pending`. This method is only available to service account clients that have been delegated domain-wide authority.
@@ -2456,7 +2456,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets vacation responder settings.
@@ -2562,7 +2562,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Lists the threads in the user's mailbox.
@@ -2634,7 +2634,7 @@ export type GoogleGmailClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets the specified thread.

@@ -1,4 +1,4 @@
-import type { BatchResponseSimplePublicObject, BatchResponseSimplePublicUpsertObject, CollectionResponseWithTotalSimplePublicObject, Error, FilterGroup, PublicAssociationsForObject, SimplePublicObject, SimplePublicObjectBatchInput, SimplePublicObjectBatchInputForCreate, SimplePublicObjectBatchInputUpsert, SimplePublicObjectId } from "./schemas.js";
+import type { BatchResponseSimplePublicObject, BatchResponseSimplePublicUpsertObject, CollectionResponseWithTotalSimplePublicObject, FilterGroup, PublicAssociationsForObject, SimplePublicObject, SimplePublicObjectBatchInput, SimplePublicObjectBatchInputForCreate, SimplePublicObjectBatchInputUpsert, SimplePublicObjectId } from "./schemas.js";
 
 export type PostOperations = {
   /**
@@ -15,7 +15,7 @@ export type PostOperations = {
    */
   archiveArchive: (input: {
     inputs: (SimplePublicObjectId)[];
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Create a batch of contacts
@@ -61,7 +61,7 @@ export type PostOperations = {
     idProperty?: string;
     /** The ID of the contact to permanently delete. */
     objectId: string;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Merge two contacts

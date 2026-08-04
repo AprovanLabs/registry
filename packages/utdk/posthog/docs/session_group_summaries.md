@@ -1,199 +1,72 @@
 # Session Group Summaries
 
-## Operations
-
-### `posthog.sessionGroupSummariesList`
-
-- **HTTP**: `GET /api/projects/{project_id}/session_group_summaries/`
-- **What it does**: API for retrieving and managing stored group session summaries.
-- **OpenAPI operationId**: `session_group_summaries_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; title: string; session_count: number; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; fir...`
-- OpenAPI response codes: `200`
+6 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type SessionGroupSummariesListInput = Parameters<typeof posthog.sessionGroupSummariesList> extends [infer T, ...unknown[]] ? T : undefined;
-type SessionGroupSummariesListOutput = Awaited<ReturnType<typeof posthog.sessionGroupSummariesList>>;
-
-const result: SessionGroupSummariesListOutput = await posthog.sessionGroupSummariesList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; title: string; session_count: number; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; fir...
 ```
 
-### `posthog.sessionGroupSummariesCreate`
+## `posthog.sessionGroupSummariesList`
 
-- **HTTP**: `POST /api/projects/{project_id}/session_group_summaries/`
-- **What it does**: API for retrieving and managing stored group session summaries.
-- **OpenAPI operationId**: `session_group_summaries_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; fir...`
-- OpenAPI response codes: `201`
+API for retrieving and managing stored group session summaries.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SessionGroupSummariesCreateInput = Parameters<typeof posthog.sessionGroupSummariesCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type SessionGroupSummariesCreateOutput = Awaited<ReturnType<typeof posthog.sessionGroupSummariesCreate>>;
-
-const result: SessionGroupSummariesCreateOutput = await posthog.sessionGroupSummariesCreate();
-
-// Result shape (from schema): { id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; fir...
+posthog.sessionGroupSummariesList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; title: string; session_count: number; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | ...>
 ```
 
-### `posthog.sessionGroupSummariesDestroy`
+<sub>`GET /api/projects/{project_id}/session_group_summaries/` · `session_group_summaries_list`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/session_group_summaries/{id}/`
-- **What it does**: API for retrieving and managing stored group session summaries.
-- **OpenAPI operationId**: `session_group_summaries_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.sessionGroupSummariesCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+API for retrieving and managing stored group session summaries.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SessionGroupSummariesDestroyInput = Parameters<typeof posthog.sessionGroupSummariesDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type SessionGroupSummariesDestroyOutput = Awaited<ReturnType<typeof posthog.sessionGroupSummariesDestroy>>;
-
-const result: SessionGroupSummariesDestroyOutput = await posthog.sessionGroupSummariesDestroy();
-
-// Result shape (from schema): unknown
+posthog.sessionGroupSummariesCreate(): Promise<{ id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | ...>
 ```
 
-### `posthog.sessionGroupSummariesRetrieve`
+<sub>`POST /api/projects/{project_id}/session_group_summaries/` · `session_group_summaries_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/session_group_summaries/{id}/`
-- **What it does**: API for retrieving and managing stored group session summaries.
-- **OpenAPI operationId**: `session_group_summaries_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.sessionGroupSummariesDestroy`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; fir...`
-- OpenAPI response codes: `200`
+API for retrieving and managing stored group session summaries.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SessionGroupSummariesRetrieveInput = Parameters<typeof posthog.sessionGroupSummariesRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type SessionGroupSummariesRetrieveOutput = Awaited<ReturnType<typeof posthog.sessionGroupSummariesRetrieve>>;
-
-const result: SessionGroupSummariesRetrieveOutput = await posthog.sessionGroupSummariesRetrieve();
-
-// Result shape (from schema): { id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; fir...
+posthog.sessionGroupSummariesDestroy(): Promise<unknown>
 ```
 
-### `posthog.sessionGroupSummariesPartialUpdate`
+<sub>`DELETE /api/projects/{project_id}/session_group_summaries/{id}/` · `session_group_summaries_destroy`</sub>
 
-- **HTTP**: `PATCH /api/projects/{project_id}/session_group_summaries/{id}/`
-- **What it does**: API for retrieving and managing stored group session summaries.
-- **OpenAPI operationId**: `session_group_summaries_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.sessionGroupSummariesRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; fir...`
-- OpenAPI response codes: `200`
+API for retrieving and managing stored group session summaries.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SessionGroupSummariesPartialUpdateInput = Parameters<typeof posthog.sessionGroupSummariesPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type SessionGroupSummariesPartialUpdateOutput = Awaited<ReturnType<typeof posthog.sessionGroupSummariesPartialUpdate>>;
-
-const result: SessionGroupSummariesPartialUpdateOutput = await posthog.sessionGroupSummariesPartialUpdate();
-
-// Result shape (from schema): { id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; fir...
+posthog.sessionGroupSummariesRetrieve(): Promise<{ id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | ...>
 ```
 
-### `posthog.sessionGroupSummariesUpdate`
+<sub>`GET /api/projects/{project_id}/session_group_summaries/{id}/` · `session_group_summaries_retrieve`</sub>
 
-- **HTTP**: `PUT /api/projects/{project_id}/session_group_summaries/{id}/`
-- **What it does**: API for retrieving and managing stored group session summaries.
-- **OpenAPI operationId**: `session_group_summaries_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.sessionGroupSummariesPartialUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; fir...`
-- OpenAPI response codes: `200`
+API for retrieving and managing stored group session summaries.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SessionGroupSummariesUpdateInput = Parameters<typeof posthog.sessionGroupSummariesUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type SessionGroupSummariesUpdateOutput = Awaited<ReturnType<typeof posthog.sessionGroupSummariesUpdate>>;
-
-const result: SessionGroupSummariesUpdateOutput = await posthog.sessionGroupSummariesUpdate();
-
-// Result shape (from schema): { id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; fir...
+posthog.sessionGroupSummariesPartialUpdate(): Promise<{ id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | ...>
 ```
 
+<sub>`PATCH /api/projects/{project_id}/session_group_summaries/{id}/` · `session_group_summaries_partial_update`</sub>
+
+## `posthog.sessionGroupSummariesUpdate`
+
+API for retrieving and managing stored group session summaries.
+
+```ts
+posthog.sessionGroupSummariesUpdate(): Promise<{ id: string; title: string; session_ids: (string)[]; summary: unknown; extra_summary_context: unknown; run_metadata: unknown; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | ...>
+```
+
+<sub>`PUT /api/projects/{project_id}/session_group_summaries/{id}/` · `session_group_summaries_update`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

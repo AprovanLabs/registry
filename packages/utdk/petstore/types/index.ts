@@ -69,7 +69,7 @@ export type PetstoreClient = {
   deletePet: (input: {
     /** Pet id to delete */
     petId: number;
-  }, options?: { headers?: { api_key?: string } }) => Promise<unknown>;
+  }, options?: { headers?: { api_key?: string } }) => Promise<undefined>;
 
   /**
    * Uploads an image.
@@ -114,7 +114,7 @@ export type PetstoreClient = {
   deleteOrder: (input: {
     /** ID of the order that needs to be deleted */
     orderId: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create user.
@@ -151,7 +151,7 @@ export type PetstoreClient = {
   /**
    * Logs out current logged in user session.
    */
-  logoutUser: () => Promise<unknown>;
+  logoutUser: () => Promise<undefined>;
 
   /**
    * Get user by user name.
@@ -174,7 +174,7 @@ export type PetstoreClient = {
     phone?: string;
     /** User Status */
     userStatus?: number;
-  }, options: { params: { username: string } }) => Promise<unknown>;
+  }, options: { params: { username: string } }) => Promise<undefined>;
 
   /**
    * Delete user resource.
@@ -182,7 +182,7 @@ export type PetstoreClient = {
   deleteUser: (input: {
     /** The name that needs to be deleted */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 };
 
 export * from "./schemas.js";

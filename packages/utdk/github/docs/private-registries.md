@@ -94,7 +94,7 @@ github.privateRegistries.deleteOrgPrivateRegistry(input: {
   org: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/private-registries/{secret_name}` · `private-registries/delete-org-private-registry`</sub>
@@ -172,7 +172,7 @@ github.privateRegistries.updateOrgPrivateRegistry(input: {
   org: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PATCH /orgs/{org}/private-registries/{secret_name}` · `private-registries/update-org-private-registry`</sub>

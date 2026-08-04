@@ -48,7 +48,7 @@ export type ReactionsOperations = {
     comment_id: number;
     /** The unique identifier of the reaction. */
     reaction_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List reactions for an issue comment
@@ -97,7 +97,7 @@ export type ReactionsOperations = {
     comment_id: number;
     /** The unique identifier of the reaction. */
     reaction_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List reactions for an issue
@@ -146,7 +146,7 @@ export type ReactionsOperations = {
     issue_number: number;
     /** The unique identifier of the reaction. */
     reaction_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List reactions for a pull request review comment
@@ -195,7 +195,7 @@ export type ReactionsOperations = {
     comment_id: number;
     /** The unique identifier of the reaction. */
     reaction_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List reactions for a release
@@ -244,5 +244,5 @@ export type ReactionsOperations = {
     release_id: number;
     /** The unique identifier of the reaction. */
     reaction_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 };

@@ -1,4 +1,4 @@
-import type { AnnouncementBannerConfiguration, Application, ApplicationProperty, ApplicationRole, AssociationContextObject, Attachment, AttachmentArchiveImpl, AttachmentArchiveMetadataReadable, AttachmentMetadata, AttachmentSettings, AuditRecords, AutoCompleteSuggestions, AvailableDashboardGadgetsResponse, Avatar, AvatarUrlsBean, Avatars, BulkChangeOwnerDetails, BulkChangelogResponseBean, BulkEditGetFields, BulkEditShareableEntityResponse, BulkIssueIsWatching, BulkIssueResults, BulkOperationProgress, BulkPermissionGrants, BulkProjectPermissions, BulkTransitionGetAvailableTransitions, BulkTransitionSubmitInput, BulkWorklogKeyResponseBean, ChangedWorklogs, ColumnItem, Comment, ComponentIssuesCount, Configuration, ConnectCustomFieldValue, ConnectModule, ConnectModules, ContainerForProjectFeatures, ContainerForRegisteredWebhooks, ContainerOfWorkflowSchemeAssociations, ContextualConfiguration, ConvertedJqlQueries, CreateCrossProjectReleaseRequest, CreateCustomFieldContext, CreateCustomFieldRequest, CreateExclusionRulesRequest, CreateFieldAssociationSchemeResponse, CreateIssueSourceRequest, CreatePermissionRequest, CreateSchedulingRequest, CreatedIssue, CreatedIssues, CustomFieldContextDefaultValue, CustomFieldCreatedContextOptionsList, CustomFieldOption, CustomFieldOptionCreate, CustomFieldOptionUpdate, CustomFieldReplacement, CustomFieldUpdatedContextOptionsList, CustomFieldValueUpdate, CustomTemplateOptions, CustomTemplateRequestDto, CustomTemplatesProjectDetails, Dashboard, DashboardGadget, DashboardGadgetPosition, DashboardGadgetResponse, DataClassificationLevelsBean, DateRangeFilterRequest, DefaultLevelValue, DefaultShareScope, DefaultWorkflow, DefaultWorkflowEditorResponse, DeleteFieldAssociationSchemeResponse, DocumentVersion, EntityProperty, EntityPropertyDetails, ErrorCollection, ErrorMessage, ExportArchivedIssuesTaskProgressResponse, FailedWebhooks, FieldConfiguration, FieldConfigurationItem, FieldConfigurationScheme, FieldConfigurationToIssueTypeMapping, FieldDetails, FieldIdentifierObject, FieldSchemeToFieldsResponse, FieldSchemeToProjectsRequest, FieldSchemeToProjectsResponse, FieldUpdateOperation, Filter, FilterSubscriptionsList, ForgePanelProjectPinAsyncResponse, FoundGroups, FoundUsers, FoundUsersAndGroups, GetAtlassianTeamResponse, GetFieldAssociationParametersResponse, GetFieldAssociationSchemeByIdResponse, GetPlanOnlyTeamResponse, GetPlanResponse, Group, GroupName, HistoryMetadata, IssueArchivalSyncResponse, IssueBean, IssueCreateMetadata, IssueEntityPropertiesForMultiUpdate, IssueEvent, IssueFieldOption, IssueFieldOptionConfiguration, IssueFilterForBulkPropertySet, IssueLimitReportResponseBean, IssueLink, IssueLinkType, IssueLinkTypes, IssueMatches, IssuePickerSuggestions, IssueTransition, IssueTypeDetails, IssueTypeSchemeId, IssueTypeScreenSchemeId, IssueTypeScreenSchemeMapping, IssueTypeWithStatus, IssueTypeWorkflowMapping, IssueTypesWorkflowMapping, IssueUpdateDetails, IssueUpdateMetadata, JExpEvaluateJiraExpressionResultBean, JiraExpressionEvalContextBean, JiraExpressionEvaluateContextBean, JiraExpressionResult, JiraExpressionsAnalysis, JiraIssueFields, JiraStatus, JqlCountResultsBean, JqlFunctionPrecomputationGetByIdResponse, JqlFunctionPrecomputationUpdateBean, JqlFunctionPrecomputationUpdateResponse, JqlQueryToSanitize, JqlReferenceData, JsonNode, License, LicenseMetric, LinkedIssue, Locale, MappingsByIssueTypeOverride, MappingsByWorkflow, MinimalFieldSchemeToFieldsResponse, MultipartFile, MultipleCustomFieldValuesUpdate, NotificationRecipients, NotificationRecipientsRestrictions, NotificationScheme, NotificationSchemeEventDetails, NotificationSchemeId, OldToNewSecurityLevelMappingsBean, OperationMessage, PageBean2ComponentJsonBean, PageBean2FieldAssociationSchemeFieldSearchResult, PageBean2FieldAssociationSchemeProjectSearchResult, PageBean2GetFieldAssociationSchemeResponse, PageBean2GetProjectsWithFieldSchemesResponse, PageBean2JqlFunctionPrecomputationBean, PageBean2ProjectFieldBean, PageBeanBulkContextualConfiguration, PageBeanChangelog, PageBeanComment, PageBeanComponentWithIssueCount, PageBeanContext, PageBeanContextForProjectAndIssueType, PageBeanContextualConfiguration, PageBeanCustomFieldContext, PageBeanCustomFieldContextDefaultValue, PageBeanCustomFieldContextOption, PageBeanCustomFieldContextProjectMapping, PageBeanDashboard, PageBeanField, PageBeanFieldConfigurationDetails, PageBeanFieldConfigurationIssueTypeItem, PageBeanFieldConfigurationItem, PageBeanFieldConfigurationScheme, PageBeanFieldConfigurationSchemeProjects, PageBeanFieldProjectAssociation, PageBeanFilterDetails, PageBeanGroupDetails, PageBeanIssueFieldOption, PageBeanIssueSecurityLevelMember, PageBeanIssueSecuritySchemeToProjectMapping, PageBeanIssueTypeScheme, PageBeanIssueTypeSchemeMapping, PageBeanIssueTypeSchemeProjects, PageBeanIssueTypeScreenScheme, PageBeanIssueTypeScreenSchemeItem, PageBeanIssueTypeScreenSchemesProjects, PageBeanIssueTypeToContextMapping, PageBeanNotificationScheme, PageBeanNotificationSchemeAndProjectMappingJsonBean, PageBeanPriority, PageBeanPrioritySchemeWithPaginatedPrioritiesAndProjects, PageBeanPriorityWithSequence, PageBeanProject, PageBeanProjectDetails, PageBeanResolutionJsonBean, PageBeanScreen, PageBeanScreenScheme, PageBeanScreenWithTab, PageBeanSecurityLevel, PageBeanSecurityLevelMember, PageBeanSecuritySchemeWithProjects, PageBeanString, PageBeanUiModificationDetails, PageBeanUser, PageBeanUserDetails, PageBeanUserKey, PageBeanVersion, PageBeanWebhook, PageBeanWorkflow, PageBeanWorkflowScheme, PageBeanWorkflowTransitionRules, PageOfChangelogs, PageOfComments, PageOfCreateMetaIssueTypeWithField, PageOfCreateMetaIssueTypes, PageOfDashboards, PageOfStatuses, PageOfWorklogs, PageWithCursorGetPlanResponseForPage, PageWithCursorGetTeamResponseForPage, ParameterRemovalDetails, ParsedJqlQueries, PermissionDetails, PermissionGrant, PermissionGrants, PermissionHolder, PermissionScheme, PermissionSchemes, Permissions, PermittedProjects, Priority, PriorityId, PriorityMapping, PrioritySchemeId, Project, ProjectAndIssueTypePair, ProjectAvatars, ProjectCategory, ProjectComponent, ProjectDataPolicies, ProjectEmailAddress, ProjectIdentifiers, ProjectIssueSecurityLevels, ProjectIssueTypeHierarchy, ProjectIssueTypeMapping, ProjectPinAction, ProjectRole, ProjectRoleDetails, ProjectTemplateModel, ProjectType, PropertyKeys, RedactionJobStatusResponse, RemoteIssueLink, RemoteIssueLinkIdentifies, RemoteObject, RemoveFieldAssociationsRequestItem, Resolution, ResolutionId, SanitizedJqlQueries, SaveProjectTemplateRequest, SaveTemplateResponse, Scope, Screen, ScreenSchemeId, ScreenTypes, ScreenableField, ScreenableTab, SearchAndReconcileResults, SearchResults, SecurityLevel, SecurityScheme, SecuritySchemeId, SecuritySchemeLevelBean, SecuritySchemeLevelMemberBean, SecuritySchemes, ServerInformation, ServiceRegistry, SharePermission, SimpleLink, SimpleListWrapperApplicationRole, SimpleListWrapperGroupName, SingleRedactionRequest, StatusCategory, StatusCreate, StatusDetails, StatusMapping, StatusProjectIssueTypeUsageDto, StatusProjectUsageDto, StatusScope, StatusUpdate, StatusWorkflowUsageDto, StreamingResponseBody, StringList, SubmittedBulkOperation, SuggestedMappingsForPrioritiesRequestBean, SuggestedMappingsForProjectsRequestBean, SystemAvatars, TargetToSourcesMapping, TaskProgress, TaskProgressBeanObject, TaskProgressBeanRemoveOptionFromIssuesResult, TimeTrackingConfiguration, TimeTrackingProvider, Transitions, UiModificationContextDetails, UiModificationIdentifiers, UnrestrictedUserEmail, UpdateFieldAssociationSchemeResponse, UpdateFieldAssociationsRequestItem, UpdateFieldSchemeParametersRequest, UpdateFieldSchemeParametersResponse, UpdatePrioritiesInSchemeRequestBean, UpdatePrioritySchemeResponseBean, UpdateProjectsInSchemeRequestBean, UpdateScreenTypes, UpdatedProjectCategory, User, UserDetails, UserList, UserMigrationBean, ValidationOptionsForCreate, ValidationOptionsForUpdate, Version, VersionApprover, VersionIssueCounts, VersionIssuesStatus, VersionRelatedWork, VersionUnresolvedIssuesCount, Visibility, Votes, Watchers, WebhookDetails, WebhooksExpirationDate, WorkflowCapabilities, WorkflowCreate, WorkflowCreateRequest, WorkflowCreateResponse, WorkflowHistoryListResponseDto, WorkflowHistoryReadResponseDto, WorkflowPreviewResponse, WorkflowProjectIssueTypeUsageDto, WorkflowProjectUsageDto, WorkflowReadResponse, WorkflowRulesSearchDetails, WorkflowScheme, WorkflowSchemeAssociation, WorkflowSchemeProjectUsageDto, WorkflowSchemeReadResponse, WorkflowSchemeUpdateRequiredMappingsResponse, WorkflowSchemeUsageDto, WorkflowScope, WorkflowSearchResponse, WorkflowStatusUpdate, WorkflowTransitionProperty, WorkflowTransitionRules, WorkflowTransitionRulesDetails, WorkflowTransitionRulesUpdateErrors, WorkflowUpdate, WorkflowUpdateRequest, WorkflowUpdateResponse, WorkflowValidationErrorList, Worklog, WorklogCompositeKey, WorkspaceDataPolicy } from "./schemas.js";
+import type { AnnouncementBannerConfiguration, Application, ApplicationProperty, ApplicationRole, AssociationContextObject, Attachment, AttachmentArchiveImpl, AttachmentArchiveMetadataReadable, AttachmentMetadata, AttachmentSettings, AuditRecords, AutoCompleteSuggestions, AvailableDashboardGadgetsResponse, Avatar, AvatarUrlsBean, Avatars, BulkChangeOwnerDetails, BulkChangelogResponseBean, BulkEditGetFields, BulkEditShareableEntityResponse, BulkIssueIsWatching, BulkIssueResults, BulkOperationProgress, BulkPermissionGrants, BulkProjectPermissions, BulkTransitionGetAvailableTransitions, BulkTransitionSubmitInput, BulkWorklogKeyResponseBean, ChangedWorklogs, ColumnItem, Comment, ComponentIssuesCount, Configuration, ConnectCustomFieldValue, ConnectModule, ConnectModules, ContainerForProjectFeatures, ContainerForRegisteredWebhooks, ContainerOfWorkflowSchemeAssociations, ContextualConfiguration, ConvertedJqlQueries, CreateCrossProjectReleaseRequest, CreateCustomFieldContext, CreateCustomFieldRequest, CreateExclusionRulesRequest, CreateFieldAssociationSchemeResponse, CreateIssueSourceRequest, CreatePermissionRequest, CreateSchedulingRequest, CreatedIssue, CreatedIssues, CustomFieldContextDefaultValue, CustomFieldCreatedContextOptionsList, CustomFieldOption, CustomFieldOptionCreate, CustomFieldOptionUpdate, CustomFieldReplacement, CustomFieldUpdatedContextOptionsList, CustomFieldValueUpdate, CustomTemplateOptions, CustomTemplateRequestDto, CustomTemplatesProjectDetails, Dashboard, DashboardGadget, DashboardGadgetPosition, DashboardGadgetResponse, DataClassificationLevelsBean, DateRangeFilterRequest, DefaultLevelValue, DefaultShareScope, DefaultWorkflow, DefaultWorkflowEditorResponse, DeleteFieldAssociationSchemeResponse, DocumentVersion, EntityProperty, EntityPropertyDetails, ErrorCollection, ExportArchivedIssuesTaskProgressResponse, FailedWebhooks, FieldConfiguration, FieldConfigurationItem, FieldConfigurationScheme, FieldConfigurationToIssueTypeMapping, FieldDetails, FieldIdentifierObject, FieldSchemeToFieldsResponse, FieldSchemeToProjectsRequest, FieldSchemeToProjectsResponse, FieldUpdateOperation, Filter, FilterSubscriptionsList, ForgePanelProjectPinAsyncResponse, FoundGroups, FoundUsers, FoundUsersAndGroups, GetAtlassianTeamResponse, GetFieldAssociationParametersResponse, GetFieldAssociationSchemeByIdResponse, GetPlanOnlyTeamResponse, GetPlanResponse, Group, GroupName, HistoryMetadata, IssueArchivalSyncResponse, IssueBean, IssueCreateMetadata, IssueEntityPropertiesForMultiUpdate, IssueEvent, IssueFieldOption, IssueFieldOptionConfiguration, IssueFilterForBulkPropertySet, IssueLimitReportResponseBean, IssueLink, IssueLinkType, IssueLinkTypes, IssueMatches, IssuePickerSuggestions, IssueTransition, IssueTypeDetails, IssueTypeSchemeId, IssueTypeScreenSchemeId, IssueTypeScreenSchemeMapping, IssueTypeWithStatus, IssueTypeWorkflowMapping, IssueTypesWorkflowMapping, IssueUpdateDetails, IssueUpdateMetadata, JExpEvaluateJiraExpressionResultBean, JiraExpressionEvalContextBean, JiraExpressionEvaluateContextBean, JiraExpressionResult, JiraExpressionsAnalysis, JiraIssueFields, JiraStatus, JqlCountResultsBean, JqlFunctionPrecomputationGetByIdResponse, JqlFunctionPrecomputationUpdateBean, JqlFunctionPrecomputationUpdateResponse, JqlQueryToSanitize, JqlReferenceData, JsonNode, License, LicenseMetric, LinkedIssue, Locale, MappingsByIssueTypeOverride, MappingsByWorkflow, MinimalFieldSchemeToFieldsResponse, MultipartFile, MultipleCustomFieldValuesUpdate, NotificationRecipients, NotificationRecipientsRestrictions, NotificationScheme, NotificationSchemeEventDetails, NotificationSchemeId, OldToNewSecurityLevelMappingsBean, OperationMessage, PageBean2ComponentJsonBean, PageBean2FieldAssociationSchemeFieldSearchResult, PageBean2FieldAssociationSchemeProjectSearchResult, PageBean2GetFieldAssociationSchemeResponse, PageBean2GetProjectsWithFieldSchemesResponse, PageBean2JqlFunctionPrecomputationBean, PageBean2ProjectFieldBean, PageBeanBulkContextualConfiguration, PageBeanChangelog, PageBeanComment, PageBeanComponentWithIssueCount, PageBeanContext, PageBeanContextForProjectAndIssueType, PageBeanContextualConfiguration, PageBeanCustomFieldContext, PageBeanCustomFieldContextDefaultValue, PageBeanCustomFieldContextOption, PageBeanCustomFieldContextProjectMapping, PageBeanDashboard, PageBeanField, PageBeanFieldConfigurationDetails, PageBeanFieldConfigurationIssueTypeItem, PageBeanFieldConfigurationItem, PageBeanFieldConfigurationScheme, PageBeanFieldConfigurationSchemeProjects, PageBeanFieldProjectAssociation, PageBeanFilterDetails, PageBeanGroupDetails, PageBeanIssueFieldOption, PageBeanIssueSecurityLevelMember, PageBeanIssueSecuritySchemeToProjectMapping, PageBeanIssueTypeScheme, PageBeanIssueTypeSchemeMapping, PageBeanIssueTypeSchemeProjects, PageBeanIssueTypeScreenScheme, PageBeanIssueTypeScreenSchemeItem, PageBeanIssueTypeScreenSchemesProjects, PageBeanIssueTypeToContextMapping, PageBeanNotificationScheme, PageBeanNotificationSchemeAndProjectMappingJsonBean, PageBeanPriority, PageBeanPrioritySchemeWithPaginatedPrioritiesAndProjects, PageBeanPriorityWithSequence, PageBeanProject, PageBeanProjectDetails, PageBeanResolutionJsonBean, PageBeanScreen, PageBeanScreenScheme, PageBeanScreenWithTab, PageBeanSecurityLevel, PageBeanSecurityLevelMember, PageBeanSecuritySchemeWithProjects, PageBeanString, PageBeanUiModificationDetails, PageBeanUser, PageBeanUserDetails, PageBeanUserKey, PageBeanVersion, PageBeanWebhook, PageBeanWorkflow, PageBeanWorkflowScheme, PageBeanWorkflowTransitionRules, PageOfChangelogs, PageOfComments, PageOfCreateMetaIssueTypeWithField, PageOfCreateMetaIssueTypes, PageOfDashboards, PageOfStatuses, PageOfWorklogs, PageWithCursorGetPlanResponseForPage, PageWithCursorGetTeamResponseForPage, ParameterRemovalDetails, ParsedJqlQueries, PermissionDetails, PermissionGrant, PermissionGrants, PermissionHolder, PermissionScheme, PermissionSchemes, Permissions, PermittedProjects, Priority, PriorityId, PriorityMapping, PrioritySchemeId, Project, ProjectAndIssueTypePair, ProjectAvatars, ProjectCategory, ProjectComponent, ProjectDataPolicies, ProjectEmailAddress, ProjectIdentifiers, ProjectIssueSecurityLevels, ProjectIssueTypeHierarchy, ProjectIssueTypeMapping, ProjectPinAction, ProjectRole, ProjectRoleDetails, ProjectTemplateModel, ProjectType, PropertyKeys, RedactionJobStatusResponse, RemoteIssueLink, RemoteIssueLinkIdentifies, RemoteObject, RemoveFieldAssociationsRequestItem, Resolution, ResolutionId, SanitizedJqlQueries, SaveProjectTemplateRequest, SaveTemplateResponse, Scope, Screen, ScreenSchemeId, ScreenTypes, ScreenableField, ScreenableTab, SearchAndReconcileResults, SearchResults, SecurityLevel, SecurityScheme, SecuritySchemeId, SecuritySchemeLevelBean, SecuritySchemeLevelMemberBean, SecuritySchemes, ServerInformation, ServiceRegistry, SharePermission, SimpleLink, SimpleListWrapperApplicationRole, SimpleListWrapperGroupName, SingleRedactionRequest, StatusCategory, StatusCreate, StatusDetails, StatusMapping, StatusProjectIssueTypeUsageDto, StatusProjectUsageDto, StatusScope, StatusUpdate, StatusWorkflowUsageDto, StreamingResponseBody, StringList, SubmittedBulkOperation, SuggestedMappingsForPrioritiesRequestBean, SuggestedMappingsForProjectsRequestBean, SystemAvatars, TargetToSourcesMapping, TaskProgress, TaskProgressBeanObject, TimeTrackingConfiguration, TimeTrackingProvider, Transitions, UiModificationContextDetails, UiModificationIdentifiers, UnrestrictedUserEmail, UpdateFieldAssociationSchemeResponse, UpdateFieldAssociationsRequestItem, UpdateFieldSchemeParametersRequest, UpdateFieldSchemeParametersResponse, UpdatePrioritiesInSchemeRequestBean, UpdatePrioritySchemeResponseBean, UpdateProjectsInSchemeRequestBean, UpdateScreenTypes, UpdatedProjectCategory, User, UserDetails, UserList, UserMigrationBean, ValidationOptionsForCreate, ValidationOptionsForUpdate, Version, VersionApprover, VersionIssueCounts, VersionIssuesStatus, VersionRelatedWork, VersionUnresolvedIssuesCount, Visibility, Votes, Watchers, WebhookDetails, WebhooksExpirationDate, WorkflowCapabilities, WorkflowCreate, WorkflowCreateRequest, WorkflowCreateResponse, WorkflowHistoryListResponseDto, WorkflowHistoryReadResponseDto, WorkflowPreviewResponse, WorkflowProjectIssueTypeUsageDto, WorkflowProjectUsageDto, WorkflowReadResponse, WorkflowRulesSearchDetails, WorkflowScheme, WorkflowSchemeAssociation, WorkflowSchemeProjectUsageDto, WorkflowSchemeReadResponse, WorkflowSchemeUpdateRequiredMappingsResponse, WorkflowSchemeUsageDto, WorkflowScope, WorkflowSearchResponse, WorkflowStatusUpdate, WorkflowTransitionProperty, WorkflowTransitionRules, WorkflowTransitionRulesDetails, WorkflowTransitionRulesUpdateErrors, WorkflowUpdate, WorkflowUpdateRequest, WorkflowUpdateResponse, WorkflowValidationErrorList, Worklog, WorklogCompositeKey, WorkspaceDataPolicy } from "./schemas.js";
 
 export type JiraClient = {
   /**
@@ -147,7 +147,7 @@ export type JiraClient = {
     id: string;
     /** Whether a redirect is provided for the attachment download. Clients that do not automatically follow redirects can set this to `false` to avoid making multiple requests to download the attachment. */
     redirect?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get Jira attachment settings
@@ -168,7 +168,7 @@ export type JiraClient = {
     width?: number;
     /** The maximum height to scale the thumbnail to. */
     height?: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete attachment
@@ -176,7 +176,7 @@ export type JiraClient = {
   removeAttachment: (input: {
     /** The ID of the attachment. */
     id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get attachment metadata
@@ -370,7 +370,7 @@ export type JiraClient = {
     commentId: string;
     /** The key of the property. */
     propertyKey: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get comment property
@@ -455,7 +455,7 @@ export type JiraClient = {
     id: string;
     /** The ID of the component to replace the deleted component. If this value is null no replacement is made. */
     moveIssuesTo?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get component
@@ -903,7 +903,7 @@ export type JiraClient = {
   deleteDashboard: (input: {
     /** The ID of the dashboard. */
     id: string;
-  }) => Promise<ErrorCollection>;
+  }) => Promise<undefined>;
 
   /**
    * Get dashboard
@@ -1322,7 +1322,7 @@ export type JiraClient = {
     contextId: number;
     /** The ID of the option to delete. */
     optionId: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Replace custom field options
@@ -1338,7 +1338,7 @@ export type JiraClient = {
     replaceWith?: number;
     /** A JQL query that specifies the issues to be updated. For example, *project=10000*. */
     jql?: string;
-  }) => Promise<TaskProgressBeanRemoveOptionFromIssuesResult>;
+  }) => Promise<unknown>;
 
   /**
    * Assign custom field context to projects
@@ -1497,7 +1497,7 @@ export type JiraClient = {
     overrideScreenSecurity?: boolean;
     /** Whether screen security is overridden to enable uneditable fields to be edited. Available to Connect and Forge app users with *Administer Jira* [global permission](https://confluence.atlassian.com/x/x4dKLg). */
     overrideEditableFlag?: boolean;
-  }) => Promise<TaskProgressBeanRemoveOptionFromIssuesResult>;
+  }) => Promise<unknown>;
 
   /**
    * Delete custom field
@@ -1505,7 +1505,7 @@ export type JiraClient = {
   deleteCustomField: (input: {
     /** The ID of a custom field. */
     id: string;
-  }) => Promise<TaskProgressBeanObject>;
+  }) => Promise<unknown>;
 
   /**
    * Restore custom field from trash
@@ -1796,7 +1796,7 @@ export type JiraClient = {
   deleteFilter: (input: {
     /** The ID of the filter to delete. */
     id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get filter
@@ -1856,7 +1856,7 @@ export type JiraClient = {
   resetColumns: (input: {
     /** The ID of the filter. */
     id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get columns
@@ -1943,7 +1943,7 @@ export type JiraClient = {
     id: number;
     /** The ID of the share permission. */
     permissionId: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get share permission
@@ -1976,7 +1976,7 @@ export type JiraClient = {
     swapGroup?: string;
     /** The ID of the group to transfer restrictions to. Only comments and worklogs are transferred. If restrictions are not transferred, comments and worklogs are inaccessible after the deletion. This parameter cannot be used with the `swapGroup` parameter. */
     swapGroupId?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get group
@@ -2045,7 +2045,7 @@ export type JiraClient = {
     username?: string;
     /** The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*. */
     accountId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add user to group
@@ -2244,7 +2244,7 @@ export type JiraClient = {
     entitiesIds?: (number)[];
     /** A list of entity property keys and values. */
     properties?: { [key: string]: JsonNode | undefined };
-  }) => Promise<ErrorCollection>;
+  }) => Promise<unknown>;
 
   /**
    * Bulk set issue properties by issue
@@ -2252,7 +2252,7 @@ export type JiraClient = {
   bulkSetIssuePropertiesByIssue: (input: {
     /** A list of issue IDs and their respective properties. */
     issues?: (IssueEntityPropertiesForMultiUpdate)[];
-  }) => Promise<ErrorCollection>;
+  }) => Promise<unknown>;
 
   /**
    * Bulk delete issue property
@@ -2264,7 +2264,7 @@ export type JiraClient = {
     entityIds?: (number)[];
     /** The key of the property. */
     propertyKey: string;
-  }) => Promise<ErrorCollection>;
+  }) => Promise<unknown>;
 
   /**
    * Bulk set issue property
@@ -2278,7 +2278,7 @@ export type JiraClient = {
     value?: unknown;
     /** The key of the property. The maximum length is 255 characters. */
     propertyKey: string;
-  }) => Promise<ErrorCollection>;
+  }) => Promise<unknown>;
 
   /**
    * Unarchive issue(s) by issue keys/ID
@@ -2303,7 +2303,7 @@ export type JiraClient = {
     issueIdOrKey: string;
     /** Whether the issue's subtasks are deleted when the issue is deleted. */
     deleteSubtasks?: "true" | "false";
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue
@@ -2484,7 +2484,7 @@ export type JiraClient = {
     issueIdOrKey: string;
     /** The ID of the comment. */
     id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get comment
@@ -2584,7 +2584,7 @@ export type JiraClient = {
     issueIdOrKey: string;
     /** The key of the property. */
     propertyKey: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue property
@@ -2615,7 +2615,7 @@ export type JiraClient = {
     issueIdOrKey: string;
     /** The global ID of a remote issue link. */
     globalId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get remote issue links
@@ -2652,7 +2652,7 @@ export type JiraClient = {
     issueIdOrKey: string;
     /** The ID of a remote issue link. */
     linkId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get remote issue link by ID
@@ -2726,7 +2726,7 @@ export type JiraClient = {
   removeVote: (input: {
     /** The ID or key of the issue. */
     issueIdOrKey: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get votes
@@ -2754,7 +2754,7 @@ export type JiraClient = {
     username?: string;
     /** The account ID of the user, which uniquely identifies the user across all Atlassian products. For example, *5b10ac8d82e05b22cc7d4ef5*. Required. */
     accountId?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue watchers
@@ -2785,7 +2785,7 @@ export type JiraClient = {
     adjustEstimate?: "leave" | "auto";
     /** Whether the work log entries should be removed to the issue even if the issue is not editable, because jira.issue.editable set to false or missing. For example, the issue is closed. Connect and Forge app users with admin permission can use this flag. */
     overrideEditableFlag?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue worklogs
@@ -2864,7 +2864,7 @@ export type JiraClient = {
     adjustEstimate?: "leave" | "auto";
     /** Whether the work log entry should be moved to and from the issues even if the issues are not editable, because jira.issue.editable set to false or missing. For example, the issue is closed. Connect and Forge app users with admin permission can use this flag. */
     overrideEditableFlag?: boolean;
-  }, options: { params: { issueIdOrKey: string } }) => Promise<unknown>;
+  }, options: { params: { issueIdOrKey: string } }) => Promise<undefined>;
 
   /**
    * Delete worklog
@@ -2884,7 +2884,7 @@ export type JiraClient = {
     increaseBy?: string;
     /** Whether the work log entry should be added to the issue even if the issue is not editable, because jira.issue.editable set to false or missing. For example, the issue is closed. Connect and Forge app users with admin permission can use this flag. */
     overrideEditableFlag?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get worklog
@@ -2963,7 +2963,7 @@ export type JiraClient = {
     worklogId: string;
     /** The key of the property. */
     propertyKey: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get worklog property
@@ -3006,7 +3006,7 @@ export type JiraClient = {
   deleteIssueLink: (input: {
     /** The ID of the issue link. */
     linkId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue link
@@ -3043,7 +3043,7 @@ export type JiraClient = {
   deleteIssueLinkType: (input: {
     /** The ID of the issue link type. */
     issueLinkTypeId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue link type
@@ -3172,7 +3172,7 @@ export type JiraClient = {
     projectId: string;
     /** The ID of the issue security scheme. Providing null will clear the association with the issue security scheme. */
     schemeId: string;
-  }) => Promise<TaskProgressBeanObject>;
+  }) => Promise<unknown>;
 
   /**
    * Search issue security schemes
@@ -3252,7 +3252,7 @@ export type JiraClient = {
     levelId: string;
     /** The ID of the issue security level that will replace the currently selected level. */
     replaceWith?: string;
-  }) => Promise<TaskProgressBeanObject>;
+  }) => Promise<unknown>;
 
   /**
    * Update issue security level
@@ -3330,7 +3330,7 @@ export type JiraClient = {
     id: string;
     /** The ID of the replacement issue type. */
     alternativeIssueTypeId?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue type
@@ -3393,7 +3393,7 @@ export type JiraClient = {
     issueTypeId: string;
     /** The key of the property. Use [Get issue type property keys](#api-rest-api-3-issuetype-issueTypeId-properties-get) to get a list of all issue type property keys. */
     propertyKey: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue type property
@@ -3810,7 +3810,7 @@ export type JiraClient = {
   removePreference: (input: {
     /** The key of the preference. */
     key: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get preference
@@ -4007,7 +4007,7 @@ export type JiraClient = {
   deletePermissionScheme: (input: {
     /** The ID of the permission scheme being deleted. */
     schemeId: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get permission scheme
@@ -4079,7 +4079,7 @@ export type JiraClient = {
     schemeId: number;
     /** The ID of the permission grant to delete. */
     permissionId: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get permission scheme grant
@@ -4358,7 +4358,7 @@ export type JiraClient = {
   deletePriority: (input: {
     /** The ID of the issue priority. */
     id: string;
-  }) => Promise<TaskProgressBeanObject>;
+  }) => Promise<unknown>;
 
   /**
    * Get priority
@@ -4697,7 +4697,7 @@ export type JiraClient = {
     projectIdOrKey: string;
     /** Whether this project is placed in the Jira recycle bin where it will be available for restoration. */
     enableUndo?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get project
@@ -4786,7 +4786,7 @@ export type JiraClient = {
     projectIdOrKey: string;
     /** The ID of the avatar. */
     id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Load project avatar
@@ -4879,7 +4879,7 @@ export type JiraClient = {
   deleteProjectAsynchronously: (input: {
     /** The project ID or project key (case sensitive). */
     projectIdOrKey: string;
-  }) => Promise<TaskProgressBeanObject>;
+  }) => Promise<unknown>;
 
   /**
    * Get project features
@@ -4917,7 +4917,7 @@ export type JiraClient = {
     projectIdOrKey: string;
     /** The project property key. Use [Get project property keys](#api-rest-api-3-project-projectIdOrKey-properties-get) to get a list of all project property keys. */
     propertyKey: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get project property
@@ -4970,7 +4970,7 @@ export type JiraClient = {
     group?: string;
     /** The ID of the group to remove from the project role. This parameter cannot be used with the `group` parameter. */
     groupId?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get project role for project
@@ -5164,7 +5164,7 @@ export type JiraClient = {
   removeProjectCategory: (input: {
     /** ID of the project category to delete. */
     id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get project category by ID
@@ -5301,7 +5301,7 @@ export type JiraClient = {
     id: string;
     /** The ID of the issue resolution that will replace the currently selected resolution. */
     replaceWith: string;
-  }) => Promise<TaskProgressBeanObject>;
+  }) => Promise<unknown>;
 
   /**
    * Get resolution
@@ -5347,7 +5347,7 @@ export type JiraClient = {
     id: number;
     /** The ID of the project role that will replace the one being deleted. The swap will attempt to swap the role in schemes (notifications, permissions, issue security), workflows, worklogs and comments. */
     swap?: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get project role by ID
@@ -5465,7 +5465,7 @@ export type JiraClient = {
     startAt?: number;
     /** The maximum number of items to return per page. The maximum number is 100, */
     maxResult?: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete screen
@@ -5473,7 +5473,7 @@ export type JiraClient = {
   deleteScreen: (input: {
     /** The ID of the screen. */
     screenId: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Update screen
@@ -5525,7 +5525,7 @@ export type JiraClient = {
     screenId: number;
     /** The ID of the screen tab. */
     tabId: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Update screen tab
@@ -5577,7 +5577,7 @@ export type JiraClient = {
     tabId: number;
     /** The ID of the field. */
     id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Move screen tab field
@@ -5643,7 +5643,7 @@ export type JiraClient = {
   deleteScreenScheme: (input: {
     /** The ID of the screen scheme. */
     screenSchemeId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Update screen scheme
@@ -5782,7 +5782,7 @@ export type JiraClient = {
    */
   setIssueNavigatorDefaultColumns: (input: {
     columns?: (string)[];
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get all statuses
@@ -6010,7 +6010,7 @@ export type JiraClient = {
     owningObjectId: string;
     /** The ID of the avatar. */
     id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get avatar image by type
@@ -6062,7 +6062,7 @@ export type JiraClient = {
     username?: string;
     /** This parameter is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details. */
     key?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get user
@@ -6186,7 +6186,7 @@ export type JiraClient = {
     accountId?: string;
     /** This parameter is no longer available. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details. */
     username?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get user default columns
@@ -6299,7 +6299,7 @@ export type JiraClient = {
     userKey?: string;
     /** This parameter is no longer available and will be removed from the documentation soon. See the [deprecation notice](https://developer.atlassian.com/cloud/jira/platform/deprecation-notice-user-privacy-api-migration-guide/) for details. */
     username?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get user property
@@ -6467,7 +6467,7 @@ export type JiraClient = {
     moveFixIssuesTo?: string;
     /** The ID of the version to update `affectedVersion` to when the field contains the deleted version. The replacement version must be in the same project as the version being deleted and cannot be the version being deleted. */
     moveAffectedIssuesTo?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get version
@@ -6626,7 +6626,7 @@ export type JiraClient = {
     versionId: string;
     /** The ID of the related work to delete. */
     relatedWorkId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete webhooks by ID
@@ -6634,7 +6634,7 @@ export type JiraClient = {
   deleteWebhookById: (input: {
     /** A list of webhook IDs. */
     webhookIds: (number)[];
-  }) => Promise<ErrorCollection>;
+  }) => Promise<undefined>;
 
   /**
    * Get dynamic webhooks for app
@@ -6762,7 +6762,7 @@ export type JiraClient = {
     workflowName: string;
     /** The workflow status. Set to `live` for inactive workflows or `draft` for draft workflows. Active workflows cannot be edited. */
     workflowMode?: "live" | "draft";
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get workflow transition properties
@@ -6824,7 +6824,7 @@ export type JiraClient = {
   deleteInactiveWorkflow: (input: {
     /** The entity ID of the workflow. */
     entityId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue types in a project that are using a given workflow
@@ -7031,7 +7031,7 @@ export type JiraClient = {
     /** The ID of the target workflow scheme to switch to */
     targetSchemeId?: string;
     [key: string]: unknown;
-  }) => Promise<TaskProgressBeanObject>;
+  }) => Promise<unknown>;
 
   /**
    * Bulk get workflow schemes
@@ -7172,7 +7172,7 @@ export type JiraClient = {
   deleteWorkflowSchemeDraft: (input: {
     /** The ID of the active workflow scheme that the draft was created from. */
     id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get draft workflow scheme
@@ -7285,7 +7285,7 @@ export type JiraClient = {
     id: number;
     /** Whether the request only performs a validation. */
     validateOnly?: boolean;
-  }) => Promise<TaskProgressBeanObject>;
+  }) => Promise<undefined>;
 
   /**
    * Delete issue types for workflow in draft workflow scheme
@@ -7295,7 +7295,7 @@ export type JiraClient = {
     id: number;
     /** The name of the workflow. */
     workflowName: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue types for workflows in draft workflow scheme
@@ -7373,7 +7373,7 @@ export type JiraClient = {
     workflowName: string;
     /** Set to true to create or update the draft of a workflow scheme and delete the mapping from the draft, when the workflow scheme cannot be edited. Defaults to `false`. */
     updateDraftIfNeeded?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get issue types for workflows in workflow scheme
@@ -7461,7 +7461,7 @@ export type JiraClient = {
     addonKey: string;
     /** The key of the property. */
     propertyKey: string;
-  }) => Promise<OperationMessage>;
+  }) => Promise<undefined>;
 
   /**
    * Get app property
@@ -7490,7 +7490,7 @@ export type JiraClient = {
   dynamicModulesResourceRemoveModulesDelete: (input: {
     /** The key of the module to remove. To include multiple module keys, provide multiple copies of this parameter. For example, `moduleKey=dynamic-attachment-entity-property&moduleKey=dynamic-select-field`. Nonexistent keys are ignored. */
     moduleKey?: (string)[];
-  }) => Promise<ErrorMessage>;
+  }) => Promise<undefined>;
 
   /**
    * Get modules
@@ -7503,7 +7503,7 @@ export type JiraClient = {
   dynamicModulesResourceRegisterModulesPost: (input: {
     /** A list of app modules in the same format as the `modules` property in the [app descriptor](https://developer.atlassian.com/cloud/jira/platform/app-descriptor/). */
     modules: (ConnectModule)[];
-  }) => Promise<ErrorMessage>;
+  }) => Promise<undefined>;
 
   /**
    * Bulk update custom field value
@@ -7520,7 +7520,7 @@ export type JiraClient = {
     body: (EntityPropertyDetails)[];
     /** The type indicating the object that contains the entity properties. */
     entityType: "IssueProperty" | "CommentProperty" | "DashboardItemProperty" | "IssueTypeProperty" | "ProjectProperty" | "UserProperty" | "WorklogProperty" | "BoardProperty" | "SprintProperty";
-  }, options: { headers: { "Atlassian-Transfer-Id": string } }) => Promise<unknown>;
+  }, options: { headers: { "Atlassian-Transfer-Id": string } }) => Promise<undefined>;
 
   /**
    * Get workflow transition rule configurations
@@ -7552,7 +7552,7 @@ export type JiraClient = {
     connectKey: string;
     /** The module key of the Connect issue field being migrated. */
     jiraIssueFieldsKey: string;
-  }) => Promise<OperationMessage>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve the attributes of service registries
@@ -7573,7 +7573,7 @@ export type JiraClient = {
   deleteForgeAppProperty: (input: {
     /** The key of the property. */
     propertyKey: string;
-  }) => Promise<OperationMessage>;
+  }) => Promise<undefined>;
 
   /**
    * Get app property (Forge)

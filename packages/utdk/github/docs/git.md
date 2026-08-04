@@ -150,7 +150,7 @@ github.git.deleteRef(input: {
   repo: string;
   /** The Git reference. For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
   ref: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/git/refs/{ref}` · `git/delete-ref`</sub>

@@ -1,4 +1,4 @@
-import type { BasicError, SimpleUser } from "./schemas.js";
+import type { SimpleUser } from "./schemas.js";
 
 export type EnterpriseTeamMembershipsOperations = {
   /**
@@ -79,5 +79,5 @@ export type EnterpriseTeamMembershipsOperations = {
     "enterprise-team": string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 };

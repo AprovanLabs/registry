@@ -47,6 +47,8 @@ github.agentTasks.createTaskInRepo(input: {
   prompt: string;
   /** The model to use for this task. The allowed models may change over time and depend on the user's GitHub Copilot plan and organization policies. Currently supported values: `claude-sonnet-4.6`, `claude-opus-4.6`, `gpt-5.2-codex`, `gpt-5.3-codex`, `gpt-5.4`, `claude-sonnet-4.5`, `claude-opus-4.5` */
   model?: string;
+  /** Optional identifier for a custom agent to use for this task. Use the custom agent's filename without the extension - for example, for a `.github/agents/performance-optimizer.agent.md` custom agent, use `performance-optimizer`. */
+  custom_agent?: string;
   /** Whether to create a PR. */
   create_pull_request?: boolean;
   /** Base ref for new branch/PR */

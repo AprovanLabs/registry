@@ -1,4 +1,4 @@
-import type { BasicError, Event, Feed, MinimalRepository, Repository, RepositorySubscription, SimpleUser, Stargazer, StarredRepository, Thread, ThreadSubscription } from "./schemas.js";
+import type { Event, Feed, MinimalRepository, Repository, RepositorySubscription, SimpleUser, Stargazer, StarredRepository, Thread, ThreadSubscription } from "./schemas.js";
 
 export type ActivityOperations = {
   /**
@@ -79,7 +79,7 @@ export type ActivityOperations = {
   markThreadAsRead: (input: {
     /** The unique identifier of the notification thread. This corresponds to the value returned in the `id` field when you retrieve notifications (for example with the [`GET /notifications` operation](https://docs.github.com/rest/activity/notifications#list-notifications-for-the-authenticated-user)). */
     thread_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Mark a thread as done
@@ -88,7 +88,7 @@ export type ActivityOperations = {
   markThreadAsDone: (input: {
     /** The unique identifier of the notification thread. This corresponds to the value returned in the `id` field when you retrieve notifications (for example with the [`GET /notifications` operation](https://docs.github.com/rest/activity/notifications#list-notifications-for-the-authenticated-user)). */
     thread_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get a thread subscription for the authenticated user
@@ -117,7 +117,7 @@ export type ActivityOperations = {
   deleteThreadSubscription: (input: {
     /** The unique identifier of the notification thread. This corresponds to the value returned in the `id` field when you retrieve notifications (for example with the [`GET /notifications` operation](https://docs.github.com/rest/activity/notifications#list-notifications-for-the-authenticated-user)). */
     thread_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List public organization events
@@ -248,7 +248,7 @@ export type ActivityOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List repositories starred by the authenticated user
@@ -274,7 +274,7 @@ export type ActivityOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Star a repository for the authenticated user
@@ -285,7 +285,7 @@ export type ActivityOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Unstar a repository for the authenticated user
@@ -296,7 +296,7 @@ export type ActivityOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repositories watched by the authenticated user

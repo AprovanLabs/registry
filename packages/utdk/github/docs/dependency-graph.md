@@ -52,7 +52,7 @@ github.dependencyGraph.fetchSbomReport(input: {
   repo: string;
   /** The unique identifier of the SBOM export. */
   sbom_uuid: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`GET /repos/{owner}/{repo}/dependency-graph/sbom/fetch-report/{sbom_uuid}` · `dependency-graph/fetch-sbom-report`</sub>

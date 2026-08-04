@@ -1,9 +1,9 @@
 # ThirdPartyLinks
 
-4 operations · `utdk/google/youtube`
+4 operations · `@utdk/clients/google/youtube`
 
 ```ts
-import youtube from "utdk/google/youtube";
+import youtube from "@utdk/clients/google/youtube";
 ```
 
 ## `youtube.youtubeThirdPartyLinksDelete`
@@ -42,7 +42,7 @@ youtube.youtubeThirdPartyLinksDelete(input: {
   externalChannelId?: string;
   /** Do not use. Required for compatibility. */
   part?: (string)[];
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /youtube/v3/thirdPartyLinks` · `youtube.thirdPartyLinks.delete`</sub>

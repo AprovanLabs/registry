@@ -1,9 +1,9 @@
 # Teamdrives
 
-5 operations · `utdk/google/drive`
+5 operations · `@utdk/clients/google/drive`
 
 ```ts
-import drive from "utdk/google/drive";
+import drive from "@utdk/clients/google/drive";
 ```
 
 ## `drive.driveTeamdrivesList`
@@ -110,7 +110,7 @@ drive.driveTeamdrivesDelete(input: {
   quotaUser?: string;
   /** Deprecated. Please use quotaUser instead. */
   userIp?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /teamdrives/{teamDriveId}` · `drive.teamdrives.delete`</sub>

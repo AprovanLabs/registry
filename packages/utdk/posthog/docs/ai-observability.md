@@ -1,513 +1,210 @@
 # AI Observability
 
-## Operations
-
-### `posthog.environmentsLlmAnalyticsEvaluationSummaryCreate`
-
-- **HTTP**: `POST /api/environments/{environment_id}/llm_analytics/evaluation_summary/`
-- **What it does**: 
-Generate an AI-powered summary of evaluation results.
-
-This endpoint analyzes evaluation runs and identifies patterns in passing
-and failing evaluations, providing actionable recommendations.
-
-Data is fetched server-side by evaluation ID to ensure data integrity.
-
-**Use Cases:**
-- Understand why evaluations are passing or failing
-- Identify systematic issues in LLM responses
-- Get recommendations for improving response quality
-- Review patterns across many evaluation runs at once
-        
-- **OpenAPI operationId**: `environments_llm_analytics_evaluation_summary_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `404`, `500`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ overall_assessment: string; pass_patterns: ({ title: string; description: string; frequency: string; example_generation_ids: (string)[] })[]; fail_patterns: ({ title: string; description: string; frequency: string; ex...`
-- OpenAPI response codes: `200`, `400`, `403`, `404`, `500`
+20 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type EnvironmentsLlmAnalyticsEvaluationSummaryCreateInput = Parameters<typeof posthog.environmentsLlmAnalyticsEvaluationSummaryCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsLlmAnalyticsEvaluationSummaryCreateOutput = Awaited<ReturnType<typeof posthog.environmentsLlmAnalyticsEvaluationSummaryCreate>>;
-
-const result: EnvironmentsLlmAnalyticsEvaluationSummaryCreateOutput = await posthog.environmentsLlmAnalyticsEvaluationSummaryCreate();
-
-// Result shape (from schema): { overall_assessment: string; pass_patterns: ({ title: string; description: string; frequency: string; example_generation_ids: (string)[] })[]; fail_patterns: ({ title: string; description: string; frequency: string; ex...
 ```
 
-### `posthog.environmentsLlmAnalyticsOfflineEvaluationsExperimentItemsCreate`
+## `posthog.llmAnalyticsPersonalSpendList`
 
-- **HTTP**: `POST /api/environments/{environment_id}/llm_analytics/offline_evaluations/experiment_items/`
-- **OpenAPI operationId**: `environments_llm_analytics_offline_evaluations_experiment_items_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `500`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ results: ((unknown)[])[] }`
-- OpenAPI response codes: `200`, `400`, `500`
+Return a structured personal LLM spend analysis for the requesting user. Pass `date_from` / `date_to` (absolute like `2026-04-23` or relative like `-7d`) to bound the window — defaults to the last 30 days, max 90 days. The `product=<ai_product>` query param is required and scopes the tool / model / day / trace breakdowns to a single product; supported values: posthog_code. `by_product` is always returned for cross-product visibility. `by_day` returns a day-ascending spend series for the scoped product. Pass `bucket_minutes` (5, 15, 30, or 60; the window may span at most 600 buckets) to additionally get `by_bucket`, a time-ascending series with per-bucket cost split into uncached input / output / cache read / cache creation components. Use `refresh=true` to bypass the 5-minute response cache.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsLlmAnalyticsOfflineEvaluationsExperimentItemsCreateInput = Parameters<typeof posthog.environmentsLlmAnalyticsOfflineEvaluationsExperimentItemsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsLlmAnalyticsOfflineEvaluationsExperimentItemsCreateOutput = Awaited<ReturnType<typeof posthog.environmentsLlmAnalyticsOfflineEvaluationsExperimentItemsCreate>>;
-
-const result: EnvironmentsLlmAnalyticsOfflineEvaluationsExperimentItemsCreateOutput = await posthog.environmentsLlmAnalyticsOfflineEvaluationsExperimentItemsCreate();
-
-// Result shape (from schema): { results: ((unknown)[])[] }
+posthog.llmAnalyticsPersonalSpendList(): Promise<({ summary: { date_from: string; date_to: string; product: string; total_cost_usd: number; event_count: number; scoped_cost_usd: number; scoped_event_count: number }; by_product: { items: ({ product: string | null; event_count: number; cost_usd: number })[]; truncated: boolean }; by_tool: { items: ({ tool: string | null; generation_count: number; cost_usd: number; share_of_scoped: number; avg_inp...>
 ```
 
-### `posthog.environmentsLlmAnalyticsSummarizationCreate`
+<sub>`GET /api/llm_analytics/@me/spend/` · `llm_analytics_personal_spend_list`</sub>
 
-- **HTTP**: `POST /api/environments/{environment_id}/llm_analytics/summarization/`
-- **What it does**: 
-Generate an AI-powered summary of an LLM trace or event.
+## `posthog.datasetItemsList`
 
-This endpoint analyzes the provided trace/event, generates a line-numbered text
-representation, and uses an LLM to create a concise summary with line references.
-
-**Two ways to use this endpoint:**
-
-1. **By ID (recommended):** Pass `trace_id` or `generation_id` with an optional `date_from`/`date_to`.
-   The backend fetches the data automatically. `summarize_type` is inferred.
-2. **By data:** Pass the full trace/event data blob in `data` with `summarize_type`.
-   This is how the frontend uses it.
-
-**Summary Format:**
-- Title (concise, max 10 words)
-- Mermaid flow diagram showing the main flow
-- 3-10 summary bullets with line references
-- "Interesting Notes" section for failures, successes, or unusual patterns
-- Line references in [L45] or [L45-52] format pointing to relevant sections
-
-The response includes the structured summary, the text representation, and metadata.
-        
-- **OpenAPI operationId**: `environments_llm_analytics_summarization_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `500`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ summary: { title: string; flow_diagram: string; summary_bullets: ({ text: string; line_refs: string })[]; interesting_notes: ({ text: string; line_refs: string })[] }; text_repr: string; metadata?: unknown }`
-- OpenAPI response codes: `200`, `400`, `403`, `500`
+List a dataset's current items or its exact contents at a prior revision.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsLlmAnalyticsSummarizationCreateInput = Parameters<typeof posthog.environmentsLlmAnalyticsSummarizationCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsLlmAnalyticsSummarizationCreateOutput = Awaited<ReturnType<typeof posthog.environmentsLlmAnalyticsSummarizationCreate>>;
-
-const result: EnvironmentsLlmAnalyticsSummarizationCreateOutput = await posthog.environmentsLlmAnalyticsSummarizationCreate();
-
-// Result shape (from schema): { summary: { title: string; flow_diagram: string; summary_bullets: ({ text: string; line_refs: string })[]; interesting_notes: ({ text: string; line_refs: string })[] }; text_repr: string; metadata?: unknown }
+posthog.datasetItemsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; dataset: string; external_id: string | null; version: number; version_id: string; dataset_revision: number; dataset_revision_id: string; archived: boolean; input: { [key: string]: unknown } | (unknown)[] | string | number | boolean; expected_output: { [key: string]: unknown } | (unknown)[] | string | number |...>
 ```
 
-### `posthog.environmentsLlmAnalyticsSummarizationBatchCheckCreate`
+<sub>`GET /api/projects/{project_id}/dataset_items/` · `dataset_items_list`</sub>
 
-- **HTTP**: `POST /api/environments/{environment_id}/llm_analytics/summarization/batch_check/`
-- **What it does**: 
-Check which traces have cached summaries available.
+## `posthog.datasetItemsCreate`
 
-This endpoint allows batch checking of multiple trace IDs to see which ones
-have cached summaries. Returns only the traces that have cached summaries
-with their titles.
-
-**Use Cases:**
-- Load cached summaries on session view load
-- Avoid unnecessary LLM calls for already-summarized traces
-- Display summary previews without generating new summaries
-        
-- **OpenAPI operationId**: `environments_llm_analytics_summarization_batch_check_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ summaries: ({ trace_id: string; title: string; cached?: boolean })[] }`
-- OpenAPI response codes: `200`, `400`, `403`
+Create an item and its first immutable version. An identical external ID retry returns the existing item. If the matching item is archived, the submitted content is restored as a new active version.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsLlmAnalyticsSummarizationBatchCheckCreateInput = Parameters<typeof posthog.environmentsLlmAnalyticsSummarizationBatchCheckCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsLlmAnalyticsSummarizationBatchCheckCreateOutput = Awaited<ReturnType<typeof posthog.environmentsLlmAnalyticsSummarizationBatchCheckCreate>>;
-
-const result: EnvironmentsLlmAnalyticsSummarizationBatchCheckCreateOutput = await posthog.environmentsLlmAnalyticsSummarizationBatchCheckCreate();
-
-// Result shape (from schema): { summaries: ({ trace_id: string; title: string; cached?: boolean })[] }
+posthog.datasetItemsCreate(): Promise<{ id: string; dataset: string; external_id: string | null; version: number; version_id: string; dataset_revision: number; dataset_revision_id: string; archived: boolean; input: { [key: string]: unknown } | (unknown)[] | string | number | boolean; expected_output: { [key: string]: unknown } | (unknown)[] | string | number | boolean | null; source_output: unknown | null; metadata: { [key: string]: ...>
 ```
 
-### `posthog.environmentsLlmAnalyticsTextReprCreate`
+<sub>`POST /api/projects/{project_id}/dataset_items/` · `dataset_items_create`</sub>
 
-- **HTTP**: `POST /api/environments/{environment_id}/llm_analytics/text_repr/`
-- **What it does**: 
-Generate a human-readable text representation of an LLM trace event.
+## `posthog.datasetItemsRetrieve`
 
-This endpoint converts AI observability events ($ai_generation, $ai_span, $ai_embedding, or $ai_trace)
-into formatted text representations suitable for display, logging, or analysis.
-
-**Supported Event Types:**
-- `$ai_generation`: Individual LLM API calls with input/output messages
-- `$ai_span`: Logical spans with state transitions
-- `$ai_embedding`: Embedding generation events (text input → vector)
-- `$ai_trace`: Full traces with hierarchical structure
-
-**Options:**
-- `max_length`: Maximum character count (default: 2000000)
-- `truncated`: Enable middle-content truncation within events (default: true)
-- `truncate_buffer`: Characters at start/end when truncating (default: 1000)
-- `include_markers`: Use interactive markers vs plain text indicators (default: true)
-  - Frontend: set true for `<<<TRUNCATED|base64|...>>>` markers
-  - Backend/LLM: set false for `... (X chars truncated) ...` text
-- `collapsed`: Show summary vs full trace tree (default: false)
-- `include_hierarchy`: Include tree structure for traces (default: true)
-- `max_depth`: Maximum depth for hierarchical rendering (default: unlimited)
-- `tools_collapse_threshold`: Number of tools before auto-collapsing list (default: 5)
-  - Tool lists >5 items show `<<<TOOLS_EXPANDABLE|...>>>` marker for frontend
-  - Or `[+] AVAILABLE TOOLS: N` for backend when `include_markers: false`
-- `include_line_numbers`: Prefix each line with line number like L001:, L010: (default: false)
-
-**Use Cases:**
-- Frontend display: `truncated: true, include_markers: true, include_line_numbers: true`
-- Backend LLM context (summary): `truncated: true, include_markers: false, collapsed: true`
-- Backend LLM context (full): `truncated: false`
-
-The response includes the formatted text and metadata about the rendering.
-        
-- **OpenAPI operationId**: `environments_llm_analytics_text_repr_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `500`, `503`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ text: string; metadata: { event_type?: string; event_id?: string; trace_id?: string; rendering: string; char_count: number; truncated: boolean; error?: string } }`
-- OpenAPI response codes: `200`, `400`, `500`, `503`
+Retrieve the current version of an active or archived item.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsLlmAnalyticsTextReprCreateInput = Parameters<typeof posthog.environmentsLlmAnalyticsTextReprCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsLlmAnalyticsTextReprCreateOutput = Awaited<ReturnType<typeof posthog.environmentsLlmAnalyticsTextReprCreate>>;
-
-const result: EnvironmentsLlmAnalyticsTextReprCreateOutput = await posthog.environmentsLlmAnalyticsTextReprCreate();
-
-// Result shape (from schema): { text: string; metadata: { event_type?: string; event_id?: string; trace_id?: string; rendering: string; char_count: number; truncated: boolean; error?: string } }
+posthog.datasetItemsRetrieve(): Promise<{ id: string; dataset: string; external_id: string | null; version: number; version_id: string; dataset_revision: number; dataset_revision_id: string; archived: boolean; input: { [key: string]: unknown } | (unknown)[] | string | number | boolean; expected_output: { [key: string]: unknown } | (unknown)[] | string | number | boolean | null; source_output: unknown | null; metadata: { [key: string]: ...>
 ```
 
-### `posthog.llmAnalyticsPersonalSpendList`
+<sub>`GET /api/projects/{project_id}/dataset_items/{dataset_item_id}/` · `dataset_items_retrieve`</sub>
 
-- **HTTP**: `GET /api/llm_analytics/@me/spend/`
-- **What it does**: Return a structured personal LLM spend analysis for the requesting user. Pass `date_from` / `date_to` (absolute like `2026-04-23` or relative like `-7d`) to bound the window — defaults to the last 30 days, max 90 days. The `product=<ai_product>` query param is required and scopes the tool / model / day / trace breakdowns to a single product; supported values: posthog_code. `by_product` is always returned for cross-product visibility. `by_day` returns a day-ascending spend series for the scoped product. Use `refresh=true` to bypass the 5-minute response cache.
-- **OpenAPI operationId**: `llm_analytics_personal_spend_list`
-- **Path params**: None
-- **Query params**: `date_from`, `date_to`, `limit`, `product`, `refresh`
-- **Response codes**: `200`, `400`, `401`, `403`, `404`, `429`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.datasetItemsPartialUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ summary: { date_from: string; date_to: string; product: string; total_cost_usd: number; event_count: number; scoped_cost_usd: number; scoped_event_count: number }; by_product: { items: ({ product: string | null; even...`
-- OpenAPI response codes: `200`, `400`, `401`, `403`, `404`, `429`
+Create a new immutable item version from editable fields.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type LlmAnalyticsPersonalSpendListInput = Parameters<typeof posthog.llmAnalyticsPersonalSpendList> extends [infer T, ...unknown[]] ? T : undefined;
-type LlmAnalyticsPersonalSpendListOutput = Awaited<ReturnType<typeof posthog.llmAnalyticsPersonalSpendList>>;
-
-const result: LlmAnalyticsPersonalSpendListOutput = await posthog.llmAnalyticsPersonalSpendList();
-
-// Result shape (from schema): ({ summary: { date_from: string; date_to: string; product: string; total_cost_usd: number; event_count: number; scoped_cost_usd: number; scoped_event_count: number }; by_product: { items: ({ product: string | null; even...
+posthog.datasetItemsPartialUpdate(): Promise<{ id: string; dataset: string; external_id: string | null; version: number; version_id: string; dataset_revision: number; dataset_revision_id: string; archived: boolean; input: { [key: string]: unknown } | (unknown)[] | string | number | boolean; expected_output: { [key: string]: unknown } | (unknown)[] | string | number | boolean | null; source_output: unknown | null; metadata: { [key: string]: ...>
 ```
 
-### `posthog.llmAnalyticsEvaluationSummaryCreate`
+<sub>`PATCH /api/projects/{project_id}/dataset_items/{dataset_item_id}/` · `dataset_items_partial_update`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/llm_analytics/evaluation_summary/`
-- **What it does**: 
-Generate an AI-powered summary of evaluation results.
+## `posthog.datasetItemsArchive`
 
-This endpoint analyzes evaluation runs and identifies patterns in passing
-and failing evaluations, providing actionable recommendations.
-
-Data is fetched server-side by evaluation ID to ensure data integrity.
-
-**Use Cases:**
-- Understand why evaluations are passing or failing
-- Identify systematic issues in LLM responses
-- Get recommendations for improving response quality
-- Review patterns across many evaluation runs at once
-        
-- **OpenAPI operationId**: `llm_analytics_evaluation_summary_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `404`, `500`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ overall_assessment: string; pass_patterns: ({ title: string; description: string; frequency: string; example_generation_ids: (string)[] })[]; fail_patterns: ({ title: string; description: string; frequency: string; ex...`
-- OpenAPI response codes: `200`, `400`, `403`, `404`, `500`
+Archive an active item by creating a new immutable version.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type LlmAnalyticsEvaluationSummaryCreateInput = Parameters<typeof posthog.llmAnalyticsEvaluationSummaryCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type LlmAnalyticsEvaluationSummaryCreateOutput = Awaited<ReturnType<typeof posthog.llmAnalyticsEvaluationSummaryCreate>>;
-
-const result: LlmAnalyticsEvaluationSummaryCreateOutput = await posthog.llmAnalyticsEvaluationSummaryCreate();
-
-// Result shape (from schema): { overall_assessment: string; pass_patterns: ({ title: string; description: string; frequency: string; example_generation_ids: (string)[] })[]; fail_patterns: ({ title: string; description: string; frequency: string; ex...
+posthog.datasetItemsArchive(): Promise<{ id: string; dataset: string; external_id: string | null; version: number; version_id: string; dataset_revision: number; dataset_revision_id: string; archived: boolean; input: { [key: string]: unknown } | (unknown)[] | string | number | boolean; expected_output: { [key: string]: unknown } | (unknown)[] | string | number | boolean | null; source_output: unknown | null; metadata: { [key: string]: ...>
 ```
 
-### `posthog.llmAnalyticsOfflineEvaluationsExperimentItemsCreate`
+<sub>`POST /api/projects/{project_id}/dataset_items/{dataset_item_id}/archive/` · `dataset_items_archive`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/llm_analytics/offline_evaluations/experiment_items/`
-- **OpenAPI operationId**: `llm_analytics_offline_evaluations_experiment_items_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `500`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.datasetItemsRestore`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ results: ((unknown)[])[] }`
-- OpenAPI response codes: `200`, `400`, `500`
+Restore an archived item by copying content into a new immutable version.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type LlmAnalyticsOfflineEvaluationsExperimentItemsCreateInput = Parameters<typeof posthog.llmAnalyticsOfflineEvaluationsExperimentItemsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type LlmAnalyticsOfflineEvaluationsExperimentItemsCreateOutput = Awaited<ReturnType<typeof posthog.llmAnalyticsOfflineEvaluationsExperimentItemsCreate>>;
-
-const result: LlmAnalyticsOfflineEvaluationsExperimentItemsCreateOutput = await posthog.llmAnalyticsOfflineEvaluationsExperimentItemsCreate();
-
-// Result shape (from schema): { results: ((unknown)[])[] }
+posthog.datasetItemsRestore(): Promise<{ id: string; dataset: string; external_id: string | null; version: number; version_id: string; dataset_revision: number; dataset_revision_id: string; archived: boolean; input: { [key: string]: unknown } | (unknown)[] | string | number | boolean; expected_output: { [key: string]: unknown } | (unknown)[] | string | number | boolean | null; source_output: unknown | null; metadata: { [key: string]: ...>
 ```
 
-### `posthog.llmAnalyticsSummarizationCreate`
+<sub>`POST /api/projects/{project_id}/dataset_items/{dataset_item_id}/restore/` · `dataset_items_restore`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/llm_analytics/summarization/`
-- **What it does**: 
-Generate an AI-powered summary of an LLM trace or event.
+## `posthog.datasetItemsVersionsList`
 
-This endpoint analyzes the provided trace/event, generates a line-numbered text
-representation, and uses an LLM to create a concise summary with line references.
-
-**Two ways to use this endpoint:**
-
-1. **By ID (recommended):** Pass `trace_id` or `generation_id` with an optional `date_from`/`date_to`.
-   The backend fetches the data automatically. `summarize_type` is inferred.
-2. **By data:** Pass the full trace/event data blob in `data` with `summarize_type`.
-   This is how the frontend uses it.
-
-**Summary Format:**
-- Title (concise, max 10 words)
-- Mermaid flow diagram showing the main flow
-- 3-10 summary bullets with line references
-- "Interesting Notes" section for failures, successes, or unusual patterns
-- Line references in [L45] or [L45-52] format pointing to relevant sections
-
-The response includes the structured summary, the text representation, and metadata.
-        
-- **OpenAPI operationId**: `llm_analytics_summarization_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`, `500`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ summary: { title: string; flow_diagram: string; summary_bullets: ({ text: string; line_refs: string })[]; interesting_notes: ({ text: string; line_refs: string })[] }; text_repr: string; metadata?: unknown }`
-- OpenAPI response codes: `200`, `400`, `403`, `500`
+List every immutable version of an item, newest first.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type LlmAnalyticsSummarizationCreateInput = Parameters<typeof posthog.llmAnalyticsSummarizationCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type LlmAnalyticsSummarizationCreateOutput = Awaited<ReturnType<typeof posthog.llmAnalyticsSummarizationCreate>>;
-
-const result: LlmAnalyticsSummarizationCreateOutput = await posthog.llmAnalyticsSummarizationCreate();
-
-// Result shape (from schema): { summary: { title: string; flow_diagram: string; summary_bullets: ({ text: string; line_refs: string })[]; interesting_notes: ({ text: string; line_refs: string })[] }; text_repr: string; metadata?: unknown }
+posthog.datasetItemsVersionsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; dataset: string; external_id: string | null; version: number; version_id: string; dataset_revision: number; dataset_revision_id: string; archived: boolean; input: { [key: string]: unknown } | (unknown)[] | string | number | boolean; expected_output: { [key: string]: unknown } | (unknown)[] | string | number |...>
 ```
 
-### `posthog.llmAnalyticsSummarizationBatchCheckCreate`
+<sub>`GET /api/projects/{project_id}/dataset_items/{dataset_item_id}/versions/` · `dataset_items_versions_list`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/llm_analytics/summarization/batch_check/`
-- **What it does**: 
-Check which traces have cached summaries available.
+## `posthog.datasetsList`
 
-This endpoint allows batch checking of multiple trace IDs to see which ones
-have cached summaries. Returns only the traces that have cached summaries
-with their titles.
-
-**Use Cases:**
-- Load cached summaries on session view load
-- Avoid unnecessary LLM calls for already-summarized traces
-- Display summary previews without generating new summaries
-        
-- **OpenAPI operationId**: `llm_analytics_summarization_batch_check_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `403`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ summaries: ({ trace_id: string; title: string; cached?: boolean })[] }`
-- OpenAPI response codes: `200`, `400`, `403`
+List active datasets by default, or archived datasets when requested.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type LlmAnalyticsSummarizationBatchCheckCreateInput = Parameters<typeof posthog.llmAnalyticsSummarizationBatchCheckCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type LlmAnalyticsSummarizationBatchCheckCreateOutput = Awaited<ReturnType<typeof posthog.llmAnalyticsSummarizationBatchCheckCreate>>;
-
-const result: LlmAnalyticsSummarizationBatchCheckCreateOutput = await posthog.llmAnalyticsSummarizationBatchCheckCreate();
-
-// Result shape (from schema): { summaries: ({ trace_id: string; title: string; cached?: boolean })[] }
+posthog.datasetsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; description: string; metadata: { [key: string]: unknown }; archived: boolean; current_revision: number | null; current_revision_id: string | null; created_at: string; updated_at: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: ...>
 ```
 
-### `posthog.llmAnalyticsTextReprCreate`
+<sub>`GET /api/projects/{project_id}/datasets/` · `datasets_list`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/llm_analytics/text_repr/`
-- **What it does**: 
-Generate a human-readable text representation of an LLM trace event.
+## `posthog.datasetsCreate`
 
-This endpoint converts AI observability events ($ai_generation, $ai_span, $ai_embedding, or $ai_trace)
-into formatted text representations suitable for display, logging, or analysis.
-
-**Supported Event Types:**
-- `$ai_generation`: Individual LLM API calls with input/output messages
-- `$ai_span`: Logical spans with state transitions
-- `$ai_embedding`: Embedding generation events (text input → vector)
-- `$ai_trace`: Full traces with hierarchical structure
-
-**Options:**
-- `max_length`: Maximum character count (default: 2000000)
-- `truncated`: Enable middle-content truncation within events (default: true)
-- `truncate_buffer`: Characters at start/end when truncating (default: 1000)
-- `include_markers`: Use interactive markers vs plain text indicators (default: true)
-  - Frontend: set true for `<<<TRUNCATED|base64|...>>>` markers
-  - Backend/LLM: set false for `... (X chars truncated) ...` text
-- `collapsed`: Show summary vs full trace tree (default: false)
-- `include_hierarchy`: Include tree structure for traces (default: true)
-- `max_depth`: Maximum depth for hierarchical rendering (default: unlimited)
-- `tools_collapse_threshold`: Number of tools before auto-collapsing list (default: 5)
-  - Tool lists >5 items show `<<<TOOLS_EXPANDABLE|...>>>` marker for frontend
-  - Or `[+] AVAILABLE TOOLS: N` for backend when `include_markers: false`
-- `include_line_numbers`: Prefix each line with line number like L001:, L010: (default: false)
-
-**Use Cases:**
-- Frontend display: `truncated: true, include_markers: true, include_line_numbers: true`
-- Backend LLM context (summary): `truncated: true, include_markers: false, collapsed: true`
-- Backend LLM context (full): `truncated: false`
-
-The response includes the formatted text and metadata about the rendering.
-        
-- **OpenAPI operationId**: `llm_analytics_text_repr_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`, `500`, `503`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ text: string; metadata: { event_type?: string; event_id?: string; trace_id?: string; rendering: string; char_count: number; truncated: boolean; error?: string } }`
-- OpenAPI response codes: `200`, `400`, `500`, `503`
+Create an empty dataset. Its first revision is created with its first item.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type LlmAnalyticsTextReprCreateInput = Parameters<typeof posthog.llmAnalyticsTextReprCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type LlmAnalyticsTextReprCreateOutput = Awaited<ReturnType<typeof posthog.llmAnalyticsTextReprCreate>>;
-
-const result: LlmAnalyticsTextReprCreateOutput = await posthog.llmAnalyticsTextReprCreate();
-
-// Result shape (from schema): { text: string; metadata: { event_type?: string; event_id?: string; trace_id?: string; rendering: string; char_count: number; truncated: boolean; error?: string } }
+posthog.datasetsCreate(): Promise<{ id: string; name: string; description: string; metadata: { [key: string]: unknown }; archived: boolean; current_revision: number | null; current_revision_id: string | null; created_at: string; updated_at: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config:...>
 ```
 
+<sub>`POST /api/projects/{project_id}/datasets/` · `datasets_create`</sub>
+
+## `posthog.datasetsRetrieve`
+
+Retrieve an active or archived dataset.
+
+```ts
+posthog.datasetsRetrieve(): Promise<{ id: string; name: string; description: string; metadata: { [key: string]: unknown }; archived: boolean; current_revision: number | null; current_revision_id: string | null; created_at: string; updated_at: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config:...>
+```
+
+<sub>`GET /api/projects/{project_id}/datasets/{id}/` · `datasets_retrieve`</sub>
+
+## `posthog.datasetsPartialUpdate`
+
+Update descriptive dataset fields without changing its revision.
+
+```ts
+posthog.datasetsPartialUpdate(): Promise<{ id: string; name: string; description: string; metadata: { [key: string]: unknown }; archived: boolean; current_revision: number | null; current_revision_id: string | null; created_at: string; updated_at: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config:...>
+```
+
+<sub>`PATCH /api/projects/{project_id}/datasets/{id}/` · `datasets_partial_update`</sub>
+
+## `posthog.datasetsArchive`
+
+Archive a dataset. Archived datasets remain readable and reject item mutations.
+
+```ts
+posthog.datasetsArchive(): Promise<{ id: string; name: string; description: string; metadata: { [key: string]: unknown }; archived: boolean; current_revision: number | null; current_revision_id: string | null; created_at: string; updated_at: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config:...>
+```
+
+<sub>`POST /api/projects/{project_id}/datasets/{id}/archive/` · `datasets_archive`</sub>
+
+## `posthog.datasetsRestore`
+
+Restore an archived dataset without changing its item states.
+
+```ts
+posthog.datasetsRestore(): Promise<{ id: string; name: string; description: string; metadata: { [key: string]: unknown }; archived: boolean; current_revision: number | null; current_revision_id: string | null; created_at: string; updated_at: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config:...>
+```
+
+<sub>`POST /api/projects/{project_id}/datasets/{id}/restore/` · `datasets_restore`</sub>
+
+## `posthog.datasetsRevisionsList`
+
+List immutable dataset revisions, newest first.
+
+```ts
+posthog.datasetsRevisionsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; dataset_id: string; revision: number; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | ...>
+```
+
+<sub>`GET /api/projects/{project_id}/datasets/{id}/revisions/` · `datasets_revisions_list`</sub>
+
+## `posthog.llmAnalyticsEvaluationSummaryCreate`
+
+Generate an AI-powered summary of evaluation results. This endpoint analyzes evaluation runs and identifies patterns in passing and failing evaluations, providing actionable recommendations. Data is fetched server-side by evaluation ID to ensure data integrity. **Use Cases:** - Understand why evaluations are passing or failing - Identify systematic issues in LLM responses - Get recommendations for improving response quality - Review patterns across many evaluation runs at once
+
+```ts
+posthog.llmAnalyticsEvaluationSummaryCreate(): Promise<{ overall_assessment: string; pass_patterns: ({ title: string; description: string; frequency: string; example_generation_ids: (string)[] })[]; fail_patterns: ({ title: string; description: string; frequency: string; example_generation_ids: (string)[] })[]; na_patterns: (unknown)[]; recommendations: (string)[]; statistics: { total_analyzed: number; pass_count: number; fail_count: number; na_count...>
+```
+
+<sub>`POST /api/projects/{project_id}/llm_analytics/evaluation_summary/` · `llm_analytics_evaluation_summary_create`</sub>
+
+## `posthog.llmAnalyticsOfflineEvaluationsExperimentItemsCreate`
+
+```ts
+posthog.llmAnalyticsOfflineEvaluationsExperimentItemsCreate(): Promise<{ results: ((unknown)[])[] }>
+```
+
+<sub>`POST /api/projects/{project_id}/llm_analytics/offline_evaluations/experiment_items/` · `llm_analytics_offline_evaluations_experiment_items_create`</sub>
+
+## `posthog.llmAnalyticsSummarizationCreate`
+
+Generate an AI-powered summary of an LLM trace or event. This endpoint analyzes the provided trace/event, generates a line-numbered text representation, and uses an LLM to create a concise summary with line references. **Two ways to use this endpoint:** 1. **By ID (recommended):** Pass `trace_id` or `generation_id` with an optional `date_from`/`date_to`. The backend fetches the data automatically. `summarize_type` is inferred. 2. **By data:** Pass the full trace/event data blob in `data` with `summarize_type`. This is how the frontend uses it. **Summary Format:** - Title (concise, max 10 words) - Mermaid flow diagram showing the main flow - 3-10 summary bullets with line references - "Interesting Notes" section for failures, successes, or unusual patterns - Line references in [L45] or [L45-52] format pointing to relevant sections The response includes the structured summary, the text representation, and metadata.
+
+```ts
+posthog.llmAnalyticsSummarizationCreate(): Promise<{ summary: { title: string; flow_diagram: string; summary_bullets: ({ text: string; line_refs: string })[]; interesting_notes: ({ text: string; line_refs: string })[] }; text_repr: string; metadata?: unknown }>
+```
+
+<sub>`POST /api/projects/{project_id}/llm_analytics/summarization/` · `llm_analytics_summarization_create`</sub>
+
+## `posthog.llmAnalyticsSummarizationBatchCheckCreate`
+
+Check which traces have cached summaries available. This endpoint allows batch checking of multiple trace IDs to see which ones have cached summaries. Returns only the traces that have cached summaries with their titles. **Use Cases:** - Load cached summaries on session view load - Avoid unnecessary LLM calls for already-summarized traces - Display summary previews without generating new summaries
+
+```ts
+posthog.llmAnalyticsSummarizationBatchCheckCreate(): Promise<{ summaries: ({ trace_id: string; title: string; cached?: boolean })[] }>
+```
+
+<sub>`POST /api/projects/{project_id}/llm_analytics/summarization/batch_check/` · `llm_analytics_summarization_batch_check_create`</sub>
+
+## `posthog.llmAnalyticsTextReprCreate`
+
+Generate a human-readable text representation of an LLM trace event. This endpoint converts AI observability events ($ai_generation, $ai_span, $ai_embedding, or $ai_trace) into formatted text representations suitable for display, logging, or analysis. **Supported Event Types:** - `$ai_generation`: Individual LLM API calls with input/output messages - `$ai_span`: Logical spans with state transitions - `$ai_embedding`: Embedding generation events (text input → vector) - `$ai_trace`: Full traces with hierarchical structure **Options:** - `max_length`: Maximum character count (default: 2000000) - `truncated`: Enable middle-content truncation within events (default: true) - `truncate_buffer`: Characters at start/end when truncating (default: 1000) - `include_markers`: Use interactive markers vs plain text indicators (default: true) - Frontend: set true for `<<<TRUNCATED|base64|...>>>` markers - Backend/LLM: set false for `... (X chars truncated) ...` text - `collapsed`: Show summary vs full trace tree (default: false) - `include_hierarchy`: Include tree structure for traces (default: true) - `max_depth`: Maximum depth for hierarchical rendering (default: unlimited) - `tools_collapse_threshold`: Number of tools before auto-collapsing list (default: 5) - Tool lists >5 items show `<<<TOOLS_EXPANDABLE|...>>>` marker for frontend - Or `[+] AVAILABLE TOOLS: N` for backend when `include_markers: false` - `include_line_numbers`: Prefix each line with line number like L001:, L010: (default: false) **Use Cases:** - Frontend display: `truncated: true, include_markers: true, include_line_numbers: true` - Backend LLM context (summary): `truncated: true, include_markers: false, collapsed: true` - Backend LLM context (full): `truncated: false` The response includes the formatted text and metadata about the rendering.
+
+```ts
+posthog.llmAnalyticsTextReprCreate(): Promise<{ text: string; metadata: { event_type?: string; event_id?: string; trace_id?: string; rendering: string; char_count: number; truncated: boolean; error?: string } }>
+```
+
+<sub>`POST /api/projects/{project_id}/llm_analytics/text_repr/` · `llm_analytics_text_repr_create`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

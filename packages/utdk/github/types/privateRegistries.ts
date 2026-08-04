@@ -1,4 +1,4 @@
-import type { BasicError, OrgPrivateRegistryConfiguration, OrgPrivateRegistryConfigurationWithSelectedRepositories } from "./schemas.js";
+import type { OrgPrivateRegistryConfiguration, OrgPrivateRegistryConfigurationWithSelectedRepositories } from "./schemas.js";
 
 export type PrivateRegistriesOperations = {
   /**
@@ -148,7 +148,7 @@ export type PrivateRegistriesOperations = {
     org: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Delete a private registry for an organization
@@ -159,5 +159,5 @@ export type PrivateRegistriesOperations = {
     org: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 };

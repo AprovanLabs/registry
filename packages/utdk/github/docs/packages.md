@@ -52,7 +52,7 @@ github.packages.deletePackageForOrg(input: {
   package_name: string;
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/packages/{package_type}/{package_name}` · `packages/delete-package-for-org`</sub>
@@ -88,7 +88,7 @@ github.packages.restorePackageForOrg(input: {
   org: string;
   /** package token */
   token?: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /orgs/{org}/packages/{package_type}/{package_name}/restore` · `packages/restore-package-for-org`</sub>
@@ -130,7 +130,7 @@ github.packages.deletePackageVersionForOrg(input: {
   org: string;
   /** Unique identifier of the package version. */
   package_version_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/packages/{package_type}/{package_name}/versions/{package_version_id}` · `packages/delete-package-version-for-org`</sub>
@@ -168,7 +168,7 @@ github.packages.restorePackageVersionForOrg(input: {
   org: string;
   /** Unique identifier of the package version. */
   package_version_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /orgs/{org}/packages/{package_type}/{package_name}/versions/{package_version_id}/restore` · `packages/restore-package-version-for-org`</sub>
@@ -212,7 +212,7 @@ github.packages.deletePackageForAuthenticatedUser(input: {
   package_type: "npm" | "maven" | "rubygems" | "docker" | "nuget" | "container";
   /** The name of the package. */
   package_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/packages/{package_type}/{package_name}` · `packages/delete-package-for-authenticated-user`</sub>
@@ -244,7 +244,7 @@ github.packages.restorePackageForAuthenticatedUser(input: {
   package_name: string;
   /** package token */
   token?: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /user/packages/{package_type}/{package_name}/restore` · `packages/restore-package-for-authenticated-user`</sub>
@@ -282,7 +282,7 @@ github.packages.deletePackageVersionForAuthenticatedUser(input: {
   package_name: string;
   /** Unique identifier of the package version. */
   package_version_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/packages/{package_type}/{package_name}/versions/{package_version_id}` · `packages/delete-package-version-for-authenticated-user`</sub>
@@ -316,7 +316,7 @@ github.packages.restorePackageVersionForAuthenticatedUser(input: {
   package_name: string;
   /** Unique identifier of the package version. */
   package_version_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /user/packages/{package_type}/{package_name}/versions/{package_version_id}/restore` · `packages/restore-package-version-for-authenticated-user`</sub>
@@ -367,7 +367,7 @@ github.packages.deletePackageForUser(input: {
   package_name: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /users/{username}/packages/{package_type}/{package_name}` · `packages/delete-package-for-user`</sub>
@@ -403,7 +403,7 @@ github.packages.restorePackageForUser(input: {
   username: string;
   /** package token */
   token?: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /users/{username}/packages/{package_type}/{package_name}/restore` · `packages/restore-package-for-user`</sub>
@@ -439,7 +439,7 @@ github.packages.deletePackageVersionForUser(input: {
   username: string;
   /** Unique identifier of the package version. */
   package_version_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /users/{username}/packages/{package_type}/{package_name}/versions/{package_version_id}` · `packages/delete-package-version-for-user`</sub>
@@ -477,7 +477,7 @@ github.packages.restorePackageVersionForUser(input: {
   username: string;
   /** Unique identifier of the package version. */
   package_version_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /users/{username}/packages/{package_type}/{package_name}/versions/{package_version_id}/restore` · `packages/restore-package-version-for-user`</sub>

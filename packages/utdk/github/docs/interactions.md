@@ -14,7 +14,7 @@ Remove interaction restrictions for an organization — [API reference](https://
 github.interactions.removeRestrictionsForOrg(input: {
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/interaction-limits` · `interactions/remove-restrictions-for-org`</sub>
@@ -57,7 +57,7 @@ github.interactions.removeRestrictionsForRepo(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/interaction-limits` · `interactions/remove-restrictions-for-repo`</sub>
@@ -106,7 +106,7 @@ github.interactions.removePullRequestBypassListForRepo(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/interaction-limits/pulls/bypass-list` · `interactions/remove-pull-request-bypass-list-for-repo`</sub>
@@ -138,7 +138,7 @@ github.interactions.setPullRequestBypassListForRepo(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/interaction-limits/pulls/bypass-list` · `interactions/set-pull-request-bypass-list-for-repo`</sub>
@@ -182,7 +182,7 @@ github.interactions.updatePullRequestCreationCapForRepo(input: {
 Remove interaction restrictions from your public repositories — [API reference](https://docs.github.com/rest/interactions/user#remove-interaction-restrictions-from-your-public-repositories)
 
 ```ts
-github.interactions.removeRestrictionsForAuthenticatedUser(): Promise<unknown>
+github.interactions.removeRestrictionsForAuthenticatedUser(): Promise<undefined>
 ```
 
 <sub>`DELETE /user/interaction-limits` · `interactions/remove-restrictions-for-authenticated-user`</sub>

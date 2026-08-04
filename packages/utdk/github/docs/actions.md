@@ -29,7 +29,7 @@ github.actions.setActionsCacheRetentionLimitForEnterprise(input: {
   max_cache_retention_days?: number;
   /** The slug version of the enterprise name. */
   enterprise: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /enterprises/{enterprise}/actions/cache/retention-limit` · `actions/set-actions-cache-retention-limit-for-enterprise`</sub>
@@ -57,7 +57,7 @@ github.actions.setActionsCacheStorageLimitForEnterprise(input: {
   max_cache_size_gb?: number;
   /** The slug version of the enterprise name. */
   enterprise: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /enterprises/{enterprise}/actions/cache/storage-limit` · `actions/set-actions-cache-storage-limit-for-enterprise`</sub>
@@ -85,7 +85,7 @@ github.actions.setActionsCacheRetentionLimitForOrganization(input: {
   max_cache_retention_days?: number;
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /organizations/{org}/actions/cache/retention-limit` · `actions/set-actions-cache-retention-limit-for-organization`</sub>
@@ -113,7 +113,7 @@ github.actions.setActionsCacheStorageLimitForOrganization(input: {
   max_cache_size_gb?: number;
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /organizations/{org}/actions/cache/storage-limit` · `actions/set-actions-cache-storage-limit-for-organization`</sub>
@@ -278,7 +278,7 @@ github.actions.deleteCustomImageFromOrg(input: {
   org: string;
   /** Image definition ID of custom image */
   image_definition_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}` · `actions/delete-custom-image-from-org`</sub>
@@ -325,7 +325,7 @@ github.actions.deleteCustomImageVersionFromOrg(input: {
   image_definition_id: number;
   /** Version of a custom image */
   version: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/hosted-runners/images/custom/{image_definition_id}/versions/{version}` · `actions/delete-custom-image-version-from-org`</sub>
@@ -436,7 +436,7 @@ github.actions.setGithubActionsPermissionsOrganization(input: {
   sha_pinning_required?: ShaPinningRequired;
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions` · `actions/set-github-actions-permissions-organization`</sub>
@@ -464,7 +464,7 @@ github.actions.setArtifactAndLogRetentionSettingsOrganization(input: {
   days: number;
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions/artifact-and-log-retention` · `actions/set-artifact-and-log-retention-settings-organization`</sub>
@@ -492,7 +492,7 @@ github.actions.setForkPrContributorApprovalPermissionsOrganization(input: {
   approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors";
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions/fork-pr-contributor-approval` · `actions/set-fork-pr-contributor-approval-permissions-organization`</sub>
@@ -526,7 +526,7 @@ github.actions.setPrivateRepoForkPrWorkflowsSettingsOrganization(input: {
   require_approval_for_fork_pr_workflows?: boolean;
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions/fork-pr-workflows-private-repos` · `actions/set-private-repo-fork-pr-workflows-settings-organization`</sub>
@@ -558,7 +558,7 @@ github.actions.setSelectedRepositoriesEnabledGithubActionsOrganization(input: {
   selected_repository_ids: (number)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions/repositories` · `actions/set-selected-repositories-enabled-github-actions-organization`</sub>
@@ -573,7 +573,7 @@ github.actions.disableSelectedRepositoryGithubActionsOrganization(input: {
   org: string;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/permissions/repositories/{repository_id}` · `actions/disable-selected-repository-github-actions-organization`</sub>
@@ -588,7 +588,7 @@ github.actions.enableSelectedRepositoryGithubActionsOrganization(input: {
   org: string;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions/repositories/{repository_id}` · `actions/enable-selected-repository-github-actions-organization`</sub>
@@ -620,7 +620,7 @@ github.actions.setAllowedActionsOrganization(input: {
   patterns_allowed?: (string)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions/selected-actions` · `actions/set-allowed-actions-organization`</sub>
@@ -648,7 +648,7 @@ github.actions.setSelfHostedRunnersPermissionsOrganization(input: {
   enabled_repositories: "all" | "selected" | "none";
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions/self-hosted-runners` · `actions/set-self-hosted-runners-permissions-organization`</sub>
@@ -680,7 +680,7 @@ github.actions.setSelectedRepositoriesSelfHostedRunnersOrganization(input: {
   selected_repository_ids: (number)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions/self-hosted-runners/repositories` · `actions/set-selected-repositories-self-hosted-runners-organization`</sub>
@@ -695,7 +695,7 @@ github.actions.disableSelectedRepositorySelfHostedRunnersOrganization(input: {
   org: string;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/permissions/self-hosted-runners/repositories/{repository_id}` · `actions/disable-selected-repository-self-hosted-runners-organization`</sub>
@@ -710,7 +710,7 @@ github.actions.enableSelectedRepositorySelfHostedRunnersOrganization(input: {
   org: string;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions/self-hosted-runners/repositories/{repository_id}` · `actions/enable-selected-repository-self-hosted-runners-organization`</sub>
@@ -738,7 +738,7 @@ github.actions.setGithubActionsDefaultWorkflowPermissionsOrganization(input: {
   can_approve_pull_request_reviews?: ActionsCanApprovePullRequestReviews;
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/permissions/workflow` · `actions/set-github-actions-default-workflow-permissions-organization`</sub>
@@ -801,7 +801,7 @@ github.actions.deleteSelfHostedRunnerGroupFromOrg(input: {
   org: string;
   /** Unique identifier of the self-hosted runner group. */
   runner_group_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}` · `actions/delete-self-hosted-runner-group-from-org`</sub>
@@ -898,7 +898,7 @@ github.actions.setRepoAccessToSelfHostedRunnerGroupInOrg(input: {
   org: string;
   /** Unique identifier of the self-hosted runner group. */
   runner_group_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories` · `actions/set-repo-access-to-self-hosted-runner-group-in-org`</sub>
@@ -915,7 +915,7 @@ github.actions.removeRepoAccessToSelfHostedRunnerGroupInOrg(input: {
   runner_group_id: number;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}` · `actions/remove-repo-access-to-self-hosted-runner-group-in-org`</sub>
@@ -932,7 +932,7 @@ github.actions.addRepoAccessToSelfHostedRunnerGroupInOrg(input: {
   runner_group_id: number;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/repositories/{repository_id}` · `actions/add-repo-access-to-self-hosted-runner-group-in-org`</sub>
@@ -968,7 +968,7 @@ github.actions.setSelfHostedRunnersInGroupForOrg(input: {
   org: string;
   /** Unique identifier of the self-hosted runner group. */
   runner_group_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/runners` · `actions/set-self-hosted-runners-in-group-for-org`</sub>
@@ -985,7 +985,7 @@ github.actions.removeSelfHostedRunnerFromGroupForOrg(input: {
   runner_group_id: number;
   /** Unique identifier of the self-hosted runner. */
   runner_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/runner-groups/{runner_group_id}/runners/{runner_id}` · `actions/remove-self-hosted-runner-from-group-for-org`</sub>
@@ -1002,7 +1002,7 @@ github.actions.addSelfHostedRunnerToGroupForOrg(input: {
   runner_group_id: number;
   /** Unique identifier of the self-hosted runner. */
   runner_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/runner-groups/{runner_group_id}/runners/{runner_id}` · `actions/add-self-hosted-runner-to-group-for-org`</sub>
@@ -1036,7 +1036,7 @@ github.actions.deleteSelfHostedRunnerFromOrg(input: {
   org: string;
   /** Unique identifier of the self-hosted runner. */
   runner_id: number;
-}): Promise<ValidationErrorSimple>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/runners/{runner_id}` · `actions/delete-self-hosted-runner-from-org`</sub>
@@ -1224,7 +1224,7 @@ github.actions.deleteOrgSecret(input: {
   org: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/secrets/{secret_name}` · `actions/delete-org-secret`</sub>
@@ -1298,7 +1298,7 @@ github.actions.setSelectedReposForOrgSecret(input: {
   org: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/secrets/{secret_name}/repositories` · `actions/set-selected-repos-for-org-secret`</sub>
@@ -1314,7 +1314,7 @@ github.actions.removeSelectedRepoFromOrgSecret(input: {
   /** The name of the secret. */
   secret_name: string;
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}` · `actions/remove-selected-repo-from-org-secret`</sub>
@@ -1330,7 +1330,7 @@ github.actions.addSelectedRepoToOrgSecret(input: {
   /** The name of the secret. */
   secret_name: string;
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/secrets/{secret_name}/repositories/{repository_id}` · `actions/add-selected-repo-to-org-secret`</sub>
@@ -1396,7 +1396,7 @@ github.actions.deleteOrgVariable(input: {
   org: string;
   /** The name of the variable. */
   name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/variables/{name}` · `actions/delete-org-variable`</sub>
@@ -1432,7 +1432,7 @@ github.actions.updateOrgVariable(input: {
   selected_repository_ids?: (number)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}, options: { params: { name: string } }): Promise<unknown>
+}, options: { params: { name: string } }): Promise<undefined>
 ```
 
 <sub>`PATCH /orgs/{org}/actions/variables/{name}` · `actions/update-org-variable`</sub>
@@ -1468,7 +1468,7 @@ github.actions.setSelectedReposForOrgVariable(input: {
   org: string;
   /** The name of the variable. */
   name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/variables/{name}/repositories` · `actions/set-selected-repos-for-org-variable`</sub>
@@ -1484,7 +1484,7 @@ github.actions.removeSelectedRepoFromOrgVariable(input: {
   /** The name of the variable. */
   name: string;
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/variables/{name}/repositories/{repository_id}` · `actions/remove-selected-repo-from-org-variable`</sub>
@@ -1500,7 +1500,7 @@ github.actions.addSelectedRepoToOrgVariable(input: {
   /** The name of the variable. */
   name: string;
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/actions/variables/{name}/repositories/{repository_id}` · `actions/add-selected-repo-to-org-variable`</sub>
@@ -1538,7 +1538,7 @@ github.actions.deleteArtifact(input: {
   repo: string;
   /** The unique identifier of the artifact. */
   artifact_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/actions/artifacts/{artifact_id}` · `actions/delete-artifact`</sub>
@@ -1573,7 +1573,7 @@ github.actions.downloadArtifact(input: {
   /** The unique identifier of the artifact. */
   artifact_id: number;
   archive_format: string;
-}): Promise<BasicError>
+}): Promise<unknown>
 ```
 
 <sub>`GET /repos/{owner}/{repo}/actions/artifacts/{artifact_id}/{archive_format}` · `actions/download-artifact`</sub>
@@ -1605,7 +1605,7 @@ github.actions.setActionsCacheRetentionLimitForRepository(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/cache/retention-limit` · `actions/set-actions-cache-retention-limit-for-repository`</sub>
@@ -1637,7 +1637,7 @@ github.actions.setActionsCacheStorageLimitForRepository(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/cache/storage-limit` · `actions/set-actions-cache-storage-limit-for-repository`</sub>
@@ -1715,7 +1715,7 @@ github.actions.deleteActionsCacheById(input: {
   repo: string;
   /** The unique identifier of the GitHub Actions cache. */
   cache_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/actions/caches/{cache_id}` · `actions/delete-actions-cache-by-id`</sub>
@@ -1917,7 +1917,7 @@ github.actions.setGithubActionsPermissionsRepository(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/permissions` · `actions/set-github-actions-permissions-repository`</sub>
@@ -1949,7 +1949,7 @@ github.actions.setWorkflowAccessToRepository(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/permissions/access` · `actions/set-workflow-access-to-repository`</sub>
@@ -1981,7 +1981,7 @@ github.actions.setArtifactAndLogRetentionSettingsRepository(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/permissions/artifact-and-log-retention` · `actions/set-artifact-and-log-retention-settings-repository`</sub>
@@ -2013,7 +2013,7 @@ github.actions.setForkPrContributorApprovalPermissionsRepository(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/permissions/fork-pr-contributor-approval` · `actions/set-fork-pr-contributor-approval-permissions-repository`</sub>
@@ -2051,7 +2051,7 @@ github.actions.setPrivateRepoForkPrWorkflowsSettingsRepository(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/permissions/fork-pr-workflows-private-repos` · `actions/set-private-repo-fork-pr-workflows-settings-repository`</sub>
@@ -2087,7 +2087,7 @@ github.actions.setAllowedActionsRepository(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/permissions/selected-actions` · `actions/set-allowed-actions-repository`</sub>
@@ -2119,7 +2119,7 @@ github.actions.setGithubActionsDefaultWorkflowPermissionsRepository(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/permissions/workflow` · `actions/set-github-actions-default-workflow-permissions-repository`</sub>
@@ -2157,7 +2157,7 @@ github.actions.deleteSelfHostedRunnerFromRepo(input: {
   repo: string;
   /** Unique identifier of the self-hosted runner. */
   runner_id: number;
-}): Promise<ValidationErrorSimple>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/actions/runners/{runner_id}` · `actions/delete-self-hosted-runner-from-repo`</sub>
@@ -2385,7 +2385,7 @@ github.actions.deleteWorkflowRun(input: {
   repo: string;
   /** The unique identifier of the workflow run. */
   run_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/actions/runs/{run_id}` · `actions/delete-workflow-run`</sub>
@@ -2584,7 +2584,7 @@ github.actions.reviewCustomGatesForRun(input: {
   repo: string;
   /** The unique identifier of the workflow run. */
   run_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /repos/{owner}/{repo}/actions/runs/{run_id}/deployment_protection_rule` · `actions/review-custom-gates-for-run`</sub>
@@ -2641,7 +2641,7 @@ github.actions.deleteWorkflowRunLogs(input: {
   repo: string;
   /** The unique identifier of the workflow run. */
   run_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/actions/runs/{run_id}/logs` · `actions/delete-workflow-run-logs`</sub>
@@ -2789,7 +2789,7 @@ github.actions.deleteRepoSecret(input: {
   repo: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/actions/secrets/{secret_name}` · `actions/delete-repo-secret`</sub>
@@ -2897,7 +2897,7 @@ github.actions.deleteRepoVariable(input: {
   repo: string;
   /** The name of the variable. */
   name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/actions/variables/{name}` · `actions/delete-repo-variable`</sub>
@@ -2933,7 +2933,7 @@ github.actions.updateRepoVariable(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}, options: { params: { name: string } }): Promise<unknown>
+}, options: { params: { name: string } }): Promise<undefined>
 ```
 
 <sub>`PATCH /repos/{owner}/{repo}/actions/variables/{name}` · `actions/update-repo-variable`</sub>
@@ -2986,7 +2986,7 @@ github.actions.disableWorkflow(input: {
   repo: string;
   /** The ID of the workflow. You can also pass the workflow file name as a string. */
   workflow_id: number | string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/disable` · `actions/disable-workflow`</sub>
@@ -3026,7 +3026,7 @@ github.actions.enableWorkflow(input: {
   repo: string;
   /** The ID of the workflow. You can also pass the workflow file name as a string. */
   workflow_id: number | string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/actions/workflows/{workflow_id}/enable` · `actions/enable-workflow`</sub>
@@ -3120,7 +3120,7 @@ github.actions.deleteEnvironmentSecret(input: {
   environment_name: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/environments/{environment_name}/secrets/{secret_name}` · `actions/delete-environment-secret`</sub>
@@ -3240,7 +3240,7 @@ github.actions.deleteEnvironmentVariable(input: {
   name: string;
   /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
   environment_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}` · `actions/delete-environment-variable`</sub>
@@ -3280,7 +3280,7 @@ github.actions.updateEnvironmentVariable(input: {
   repo: string;
   /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
   environment_name: string;
-}, options: { params: { name: string } }): Promise<unknown>
+}, options: { params: { name: string } }): Promise<undefined>
 ```
 
 <sub>`PATCH /repos/{owner}/{repo}/environments/{environment_name}/variables/{name}` · `actions/update-environment-variable`</sub>

@@ -35,7 +35,7 @@ github.codespaces.setCodespacesAccess(input: {
   selected_usernames?: (string)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/codespaces/access` · `codespaces/set-codespaces-access`</sub>
@@ -50,7 +50,7 @@ github.codespaces.deleteCodespacesAccessUsers(input: {
   selected_usernames: (string)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/codespaces/access/selected_users` · `codespaces/delete-codespaces-access-users`</sub>
@@ -65,7 +65,7 @@ github.codespaces.setCodespacesAccessUsers(input: {
   selected_usernames: (string)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /orgs/{org}/codespaces/access/selected_users` · `codespaces/set-codespaces-access-users`</sub>
@@ -97,7 +97,7 @@ github.codespaces.deleteOrgSecret(input: {
   org: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/codespaces/secrets/{secret_name}` · `codespaces/delete-org-secret`</sub>
@@ -171,7 +171,7 @@ github.codespaces.setSelectedReposForOrgSecret(input: {
   org: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/codespaces/secrets/{secret_name}/repositories` · `codespaces/set-selected-repos-for-org-secret`</sub>
@@ -187,7 +187,7 @@ github.codespaces.removeSelectedRepoFromOrgSecret(input: {
   /** The name of the secret. */
   secret_name: string;
   repository_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}` · `codespaces/remove-selected-repo-from-org-secret`</sub>
@@ -203,7 +203,7 @@ github.codespaces.addSelectedRepoToOrgSecret(input: {
   /** The name of the secret. */
   secret_name: string;
   repository_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/codespaces/secrets/{secret_name}/repositories/{repository_id}` · `codespaces/add-selected-repo-to-org-secret`</sub>
@@ -439,7 +439,7 @@ github.codespaces.deleteRepoSecret(input: {
   repo: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/codespaces/secrets/{secret_name}` · `codespaces/delete-repo-secret`</sub>
@@ -715,7 +715,7 @@ Delete a secret for the authenticated user — [API reference](https://docs.gith
 github.codespaces.deleteSecretForAuthenticatedUser(input: {
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/codespaces/secrets/{secret_name}` · `codespaces/delete-secret-for-authenticated-user`</sub>
@@ -775,7 +775,7 @@ github.codespaces.setRepositoriesForSecretForAuthenticatedUser(input: {
   selected_repository_ids: (number)[];
   /** The name of the secret. */
   secret_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /user/codespaces/secrets/{secret_name}/repositories` · `codespaces/set-repositories-for-secret-for-authenticated-user`</sub>
@@ -789,7 +789,7 @@ github.codespaces.removeRepositoryForSecretForAuthenticatedUser(input: {
   /** The name of the secret. */
   secret_name: string;
   repository_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/codespaces/secrets/{secret_name}/repositories/{repository_id}` · `codespaces/remove-repository-for-secret-for-authenticated-user`</sub>
@@ -803,7 +803,7 @@ github.codespaces.addRepositoryForSecretForAuthenticatedUser(input: {
   /** The name of the secret. */
   secret_name: string;
   repository_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /user/codespaces/secrets/{secret_name}/repositories/{repository_id}` · `codespaces/add-repository-for-secret-for-authenticated-user`</sub>

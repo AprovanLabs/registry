@@ -1,4 +1,4 @@
-import type { AlertNumber, BasicError, CodeScanningAlert, CodeScanningAlertInstanceList, CodeScanningAlertItems, CodeScanningAlertSeverity, CodeScanningAlertStateQuery, CodeScanningAnalysis, CodeScanningAnalysisCommitSha, CodeScanningAnalysisDeletion, CodeScanningAnalysisSarifFile, CodeScanningAnalysisSarifId, CodeScanningAnalysisToolGuid, CodeScanningAnalysisToolName, CodeScanningAutofix, CodeScanningAutofixCommitsResponse, CodeScanningCodeqlDatabase, CodeScanningDefaultSetup, CodeScanningOrganizationAlertItems, CodeScanningRef, CodeScanningRefFull, CodeScanningSarifsReceipt, CodeScanningSarifsStatus, CodeScanningVariantAnalysis, CodeScanningVariantAnalysisRepoTask, EmptyObject } from "./schemas.js";
+import type { AlertNumber, CodeScanningAlert, CodeScanningAlertInstanceList, CodeScanningAlertItems, CodeScanningAlertSeverity, CodeScanningAlertStateQuery, CodeScanningAnalysis, CodeScanningAnalysisCommitSha, CodeScanningAnalysisDeletion, CodeScanningAnalysisSarifFile, CodeScanningAnalysisSarifId, CodeScanningAnalysisToolGuid, CodeScanningAnalysisToolName, CodeScanningAutofix, CodeScanningAutofixCommitsResponse, CodeScanningCodeqlDatabase, CodeScanningDefaultSetup, CodeScanningOrganizationAlertItems, CodeScanningRef, CodeScanningRefFull, CodeScanningSarifsReceipt, CodeScanningSarifsStatus, CodeScanningVariantAnalysis, CodeScanningVariantAnalysisRepoTask, EmptyObject } from "./schemas.js";
 
 export type CodeScanningOperations = {
   /**
@@ -232,7 +232,7 @@ export type CodeScanningOperations = {
     repo: string;
     /** The language of the CodeQL database. */
     language: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Create a CodeQL variant analysis

@@ -1,4 +1,4 @@
-import type { AlertNumber, BasicError, DependabotAlert, DependabotAlertWithRepository, DependabotPublicKey, DependabotRepositoryAccessDetails, DependabotSecret, EmptyObject, MinimalRepository, OrganizationDependabotSecret } from "./schemas.js";
+import type { AlertNumber, DependabotAlert, DependabotAlertWithRepository, DependabotPublicKey, DependabotRepositoryAccessDetails, DependabotSecret, EmptyObject, MinimalRepository, OrganizationDependabotSecret } from "./schemas.js";
 
 export type DependabotOperations = {
   /**
@@ -62,7 +62,7 @@ export type DependabotOperations = {
     repository_ids_to_remove?: (number)[];
     /** The slug version of the enterprise name. */
     enterprise: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Set the default repository access level for Dependabot in an enterprise
@@ -73,7 +73,7 @@ export type DependabotOperations = {
     default_level: "public" | "internal";
     /** The slug version of the enterprise name. */
     enterprise: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List Dependabot alerts for an organization
@@ -142,7 +142,7 @@ export type DependabotOperations = {
     repository_ids_to_remove?: (number)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Set the default repository access level for Dependabot
@@ -153,7 +153,7 @@ export type DependabotOperations = {
     default_level: "public" | "internal";
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List organization secrets
@@ -216,7 +216,7 @@ export type DependabotOperations = {
     org: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List selected repositories for an organization secret
@@ -244,7 +244,7 @@ export type DependabotOperations = {
     org: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add selected repository to an organization secret
@@ -256,7 +256,7 @@ export type DependabotOperations = {
     /** The name of the secret. */
     secret_name: string;
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove selected repository from an organization secret
@@ -268,7 +268,7 @@ export type DependabotOperations = {
     /** The name of the secret. */
     secret_name: string;
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List Dependabot alerts for a repository
@@ -403,5 +403,5 @@ export type DependabotOperations = {
     repo: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 };

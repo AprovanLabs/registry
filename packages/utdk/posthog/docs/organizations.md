@@ -1,2957 +1,838 @@
 # Organizations
 
-## Operations
+90 operations · `@utdk/posthog`
 
-### `posthog.list`
-
-- **HTTP**: `GET /api/organizations/`
-- **OpenAPI operationId**: `list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; p...`
-- OpenAPI response codes: `200`
-
 ```ts
 import posthog from "@utdk/posthog";
-
-type ListInput = Parameters<typeof posthog.list> extends [infer T, ...unknown[]] ? T : undefined;
-type ListOutput = Awaited<ReturnType<typeof posthog.list>>;
-
-const result: ListOutput = await posthog.list();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; p...
 ```
-
-### `posthog.create`
-
-- **HTTP**: `POST /api/organizations/`
-- **OpenAPI operationId**: `create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+## `posthog.list`
 
-**Outputs**
-
-- Client return type: `{ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `201`
-
 ```ts
-import posthog from "@utdk/posthog";
+posthog.list(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; projects: ({ [key: string]: unknown })[]; available_product_features: unknown[] | null; is_member_join_em...>
+```
 
-type CreateInput = Parameters<typeof posthog.create> extends [infer T, ...unknown[]] ? T : undefined;
-type CreateOutput = Awaited<ReturnType<typeof posthog.create>>;
+<sub>`GET /api/organizations/` · `list`</sub>
 
-const result: CreateOutput = await posthog.create();
+## `posthog.create`
 
-// Result shape (from schema): { id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; ...
+```ts
+posthog.create(): Promise<{ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; projects: ({ [key: string]: unknown })[]; available_product_features: unknown[] | null; is_member_join_email_enabled: boolean; metadata: { [key: string]: string | undefined }; cust...>
 ```
-
-### `posthog.destroy`
 
-- **HTTP**: `DELETE /api/organizations/{id}/`
-- **OpenAPI operationId**: `destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`POST /api/organizations/` · `create`</sub>
 
-**Inputs**
+## `posthog.destroy`
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+```ts
+posthog.destroy(): Promise<unknown>
+```
 
-**Outputs**
+<sub>`DELETE /api/organizations/{id}/` · `destroy`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `posthog.retrieve`
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.retrieve(): Promise<{ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; projects: ({ [key: string]: unknown })[]; available_product_features: unknown[] | null; is_member_join_email_enabled: boolean; metadata: { [key: string]: string | undefined }; cust...>
+```
 
-type DestroyInput = Parameters<typeof posthog.destroy> extends [infer T, ...unknown[]] ? T : undefined;
-type DestroyOutput = Awaited<ReturnType<typeof posthog.destroy>>;
+<sub>`GET /api/organizations/{id}/` · `retrieve`</sub>
 
-const result: DestroyOutput = await posthog.destroy();
+## `posthog.partialUpdate`
 
-// Result shape (from schema): unknown
+```ts
+posthog.partialUpdate(): Promise<{ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; projects: ({ [key: string]: unknown })[]; available_product_features: unknown[] | null; is_member_join_email_enabled: boolean; metadata: { [key: string]: string | undefined }; cust...>
 ```
 
-### `posthog.retrieve`
+<sub>`PATCH /api/organizations/{id}/` · `partial_update`</sub>
 
-- **HTTP**: `GET /api/organizations/{id}/`
-- **OpenAPI operationId**: `retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.update`
 
-**Inputs**
+```ts
+posthog.update(): Promise<{ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; projects: ({ [key: string]: unknown })[]; available_product_features: unknown[] | null; is_member_join_email_enabled: boolean; metadata: { [key: string]: string | undefined }; cust...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`PUT /api/organizations/{id}/` · `update`</sub>
 
-**Outputs**
+## `posthog.requestAiAccessCreate`
 
-- Client return type: `{ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
+Notify organization admins that a member is requesting PostHog AI be enabled.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type RetrieveInput = Parameters<typeof posthog.retrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type RetrieveOutput = Awaited<ReturnType<typeof posthog.retrieve>>;
-
-const result: RetrieveOutput = await posthog.retrieve();
-
-// Result shape (from schema): { id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; ...
+posthog.requestAiAccessCreate(): Promise<{ success: boolean }>
 ```
-
-### `posthog.partialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{id}/`
-- **OpenAPI operationId**: `partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`POST /api/organizations/{id}/request_ai_access/` · `request_ai_access_create`</sub>
 
-**Outputs**
+## `posthog.cimdVerificationTokensList`
 
-- Client return type: `{ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
+Manage CIMD verification tokens for an organization. A partner embeds the plaintext token in their CIMD metadata document as `verification_token` inside the `com.posthog` object (the legacy top-level `posthog_verification_token` field still works as a fallback). When PostHog fetches the metadata, matching the token links the partner app to this organization and grants a higher default rate limit for account provisioning. The plaintext value is only available on creation; we store a hash.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type PartialUpdateInput = Parameters<typeof posthog.partialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type PartialUpdateOutput = Awaited<ReturnType<typeof posthog.partialUpdate>>;
-
-const result: PartialUpdateOutput = await posthog.partialUpdate();
-
-// Result shape (from schema): { id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; ...
+posthog.cimdVerificationTokensList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; label: string; mask_value: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "produc...>
 ```
 
-### `posthog.update`
+<sub>`GET /api/organizations/{organization_id}/cimd_verification_tokens/` · `cimd_verification_tokens_list`</sub>
 
-- **HTTP**: `PUT /api/organizations/{id}/`
-- **OpenAPI operationId**: `update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.cimdVerificationTokensCreate`
 
-**Inputs**
+Manage CIMD verification tokens for an organization. A partner embeds the plaintext token in their CIMD metadata document as `verification_token` inside the `com.posthog` object (the legacy top-level `posthog_verification_token` field still works as a fallback). When PostHog fetches the metadata, matching the token links the partner app to this organization and grants a higher default rate limit for account provisioning. The plaintext value is only available on creation; we store a hash.
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
 ```ts
-import posthog from "@utdk/posthog";
+posthog.cimdVerificationTokensCreate(): Promise<{ id: string; label: string; mask_value: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "other"...>
+```
+
+<sub>`POST /api/organizations/{organization_id}/cimd_verification_tokens/` · `cimd_verification_tokens_create`</sub>
 
-type UpdateInput = Parameters<typeof posthog.update> extends [infer T, ...unknown[]] ? T : undefined;
-type UpdateOutput = Awaited<ReturnType<typeof posthog.update>>;
+## `posthog.cimdVerificationTokensDestroy`
 
-const result: UpdateOutput = await posthog.update();
+Manage CIMD verification tokens for an organization. A partner embeds the plaintext token in their CIMD metadata document as `verification_token` inside the `com.posthog` object (the legacy top-level `posthog_verification_token` field still works as a fallback). When PostHog fetches the metadata, matching the token links the partner app to this organization and grants a higher default rate limit for account provisioning. The plaintext value is only available on creation; we store a hash.
 
-// Result shape (from schema): { id: string; name: string; slug: string; logo_media_id?: string | null; created_at: string; updated_at: string; membership_level: 1 | 8 | 15; plugins_access_level: 0 | 3 | 6 | 9; teams: ({ [key: string]: unknown })[]; ...
+```ts
+posthog.cimdVerificationTokensDestroy(): Promise<unknown>
 ```
 
-### `posthog.requestAiAccessCreate`
+<sub>`DELETE /api/organizations/{organization_id}/cimd_verification_tokens/{id}/` · `cimd_verification_tokens_destroy`</sub>
 
-- **HTTP**: `POST /api/organizations/{id}/request_ai_access/`
-- **What it does**: Notify organization admins that a member is requesting PostHog AI be enabled.
-- **OpenAPI operationId**: `request_ai_access_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.cimdVerificationTokensRetrieve`
 
-**Inputs**
+Manage CIMD verification tokens for an organization. A partner embeds the plaintext token in their CIMD metadata document as `verification_token` inside the `com.posthog` object (the legacy top-level `posthog_verification_token` field still works as a fallback). When PostHog fetches the metadata, matching the token links the partner app to this organization and grants a higher default rate limit for account provisioning. The plaintext value is only available on creation; we store a hash.
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+```ts
+posthog.cimdVerificationTokensRetrieve(): Promise<{ id: string; label: string; mask_value: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "other"...>
+```
 
-**Outputs**
+<sub>`GET /api/organizations/{organization_id}/cimd_verification_tokens/{id}/` · `cimd_verification_tokens_retrieve`</sub>
 
-- Client return type: `{ success: boolean }`
-- OpenAPI response codes: `200`
+## `posthog.domainsList`
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.domainsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; has_scim: boolean; scim_base_url: string | null; has_id_jag: boolean; identity_provider_config?: string | null })[] }>
+```
 
-type RequestAiAccessCreateInput = Parameters<typeof posthog.requestAiAccessCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type RequestAiAccessCreateOutput = Awaited<ReturnType<typeof posthog.requestAiAccessCreate>>;
+<sub>`GET /api/organizations/{organization_id}/domains/` · `domains_list`</sub>
 
-const result: RequestAiAccessCreateOutput = await posthog.requestAiAccessCreate();
+## `posthog.domainsCreate`
 
-// Result shape (from schema): { success: boolean }
+```ts
+posthog.domainsCreate(): Promise<{ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; has_scim: boolean; scim_base_url: string | null; has_id_jag: boolean; identity_provider_config?: string | null }>
 ```
 
-### `posthog.cimdVerificationTokensList`
+<sub>`POST /api/organizations/{organization_id}/domains/` · `domains_create`</sub>
 
-- **HTTP**: `GET /api/organizations/{organization_id}/cimd_verification_tokens/`
-- **What it does**: Manage CIMD verification tokens for an organization.
+## `posthog.domainsDestroy`
 
-A partner embeds the plaintext token in their CIMD metadata document as
-`verification_token` inside the `com.posthog` object (the legacy top-level
-`posthog_verification_token` field still works as a fallback). When PostHog fetches
-the metadata, matching the token links the partner app to this organization and
-grants a higher default rate limit for account provisioning.
+```ts
+posthog.domainsDestroy(): Promise<unknown>
+```
 
-The plaintext value is only available on creation; we store a hash.
-- **OpenAPI operationId**: `cimd_verification_tokens_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`DELETE /api/organizations/{organization_id}/domains/{id}/` · `domains_destroy`</sub>
 
-**Inputs**
+## `posthog.domainsRetrieve`
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+```ts
+posthog.domainsRetrieve(): Promise<{ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; has_scim: boolean; scim_base_url: string | null; has_id_jag: boolean; identity_provider_config?: string | null }>
+```
 
-**Outputs**
+<sub>`GET /api/organizations/{organization_id}/domains/{id}/` · `domains_retrieve`</sub>
 
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; label: string; mask_value: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string...`
-- OpenAPI response codes: `200`
+## `posthog.domainsPartialUpdate`
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.domainsPartialUpdate(): Promise<{ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; has_scim: boolean; scim_base_url: string | null; has_id_jag: boolean; identity_provider_config?: string | null }>
+```
 
-type CimdVerificationTokensListInput = Parameters<typeof posthog.cimdVerificationTokensList> extends [infer T, ...unknown[]] ? T : undefined;
-type CimdVerificationTokensListOutput = Awaited<ReturnType<typeof posthog.cimdVerificationTokensList>>;
+<sub>`PATCH /api/organizations/{organization_id}/domains/{id}/` · `domains_partial_update`</sub>
 
-const result: CimdVerificationTokensListOutput = await posthog.cimdVerificationTokensList();
+## `posthog.domainsUpdate`
 
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; label: string; mask_value: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string...
+```ts
+posthog.domainsUpdate(): Promise<{ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; has_scim: boolean; scim_base_url: string | null; has_id_jag: boolean; identity_provider_config?: string | null }>
 ```
 
-### `posthog.cimdVerificationTokensCreate`
+<sub>`PUT /api/organizations/{organization_id}/domains/{id}/` · `domains_update`</sub>
 
-- **HTTP**: `POST /api/organizations/{organization_id}/cimd_verification_tokens/`
-- **What it does**: Manage CIMD verification tokens for an organization.
+## `posthog.domainsScimLogsRetrieve`
 
-A partner embeds the plaintext token in their CIMD metadata document as
-`verification_token` inside the `com.posthog` object (the legacy top-level
-`posthog_verification_token` field still works as a fallback). When PostHog fetches
-the metadata, matching the token links the partner app to this organization and
-grants a higher default rate limit for account provisioning.
+```ts
+posthog.domainsScimLogsRetrieve(): Promise<unknown>
+```
 
-The plaintext value is only available on creation; we store a hash.
-- **OpenAPI operationId**: `cimd_verification_tokens_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`GET /api/organizations/{organization_id}/domains/{id}/scim/logs/` · `domains_scim_logs_retrieve`</sub>
 
-**Inputs**
+## `posthog.domainsVerifyCreate`
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+```ts
+posthog.domainsVerifyCreate(): Promise<unknown>
+```
 
-**Outputs**
+<sub>`POST /api/organizations/{organization_id}/domains/{id}/verify/` · `domains_verify_create`</sub>
 
-- Client return type: `{ id: string; label: string; mask_value: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; he...`
-- OpenAPI response codes: `201`
+## `posthog.identityProviderConfigsList`
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.identityProviderConfigsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boolean; scim_bearer_token: string | null; has_id_jag: boolean; id_jag_issuer_url?: string | null; id_jag_jw...>
+```
 
-type CimdVerificationTokensCreateInput = Parameters<typeof posthog.cimdVerificationTokensCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type CimdVerificationTokensCreateOutput = Awaited<ReturnType<typeof posthog.cimdVerificationTokensCreate>>;
+<sub>`GET /api/organizations/{organization_id}/identity_provider_configs/` · `identity_provider_configs_list`</sub>
 
-const result: CimdVerificationTokensCreateOutput = await posthog.cimdVerificationTokensCreate();
+## `posthog.identityProviderConfigsCreate`
 
-// Result shape (from schema): { id: string; label: string; mask_value: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; he...
+```ts
+posthog.identityProviderConfigsCreate(): Promise<{ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boolean; scim_bearer_token: string | null; has_id_jag: boolean; id_jag_issuer_url?: string | null; id_jag_jwks_url?: string | null; id_jag_allowed_clients?: (string)[] }>
 ```
 
-### `posthog.cimdVerificationTokensDestroy`
+<sub>`POST /api/organizations/{organization_id}/identity_provider_configs/` · `identity_provider_configs_create`</sub>
 
-- **HTTP**: `DELETE /api/organizations/{organization_id}/cimd_verification_tokens/{id}/`
-- **What it does**: Manage CIMD verification tokens for an organization.
+## `posthog.identityProviderConfigsDestroy`
 
-A partner embeds the plaintext token in their CIMD metadata document as
-`verification_token` inside the `com.posthog` object (the legacy top-level
-`posthog_verification_token` field still works as a fallback). When PostHog fetches
-the metadata, matching the token links the partner app to this organization and
-grants a higher default rate limit for account provisioning.
+```ts
+posthog.identityProviderConfigsDestroy(): Promise<unknown>
+```
 
-The plaintext value is only available on creation; we store a hash.
-- **OpenAPI operationId**: `cimd_verification_tokens_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`DELETE /api/organizations/{organization_id}/identity_provider_configs/{id}/` · `identity_provider_configs_destroy`</sub>
 
-**Inputs**
+## `posthog.identityProviderConfigsRetrieve`
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+```ts
+posthog.identityProviderConfigsRetrieve(): Promise<{ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boolean; scim_bearer_token: string | null; has_id_jag: boolean; id_jag_issuer_url?: string | null; id_jag_jwks_url?: string | null; id_jag_allowed_clients?: (string)[] }>
+```
 
-**Outputs**
+<sub>`GET /api/organizations/{organization_id}/identity_provider_configs/{id}/` · `identity_provider_configs_retrieve`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `posthog.identityProviderConfigsPartialUpdate`
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.identityProviderConfigsPartialUpdate(): Promise<{ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boolean; scim_bearer_token: string | null; has_id_jag: boolean; id_jag_issuer_url?: string | null; id_jag_jwks_url?: string | null; id_jag_allowed_clients?: (string)[] }>
+```
 
-type CimdVerificationTokensDestroyInput = Parameters<typeof posthog.cimdVerificationTokensDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type CimdVerificationTokensDestroyOutput = Awaited<ReturnType<typeof posthog.cimdVerificationTokensDestroy>>;
+<sub>`PATCH /api/organizations/{organization_id}/identity_provider_configs/{id}/` · `identity_provider_configs_partial_update`</sub>
 
-const result: CimdVerificationTokensDestroyOutput = await posthog.cimdVerificationTokensDestroy();
+## `posthog.identityProviderConfigsUpdate`
 
-// Result shape (from schema): unknown
+```ts
+posthog.identityProviderConfigsUpdate(): Promise<{ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boolean; scim_bearer_token: string | null; has_id_jag: boolean; id_jag_issuer_url?: string | null; id_jag_jwks_url?: string | null; id_jag_allowed_clients?: (string)[] }>
 ```
-
-### `posthog.cimdVerificationTokensRetrieve`
 
-- **HTTP**: `GET /api/organizations/{organization_id}/cimd_verification_tokens/{id}/`
-- **What it does**: Manage CIMD verification tokens for an organization.
+<sub>`PUT /api/organizations/{organization_id}/identity_provider_configs/{id}/` · `identity_provider_configs_update`</sub>
 
-A partner embeds the plaintext token in their CIMD metadata document as
-`verification_token` inside the `com.posthog` object (the legacy top-level
-`posthog_verification_token` field still works as a fallback). When PostHog fetches
-the metadata, matching the token links the partner app to this organization and
-grants a higher default rate limit for account provisioning.
+## `posthog.identityProviderConfigsScimTokenCreate`
 
-The plaintext value is only available on creation; we store a hash.
-- **OpenAPI operationId**: `cimd_verification_tokens_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+Regenerate the SCIM bearer token for this IdP config.
 
-**Inputs**
+```ts
+posthog.identityProviderConfigsScimTokenCreate(): Promise<{ scim_enabled: boolean; scim_bearer_token: string }>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`POST /api/organizations/{organization_id}/identity_provider_configs/{id}/scim/token/` · `identity_provider_configs_scim_token_create`</sub>
 
-**Outputs**
+## `posthog.orgOrganizationsIntegrationsList`
 
-- Client return type: `{ id: string; label: string; mask_value: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; he...`
-- OpenAPI response codes: `200`
+ViewSet for organization-level integrations. Provides access to integrations that are scoped to the entire organization (vs. project-level integrations). Examples include Vercel, AWS Marketplace, etc. Creation is handled by the integration installation flows (e.g., Vercel marketplace installation). Users can disconnect integrations via the DELETE endpoint.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type CimdVerificationTokensRetrieveInput = Parameters<typeof posthog.cimdVerificationTokensRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type CimdVerificationTokensRetrieveOutput = Awaited<ReturnType<typeof posthog.cimdVerificationTokensRetrieve>>;
-
-const result: CimdVerificationTokensRetrieveOutput = await posthog.cimdVerificationTokensRetrieve();
-
-// Result shape (from schema): { id: string; label: string; mask_value: string | null; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; he...
+posthog.orgOrganizationsIntegrationsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; kind: "vercel"; integration_id: string | null; config: unknown; created_at: string; updated_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } |...>
 ```
 
-### `posthog.domainsList`
+<sub>`GET /api/organizations/{organization_id}/integrations/` · `org_organizations_integrations_list`</sub>
 
-- **HTTP**: `GET /api/organizations/{organization_id}/domains/`
-- **OpenAPI operationId**: `domains_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.orgOrganizationIntegrationsDestroy`
 
-**Inputs**
+ViewSet for organization-level integrations. Provides access to integrations that are scoped to the entire organization (vs. project-level integrations). Examples include Vercel, AWS Marketplace, etc. Creation is handled by the integration installation flows (e.g., Vercel marketplace installation). Users can disconnect integrations via the DELETE endpoint.
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boole...`
-- OpenAPI response codes: `200`
-
 ```ts
-import posthog from "@utdk/posthog";
-
-type DomainsListInput = Parameters<typeof posthog.domainsList> extends [infer T, ...unknown[]] ? T : undefined;
-type DomainsListOutput = Awaited<ReturnType<typeof posthog.domainsList>>;
-
-const result: DomainsListOutput = await posthog.domainsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boole...
+posthog.orgOrganizationIntegrationsDestroy(): Promise<unknown>
 ```
-
-### `posthog.domainsCreate`
 
-- **HTTP**: `POST /api/organizations/{organization_id}/domains/`
-- **OpenAPI operationId**: `domains_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`DELETE /api/organizations/{organization_id}/integrations/{id}/` · `org_organization_integrations_destroy`</sub>
 
-**Inputs**
+## `posthog.orgOrganizationsIntegrationsRetrieve`
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+ViewSet for organization-level integrations. Provides access to integrations that are scoped to the entire organization (vs. project-level integrations). Examples include Vercel, AWS Marketplace, etc. Creation is handled by the integration installation flows (e.g., Vercel marketplace installation). Users can disconnect integrations via the DELETE endpoint.
 
-**Outputs**
-
-- Client return type: `{ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; saml_entity_id?: string | ...`
-- OpenAPI response codes: `201`
-
 ```ts
-import posthog from "@utdk/posthog";
-
-type DomainsCreateInput = Parameters<typeof posthog.domainsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type DomainsCreateOutput = Awaited<ReturnType<typeof posthog.domainsCreate>>;
-
-const result: DomainsCreateOutput = await posthog.domainsCreate();
-
-// Result shape (from schema): { id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; saml_entity_id?: string | ...
+posthog.orgOrganizationsIntegrationsRetrieve(): Promise<{ id: string; kind: "vercel"; integration_id: string | null; config: unknown; created_at: string; updated_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder...>
 ```
-
-### `posthog.domainsDestroy`
-
-- **HTTP**: `DELETE /api/organizations/{organization_id}/domains/{id}/`
-- **OpenAPI operationId**: `domains_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
 
-**Inputs**
+<sub>`GET /api/organizations/{organization_id}/integrations/{id}/` · `org_organizations_integrations_retrieve`</sub>
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+## `posthog.integrationsEnvironmentMappingPartialUpdate`
 
-**Outputs**
+ViewSet for organization-level integrations. Provides access to integrations that are scoped to the entire organization (vs. project-level integrations). Examples include Vercel, AWS Marketplace, etc. Creation is handled by the integration installation flows (e.g., Vercel marketplace installation). Users can disconnect integrations via the DELETE endpoint.
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
 ```ts
-import posthog from "@utdk/posthog";
-
-type DomainsDestroyInput = Parameters<typeof posthog.domainsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type DomainsDestroyOutput = Awaited<ReturnType<typeof posthog.domainsDestroy>>;
-
-const result: DomainsDestroyOutput = await posthog.domainsDestroy();
-
-// Result shape (from schema): unknown
+posthog.integrationsEnvironmentMappingPartialUpdate(): Promise<{ id: string; kind: "vercel"; integration_id: string | null; config: unknown; created_at: string; updated_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder...>
 ```
-
-### `posthog.domainsRetrieve`
 
-- **HTTP**: `GET /api/organizations/{organization_id}/domains/{id}/`
-- **OpenAPI operationId**: `domains_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`PATCH /api/organizations/{organization_id}/integrations/{id}/environment-mapping/` · `integrations_environment_mapping_partial_update`</sub>
 
-**Inputs**
+## `posthog.invitesList`
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+```ts
+posthog.invitesList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; target_email: string; first_name?: string; emailing_attempt_made: boolean; level?: 1 | 8 | 15; is_expired: boolean; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]:...>
+```
 
-**Outputs**
+<sub>`GET /api/organizations/{organization_id}/invites/` · `invites_list`</sub>
 
-- Client return type: `{ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; saml_entity_id?: string | ...`
-- OpenAPI response codes: `200`
+## `posthog.invitesCreate`
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.invitesCreate(): Promise<{ id: string; target_email: string; first_name?: string; emailing_attempt_made: boolean; level?: 1 | 8 | 15; is_expired: boolean; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product...>
+```
 
-type DomainsRetrieveInput = Parameters<typeof posthog.domainsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type DomainsRetrieveOutput = Awaited<ReturnType<typeof posthog.domainsRetrieve>>;
+<sub>`POST /api/organizations/{organization_id}/invites/` · `invites_create`</sub>
 
-const result: DomainsRetrieveOutput = await posthog.domainsRetrieve();
+## `posthog.invitesDestroy`
 
-// Result shape (from schema): { id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; saml_entity_id?: string | ...
+```ts
+posthog.invitesDestroy(): Promise<unknown>
 ```
 
-### `posthog.domainsPartialUpdate`
+<sub>`DELETE /api/organizations/{organization_id}/invites/{id}/` · `invites_destroy`</sub>
 
-- **HTTP**: `PATCH /api/organizations/{organization_id}/domains/{id}/`
-- **OpenAPI operationId**: `domains_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.invitesBulkCreate`
 
-**Inputs**
+```ts
+posthog.invitesBulkCreate(): Promise<unknown>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`POST /api/organizations/{organization_id}/invites/bulk/` · `invites_bulk_create`</sub>
 
-**Outputs**
+## `posthog.invitesDelegateCreate`
 
-- Client return type: `{ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; saml_entity_id?: string | ...`
-- OpenAPI response codes: `200`
+Create an onboarding delegation invite: an admin-level invite flagged as a setup delegation. Sends a single dedicated delegation email and records the inviting user as having delegated.
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.invitesDelegateCreate(): Promise<{ id: string; target_email: string; first_name?: string; emailing_attempt_made: boolean; level?: 1 | 8 | 15; is_expired: boolean; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product...>
+```
 
-type DomainsPartialUpdateInput = Parameters<typeof posthog.domainsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type DomainsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.domainsPartialUpdate>>;
+<sub>`POST /api/organizations/{organization_id}/invites/delegate/` · `invites_delegate_create`</sub>
 
-const result: DomainsPartialUpdateOutput = await posthog.domainsPartialUpdate();
+## `posthog.legalDocumentsList`
 
-// Result shape (from schema): { id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; saml_entity_id?: string | ...
+```ts
+posthog.legalDocumentsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; document_type: string; company_name: string; representative_email: string; status: string; created_by: { first_name: string; email: string } | null; created_at: string })[] }>
 ```
 
-### `posthog.domainsUpdate`
+<sub>`GET /api/organizations/{organization_id}/legal_documents/` · `legal_documents_list`</sub>
 
-- **HTTP**: `PUT /api/organizations/{organization_id}/domains/{id}/`
-- **OpenAPI operationId**: `domains_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.legalDocumentsCreate`
 
-**Inputs**
+```ts
+posthog.legalDocumentsCreate(): Promise<{ id: string; document_type: string; company_name: string; representative_email: string; status: string; created_by: { first_name: string; email: string } | null; created_at: string }>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`POST /api/organizations/{organization_id}/legal_documents/` · `legal_documents_create`</sub>
 
-**Outputs**
+## `posthog.legalDocumentsDestroy`
 
-- Client return type: `{ id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; saml_entity_id?: string | ...`
-- OpenAPI response codes: `200`
+Delete an unsigned legal document. The PandaDoc envelope is voided first so the original signer can no longer complete it; only if that succeeds is the row removed, freeing the unique-per-org-per-type constraint so a fresh document can be generated. Returns 503 if the PandaDoc void fails — the row stays in that case and the frontend should prompt the user to retry. Returns 403 for signed documents (legal artifacts; staff can still delete signed rows from Django admin).
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.legalDocumentsDestroy(): Promise<unknown>
+```
 
-type DomainsUpdateInput = Parameters<typeof posthog.domainsUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type DomainsUpdateOutput = Awaited<ReturnType<typeof posthog.domainsUpdate>>;
+<sub>`DELETE /api/organizations/{organization_id}/legal_documents/{id}/` · `legal_documents_destroy`</sub>
 
-const result: DomainsUpdateOutput = await posthog.domainsUpdate();
+## `posthog.legalDocumentsRetrieve`
 
-// Result shape (from schema): { id: string; domain: string; is_verified: boolean; verified_at: string | null; verification_challenge: string; jit_provisioning_enabled?: boolean; sso_enforcement?: string; has_saml: boolean; saml_entity_id?: string | ...
+```ts
+posthog.legalDocumentsRetrieve(): Promise<{ id: string; document_type: string; company_name: string; representative_email: string; status: string; created_by: { first_name: string; email: string } | null; created_at: string }>
 ```
 
-### `posthog.domainsScimLogsRetrieve`
+<sub>`GET /api/organizations/{organization_id}/legal_documents/{id}/` · `legal_documents_retrieve`</sub>
 
-- **HTTP**: `GET /api/organizations/{organization_id}/domains/{id}/scim/logs/`
-- **OpenAPI operationId**: `domains_scim_logs_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.legalDocumentsDownloadRetrieve`
 
-**Inputs**
+Short-lived redirect to the signed PDF in object storage. 404 while the envelope is still out for signature (or if the upload hasn't completed yet). The underlying presigned URL expires in ~60s; clients should hit this endpoint each time they want to view the PDF rather than caching.
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+```ts
+posthog.legalDocumentsDownloadRetrieve(): Promise<unknown>
+```
 
-**Outputs**
+<sub>`GET /api/organizations/{organization_id}/legal_documents/{id}/download/` · `legal_documents_download_retrieve`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+## `posthog.membersList`
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.membersList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "s...>
+```
 
-type DomainsScimLogsRetrieveInput = Parameters<typeof posthog.domainsScimLogsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type DomainsScimLogsRetrieveOutput = Awaited<ReturnType<typeof posthog.domainsScimLogsRetrieve>>;
+<sub>`GET /api/organizations/{organization_id}/members/` · `members_list`</sub>
 
-const result: DomainsScimLogsRetrieveOutput = await posthog.domainsScimLogsRetrieve();
+## `posthog.membersDestroy`
 
-// Result shape (from schema): unknown
+```ts
+posthog.membersDestroy(): Promise<unknown>
 ```
 
-### `posthog.domainsScimTokenCreate`
+<sub>`DELETE /api/organizations/{organization_id}/members/{user__uuid}/` · `members_destroy`</sub>
 
-- **HTTP**: `POST /api/organizations/{organization_id}/domains/{id}/scim/token/`
-- **What it does**: Regenerate SCIM bearer token.
-- **OpenAPI operationId**: `domains_scim_token_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.membersPartialUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+```ts
+posthog.membersPartialUpdate(): Promise<{ id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "other" | "" | null }; level?: 1 | 8 | 15; joined_at: s...>
+```
 
-**Outputs**
+<sub>`PATCH /api/organizations/{organization_id}/members/{user__uuid}/` · `members_partial_update`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+## `posthog.membersUpdate`
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.membersUpdate(): Promise<{ id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "other" | "" | null }; level?: 1 | 8 | 15; joined_at: s...>
+```
 
-type DomainsScimTokenCreateInput = Parameters<typeof posthog.domainsScimTokenCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type DomainsScimTokenCreateOutput = Awaited<ReturnType<typeof posthog.domainsScimTokenCreate>>;
+<sub>`PUT /api/organizations/{organization_id}/members/{user__uuid}/` · `members_update`</sub>
 
-const result: DomainsScimTokenCreateOutput = await posthog.domainsScimTokenCreate();
+## `posthog.membersGithubLoginRetrieve`
 
-// Result shape (from schema): unknown
+```ts
+posthog.membersGithubLoginRetrieve(): Promise<{ github_login: string | null }>
 ```
 
-### `posthog.domainsVerifyCreate`
+<sub>`GET /api/organizations/{organization_id}/members/{user__uuid}/github_login/` · `members_github_login_retrieve`</sub>
 
-- **HTTP**: `POST /api/organizations/{organization_id}/domains/{id}/verify/`
-- **OpenAPI operationId**: `domains_verify_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.membersScopedApiKeysRetrieve`
 
-**Inputs**
+```ts
+posthog.membersScopedApiKeysRetrieve(): Promise<{ id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "other" | "" | null }; level?: 1 | 8 | 15; joined_at: s...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`GET /api/organizations/{organization_id}/members/{user__uuid}/scoped_api_keys/` · `members_scoped_api_keys_retrieve`</sub>
 
-**Outputs**
+## `posthog.oauthApplicationsList`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+ViewSet for listing OAuth applications at the organization level (read-only).
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type DomainsVerifyCreateInput = Parameters<typeof posthog.domainsVerifyCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type DomainsVerifyCreateOutput = Awaited<ReturnType<typeof posthog.domainsVerifyCreate>>;
-
-const result: DomainsVerifyCreateOutput = await posthog.domainsVerifyCreate();
-
-// Result shape (from schema): unknown
+posthog.oauthApplicationsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name?: string; client_id?: string; redirect_uris_list: (string)[]; is_verified?: boolean; created: string; updated: string })[] }>
 ```
-
-### `posthog.identityProviderConfigsList`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/identity_provider_configs/`
-- **OpenAPI operationId**: `identity_provider_configs_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
 
-**Inputs**
+<sub>`GET /api/organizations/{organization_id}/oauth_applications/` · `oauth_applications_list`</sub>
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+## `posthog.organizationsProjectsList`
 
-**Outputs**
+Projects for the current organization.
 
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | ...`
-- OpenAPI response codes: `200`
-
 ```ts
-import posthog from "@utdk/posthog";
-
-type IdentityProviderConfigsListInput = Parameters<typeof posthog.identityProviderConfigsList> extends [infer T, ...unknown[]] ? T : undefined;
-type IdentityProviderConfigsListOutput = Awaited<ReturnType<typeof posthog.identityProviderConfigsList>>;
-
-const result: IdentityProviderConfigsListOutput = await posthog.identityProviderConfigsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | ...
+posthog.organizationsProjectsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: number; uuid: string; organization: string; project_id: number; api_token: string; name: string; completed_snippet_onboarding: boolean; has_completed_onboarding_for: unknown; ingested_event: boolean; is_demo: boolean; timezone: "Africa/Abidjan" | "Africa/Accra" | "Africa/Addis_Ababa" | "Africa/Algiers" | "Africa/Asma...>
 ```
-
-### `posthog.identityProviderConfigsCreate`
-
-- **HTTP**: `POST /api/organizations/{organization_id}/identity_provider_configs/`
-- **OpenAPI operationId**: `identity_provider_configs_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`GET /api/organizations/{organization_id}/projects/` · `organizations_projects_list`</sub>
 
-**Outputs**
+## `posthog.organizationsProjectsCreate`
 
-- Client return type: `{ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boo...`
-- OpenAPI response codes: `201`
+Projects for the current organization.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type IdentityProviderConfigsCreateInput = Parameters<typeof posthog.identityProviderConfigsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type IdentityProviderConfigsCreateOutput = Awaited<ReturnType<typeof posthog.identityProviderConfigsCreate>>;
-
-const result: IdentityProviderConfigsCreateOutput = await posthog.identityProviderConfigsCreate();
-
-// Result shape (from schema): { id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boo...
+posthog.organizationsProjectsCreate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
 ```
 
-### `posthog.identityProviderConfigsDestroy`
+<sub>`POST /api/organizations/{organization_id}/projects/` · `organizations_projects_create`</sub>
 
-- **HTTP**: `DELETE /api/organizations/{organization_id}/identity_provider_configs/{id}/`
-- **OpenAPI operationId**: `identity_provider_configs_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.organizationsProjectsDestroy`
 
-**Inputs**
+Projects for the current organization.
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
 ```ts
-import posthog from "@utdk/posthog";
-
-type IdentityProviderConfigsDestroyInput = Parameters<typeof posthog.identityProviderConfigsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type IdentityProviderConfigsDestroyOutput = Awaited<ReturnType<typeof posthog.identityProviderConfigsDestroy>>;
-
-const result: IdentityProviderConfigsDestroyOutput = await posthog.identityProviderConfigsDestroy();
-
-// Result shape (from schema): unknown
+posthog.organizationsProjectsDestroy(): Promise<unknown>
 ```
-
-### `posthog.identityProviderConfigsRetrieve`
 
-- **HTTP**: `GET /api/organizations/{organization_id}/identity_provider_configs/{id}/`
-- **OpenAPI operationId**: `identity_provider_configs_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`DELETE /api/organizations/{organization_id}/projects/{id}/` · `organizations_projects_destroy`</sub>
 
-**Inputs**
+## `posthog.organizationsProjectsRetrieve`
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+Retrieve a project and its settings.
 
-**Outputs**
-
-- Client return type: `{ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boo...`
-- OpenAPI response codes: `200`
-
 ```ts
-import posthog from "@utdk/posthog";
-
-type IdentityProviderConfigsRetrieveInput = Parameters<typeof posthog.identityProviderConfigsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type IdentityProviderConfigsRetrieveOutput = Awaited<ReturnType<typeof posthog.identityProviderConfigsRetrieve>>;
-
-const result: IdentityProviderConfigsRetrieveOutput = await posthog.identityProviderConfigsRetrieve();
-
-// Result shape (from schema): { id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boo...
+posthog.organizationsProjectsRetrieve(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
 ```
-
-### `posthog.identityProviderConfigsPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/identity_provider_configs/{id}/`
-- **OpenAPI operationId**: `identity_provider_configs_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
 
-**Inputs**
+<sub>`GET /api/organizations/{organization_id}/projects/{id}/` · `organizations_projects_retrieve`</sub>
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+## `posthog.organizationsProjectsPartialUpdate`
 
-**Outputs**
+Update one or more of a project's settings. Only the fields included in the request body are changed.
 
-- Client return type: `{ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boo...`
-- OpenAPI response codes: `200`
-
 ```ts
-import posthog from "@utdk/posthog";
-
-type IdentityProviderConfigsPartialUpdateInput = Parameters<typeof posthog.identityProviderConfigsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type IdentityProviderConfigsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.identityProviderConfigsPartialUpdate>>;
-
-const result: IdentityProviderConfigsPartialUpdateOutput = await posthog.identityProviderConfigsPartialUpdate();
-
-// Result shape (from schema): { id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boo...
+posthog.organizationsProjectsPartialUpdate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
 ```
-
-### `posthog.identityProviderConfigsUpdate`
-
-- **HTTP**: `PUT /api/organizations/{organization_id}/identity_provider_configs/{id}/`
-- **OpenAPI operationId**: `identity_provider_configs_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`PATCH /api/organizations/{organization_id}/projects/{id}/` · `organizations_projects_partial_update`</sub>
 
-**Outputs**
+## `posthog.organizationsProjectsUpdate`
 
-- Client return type: `{ id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boo...`
-- OpenAPI response codes: `200`
+Replace a project and its settings. Prefer the PATCH endpoint for partial updates — PUT requires every writable field to be provided.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type IdentityProviderConfigsUpdateInput = Parameters<typeof posthog.identityProviderConfigsUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type IdentityProviderConfigsUpdateOutput = Awaited<ReturnType<typeof posthog.identityProviderConfigsUpdate>>;
-
-const result: IdentityProviderConfigsUpdateOutput = await posthog.identityProviderConfigsUpdate();
-
-// Result shape (from schema): { id: string; name?: string; created_at: string; updated_at: string; has_saml: boolean; saml_entity_id?: string | null; saml_acs_url?: string | null; saml_x509_cert?: string | null; has_scim: boolean; scim_enabled?: boo...
+posthog.organizationsProjectsUpdate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
 ```
 
-### `posthog.identityProviderConfigsScimTokenCreate`
+<sub>`PUT /api/organizations/{organization_id}/projects/{id}/` · `organizations_projects_update`</sub>
 
-- **HTTP**: `POST /api/organizations/{organization_id}/identity_provider_configs/{id}/scim/token/`
-- **What it does**: Regenerate the SCIM bearer token for this IdP config.
-- **OpenAPI operationId**: `identity_provider_configs_scim_token_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.organizationsProjectsActivityRetrieve`
 
-**Inputs**
+Projects for the current organization.
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ scim_enabled: boolean; scim_bearer_token: string }`
-- OpenAPI response codes: `200`
-
 ```ts
-import posthog from "@utdk/posthog";
+posthog.organizationsProjectsActivityRetrieve(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-type IdentityProviderConfigsScimTokenCreateInput = Parameters<typeof posthog.identityProviderConfigsScimTokenCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type IdentityProviderConfigsScimTokenCreateOutput = Awaited<ReturnType<typeof posthog.identityProviderConfigsScimTokenCreate>>;
+<sub>`GET /api/organizations/{organization_id}/projects/{id}/activity/` · `organizations_projects_activity_retrieve`</sub>
 
-const result: IdentityProviderConfigsScimTokenCreateOutput = await posthog.identityProviderConfigsScimTokenCreate();
+## `posthog.organizationsProjectsAddProductIntentPartialUpdate`
 
-// Result shape (from schema): { scim_enabled: boolean; scim_bearer_token: string }
-```
+Projects for the current organization.
 
-### `posthog.orgOrganizationsIntegrationsList`
+```ts
+posthog.organizationsProjectsAddProductIntentPartialUpdate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-- **HTTP**: `GET /api/organizations/{organization_id}/integrations/`
-- **What it does**: ViewSet for organization-level integrations.
+<sub>`PATCH /api/organizations/{organization_id}/projects/{id}/add_product_intent/` · `organizations_projects_add_product_intent_partial_update`</sub>
 
-Provides access to integrations that are scoped to the entire organization
-(vs. project-level integrations). Examples include Vercel, AWS Marketplace, etc.
+## `posthog.organizationsProjectsChangeOrganizationCreate`
 
-Creation is handled by the integration installation flows
-(e.g., Vercel marketplace installation). Users can disconnect integrations
-via the DELETE endpoint.
-- **OpenAPI operationId**: `org_organizations_integrations_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+Projects for the current organization.
 
-**Inputs**
+```ts
+posthog.organizationsProjectsChangeOrganizationCreate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`POST /api/organizations/{organization_id}/projects/{id}/change_organization/` · `organizations_projects_change_organization_create`</sub>
 
-**Outputs**
+## `posthog.organizationsProjectsCompleteProductOnboardingPartialUpdate`
 
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; kind: "vercel"; integration_id: string | null; config: unknown; created_at: string; updated_at: string; created_by: { id: number; ...`
-- OpenAPI response codes: `200`
+Projects for the current organization.
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.organizationsProjectsCompleteProductOnboardingPartialUpdate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-type OrgOrganizationsIntegrationsListInput = Parameters<typeof posthog.orgOrganizationsIntegrationsList> extends [infer T, ...unknown[]] ? T : undefined;
-type OrgOrganizationsIntegrationsListOutput = Awaited<ReturnType<typeof posthog.orgOrganizationsIntegrationsList>>;
+<sub>`PATCH /api/organizations/{organization_id}/projects/{id}/complete_product_onboarding/` · `organizations_projects_complete_product_onboarding_partial_update`</sub>
 
-const result: OrgOrganizationsIntegrationsListOutput = await posthog.orgOrganizationsIntegrationsList();
+## `posthog.organizationsProjectsDefaultEvaluationContextsDestroy`
 
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; kind: "vercel"; integration_id: string | null; config: unknown; created_at: string; updated_at: string; created_by: { id: number; ...
-```
+Manage default evaluation contexts for a project. Members can read; writing requires project admin, matching the admin-only settings UI.
 
-### `posthog.orgOrganizationIntegrationsDestroy`
+```ts
+posthog.organizationsProjectsDefaultEvaluationContextsDestroy(): Promise<unknown>
+```
 
-- **HTTP**: `DELETE /api/organizations/{organization_id}/integrations/{id}/`
-- **What it does**: ViewSet for organization-level integrations.
+<sub>`DELETE /api/organizations/{organization_id}/projects/{id}/default_evaluation_contexts/` · `organizations_projects_default_evaluation_contexts_destroy`</sub>
 
-Provides access to integrations that are scoped to the entire organization
-(vs. project-level integrations). Examples include Vercel, AWS Marketplace, etc.
+## `posthog.organizationsProjectsDefaultEvaluationContextsRetrieve`
 
-Creation is handled by the integration installation flows
-(e.g., Vercel marketplace installation). Users can disconnect integrations
-via the DELETE endpoint.
-- **OpenAPI operationId**: `org_organization_integrations_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`, `409`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+Manage default evaluation contexts for a project. Members can read; writing requires project admin, matching the admin-only settings UI.
 
-**Inputs**
+```ts
+posthog.organizationsProjectsDefaultEvaluationContextsRetrieve(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`GET /api/organizations/{organization_id}/projects/{id}/default_evaluation_contexts/` · `organizations_projects_default_evaluation_contexts_retrieve`</sub>
 
-**Outputs**
+## `posthog.organizationsProjectsDefaultEvaluationContextsCreate`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `409`
+Manage default evaluation contexts for a project. Members can read; writing requires project admin, matching the admin-only settings UI.
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.organizationsProjectsDefaultEvaluationContextsCreate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-type OrgOrganizationIntegrationsDestroyInput = Parameters<typeof posthog.orgOrganizationIntegrationsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type OrgOrganizationIntegrationsDestroyOutput = Awaited<ReturnType<typeof posthog.orgOrganizationIntegrationsDestroy>>;
+<sub>`POST /api/organizations/{organization_id}/projects/{id}/default_evaluation_contexts/` · `organizations_projects_default_evaluation_contexts_create`</sub>
 
-const result: OrgOrganizationIntegrationsDestroyOutput = await posthog.orgOrganizationIntegrationsDestroy();
+## `posthog.organizationsProjectsDefaultReleaseConditionsRetrieve`
 
-// Result shape (from schema): unknown
-```
+Manage default release conditions for new feature flags in this project. Members can read; writing requires project admin, matching the admin-only settings UI.
 
-### `posthog.orgOrganizationsIntegrationsRetrieve`
+```ts
+posthog.organizationsProjectsDefaultReleaseConditionsRetrieve(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-- **HTTP**: `GET /api/organizations/{organization_id}/integrations/{id}/`
-- **What it does**: ViewSet for organization-level integrations.
+<sub>`GET /api/organizations/{organization_id}/projects/{id}/default_release_conditions/` · `organizations_projects_default_release_conditions_retrieve`</sub>
 
-Provides access to integrations that are scoped to the entire organization
-(vs. project-level integrations). Examples include Vercel, AWS Marketplace, etc.
+## `posthog.organizationsProjectsDefaultReleaseConditionsUpdate`
 
-Creation is handled by the integration installation flows
-(e.g., Vercel marketplace installation). Users can disconnect integrations
-via the DELETE endpoint.
-- **OpenAPI operationId**: `org_organizations_integrations_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+Manage default release conditions for new feature flags in this project. Members can read; writing requires project admin, matching the admin-only settings UI.
 
-**Inputs**
+```ts
+posthog.organizationsProjectsDefaultReleaseConditionsUpdate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`PUT /api/organizations/{organization_id}/projects/{id}/default_release_conditions/` · `organizations_projects_default_release_conditions_update`</sub>
 
-**Outputs**
+## `posthog.organizationsProjectsDeleteSecretTokenBackupPartialUpdate`
 
-- Client return type: `{ id: string; kind: "vercel"; integration_id: string | null; config: unknown; created_at: string; updated_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?:...`
-- OpenAPI response codes: `200`
+Projects for the current organization.
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.organizationsProjectsDeleteSecretTokenBackupPartialUpdate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-type OrgOrganizationsIntegrationsRetrieveInput = Parameters<typeof posthog.orgOrganizationsIntegrationsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type OrgOrganizationsIntegrationsRetrieveOutput = Awaited<ReturnType<typeof posthog.orgOrganizationsIntegrationsRetrieve>>;
+<sub>`PATCH /api/organizations/{organization_id}/projects/{id}/delete_secret_token_backup/` · `organizations_projects_delete_secret_token_backup_partial_update`</sub>
 
-const result: OrgOrganizationsIntegrationsRetrieveOutput = await posthog.orgOrganizationsIntegrationsRetrieve();
+## `posthog.organizationsProjectsEvaluationContextSuggestionsDestroy`
 
-// Result shape (from schema): { id: string; kind: "vercel"; integration_id: string | null; config: unknown; created_at: string; updated_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?:...
-```
+Hide an evaluation context name from the flag editor's suggestion list, or restore it. POST hides the name; DELETE restores it. The underlying context row and any flags already using it are never modified — this only controls what gets suggested.
 
-### `posthog.integrationsEnvironmentMappingPartialUpdate`
+```ts
+posthog.organizationsProjectsEvaluationContextSuggestionsDestroy(): Promise<{ success: boolean; name: string; hidden_from_suggestions: boolean }>
+```
 
-- **HTTP**: `PATCH /api/organizations/{organization_id}/integrations/{id}/environment-mapping/`
-- **What it does**: ViewSet for organization-level integrations.
+<sub>`DELETE /api/organizations/{organization_id}/projects/{id}/evaluation_context_suggestions/` · `organizations_projects_evaluation_context_suggestions_destroy`</sub>
 
-Provides access to integrations that are scoped to the entire organization
-(vs. project-level integrations). Examples include Vercel, AWS Marketplace, etc.
+## `posthog.organizationsProjectsEvaluationContextSuggestionsCreate`
 
-Creation is handled by the integration installation flows
-(e.g., Vercel marketplace installation). Users can disconnect integrations
-via the DELETE endpoint.
-- **OpenAPI operationId**: `integrations_environment_mapping_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+Hide an evaluation context name from the flag editor's suggestion list, or restore it. POST hides the name; DELETE restores it. The underlying context row and any flags already using it are never modified — this only controls what gets suggested.
 
-**Inputs**
+```ts
+posthog.organizationsProjectsEvaluationContextSuggestionsCreate(): Promise<{ success: boolean; name: string; hidden_from_suggestions: boolean }>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`POST /api/organizations/{organization_id}/projects/{id}/evaluation_context_suggestions/` · `organizations_projects_evaluation_context_suggestions_create`</sub>
 
-**Outputs**
+## `posthog.organizationsProjectsEventIngestionRestrictionsRetrieve`
 
-- Client return type: `{ id: string; kind: "vercel"; integration_id: string | null; config: unknown; created_at: string; updated_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?:...`
-- OpenAPI response codes: `200`
+Projects for the current organization.
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.organizationsProjectsEventIngestionRestrictionsRetrieve(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
+
+<sub>`GET /api/organizations/{organization_id}/projects/{id}/event_ingestion_restrictions/` · `organizations_projects_event_ingestion_restrictions_retrieve`</sub>
 
-type IntegrationsEnvironmentMappingPartialUpdateInput = Parameters<typeof posthog.integrationsEnvironmentMappingPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type IntegrationsEnvironmentMappingPartialUpdateOutput = Awaited<ReturnType<typeof posthog.integrationsEnvironmentMappingPartialUpdate>>;
+## `posthog.organizationsProjectsExperimentsConfigRetrieve`
 
-const result: IntegrationsEnvironmentMappingPartialUpdateOutput = await posthog.integrationsEnvironmentMappingPartialUpdate();
+Manage experiment configuration for this project.
 
-// Result shape (from schema): { id: string; kind: "vercel"; integration_id: string | null; config: unknown; created_at: string; updated_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?:...
+```ts
+posthog.organizationsProjectsExperimentsConfigRetrieve(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
 ```
+
+<sub>`GET /api/organizations/{organization_id}/projects/{id}/experiments_config/` · `organizations_projects_experiments_config_retrieve`</sub>
 
-### `posthog.invitesList`
+## `posthog.organizationsProjectsExperimentsConfigPartialUpdate`
 
-- **HTTP**: `GET /api/organizations/{organization_id}/invites/`
-- **OpenAPI operationId**: `invites_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+Manage experiment configuration for this project.
 
-**Inputs**
+```ts
+posthog.organizationsProjectsExperimentsConfigPartialUpdate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`PATCH /api/organizations/{organization_id}/projects/{id}/experiments_config/` · `organizations_projects_experiments_config_partial_update`</sub>
 
-**Outputs**
+## `posthog.organizationsProjectsGenerateConversationsPublicTokenCreate`
 
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; target_email: string; first_name?: string; emailing_attempt_made: boolean; level?: 1 | 8 | 15; is_expired: boolean; created_by: { ...`
-- OpenAPI response codes: `200`
+Projects for the current organization.
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.organizationsProjectsGenerateConversationsPublicTokenCreate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-type InvitesListInput = Parameters<typeof posthog.invitesList> extends [infer T, ...unknown[]] ? T : undefined;
-type InvitesListOutput = Awaited<ReturnType<typeof posthog.invitesList>>;
+<sub>`POST /api/organizations/{organization_id}/projects/{id}/generate_conversations_public_token/` · `organizations_projects_generate_conversations_public_token_create`</sub>
 
-const result: InvitesListOutput = await posthog.invitesList();
+## `posthog.organizationsProjectsIsGeneratingDemoDataRetrieve`
 
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; target_email: string; first_name?: string; emailing_attempt_made: boolean; level?: 1 | 8 | 15; is_expired: boolean; created_by: { ...
+Projects for the current organization.
+
+```ts
+posthog.organizationsProjectsIsGeneratingDemoDataRetrieve(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
 ```
 
-### `posthog.invitesCreate`
+<sub>`GET /api/organizations/{organization_id}/projects/{id}/is_generating_demo_data/` · `organizations_projects_is_generating_demo_data_retrieve`</sub>
 
-- **HTTP**: `POST /api/organizations/{organization_id}/invites/`
-- **OpenAPI operationId**: `invites_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.organizationsProjectsLogsConfigRetrieve`
 
-**Inputs**
+Manage logs product configuration for this project's canonical environment. Members can read; writing requires project admin, matching the admin-only settings UI. Mirrors the env-router action so /api/projects/:id/logs_config/ resolves alongside the legacy /api/environments/:id/logs_config/ alias.
+
+```ts
+posthog.organizationsProjectsLogsConfigRetrieve(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`GET /api/organizations/{organization_id}/projects/{id}/logs_config/` · `organizations_projects_logs_config_retrieve`</sub>
 
-**Outputs**
+## `posthog.organizationsProjectsLogsConfigPartialUpdate`
 
-- Client return type: `{ id: string; target_email: string; first_name?: string; emailing_attempt_made: boolean; level?: 1 | 8 | 15; is_expired: boolean; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string;...`
-- OpenAPI response codes: `201`
+Manage logs product configuration for this project's canonical environment. Members can read; writing requires project admin, matching the admin-only settings UI. Mirrors the env-router action so /api/projects/:id/logs_config/ resolves alongside the legacy /api/environments/:id/logs_config/ alias.
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.organizationsProjectsLogsConfigPartialUpdate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
+
+<sub>`PATCH /api/organizations/{organization_id}/projects/{id}/logs_config/` · `organizations_projects_logs_config_partial_update`</sub>
 
-type InvitesCreateInput = Parameters<typeof posthog.invitesCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type InvitesCreateOutput = Awaited<ReturnType<typeof posthog.invitesCreate>>;
+## `posthog.organizationsProjectsResetTokenPartialUpdate`
 
-const result: InvitesCreateOutput = await posthog.invitesCreate();
+Projects for the current organization.
 
-// Result shape (from schema): { id: string; target_email: string; first_name?: string; emailing_attempt_made: boolean; level?: 1 | 8 | 15; is_expired: boolean; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string;...
+```ts
+posthog.organizationsProjectsResetTokenPartialUpdate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
 ```
+
+<sub>`PATCH /api/organizations/{organization_id}/projects/{id}/reset_token/` · `organizations_projects_reset_token_partial_update`</sub>
 
-### `posthog.invitesDestroy`
+## `posthog.organizationsProjectsRotateSecretTokenPartialUpdate`
 
-- **HTTP**: `DELETE /api/organizations/{organization_id}/invites/{id}/`
-- **OpenAPI operationId**: `invites_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+Projects for the current organization.
 
-**Inputs**
+```ts
+posthog.organizationsProjectsRotateSecretTokenPartialUpdate(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`PATCH /api/organizations/{organization_id}/projects/{id}/rotate_secret_token/` · `organizations_projects_rotate_secret_token_partial_update`</sub>
 
-**Outputs**
+## `posthog.organizationsProjectsSettingsAsOfRetrieve`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Return the project settings as of the provided timestamp. Query params: - at: ISO8601 datetime (required) - scope: optional, one or multiple keys to filter the returned settings
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.organizationsProjectsSettingsAsOfRetrieve(): Promise<{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; live_events_token: string | null; updated_at: string | null; uuid: string; api_token: string; app_urls?: (string | null)[]; anonymize_ips?: boolean; completed_snippet_onboarding?: ...>
+```
 
-type InvitesDestroyInput = Parameters<typeof posthog.invitesDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type InvitesDestroyOutput = Awaited<ReturnType<typeof posthog.invitesDestroy>>;
+<sub>`GET /api/organizations/{organization_id}/projects/{id}/settings_as_of/` · `organizations_projects_settings_as_of_retrieve`</sub>
 
-const result: InvitesDestroyOutput = await posthog.invitesDestroy();
+## `posthog.roleExternalReferencesList`
 
-// Result shape (from schema): unknown
+```ts
+posthog.roleExternalReferencesList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; provider: string; provider_organization_id: string; provider_role_id: string; provider_role_slug?: string | null; provider_role_name: string; role: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_...>
 ```
-
-### `posthog.invitesBulkCreate`
 
-- **HTTP**: `POST /api/organizations/{organization_id}/invites/bulk/`
-- **OpenAPI operationId**: `invites_bulk_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+<sub>`GET /api/organizations/{organization_id}/role_external_references/` · `role_external_references_list`</sub>
 
-**Inputs**
+## `posthog.roleExternalReferencesCreate`
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+```ts
+posthog.roleExternalReferencesCreate(): Promise<{ id: string; provider: string; provider_organization_id: string; provider_role_id: string; provider_role_slug?: string | null; provider_role_name: string; role: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | nu...>
+```
 
-**Outputs**
+<sub>`POST /api/organizations/{organization_id}/role_external_references/` · `role_external_references_create`</sub>
 
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+## `posthog.roleExternalReferencesDestroy`
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.roleExternalReferencesDestroy(): Promise<unknown>
+```
 
-type InvitesBulkCreateInput = Parameters<typeof posthog.invitesBulkCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type InvitesBulkCreateOutput = Awaited<ReturnType<typeof posthog.invitesBulkCreate>>;
+<sub>`DELETE /api/organizations/{organization_id}/role_external_references/{id}/` · `role_external_references_destroy`</sub>
 
-const result: InvitesBulkCreateOutput = await posthog.invitesBulkCreate();
+## `posthog.roleExternalReferencesLookupRetrieve`
 
-// Result shape (from schema): unknown
+```ts
+posthog.roleExternalReferencesLookupRetrieve(): Promise<{ reference: { id: string; provider: string; provider_organization_id: string; provider_role_id: string; provider_role_slug?: string | null; provider_role_name: string; role: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: u...>
 ```
+
+<sub>`GET /api/organizations/{organization_id}/role_external_references/lookup/` · `role_external_references_lookup_retrieve`</sub>
 
-### `posthog.invitesDelegateCreate`
+## `posthog.rolesList`
 
-- **HTTP**: `POST /api/organizations/{organization_id}/invites/delegate/`
-- **What it does**: Create an onboarding delegation invite: an admin-level invite flagged as a setup delegation.
-Sends a single dedicated delegation email and records the inviting user as having delegated.
-- **OpenAPI operationId**: `invites_delegate_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+Role endpoints disclose member records, so they scope them the same way the members list does when the org restricts member list visibility.
 
-**Inputs**
+```ts
+posthog.rolesList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "fo...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`GET /api/organizations/{organization_id}/roles/` · `roles_list`</sub>
 
-**Outputs**
+## `posthog.rolesCreate`
 
-- Client return type: `{ id: string; target_email: string; first_name?: string; emailing_attempt_made: boolean; level?: 1 | 8 | 15; is_expired: boolean; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string;...`
-- OpenAPI response codes: `200`
+Role endpoints disclose member records, so they scope them the same way the members list does when the org restricts member list visibility.
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.rolesCreate(): Promise<{ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "other" | "" | ...>
+```
 
-type InvitesDelegateCreateInput = Parameters<typeof posthog.invitesDelegateCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type InvitesDelegateCreateOutput = Awaited<ReturnType<typeof posthog.invitesDelegateCreate>>;
+<sub>`POST /api/organizations/{organization_id}/roles/` · `roles_create`</sub>
 
-const result: InvitesDelegateCreateOutput = await posthog.invitesDelegateCreate();
+## `posthog.rolesDestroy`
 
-// Result shape (from schema): { id: string; target_email: string; first_name?: string; emailing_attempt_made: boolean; level?: 1 | 8 | 15; is_expired: boolean; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string;...
+Role endpoints disclose member records, so they scope them the same way the members list does when the org restricts member list visibility.
+
+```ts
+posthog.rolesDestroy(): Promise<unknown>
 ```
 
-### `posthog.legalDocumentsList`
+<sub>`DELETE /api/organizations/{organization_id}/roles/{id}/` · `roles_destroy`</sub>
 
-- **HTTP**: `GET /api/organizations/{organization_id}/legal_documents/`
-- **OpenAPI operationId**: `legal_documents_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.rolesRetrieve`
 
-**Inputs**
+Role endpoints disclose member records, so they scope them the same way the members list does when the org restricts member list visibility.
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+```ts
+posthog.rolesRetrieve(): Promise<{ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "other" | "" | ...>
+```
 
-**Outputs**
+<sub>`GET /api/organizations/{organization_id}/roles/{id}/` · `roles_retrieve`</sub>
 
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; document_type: string; company_name: string; representative_email: string; status: string; created_by: { first_name: string; email...`
-- OpenAPI response codes: `200`
+## `posthog.rolesPartialUpdate`
 
+Role endpoints disclose member records, so they scope them the same way the members list does when the org restricts member list visibility.
+
 ```ts
-import posthog from "@utdk/posthog";
+posthog.rolesPartialUpdate(): Promise<{ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "other" | "" | ...>
+```
+
+<sub>`PATCH /api/organizations/{organization_id}/roles/{id}/` · `roles_partial_update`</sub>
 
-type LegalDocumentsListInput = Parameters<typeof posthog.legalDocumentsList> extends [infer T, ...unknown[]] ? T : undefined;
-type LegalDocumentsListOutput = Awaited<ReturnType<typeof posthog.legalDocumentsList>>;
+## `posthog.rolesUpdate`
 
-const result: LegalDocumentsListOutput = await posthog.legalDocumentsList();
+Role endpoints disclose member records, so they scope them the same way the members list does when the org restricts member list visibility.
 
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; document_type: string; company_name: string; representative_email: string; status: string; created_by: { first_name: string; email...
+```ts
+posthog.rolesUpdate(): Promise<{ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "other" | "" | ...>
 ```
+
+<sub>`PUT /api/organizations/{organization_id}/roles/{id}/` · `roles_update`</sub>
 
-### `posthog.legalDocumentsCreate`
+## `posthog.rolesRoleMembershipsList`
 
-- **HTTP**: `POST /api/organizations/{organization_id}/legal_documents/`
-- **OpenAPI operationId**: `legal_documents_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+Role endpoints disclose member records, so they scope them the same way the members list does when the org restricts member list visibility.
 
-**Inputs**
+```ts
+posthog.rolesRoleMembershipsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; role_id: string; organization_member: { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "pr...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`GET /api/organizations/{organization_id}/roles/{role_id}/role_memberships/` · `roles_role_memberships_list`</sub>
 
-**Outputs**
+## `posthog.rolesRoleMembershipsCreate`
 
-- Client return type: `{ id: string; document_type: string; company_name: string; representative_email: string; status: string; created_by: { first_name: string; email: string } | null; created_at: string }`
-- OpenAPI response codes: `201`
+Role endpoints disclose member records, so they scope them the same way the members list does when the org restricts member list visibility.
 
 ```ts
-import posthog from "@utdk/posthog";
+posthog.rolesRoleMembershipsCreate(): Promise<{ id: string; role_id: string; organization_member: { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "ot...>
+```
 
-type LegalDocumentsCreateInput = Parameters<typeof posthog.legalDocumentsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type LegalDocumentsCreateOutput = Awaited<ReturnType<typeof posthog.legalDocumentsCreate>>;
+<sub>`POST /api/organizations/{organization_id}/roles/{role_id}/role_memberships/` · `roles_role_memberships_create`</sub>
 
-const result: LegalDocumentsCreateOutput = await posthog.legalDocumentsCreate();
+## `posthog.rolesRoleMembershipsDestroy`
 
-// Result shape (from schema): { id: string; document_type: string; company_name: string; representative_email: string; status: string; created_by: { first_name: string; email: string } | null; created_at: string }
+Role endpoints disclose member records, so they scope them the same way the members list does when the org restricts member list visibility.
+
+```ts
+posthog.rolesRoleMembershipsDestroy(): Promise<unknown>
 ```
 
-### `posthog.legalDocumentsDestroy`
+<sub>`DELETE /api/organizations/{organization_id}/roles/{role_id}/role_memberships/{id}/` · `roles_role_memberships_destroy`</sub>
 
-- **HTTP**: `DELETE /api/organizations/{organization_id}/legal_documents/{id}/`
-- **What it does**: Delete an unsigned legal document. The PandaDoc envelope is voided
-first so the original signer can no longer complete it; only if that
-succeeds is the row removed, freeing the unique-per-org-per-type
-constraint so a fresh document can be generated.
+## `posthog.rolesRoleMembershipsRetrieve`
 
-Returns 503 if the PandaDoc void fails — the row stays in that case
-and the frontend should prompt the user to retry. Returns 403 for
-signed documents (legal artifacts; staff can still delete signed
-rows from Django admin).
-- **OpenAPI operationId**: `legal_documents_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`, `403`, `404`, `503`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+Role endpoints disclose member records, so they scope them the same way the members list does when the org restricts member list visibility.
 
-**Inputs**
+```ts
+posthog.rolesRoleMembershipsRetrieve(): Promise<{ id: string; role_id: string; organization_member: { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "student" | "ot...>
+```
 
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
+<sub>`GET /api/organizations/{organization_id}/roles/{role_id}/role_memberships/{id}/` · `roles_role_memberships_retrieve`</sub>
 
-**Outputs**
+## `posthog.welcomeCurrentRetrieve`
 
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `403`, `404`, `503`
+Aggregated payload for the invited-user welcome screen.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type LegalDocumentsDestroyInput = Parameters<typeof posthog.legalDocumentsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type LegalDocumentsDestroyOutput = Awaited<ReturnType<typeof posthog.legalDocumentsDestroy>>;
-
-const result: LegalDocumentsDestroyOutput = await posthog.legalDocumentsDestroy();
-
-// Result shape (from schema): unknown
-```
-
-### `posthog.legalDocumentsRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/legal_documents/{id}/`
-- **OpenAPI operationId**: `legal_documents_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; document_type: string; company_name: string; representative_email: string; status: string; created_by: { first_name: string; email: string } | null; created_at: string }`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type LegalDocumentsRetrieveInput = Parameters<typeof posthog.legalDocumentsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type LegalDocumentsRetrieveOutput = Awaited<ReturnType<typeof posthog.legalDocumentsRetrieve>>;
-
-const result: LegalDocumentsRetrieveOutput = await posthog.legalDocumentsRetrieve();
-
-// Result shape (from schema): { id: string; document_type: string; company_name: string; representative_email: string; status: string; created_by: { first_name: string; email: string } | null; created_at: string }
-```
-
-### `posthog.legalDocumentsDownloadRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/legal_documents/{id}/download/`
-- **What it does**: Short-lived redirect to the signed PDF in object storage. 404 while the
-envelope is still out for signature (or if the upload hasn't completed
-yet). The underlying presigned URL expires in ~60s; clients should hit
-this endpoint each time they want to view the PDF rather than caching.
-- **OpenAPI operationId**: `legal_documents_download_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `302`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `302`, `404`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type LegalDocumentsDownloadRetrieveInput = Parameters<typeof posthog.legalDocumentsDownloadRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type LegalDocumentsDownloadRetrieveOutput = Awaited<ReturnType<typeof posthog.legalDocumentsDownloadRetrieve>>;
-
-const result: LegalDocumentsDownloadRetrieveOutput = await posthog.legalDocumentsDownloadRetrieve();
-
-// Result shape (from schema): unknown
-```
-
-### `posthog.membersList`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/members/`
-- **OpenAPI operationId**: `members_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`, `order`, `search`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_ve...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type MembersListInput = Parameters<typeof posthog.membersList> extends [infer T, ...unknown[]] ? T : undefined;
-type MembersListOutput = Awaited<ReturnType<typeof posthog.membersList>>;
-
-const result: MembersListOutput = await posthog.membersList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_ve...
-```
-
-### `posthog.membersDestroy`
-
-- **HTTP**: `DELETE /api/organizations/{organization_id}/members/{user__uuid}/`
-- **OpenAPI operationId**: `members_destroy`
-- **Path params**: `user__uuid`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type MembersDestroyInput = Parameters<typeof posthog.membersDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type MembersDestroyOutput = Awaited<ReturnType<typeof posthog.membersDestroy>>;
-
-const result: MembersDestroyOutput = await posthog.membersDestroy();
-
-// Result shape (from schema): unknown
-```
-
-### `posthog.membersPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/members/{user__uuid}/`
-- **OpenAPI operationId**: `members_partial_update`
-- **Path params**: `user__uuid`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type MembersPartialUpdateInput = Parameters<typeof posthog.membersPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type MembersPartialUpdateOutput = Awaited<ReturnType<typeof posthog.membersPartialUpdate>>;
-
-const result: MembersPartialUpdateOutput = await posthog.membersPartialUpdate();
-
-// Result shape (from schema): { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null...
-```
-
-### `posthog.membersUpdate`
-
-- **HTTP**: `PUT /api/organizations/{organization_id}/members/{user__uuid}/`
-- **OpenAPI operationId**: `members_update`
-- **Path params**: `user__uuid`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type MembersUpdateInput = Parameters<typeof posthog.membersUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type MembersUpdateOutput = Awaited<ReturnType<typeof posthog.membersUpdate>>;
-
-const result: MembersUpdateOutput = await posthog.membersUpdate();
-
-// Result shape (from schema): { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null...
-```
-
-### `posthog.membersGithubLoginRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/members/{user__uuid}/github_login/`
-- **OpenAPI operationId**: `members_github_login_retrieve`
-- **Path params**: `user__uuid`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ github_login: string | null }`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type MembersGithubLoginRetrieveInput = Parameters<typeof posthog.membersGithubLoginRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type MembersGithubLoginRetrieveOutput = Awaited<ReturnType<typeof posthog.membersGithubLoginRetrieve>>;
-
-const result: MembersGithubLoginRetrieveOutput = await posthog.membersGithubLoginRetrieve();
-
-// Result shape (from schema): { github_login: string | null }
-```
-
-### `posthog.membersScopedApiKeysRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/members/{user__uuid}/scoped_api_keys/`
-- **OpenAPI operationId**: `members_scoped_api_keys_retrieve`
-- **Path params**: `user__uuid`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type MembersScopedApiKeysRetrieveInput = Parameters<typeof posthog.membersScopedApiKeysRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type MembersScopedApiKeysRetrieveOutput = Awaited<ReturnType<typeof posthog.membersScopedApiKeysRetrieve>>;
-
-const result: MembersScopedApiKeysRetrieveOutput = await posthog.membersScopedApiKeysRetrieve();
-
-// Result shape (from schema): { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null...
-```
-
-### `posthog.oauthApplicationsList`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/oauth_applications/`
-- **What it does**: ViewSet for listing OAuth applications at the organization level (read-only).
-- **OpenAPI operationId**: `oauth_applications_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name?: string; client_id?: string; redirect_uris_list: (string)[]; is_verified?: boolean; created: string; updated: string })[] }`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OauthApplicationsListInput = Parameters<typeof posthog.oauthApplicationsList> extends [infer T, ...unknown[]] ? T : undefined;
-type OauthApplicationsListOutput = Awaited<ReturnType<typeof posthog.oauthApplicationsList>>;
-
-const result: OauthApplicationsListOutput = await posthog.oauthApplicationsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; name?: string; client_id?: string; redirect_uris_list: (string)[]; is_verified?: boolean; created: string; updated: string })[] }
-```
-
-### `posthog.organizationsProjectsList`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/projects/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`, `search`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: number; uuid: string; organization: string; project_id: number; api_token: string; name: string; completed_snippet_onboarding: boolean; ha...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsListInput = Parameters<typeof posthog.organizationsProjectsList> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsListOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsList>>;
-
-const result: OrganizationsProjectsListOutput = await posthog.organizationsProjectsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: number; uuid: string; organization: string; project_id: number; api_token: string; name: string; completed_snippet_onboarding: boolean; ha...
-```
-
-### `posthog.organizationsProjectsCreate`
-
-- **HTTP**: `POST /api/organizations/{organization_id}/projects/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `201`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsCreateInput = Parameters<typeof posthog.organizationsProjectsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsCreateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsCreate>>;
-
-const result: OrganizationsProjectsCreateOutput = await posthog.organizationsProjectsCreate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsDestroy`
-
-- **HTTP**: `DELETE /api/organizations/{organization_id}/projects/{id}/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsDestroyInput = Parameters<typeof posthog.organizationsProjectsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsDestroyOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsDestroy>>;
-
-const result: OrganizationsProjectsDestroyOutput = await posthog.organizationsProjectsDestroy();
-
-// Result shape (from schema): unknown
-```
-
-### `posthog.organizationsProjectsRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/projects/{id}/`
-- **What it does**: Retrieve a project and its settings.
-- **OpenAPI operationId**: `organizations_projects_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsRetrieveInput = Parameters<typeof posthog.organizationsProjectsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsRetrieveOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsRetrieve>>;
-
-const result: OrganizationsProjectsRetrieveOutput = await posthog.organizationsProjectsRetrieve();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/projects/{id}/`
-- **What it does**: Update one or more of a project's settings. Only the fields included in the request body are changed.
-- **OpenAPI operationId**: `organizations_projects_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsPartialUpdateInput = Parameters<typeof posthog.organizationsProjectsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsPartialUpdate>>;
-
-const result: OrganizationsProjectsPartialUpdateOutput = await posthog.organizationsProjectsPartialUpdate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsUpdate`
-
-- **HTTP**: `PUT /api/organizations/{organization_id}/projects/{id}/`
-- **What it does**: Replace a project and its settings. Prefer the PATCH endpoint for partial updates — PUT requires every writable field to be provided.
-- **OpenAPI operationId**: `organizations_projects_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsUpdateInput = Parameters<typeof posthog.organizationsProjectsUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsUpdateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsUpdate>>;
-
-const result: OrganizationsProjectsUpdateOutput = await posthog.organizationsProjectsUpdate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsActivityRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/projects/{id}/activity/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_activity_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsActivityRetrieveInput = Parameters<typeof posthog.organizationsProjectsActivityRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsActivityRetrieveOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsActivityRetrieve>>;
-
-const result: OrganizationsProjectsActivityRetrieveOutput = await posthog.organizationsProjectsActivityRetrieve();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsAddProductIntentPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/projects/{id}/add_product_intent/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_add_product_intent_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsAddProductIntentPartialUpdateInput = Parameters<typeof posthog.organizationsProjectsAddProductIntentPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsAddProductIntentPartialUpdateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsAddProductIntentPartialUpdate>>;
-
-const result: OrganizationsProjectsAddProductIntentPartialUpdateOutput = await posthog.organizationsProjectsAddProductIntentPartialUpdate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsChangeOrganizationCreate`
-
-- **HTTP**: `POST /api/organizations/{organization_id}/projects/{id}/change_organization/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_change_organization_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsChangeOrganizationCreateInput = Parameters<typeof posthog.organizationsProjectsChangeOrganizationCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsChangeOrganizationCreateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsChangeOrganizationCreate>>;
-
-const result: OrganizationsProjectsChangeOrganizationCreateOutput = await posthog.organizationsProjectsChangeOrganizationCreate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsCompleteProductOnboardingPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/projects/{id}/complete_product_onboarding/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_complete_product_onboarding_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsCompleteProductOnboardingPartialUpdateInput = Parameters<typeof posthog.organizationsProjectsCompleteProductOnboardingPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsCompleteProductOnboardingPartialUpdateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsCompleteProductOnboardingPartialUpdate>>;
-
-const result: OrganizationsProjectsCompleteProductOnboardingPartialUpdateOutput = await posthog.organizationsProjectsCompleteProductOnboardingPartialUpdate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsDefaultEvaluationContextsDestroy`
-
-- **HTTP**: `DELETE /api/organizations/{organization_id}/projects/{id}/default_evaluation_contexts/`
-- **What it does**: Manage default evaluation contexts for a project.
-- **OpenAPI operationId**: `organizations_projects_default_evaluation_contexts_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsDefaultEvaluationContextsDestroyInput = Parameters<typeof posthog.organizationsProjectsDefaultEvaluationContextsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsDefaultEvaluationContextsDestroyOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsDefaultEvaluationContextsDestroy>>;
-
-const result: OrganizationsProjectsDefaultEvaluationContextsDestroyOutput = await posthog.organizationsProjectsDefaultEvaluationContextsDestroy();
-
-// Result shape (from schema): unknown
-```
-
-### `posthog.organizationsProjectsDefaultEvaluationContextsRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/projects/{id}/default_evaluation_contexts/`
-- **What it does**: Manage default evaluation contexts for a project.
-- **OpenAPI operationId**: `organizations_projects_default_evaluation_contexts_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsDefaultEvaluationContextsRetrieveInput = Parameters<typeof posthog.organizationsProjectsDefaultEvaluationContextsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsDefaultEvaluationContextsRetrieveOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsDefaultEvaluationContextsRetrieve>>;
-
-const result: OrganizationsProjectsDefaultEvaluationContextsRetrieveOutput = await posthog.organizationsProjectsDefaultEvaluationContextsRetrieve();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsDefaultEvaluationContextsCreate`
-
-- **HTTP**: `POST /api/organizations/{organization_id}/projects/{id}/default_evaluation_contexts/`
-- **What it does**: Manage default evaluation contexts for a project.
-- **OpenAPI operationId**: `organizations_projects_default_evaluation_contexts_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsDefaultEvaluationContextsCreateInput = Parameters<typeof posthog.organizationsProjectsDefaultEvaluationContextsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsDefaultEvaluationContextsCreateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsDefaultEvaluationContextsCreate>>;
-
-const result: OrganizationsProjectsDefaultEvaluationContextsCreateOutput = await posthog.organizationsProjectsDefaultEvaluationContextsCreate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsDefaultReleaseConditionsRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/projects/{id}/default_release_conditions/`
-- **What it does**: Manage default release conditions for new feature flags in this project.
-- **OpenAPI operationId**: `organizations_projects_default_release_conditions_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsDefaultReleaseConditionsRetrieveInput = Parameters<typeof posthog.organizationsProjectsDefaultReleaseConditionsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsDefaultReleaseConditionsRetrieveOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsDefaultReleaseConditionsRetrieve>>;
-
-const result: OrganizationsProjectsDefaultReleaseConditionsRetrieveOutput = await posthog.organizationsProjectsDefaultReleaseConditionsRetrieve();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsDefaultReleaseConditionsUpdate`
-
-- **HTTP**: `PUT /api/organizations/{organization_id}/projects/{id}/default_release_conditions/`
-- **What it does**: Manage default release conditions for new feature flags in this project.
-- **OpenAPI operationId**: `organizations_projects_default_release_conditions_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsDefaultReleaseConditionsUpdateInput = Parameters<typeof posthog.organizationsProjectsDefaultReleaseConditionsUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsDefaultReleaseConditionsUpdateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsDefaultReleaseConditionsUpdate>>;
-
-const result: OrganizationsProjectsDefaultReleaseConditionsUpdateOutput = await posthog.organizationsProjectsDefaultReleaseConditionsUpdate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsDeleteSecretTokenBackupPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/projects/{id}/delete_secret_token_backup/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_delete_secret_token_backup_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsDeleteSecretTokenBackupPartialUpdateInput = Parameters<typeof posthog.organizationsProjectsDeleteSecretTokenBackupPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsDeleteSecretTokenBackupPartialUpdateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsDeleteSecretTokenBackupPartialUpdate>>;
-
-const result: OrganizationsProjectsDeleteSecretTokenBackupPartialUpdateOutput = await posthog.organizationsProjectsDeleteSecretTokenBackupPartialUpdate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsEvaluationContextSuggestionsDestroy`
-
-- **HTTP**: `DELETE /api/organizations/{organization_id}/projects/{id}/evaluation_context_suggestions/`
-- **What it does**: Hide an evaluation context name from the flag editor's suggestion list, or restore it.
-
-POST hides the name; DELETE restores it. The underlying context row and any flags already
-using it are never modified — this only controls what gets suggested.
-- **OpenAPI operationId**: `organizations_projects_evaluation_context_suggestions_destroy`
-- **Path params**: `id`
-- **Query params**: `context_name`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ success: boolean; name: string; hidden_from_suggestions: boolean }`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsEvaluationContextSuggestionsDestroyInput = Parameters<typeof posthog.organizationsProjectsEvaluationContextSuggestionsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsEvaluationContextSuggestionsDestroyOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsEvaluationContextSuggestionsDestroy>>;
-
-const result: OrganizationsProjectsEvaluationContextSuggestionsDestroyOutput = await posthog.organizationsProjectsEvaluationContextSuggestionsDestroy();
-
-// Result shape (from schema): { success: boolean; name: string; hidden_from_suggestions: boolean }
-```
-
-### `posthog.organizationsProjectsEvaluationContextSuggestionsCreate`
-
-- **HTTP**: `POST /api/organizations/{organization_id}/projects/{id}/evaluation_context_suggestions/`
-- **What it does**: Hide an evaluation context name from the flag editor's suggestion list, or restore it.
-
-POST hides the name; DELETE restores it. The underlying context row and any flags already
-using it are never modified — this only controls what gets suggested.
-- **OpenAPI operationId**: `organizations_projects_evaluation_context_suggestions_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ success: boolean; name: string; hidden_from_suggestions: boolean }`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsEvaluationContextSuggestionsCreateInput = Parameters<typeof posthog.organizationsProjectsEvaluationContextSuggestionsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsEvaluationContextSuggestionsCreateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsEvaluationContextSuggestionsCreate>>;
-
-const result: OrganizationsProjectsEvaluationContextSuggestionsCreateOutput = await posthog.organizationsProjectsEvaluationContextSuggestionsCreate();
-
-// Result shape (from schema): { success: boolean; name: string; hidden_from_suggestions: boolean }
-```
-
-### `posthog.organizationsProjectsEventIngestionRestrictionsRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/projects/{id}/event_ingestion_restrictions/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_event_ingestion_restrictions_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsEventIngestionRestrictionsRetrieveInput = Parameters<typeof posthog.organizationsProjectsEventIngestionRestrictionsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsEventIngestionRestrictionsRetrieveOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsEventIngestionRestrictionsRetrieve>>;
-
-const result: OrganizationsProjectsEventIngestionRestrictionsRetrieveOutput = await posthog.organizationsProjectsEventIngestionRestrictionsRetrieve();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsExperimentsConfigRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/projects/{id}/experiments_config/`
-- **What it does**: Manage experiment configuration for this project.
-- **OpenAPI operationId**: `organizations_projects_experiments_config_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsExperimentsConfigRetrieveInput = Parameters<typeof posthog.organizationsProjectsExperimentsConfigRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsExperimentsConfigRetrieveOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsExperimentsConfigRetrieve>>;
-
-const result: OrganizationsProjectsExperimentsConfigRetrieveOutput = await posthog.organizationsProjectsExperimentsConfigRetrieve();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsExperimentsConfigPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/projects/{id}/experiments_config/`
-- **What it does**: Manage experiment configuration for this project.
-- **OpenAPI operationId**: `organizations_projects_experiments_config_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsExperimentsConfigPartialUpdateInput = Parameters<typeof posthog.organizationsProjectsExperimentsConfigPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsExperimentsConfigPartialUpdateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsExperimentsConfigPartialUpdate>>;
-
-const result: OrganizationsProjectsExperimentsConfigPartialUpdateOutput = await posthog.organizationsProjectsExperimentsConfigPartialUpdate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsGenerateConversationsPublicTokenCreate`
-
-- **HTTP**: `POST /api/organizations/{organization_id}/projects/{id}/generate_conversations_public_token/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_generate_conversations_public_token_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsGenerateConversationsPublicTokenCreateInput = Parameters<typeof posthog.organizationsProjectsGenerateConversationsPublicTokenCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsGenerateConversationsPublicTokenCreateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsGenerateConversationsPublicTokenCreate>>;
-
-const result: OrganizationsProjectsGenerateConversationsPublicTokenCreateOutput = await posthog.organizationsProjectsGenerateConversationsPublicTokenCreate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsIsGeneratingDemoDataRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/projects/{id}/is_generating_demo_data/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_is_generating_demo_data_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsIsGeneratingDemoDataRetrieveInput = Parameters<typeof posthog.organizationsProjectsIsGeneratingDemoDataRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsIsGeneratingDemoDataRetrieveOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsIsGeneratingDemoDataRetrieve>>;
-
-const result: OrganizationsProjectsIsGeneratingDemoDataRetrieveOutput = await posthog.organizationsProjectsIsGeneratingDemoDataRetrieve();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsLogsConfigRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/projects/{id}/logs_config/`
-- **What it does**: Manage logs product configuration for this project's canonical environment.
-Mirrors the env-router action so /api/projects/:id/logs_config/ resolves
-alongside the legacy /api/environments/:id/logs_config/ alias.
-- **OpenAPI operationId**: `organizations_projects_logs_config_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsLogsConfigRetrieveInput = Parameters<typeof posthog.organizationsProjectsLogsConfigRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsLogsConfigRetrieveOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsLogsConfigRetrieve>>;
-
-const result: OrganizationsProjectsLogsConfigRetrieveOutput = await posthog.organizationsProjectsLogsConfigRetrieve();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsLogsConfigPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/projects/{id}/logs_config/`
-- **What it does**: Manage logs product configuration for this project's canonical environment.
-Mirrors the env-router action so /api/projects/:id/logs_config/ resolves
-alongside the legacy /api/environments/:id/logs_config/ alias.
-- **OpenAPI operationId**: `organizations_projects_logs_config_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsLogsConfigPartialUpdateInput = Parameters<typeof posthog.organizationsProjectsLogsConfigPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsLogsConfigPartialUpdateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsLogsConfigPartialUpdate>>;
-
-const result: OrganizationsProjectsLogsConfigPartialUpdateOutput = await posthog.organizationsProjectsLogsConfigPartialUpdate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsResetTokenPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/projects/{id}/reset_token/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_reset_token_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsResetTokenPartialUpdateInput = Parameters<typeof posthog.organizationsProjectsResetTokenPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsResetTokenPartialUpdateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsResetTokenPartialUpdate>>;
-
-const result: OrganizationsProjectsResetTokenPartialUpdateOutput = await posthog.organizationsProjectsResetTokenPartialUpdate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsRotateSecretTokenPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/projects/{id}/rotate_secret_token/`
-- **What it does**: Projects for the current organization.
-- **OpenAPI operationId**: `organizations_projects_rotate_secret_token_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsRotateSecretTokenPartialUpdateInput = Parameters<typeof posthog.organizationsProjectsRotateSecretTokenPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsRotateSecretTokenPartialUpdateOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsRotateSecretTokenPartialUpdate>>;
-
-const result: OrganizationsProjectsRotateSecretTokenPartialUpdateOutput = await posthog.organizationsProjectsRotateSecretTokenPartialUpdate();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.organizationsProjectsSettingsAsOfRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/projects/{id}/settings_as_of/`
-- **What it does**: Return the project settings as of the provided timestamp.
-Query params:
-- at: ISO8601 datetime (required)
-- scope: optional, one or multiple keys to filter the returned settings
-- **OpenAPI operationId**: `organizations_projects_settings_as_of_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type OrganizationsProjectsSettingsAsOfRetrieveInput = Parameters<typeof posthog.organizationsProjectsSettingsAsOfRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type OrganizationsProjectsSettingsAsOfRetrieveOutput = Awaited<ReturnType<typeof posthog.organizationsProjectsSettingsAsOfRetrieve>>;
-
-const result: OrganizationsProjectsSettingsAsOfRetrieveOutput = await posthog.organizationsProjectsSettingsAsOfRetrieve();
-
-// Result shape (from schema): { id: number; organization: string; name?: string; product_description?: string | null; created_at: string; effective_membership_level: 1 | 8 | 15; has_group_types: boolean; group_types: ({ [key: string]: unknown })[]; ...
-```
-
-### `posthog.roleExternalReferencesList`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/role_external_references/`
-- **OpenAPI operationId**: `role_external_references_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; provider: string; provider_organization_id: string; provider_role_id: string; provider_role_slug?: string | null; provider_role_na...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RoleExternalReferencesListInput = Parameters<typeof posthog.roleExternalReferencesList> extends [infer T, ...unknown[]] ? T : undefined;
-type RoleExternalReferencesListOutput = Awaited<ReturnType<typeof posthog.roleExternalReferencesList>>;
-
-const result: RoleExternalReferencesListOutput = await posthog.roleExternalReferencesList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; provider: string; provider_organization_id: string; provider_role_id: string; provider_role_slug?: string | null; provider_role_na...
-```
-
-### `posthog.roleExternalReferencesCreate`
-
-- **HTTP**: `POST /api/organizations/{organization_id}/role_external_references/`
-- **OpenAPI operationId**: `role_external_references_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; provider: string; provider_organization_id: string; provider_role_id: string; provider_role_slug?: string | null; provider_role_name: string; role: string; created_at: string; created_by: { id: number; uui...`
-- OpenAPI response codes: `201`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RoleExternalReferencesCreateInput = Parameters<typeof posthog.roleExternalReferencesCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type RoleExternalReferencesCreateOutput = Awaited<ReturnType<typeof posthog.roleExternalReferencesCreate>>;
-
-const result: RoleExternalReferencesCreateOutput = await posthog.roleExternalReferencesCreate();
-
-// Result shape (from schema): { id: string; provider: string; provider_organization_id: string; provider_role_id: string; provider_role_slug?: string | null; provider_role_name: string; role: string; created_at: string; created_by: { id: number; uui...
-```
-
-### `posthog.roleExternalReferencesDestroy`
-
-- **HTTP**: `DELETE /api/organizations/{organization_id}/role_external_references/{id}/`
-- **OpenAPI operationId**: `role_external_references_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RoleExternalReferencesDestroyInput = Parameters<typeof posthog.roleExternalReferencesDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type RoleExternalReferencesDestroyOutput = Awaited<ReturnType<typeof posthog.roleExternalReferencesDestroy>>;
-
-const result: RoleExternalReferencesDestroyOutput = await posthog.roleExternalReferencesDestroy();
-
-// Result shape (from schema): unknown
-```
-
-### `posthog.roleExternalReferencesLookupRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/role_external_references/lookup/`
-- **OpenAPI operationId**: `role_external_references_lookup_retrieve`
-- **Path params**: None
-- **Query params**: `provider`, `provider_organization_id`, `provider_role_id`, `provider_role_slug`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ reference: { id: string; provider: string; provider_organization_id: string; provider_role_id: string; provider_role_slug?: string | null; provider_role_name: string; role: string; created_at: string; created_by: { id...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RoleExternalReferencesLookupRetrieveInput = Parameters<typeof posthog.roleExternalReferencesLookupRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type RoleExternalReferencesLookupRetrieveOutput = Awaited<ReturnType<typeof posthog.roleExternalReferencesLookupRetrieve>>;
-
-const result: RoleExternalReferencesLookupRetrieveOutput = await posthog.roleExternalReferencesLookupRetrieve();
-
-// Result shape (from schema): { reference: { id: string; provider: string; provider_organization_id: string; provider_role_id: string; provider_role_slug?: string | null; provider_role_name: string; role: string; created_at: string; created_by: { id...
-```
-
-### `posthog.rolesList`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/roles/`
-- **OpenAPI operationId**: `roles_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_n...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RolesListInput = Parameters<typeof posthog.rolesList> extends [infer T, ...unknown[]] ? T : undefined;
-type RolesListOutput = Awaited<ReturnType<typeof posthog.rolesList>>;
-
-const result: RolesListOutput = await posthog.rolesList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_n...
+posthog.welcomeCurrentRetrieve(): Promise<{ organization_name: string; inviter: { name: string; email: string } | null; team_members: ({ name: string; email: string; avatar: string | null; role: string; last_active: "today" | "this_week" | "inactive" | "never" })[]; recent_activity: ({ type: string; actor_name: string; entity_name: string; entity_url: string | null; timestamp: string })[]; popular_dashboards: ({ id: number; name: string;...>
 ```
 
-### `posthog.rolesCreate`
-
-- **HTTP**: `POST /api/organizations/{organization_id}/roles/`
-- **OpenAPI operationId**: `roles_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_c...`
-- OpenAPI response codes: `201`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RolesCreateInput = Parameters<typeof posthog.rolesCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type RolesCreateOutput = Awaited<ReturnType<typeof posthog.rolesCreate>>;
-
-const result: RolesCreateOutput = await posthog.rolesCreate();
-
-// Result shape (from schema): { id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_c...
-```
-
-### `posthog.rolesDestroy`
-
-- **HTTP**: `DELETE /api/organizations/{organization_id}/roles/{id}/`
-- **OpenAPI operationId**: `roles_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RolesDestroyInput = Parameters<typeof posthog.rolesDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type RolesDestroyOutput = Awaited<ReturnType<typeof posthog.rolesDestroy>>;
-
-const result: RolesDestroyOutput = await posthog.rolesDestroy();
-
-// Result shape (from schema): unknown
-```
-
-### `posthog.rolesRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/roles/{id}/`
-- **OpenAPI operationId**: `roles_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_c...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RolesRetrieveInput = Parameters<typeof posthog.rolesRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type RolesRetrieveOutput = Awaited<ReturnType<typeof posthog.rolesRetrieve>>;
-
-const result: RolesRetrieveOutput = await posthog.rolesRetrieve();
-
-// Result shape (from schema): { id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_c...
-```
-
-### `posthog.rolesPartialUpdate`
-
-- **HTTP**: `PATCH /api/organizations/{organization_id}/roles/{id}/`
-- **OpenAPI operationId**: `roles_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_c...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RolesPartialUpdateInput = Parameters<typeof posthog.rolesPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type RolesPartialUpdateOutput = Awaited<ReturnType<typeof posthog.rolesPartialUpdate>>;
-
-const result: RolesPartialUpdateOutput = await posthog.rolesPartialUpdate();
-
-// Result shape (from schema): { id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_c...
-```
-
-### `posthog.rolesUpdate`
-
-- **HTTP**: `PUT /api/organizations/{organization_id}/roles/{id}/`
-- **OpenAPI operationId**: `roles_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_c...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RolesUpdateInput = Parameters<typeof posthog.rolesUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type RolesUpdateOutput = Awaited<ReturnType<typeof posthog.rolesUpdate>>;
-
-const result: RolesUpdateOutput = await posthog.rolesUpdate();
-
-// Result shape (from schema): { id: string; name: string; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_c...
-```
-
-### `posthog.rolesRoleMembershipsList`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/roles/{role_id}/role_memberships/`
-- **OpenAPI operationId**: `roles_role_memberships_list`
-- **Path params**: `role_id`
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; role_id: string; organization_member: { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: st...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RolesRoleMembershipsListInput = Parameters<typeof posthog.rolesRoleMembershipsList> extends [infer T, ...unknown[]] ? T : undefined;
-type RolesRoleMembershipsListOutput = Awaited<ReturnType<typeof posthog.rolesRoleMembershipsList>>;
-
-const result: RolesRoleMembershipsListOutput = await posthog.rolesRoleMembershipsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; role_id: string; organization_member: { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: st...
-```
-
-### `posthog.rolesRoleMembershipsCreate`
-
-- **HTTP**: `POST /api/organizations/{organization_id}/roles/{role_id}/role_memberships/`
-- **OpenAPI operationId**: `roles_role_memberships_create`
-- **Path params**: `role_id`
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; role_id: string; organization_member: { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null...`
-- OpenAPI response codes: `201`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RolesRoleMembershipsCreateInput = Parameters<typeof posthog.rolesRoleMembershipsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type RolesRoleMembershipsCreateOutput = Awaited<ReturnType<typeof posthog.rolesRoleMembershipsCreate>>;
-
-const result: RolesRoleMembershipsCreateOutput = await posthog.rolesRoleMembershipsCreate();
-
-// Result shape (from schema): { id: string; role_id: string; organization_member: { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null...
-```
-
-### `posthog.rolesRoleMembershipsDestroy`
-
-- **HTTP**: `DELETE /api/organizations/{organization_id}/roles/{role_id}/role_memberships/{id}/`
-- **OpenAPI operationId**: `roles_role_memberships_destroy`
-- **Path params**: `id`, `role_id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RolesRoleMembershipsDestroyInput = Parameters<typeof posthog.rolesRoleMembershipsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type RolesRoleMembershipsDestroyOutput = Awaited<ReturnType<typeof posthog.rolesRoleMembershipsDestroy>>;
-
-const result: RolesRoleMembershipsDestroyOutput = await posthog.rolesRoleMembershipsDestroy();
-
-// Result shape (from schema): unknown
-```
-
-### `posthog.rolesRoleMembershipsRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/roles/{role_id}/role_memberships/{id}/`
-- **OpenAPI operationId**: `roles_role_memberships_retrieve`
-- **Path params**: `id`, `role_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; role_id: string; organization_member: { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type RolesRoleMembershipsRetrieveInput = Parameters<typeof posthog.rolesRoleMembershipsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type RolesRoleMembershipsRetrieveOutput = Awaited<ReturnType<typeof posthog.rolesRoleMembershipsRetrieve>>;
-
-const result: RolesRoleMembershipsRetrieveOutput = await posthog.rolesRoleMembershipsRetrieve();
-
-// Result shape (from schema): { id: string; role_id: string; organization_member: { id: string; user: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null...
-```
-
-### `posthog.welcomeCurrentRetrieve`
-
-- **HTTP**: `GET /api/organizations/{organization_id}/welcome/current/`
-- **What it does**: Aggregated payload for the invited-user welcome screen.
-- **OpenAPI operationId**: `welcome_current_retrieve`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ organization_name: string; inviter: { name: string; email: string } | null; team_members: ({ name: string; email: string; avatar: string | null; role: string; last_active: "today" | "this_week" | "inactive" | "never" ...`
-- OpenAPI response codes: `200`, `404`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type WelcomeCurrentRetrieveInput = Parameters<typeof posthog.welcomeCurrentRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type WelcomeCurrentRetrieveOutput = Awaited<ReturnType<typeof posthog.welcomeCurrentRetrieve>>;
-
-const result: WelcomeCurrentRetrieveOutput = await posthog.welcomeCurrentRetrieve();
-
-// Result shape (from schema): { organization_name: string; inviter: { name: string; email: string } | null; team_members: ({ name: string; email: string; avatar: string | null; role: string; last_active: "today" | "this_week" | "inactive" | "never" ...
-```
+<sub>`GET /api/organizations/{organization_id}/welcome/current/` · `welcome_current_retrieve`</sub>
 
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

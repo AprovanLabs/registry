@@ -1,9 +1,9 @@
 # LiveChatBans
 
-2 operations · `utdk/google/youtube`
+2 operations · `@utdk/clients/google/youtube`
 
 ```ts
-import youtube from "utdk/google/youtube";
+import youtube from "@utdk/clients/google/youtube";
 ```
 
 ## `youtube.youtubeLiveChatBansDelete`
@@ -35,7 +35,7 @@ youtube.youtubeLiveChatBansDelete(input: {
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
   id: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /youtube/v3/liveChat/bans` · `youtube.liveChatBans.delete`</sub>

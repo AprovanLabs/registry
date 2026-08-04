@@ -1,9 +1,9 @@
 # Drives
 
-7 operations · `utdk/google/drive`
+7 operations · `@utdk/clients/google/drive`
 
 ```ts
-import drive from "utdk/google/drive";
+import drive from "@utdk/clients/google/drive";
 ```
 
 ## `drive.driveDrivesList`
@@ -116,7 +116,7 @@ drive.driveDrivesDelete(input: {
   allowItemDeletion?: boolean;
   /** Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the shared drive belongs. */
   useDomainAdminAccess?: boolean;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /drives/{driveId}` · `drive.drives.delete`</sub>

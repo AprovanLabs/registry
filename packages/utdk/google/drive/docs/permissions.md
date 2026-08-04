@@ -1,9 +1,9 @@
 # Permissions
 
-5 operations · `utdk/google/drive`
+5 operations · `@utdk/clients/google/drive`
 
 ```ts
-import drive from "utdk/google/drive";
+import drive from "@utdk/clients/google/drive";
 ```
 
 ## `drive.drivePermissionsList`
@@ -148,7 +148,7 @@ drive.drivePermissionsDelete(input: {
   supportsTeamDrives?: boolean;
   /** Issue the request as a domain administrator; if set to true, then the requester will be granted access if the file ID parameter refers to a shared drive and the requester is an administrator of the domain to which the shared drive belongs. */
   useDomainAdminAccess?: boolean;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /files/{fileId}/permissions/{permissionId}` · `drive.permissions.delete`</sub>

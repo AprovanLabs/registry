@@ -1,4 +1,4 @@
-import type { BasicError, EmptyObject, OidcCustomPropertyInclusion, OidcCustomSub } from "./schemas.js";
+import type { EmptyObject, OidcCustomPropertyInclusion, OidcCustomSub } from "./schemas.js";
 
 export type OidcOperations = {
   /**
@@ -30,7 +30,7 @@ export type OidcOperations = {
     enterprise: string;
     /** The name of the custom property to remove from OIDC token inclusion */
     custom_property_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List OIDC custom property inclusions for an organization
@@ -61,7 +61,7 @@ export type OidcOperations = {
     org: string;
     /** The name of the custom property to remove from OIDC token inclusion */
     custom_property_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get the customization template for an OIDC subject claim for an organization

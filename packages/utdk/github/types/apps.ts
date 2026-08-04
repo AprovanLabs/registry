@@ -1,4 +1,4 @@
-import type { AppPermissions, Authorization, BasicError, HookDelivery, HookDeliveryItem, Installation, InstallationToken, Integration, IntegrationInstallationRequest, MarketplaceListingPlan, MarketplacePurchase, Repository, UserMarketplacePurchase, ValidationError, WebhookConfig, WebhookConfigContentType, WebhookConfigInsecureSsl, WebhookConfigSecret, WebhookConfigUrl } from "./schemas.js";
+import type { AppPermissions, Authorization, HookDelivery, HookDeliveryItem, Installation, InstallationToken, Integration, IntegrationInstallationRequest, MarketplaceListingPlan, MarketplacePurchase, Repository, UserMarketplacePurchase, WebhookConfig, WebhookConfigContentType, WebhookConfigInsecureSsl, WebhookConfigSecret, WebhookConfigUrl } from "./schemas.js";
 
 export type AppsOperations = {
   /**
@@ -102,7 +102,7 @@ export type AppsOperations = {
   deleteInstallation: (input: {
     /** The unique identifier of the installation. */
     installation_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Create an installation access token for an app
@@ -125,7 +125,7 @@ export type AppsOperations = {
   suspendInstallation: (input: {
     /** The unique identifier of the installation. */
     installation_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Unsuspend an app installation
@@ -134,7 +134,7 @@ export type AppsOperations = {
   unsuspendInstallation: (input: {
     /** The unique identifier of the installation. */
     installation_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Delete an app authorization
@@ -145,7 +145,7 @@ export type AppsOperations = {
     access_token: string;
     /** The client ID of the GitHub app. */
     client_id: string;
-  }) => Promise<ValidationError>;
+  }) => Promise<undefined>;
 
   /**
    * Check a token
@@ -178,7 +178,7 @@ export type AppsOperations = {
     access_token: string;
     /** The client ID of the GitHub app. */
     client_id: string;
-  }) => Promise<ValidationError>;
+  }) => Promise<undefined>;
 
   /**
    * Create a scoped access token
@@ -223,7 +223,7 @@ export type AppsOperations = {
    * Revoke an installation access token
    * @see https://docs.github.com/rest/apps/installations#revoke-an-installation-access-token
    */
-  revokeInstallationAccessToken: () => Promise<unknown>;
+  revokeInstallationAccessToken: () => Promise<undefined>;
 
   /**
    * Get a subscription plan for an account
@@ -352,7 +352,7 @@ export type AppsOperations = {
     installation_id: number;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove a repository from an app installation
@@ -363,7 +363,7 @@ export type AppsOperations = {
     installation_id: number;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List subscriptions for the authenticated user

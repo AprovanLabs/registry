@@ -273,7 +273,7 @@ github.codeScanning.deleteCodeqlDatabase(input: {
   repo: string;
   /** The language of the CodeQL database. */
   language: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/code-scanning/codeql/databases/{language}` · `code-scanning/delete-codeql-database`</sub>

@@ -1,4 +1,4 @@
-import type { ActionsArtifactAndLogRetentionResponse, ActionsCacheList, ActionsCacheRetentionLimitForEnterprise, ActionsCacheRetentionLimitForOrganization, ActionsCacheRetentionLimitForRepository, ActionsCacheStorageLimitForEnterprise, ActionsCacheStorageLimitForOrganization, ActionsCacheStorageLimitForRepository, ActionsCacheUsageByRepository, ActionsCacheUsageOrgEnterprise, ActionsCanApprovePullRequestReviews, ActionsDefaultWorkflowPermissions, ActionsEnabled, ActionsForkPrContributorApproval, ActionsForkPrWorkflowsPrivateRepos, ActionsGetDefaultWorkflowPermissions, ActionsHostedRunner, ActionsHostedRunnerCuratedImage, ActionsHostedRunnerCustomImage, ActionsHostedRunnerCustomImageVersion, ActionsHostedRunnerLimits, ActionsHostedRunnerMachineSpec, ActionsOrganizationPermissions, ActionsPublicKey, ActionsRepositoryPermissions, ActionsSecret, ActionsVariable, ActionsWorkflowAccessToRepository, AllowedActions, Artifact, AuthenticationToken, BasicError, ConcurrencyGroup, ConcurrencyGroupList, ConcurrencyGroupRunList, Deployment, EmptyObject, EnabledRepositories, EnvironmentApprovals, Job, MinimalRepository, OidcCustomSubRepo, OrganizationActionsSecret, OrganizationActionsVariable, PendingDeployment, Repository, ReviewCustomGatesCommentRequired, ReviewCustomGatesStateRequired, Runner, RunnerApplication, RunnerGroupsOrg, RunnerLabel, SelectedActions, SelfHostedRunnersSettings, ShaPinningRequired, ValidationErrorSimple, Workflow, WorkflowDispatchResponse, WorkflowRun, WorkflowRunUsage, WorkflowUsage } from "./schemas.js";
+import type { ActionsArtifactAndLogRetentionResponse, ActionsCacheList, ActionsCacheRetentionLimitForEnterprise, ActionsCacheRetentionLimitForOrganization, ActionsCacheRetentionLimitForRepository, ActionsCacheStorageLimitForEnterprise, ActionsCacheStorageLimitForOrganization, ActionsCacheStorageLimitForRepository, ActionsCacheUsageByRepository, ActionsCacheUsageOrgEnterprise, ActionsCanApprovePullRequestReviews, ActionsDefaultWorkflowPermissions, ActionsEnabled, ActionsForkPrContributorApproval, ActionsForkPrWorkflowsPrivateRepos, ActionsGetDefaultWorkflowPermissions, ActionsHostedRunner, ActionsHostedRunnerCuratedImage, ActionsHostedRunnerCustomImage, ActionsHostedRunnerCustomImageVersion, ActionsHostedRunnerLimits, ActionsHostedRunnerMachineSpec, ActionsOrganizationPermissions, ActionsPublicKey, ActionsRepositoryPermissions, ActionsSecret, ActionsVariable, ActionsWorkflowAccessToRepository, AllowedActions, Artifact, AuthenticationToken, ConcurrencyGroup, ConcurrencyGroupList, ConcurrencyGroupRunList, Deployment, EmptyObject, EnabledRepositories, EnvironmentApprovals, Job, MinimalRepository, OidcCustomSubRepo, OrganizationActionsSecret, OrganizationActionsVariable, PendingDeployment, Repository, ReviewCustomGatesCommentRequired, ReviewCustomGatesStateRequired, Runner, RunnerApplication, RunnerGroupsOrg, RunnerLabel, SelectedActions, SelfHostedRunnersSettings, ShaPinningRequired, Workflow, WorkflowDispatchResponse, WorkflowRun, WorkflowRunUsage, WorkflowUsage } from "./schemas.js";
 
 export type ActionsOperations = {
   /**
@@ -19,7 +19,7 @@ export type ActionsOperations = {
     max_cache_retention_days?: number;
     /** The slug version of the enterprise name. */
     enterprise: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get GitHub Actions cache storage limit for an enterprise
@@ -39,7 +39,7 @@ export type ActionsOperations = {
     max_cache_size_gb?: number;
     /** The slug version of the enterprise name. */
     enterprise: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get GitHub Actions cache retention limit for an organization
@@ -59,7 +59,7 @@ export type ActionsOperations = {
     max_cache_retention_days?: number;
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get GitHub Actions cache storage limit for an organization
@@ -79,7 +79,7 @@ export type ActionsOperations = {
     max_cache_size_gb?: number;
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get GitHub Actions cache usage for an organization
@@ -168,7 +168,7 @@ export type ActionsOperations = {
     org: string;
     /** Image definition ID of custom image */
     image_definition_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List image versions of a custom image for an organization
@@ -205,7 +205,7 @@ export type ActionsOperations = {
     image_definition_id: number;
     /** Version of a custom image */
     version: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get GitHub-owned images for GitHub-hosted runners in an organization
@@ -322,7 +322,7 @@ export type ActionsOperations = {
     sha_pinning_required?: ShaPinningRequired;
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get artifact and log retention settings for an organization
@@ -342,7 +342,7 @@ export type ActionsOperations = {
     days: number;
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get fork PR contributor approval permissions for an organization
@@ -362,7 +362,7 @@ export type ActionsOperations = {
     approval_policy: "first_time_contributors_new_to_github" | "first_time_contributors" | "all_external_contributors";
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get private repo fork PR workflow settings for an organization
@@ -388,7 +388,7 @@ export type ActionsOperations = {
     require_approval_for_fork_pr_workflows?: boolean;
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List selected repositories enabled for GitHub Actions in an organization
@@ -412,7 +412,7 @@ export type ActionsOperations = {
     selected_repository_ids: (number)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Enable a selected repository for GitHub Actions in an organization
@@ -423,7 +423,7 @@ export type ActionsOperations = {
     org: string;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Disable a selected repository for GitHub Actions in an organization
@@ -434,7 +434,7 @@ export type ActionsOperations = {
     org: string;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get allowed actions and reusable workflows for an organization
@@ -458,7 +458,7 @@ export type ActionsOperations = {
     patterns_allowed?: (string)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get self-hosted runners settings for an organization
@@ -478,7 +478,7 @@ export type ActionsOperations = {
     enabled_repositories: "all" | "selected" | "none";
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repositories allowed to use self-hosted runners in an organization
@@ -502,7 +502,7 @@ export type ActionsOperations = {
     selected_repository_ids: (number)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Add a repository to the list of repositories allowed to use self-hosted runners in an organization
@@ -513,7 +513,7 @@ export type ActionsOperations = {
     org: string;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove a repository from the list of repositories allowed to use self-hosted runners in an organization
@@ -524,7 +524,7 @@ export type ActionsOperations = {
     org: string;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get default workflow permissions for an organization
@@ -544,7 +544,7 @@ export type ActionsOperations = {
     can_approve_pull_request_reviews?: ActionsCanApprovePullRequestReviews;
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List self-hosted runner groups for an organization
@@ -629,7 +629,7 @@ export type ActionsOperations = {
     org: string;
     /** Unique identifier of the self-hosted runner group. */
     runner_group_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List GitHub-hosted runners in a group for an organization
@@ -672,7 +672,7 @@ export type ActionsOperations = {
     org: string;
     /** Unique identifier of the self-hosted runner group. */
     runner_group_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add repository access to a self-hosted runner group in an organization
@@ -685,7 +685,7 @@ export type ActionsOperations = {
     runner_group_id: number;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove repository access to a self-hosted runner group in an organization
@@ -698,7 +698,7 @@ export type ActionsOperations = {
     runner_group_id: number;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List self-hosted runners in a group for an organization
@@ -726,7 +726,7 @@ export type ActionsOperations = {
     org: string;
     /** Unique identifier of the self-hosted runner group. */
     runner_group_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add a self-hosted runner to a group for an organization
@@ -739,7 +739,7 @@ export type ActionsOperations = {
     runner_group_id: number;
     /** Unique identifier of the self-hosted runner. */
     runner_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove a self-hosted runner from a group for an organization
@@ -752,7 +752,7 @@ export type ActionsOperations = {
     runner_group_id: number;
     /** Unique identifier of the self-hosted runner. */
     runner_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List self-hosted runners for an organization
@@ -833,7 +833,7 @@ export type ActionsOperations = {
     org: string;
     /** Unique identifier of the self-hosted runner. */
     runner_id: number;
-  }) => Promise<ValidationErrorSimple>;
+  }) => Promise<undefined>;
 
   /**
    * List labels for a self-hosted runner for an organization
@@ -957,7 +957,7 @@ export type ActionsOperations = {
     org: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List selected repositories for an organization secret
@@ -985,7 +985,7 @@ export type ActionsOperations = {
     org: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add selected repository to an organization secret
@@ -997,7 +997,7 @@ export type ActionsOperations = {
     /** The name of the secret. */
     secret_name: string;
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove selected repository from an organization secret
@@ -1009,7 +1009,7 @@ export type ActionsOperations = {
     /** The name of the secret. */
     secret_name: string;
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List organization variables
@@ -1067,7 +1067,7 @@ export type ActionsOperations = {
     selected_repository_ids?: (number)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }, options: { params: { name: string } }) => Promise<unknown>;
+  }, options: { params: { name: string } }) => Promise<undefined>;
 
   /**
    * Delete an organization variable
@@ -1078,7 +1078,7 @@ export type ActionsOperations = {
     org: string;
     /** The name of the variable. */
     name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List selected repositories for an organization variable
@@ -1106,7 +1106,7 @@ export type ActionsOperations = {
     org: string;
     /** The name of the variable. */
     name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add selected repository to an organization variable
@@ -1118,7 +1118,7 @@ export type ActionsOperations = {
     /** The name of the variable. */
     name: string;
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove selected repository from an organization variable
@@ -1130,7 +1130,7 @@ export type ActionsOperations = {
     /** The name of the variable. */
     name: string;
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List artifacts for a repository
@@ -1173,7 +1173,7 @@ export type ActionsOperations = {
     repo: string;
     /** The unique identifier of the artifact. */
     artifact_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Download an artifact
@@ -1187,7 +1187,7 @@ export type ActionsOperations = {
     /** The unique identifier of the artifact. */
     artifact_id: number;
     archive_format: string;
-  }) => Promise<BasicError>;
+  }) => Promise<unknown>;
 
   /**
    * Get GitHub Actions cache retention limit for a repository
@@ -1211,7 +1211,7 @@ export type ActionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get GitHub Actions cache storage limit for a repository
@@ -1235,7 +1235,7 @@ export type ActionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get GitHub Actions cache usage for a repository
@@ -1297,7 +1297,7 @@ export type ActionsOperations = {
     repo: string;
     /** The unique identifier of the GitHub Actions cache. */
     cache_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List concurrency groups for a repository
@@ -1455,7 +1455,7 @@ export type ActionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get the level of access for workflows outside of the repository
@@ -1479,7 +1479,7 @@ export type ActionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get artifact and log retention settings for a repository
@@ -1503,7 +1503,7 @@ export type ActionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get fork PR contributor approval permissions for a repository
@@ -1527,7 +1527,7 @@ export type ActionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get private repo fork PR workflow settings for a repository
@@ -1557,7 +1557,7 @@ export type ActionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get allowed actions and reusable workflows for a repository
@@ -1585,7 +1585,7 @@ export type ActionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get default workflow permissions for a repository
@@ -1609,7 +1609,7 @@ export type ActionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List self-hosted runners for a repository
@@ -1704,7 +1704,7 @@ export type ActionsOperations = {
     repo: string;
     /** Unique identifier of the self-hosted runner. */
     runner_id: number;
-  }) => Promise<ValidationErrorSimple>;
+  }) => Promise<undefined>;
 
   /**
    * List labels for a self-hosted runner for a repository
@@ -1834,7 +1834,7 @@ export type ActionsOperations = {
     repo: string;
     /** The unique identifier of the workflow run. */
     run_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get the review history for a workflow run
@@ -1978,7 +1978,7 @@ export type ActionsOperations = {
     repo: string;
     /** The unique identifier of the workflow run. */
     run_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Force cancel a workflow run
@@ -2036,7 +2036,7 @@ export type ActionsOperations = {
     repo: string;
     /** The unique identifier of the workflow run. */
     run_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get pending deployments for a workflow run
@@ -2180,7 +2180,7 @@ export type ActionsOperations = {
     repo: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List repository variables
@@ -2238,7 +2238,7 @@ export type ActionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }, options: { params: { name: string } }) => Promise<unknown>;
+  }, options: { params: { name: string } }) => Promise<undefined>;
 
   /**
    * Delete a repository variable
@@ -2251,7 +2251,7 @@ export type ActionsOperations = {
     repo: string;
     /** The name of the variable. */
     name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List repository workflows
@@ -2292,7 +2292,7 @@ export type ActionsOperations = {
     repo: string;
     /** The ID of the workflow. You can also pass the workflow file name as a string. */
     workflow_id: number | string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create a workflow dispatch event
@@ -2324,7 +2324,7 @@ export type ActionsOperations = {
     repo: string;
     /** The ID of the workflow. You can also pass the workflow file name as a string. */
     workflow_id: number | string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List workflow runs for a workflow
@@ -2449,7 +2449,7 @@ export type ActionsOperations = {
     environment_name: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List environment variables
@@ -2515,7 +2515,7 @@ export type ActionsOperations = {
     repo: string;
     /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
     environment_name: string;
-  }, options: { params: { name: string } }) => Promise<unknown>;
+  }, options: { params: { name: string } }) => Promise<undefined>;
 
   /**
    * Delete an environment variable
@@ -2530,5 +2530,5 @@ export type ActionsOperations = {
     name: string;
     /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
     environment_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 };

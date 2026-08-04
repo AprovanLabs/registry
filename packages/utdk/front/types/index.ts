@@ -66,7 +66,7 @@ export type FrontClient = {
   deleteAnAccount: (input: {
     /** The Account ID. Alternatively, you can supply the account domain or external ID as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     account_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List account contacts
@@ -92,7 +92,7 @@ export type FrontClient = {
     contact_ids: (ResourceId)[];
     /** The Account ID. Alternatively, you can supply the account domain or external ID as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     account_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove contact from Account
@@ -102,7 +102,7 @@ export type FrontClient = {
     contact_ids: (ResourceId)[];
     /** The Account ID. Alternatively, you can supply the account domain or external ID as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     account_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create a new analytics export
@@ -152,7 +152,7 @@ export type FrontClient = {
     app_object: { id?: string; ext_link?: string };
     /** The application UID */
     application_uid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List channels
@@ -179,7 +179,7 @@ export type FrontClient = {
     settings?: { undo_send_time?: 0 | 5 | 10 | 15 | 30 | 60; all_teammates_can_reply?: boolean; webhook_url?: string };
     /** The Channel ID. Alternatively, you can supply the channel address as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     channel_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create draft
@@ -373,7 +373,7 @@ export type FrontClient = {
   createGroup: (input: {
     /** Name of the contact list */
     name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete group
@@ -381,7 +381,7 @@ export type FrontClient = {
   deleteGroup: (input: {
     /** The contact group ID */
     contact_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List contacts in group
@@ -403,7 +403,7 @@ export type FrontClient = {
     contact_ids: (ResourceId)[];
     /** The contact group ID */
     contact_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove contacts from group
@@ -413,7 +413,7 @@ export type FrontClient = {
     contact_ids: (ResourceId)[];
     /** The contact group ID */
     contact_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List contact lists
@@ -426,7 +426,7 @@ export type FrontClient = {
   createContactList: (input: {
     /** Name of the contact list */
     name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete contact list
@@ -434,7 +434,7 @@ export type FrontClient = {
   deleteContactList: (input: {
     /** The contact list ID */
     contact_list_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List contacts in contact list
@@ -456,7 +456,7 @@ export type FrontClient = {
     contact_ids: (ResourceId)[];
     /** The contact list ID */
     contact_list_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove contacts from contact list
@@ -466,7 +466,7 @@ export type FrontClient = {
     contact_ids: (ResourceId)[];
     /** The contact list ID */
     contact_list_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List contacts
@@ -549,7 +549,7 @@ export type FrontClient = {
     custom_fields?: CustomFieldParameter;
     /** The contact ID. Alternatively, you can supply the contact's source and handle as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     contact_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete a contact
@@ -557,7 +557,7 @@ export type FrontClient = {
   deleteAContact: (input: {
     /** The contact ID. Alternatively, you can supply the contact's source and handle as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     contact_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List contact conversations
@@ -583,7 +583,7 @@ export type FrontClient = {
     source: "twitter" | "email" | "phone" | "facebook" | "intercom" | "front_chat" | "custom";
     /** The contact ID. Alternatively, you can supply the contact's source and handle as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     contact_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete contact handle
@@ -597,7 +597,7 @@ export type FrontClient = {
     force?: boolean;
     /** The contact ID. Alternatively, you can supply the contact's source and handle as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     contact_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List notes
@@ -696,7 +696,7 @@ export type FrontClient = {
     custom_fields?: CustomFieldParameter;
     /** The conversation ID */
     conversation_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete conversation
@@ -704,7 +704,7 @@ export type FrontClient = {
   deleteConversation: (input: {
     /** The conversation ID */
     conversation_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Update conversation assignee
@@ -714,7 +714,7 @@ export type FrontClient = {
     assignee_id: string;
     /** The conversation ID */
     conversation_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List conversation comments
@@ -810,7 +810,7 @@ export type FrontClient = {
     conversation_id: string;
     /** Whether to ignore invalid teammate IDs and continue adding valid ones. */
     ignore_errors?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete conversation followers
@@ -820,7 +820,7 @@ export type FrontClient = {
     teammate_ids: (string)[];
     /** The conversation ID */
     conversation_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List conversation inboxes
@@ -840,7 +840,7 @@ export type FrontClient = {
     link_external_urls?: (string)[];
     /** The conversation ID */
     conversation_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove conversation links
@@ -850,7 +850,7 @@ export type FrontClient = {
     link_ids: (string)[];
     /** The conversation ID */
     conversation_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List conversation messages
@@ -915,7 +915,7 @@ export type FrontClient = {
     status_id?: string;
     /** The conversation ID */
     conversation_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add conversation tag
@@ -924,7 +924,7 @@ export type FrontClient = {
     tag_ids: (ResourceId)[];
     /** The conversation ID */
     conversation_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove conversation tag
@@ -933,7 +933,7 @@ export type FrontClient = {
     tag_ids: (ResourceId)[];
     /** The conversation ID */
     conversation_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List Contact's custom fields
@@ -956,7 +956,7 @@ export type FrontClient = {
     version: string;
     /** The draft ID */
     draft_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Edit draft
@@ -1041,7 +1041,7 @@ export type FrontClient = {
     send_as?: string;
     /** The Inbox ID */
     inbox_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List inbox conversations
@@ -1109,7 +1109,7 @@ export type FrontClient = {
     teammate_ids: (ResourceId)[];
     /** The Inbox ID */
     inbox_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Removes inbox access
@@ -1118,7 +1118,7 @@ export type FrontClient = {
     teammate_ids: (ResourceId)[];
     /** The Inbox ID */
     inbox_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get a knowledge base article
@@ -1212,7 +1212,7 @@ export type FrontClient = {
   deleteAKnowledgeBaseCategory: (input: {
     /** The ID of the category to delete */
     category_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List articles in a category
@@ -1474,7 +1474,7 @@ export type FrontClient = {
     name?: string;
     /** The Link ID */
     link_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List link conversations
@@ -1639,7 +1639,7 @@ export type FrontClient = {
   deleteMessageTemplate: (input: {
     /** The message template ID */
     message_template_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Download attachment for a message template
@@ -1684,7 +1684,7 @@ export type FrontClient = {
     body?: { [key: string]: unknown };
     /** The message ID */
     message_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List rules
@@ -1744,7 +1744,7 @@ export type FrontClient = {
     teammate_ids?: (ResourceId)[];
     /** The Shift ID */
     shift_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List shift's teammates
@@ -1761,7 +1761,7 @@ export type FrontClient = {
     teammate_ids: (ResourceId)[];
     /** The Shift ID */
     shift_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove teammates from shift
@@ -1770,7 +1770,7 @@ export type FrontClient = {
     teammate_ids: (ResourceId)[];
     /** The Shift ID */
     shift_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get signatures
@@ -1806,7 +1806,7 @@ export type FrontClient = {
   deleteSignature: (input: {
     /** The signature ID */
     signature_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List tags
@@ -1860,7 +1860,7 @@ export type FrontClient = {
     is_visible_in_conversation_lists?: boolean;
     /** The tag ID */
     tag_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete tag
@@ -1868,7 +1868,7 @@ export type FrontClient = {
   deleteTag: (input: {
     /** The ID of the tag to delete */
     tag_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List tag children
@@ -1945,7 +1945,7 @@ export type FrontClient = {
     permissions?: { contacts?: { access: string; contact_group_ids?: (string)[]; contact_list_ids?: (string)[] } };
     /** The teammate group ID. */
     teammate_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete teammate group
@@ -1953,7 +1953,7 @@ export type FrontClient = {
   deleteCompanyTeammateGroup: (input: {
     /** The teammate group ID. */
     teammate_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List teammate group team inboxes
@@ -1970,7 +1970,7 @@ export type FrontClient = {
     inbox_ids: (ResourceId)[];
     /** The teammate group ID. */
     teammate_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove teammate group team inboxes
@@ -1979,7 +1979,7 @@ export type FrontClient = {
     inbox_ids: (ResourceId)[];
     /** The teammate group ID. */
     teammate_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List teammate group teammates
@@ -1996,7 +1996,7 @@ export type FrontClient = {
     teammate_ids: (ResourceId)[];
     /** The teammate group ID. */
     teammate_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove teammate group teammates
@@ -2005,7 +2005,7 @@ export type FrontClient = {
     teammate_ids: (ResourceId)[];
     /** The teammate group ID. */
     teammate_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List teammate group teams
@@ -2022,7 +2022,7 @@ export type FrontClient = {
     team_ids: (ResourceId)[];
     /** The teammate group ID. */
     teammate_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove teammate group teams
@@ -2031,7 +2031,7 @@ export type FrontClient = {
     team_ids: (ResourceId)[];
     /** The teammate group ID. */
     teammate_group_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List teammates
@@ -2067,7 +2067,7 @@ export type FrontClient = {
     custom_fields?: CustomFieldParameter;
     /** The teammate ID. Alternatively, you can supply an email as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     teammate_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List teammate channels
@@ -2093,7 +2093,7 @@ export type FrontClient = {
     name: string;
     /** The teammate ID. Alternatively, you can supply an email as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     teammate_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List teammate contact lists
@@ -2111,7 +2111,7 @@ export type FrontClient = {
     name: string;
     /** The teammate ID. Alternatively, you can supply an email as a [resource alias](https://dev.frontapp.com/docs/resource-aliases-1). */
     teammate_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List teammate contacts
@@ -2389,7 +2389,7 @@ export type FrontClient = {
     name: string;
     /** The team ID */
     team_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List team contact lists
@@ -2407,7 +2407,7 @@ export type FrontClient = {
     name: string;
     /** The team ID */
     team_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List team contacts
@@ -2632,7 +2632,7 @@ export type FrontClient = {
     teammate_ids: (ResourceId)[];
     /** The Team ID */
     team_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove teammates from team
@@ -2641,7 +2641,7 @@ export type FrontClient = {
     teammate_ids: (ResourceId)[];
     /** The Team ID */
     team_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List team time offs
@@ -2714,7 +2714,7 @@ export type FrontClient = {
     auto_responder?: { body?: string; is_enabled?: boolean; is_contacts_only?: boolean; channel_ids?: (ResourceId)[] };
     /** The time off ID */
     time_off_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete time off
@@ -2722,7 +2722,7 @@ export type FrontClient = {
   deleteTimeOff: (input: {
     /** The time off ID */
     time_off_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List views
@@ -2764,7 +2764,7 @@ export type FrontClient = {
     highlight?: string;
     /** The view ID */
     view_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add view to teammate sidebars
@@ -2773,7 +2773,7 @@ export type FrontClient = {
     teammate_ids: (string)[];
     /** The view ID */
     view_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 };
 
 export * from "./schemas.js";

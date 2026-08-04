@@ -1,9 +1,9 @@
 # Volumes
 
-7 operations · `utdk/google/books`
+7 operations · `@utdk/clients/google/books`
 
 ```ts
-import books from "utdk/google/books";
+import books from "@utdk/clients/google/books";
 ```
 
 ## `books.booksVolumesList`

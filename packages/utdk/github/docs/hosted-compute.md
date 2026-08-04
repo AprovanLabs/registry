@@ -56,7 +56,7 @@ github.hostedCompute.deleteNetworkConfigurationFromOrg(input: {
   org: string;
   /** Unique identifier of the hosted compute network configuration. */
   network_configuration_id: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/settings/network-configurations/{network_configuration_id}` · `hosted-compute/delete-network-configuration-from-org`</sub>

@@ -144,7 +144,7 @@ github.repos.deleteOrgRuleset(input: {
   org: string;
   /** The ID of the ruleset. */
   ruleset_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/rulesets/{ruleset_id}` · `repos/delete-org-ruleset`</sub>
@@ -243,7 +243,7 @@ github.repos.delete(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}` · `repos/delete`</sub>
@@ -453,7 +453,7 @@ github.repos.deleteAutolink(input: {
   repo: string;
   /** The unique identifier of the autolink. */
   autolink_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/autolinks/{autolink_id}` · `repos/delete-autolink`</sub>
@@ -485,7 +485,7 @@ github.repos.disableAutomatedSecurityFixes(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/automated-security-fixes` · `repos/disable-automated-security-fixes`</sub>
@@ -515,7 +515,7 @@ github.repos.enableAutomatedSecurityFixes(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/automated-security-fixes` · `repos/enable-automated-security-fixes`</sub>
@@ -570,7 +570,7 @@ github.repos.deleteBranchProtection(input: {
   repo: string;
   /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
   branch: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection` · `repos/delete-branch-protection`</sub>
@@ -643,7 +643,7 @@ github.repos.deleteAdminBranchProtection(input: {
   repo: string;
   /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
   branch: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/enforce_admins` · `repos/delete-admin-branch-protection`</sub>
@@ -694,7 +694,7 @@ github.repos.deletePullRequestReviewProtection(input: {
   repo: string;
   /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
   branch: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_pull_request_reviews` · `repos/delete-pull-request-review-protection`</sub>
@@ -757,7 +757,7 @@ github.repos.deleteCommitSignatureProtection(input: {
   repo: string;
   /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
   branch: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_signatures` · `repos/delete-commit-signature-protection`</sub>
@@ -808,7 +808,7 @@ github.repos.removeStatusCheckProtection(input: {
   repo: string;
   /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
   branch: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/required_status_checks` · `repos/remove-status-check-protection`</sub>
@@ -936,7 +936,7 @@ github.repos.deleteAccessRestrictions(input: {
   repo: string;
   /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
   branch: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/branches/{branch}/protection/restrictions` · `repos/delete-access-restrictions`</sub>
@@ -1248,7 +1248,7 @@ github.repos.removeCollaborator(input: {
   repo: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/collaborators/{username}` · `repos/remove-collaborator`</sub>
@@ -1265,7 +1265,7 @@ github.repos.checkCollaborator(input: {
   repo: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`GET /repos/{owner}/{repo}/collaborators/{username}` · `repos/check-collaborator`</sub>
@@ -1337,7 +1337,7 @@ github.repos.deleteCommitComment(input: {
   repo: string;
   /** The unique identifier of the comment. */
   comment_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/comments/{comment_id}` · `repos/delete-commit-comment`</sub>
@@ -1759,7 +1759,7 @@ github.repos.deleteDeployment(input: {
   repo: string;
   /** deployment_id parameter */
   deployment_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/deployments/{deployment_id}` · `repos/delete-deployment`</sub>
@@ -1865,7 +1865,7 @@ github.repos.createDispatchEvent(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /repos/{owner}/{repo}/dispatches` · `repos/create-dispatch-event`</sub>
@@ -1901,7 +1901,7 @@ github.repos.deleteAnEnvironment(input: {
   repo: string;
   /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
   environment_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/environments/{environment_name}` · `repos/delete-an-environment`</sub>
@@ -1995,7 +1995,7 @@ github.repos.disableDeploymentProtectionRule(input: {
   owner: string;
   /** The unique identifier of the protection rule. */
   protection_rule_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment_protection_rules/{protection_rule_id}` · `repos/disable-deployment-protection-rule`</sub>
@@ -2096,7 +2096,7 @@ github.repos.deleteDeploymentBranchPolicy(input: {
   environment_name: string;
   /** The unique identifier of the branch policy. */
   branch_policy_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/environments/{environment_name}/deployment-branch-policies/{branch_policy_id}` · `repos/delete-deployment-branch-policy`</sub>
@@ -2252,7 +2252,7 @@ github.repos.deleteWebhook(input: {
   repo: string;
   /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
   hook_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/hooks/{hook_id}` · `repos/delete-webhook`</sub>
@@ -2409,7 +2409,7 @@ github.repos.pingWebhook(input: {
   repo: string;
   /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
   hook_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /repos/{owner}/{repo}/hooks/{hook_id}/pings` · `repos/ping-webhook`</sub>
@@ -2426,7 +2426,7 @@ github.repos.testPushWebhook(input: {
   repo: string;
   /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
   hook_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /repos/{owner}/{repo}/hooks/{hook_id}/tests` · `repos/test-push-webhook`</sub>
@@ -2441,7 +2441,7 @@ github.repos.disableImmutableReleases(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/immutable-releases` · `repos/disable-immutable-releases`</sub>
@@ -2471,7 +2471,7 @@ github.repos.enableImmutableReleases(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/immutable-releases` · `repos/enable-immutable-releases`</sub>
@@ -2507,7 +2507,7 @@ github.repos.deleteInvitation(input: {
   repo: string;
   /** The unique identifier of the invitation. */
   invitation_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/invitations/{invitation_id}` · `repos/delete-invitation`</sub>
@@ -2598,7 +2598,7 @@ github.repos.deleteDeployKey(input: {
   repo: string;
   /** The unique identifier of the key. */
   key_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/keys/{key_id}` · `repos/delete-deploy-key`</sub>
@@ -2683,7 +2683,7 @@ github.repos.deletePagesSite(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/pages` · `repos/delete-pages-site`</sub>
@@ -2731,7 +2731,7 @@ github.repos.updateInformationAboutPagesSite(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/pages` · `repos/update-information-about-pages-site`</sub>
@@ -2855,7 +2855,7 @@ github.repos.cancelPagesDeployment(input: {
   repo: string;
   /** The ID of the Pages deployment. You can also give the commit SHA of the deployment. */
   pages_deployment_id: number | string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /repos/{owner}/{repo}/pages/deployments/{pages_deployment_id}/cancel` · `repos/cancel-pages-deployment`</sub>
@@ -2885,7 +2885,7 @@ github.repos.disablePrivateVulnerabilityReporting(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/private-vulnerability-reporting` · `repos/disable-private-vulnerability-reporting`</sub>
@@ -2915,7 +2915,7 @@ github.repos.enablePrivateVulnerabilityReporting(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/private-vulnerability-reporting` · `repos/enable-private-vulnerability-reporting`</sub>
@@ -2947,7 +2947,7 @@ github.repos.customPropertiesForReposCreateOrUpdateRepositoryValues(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PATCH /repos/{owner}/{repo}/properties/values` · `repos/custom-properties-for-repos-create-or-update-repository-values`</sub>
@@ -3052,7 +3052,7 @@ github.repos.deleteRelease(input: {
   repo: string;
   /** The unique identifier of the release. */
   release_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/releases/{release_id}` · `repos/delete-release`</sub>
@@ -3161,7 +3161,7 @@ github.repos.deleteReleaseAsset(input: {
   repo: string;
   /** The unique identifier of the asset. */
   asset_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/releases/assets/{asset_id}` · `repos/delete-release-asset`</sub>
@@ -3341,7 +3341,7 @@ github.repos.deleteRepoRuleset(input: {
   repo: string;
   /** The ID of the ruleset. */
   ruleset_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/rulesets/{ruleset_id}` · `repos/delete-repo-ruleset`</sub>
@@ -3762,7 +3762,7 @@ github.repos.disableVulnerabilityAlerts(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/vulnerability-alerts` · `repos/disable-vulnerability-alerts`</sub>
@@ -3777,7 +3777,7 @@ github.repos.checkVulnerabilityAlerts(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`GET /repos/{owner}/{repo}/vulnerability-alerts` · `repos/check-vulnerability-alerts`</sub>
@@ -3792,7 +3792,7 @@ github.repos.enableVulnerabilityAlerts(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/vulnerability-alerts` · `repos/enable-vulnerability-alerts`</sub>
@@ -3960,7 +3960,7 @@ Decline a repository invitation — [API reference](https://docs.github.com/rest
 github.repos.declineInvitationForAuthenticatedUser(input: {
   /** The unique identifier of the invitation. */
   invitation_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/repository_invitations/{invitation_id}` · `repos/decline-invitation-for-authenticated-user`</sub>
@@ -3973,7 +3973,7 @@ Accept a repository invitation — [API reference](https://docs.github.com/rest/
 github.repos.acceptInvitationForAuthenticatedUser(input: {
   /** The unique identifier of the invitation. */
   invitation_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PATCH /user/repository_invitations/{invitation_id}` · `repos/accept-invitation-for-authenticated-user`</sub>

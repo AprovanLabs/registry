@@ -83,7 +83,7 @@ github.migrations.deleteArchiveForOrg(input: {
   org: string;
   /** The unique identifier of the migration. */
   migration_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/migrations/{migration_id}/archive` · `migrations/delete-archive-for-org`</sub>
@@ -98,7 +98,7 @@ github.migrations.downloadArchiveForOrg(input: {
   org: string;
   /** The unique identifier of the migration. */
   migration_id: number;
-}): Promise<BasicError>
+}): Promise<unknown>
 ```
 
 <sub>`GET /orgs/{org}/migrations/{migration_id}/archive` · `migrations/download-archive-for-org`</sub>
@@ -115,7 +115,7 @@ github.migrations.unlockRepoForOrg(input: {
   migration_id: number;
   /** repo_name parameter */
   repo_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/migrations/{migration_id}/repos/{repo_name}/lock` · `migrations/unlock-repo-for-org`</sub>
@@ -149,7 +149,7 @@ github.migrations.cancelImport(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/import` · `migrations/cancel-import`</sub>
@@ -351,7 +351,7 @@ Delete a user migration archive — [API reference](https://docs.github.com/rest
 github.migrations.deleteArchiveForAuthenticatedUser(input: {
   /** The unique identifier of the migration. */
   migration_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/migrations/{migration_id}/archive` · `migrations/delete-archive-for-authenticated-user`</sub>
@@ -364,7 +364,7 @@ Download a user migration archive — [API reference](https://docs.github.com/re
 github.migrations.getArchiveForAuthenticatedUser(input: {
   /** The unique identifier of the migration. */
   migration_id: number;
-}): Promise<BasicError>
+}): Promise<unknown>
 ```
 
 <sub>`GET /user/migrations/{migration_id}/archive` · `migrations/get-archive-for-authenticated-user`</sub>
@@ -379,7 +379,7 @@ github.migrations.unlockRepoForAuthenticatedUser(input: {
   migration_id: number;
   /** repo_name parameter */
   repo_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/migrations/{migration_id}/repos/{repo_name}/lock` · `migrations/unlock-repo-for-authenticated-user`</sub>

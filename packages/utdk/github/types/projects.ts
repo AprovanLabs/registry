@@ -1,4 +1,4 @@
-import type { BasicError, ProjectsV2, ProjectsV2Field, ProjectsV2FieldIterationConfiguration, ProjectsV2FieldSingleSelectOption, ProjectsV2ItemSimple, ProjectsV2ItemWithContent, ProjectsV2View } from "./schemas.js";
+import type { ProjectsV2, ProjectsV2Field, ProjectsV2FieldIterationConfiguration, ProjectsV2FieldSingleSelectOption, ProjectsV2ItemSimple, ProjectsV2ItemWithContent, ProjectsV2View } from "./schemas.js";
 
 export type ProjectsOperations = {
   /**
@@ -160,7 +160,7 @@ export type ProjectsOperations = {
     org: string;
     /** The unique identifier of the project item. */
     item_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Create a view for an organization-owned project
@@ -380,7 +380,7 @@ export type ProjectsOperations = {
     username: string;
     /** The unique identifier of the project item. */
     item_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List items for a user project view

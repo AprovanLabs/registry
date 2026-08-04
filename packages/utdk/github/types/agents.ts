@@ -62,7 +62,7 @@ export type AgentsOperations = {
     org: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List selected repositories for an organization secret
@@ -90,7 +90,7 @@ export type AgentsOperations = {
     org: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add selected repository to an organization secret
@@ -102,7 +102,7 @@ export type AgentsOperations = {
     /** The name of the secret. */
     secret_name: string;
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove selected repository from an organization secret
@@ -114,7 +114,7 @@ export type AgentsOperations = {
     /** The name of the secret. */
     secret_name: string;
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List organization variables
@@ -172,7 +172,7 @@ export type AgentsOperations = {
     selected_repository_ids?: (number)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }, options: { params: { name: string } }) => Promise<unknown>;
+  }, options: { params: { name: string } }) => Promise<undefined>;
 
   /**
    * Delete an organization variable
@@ -183,7 +183,7 @@ export type AgentsOperations = {
     org: string;
     /** The name of the variable. */
     name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List selected repositories for an organization variable
@@ -211,7 +211,7 @@ export type AgentsOperations = {
     org: string;
     /** The name of the variable. */
     name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add selected repository to an organization variable
@@ -223,7 +223,7 @@ export type AgentsOperations = {
     /** The name of the variable. */
     name: string;
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove selected repository from an organization variable
@@ -235,7 +235,7 @@ export type AgentsOperations = {
     /** The name of the variable. */
     name: string;
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List repository organization secrets
@@ -334,7 +334,7 @@ export type AgentsOperations = {
     repo: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List repository variables
@@ -392,7 +392,7 @@ export type AgentsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }, options: { params: { name: string } }) => Promise<unknown>;
+  }, options: { params: { name: string } }) => Promise<undefined>;
 
   /**
    * Delete a repository variable
@@ -405,5 +405,5 @@ export type AgentsOperations = {
     repo: string;
     /** The name of the variable. */
     name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 };

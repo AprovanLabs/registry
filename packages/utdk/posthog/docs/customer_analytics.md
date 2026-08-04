@@ -1,441 +1,189 @@
 # Customer Analytics
 
-## Operations
-
-### `posthog.environmentsAccountsNotebooksList`
-
-- **HTTP**: `GET /api/environments/{environment_id}/accounts/{account_id}/notebooks/`
-- **OpenAPI operationId**: `environments_accounts_notebooks_list`
-- **Path params**: `account_id`
-- **Query params**: `limit`, `offset`, `ordering`, `search`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: nu...`
-- OpenAPI response codes: `200`
+19 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type EnvironmentsAccountsNotebooksListInput = Parameters<typeof posthog.environmentsAccountsNotebooksList> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsAccountsNotebooksListOutput = Awaited<ReturnType<typeof posthog.environmentsAccountsNotebooksList>>;
-
-const result: EnvironmentsAccountsNotebooksListOutput = await posthog.environmentsAccountsNotebooksList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: nu...
 ```
 
-### `posthog.environmentsAccountsNotebooksCreate`
+## `posthog.customerAnalyticsExternalAccountsRetrieve`
 
-- **HTTP**: `POST /api/environments/{environment_id}/accounts/{account_id}/notebooks/`
-- **OpenAPI operationId**: `environments_accounts_notebooks_create`
-- **Path params**: `account_id`
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_...`
-- OpenAPI response codes: `201`
+List external customer analytics accounts
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsAccountsNotebooksCreateInput = Parameters<typeof posthog.environmentsAccountsNotebooksCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsAccountsNotebooksCreateOutput = Awaited<ReturnType<typeof posthog.environmentsAccountsNotebooksCreate>>;
-
-const result: EnvironmentsAccountsNotebooksCreateOutput = await posthog.environmentsAccountsNotebooksCreate();
-
-// Result shape (from schema): { id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_...
+posthog.customerAnalyticsExternalAccountsRetrieve(input: {
+  /** When true, return only accounts with at least one active relationship assignment to a current member of the project's organization. */
+  assigned_only?: boolean;
+  /** Account UUID from `next_cursor` to continue listing from. Omit for the first page. */
+  cursor?: string;
+  /** Maximum number of accounts to return. Values below 1 are clamped to 1; values above 100 are clamped to 100. */
+  limit?: number;
+}): Promise<ExternalAccountListPage>
 ```
 
-### `posthog.environmentsAccountsNotebooksDestroy`
+<sub>`GET /api/customer_analytics/external/accounts` · `customer_analytics_external_accounts_retrieve`</sub>
 
-- **HTTP**: `DELETE /api/environments/{environment_id}/accounts/{account_id}/notebooks/{short_id}/`
-- **OpenAPI operationId**: `environments_accounts_notebooks_destroy`
-- **Path params**: `account_id`, `short_id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `posthog.accountNotesList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsAccountsNotebooksDestroyInput = Parameters<typeof posthog.environmentsAccountsNotebooksDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsAccountsNotebooksDestroyOutput = Awaited<ReturnType<typeof posthog.environmentsAccountsNotebooksDestroy>>;
-
-const result: EnvironmentsAccountsNotebooksDestroyOutput = await posthog.environmentsAccountsNotebooksDestroy();
-
-// Result shape (from schema): unknown
+posthog.accountNotesList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ short_id: string; title: string | null; created_at: string; last_modified_at: string; account_id: string; account_name: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]:...>
 ```
 
-### `posthog.environmentsAccountsNotebooksRetrieve`
+<sub>`GET /api/projects/{project_id}/account_notes/` · `account_notes_list`</sub>
 
-- **HTTP**: `GET /api/environments/{environment_id}/accounts/{account_id}/notebooks/{short_id}/`
-- **OpenAPI operationId**: `environments_accounts_notebooks_retrieve`
-- **Path params**: `account_id`, `short_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_...`
-- OpenAPI response codes: `200`
+## `posthog.accountsCustomPropertyValuesList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsAccountsNotebooksRetrieveInput = Parameters<typeof posthog.environmentsAccountsNotebooksRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsAccountsNotebooksRetrieveOutput = Awaited<ReturnType<typeof posthog.environmentsAccountsNotebooksRetrieve>>;
-
-const result: EnvironmentsAccountsNotebooksRetrieveOutput = await posthog.environmentsAccountsNotebooksRetrieve();
-
-// Result shape (from schema): { id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_...
+posthog.accountsCustomPropertyValuesList(): Promise<({ id: string; account_id: string; definition_id: string; value: string | number | boolean; created_at: string; created_by_id: number | null })[]>
 ```
 
-### `posthog.accountNotesList`
+<sub>`GET /api/projects/{project_id}/accounts/{account_id}/custom_property_values/` · `accounts_custom_property_values_list`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/account_notes/`
-- **OpenAPI operationId**: `account_notes_list`
-- **Path params**: None
-- **Query params**: `account_id`, `assigned_to`, `created_by`, `limit`, `offset`, `search`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ short_id: string; title: string | null; created_at: string; last_modified_at: string; account_id: string; account_name: string; created_by: { ...`
-- OpenAPI response codes: `200`
+## `posthog.accountsCustomPropertyValuesCreate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountNotesListInput = Parameters<typeof posthog.accountNotesList> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountNotesListOutput = Awaited<ReturnType<typeof posthog.accountNotesList>>;
-
-const result: AccountNotesListOutput = await posthog.accountNotesList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ short_id: string; title: string | null; created_at: string; last_modified_at: string; account_id: string; account_name: string; created_by: { ...
+posthog.accountsCustomPropertyValuesCreate(): Promise<{ id: string; account_id: string; definition_id: string; value: string | number | boolean; created_at: string; created_by_id: number | null }>
 ```
 
-### `posthog.accountsCustomPropertyValuesList`
+<sub>`POST /api/projects/{project_id}/accounts/{account_id}/custom_property_values/` · `accounts_custom_property_values_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/accounts/{account_id}/custom_property_values/`
-- **OpenAPI operationId**: `accounts_custom_property_values_list`
-- **Path params**: `account_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: string; account_id: string; definition_id: string; value: string | number | boolean; created_at: string; created_by_id: number | null })[]`
-- OpenAPI response codes: `200`
+## `posthog.accountsNotebooksList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsCustomPropertyValuesListInput = Parameters<typeof posthog.accountsCustomPropertyValuesList> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsCustomPropertyValuesListOutput = Awaited<ReturnType<typeof posthog.accountsCustomPropertyValuesList>>;
-
-const result: AccountsCustomPropertyValuesListOutput = await posthog.accountsCustomPropertyValuesList();
-
-// Result shape (from schema): ({ id: string; account_id: string; definition_id: string; value: string | number | boolean; created_at: string; created_by_id: number | null })[]
+posthog.accountsNotebooksList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unkno...>
 ```
 
-### `posthog.accountsCustomPropertyValuesCreate`
+<sub>`GET /api/projects/{project_id}/accounts/{account_id}/notebooks/` · `accounts_notebooks_list`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/accounts/{account_id}/custom_property_values/`
-- **OpenAPI operationId**: `accounts_custom_property_values_create`
-- **Path params**: `account_id`
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; account_id: string; definition_id: string; value: string | number | boolean; created_at: string; created_by_id: number | null }`
-- OpenAPI response codes: `201`
+## `posthog.accountsNotebooksCreate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsCustomPropertyValuesCreateInput = Parameters<typeof posthog.accountsCustomPropertyValuesCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsCustomPropertyValuesCreateOutput = Awaited<ReturnType<typeof posthog.accountsCustomPropertyValuesCreate>>;
-
-const result: AccountsCustomPropertyValuesCreateOutput = await posthog.accountsCustomPropertyValuesCreate();
-
-// Result shape (from schema): { id: string; account_id: string; definition_id: string; value: string | number | boolean; created_at: string; created_by_id: number | null }
+posthog.accountsNotebooksCreate(): Promise<{ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "f...>
 ```
 
-### `posthog.accountsNotebooksList`
+<sub>`POST /api/projects/{project_id}/accounts/{account_id}/notebooks/` · `accounts_notebooks_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/accounts/{account_id}/notebooks/`
-- **OpenAPI operationId**: `accounts_notebooks_list`
-- **Path params**: `account_id`
-- **Query params**: `limit`, `offset`, `ordering`, `search`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: nu...`
-- OpenAPI response codes: `200`
+## `posthog.accountsNotebooksDestroy`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsNotebooksListInput = Parameters<typeof posthog.accountsNotebooksList> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsNotebooksListOutput = Awaited<ReturnType<typeof posthog.accountsNotebooksList>>;
-
-const result: AccountsNotebooksListOutput = await posthog.accountsNotebooksList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: nu...
+posthog.accountsNotebooksDestroy(): Promise<unknown>
 ```
 
-### `posthog.accountsNotebooksCreate`
+<sub>`DELETE /api/projects/{project_id}/accounts/{account_id}/notebooks/{short_id}/` · `accounts_notebooks_destroy`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/accounts/{account_id}/notebooks/`
-- **OpenAPI operationId**: `accounts_notebooks_create`
-- **Path params**: `account_id`
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_...`
-- OpenAPI response codes: `201`
+## `posthog.accountsNotebooksRetrieve`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsNotebooksCreateInput = Parameters<typeof posthog.accountsNotebooksCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsNotebooksCreateOutput = Awaited<ReturnType<typeof posthog.accountsNotebooksCreate>>;
-
-const result: AccountsNotebooksCreateOutput = await posthog.accountsNotebooksCreate();
-
-// Result shape (from schema): { id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_...
+posthog.accountsNotebooksRetrieve(): Promise<{ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "f...>
 ```
 
-### `posthog.accountsNotebooksDestroy`
+<sub>`GET /api/projects/{project_id}/accounts/{account_id}/notebooks/{short_id}/` · `accounts_notebooks_retrieve`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/accounts/{account_id}/notebooks/{short_id}/`
-- **OpenAPI operationId**: `accounts_notebooks_destroy`
-- **Path params**: `account_id`, `short_id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `posthog.accountsRelationshipsList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsNotebooksDestroyInput = Parameters<typeof posthog.accountsNotebooksDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsNotebooksDestroyOutput = Awaited<ReturnType<typeof posthog.accountsNotebooksDestroy>>;
-
-const result: AccountsNotebooksDestroyOutput = await posthog.accountsNotebooksDestroy();
-
-// Result shape (from schema): unknown
+posthog.accountsRelationshipsList(): Promise<({ id: string; definition: { id: string; name: string; description?: string | null; is_single_holder?: boolean }; user: { id: number; email: string } | null; started_at: string; ended_at: string | null })[]>
 ```
 
-### `posthog.accountsNotebooksRetrieve`
+<sub>`GET /api/projects/{project_id}/accounts/{account_id}/relationships/` · `accounts_relationships_list`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/accounts/{account_id}/notebooks/{short_id}/`
-- **OpenAPI operationId**: `accounts_notebooks_retrieve`
-- **Path params**: `account_id`, `short_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_...`
-- OpenAPI response codes: `200`
+## `posthog.accountsRelationshipsCreate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsNotebooksRetrieveInput = Parameters<typeof posthog.accountsNotebooksRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsNotebooksRetrieveOutput = Awaited<ReturnType<typeof posthog.accountsNotebooksRetrieve>>;
-
-const result: AccountsNotebooksRetrieveOutput = await posthog.accountsNotebooksRetrieve();
-
-// Result shape (from schema): { id: string; short_id: string; title?: string | null; content?: unknown; text_content?: string | null; created_at: string; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_...
+posthog.accountsRelationshipsCreate(): Promise<{ id: string; definition: { id: string; name: string; description?: string | null; is_single_holder?: boolean }; user: { id: number; email: string } | null; started_at: string; ended_at: string | null }>
 ```
 
-### `posthog.accountsRelationshipsList`
+<sub>`POST /api/projects/{project_id}/accounts/{account_id}/relationships/` · `accounts_relationships_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/accounts/{account_id}/relationships/`
-- **OpenAPI operationId**: `accounts_relationships_list`
-- **Path params**: `account_id`
-- **Query params**: `include_history`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: string; definition: { id: string; name: string; description?: string | null; is_single_holder?: boolean }; user: { id: number; email: string } | null; started_at: string; ended_at: string | null })[]`
-- OpenAPI response codes: `200`
+## `posthog.accountsRelationshipsEndCreate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsRelationshipsListInput = Parameters<typeof posthog.accountsRelationshipsList> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsRelationshipsListOutput = Awaited<ReturnType<typeof posthog.accountsRelationshipsList>>;
-
-const result: AccountsRelationshipsListOutput = await posthog.accountsRelationshipsList();
-
-// Result shape (from schema): ({ id: string; definition: { id: string; name: string; description?: string | null; is_single_holder?: boolean }; user: { id: number; email: string } | null; started_at: string; ended_at: string | null })[]
+posthog.accountsRelationshipsEndCreate(): Promise<{ id: string; definition: { id: string; name: string; description?: string | null; is_single_holder?: boolean }; user: { id: number; email: string } | null; started_at: string; ended_at: string | null }>
 ```
 
-### `posthog.accountsRelationshipsCreate`
+<sub>`POST /api/projects/{project_id}/accounts/{account_id}/relationships/{id}/end/` · `accounts_relationships_end_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/accounts/{account_id}/relationships/`
-- **OpenAPI operationId**: `accounts_relationships_create`
-- **Path params**: `account_id`
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.eventStreamsList`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; definition: { id: string; name: string; description?: string | null; is_single_holder?: boolean }; user: { id: number; email: string } | null; started_at: string; ended_at: string | null }`
-- OpenAPI response codes: `201`
+The caller's event stream: a live feed of selected accounts' events posted to a Slack channel of their choice. Per-user — each team member owns at most one stream, and every endpoint is scoped to the caller's own. Delivery runs through a managed CDP destination that is re-provisioned inside the same transaction as every write, so config and delivery can't drift apart.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsRelationshipsCreateInput = Parameters<typeof posthog.accountsRelationshipsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsRelationshipsCreateOutput = Awaited<ReturnType<typeof posthog.accountsRelationshipsCreate>>;
-
-const result: AccountsRelationshipsCreateOutput = await posthog.accountsRelationshipsCreate();
-
-// Result shape (from schema): { id: string; definition: { id: string; name: string; description?: string | null; is_single_holder?: boolean }; user: { id: number; email: string } | null; started_at: string; ended_at: string | null }
+posthog.eventStreamsList(): Promise<({ id: string; enabled?: boolean; event_names?: (string)[]; slack_integration?: number | null; slack_channel_id?: string; slack_channel_name?: string; account_ids: (string)[]; created_at: string; created_by: number | null; updated_at: string | null })[]>
 ```
 
-### `posthog.accountsRelationshipsEndCreate`
+<sub>`GET /api/projects/{project_id}/event_streams/` · `event_streams_list`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/accounts/{account_id}/relationships/{id}/end/`
-- **OpenAPI operationId**: `accounts_relationships_end_create`
-- **Path params**: `account_id`, `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.eventStreamsCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; definition: { id: string; name: string; description?: string | null; is_single_holder?: boolean }; user: { id: number; email: string } | null; started_at: string; ended_at: string | null }`
-- OpenAPI response codes: `200`
+The caller's event stream: a live feed of selected accounts' events posted to a Slack channel of their choice. Per-user — each team member owns at most one stream, and every endpoint is scoped to the caller's own. Delivery runs through a managed CDP destination that is re-provisioned inside the same transaction as every write, so config and delivery can't drift apart.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsRelationshipsEndCreateInput = Parameters<typeof posthog.accountsRelationshipsEndCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsRelationshipsEndCreateOutput = Awaited<ReturnType<typeof posthog.accountsRelationshipsEndCreate>>;
-
-const result: AccountsRelationshipsEndCreateOutput = await posthog.accountsRelationshipsEndCreate();
-
-// Result shape (from schema): { id: string; definition: { id: string; name: string; description?: string | null; is_single_holder?: boolean }; user: { id: number; email: string } | null; started_at: string; ended_at: string | null }
+posthog.eventStreamsCreate(): Promise<{ id: string; enabled?: boolean; event_names?: (string)[]; slack_integration?: number | null; slack_channel_id?: string; slack_channel_name?: string; account_ids: (string)[]; created_at: string; created_by: number | null; updated_at: string | null }>
 ```
 
+<sub>`POST /api/projects/{project_id}/event_streams/` · `event_streams_create`</sub>
+
+## `posthog.eventStreamsDestroy`
+
+The caller's event stream: a live feed of selected accounts' events posted to a Slack channel of their choice. Per-user — each team member owns at most one stream, and every endpoint is scoped to the caller's own. Delivery runs through a managed CDP destination that is re-provisioned inside the same transaction as every write, so config and delivery can't drift apart.
+
+```ts
+posthog.eventStreamsDestroy(): Promise<unknown>
+```
+
+<sub>`DELETE /api/projects/{project_id}/event_streams/{id}/` · `event_streams_destroy`</sub>
+
+## `posthog.eventStreamsPartialUpdate`
+
+The caller's event stream: a live feed of selected accounts' events posted to a Slack channel of their choice. Per-user — each team member owns at most one stream, and every endpoint is scoped to the caller's own. Delivery runs through a managed CDP destination that is re-provisioned inside the same transaction as every write, so config and delivery can't drift apart.
+
+```ts
+posthog.eventStreamsPartialUpdate(): Promise<{ id: string; enabled?: boolean; event_names?: (string)[]; slack_integration?: number | null; slack_channel_id?: string; slack_channel_name?: string; account_ids: (string)[]; created_at: string; created_by: number | null; updated_at: string | null }>
+```
+
+<sub>`PATCH /api/projects/{project_id}/event_streams/{id}/` · `event_streams_partial_update`</sub>
+
+## `posthog.eventStreamsUpdate`
+
+The caller's event stream: a live feed of selected accounts' events posted to a Slack channel of their choice. Per-user — each team member owns at most one stream, and every endpoint is scoped to the caller's own. Delivery runs through a managed CDP destination that is re-provisioned inside the same transaction as every write, so config and delivery can't drift apart.
+
+```ts
+posthog.eventStreamsUpdate(): Promise<{ id: string; enabled?: boolean; event_names?: (string)[]; slack_integration?: number | null; slack_channel_id?: string; slack_channel_name?: string; account_ids: (string)[]; created_at: string; created_by: number | null; updated_at: string | null }>
+```
+
+<sub>`PUT /api/projects/{project_id}/event_streams/{id}/` · `event_streams_update`</sub>
+
+## `posthog.eventStreamsAddAccountCreate`
+
+The caller's event stream: a live feed of selected accounts' events posted to a Slack channel of their choice. Per-user — each team member owns at most one stream, and every endpoint is scoped to the caller's own. Delivery runs through a managed CDP destination that is re-provisioned inside the same transaction as every write, so config and delivery can't drift apart.
+
+```ts
+posthog.eventStreamsAddAccountCreate(): Promise<{ id: string; enabled?: boolean; event_names?: (string)[]; slack_integration?: number | null; slack_channel_id?: string; slack_channel_name?: string; account_ids: (string)[]; created_at: string; created_by: number | null; updated_at: string | null }>
+```
+
+<sub>`POST /api/projects/{project_id}/event_streams/{id}/add_account/` · `event_streams_add_account_create`</sub>
+
+## `posthog.eventStreamsRemoveAccountCreate`
+
+The caller's event stream: a live feed of selected accounts' events posted to a Slack channel of their choice. Per-user — each team member owns at most one stream, and every endpoint is scoped to the caller's own. Delivery runs through a managed CDP destination that is re-provisioned inside the same transaction as every write, so config and delivery can't drift apart.
+
+```ts
+posthog.eventStreamsRemoveAccountCreate(): Promise<{ id: string; enabled?: boolean; event_names?: (string)[]; slack_integration?: number | null; slack_channel_id?: string; slack_channel_name?: string; account_ids: (string)[]; created_at: string; created_by: number | null; updated_at: string | null }>
+```
+
+<sub>`POST /api/projects/{project_id}/event_streams/{id}/remove_account/` · `event_streams_remove_account_create`</sub>
+
+## `posthog.eventStreamsSendTestMessageCreate`
+
+The caller's event stream: a live feed of selected accounts' events posted to a Slack channel of their choice. Per-user — each team member owns at most one stream, and every endpoint is scoped to the caller's own. Delivery runs through a managed CDP destination that is re-provisioned inside the same transaction as every write, so config and delivery can't drift apart.
+
+```ts
+posthog.eventStreamsSendTestMessageCreate(): Promise<{ channel_id: string }>
+```
+
+<sub>`POST /api/projects/{project_id}/event_streams/{id}/send_test_message/` · `event_streams_send_test_message_create`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

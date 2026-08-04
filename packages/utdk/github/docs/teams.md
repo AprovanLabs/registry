@@ -64,7 +64,7 @@ github.teams.deleteInOrg(input: {
   org: string;
   /** The slug of the team name. */
   team_slug: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/teams/{team_slug}` · `teams/delete-in-org`</sub>
@@ -163,7 +163,7 @@ github.teams.removeMembershipForUserInOrg(input: {
   team_slug: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/teams/{team_slug}/memberships/{username}` · `teams/remove-membership-for-user-in-org`</sub>
@@ -237,7 +237,7 @@ github.teams.removeRepoInOrg(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}` · `teams/remove-repo-in-org`</sub>
@@ -277,7 +277,7 @@ github.teams.addOrUpdateRepoPermissionsInOrg(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/teams/{team_slug}/repos/{owner}/{repo}` · `teams/add-or-update-repo-permissions-in-org`</sub>
@@ -309,7 +309,7 @@ Delete a team (Legacy) — [API reference](https://docs.github.com/rest/teams/te
 github.teams.deleteLegacy(input: {
   /** The unique identifier of the team. */
   team_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /teams/{team_id}` · `teams/delete-legacy`</sub>
@@ -398,7 +398,7 @@ github.teams.removeMemberLegacy(input: {
   team_id: number;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /teams/{team_id}/members/{username}` · `teams/remove-member-legacy`</sub>
@@ -413,7 +413,7 @@ github.teams.getMemberLegacy(input: {
   team_id: number;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`GET /teams/{team_id}/members/{username}` · `teams/get-member-legacy`</sub>
@@ -428,7 +428,7 @@ github.teams.addMemberLegacy(input: {
   team_id: number;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /teams/{team_id}/members/{username}` · `teams/add-member-legacy`</sub>
@@ -443,7 +443,7 @@ github.teams.removeMembershipForUserLegacy(input: {
   team_id: number;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /teams/{team_id}/memberships/{username}` · `teams/remove-membership-for-user-legacy`</sub>
@@ -509,7 +509,7 @@ github.teams.removeRepoLegacy(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /teams/{team_id}/repos/{owner}/{repo}` · `teams/remove-repo-legacy`</sub>
@@ -545,7 +545,7 @@ github.teams.addOrUpdateRepoPermissionsLegacy(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /teams/{team_id}/repos/{owner}/{repo}` · `teams/add-or-update-repo-permissions-legacy`</sub>

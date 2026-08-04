@@ -1,4 +1,4 @@
-import type { BasicError, Import, Migration, MinimalRepository, PorterAuthor, PorterLargeFile } from "./schemas.js";
+import type { Import, Migration, MinimalRepository, PorterAuthor, PorterLargeFile } from "./schemas.js";
 
 export type MigrationsOperations = {
   /**
@@ -65,7 +65,7 @@ export type MigrationsOperations = {
     org: string;
     /** The unique identifier of the migration. */
     migration_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<unknown>;
 
   /**
    * Delete an organization migration archive
@@ -76,7 +76,7 @@ export type MigrationsOperations = {
     org: string;
     /** The unique identifier of the migration. */
     migration_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Unlock an organization repository
@@ -89,7 +89,7 @@ export type MigrationsOperations = {
     migration_id: number;
     /** repo_name parameter */
     repo_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repositories in an organization migration
@@ -166,7 +166,7 @@ export type MigrationsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get commit authors
@@ -273,7 +273,7 @@ export type MigrationsOperations = {
   getArchiveForAuthenticatedUser: (input: {
     /** The unique identifier of the migration. */
     migration_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<unknown>;
 
   /**
    * Delete a user migration archive
@@ -282,7 +282,7 @@ export type MigrationsOperations = {
   deleteArchiveForAuthenticatedUser: (input: {
     /** The unique identifier of the migration. */
     migration_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Unlock a user repository
@@ -293,7 +293,7 @@ export type MigrationsOperations = {
     migration_id: number;
     /** repo_name parameter */
     repo_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repositories for a user migration

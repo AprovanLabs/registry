@@ -76,7 +76,7 @@ github.dependabot.updateRepositoryAccessForEnterprise(input: {
   repository_ids_to_remove?: (number)[];
   /** The slug version of the enterprise name. */
   enterprise: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PATCH /enterprises/{enterprise}/dependabot/repository-access` · `dependabot/update-repository-access-for-enterprise`</sub>
@@ -91,7 +91,7 @@ github.dependabot.setRepositoryAccessDefaultLevelForEnterprise(input: {
   default_level: "public" | "internal";
   /** The slug version of the enterprise name. */
   enterprise: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /enterprises/{enterprise}/dependabot/repository-access/default-level` · `dependabot/set-repository-access-default-level-for-enterprise`</sub>
@@ -172,7 +172,7 @@ github.dependabot.updateRepositoryAccessForOrg(input: {
   repository_ids_to_remove?: (number)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PATCH /orgs/{org}/dependabot/repository-access` · `dependabot/update-repository-access-for-org`</sub>
@@ -187,7 +187,7 @@ github.dependabot.setRepositoryAccessDefaultLevel(input: {
   default_level: "public" | "internal";
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/dependabot/repository-access/default-level` · `dependabot/set-repository-access-default-level`</sub>
@@ -219,7 +219,7 @@ github.dependabot.deleteOrgSecret(input: {
   org: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/dependabot/secrets/{secret_name}` · `dependabot/delete-org-secret`</sub>
@@ -293,7 +293,7 @@ github.dependabot.setSelectedReposForOrgSecret(input: {
   org: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/dependabot/secrets/{secret_name}/repositories` · `dependabot/set-selected-repos-for-org-secret`</sub>
@@ -309,7 +309,7 @@ github.dependabot.removeSelectedRepoFromOrgSecret(input: {
   /** The name of the secret. */
   secret_name: string;
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/dependabot/secrets/{secret_name}/repositories/{repository_id}` · `dependabot/remove-selected-repo-from-org-secret`</sub>
@@ -325,7 +325,7 @@ github.dependabot.addSelectedRepoToOrgSecret(input: {
   /** The name of the secret. */
   secret_name: string;
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/dependabot/secrets/{secret_name}/repositories/{repository_id}` · `dependabot/add-selected-repo-to-org-secret`</sub>
@@ -452,7 +452,7 @@ github.dependabot.deleteRepoSecret(input: {
   repo: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/dependabot/secrets/{secret_name}` · `dependabot/delete-repo-secret`</sub>

@@ -135,7 +135,7 @@ Delete an installation for the authenticated app — [API reference](https://doc
 github.apps.deleteInstallation(input: {
   /** The unique identifier of the installation. */
   installation_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /app/installations/{installation_id}` · `apps/delete-installation`</sub>
@@ -179,7 +179,7 @@ Unsuspend an app installation — [API reference](https://docs.github.com/rest/a
 github.apps.unsuspendInstallation(input: {
   /** The unique identifier of the installation. */
   installation_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /app/installations/{installation_id}/suspended` · `apps/unsuspend-installation`</sub>
@@ -192,7 +192,7 @@ Suspend an app installation — [API reference](https://docs.github.com/rest/app
 github.apps.suspendInstallation(input: {
   /** The unique identifier of the installation. */
   installation_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /app/installations/{installation_id}/suspended` · `apps/suspend-installation`</sub>
@@ -207,7 +207,7 @@ github.apps.deleteAuthorization(input: {
   access_token: string;
   /** The client ID of the GitHub app. */
   client_id: string;
-}): Promise<ValidationError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /applications/{client_id}/grant` · `apps/delete-authorization`</sub>
@@ -222,7 +222,7 @@ github.apps.deleteToken(input: {
   access_token: string;
   /** The client ID of the GitHub app. */
   client_id: string;
-}): Promise<ValidationError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /applications/{client_id}/token` · `apps/delete-token`</sub>
@@ -313,7 +313,7 @@ github.apps.listReposAccessibleToInstallation(input: {
 Revoke an installation access token — [API reference](https://docs.github.com/rest/apps/installations#revoke-an-installation-access-token)
 
 ```ts
-github.apps.revokeInstallationAccessToken(): Promise<unknown>
+github.apps.revokeInstallationAccessToken(): Promise<undefined>
 ```
 
 <sub>`DELETE /installation/token` · `apps/revoke-installation-access-token`</sub>
@@ -486,7 +486,7 @@ github.apps.removeRepoFromInstallationForAuthenticatedUser(input: {
   installation_id: number;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/installations/{installation_id}/repositories/{repository_id}` · `apps/remove-repo-from-installation-for-authenticated-user`</sub>
@@ -501,7 +501,7 @@ github.apps.addRepoToInstallationForAuthenticatedUser(input: {
   installation_id: number;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /user/installations/{installation_id}/repositories/{repository_id}` · `apps/add-repo-to-installation-for-authenticated-user`</sub>

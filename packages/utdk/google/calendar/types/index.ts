@@ -57,7 +57,7 @@ export type GoogleCalendarClient = {
     quotaUser?: string;
     /** Deprecated. Please use quotaUser instead. */
     userIp?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Returns metadata for a calendar.
@@ -293,7 +293,7 @@ export type GoogleCalendarClient = {
     quotaUser?: string;
     /** Deprecated. Please use quotaUser instead. */
     userIp?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Returns an access control rule.
@@ -411,7 +411,7 @@ export type GoogleCalendarClient = {
     quotaUser?: string;
     /** Deprecated. Please use quotaUser instead. */
     userIp?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Returns events on the specified calendar.
@@ -821,7 +821,7 @@ export type GoogleCalendarClient = {
     sendNotifications?: boolean;
     /** Guests who should receive notifications about the deletion of the event. */
     sendUpdates?: "all" | "externalOnly" | "none";
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Returns an event based on its Google Calendar ID. To retrieve an event using its iCalendar ID, call the events.list method using the iCalUID parameter.
@@ -1195,7 +1195,7 @@ export type GoogleCalendarClient = {
     quotaUser?: string;
     /** Deprecated. Please use quotaUser instead. */
     userIp?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Returns the color definitions for calendars and events.
@@ -1413,7 +1413,7 @@ export type GoogleCalendarClient = {
     quotaUser?: string;
     /** Deprecated. Please use quotaUser instead. */
     userIp?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Returns a calendar from the user's calendar list.

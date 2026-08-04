@@ -1,1427 +1,566 @@
 # Signals
 
-## Operations
-
-### `posthog.signalsProcessingList`
-
-- **HTTP**: `GET /api/projects/{project_id}/signals/processing/`
-- **What it does**: Return current processing state including pause status.
-- **OpenAPI operationId**: `signals_processing_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ paused_until: string | null })[] }`
-- OpenAPI response codes: `200`
+57 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type SignalsProcessingListInput = Parameters<typeof posthog.signalsProcessingList> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsProcessingListOutput = Awaited<ReturnType<typeof posthog.signalsProcessingList>>;
-
-const result: SignalsProcessingListOutput = await posthog.signalsProcessingList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ paused_until: string | null })[] }
 ```
 
-### `posthog.signalsProcessingPauseDestroy`
+## `posthog.signalsProcessingList`
 
-- **HTTP**: `DELETE /api/projects/{project_id}/signals/processing/pause/`
-- **What it does**: View and control signal processing pipeline state for a team.
-- **OpenAPI operationId**: `signals_processing_pause_destroy`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ status: string; paused_until: string }`
-- OpenAPI response codes: `200`
+Return current processing state including pause status.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsProcessingPauseDestroyInput = Parameters<typeof posthog.signalsProcessingPauseDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsProcessingPauseDestroyOutput = Awaited<ReturnType<typeof posthog.signalsProcessingPauseDestroy>>;
-
-const result: SignalsProcessingPauseDestroyOutput = await posthog.signalsProcessingPauseDestroy();
-
-// Result shape (from schema): { status: string; paused_until: string }
+posthog.signalsProcessingList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ paused_until: string | null })[] }>
 ```
 
-### `posthog.signalsProcessingPauseUpdate`
+<sub>`GET /api/projects/{project_id}/signals/processing/` · `signals_processing_list`</sub>
 
-- **HTTP**: `PUT /api/projects/{project_id}/signals/processing/pause/`
-- **What it does**: View and control signal processing pipeline state for a team.
-- **OpenAPI operationId**: `signals_processing_pause_update`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsProcessingPauseDestroy`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ status: string; paused_until: string }`
-- OpenAPI response codes: `200`
+View and control signal processing pipeline state for a team.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsProcessingPauseUpdateInput = Parameters<typeof posthog.signalsProcessingPauseUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsProcessingPauseUpdateOutput = Awaited<ReturnType<typeof posthog.signalsProcessingPauseUpdate>>;
-
-const result: SignalsProcessingPauseUpdateOutput = await posthog.signalsProcessingPauseUpdate();
-
-// Result shape (from schema): { status: string; paused_until: string }
+posthog.signalsProcessingPauseDestroy(): Promise<{ status: string; paused_until: string }>
 ```
 
-### `posthog.signalsReportsList`
+<sub>`DELETE /api/projects/{project_id}/signals/processing/pause/` · `signals_processing_pause_destroy`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/reports/`
-- **OpenAPI operationId**: `signals_reports_list`
-- **Path params**: None
-- **Query params**: `has_implementation_pr`, `limit`, `offset`, `ordering`, `priority`, `search`, `source_product`, `status`, `suggested_reviewers`, `task_id`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsProcessingPauseUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "res...`
-- OpenAPI response codes: `200`
+View and control signal processing pipeline state for a team.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportsListInput = Parameters<typeof posthog.signalsReportsList> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportsListOutput = Awaited<ReturnType<typeof posthog.signalsReportsList>>;
-
-const result: SignalsReportsListOutput = await posthog.signalsReportsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "res...
+posthog.signalsProcessingPauseUpdate(): Promise<{ status: string; paused_until: string }>
 ```
 
-### `posthog.signalsReportsRetrieve`
+<sub>`PUT /api/projects/{project_id}/signals/processing/pause/` · `signals_processing_pause_update`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/reports/{id}/`
-- **OpenAPI operationId**: `signals_reports_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_...`
-- OpenAPI response codes: `200`
+## `posthog.signalsReportsList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportsRetrieveInput = Parameters<typeof posthog.signalsReportsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportsRetrieveOutput = Awaited<ReturnType<typeof posthog.signalsReportsRetrieve>>;
-
-const result: SignalsReportsRetrieveOutput = await posthog.signalsReportsRetrieve();
-
-// Result shape (from schema): { id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_...
+posthog.signalsReportsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_count: number; signals_at_run: number; created_at: string; updated_at: string; artefact_count: number; ch...>
 ```
 
-### `posthog.signalsReportsPartialUpdate`
+<sub>`GET /api/projects/{project_id}/signals/reports/` · `signals_reports_list`</sub>
 
-- **HTTP**: `PATCH /api/projects/{project_id}/signals/reports/{id}/`
-- **What it does**: Edit a report's title or summary
-- **OpenAPI operationId**: `signals_reports_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_...`
-- OpenAPI response codes: `200`, `400`, `404`
+## `posthog.signalsReportsRetrieve`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportsPartialUpdateInput = Parameters<typeof posthog.signalsReportsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.signalsReportsPartialUpdate>>;
-
-const result: SignalsReportsPartialUpdateOutput = await posthog.signalsReportsPartialUpdate();
-
-// Result shape (from schema): { id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_...
+posthog.signalsReportsRetrieve(): Promise<{ id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_count: number; signals_at_run: number; created_at: string; updated_at: string; artefact_count: number; charts: ({ chart_id: string; title: string; query: unknown; caption?: string ...>
 ```
 
-### `posthog.signalsReportsSignalsRetrieve`
+<sub>`GET /api/projects/{project_id}/signals/reports/{id}/` · `signals_reports_retrieve`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/reports/{id}/signals/`
-- **What it does**: List a report's signals
-- **OpenAPI operationId**: `signals_reports_signals_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportsPartialUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ report: { id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: numbe...`
-- OpenAPI response codes: `200`
+Edit a report's title or summary
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportsSignalsRetrieveInput = Parameters<typeof posthog.signalsReportsSignalsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportsSignalsRetrieveOutput = Awaited<ReturnType<typeof posthog.signalsReportsSignalsRetrieve>>;
-
-const result: SignalsReportsSignalsRetrieveOutput = await posthog.signalsReportsSignalsRetrieve();
-
-// Result shape (from schema): { report: { id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: numbe...
+posthog.signalsReportsPartialUpdate(): Promise<{ id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_count: number; signals_at_run: number; created_at: string; updated_at: string; artefact_count: number; charts: ({ chart_id: string; title: string; query: unknown; caption?: string ...>
 ```
 
-### `posthog.signalsReportsStateCreate`
+<sub>`PATCH /api/projects/{project_id}/signals/reports/{id}/` · `signals_reports_partial_update`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/reports/{id}/state/`
-- **What it does**: Transition a report to a new state. The model validates allowed transitions.
+## `posthog.signalsReportPrChecks`
 
-The request body is validated by SignalReportStateRequestSerializer — only the
-fields it declares (state, dismissal_reason, dismissal_note, snooze_for) are read,
-and only snooze_for is ever forwarded to transition_to. Any other key is ignored,
-so internal transition_to kwargs (reset_weight, error, ...) can't be injected.
-
-Body: {
-    "state": "suppressed" | "potential",
-    # Optional dismissal feedback (honored when state == "suppressed" or "potential"):
-    "dismissal_reason": "<canonical reason code, see SIGNAL_REPORT_DISMISSAL_REASON_CHOICES>",
-    "dismissal_note": "free-form text",
-    # Optional, only honored for state == "potential":
-    "snooze_for": <number of additional signals before re-promotion>,
-}
-- **OpenAPI operationId**: `signals_reports_state_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_...`
-- OpenAPI response codes: `200`
+Fetch CI checks for a report's implementation PR
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportsStateCreateInput = Parameters<typeof posthog.signalsReportsStateCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportsStateCreateOutput = Awaited<ReturnType<typeof posthog.signalsReportsStateCreate>>;
-
-const result: SignalsReportsStateCreateOutput = await posthog.signalsReportsStateCreate();
-
-// Result shape (from schema): { id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_...
+posthog.signalsReportPrChecks(): Promise<{ checks: ({ name: string; status: string | null; conclusion: string | null; url: string | null })[] }>
 ```
 
-### `posthog.signalsReportArtefactsList`
+<sub>`GET /api/projects/{project_id}/signals/reports/{id}/pr_checks/` · `signals_report_pr_checks`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/reports/{report_id}/artefacts/`
-- **What it does**: List a report's artefacts
-- **OpenAPI operationId**: `signals_report_artefacts_list`
-- **Path params**: `report_id`
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportPrComments`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; type: "video_segment" | "safety_judgment" | "actionability_judgment" | "priority_judgment" | "signal_finding" | "repo_selection" |...`
-- OpenAPI response codes: `200`
+Fetch comments for a report's implementation PR
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportArtefactsListInput = Parameters<typeof posthog.signalsReportArtefactsList> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportArtefactsListOutput = Awaited<ReturnType<typeof posthog.signalsReportArtefactsList>>;
-
-const result: SignalsReportArtefactsListOutput = await posthog.signalsReportArtefactsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; type: "video_segment" | "safety_judgment" | "actionability_judgment" | "priority_judgment" | "signal_finding" | "repo_selection" |...
+posthog.signalsReportPrComments(): Promise<{ comments: ({ id: string; author: string | null; author_avatar_url: string | null; body: string; created_at: string | null; url: string | null; comment_type: "conversation" | "review"; path: string | null; line: number | null; start_line: number | null; side: "LEFT" | "RIGHT" | null; diff_hunk: string | null; in_reply_to_id: string | null; commit_id: string | null; reactions: ({ id: string; cont...>
 ```
 
-### `posthog.signalsReportArtefactsCreate`
+<sub>`GET /api/projects/{project_id}/signals/reports/{id}/pr_comments/` · `signals_report_pr_comments`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/reports/{report_id}/artefacts/`
-- **What it does**: Append an artefact to a report
-- **OpenAPI operationId**: `signals_report_artefacts_create`
-- **Path params**: `report_id`
-- **Query params**: None
-- **Response codes**: `201`, `400`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportPrReviewCommentsCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; report_id: string; type: string; content: unknown; created_at: string; updated_at: string | null; task_id: string | null }`
-- OpenAPI response codes: `201`, `400`, `404`
+Post an inline review comment on a report's implementation PR
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportArtefactsCreateInput = Parameters<typeof posthog.signalsReportArtefactsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportArtefactsCreateOutput = Awaited<ReturnType<typeof posthog.signalsReportArtefactsCreate>>;
-
-const result: SignalsReportArtefactsCreateOutput = await posthog.signalsReportArtefactsCreate();
-
-// Result shape (from schema): { id: string; report_id: string; type: string; content: unknown; created_at: string; updated_at: string | null; task_id: string | null }
+posthog.signalsReportPrReviewCommentsCreate(): Promise<{ comment: { id: string; author: string | null; author_avatar_url: string | null; body: string; created_at: string | null; url: string | null; comment_type: "conversation" | "review"; path: string | null; line: number | null; start_line: number | null; side: "LEFT" | "RIGHT" | null; diff_hunk: string | null; in_reply_to_id: string | null; commit_id: string | null; reactions: ({ id: string; conten...>
 ```
 
-### `posthog.signalsReportArtefactsDestroy`
+<sub>`POST /api/projects/{project_id}/signals/reports/{id}/pr_review_comments/` · `signals_report_pr_review_comments_create`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/signals/reports/{report_id}/artefacts/{id}/`
-- **What it does**: Delete an artefact
-- **OpenAPI operationId**: `signals_report_artefacts_destroy`
-- **Path params**: `id`, `report_id`
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportPrReviewCommentDestroy`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+Delete one of the requesting user's own review comments
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportArtefactsDestroyInput = Parameters<typeof posthog.signalsReportArtefactsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportArtefactsDestroyOutput = Awaited<ReturnType<typeof posthog.signalsReportArtefactsDestroy>>;
-
-const result: SignalsReportArtefactsDestroyOutput = await posthog.signalsReportArtefactsDestroy();
-
-// Result shape (from schema): unknown
+posthog.signalsReportPrReviewCommentDestroy(): Promise<unknown>
 ```
 
-### `posthog.signalsReportArtefactsRetrieve`
+<sub>`DELETE /api/projects/{project_id}/signals/reports/{id}/pr_review_comments/{comment_id}/` · `signals_report_pr_review_comment_destroy`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/reports/{report_id}/artefacts/{id}/`
-- **What it does**: Get a single artefact
-- **OpenAPI operationId**: `signals_report_artefacts_retrieve`
-- **Path params**: `id`, `report_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportPrReviewCommentUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; type: "video_segment" | "safety_judgment" | "actionability_judgment" | "priority_judgment" | "signal_finding" | "repo_selection" | "suggested_reviewers" | "dismissal" | "code_reference" | "commit" | "task_...`
-- OpenAPI response codes: `200`
+Edit one of the requesting user's own review comments
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportArtefactsRetrieveInput = Parameters<typeof posthog.signalsReportArtefactsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportArtefactsRetrieveOutput = Awaited<ReturnType<typeof posthog.signalsReportArtefactsRetrieve>>;
-
-const result: SignalsReportArtefactsRetrieveOutput = await posthog.signalsReportArtefactsRetrieve();
-
-// Result shape (from schema): { id: string; type: "video_segment" | "safety_judgment" | "actionability_judgment" | "priority_judgment" | "signal_finding" | "repo_selection" | "suggested_reviewers" | "dismissal" | "code_reference" | "commit" | "task_...
+posthog.signalsReportPrReviewCommentUpdate(): Promise<{ comment: { id: string; author: string | null; author_avatar_url: string | null; body: string; created_at: string | null; url: string | null; comment_type: "conversation" | "review"; path: string | null; line: number | null; start_line: number | null; side: "LEFT" | "RIGHT" | null; diff_hunk: string | null; in_reply_to_id: string | null; commit_id: string | null; reactions: ({ id: string; conten...>
 ```
 
-### `posthog.signalsReportArtefactsPartialUpdate`
+<sub>`PATCH /api/projects/{project_id}/signals/reports/{id}/pr_review_comments/{comment_id}/` · `signals_report_pr_review_comment_update`</sub>
 
-- **HTTP**: `PATCH /api/projects/{project_id}/signals/reports/{report_id}/artefacts/{id}/`
-- **What it does**: Replace an artefact's content
-- **OpenAPI operationId**: `signals_report_artefacts_partial_update`
-- **Path params**: `id`, `report_id`
-- **Query params**: None
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportPrReviewCommentReactionsCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; report_id: string; type: string; content: unknown; created_at: string; updated_at: string | null; task_id: string | null }`
-- OpenAPI response codes: `200`, `400`, `404`
+React to a review comment as the requesting user
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportArtefactsPartialUpdateInput = Parameters<typeof posthog.signalsReportArtefactsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportArtefactsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.signalsReportArtefactsPartialUpdate>>;
-
-const result: SignalsReportArtefactsPartialUpdateOutput = await posthog.signalsReportArtefactsPartialUpdate();
-
-// Result shape (from schema): { id: string; report_id: string; type: string; content: unknown; created_at: string; updated_at: string | null; task_id: string | null }
+posthog.signalsReportPrReviewCommentReactionsCreate(): Promise<{ reaction: { id: string; content: string; user_login: string | null } }>
 ```
 
-### `posthog.signalsReportArtefactsDiff`
+<sub>`POST /api/projects/{project_id}/signals/reports/{id}/pr_review_comments/{comment_id}/reactions/` · `signals_report_pr_review_comment_reactions_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/reports/{report_id}/artefacts/{id}/diff/`
-- **What it does**: Fetch the diff for a commit artefact
-- **OpenAPI operationId**: `signals_report_artefacts_diff`
-- **Path params**: `id`, `report_id`
-- **Query params**: None
-- **Response codes**: `200`, `400`, `404`, `502`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportPrReviewCommentReactionDestroy`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ diff: string; truncated: boolean }`
-- OpenAPI response codes: `200`, `400`, `404`, `502`
+Remove one of the requesting user's own reactions from a review comment
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportArtefactsDiffInput = Parameters<typeof posthog.signalsReportArtefactsDiff> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportArtefactsDiffOutput = Awaited<ReturnType<typeof posthog.signalsReportArtefactsDiff>>;
-
-const result: SignalsReportArtefactsDiffOutput = await posthog.signalsReportArtefactsDiff();
-
-// Result shape (from schema): { diff: string; truncated: boolean }
+posthog.signalsReportPrReviewCommentReactionDestroy(): Promise<unknown>
 ```
 
-### `posthog.signalsReportsBulkStateCreate`
+<sub>`DELETE /api/projects/{project_id}/signals/reports/{id}/pr_review_comments/{comment_id}/reactions/{reaction_id}/` · `signals_report_pr_review_comment_reaction_destroy`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/reports/bulk-state/`
-- **What it does**: Transition many reports to a new state in one call.
+## `posthog.signalsReportsRefundCreate`
 
-Each id is processed independently: a report whose transition isn't allowed from its
-current status is reported as `skipped` (a 409 on the single-report endpoint) and the
-rest still go through. Returns one result per requested id (in request order, after
-de-duplication) plus per-outcome counts. The whole call is 200 even on partial failure —
-inspect `results` / the counts to see what happened.
-- **OpenAPI operationId**: `signals_reports_bulk_state_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ results: ({ id: string; outcome: string; status?: string | null; detail?: string | null })[]; transitioned_count: number; skipped_count: number; failed_count: number; not_found_count: number }`
-- OpenAPI response codes: `200`
+Refund a report's implementation PR
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsReportsBulkStateCreateInput = Parameters<typeof posthog.signalsReportsBulkStateCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsReportsBulkStateCreateOutput = Awaited<ReturnType<typeof posthog.signalsReportsBulkStateCreate>>;
-
-const result: SignalsReportsBulkStateCreateOutput = await posthog.signalsReportsBulkStateCreate();
-
-// Result shape (from schema): { results: ({ id: string; outcome: string; status?: string | null; detail?: string | null })[]; transitioned_count: number; skipped_count: number; failed_count: number; not_found_count: number }
+posthog.signalsReportsRefundCreate(): Promise<{ id: string; reason: "pr_incorrect" | "pr_not_useful" | "duplicate" | "other"; note: string; billing_path: "excluded" | "credited"; credits: number; pr_url: string; pr_run_created_at: string; credit_amount_usd: string | null; billing_synced: boolean; created_at: string; already_refunded: boolean }>
 ```
 
-### `posthog.signalsScoutConfigList`
+<sub>`POST /api/projects/{project_id}/signals/reports/{id}/refund/` · `signals_reports_refund_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/configs/`
-- **What it does**: List scout configs
-- **OpenAPI operationId**: `signals_scout_config_list`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportsSignalsRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled?: boolean; emit?: boolean; run_interval_minutes?: number; last_run_at: string | null; created_at: string })[]`
-- OpenAPI response codes: `200`
+List a report's signals
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutConfigListInput = Parameters<typeof posthog.signalsScoutConfigList> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutConfigListOutput = Awaited<ReturnType<typeof posthog.signalsScoutConfigList>>;
-
-const result: SignalsScoutConfigListOutput = await posthog.signalsScoutConfigList();
-
-// Result shape (from schema): ({ id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled?: boolean; emit?: boolean; run_interval_minutes?: number; last_run_at: string | null; created_at: string })[]
+posthog.signalsReportsSignalsRetrieve(): Promise<{ report: { id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_count: number; signals_at_run: number; created_at: string; updated_at: string; artefact_count: number; charts: ({ chart_id: string; title: string; query: unknown; caption...>
 ```
 
-### `posthog.signalsScoutConfigCreate`
+<sub>`GET /api/projects/{project_id}/signals/reports/{id}/signals/` · `signals_reports_signals_retrieve`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/scout/configs/`
-- **What it does**: Create a scout config
-- **OpenAPI operationId**: `signals_scout_config_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `201`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportsStateCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled?: boolean; emit?: boolean; run_interval_minutes?: number; last_run_at: string | null; created_at: string }`
-- OpenAPI response codes: `200`, `201`, `400`
+Transition a report to a new state. The model validates allowed transitions. The request body is validated by SignalReportStateRequestSerializer — only the fields it declares (state, dismissal_reason, dismissal_note, snooze_for) are read, and only snooze_for is ever forwarded to transition_to. Any other key is ignored, so internal transition_to kwargs (reset_weight, error, ...) can't be injected. Body: { "state": "suppressed" | "potential" | "resolved", # Optional dismissal feedback (honored when state == "suppressed", "potential", or "resolved"): "dismissal_reason": "<canonical reason code, see SIGNAL_REPORT_DISMISSAL_REASON_CHOICES>", "dismissal_note": "free-form text", # Optional, only honored for state == "potential": "snooze_for": <number of additional signals before re-promotion>, }
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutConfigCreateInput = Parameters<typeof posthog.signalsScoutConfigCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutConfigCreateOutput = Awaited<ReturnType<typeof posthog.signalsScoutConfigCreate>>;
-
-const result: SignalsScoutConfigCreateOutput = await posthog.signalsScoutConfigCreate();
-
-// Result shape (from schema): { id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled?: boolean; emit?: boolean; run_interval_minutes?: number; last_run_at: string | null; created_at: string }
+posthog.signalsReportsStateCreate(): Promise<{ id: string; title: string | null; summary: string | null; status: "potential" | "candidate" | "in_progress" | "pending_input" | "ready" | "resolved" | "failed" | "deleted" | "suppressed"; total_weight: number; signal_count: number; signals_at_run: number; created_at: string; updated_at: string; artefact_count: number; charts: ({ chart_id: string; title: string; query: unknown; caption?: string ...>
 ```
 
-### `posthog.signalsScoutConfigDestroy`
+<sub>`POST /api/projects/{project_id}/signals/reports/{id}/state/` · `signals_reports_state_create`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/signals/scout/configs/{id}/`
-- **What it does**: Delete a scout config
-- **OpenAPI operationId**: `signals_scout_config_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportArtefactsList`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`, `404`
+List a report's artefacts
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutConfigDestroyInput = Parameters<typeof posthog.signalsScoutConfigDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutConfigDestroyOutput = Awaited<ReturnType<typeof posthog.signalsScoutConfigDestroy>>;
-
-const result: SignalsScoutConfigDestroyOutput = await posthog.signalsScoutConfigDestroy();
-
-// Result shape (from schema): unknown
+posthog.signalsReportArtefactsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; type: "video_segment" | "safety_judgment" | "actionability_judgment" | "priority_judgment" | "signal_finding" | "repo_selection" | "suggested_reviewers" | "dismissal" | "code_reference" | "commit" | "task_run" | "note" | "title_change" | "summary_change" | "code_review" | "related_to"; content: { [key: string...>
 ```
 
-### `posthog.signalsScoutConfigUpdate`
+<sub>`GET /api/projects/{project_id}/signals/reports/{report_id}/artefacts/` · `signals_report_artefacts_list`</sub>
 
-- **HTTP**: `PATCH /api/projects/{project_id}/signals/scout/configs/{id}/`
-- **What it does**: Update a scout config
-- **OpenAPI operationId**: `signals_scout_config_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportArtefactsCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled?: boolean; emit?: boolean; run_interval_minutes?: number; last_run_at: string | null; created_at: string }`
-- OpenAPI response codes: `200`, `400`, `404`
+Append an artefact to a report
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutConfigUpdateInput = Parameters<typeof posthog.signalsScoutConfigUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutConfigUpdateOutput = Awaited<ReturnType<typeof posthog.signalsScoutConfigUpdate>>;
-
-const result: SignalsScoutConfigUpdateOutput = await posthog.signalsScoutConfigUpdate();
-
-// Result shape (from schema): { id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled?: boolean; emit?: boolean; run_interval_minutes?: number; last_run_at: string | null; created_at: string }
+posthog.signalsReportArtefactsCreate(): Promise<{ id: string; report_id: string; type: string; content: unknown; created_at: string; updated_at: string | null; task_id: string | null }>
 ```
 
-### `posthog.signalsScoutConfigRun`
+<sub>`POST /api/projects/{project_id}/signals/reports/{report_id}/artefacts/` · `signals_report_artefacts_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/scout/configs/{id}/run/`
-- **What it does**: Run a scout now
-- **OpenAPI operationId**: `signals_scout_config_run`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `202`, `403`, `404`, `409`, `429`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportArtefactsDestroy`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`, `403`, `404`, `409`, `429`
+Delete an artefact
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutConfigRunInput = Parameters<typeof posthog.signalsScoutConfigRun> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutConfigRunOutput = Awaited<ReturnType<typeof posthog.signalsScoutConfigRun>>;
-
-const result: SignalsScoutConfigRunOutput = await posthog.signalsScoutConfigRun();
-
-// Result shape (from schema): unknown
+posthog.signalsReportArtefactsDestroy(): Promise<unknown>
 ```
 
-### `posthog.signalsScoutConfigSync`
+<sub>`DELETE /api/projects/{project_id}/signals/reports/{report_id}/artefacts/{id}/` · `signals_report_artefacts_destroy`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/scout/configs/sync/`
-- **What it does**: Sync scout configs
-- **OpenAPI operationId**: `signals_scout_config_sync`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportArtefactsRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled?: boolean; emit?: boolean; run_interval_minutes?: number; last_run_at: string | null; created_at: string })[]`
-- OpenAPI response codes: `200`
+Get a single artefact
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutConfigSyncInput = Parameters<typeof posthog.signalsScoutConfigSync> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutConfigSyncOutput = Awaited<ReturnType<typeof posthog.signalsScoutConfigSync>>;
-
-const result: SignalsScoutConfigSyncOutput = await posthog.signalsScoutConfigSync();
-
-// Result shape (from schema): ({ id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled?: boolean; emit?: boolean; run_interval_minutes?: number; last_run_at: string | null; created_at: string })[]
+posthog.signalsReportArtefactsRetrieve(): Promise<{ id: string; type: "video_segment" | "safety_judgment" | "actionability_judgment" | "priority_judgment" | "signal_finding" | "repo_selection" | "suggested_reviewers" | "dismissal" | "code_reference" | "commit" | "task_run" | "note" | "title_change" | "summary_change" | "code_review" | "related_to"; content: { [key: string]: unknown } | (unknown)[]; created_at: string; updated_at: string | null; ...>
 ```
 
-### `posthog.signalsScoutMembersList`
+<sub>`GET /api/projects/{project_id}/signals/reports/{report_id}/artefacts/{id}/` · `signals_report_artefacts_retrieve`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/members/`
-- **What it does**: List project members for reviewer routing
-- **OpenAPI operationId**: `signals_scout_members_list`
-- **Path params**: None
-- **Query params**: `search`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportArtefactsPartialUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ user_uuid: string; email: string; first_name: string; last_name: string; github_login: string | null })[]`
-- OpenAPI response codes: `200`
+Replace an artefact's content
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutMembersListInput = Parameters<typeof posthog.signalsScoutMembersList> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutMembersListOutput = Awaited<ReturnType<typeof posthog.signalsScoutMembersList>>;
-
-const result: SignalsScoutMembersListOutput = await posthog.signalsScoutMembersList();
-
-// Result shape (from schema): ({ user_uuid: string; email: string; first_name: string; last_name: string; github_login: string | null })[]
+posthog.signalsReportArtefactsPartialUpdate(): Promise<{ id: string; report_id: string; type: string; content: unknown; created_at: string; updated_at: string | null; task_id: string | null }>
 ```
 
-### `posthog.signalsScoutMetadataGet`
+<sub>`PATCH /api/projects/{project_id}/signals/reports/{report_id}/artefacts/{id}/` · `signals_report_artefacts_partial_update`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/metadata/current/`
-- **What it does**: Get scout metadata
-- **OpenAPI operationId**: `signals_scout_metadata_get`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportArtefactsDiff`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ enrolled: boolean; banner_message: string | null; limits: { max_runs_per_tick: number; max_runs_per_day: number | null; runs_today: number; runs_remaining_today: number | null } }`
-- OpenAPI response codes: `200`
+Fetch the diff for a commit artefact
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutMetadataGetInput = Parameters<typeof posthog.signalsScoutMetadataGet> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutMetadataGetOutput = Awaited<ReturnType<typeof posthog.signalsScoutMetadataGet>>;
-
-const result: SignalsScoutMetadataGetOutput = await posthog.signalsScoutMetadataGet();
-
-// Result shape (from schema): { enrolled: boolean; banner_message: string | null; limits: { max_runs_per_tick: number; max_runs_per_day: number | null; runs_today: number; runs_remaining_today: number | null } }
+posthog.signalsReportArtefactsDiff(): Promise<{ diff: string; truncated: boolean }>
 ```
 
-### `posthog.signalsScoutProjectProfileGet`
+<sub>`GET /api/projects/{project_id}/signals/reports/{report_id}/artefacts/{id}/diff/` · `signals_report_artefacts_diff`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/project_profile/current/`
-- **What it does**: Get the current project profile
-- **OpenAPI operationId**: `signals_scout_project_profile_get`
-- **Path params**: None
-- **Query params**: `force_refresh`
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportsBulkStateCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ profile_id: string; computed_at: string; expires_at: string; source_version: string; payload: { inventory: { project_context: { product_description: string | null; app_urls: (string)[] }; products_in_use: (string)[]; ...`
-- OpenAPI response codes: `200`, `404`
+Transition many reports to a new state in one call. Each id is processed independently: a report whose transition isn't allowed from its current status is reported as `skipped` (a 409 on the single-report endpoint) and the rest still go through. Returns one result per requested id (in request order, after de-duplication) plus per-outcome counts. The whole call is 200 even on partial failure — inspect `results` / the counts to see what happened.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutProjectProfileGetInput = Parameters<typeof posthog.signalsScoutProjectProfileGet> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutProjectProfileGetOutput = Awaited<ReturnType<typeof posthog.signalsScoutProjectProfileGet>>;
-
-const result: SignalsScoutProjectProfileGetOutput = await posthog.signalsScoutProjectProfileGet();
-
-// Result shape (from schema): { profile_id: string; computed_at: string; expires_at: string; source_version: string; payload: { inventory: { project_context: { product_description: string | null; app_urls: (string)[] }; products_in_use: (string)[]; ...
+posthog.signalsReportsBulkStateCreate(): Promise<{ results: ({ id: string; outcome: string; status?: string | null; detail?: string | null })[]; transitioned_count: number; skipped_count: number; failed_count: number; not_found_count: number }>
 ```
 
-### `posthog.signalsScoutRunsList`
+<sub>`POST /api/projects/{project_id}/signals/reports/bulk-state/` · `signals_reports_bulk_state_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/runs/`
-- **What it does**: Search recent agent runs
-- **OpenAPI operationId**: `signals_scout_runs_list`
-- **Path params**: None
-- **Query params**: `date_from`, `date_to`, `emitted`, `limit`, `skill_name`, `skill_version`, `text`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsReportsRefundSummaryRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ run_id: string; skill_name: string; skill_version: number; status: string; created_at: string; started_at: string; completed_at: string | null; task_id?: string | null; task_run_id?: string | null; task_url?: string ...`
-- OpenAPI response codes: `200`
+Summarize credited PR refunds for the billing period
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutRunsListInput = Parameters<typeof posthog.signalsScoutRunsList> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutRunsListOutput = Awaited<ReturnType<typeof posthog.signalsScoutRunsList>>;
-
-const result: SignalsScoutRunsListOutput = await posthog.signalsScoutRunsList();
-
-// Result shape (from schema): ({ run_id: string; skill_name: string; skill_version: number; status: string; created_at: string; started_at: string; completed_at: string | null; task_id?: string | null; task_run_id?: string | null; task_url?: string ...
+posthog.signalsReportsRefundSummaryRetrieve(): Promise<{ credited_refund_count: number; credited_credits: number; period_billable_credits: number }>
 ```
 
-### `posthog.signalsScoutRunsRetrieve`
+<sub>`GET /api/projects/{project_id}/signals/reports/refund-summary/` · `signals_reports_refund_summary_retrieve`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/runs/{run_id}/`
-- **What it does**: Get a run by ID
-- **OpenAPI operationId**: `signals_scout_runs_retrieve`
-- **Path params**: `run_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ run_id: string; skill_name: string; skill_version: number; status: string; created_at: string; started_at: string; completed_at: string | null; task_id?: string | null; task_run_id?: string | null; task_url?: string |...`
-- OpenAPI response codes: `200`, `404`
+Create a scout
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutRunsRetrieveInput = Parameters<typeof posthog.signalsScoutRunsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutRunsRetrieveOutput = Awaited<ReturnType<typeof posthog.signalsScoutRunsRetrieve>>;
-
-const result: SignalsScoutRunsRetrieveOutput = await posthog.signalsScoutRunsRetrieve();
-
-// Result shape (from schema): { run_id: string; skill_name: string; skill_version: number; status: string; created_at: string; started_at: string; completed_at: string | null; task_id?: string | null; task_run_id?: string | null; task_url?: string |...
+posthog.signalsScoutCreate(): Promise<{ created: boolean; skill: { id: string; name: string; description: string; version: number; allowed_tools: (string)[] }; config: { id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled: boolean; status: "active" | "pending_pause" | "paused_by_system" | "paused_by_user"; pause_reason: "no_output" | "ignored" | "repeated_failures" | null; emit: boolean;...>
 ```
 
-### `posthog.signalsScoutEditReport`
+<sub>`POST /api/projects/{project_id}/signals/scout/` · `signals_scout_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/scout/runs/{run_id}/edit-report/`
-- **What it does**: Edit an existing report for a run
-- **OpenAPI operationId**: `signals_scout_edit_report`
-- **Path params**: `run_id`
-- **Query params**: None
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutConfigList`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ report_id: string; updated_fields: (string)[]; note_appended: boolean; reviewers_set: boolean }`
-- OpenAPI response codes: `200`, `400`, `404`
+List scout configs
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutEditReportInput = Parameters<typeof posthog.signalsScoutEditReport> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutEditReportOutput = Awaited<ReturnType<typeof posthog.signalsScoutEditReport>>;
-
-const result: SignalsScoutEditReportOutput = await posthog.signalsScoutEditReport();
-
-// Result shape (from schema): { report_id: string; updated_fields: (string)[]; note_appended: boolean; reviewers_set: boolean }
+posthog.signalsScoutConfigList(): Promise<({ id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled: boolean; status: "active" | "pending_pause" | "paused_by_system" | "paused_by_user"; pause_reason: "no_output" | "ignored" | "repeated_failures" | null; emit: boolean; run_interval_minutes: number; run_cron_schedule: string | null; output_destinations: { slack?: { integration_id: number; channel...>
 ```
 
-### `posthog.signalsScoutRunsEmissions`
+<sub>`GET /api/projects/{project_id}/signals/scout/configs/` · `signals_scout_config_list`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/runs/{run_id}/emissions/`
-- **What it does**: List a run's emitted findings
-- **OpenAPI operationId**: `signals_scout_runs_emissions`
-- **Path params**: `run_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutConfigCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: string; run_id: string; finding_id: string; description: string; weight: number; confidence: number; severity: "P0" | "P1" | "P2" | "P3" | "P4" | null; tags: (string)[]; source_id: string; emitted_at: string })[]`
-- OpenAPI response codes: `200`, `404`
+Create a scout config
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutRunsEmissionsInput = Parameters<typeof posthog.signalsScoutRunsEmissions> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutRunsEmissionsOutput = Awaited<ReturnType<typeof posthog.signalsScoutRunsEmissions>>;
-
-const result: SignalsScoutRunsEmissionsOutput = await posthog.signalsScoutRunsEmissions();
-
-// Result shape (from schema): ({ id: string; run_id: string; finding_id: string; description: string; weight: number; confidence: number; severity: "P0" | "P1" | "P2" | "P3" | "P4" | null; tags: (string)[]; source_id: string; emitted_at: string })[]
+posthog.signalsScoutConfigCreate(): Promise<{ id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled: boolean; status: "active" | "pending_pause" | "paused_by_system" | "paused_by_user"; pause_reason: "no_output" | "ignored" | "repeated_failures" | null; emit: boolean; run_interval_minutes: number; run_cron_schedule: string | null; output_destinations: { slack?: { integration_id: number; channel?...>
 ```
 
-### `posthog.signalsScoutRunsEmissionReports`
+<sub>`POST /api/projects/{project_id}/signals/scout/configs/` · `signals_scout_config_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/runs/{run_id}/emissions/reports/`
-- **What it does**: List the inbox reports a run's findings linked to
-- **OpenAPI operationId**: `signals_scout_runs_emission_reports`
-- **Path params**: `run_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutConfigDestroy`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ finding_id: string; source_id: string; report: { id: string; title: string | null; status: string } | null })[]`
-- OpenAPI response codes: `200`, `404`
+Delete a scout config
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutRunsEmissionReportsInput = Parameters<typeof posthog.signalsScoutRunsEmissionReports> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutRunsEmissionReportsOutput = Awaited<ReturnType<typeof posthog.signalsScoutRunsEmissionReports>>;
-
-const result: SignalsScoutRunsEmissionReportsOutput = await posthog.signalsScoutRunsEmissionReports();
-
-// Result shape (from schema): ({ finding_id: string; source_id: string; report: { id: string; title: string | null; status: string } | null })[]
+posthog.signalsScoutConfigDestroy(): Promise<unknown>
 ```
 
-### `posthog.signalsScoutEmitReport`
+<sub>`DELETE /api/projects/{project_id}/signals/scout/configs/{id}/` · `signals_scout_config_destroy`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/scout/runs/{run_id}/emit-report/`
-- **What it does**: Author a full report for a run
-- **OpenAPI operationId**: `signals_scout_emit_report`
-- **Path params**: `run_id`
-- **Query params**: None
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutConfigUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ report_id: string | null; report_status: string | null; emitted: boolean; skipped_reason: string | null; safety_explanation: string | null; remediation: string | null }`
-- OpenAPI response codes: `200`, `400`, `404`
+Update a scout config
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutEmitReportInput = Parameters<typeof posthog.signalsScoutEmitReport> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutEmitReportOutput = Awaited<ReturnType<typeof posthog.signalsScoutEmitReport>>;
-
-const result: SignalsScoutEmitReportOutput = await posthog.signalsScoutEmitReport();
-
-// Result shape (from schema): { report_id: string | null; report_status: string | null; emitted: boolean; skipped_reason: string | null; safety_explanation: string | null; remediation: string | null }
+posthog.signalsScoutConfigUpdate(): Promise<{ id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled: boolean; status: "active" | "pending_pause" | "paused_by_system" | "paused_by_user"; pause_reason: "no_output" | "ignored" | "repeated_failures" | null; emit: boolean; run_interval_minutes: number; run_cron_schedule: string | null; output_destinations: { slack?: { integration_id: number; channel?...>
 ```
 
-### `posthog.signalsScoutEmitSignal`
+<sub>`PATCH /api/projects/{project_id}/signals/scout/configs/{id}/` · `signals_scout_config_update`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/scout/runs/{run_id}/emit-signal/`
-- **What it does**: Emit a finding for a run
-- **OpenAPI operationId**: `signals_scout_emit_signal`
-- **Path params**: `run_id`
-- **Query params**: None
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutConfigRun`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ finding_id: string; emitted: boolean; skipped_reason: string | null; remediation: string | null }`
-- OpenAPI response codes: `200`, `400`, `404`
+Run a scout now
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutEmitSignalInput = Parameters<typeof posthog.signalsScoutEmitSignal> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutEmitSignalOutput = Awaited<ReturnType<typeof posthog.signalsScoutEmitSignal>>;
-
-const result: SignalsScoutEmitSignalOutput = await posthog.signalsScoutEmitSignal();
-
-// Result shape (from schema): { finding_id: string; emitted: boolean; skipped_reason: string | null; remediation: string | null }
+posthog.signalsScoutConfigRun(): Promise<unknown>
 ```
 
-### `posthog.signalsScoutRunsEmissionsBatch`
+<sub>`POST /api/projects/{project_id}/signals/scout/configs/{id}/run/` · `signals_scout_config_run`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/scout/runs/emissions/batch/`
-- **What it does**: List emitted findings for many runs at once
-- **OpenAPI operationId**: `signals_scout_runs_emissions_batch`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutConfigSync`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: string; run_id: string; finding_id: string; description: string; weight: number; confidence: number; severity: "P0" | "P1" | "P2" | "P3" | "P4" | null; tags: (string)[]; source_id: string; emitted_at: string })[]`
-- OpenAPI response codes: `200`
+Sync scout configs
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutRunsEmissionsBatchInput = Parameters<typeof posthog.signalsScoutRunsEmissionsBatch> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutRunsEmissionsBatchOutput = Awaited<ReturnType<typeof posthog.signalsScoutRunsEmissionsBatch>>;
-
-const result: SignalsScoutRunsEmissionsBatchOutput = await posthog.signalsScoutRunsEmissionsBatch();
-
-// Result shape (from schema): ({ id: string; run_id: string; finding_id: string; description: string; weight: number; confidence: number; severity: "P0" | "P1" | "P2" | "P3" | "P4" | null; tags: (string)[]; source_id: string; emitted_at: string })[]
+posthog.signalsScoutConfigSync(): Promise<({ id: string; skill_name: string; description: string; scout_origin: "canonical" | "custom"; enabled: boolean; status: "active" | "pending_pause" | "paused_by_system" | "paused_by_user"; pause_reason: "no_output" | "ignored" | "repeated_failures" | null; emit: boolean; run_interval_minutes: number; run_cron_schedule: string | null; output_destinations: { slack?: { integration_id: number; channel...>
 ```
 
-### `posthog.signalsScoutRunsRecentEmissions`
+<sub>`POST /api/projects/{project_id}/signals/scout/configs/sync/` · `signals_scout_config_sync`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/runs/emissions/recent/`
-- **What it does**: List recent emitted findings across all runs
-- **OpenAPI operationId**: `signals_scout_runs_recent_emissions`
-- **Path params**: None
-- **Query params**: `date_from`, `date_to`, `limit`, `skill_name`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutMembersList`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: string; run_id: string; finding_id: string; description: string; weight: number; confidence: number; severity: "P0" | "P1" | "P2" | "P3" | "P4" | null; tags: (string)[]; source_id: string; emitted_at: string })[]`
-- OpenAPI response codes: `200`
+List project members for reviewer routing
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutRunsRecentEmissionsInput = Parameters<typeof posthog.signalsScoutRunsRecentEmissions> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutRunsRecentEmissionsOutput = Awaited<ReturnType<typeof posthog.signalsScoutRunsRecentEmissions>>;
-
-const result: SignalsScoutRunsRecentEmissionsOutput = await posthog.signalsScoutRunsRecentEmissions();
-
-// Result shape (from schema): ({ id: string; run_id: string; finding_id: string; description: string; weight: number; confidence: number; severity: "P0" | "P1" | "P2" | "P3" | "P4" | null; tags: (string)[]; source_id: string; emitted_at: string })[]
+posthog.signalsScoutMembersList(): Promise<({ user_uuid: string; email: string; first_name: string; last_name: string; github_login: string | null })[]>
 ```
 
-### `posthog.signalsScoutRunsEmissionReportsBatch`
+<sub>`GET /api/projects/{project_id}/signals/scout/members/` · `signals_scout_members_list`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/scout/runs/emissions/reports/batch/`
-- **What it does**: List the inbox reports many runs' findings linked to
-- **OpenAPI operationId**: `signals_scout_runs_emission_reports_batch`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutMetadataGet`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ finding_id: string; source_id: string; report: { id: string; title: string | null; status: string } | null })[]`
-- OpenAPI response codes: `200`
+Get scout metadata
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutRunsEmissionReportsBatchInput = Parameters<typeof posthog.signalsScoutRunsEmissionReportsBatch> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutRunsEmissionReportsBatchOutput = Awaited<ReturnType<typeof posthog.signalsScoutRunsEmissionReportsBatch>>;
-
-const result: SignalsScoutRunsEmissionReportsBatchOutput = await posthog.signalsScoutRunsEmissionReportsBatch();
-
-// Result shape (from schema): ({ finding_id: string; source_id: string; report: { id: string; title: string | null; status: string } | null })[]
+posthog.signalsScoutMetadataGet(): Promise<{ enrolled: boolean; banner_message: string | null; limits: { max_runs_per_tick: number; max_runs_per_day: number | null; runs_today: number; runs_remaining_today: number | null } }>
 ```
 
-### `posthog.signalsScoutRunsFindingsSummary`
+<sub>`GET /api/projects/{project_id}/signals/scout/metadata/current/` · `signals_scout_metadata_get`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/runs/findings/summary/`
-- **What it does**: Summarise recently emitted findings across the fleet
-- **OpenAPI operationId**: `signals_scout_runs_findings_summary`
-- **Path params**: None
-- **Query params**: `window_hours`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutNotesList`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; scout_count: number; latest_at: string | null }`
-- OpenAPI response codes: `200`
+List scout notes
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutRunsFindingsSummaryInput = Parameters<typeof posthog.signalsScoutRunsFindingsSummary> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutRunsFindingsSummaryOutput = Awaited<ReturnType<typeof posthog.signalsScoutRunsFindingsSummary>>;
-
-const result: SignalsScoutRunsFindingsSummaryOutput = await posthog.signalsScoutRunsFindingsSummary();
-
-// Result shape (from schema): { count: number; scout_count: number; latest_at: string | null }
+posthog.signalsScoutNotesList(): Promise<({ id: string; skill_name: string; content: string; created_at: string | null; expires_at: string | null; created_by_name: string | null; origin: string })[]>
 ```
 
-### `posthog.signalsScoutScratchpadSearch`
+<sub>`GET /api/projects/{project_id}/signals/scout/notes/` · `signals_scout_notes_list`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/scout/scratchpad/`
-- **What it does**: Search the scout scratchpad
-- **OpenAPI operationId**: `signals_scout_scratchpad_search`
-- **Path params**: None
-- **Query params**: `content_max_chars`, `date_from`, `date_to`, `keys_only`, `limit`, `text`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutNotesCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ key: string; content: string; created_at: string | null; updated_at: string | null; created_by_run_id: string | null; created_by_skill?: string | null; created_by_run_url?: string | null })[]`
-- OpenAPI response codes: `200`
+Leave a note for the scouts
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutScratchpadSearchInput = Parameters<typeof posthog.signalsScoutScratchpadSearch> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutScratchpadSearchOutput = Awaited<ReturnType<typeof posthog.signalsScoutScratchpadSearch>>;
-
-const result: SignalsScoutScratchpadSearchOutput = await posthog.signalsScoutScratchpadSearch();
-
-// Result shape (from schema): ({ key: string; content: string; created_at: string | null; updated_at: string | null; created_by_run_id: string | null; created_by_skill?: string | null; created_by_run_url?: string | null })[]
+posthog.signalsScoutNotesCreate(): Promise<{ id: string; skill_name: string; content: string; created_at: string | null; expires_at: string | null; created_by_name: string | null; origin: string }>
 ```
 
-### `posthog.signalsScoutScratchpadRemember`
+<sub>`POST /api/projects/{project_id}/signals/scout/notes/` · `signals_scout_notes_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/scout/scratchpad/`
-- **What it does**: Remember a scratchpad entry
-- **OpenAPI operationId**: `signals_scout_scratchpad_remember`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutNotesDestroy`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ key: string; content: string; created_at: string | null; updated_at: string | null; created_by_run_id: string | null; created_by_skill?: string | null; created_by_run_url?: string | null }`
-- OpenAPI response codes: `200`, `400`
+Delete a scout note
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutScratchpadRememberInput = Parameters<typeof posthog.signalsScoutScratchpadRemember> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutScratchpadRememberOutput = Awaited<ReturnType<typeof posthog.signalsScoutScratchpadRemember>>;
-
-const result: SignalsScoutScratchpadRememberOutput = await posthog.signalsScoutScratchpadRemember();
-
-// Result shape (from schema): { key: string; content: string; created_at: string | null; updated_at: string | null; created_by_run_id: string | null; created_by_skill?: string | null; created_by_run_url?: string | null }
+posthog.signalsScoutNotesDestroy(): Promise<unknown>
 ```
 
-### `posthog.signalsScoutScratchpadForget`
+<sub>`DELETE /api/projects/{project_id}/signals/scout/notes/{id}/` · `signals_scout_notes_destroy`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/scout/scratchpad/forget/`
-- **What it does**: Forget a scratchpad entry by key
-- **OpenAPI operationId**: `signals_scout_scratchpad_forget`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutProjectProfileGet`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ deleted: boolean }`
-- OpenAPI response codes: `200`
+Get the current project profile
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsScoutScratchpadForgetInput = Parameters<typeof posthog.signalsScoutScratchpadForget> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsScoutScratchpadForgetOutput = Awaited<ReturnType<typeof posthog.signalsScoutScratchpadForget>>;
-
-const result: SignalsScoutScratchpadForgetOutput = await posthog.signalsScoutScratchpadForget();
-
-// Result shape (from schema): { deleted: boolean }
+posthog.signalsScoutProjectProfileGet(): Promise<{ profile_id: string; computed_at: string; expires_at: string; source_version: string; payload: { inventory: { project_context: { product_description: string | null; app_urls: (string)[] }; products_in_use: (string)[]; product_intents: ({ product_type: string; activated_at: string | null; created_at: string | null })[]; integrations: ({ kind: string; created_at: string | null })[]; external_data_...>
 ```
 
-### `posthog.signalsSourceConfigsList`
+<sub>`GET /api/projects/{project_id}/signals/scout/project_profile/current/` · `signals_scout_project_profile_get`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/source_configs/`
-- **OpenAPI operationId**: `signals_source_configs_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutRunsList`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "zendesk" | "conversations" | "error_tracking" | "pgana...`
-- OpenAPI response codes: `200`
+Search recent agent runs
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsSourceConfigsListInput = Parameters<typeof posthog.signalsSourceConfigsList> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsSourceConfigsListOutput = Awaited<ReturnType<typeof posthog.signalsSourceConfigsList>>;
-
-const result: SignalsSourceConfigsListOutput = await posthog.signalsSourceConfigsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "zendesk" | "conversations" | "error_tracking" | "pgana...
+posthog.signalsScoutRunsList(): Promise<({ run_id: string; skill_name: string; skill_version: number; status: "not_started" | "queued" | "in_progress" | "completed" | "failed" | "cancelled"; created_at: string; started_at: string; completed_at: string | null; task_id?: string | null; task_run_id?: string | null; task_url?: string | null; summary: string; error?: string | null; failure_reason?: string | null; emitted_count: number; emit...>
 ```
 
-### `posthog.signalsSourceConfigsCreate`
+<sub>`GET /api/projects/{project_id}/signals/scout/runs/` · `signals_scout_runs_list`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/signals/source_configs/`
-- **OpenAPI operationId**: `signals_source_configs_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutRunsRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_...`
-- OpenAPI response codes: `201`
+Get a run by ID
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsSourceConfigsCreateInput = Parameters<typeof posthog.signalsSourceConfigsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsSourceConfigsCreateOutput = Awaited<ReturnType<typeof posthog.signalsSourceConfigsCreate>>;
-
-const result: SignalsSourceConfigsCreateOutput = await posthog.signalsSourceConfigsCreate();
-
-// Result shape (from schema): { id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_...
+posthog.signalsScoutRunsRetrieve(): Promise<{ run_id: string; skill_name: string; skill_version: number; status: "not_started" | "queued" | "in_progress" | "completed" | "failed" | "cancelled"; created_at: string; started_at: string; completed_at: string | null; task_id?: string | null; task_run_id?: string | null; task_url?: string | null; summary: string; error?: string | null; failure_reason?: string | null; emitted_count: number; emitt...>
 ```
 
-### `posthog.signalsSourceConfigsDestroy`
+<sub>`GET /api/projects/{project_id}/signals/scout/runs/{run_id}/` · `signals_scout_runs_retrieve`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/signals/source_configs/{id}/`
-- **OpenAPI operationId**: `signals_source_configs_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutEditReport`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Edit an existing report for a run
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsSourceConfigsDestroyInput = Parameters<typeof posthog.signalsSourceConfigsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsSourceConfigsDestroyOutput = Awaited<ReturnType<typeof posthog.signalsSourceConfigsDestroy>>;
-
-const result: SignalsSourceConfigsDestroyOutput = await posthog.signalsSourceConfigsDestroy();
-
-// Result shape (from schema): unknown
+posthog.signalsScoutEditReport(): Promise<{ report_id: string; updated_fields: (string)[]; note_appended: boolean; reviewers_set: boolean; charts_set: number | null }>
 ```
 
-### `posthog.signalsSourceConfigsRetrieve`
+<sub>`POST /api/projects/{project_id}/signals/scout/runs/{run_id}/edit-report/` · `signals_scout_edit_report`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/signals/source_configs/{id}/`
-- **OpenAPI operationId**: `signals_source_configs_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutRunsEmissions`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_...`
-- OpenAPI response codes: `200`
+List a run's emitted findings
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsSourceConfigsRetrieveInput = Parameters<typeof posthog.signalsSourceConfigsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsSourceConfigsRetrieveOutput = Awaited<ReturnType<typeof posthog.signalsSourceConfigsRetrieve>>;
-
-const result: SignalsSourceConfigsRetrieveOutput = await posthog.signalsSourceConfigsRetrieve();
-
-// Result shape (from schema): { id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_...
+posthog.signalsScoutRunsEmissions(): Promise<({ id: string; run_id: string; finding_id: string; description: string; weight: number; confidence: number; severity: "P0" | "P1" | "P2" | "P3" | "P4" | null; tags: (string)[]; source_id: string; emitted_at: string })[]>
 ```
 
-### `posthog.signalsSourceConfigsPartialUpdate`
+<sub>`GET /api/projects/{project_id}/signals/scout/runs/{run_id}/emissions/` · `signals_scout_runs_emissions`</sub>
 
-- **HTTP**: `PATCH /api/projects/{project_id}/signals/source_configs/{id}/`
-- **OpenAPI operationId**: `signals_source_configs_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutRunsEmissionReports`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_...`
-- OpenAPI response codes: `200`
+List the inbox reports a run's findings linked to
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsSourceConfigsPartialUpdateInput = Parameters<typeof posthog.signalsSourceConfigsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsSourceConfigsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.signalsSourceConfigsPartialUpdate>>;
-
-const result: SignalsSourceConfigsPartialUpdateOutput = await posthog.signalsSourceConfigsPartialUpdate();
-
-// Result shape (from schema): { id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_...
+posthog.signalsScoutRunsEmissionReports(): Promise<({ finding_id: string; source_id: string; report: { id: string; title: string | null; status: string } | null })[]>
 ```
 
-### `posthog.signalsSourceConfigsUpdate`
+<sub>`GET /api/projects/{project_id}/signals/scout/runs/{run_id}/emissions/reports/` · `signals_scout_runs_emission_reports`</sub>
 
-- **HTTP**: `PUT /api/projects/{project_id}/signals/source_configs/{id}/`
-- **OpenAPI operationId**: `signals_source_configs_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.signalsScoutEmitReport`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_...`
-- OpenAPI response codes: `200`
+Author a full report for a run
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type SignalsSourceConfigsUpdateInput = Parameters<typeof posthog.signalsSourceConfigsUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type SignalsSourceConfigsUpdateOutput = Awaited<ReturnType<typeof posthog.signalsSourceConfigsUpdate>>;
-
-const result: SignalsSourceConfigsUpdateOutput = await posthog.signalsSourceConfigsUpdate();
-
-// Result shape (from schema): { id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_...
+posthog.signalsScoutEmitReport(): Promise<{ report_id: string | null; report_status: string | null; emitted: boolean; skipped_reason: string | null; safety_explanation: string | null; remediation: string | null }>
 ```
 
+<sub>`POST /api/projects/{project_id}/signals/scout/runs/{run_id}/emit-report/` · `signals_scout_emit_report`</sub>
+
+## `posthog.signalsScoutEmitSignal`
+
+Emit a finding for a run
+
+```ts
+posthog.signalsScoutEmitSignal(): Promise<{ finding_id: string; emitted: boolean; skipped_reason: string | null; remediation: string | null }>
+```
+
+<sub>`POST /api/projects/{project_id}/signals/scout/runs/{run_id}/emit-signal/` · `signals_scout_emit_signal`</sub>
+
+## `posthog.signalsScoutRunsEmissionsBatch`
+
+List emitted findings for many runs at once
+
+```ts
+posthog.signalsScoutRunsEmissionsBatch(): Promise<({ id: string; run_id: string; finding_id: string; description: string; weight: number; confidence: number; severity: "P0" | "P1" | "P2" | "P3" | "P4" | null; tags: (string)[]; source_id: string; emitted_at: string })[]>
+```
+
+<sub>`POST /api/projects/{project_id}/signals/scout/runs/emissions/batch/` · `signals_scout_runs_emissions_batch`</sub>
+
+## `posthog.signalsScoutRunsRecentEmissions`
+
+List recent emitted findings across all runs
+
+```ts
+posthog.signalsScoutRunsRecentEmissions(): Promise<({ id: string; run_id: string; finding_id: string; description: string; weight: number; confidence: number; severity: "P0" | "P1" | "P2" | "P3" | "P4" | null; tags: (string)[]; source_id: string; emitted_at: string })[]>
+```
+
+<sub>`GET /api/projects/{project_id}/signals/scout/runs/emissions/recent/` · `signals_scout_runs_recent_emissions`</sub>
+
+## `posthog.signalsScoutRunsEmissionReportsBatch`
+
+List the inbox reports many runs' findings linked to
+
+```ts
+posthog.signalsScoutRunsEmissionReportsBatch(): Promise<({ finding_id: string; source_id: string; report: { id: string; title: string | null; status: string } | null })[]>
+```
+
+<sub>`POST /api/projects/{project_id}/signals/scout/runs/emissions/reports/batch/` · `signals_scout_runs_emission_reports_batch`</sub>
+
+## `posthog.signalsScoutRunsFindingsSummary`
+
+Summarise recent scout output across the fleet
+
+```ts
+posthog.signalsScoutRunsFindingsSummary(): Promise<{ count: number; scout_count: number; authored_report_count: number; edited_report_count: number; latest_at: string | null }>
+```
+
+<sub>`GET /api/projects/{project_id}/signals/scout/runs/findings/summary/` · `signals_scout_runs_findings_summary`</sub>
+
+## `posthog.signalsScoutScratchpadSearch`
+
+Search the scout scratchpad
+
+```ts
+posthog.signalsScoutScratchpadSearch(): Promise<({ key: string; content: string; created_at: string | null; updated_at: string | null; created_by_run_id: string | null; created_by_skill?: string | null; created_by_run_url?: string | null })[]>
+```
+
+<sub>`GET /api/projects/{project_id}/signals/scout/scratchpad/` · `signals_scout_scratchpad_search`</sub>
+
+## `posthog.signalsScoutScratchpadRemember`
+
+Remember a scratchpad entry
+
+```ts
+posthog.signalsScoutScratchpadRemember(): Promise<{ key: string; content: string; created_at: string | null; updated_at: string | null; created_by_run_id: string | null; created_by_skill?: string | null; created_by_run_url?: string | null }>
+```
+
+<sub>`POST /api/projects/{project_id}/signals/scout/scratchpad/` · `signals_scout_scratchpad_remember`</sub>
+
+## `posthog.signalsScoutScratchpadForget`
+
+Forget a scratchpad entry by key
+
+```ts
+posthog.signalsScoutScratchpadForget(): Promise<{ deleted: boolean }>
+```
+
+<sub>`POST /api/projects/{project_id}/signals/scout/scratchpad/forget/` · `signals_scout_scratchpad_forget`</sub>
+
+## `posthog.signalsSourceConfigsList`
+
+```ts
+posthog.signalsSourceConfigsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "jira" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_vision" | "analytics" | "freshdesk" | "freshservice" | "front" | "gorgias" | "kustomer" | "dixa"...>
+```
+
+<sub>`GET /api/projects/{project_id}/signals/source_configs/` · `signals_source_configs_list`</sub>
+
+## `posthog.signalsSourceConfigsCreate`
+
+```ts
+posthog.signalsSourceConfigsCreate(): Promise<{ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "jira" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_vision" | "analytics" | "freshdesk" | "freshservice" | "front" | "gorgias" | "kustomer" | "dixa" | "plain" | "gitlab" | "gitea" | "shortcut" | "sentry" | "rollbar" | "bugs...>
+```
+
+<sub>`POST /api/projects/{project_id}/signals/source_configs/` · `signals_source_configs_create`</sub>
+
+## `posthog.signalsSourceConfigsDestroy`
+
+```ts
+posthog.signalsSourceConfigsDestroy(): Promise<unknown>
+```
+
+<sub>`DELETE /api/projects/{project_id}/signals/source_configs/{id}/` · `signals_source_configs_destroy`</sub>
+
+## `posthog.signalsSourceConfigsRetrieve`
+
+```ts
+posthog.signalsSourceConfigsRetrieve(): Promise<{ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "jira" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_vision" | "analytics" | "freshdesk" | "freshservice" | "front" | "gorgias" | "kustomer" | "dixa" | "plain" | "gitlab" | "gitea" | "shortcut" | "sentry" | "rollbar" | "bugs...>
+```
+
+<sub>`GET /api/projects/{project_id}/signals/source_configs/{id}/` · `signals_source_configs_retrieve`</sub>
+
+## `posthog.signalsSourceConfigsPartialUpdate`
+
+```ts
+posthog.signalsSourceConfigsPartialUpdate(): Promise<{ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "jira" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_vision" | "analytics" | "freshdesk" | "freshservice" | "front" | "gorgias" | "kustomer" | "dixa" | "plain" | "gitlab" | "gitea" | "shortcut" | "sentry" | "rollbar" | "bugs...>
+```
+
+<sub>`PATCH /api/projects/{project_id}/signals/source_configs/{id}/` · `signals_source_configs_partial_update`</sub>
+
+## `posthog.signalsSourceConfigsUpdate`
+
+```ts
+posthog.signalsSourceConfigsUpdate(): Promise<{ id: string; source_product: "session_replay" | "llm_analytics" | "github" | "linear" | "jira" | "zendesk" | "conversations" | "error_tracking" | "pganalyze" | "signals_scout" | "logs" | "health_checks" | "endpoints" | "replay_vision" | "analytics" | "freshdesk" | "freshservice" | "front" | "gorgias" | "kustomer" | "dixa" | "plain" | "gitlab" | "gitea" | "shortcut" | "sentry" | "rollbar" | "bugs...>
+```
+
+<sub>`PUT /api/projects/{project_id}/signals/source_configs/{id}/` · `signals_source_configs_update`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

@@ -1355,7 +1355,7 @@ export type PipedriveClient = {
     redirect_uri: string;
     /** You may pass any random string as the state parameter and the same string will be returned to your app after a user authorizes access. It may be used to store the user's session ID from your app or distinguish different responses. Using state may increase security; see RFC-6749.  */
     state?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Getting the tokens

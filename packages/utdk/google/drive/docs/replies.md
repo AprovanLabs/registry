@@ -1,9 +1,9 @@
 # Replies
 
-5 operations · `utdk/google/drive`
+5 operations · `@utdk/clients/google/drive`
 
 ```ts
-import drive from "utdk/google/drive";
+import drive from "@utdk/clients/google/drive";
 ```
 
 ## `drive.driveRepliesList`
@@ -114,7 +114,7 @@ drive.driveRepliesDelete(input: {
   quotaUser?: string;
   /** Deprecated. Please use quotaUser instead. */
   userIp?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /files/{fileId}/comments/{commentId}/replies/{replyId}` · `drive.replies.delete`</sub>

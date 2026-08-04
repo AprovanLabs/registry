@@ -1,9 +1,9 @@
 # Events
 
-11 operations · `utdk/google/calendar`
+11 operations · `@utdk/clients/google/calendar`
 
 ```ts
-import calendar from "utdk/google/calendar";
+import calendar from "@utdk/clients/google/calendar";
 ```
 
 ## `calendar.calendarEventsList`
@@ -214,7 +214,7 @@ calendar.calendarEventsDelete(input: {
   sendNotifications?: boolean;
   /** Guests who should receive notifications about the deletion of the event. */
   sendUpdates?: "all" | "externalOnly" | "none";
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /calendars/{calendarId}/events/{eventId}` · `calendar.events.delete`</sub>

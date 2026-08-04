@@ -1,9 +1,9 @@
 # Youtube
 
-1 operation · `utdk/google/youtube`
+1 operation · `@utdk/clients/google/youtube`
 
 ```ts
-import youtube from "utdk/google/youtube";
+import youtube from "@utdk/clients/google/youtube";
 ```
 
 ## `youtube.youtubeYoutubeV3UpdateCommentThreads`

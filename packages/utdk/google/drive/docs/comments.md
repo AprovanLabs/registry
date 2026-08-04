@@ -1,9 +1,9 @@
 # Comments
 
-5 operations · `utdk/google/drive`
+5 operations · `@utdk/clients/google/drive`
 
 ```ts
-import drive from "utdk/google/drive";
+import drive from "@utdk/clients/google/drive";
 ```
 
 ## `drive.driveCommentsList`
@@ -116,7 +116,7 @@ drive.driveCommentsDelete(input: {
   quotaUser?: string;
   /** Deprecated. Please use quotaUser instead. */
   userIp?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /files/{fileId}/comments/{commentId}` · `drive.comments.delete`</sub>

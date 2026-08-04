@@ -1,4 +1,4 @@
-import type { BasicError, Package, PackageVersion } from "./schemas.js";
+import type { Package, PackageVersion } from "./schemas.js";
 
 export type PackagesOperations = {
   /**
@@ -51,7 +51,7 @@ export type PackagesOperations = {
     package_name: string;
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Restore a package for an organization
@@ -66,7 +66,7 @@ export type PackagesOperations = {
     org: string;
     /** package token */
     token?: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List package versions for a package owned by an organization
@@ -115,7 +115,7 @@ export type PackagesOperations = {
     org: string;
     /** Unique identifier of the package version. */
     package_version_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Restore package version for an organization
@@ -130,7 +130,7 @@ export type PackagesOperations = {
     org: string;
     /** Unique identifier of the package version. */
     package_version_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get list of conflicting packages during Docker migration for authenticated-user
@@ -173,7 +173,7 @@ export type PackagesOperations = {
     package_type: "npm" | "maven" | "rubygems" | "docker" | "nuget" | "container";
     /** The name of the package. */
     package_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Restore a package for the authenticated user
@@ -186,7 +186,7 @@ export type PackagesOperations = {
     package_name: string;
     /** package token */
     token?: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List package versions for a package owned by the authenticated user
@@ -229,7 +229,7 @@ export type PackagesOperations = {
     package_name: string;
     /** Unique identifier of the package version. */
     package_version_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Restore a package version for the authenticated user
@@ -242,7 +242,7 @@ export type PackagesOperations = {
     package_name: string;
     /** Unique identifier of the package version. */
     package_version_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get list of conflicting packages during Docker migration for user
@@ -294,7 +294,7 @@ export type PackagesOperations = {
     package_name: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Restore a package for a user
@@ -309,7 +309,7 @@ export type PackagesOperations = {
     username: string;
     /** package token */
     token?: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List package versions for a package owned by a user
@@ -352,7 +352,7 @@ export type PackagesOperations = {
     username: string;
     /** Unique identifier of the package version. */
     package_version_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Restore package version for a user
@@ -367,5 +367,5 @@ export type PackagesOperations = {
     username: string;
     /** Unique identifier of the package version. */
     package_version_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 };

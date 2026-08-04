@@ -37,7 +37,7 @@ github.enterpriseTeamMemberships.remove(input: {
   "enterprise-team": string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /enterprises/{enterprise}/teams/{enterprise-team}/memberships/{username}` · `enterprise-team-memberships/remove`</sub>

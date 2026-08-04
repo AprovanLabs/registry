@@ -29,7 +29,7 @@ export type GoogleTasksClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Returns all tasks in the specified task list.
@@ -173,7 +173,7 @@ export type GoogleTasksClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Returns the specified task.
@@ -467,7 +467,7 @@ export type GoogleTasksClient = {
     upload_protocol?: string;
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Returns the authenticated user's specified task list.

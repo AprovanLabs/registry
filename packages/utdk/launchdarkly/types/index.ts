@@ -1,4 +1,4 @@
-import type { AgentGraph, AgentGraphEdge, AgentGraphEdgePost, AgentGraphs, AgentOptimization, AgentOptimizationAcceptanceStatement, AgentOptimizationJudge, AgentOptimizationResult, AgentOptimizationResultActivity, AgentOptimizationResultStatus, AgentOptimizationResults, AgentOptimizationRuns, AgentOptimizations, AiConfig, AiConfigTargeting, AiConfigVariation, AiConfigVariationPost, AiConfigVariationsResponse, AiConfigs, AiTool, AiTools, AnalysisConfigInput, AnnouncementJsonPatch, AnnouncementResponse, ApplicationCollectionRep, ApplicationRep, ApplicationVersionRep, ApplicationVersionsCollectionRep, ApprovalRequestResponse, ApprovalRequestSettings, AuditLogEntryListingRepCollection, AuditLogEntryRep, BigSegmentStoreIntegration, BigSegmentStoreIntegrationCollection, BigSegmentTarget, BooleanFlagDefaults, BranchCollectionRep, BranchRep, BulkEditMembersRep, BulkEditTeamsRep, CallerIdentityRep, CapabilityConfigPost, Client, ClientCollection, ClientSideAvailabilityPost, ContextAttributeNamesCollection, ContextAttributeValuesCollection, ContextInstance, ContextInstanceEvaluations, ContextInstanceSegmentMemberships, ContextInstances, ContextKindsCollectionRep, Contexts, CountBucketsResult, CreatePhaseInput, CustomProperties, CustomRole, CustomRoles, CustomWorkflowOutput, CustomWorkflowsListingOutput, DefaultClientSideAvailability, DefaultClientSideAvailabilityPost, Defaults, DependentFlagsByEnvironment, DeploymentCollectionRep, DeploymentRep, Destination, Destinations, Environment, EnvironmentPost, Environments, Error, EventFilter, ExpandableApprovalRequestResponse, ExpandableApprovalRequestsResponse, Experiment, ExperimentCollectionRep, ExpiringTargetGetResponse, ExpiringTargetPatchResponse, ExpiringUserTargetGetResponse, ExpiringUserTargetPatchResponse, Export, ExtinctionCollectionRep, ExtinctionListPost, FeatureFlag, FeatureFlagScheduledChange, FeatureFlagScheduledChanges, FeatureFlagStatusAcrossEnvironments, FeatureFlagStatuses, FeatureFlags, FeatureWorkflowId, FlagConfigApprovalRequestResponse, FlagConfigApprovalRequestsResponse, FlagCopyConfigEnvironment, FlagDefaultsRep, FlagEventCollectionRep, FlagFollowersByProjEnvGetRep, FlagFollowersGetRep, FlagImportIntegration, FlagImportIntegrationCollection, FlagLinkCollectionRep, FlagLinkRep, FlagPrerequisitePost, FlagStatusRep, FlagsInput, ForbiddenErrorRep, FormVariableConfig, GenerateTrustPolicyPostRep, GenerateWarehouseDestinationKeyPairPostRep, GetAnnouncementsPublic200Response, GuardedReleaseConfig, HoldoutDetailRep, HoldoutRep, HoldoutsCollectionRep, Import, InsightGroup, InsightGroupCollection, InsightScores, InsightsChart, InsightsRepositoryCollection, InsightsRepositoryProject, InsightsRepositoryProjectCollection, Instruction, InstructionUserRequest, Instructions, Integration, IntegrationConfigurationCollectionRep, IntegrationConfigurationsRep, IntegrationDeliveryConfiguration, IntegrationDeliveryConfigurationCollection, IntegrationDeliveryConfigurationResponse, Integrations, InvalidRequestErrorRep, IpAllowlistEntryResponse, IpAllowlistResponse, IpList, IterationInput, IterationRep, JsonPatch, JudgeConfiguration, LayerCollectionRep, LayerRep, LinkResourceSuccessResponse, Member, Members, Message, MetricCollectionRep, MetricDataSourceRefRep, MetricEventDefaultRep, MetricGroupCollectionRep, MetricGroupRep, MetricInMetricGroupInput, MetricInput, MetricRep, Metrics, MetricsByVariation, MetricsInput, MigrationSafetyIssueRep, MigrationSettingsPost, ModelConfig, MultiEnvironmentDependentFlags, NamingConvention, NewMemberFormListPost, ObjectId, PatchSegmentExpiringTargetInstruction, PatchSegmentInstruction, PermissionGrantInput, PhaseStatus, ProgressiveReleaseConfig, Project, ProjectRep, Projects, PromptSnippet, PromptSnippets, PullRequestCollectionRep, QuickStats, RandomizationSettingsRep, RandomizationUnitInput, RateLimitedErrorRep, ReferenceRep, RelayAutoConfigCollectionRep, RelayAutoConfigRep, Release, ReleaseMethod, ReleasePipeline, ReleasePipelineCollection, ReleasePoliciesResponse, ReleasePolicy, ReleasePolicyScope, ReleaseProgressionCollection, ReleaserAudienceConfigInput, RepositoryCollectionRep, RepositoryRep, ResourceCategory, RestrictedModelsResponse, RoleAttributeMap, RoleType, RootResponse, SdkListRep, SdkVersionDetailsRep, SdkVersionListRep, SegmentUserList, SeriesListRep, SeriesListRepFloat, SnippetReferences, SourceEnv, SourceFlag, StageInput, Statement, StatementPost, StatementPostList, StatisticCollectionRep, StatisticsRoot, TagsCollection, Team, TeamCustomRoles, TeamImportsRep, TeamMaintainers, Teams, Token, Tokens, ToolReferences, TreatmentsInput, TriggerWorkflowCollectionRep, TriggerWorkflowRep, UnauthorizedErrorRep, UnixMillis, UnlinkResourceSuccessResponse, UpsertPayloadRep, UpsertResponseRep, UrlPost, UserAttributeNamesRep, UserFlagSetting, UserFlagSettings, UserRecord, UserSegment, UserSegments, Users, UsersRep, ValidationFailedErrorRep, Variation, VariationToolPost, VersionsRep, View, ViewLinkRequest, ViewLinkedResources, Views, WarehouseDestinationSetupScriptRep, Webhook, Webhooks, WorkflowTemplateOutput, WorkflowTemplatesListingOutputRep } from "./schemas.js";
+import type { AgentGraph, AgentGraphEdge, AgentGraphEdgePost, AgentGraphs, AgentOptimization, AgentOptimizationAcceptanceStatement, AgentOptimizationJudge, AgentOptimizationResult, AgentOptimizationResultActivity, AgentOptimizationResultStatus, AgentOptimizationResults, AgentOptimizationRuns, AgentOptimizations, AiConfig, AiConfigTargeting, AiConfigVariation, AiConfigVariationPost, AiConfigVariationsResponse, AiConfigs, AiTool, AiTools, AnalysisConfigInput, AnnouncementJsonPatch, AnnouncementResponse, ApplicationCollectionRep, ApplicationRep, ApplicationVersionRep, ApplicationVersionsCollectionRep, ApprovalRequestResponse, ApprovalRequestSettings, AuditLogEntryListingRepCollection, AuditLogEntryRep, BigSegmentStoreIntegration, BigSegmentStoreIntegrationCollection, BigSegmentTarget, BooleanFlagDefaults, BranchCollectionRep, BranchRep, BulkEditMembersRep, BulkEditTeamsRep, CallerIdentityRep, CapabilityConfigPost, Client, ClientCollection, ClientSideAvailabilityPost, ContextAttributeNamesCollection, ContextAttributeValuesCollection, ContextInstance, ContextInstanceEvaluations, ContextInstanceSegmentMemberships, ContextInstances, ContextKindsCollectionRep, Contexts, CountBucketsResult, CreatePhaseInput, CustomProperties, CustomRole, CustomRoles, CustomWorkflowOutput, CustomWorkflowsListingOutput, DefaultClientSideAvailability, DefaultClientSideAvailabilityPost, Defaults, DependentFlagsByEnvironment, DeploymentCollectionRep, DeploymentRep, Destination, Destinations, Environment, EnvironmentPost, Environments, EventFilter, ExpandableApprovalRequestResponse, ExpandableApprovalRequestsResponse, Experiment, ExperimentCollectionRep, ExpiringTargetGetResponse, ExpiringTargetPatchResponse, ExpiringUserTargetGetResponse, ExpiringUserTargetPatchResponse, Export, ExtinctionCollectionRep, ExtinctionListPost, FeatureFlag, FeatureFlagScheduledChange, FeatureFlagScheduledChanges, FeatureFlagStatusAcrossEnvironments, FeatureFlagStatuses, FeatureFlags, FeatureWorkflowId, FlagConfigApprovalRequestResponse, FlagConfigApprovalRequestsResponse, FlagCopyConfigEnvironment, FlagDefaultsRep, FlagEventCollectionRep, FlagFollowersByProjEnvGetRep, FlagFollowersGetRep, FlagImportIntegration, FlagImportIntegrationCollection, FlagLinkCollectionRep, FlagLinkRep, FlagPrerequisitePost, FlagStatusRep, FlagsInput, FormVariableConfig, GenerateTrustPolicyPostRep, GenerateWarehouseDestinationKeyPairPostRep, GetAnnouncementsPublic200Response, GuardedReleaseConfig, HoldoutDetailRep, HoldoutRep, HoldoutsCollectionRep, Import, InsightGroup, InsightGroupCollection, InsightScores, InsightsChart, InsightsRepositoryCollection, InsightsRepositoryProject, InsightsRepositoryProjectCollection, Instruction, InstructionUserRequest, Instructions, Integration, IntegrationConfigurationCollectionRep, IntegrationConfigurationsRep, IntegrationDeliveryConfiguration, IntegrationDeliveryConfigurationCollection, IntegrationDeliveryConfigurationResponse, Integrations, IpAllowlistEntryResponse, IpAllowlistResponse, IpList, IterationInput, IterationRep, JsonPatch, JudgeConfiguration, LayerCollectionRep, LayerRep, LinkResourceSuccessResponse, Member, Members, Message, MetricCollectionRep, MetricDataSourceRefRep, MetricEventDefaultRep, MetricGroupCollectionRep, MetricGroupRep, MetricInMetricGroupInput, MetricInput, MetricRep, Metrics, MetricsByVariation, MetricsInput, MigrationSafetyIssueRep, MigrationSettingsPost, ModelConfig, MultiEnvironmentDependentFlags, NamingConvention, NewMemberFormListPost, ObjectId, PatchSegmentExpiringTargetInstruction, PatchSegmentInstruction, PermissionGrantInput, PhaseStatus, ProgressiveReleaseConfig, Project, ProjectRep, Projects, PromptSnippet, PromptSnippets, PullRequestCollectionRep, QuickStats, RandomizationSettingsRep, RandomizationUnitInput, ReferenceRep, RelayAutoConfigCollectionRep, RelayAutoConfigRep, Release, ReleaseMethod, ReleasePipeline, ReleasePipelineCollection, ReleasePoliciesResponse, ReleasePolicy, ReleasePolicyScope, ReleaseProgressionCollection, ReleaserAudienceConfigInput, RepositoryCollectionRep, RepositoryRep, ResourceCategory, RestrictedModelsResponse, RoleAttributeMap, RoleType, RootResponse, SdkListRep, SdkVersionDetailsRep, SdkVersionListRep, SegmentUserList, SeriesListRep, SeriesListRepFloat, SnippetReferences, SourceEnv, SourceFlag, StageInput, Statement, StatementPost, StatementPostList, StatisticCollectionRep, StatisticsRoot, TagsCollection, Team, TeamCustomRoles, TeamImportsRep, TeamMaintainers, Teams, Token, Tokens, ToolReferences, TreatmentsInput, TriggerWorkflowCollectionRep, TriggerWorkflowRep, UnixMillis, UnlinkResourceSuccessResponse, UpsertPayloadRep, UpsertResponseRep, UrlPost, UserAttributeNamesRep, UserFlagSetting, UserFlagSettings, UserRecord, UserSegment, UserSegments, Users, UsersRep, Variation, VariationToolPost, VersionsRep, View, ViewLinkRequest, ViewLinkedResources, Views, WarehouseDestinationSetupScriptRep, Webhook, Webhooks, WorkflowTemplateOutput, WorkflowTemplatesListingOutputRep } from "./schemas.js";
 
 export type LaunchdarklyClient = {
   /**
@@ -47,7 +47,7 @@ export type LaunchdarklyClient = {
   deleteRelayAutoConfig: (input: {
     /** The relay auto config id */
     id: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Reset Relay Proxy configuration key
@@ -100,7 +100,7 @@ export type LaunchdarklyClient = {
   deleteApplication: (input: {
     /** The application key */
     applicationKey: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get application versions by application key
@@ -137,7 +137,7 @@ export type LaunchdarklyClient = {
     applicationKey: string;
     /** The application version key */
     versionKey: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List approval requests
@@ -201,7 +201,7 @@ export type LaunchdarklyClient = {
   deleteApprovalRequest: (input: {
     /** The approval request ID */
     id: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Apply approval request
@@ -355,7 +355,7 @@ export type LaunchdarklyClient = {
   deleteRepository: (input: {
     /** The repository name */
     repo: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Delete branches
@@ -364,7 +364,7 @@ export type LaunchdarklyClient = {
     body: (string)[];
     /** The repository name to delete branches for. */
     repo: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List branches
@@ -408,7 +408,7 @@ export type LaunchdarklyClient = {
     repo: string;
     /** The URL-encoded branch name */
     branch: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Create extinction
@@ -419,7 +419,7 @@ export type LaunchdarklyClient = {
     repo: string;
     /** The URL-encoded branch name */
     branch: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get links to code reference repositories for each project
@@ -555,7 +555,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The Data Export destination ID */
     id: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List flag links
@@ -614,7 +614,7 @@ export type LaunchdarklyClient = {
     featureFlagKey: string;
     /** The flag link ID or Key */
     id: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get flag status across environments
@@ -772,7 +772,7 @@ export type LaunchdarklyClient = {
     projectKey: string;
     /** The feature flag key. The key identifies the flag in your code. */
     featureFlagKey: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Copy feature flag
@@ -934,7 +934,7 @@ export type LaunchdarklyClient = {
     featureFlagKey: string;
     /** The flag trigger ID */
     id: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get release for flag
@@ -965,7 +965,7 @@ export type LaunchdarklyClient = {
     projectKey: string;
     /** The flag key */
     flagKey: string;
-  }) => Promise<ForbiddenErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List all big segment store integrations
@@ -1033,7 +1033,7 @@ export type LaunchdarklyClient = {
     integrationKey: string;
     /** The integration ID */
     integrationId: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List all delivery configurations
@@ -1111,7 +1111,7 @@ export type LaunchdarklyClient = {
     integrationKey: string;
     /** The configuration ID */
     id: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Validate delivery configuration
@@ -1183,7 +1183,7 @@ export type LaunchdarklyClient = {
     integrationKey: string;
     /** The integration ID */
     integrationId: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Trigger a single flag import run
@@ -1195,7 +1195,7 @@ export type LaunchdarklyClient = {
     integrationKey: string;
     /** The integration ID */
     integrationId: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get all configurations for the integration
@@ -1246,7 +1246,7 @@ export type LaunchdarklyClient = {
   deleteIntegrationConfiguration: (input: {
     /** The ID of the integration configuration to be deleted */
     integrationConfigurationId: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get audit log subscriptions by integration
@@ -1307,7 +1307,7 @@ export type LaunchdarklyClient = {
     integrationKey: string;
     /** The subscription ID */
     id: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List account members
@@ -1367,7 +1367,7 @@ export type LaunchdarklyClient = {
   deleteMember: (input: {
     /** The member ID */
     id: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Add a member to teams
@@ -1490,7 +1490,7 @@ export type LaunchdarklyClient = {
     projectKey: string;
     /** The metric key */
     metricKey: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get clients
@@ -1532,12 +1532,12 @@ export type LaunchdarklyClient = {
   deleteOAuthClient: (input: {
     /** The client ID */
     clientId: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Gets the OpenAPI spec in json
    */
-  getOpenapiSpec: () => Promise<RateLimitedErrorRep>;
+  getOpenapiSpec: () => Promise<undefined>;
 
   /**
    * List projects
@@ -1600,7 +1600,7 @@ export type LaunchdarklyClient = {
   deleteProject: (input: {
     /** The project key */
     projectKey: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get context kinds
@@ -1705,7 +1705,7 @@ export type LaunchdarklyClient = {
     projectKey: string;
     /** The environment key */
     environmentKey: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Reset environment SDK key
@@ -1801,7 +1801,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The context instance ID */
     id: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Search for contexts
@@ -1841,7 +1841,7 @@ export type LaunchdarklyClient = {
     contextKey: string;
     /** The feature flag key */
     featureFlagKey: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get contexts
@@ -2293,7 +2293,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The feature flag approval request ID */
     id: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Apply approval request for a flag
@@ -2353,7 +2353,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The memberId of the member to add as a follower of the flag. Reader roles can only add themselves. */
     memberId: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Remove a member as a follower of a flag in a project and environment
@@ -2367,7 +2367,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The memberId of the member to remove as a follower of the flag. Reader roles can only remove themselves. */
     memberId: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List scheduled changes
@@ -2447,7 +2447,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The scheduled change id */
     id: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get workflows
@@ -2519,7 +2519,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The workflow id */
     workflowId: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get migration safety issues
@@ -2677,7 +2677,7 @@ export type LaunchdarklyClient = {
     projectKey: string;
     /** The metric group key */
     metricGroupKey: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get all release pipelines
@@ -2751,7 +2751,7 @@ export type LaunchdarklyClient = {
     projectKey: string;
     /** The release pipeline key */
     pipelineKey: string;
-  }) => Promise<ForbiddenErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get release progressions for release pipeline
@@ -2828,7 +2828,7 @@ export type LaunchdarklyClient = {
   deleteCustomRole: (input: {
     /** The custom role key */
     customRoleKey: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List segments
@@ -2910,7 +2910,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The segment key */
     segmentKey: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Update context targets on a big segment
@@ -2924,7 +2924,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The segment key */
     segmentKey: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get big segment membership for context
@@ -2950,7 +2950,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The segment key */
     segmentKey: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get big segment export
@@ -2982,7 +2982,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The segment key */
     segmentKey: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get big segment import
@@ -3010,7 +3010,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The segment key */
     segmentKey: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get big segment membership for user
@@ -3158,7 +3158,7 @@ export type LaunchdarklyClient = {
   deleteTeam: (input: {
     /** The team key */
     teamKey: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get team maintainers
@@ -3224,7 +3224,7 @@ export type LaunchdarklyClient = {
   deleteWorkflowTemplate: (input: {
     /** The template key */
     templateKey: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List access tokens
@@ -3281,7 +3281,7 @@ export type LaunchdarklyClient = {
   deleteToken: (input: {
     /** The ID of the access token to update */
     id: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Reset access token
@@ -3856,7 +3856,7 @@ export type LaunchdarklyClient = {
     environmentKey: string;
     /** The user key */
     userKey: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List flag settings for user
@@ -3900,7 +3900,7 @@ export type LaunchdarklyClient = {
     userKey: string;
     /** The feature flag key */
     featureFlagKey: string;
-  }) => Promise<InvalidRequestErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get expiring dates on flags for user
@@ -3983,7 +3983,7 @@ export type LaunchdarklyClient = {
   deleteWebhook: (input: {
     /** The ID of the webhook to delete */
     id: string;
-  }) => Promise<UnauthorizedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List tags
@@ -4063,7 +4063,7 @@ export type LaunchdarklyClient = {
   deleteAiConfig: (input: {
     projectKey: string;
     configKey: string;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Get AI Config
@@ -4121,7 +4121,7 @@ export type LaunchdarklyClient = {
     projectKey: string;
     configKey: string;
     variationKey: string;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Get AI Config variation
@@ -4202,7 +4202,7 @@ export type LaunchdarklyClient = {
   deleteRestrictedModels: (input: {
     keys: (string)[];
     projectKey: string;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Add AI models to the restricted list
@@ -4253,7 +4253,7 @@ export type LaunchdarklyClient = {
   deleteModelConfig: (input: {
     projectKey: string;
     modelConfigKey: string;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Get AI model config
@@ -4325,7 +4325,7 @@ export type LaunchdarklyClient = {
   deleteAiTool: (input: {
     projectKey: string;
     toolKey: string;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Get AI tool
@@ -4384,7 +4384,7 @@ export type LaunchdarklyClient = {
   deletePromptSnippet: (input: {
     projectKey: string;
     snippetKey: string;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Get a prompt snippet
@@ -4471,7 +4471,7 @@ export type LaunchdarklyClient = {
   deleteAgentGraph: (input: {
     projectKey: string;
     graphKey: string;
-  }, options: { headers: { "LD-API-Version": "beta" } }) => Promise<Error>;
+  }, options: { headers: { "LD-API-Version": "beta" } }) => Promise<undefined>;
 
   /**
    * Get agent graph
@@ -4542,7 +4542,7 @@ export type LaunchdarklyClient = {
   deleteAgentOptimization: (input: {
     projectKey: string;
     optimizationKey: string;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Get an agent optimization
@@ -4688,7 +4688,7 @@ export type LaunchdarklyClient = {
    */
   deleteAnnouncementPublic: (input: {
     announcementId: string;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Update an announcement
@@ -4782,7 +4782,7 @@ export type LaunchdarklyClient = {
   deleteView: (input: {
     projectKey: string;
     viewKey: string;
-  }, options: { headers: { "LD-API-Version": "beta" } }) => Promise<Error>;
+  }, options: { headers: { "LD-API-Version": "beta" } }) => Promise<undefined>;
 
   /**
    * Get view
@@ -4922,7 +4922,7 @@ export type LaunchdarklyClient = {
     projectKey: string;
     /** The human-readable key of the release policy */
     policyKey: string;
-  }, options: { headers: { "LD-API-Version": "beta" } }) => Promise<Error>;
+  }, options: { headers: { "LD-API-Version": "beta" } }) => Promise<undefined>;
 
   /**
    * Get a release policy by key
@@ -4979,7 +4979,7 @@ export type LaunchdarklyClient = {
   deleteIpAllowlistEntry: (input: {
     /** Unique identifier for the allowlist entry */
     id: string;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * Update IP Allowlist Entry Description
@@ -5124,7 +5124,7 @@ export type LaunchdarklyClient = {
     eventMetadata?: { [key: string]: unknown | undefined };
     /** A JSON object containing metadata about the deployment */
     deploymentMetadata?: { [key: string]: unknown | undefined };
-  }) => Promise<ValidationFailedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * List deployments
@@ -5262,7 +5262,7 @@ export type LaunchdarklyClient = {
   deleteInsightGroup: (input: {
     /** The insight group key */
     insightGroupKey: string;
-  }) => Promise<ValidationFailedErrorRep>;
+  }) => Promise<undefined>;
 
   /**
    * Get insight scores
@@ -5329,7 +5329,7 @@ export type LaunchdarklyClient = {
     repositoryKey: string;
     /** The project key */
     projectKey: string;
-  }) => Promise<ValidationFailedErrorRep>;
+  }) => Promise<undefined>;
 };
 
 export * from "./schemas.js";

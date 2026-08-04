@@ -1,4 +1,4 @@
-import type { BasicError, EnterpriseTeam } from "./schemas.js";
+import type { EnterpriseTeam } from "./schemas.js";
 
 export type EnterpriseTeamsOperations = {
   /**
@@ -78,5 +78,5 @@ export type EnterpriseTeamsOperations = {
     enterprise: string;
     /** The slug of the team name. */
     team_slug: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 };

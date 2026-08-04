@@ -62,7 +62,7 @@ github.reactions.deleteForCommitComment(input: {
   comment_id: number;
   /** The unique identifier of the reaction. */
   reaction_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/comments/{comment_id}/reactions/{reaction_id}` · `reactions/delete-for-commit-comment`</sub>
@@ -123,7 +123,7 @@ github.reactions.deleteForIssue(input: {
   issue_number: number;
   /** The unique identifier of the reaction. */
   reaction_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/issues/{issue_number}/reactions/{reaction_id}` · `reactions/delete-for-issue`</sub>
@@ -184,7 +184,7 @@ github.reactions.deleteForIssueComment(input: {
   comment_id: number;
   /** The unique identifier of the reaction. */
   reaction_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}/reactions/{reaction_id}` · `reactions/delete-for-issue-comment`</sub>
@@ -245,7 +245,7 @@ github.reactions.deleteForPullRequestComment(input: {
   comment_id: number;
   /** The unique identifier of the reaction. */
   reaction_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/pulls/comments/{comment_id}/reactions/{reaction_id}` · `reactions/delete-for-pull-request-comment`</sub>
@@ -306,7 +306,7 @@ github.reactions.deleteForRelease(input: {
   release_id: number;
   /** The unique identifier of the reaction. */
   reaction_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/releases/{release_id}/reactions/{reaction_id}` · `reactions/delete-for-release`</sub>

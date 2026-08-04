@@ -1,9 +1,9 @@
 # Channels
 
-1 operation · `utdk/google/drive`
+1 operation · `@utdk/clients/google/drive`
 
 ```ts
-import drive from "utdk/google/drive";
+import drive from "@utdk/clients/google/drive";
 ```
 
 ## `drive.driveChannelsStop`
@@ -46,7 +46,7 @@ drive.driveChannelsStop(input: {
   quotaUser?: string;
   /** Deprecated. Please use quotaUser instead. */
   userIp?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /channels/stop` · `drive.channels.stop`</sub>

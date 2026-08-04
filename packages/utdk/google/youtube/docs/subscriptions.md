@@ -1,9 +1,9 @@
 # Subscriptions
 
-3 operations · `utdk/google/youtube`
+3 operations · `@utdk/clients/google/youtube`
 
 ```ts
-import youtube from "utdk/google/youtube";
+import youtube from "@utdk/clients/google/youtube";
 ```
 
 ## `youtube.youtubeSubscriptionsDelete`
@@ -35,7 +35,7 @@ youtube.youtubeSubscriptionsDelete(input: {
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
   id: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /youtube/v3/subscriptions` · `youtube.subscriptions.delete`</sub>

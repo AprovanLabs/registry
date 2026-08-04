@@ -96,7 +96,7 @@ Mark a thread as done — [API reference](https://docs.github.com/rest/activity/
 github.activity.markThreadAsDone(input: {
   /** The unique identifier of the notification thread. This corresponds to the value returned in the `id` field when you retrieve notifications (for example with the [`GET /notifications` operation](https://docs.github.com/rest/activity/notifications#list-notifications-for-the-authenticated-user)). */
   thread_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /notifications/threads/{thread_id}` · `activity/mark-thread-as-done`</sub>
@@ -122,7 +122,7 @@ Mark a thread as read — [API reference](https://docs.github.com/rest/activity/
 github.activity.markThreadAsRead(input: {
   /** The unique identifier of the notification thread. This corresponds to the value returned in the `id` field when you retrieve notifications (for example with the [`GET /notifications` operation](https://docs.github.com/rest/activity/notifications#list-notifications-for-the-authenticated-user)). */
   thread_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PATCH /notifications/threads/{thread_id}` · `activity/mark-thread-as-read`</sub>
@@ -135,7 +135,7 @@ Delete a thread subscription — [API reference](https://docs.github.com/rest/ac
 github.activity.deleteThreadSubscription(input: {
   /** The unique identifier of the notification thread. This corresponds to the value returned in the `id` field when you retrieve notifications (for example with the [`GET /notifications` operation](https://docs.github.com/rest/activity/notifications#list-notifications-for-the-authenticated-user)). */
   thread_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /notifications/threads/{thread_id}/subscription` · `activity/delete-thread-subscription`</sub>
@@ -296,7 +296,7 @@ github.activity.deleteRepoSubscription(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/subscription` · `activity/delete-repo-subscription`</sub>
@@ -364,7 +364,7 @@ github.activity.unstarRepoForAuthenticatedUser(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/starred/{owner}/{repo}` · `activity/unstar-repo-for-authenticated-user`</sub>
@@ -379,7 +379,7 @@ github.activity.checkRepoIsStarredByAuthenticatedUser(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`GET /user/starred/{owner}/{repo}` · `activity/check-repo-is-starred-by-authenticated-user`</sub>
@@ -394,7 +394,7 @@ github.activity.starRepoForAuthenticatedUser(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /user/starred/{owner}/{repo}` · `activity/star-repo-for-authenticated-user`</sub>

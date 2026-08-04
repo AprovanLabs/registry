@@ -79,7 +79,7 @@ Unblock a user — [API reference](https://docs.github.com/rest/users/blocking#u
 github.users.unblock(input: {
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/blocks/{username}` · `users/unblock`</sub>
@@ -92,7 +92,7 @@ Check if a user is blocked by the authenticated user — [API reference](https:/
 github.users.checkBlocked(input: {
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`GET /user/blocks/{username}` · `users/check-blocked`</sub>
@@ -105,7 +105,7 @@ Block a user — [API reference](https://docs.github.com/rest/users/blocking#blo
 github.users.block(input: {
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /user/blocks/{username}` · `users/block`</sub>
@@ -130,7 +130,7 @@ Delete an email address for the authenticated user — [API reference](https://d
 ```ts
 github.users.deleteEmailForAuthenticatedUser(input: {
   body?: { emails: (string)[] } | (string)[] | string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/emails` · `users/delete-email-for-authenticated-user`</sub>
@@ -200,7 +200,7 @@ Unfollow a user — [API reference](https://docs.github.com/rest/users/followers
 github.users.unfollow(input: {
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/following/{username}` · `users/unfollow`</sub>
@@ -213,7 +213,7 @@ Check if a person is followed by the authenticated user — [API reference](http
 github.users.checkPersonIsFollowedByAuthenticated(input: {
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`GET /user/following/{username}` · `users/check-person-is-followed-by-authenticated`</sub>
@@ -226,7 +226,7 @@ Follow a user — [API reference](https://docs.github.com/rest/users/followers#f
 github.users.follow(input: {
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /user/following/{username}` · `users/follow`</sub>
@@ -269,7 +269,7 @@ Delete a GPG key for the authenticated user — [API reference](https://docs.git
 github.users.deleteGpgKeyForAuthenticatedUser(input: {
   /** The unique identifier of the GPG key. */
   gpg_key_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/gpg_keys/{gpg_key_id}` · `users/delete-gpg-key-for-authenticated-user`</sub>
@@ -325,7 +325,7 @@ Delete a public SSH key for the authenticated user — [API reference](https://d
 github.users.deletePublicSshKeyForAuthenticatedUser(input: {
   /** The unique identifier of the key. */
   key_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/keys/{key_id}` · `users/delete-public-ssh-key-for-authenticated-user`</sub>
@@ -366,7 +366,7 @@ Delete social accounts for the authenticated user — [API reference](https://do
 github.users.deleteSocialAccountForAuthenticatedUser(input: {
   /** Full URLs for the social media profiles to delete. */
   account_urls: (string)[];
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/social_accounts` · `users/delete-social-account-for-authenticated-user`</sub>
@@ -437,7 +437,7 @@ Delete an SSH signing key for the authenticated user — [API reference](https:/
 github.users.deleteSshSigningKeyForAuthenticatedUser(input: {
   /** The unique identifier of the SSH signing key. */
   ssh_signing_key_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /user/ssh_signing_keys/{ssh_signing_key_id}` · `users/delete-ssh-signing-key-for-authenticated-user`</sub>
@@ -493,7 +493,7 @@ github.users.deleteAttestationsById(input: {
   username: string;
   /** Attestation ID */
   attestation_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /users/{username}/attestations/{attestation_id}` · `users/delete-attestations-by-id`</sub>
@@ -554,7 +554,7 @@ github.users.deleteAttestationsBulk(input: {
   body: { subject_digests: (string)[] } | { attestation_ids: (number)[] };
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /users/{username}/attestations/delete-request` · `users/delete-attestations-bulk`</sub>
@@ -569,7 +569,7 @@ github.users.deleteAttestationsBySubjectDigest(input: {
   username: string;
   /** Subject Digest */
   subject_digest: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /users/{username}/attestations/digest/{subject_digest}` · `users/delete-attestations-by-subject-digest`</sub>
@@ -617,7 +617,7 @@ github.users.checkFollowingForUser(input: {
   /** The handle for the GitHub user account. */
   username: string;
   target_user: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`GET /users/{username}/following/{target_user}` · `users/check-following-for-user`</sub>

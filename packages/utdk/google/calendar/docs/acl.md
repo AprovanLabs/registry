@@ -1,9 +1,9 @@
 # Acl
 
-7 operations · `utdk/google/calendar`
+7 operations · `@utdk/clients/google/calendar`
 
 ```ts
-import calendar from "utdk/google/calendar";
+import calendar from "@utdk/clients/google/calendar";
 ```
 
 ## `calendar.calendarAclList`
@@ -104,7 +104,7 @@ calendar.calendarAclDelete(input: {
   quotaUser?: string;
   /** Deprecated. Please use quotaUser instead. */
   userIp?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /calendars/{calendarId}/acl/{ruleId}` · `calendar.acl.delete`</sub>

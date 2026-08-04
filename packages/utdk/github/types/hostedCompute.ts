@@ -74,7 +74,7 @@ export type HostedComputeOperations = {
     org: string;
     /** Unique identifier of the hosted compute network configuration. */
     network_configuration_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get a hosted compute network settings resource for an organization

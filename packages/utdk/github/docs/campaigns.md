@@ -52,7 +52,7 @@ github.campaigns.deleteCampaign(input: {
   org: string;
   /** The campaign number. */
   campaign_number: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/campaigns/{campaign_number}` · `campaigns/delete-campaign`</sub>

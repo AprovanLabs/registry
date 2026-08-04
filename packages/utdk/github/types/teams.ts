@@ -1,4 +1,4 @@
-import type { BasicError, MinimalRepository, OrganizationInvitation, Team, TeamFull, TeamMember, TeamMembership, TeamRepository } from "./schemas.js";
+import type { MinimalRepository, OrganizationInvitation, Team, TeamFull, TeamMember, TeamMembership, TeamRepository } from "./schemas.js";
 
 export type TeamsOperations = {
   /**
@@ -84,7 +84,7 @@ export type TeamsOperations = {
     org: string;
     /** The slug of the team name. */
     team_slug: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List pending team invitations
@@ -157,7 +157,7 @@ export type TeamsOperations = {
     team_slug: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List team repositories
@@ -204,7 +204,7 @@ export type TeamsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove a repository from a team
@@ -219,7 +219,7 @@ export type TeamsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List child teams
@@ -273,7 +273,7 @@ export type TeamsOperations = {
   deleteLegacy: (input: {
     /** The unique identifier of the team. */
     team_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List pending team invitations (Legacy)
@@ -312,7 +312,7 @@ export type TeamsOperations = {
     team_id: number;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add team member (Legacy)
@@ -323,7 +323,7 @@ export type TeamsOperations = {
     team_id: number;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove team member (Legacy)
@@ -334,7 +334,7 @@ export type TeamsOperations = {
     team_id: number;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get team membership for a user (Legacy)
@@ -369,7 +369,7 @@ export type TeamsOperations = {
     team_id: number;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List team repositories (Legacy)
@@ -410,7 +410,7 @@ export type TeamsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove a repository from a team (Legacy)
@@ -423,7 +423,7 @@ export type TeamsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List child teams (Legacy)

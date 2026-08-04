@@ -1,9 +1,9 @@
 # Users
 
-79 operations · `utdk/google/gmail`
+79 operations · `@utdk/clients/google/gmail`
 
 ```ts
-import gmail from "utdk/google/gmail";
+import gmail from "@utdk/clients/google/gmail";
 ```
 
 ## `gmail.gmailUsersDraftsList`
@@ -120,7 +120,7 @@ gmail.gmailUsersDraftsDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gmail/v1/users/{userId}/drafts/{id}` · `gmail.users.drafts.delete`</sub>
@@ -409,7 +409,7 @@ gmail.gmailUsersLabelsDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gmail/v1/users/{userId}/labels/{id}` · `gmail.users.labels.delete`</sub>
@@ -695,7 +695,7 @@ gmail.gmailUsersMessagesDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gmail/v1/users/{userId}/messages/{id}` · `gmail.users.messages.delete`</sub>
@@ -927,7 +927,7 @@ gmail.gmailUsersMessagesBatchDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /gmail/v1/users/{userId}/messages/batchDelete` · `gmail.users.messages.batchDelete`</sub>
@@ -968,7 +968,7 @@ gmail.gmailUsersMessagesBatchModify(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /gmail/v1/users/{userId}/messages/batchModify` · `gmail.users.messages.batchModify`</sub>
@@ -1308,7 +1308,7 @@ gmail.gmailUsersSettingsCseIdentitiesDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gmail/v1/users/{userId}/settings/cse/identities/{cseEmailAddress}` · `gmail.users.settings.cse.identities.delete`</sub>
@@ -1623,7 +1623,7 @@ gmail.gmailUsersSettingsCseKeypairsObliterate(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /gmail/v1/users/{userId}/settings/cse/keypairs/{keyPairId}:obliterate` · `gmail.users.settings.cse.keypairs.obliterate`</sub>
@@ -1734,7 +1734,7 @@ gmail.gmailUsersSettingsDelegatesDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gmail/v1/users/{userId}/settings/delegates/{delegateEmail}` · `gmail.users.settings.delegates.delete`</sub>
@@ -1884,7 +1884,7 @@ gmail.gmailUsersSettingsFiltersDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gmail/v1/users/{userId}/settings/filters/{id}` · `gmail.users.settings.filters.delete`</sub>
@@ -2032,7 +2032,7 @@ gmail.gmailUsersSettingsForwardingAddressesDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gmail/v1/users/{userId}/settings/forwardingAddresses/{forwardingEmail}` · `gmail.users.settings.forwardingAddresses.delete`</sub>
@@ -2418,7 +2418,7 @@ gmail.gmailUsersSettingsSendAsDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gmail/v1/users/{userId}/settings/sendAs/{sendAsEmail}` · `gmail.users.settings.sendAs.delete`</sub>
@@ -2688,7 +2688,7 @@ gmail.gmailUsersSettingsSendAsSmimeInfoDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gmail/v1/users/{userId}/settings/sendAs/{sendAsEmail}/smimeInfo/{id}` · `gmail.users.settings.sendAs.smimeInfo.delete`</sub>
@@ -2766,7 +2766,7 @@ gmail.gmailUsersSettingsSendAsSmimeInfoSetDefault(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /gmail/v1/users/{userId}/settings/sendAs/{sendAsEmail}/smimeInfo/{id}/setDefault` · `gmail.users.settings.sendAs.smimeInfo.setDefault`</sub>
@@ -2803,7 +2803,7 @@ gmail.gmailUsersSettingsSendAsVerify(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /gmail/v1/users/{userId}/settings/sendAs/{sendAsEmail}/verify` · `gmail.users.settings.sendAs.verify`</sub>
@@ -2924,7 +2924,7 @@ gmail.gmailUsersStop(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /gmail/v1/users/{userId}/stop` · `gmail.users.stop`</sub>
@@ -3006,7 +3006,7 @@ gmail.gmailUsersThreadsDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gmail/v1/users/{userId}/threads/{id}` · `gmail.users.threads.delete`</sub>

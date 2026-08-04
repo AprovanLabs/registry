@@ -1,9 +1,9 @@
 # Files
 
-12 operations · `utdk/google/drive`
+12 operations · `@utdk/clients/google/drive`
 
 ```ts
-import drive from "utdk/google/drive";
+import drive from "@utdk/clients/google/drive";
 ```
 
 ## `drive.driveFilesList`
@@ -256,7 +256,7 @@ drive.driveFilesDelete(input: {
   supportsAllDrives?: boolean;
   /** Deprecated use supportsAllDrives instead. */
   supportsTeamDrives?: boolean;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /files/{fileId}` · `drive.files.delete`</sub>
@@ -660,7 +660,7 @@ drive.driveFilesExport(input: {
   userIp?: string;
   /** The MIME type of the format requested for this export. */
   mimeType: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`GET /files/{fileId}/export` · `drive.files.export`</sub>
@@ -839,7 +839,7 @@ drive.driveFilesEmptyTrash(input: {
   driveId?: string;
   /** Deprecated. If an item is not in a shared drive and its last parent is deleted but the item itself is not, the item will be placed under its owner's root. */
   enforceSingleParent?: boolean;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /files/trash` · `drive.files.emptyTrash`</sub>
