@@ -21,6 +21,8 @@ export type SdkSymbol = {
   paramsPreview: string;
   fields: TryItField[];
   snippet: string;
+  outputs: RegistryOperation["outputs"];
+  responseUnknown: boolean;
 };
 
 type SchemaLike = {
@@ -126,6 +128,8 @@ export function buildSdkSymbols(entry: RegistryEntry): SdkSymbol[] {
       paramsPreview: buildParamsPreview(fields),
       fields,
       snippet,
+      outputs: operation.outputs,
+      responseUnknown: operation.responseUnknown,
     };
   });
 }

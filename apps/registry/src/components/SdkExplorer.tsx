@@ -23,6 +23,97 @@ import { Input } from "@/components/ui/input";
 import type { SdkSymbol } from "@/lib/sdk";
 import { cn } from "@/lib/utils";
 
+function schemaTypeLabel(schema: unknown): string {
+  if (!schema || typeof schema !== "object") {
+    return "no body";
+  }
+  const record = schema as Record<string, unknown>;
+  if (typeof record.$ref === "string") {
+    return record.$ref.replace(/^#\/components\/schemas\//, "");
+  }
+  const type = typeof record.type === "string" ? record.type : null;
+  const format = typeof record.format === "string" ? record.format : null;
+  if (type) {
+    return format ? `${type} (${format})` : type;
+  }
+  if (record.properties) {
+    return "object";
+  }
+  if (record.items) {
+    return "array";
+  }
+  return "unknown";
+}
+
+function sortStatusCodes(statuses: string[]): string[] {
+  return [...statuses].sort((left, right) => {
+    const leftNum = Number.parseInt(left, 10);
+    const rightNum = Number.parseInt(right, 10);
+    const leftIsNum = !Number.isNaN(leftNum);
+    const rightIsNum = !Number.isNaN(rightNum);
+    if (leftIsNum && rightIsNum) return leftNum - rightNum;
+    if (leftIsNum) return -1;
+    if (rightIsNum) return 1;
+    return left.localeCompare(right);
+  });
+}
+
+function SymbolReturnsSection({ symbol }: { symbol: SdkSymbol }) {
+  const statuses = sortStatusCodes(Object.keys(symbol.outputs));
+
+  return (
+    <div className="flex flex-col gap-3 rounded-xl border bg-muted/30 p-4">
+      <div>
+        <p className="text-sm font-medium">Returns</p>
+        <p className="text-xs text-muted-foreground">
+          Per-status response shapes from the upstream OpenAPI specification.
+        </p>
+      </div>
+      {symbol.responseUnknown ? (
+        <p className="text-sm text-muted-foreground">
+          Upstream spec declares no <code className="font-mono text-xs">responses</code>{" "}
+          object — return type coverage is unknown for this operation.
+        </p>
+      ) : statuses.length === 0 ? (
+        <p className="text-sm text-muted-foreground">No response entries declared.</p>
+      ) : (
+        statuses.map((status) => {
+          const output = symbol.outputs[status]!;
+          const schemaJson =
+            output.schema && typeof output.schema === "object"
+              ? JSON.stringify(output.schema, null, 2)
+              : null;
+          const truncated =
+            schemaJson && schemaJson.length > 1200
+              ? `${schemaJson.slice(0, 1200)}\n…`
+              : schemaJson;
+
+          return (
+            <div key={status} className="rounded-lg border bg-background p-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded border px-1.5 py-0.5 font-mono text-[0.65rem]">
+                  {status}
+                </span>
+                <span className="font-mono text-xs text-syntax-type">
+                  {schemaTypeLabel(output.schema)}
+                </span>
+              </div>
+              {output.description ? (
+                <p className="mt-2 text-xs text-muted-foreground">{output.description}</p>
+              ) : null}
+              {truncated ? (
+                <pre className="mt-2 max-h-48 overflow-auto rounded-md bg-muted/50 p-2 text-[0.65rem] leading-5">
+                  <code>{truncated}</code>
+                </pre>
+              ) : null}
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+}
+
 export interface SdkExplorerProps {
   /** Provider path used by the gateway (e.g. "github"). */
   provider: string;
@@ -175,6 +266,7 @@ export function SdkExplorer({ provider, packageName, symbols }: SdkExplorerProps
                 operation={active.sdkPath}
                 provider={provider}
               />
+              <SymbolReturnsSection symbol={active} />
             </CardContent>
           ) : null}
         </Card>

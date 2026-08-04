@@ -47,6 +47,11 @@ export type RequestBodyField = {
   schema: OpenApiSchemaType;
 };
 
+export type OperationResponse = {
+  description: string | null;
+  schema: OpenApiSchemaType | null;
+};
+
 export type OperationInfo = {
   /** Canonical UTDK method path (e.g. "orgs.listForUser") — use this for gateway calls and SDK references */
   sdkPath: string;
@@ -58,6 +63,9 @@ export type OperationInfo = {
   httpPath: string;
   parameters: OperationParameter[];
   requestBodyFields: RequestBodyField[];
+  outputs: Record<string, OperationResponse>;
+  /** True when the upstream OpenAPI operation omits a `responses` object. */
+  responseUnknown: boolean;
   tags: string[];
 };
 
@@ -205,6 +213,37 @@ export async function loadProviderOperations(providerPath: string): Promise<Oper
         }
       }
 
+      const responseUnknown =
+        !op.responses ||
+        typeof op.responses !== "object" ||
+        Object.keys(op.responses).length === 0;
+      const outputs: Record<string, OperationResponse> = {};
+
+      if (!responseUnknown) {
+        for (const [statusCode, responseObj] of Object.entries(
+          op.responses as Record<string, unknown>,
+        )) {
+          if (!responseObj || typeof responseObj !== "object") continue;
+
+          const response = resolveRef(responseObj, doc) as Record<string, unknown>;
+          const content = response.content as Record<string, unknown> | undefined;
+          const jsonContent =
+            (content?.["application/json"] as Record<string, unknown> | undefined) ??
+            (content?.["application/x-www-form-urlencoded"] as
+              | Record<string, unknown>
+              | undefined);
+          const schema = jsonContent?.schema
+            ? resolveSchemaDeep(jsonContent.schema, doc)
+            : null;
+
+          outputs[statusCode] = {
+            description:
+              typeof response.description === "string" ? response.description : null,
+            schema,
+          };
+        }
+      }
+
       operations.push({
         sdkPath: operationIdToSdkPath(operationId),
         operationId,
@@ -214,6 +253,8 @@ export async function loadProviderOperations(providerPath: string): Promise<Oper
         httpPath,
         parameters,
         requestBodyFields,
+        outputs,
+        responseUnknown,
         tags: Array.isArray(op.tags)
           ? op.tags.filter((t): t is string => typeof t === "string")
           : [],

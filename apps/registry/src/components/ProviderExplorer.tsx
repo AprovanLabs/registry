@@ -56,6 +56,110 @@ function MethodBadge({ method }: { method: string }) {
   );
 }
 
+function schemaTypeLabel(schema: unknown): string {
+  if (!schema || typeof schema !== "object") {
+    return "no body";
+  }
+  const record = schema as Record<string, unknown>;
+  if (typeof record.$ref === "string") {
+    return record.$ref.replace(/^#\/components\/schemas\//, "");
+  }
+  const type = typeof record.type === "string" ? record.type : null;
+  const format = typeof record.format === "string" ? record.format : null;
+  if (type) {
+    return format ? `${type} (${format})` : type;
+  }
+  if (record.properties) {
+    return "object";
+  }
+  if (record.items) {
+    return "array";
+  }
+  return "unknown";
+}
+
+function sortStatusCodes(statuses: string[]): string[] {
+  return [...statuses].sort((left, right) => {
+    const leftNum = Number.parseInt(left, 10);
+    const rightNum = Number.parseInt(right, 10);
+    const leftIsNum = !Number.isNaN(leftNum);
+    const rightIsNum = !Number.isNaN(rightNum);
+    if (leftIsNum && rightIsNum) return leftNum - rightNum;
+    if (leftIsNum) return -1;
+    if (rightIsNum) return 1;
+    return left.localeCompare(right);
+  });
+}
+
+function ReturnsSection({
+  outputs,
+  responseUnknown,
+}: {
+  outputs: CatalogOperation["outputs"];
+  responseUnknown: boolean;
+}) {
+  const statuses = sortStatusCodes(Object.keys(outputs));
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Returns</CardTitle>
+        <CardDescription>
+          Per-status response shapes from the upstream OpenAPI specification.
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="flex flex-col gap-3">
+        {responseUnknown ? (
+          <p className="text-sm text-muted-foreground">
+            Upstream spec declares no <code className="font-mono text-xs">responses</code>{" "}
+            object — return type coverage is unknown for this operation.
+          </p>
+        ) : statuses.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No response entries declared.</p>
+        ) : (
+          statuses.map((status) => {
+            const output = outputs[status]!;
+            const schemaJson =
+              output.schema && typeof output.schema === "object"
+                ? JSON.stringify(output.schema, null, 2)
+                : null;
+            const truncated =
+              schemaJson && schemaJson.length > 1200
+                ? `${schemaJson.slice(0, 1200)}\n…`
+                : schemaJson;
+
+            return (
+              <div
+                key={status}
+                className="rounded-lg border bg-muted/30 p-3"
+              >
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge className="font-mono text-[0.65rem]" variant="outline">
+                    {status}
+                  </Badge>
+                  <span className="font-mono text-xs text-syntax-type">
+                    {schemaTypeLabel(output.schema)}
+                  </span>
+                </div>
+                {output.description ? (
+                  <p className="mt-2 text-xs text-muted-foreground">
+                    {output.description}
+                  </p>
+                ) : null}
+                {truncated ? (
+                  <pre className="mt-2 max-h-48 overflow-auto rounded-md bg-background p-2 text-[0.65rem] leading-5">
+                    <code>{truncated}</code>
+                  </pre>
+                ) : null}
+              </div>
+            );
+          })
+        )}
+      </CardContent>
+    </Card>
+  );
+}
+
 function readRoute(): { providerPath: string | null; operationId: string | null } {
   if (typeof window === "undefined") {
     return { providerPath: null, operationId: null };
@@ -766,6 +870,11 @@ function OperationView({
           </Card>
 
           <SnippetBlock label="TypeScript snippet" text={snippet} />
+
+          <ReturnsSection
+            outputs={operation.outputs}
+            responseUnknown={operation.responseUnknown}
+          />
 
           <div>
             <h2 className="mb-4 text-xl font-semibold tracking-tight">Try it</h2>
