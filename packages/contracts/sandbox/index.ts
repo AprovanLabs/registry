@@ -460,9 +460,9 @@ const ID = { type: "string", description: "Sandbox id returned by create" } as c
 export function sandboxToolEntries(
   provider: string,
   details: { label?: string; capabilities: SandboxCapabilities; defaultImage?: string },
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> {
+): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
   const label = details.label ?? provider;
-  const entries: Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> = [
+  const entries: Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> = [
     {
       name: `${provider}.create`,
       description:

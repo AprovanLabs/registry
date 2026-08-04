@@ -262,7 +262,7 @@ const PR_NUMBER = { type: "number", description: "Pull request number" } as cons
  */
 export function vcsToolEntries(
   provider: string,
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> {
+): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
   const repoArgs = (extra: Record<string, unknown> = {}, required: string[] = []) => ({
     type: "object",
     properties: { ...REPO_REF_PROPERTIES, ...extra },

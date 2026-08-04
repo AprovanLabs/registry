@@ -669,7 +669,7 @@ export function agentToolEntries(
      */
     interfaceNamespace?: boolean;
   } = {},
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> {
+): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
   const interfaceNs =
     details.interfaceNamespace === true || provider === "agent" || provider.startsWith("agent:");
   // "on the workspace's bound runtime" reads correctly wherever the binding
@@ -678,7 +678,7 @@ export function agentToolEntries(
   const capabilities = details.capabilities;
   const efforts = capabilities?.effortLevels ?? AGENT_EFFORTS;
 
-  const entries: Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> = [
+  const entries: Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> = [
     {
       name: `${provider}.run`,
       description:

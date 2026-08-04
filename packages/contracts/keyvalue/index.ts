@@ -196,7 +196,7 @@ export function ttlUnsupported(provider: string): KeyValueError {
  */
 export function keyvalueToolEntries(
   provider: string,
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> {
+): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
   const key = { type: "string", description: "Key to address (flat string; host scopes tenancy)" };
   return [
     {

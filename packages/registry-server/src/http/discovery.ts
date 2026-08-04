@@ -49,7 +49,12 @@ function deriveToolEntries(provider: string, mod: ProviderModule): ToolEntry[] {
           ? { description: entry["description"] as string }
           : {}),
         inputSchema: entry["inputSchema"],
-        outputSchema: entry["outputSchema"],
+        ...(entry["outputSchema"] !== undefined
+          ? { outputSchema: entry["outputSchema"] }
+          : {}),
+        ...(typeof entry["streaming"] === "boolean"
+          ? { streaming: entry["streaming"] as boolean }
+          : {}),
       });
     }
   }
@@ -57,9 +62,15 @@ function deriveToolEntries(provider: string, mod: ProviderModule): ToolEntry[] {
 }
 
 /** Re-label a contract package's entries onto a namespace, length-safe. */
-function relabelEntries(
+export function relabelEntries(
   namespace: string,
-  entries: Array<{ name: string; description: string; inputSchema: Record<string, unknown> }>,
+  entries: Array<{
+    name: string;
+    description: string;
+    inputSchema: Record<string, unknown>;
+    outputSchema?: unknown;
+    streaming?: boolean;
+  }>,
 ): ToolEntry[] {
   return entries.map((entry) => ({
     provider: namespace,
@@ -71,6 +82,8 @@ function relabelEntries(
       : entry.name.slice(entry.name.indexOf(".") + 1),
     description: entry.description,
     inputSchema: entry.inputSchema,
+    ...(entry.outputSchema !== undefined ? { outputSchema: entry.outputSchema } : {}),
+    ...(entry.streaming !== undefined ? { streaming: entry.streaming } : {}),
   }));
 }
 
