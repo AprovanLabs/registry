@@ -132,9 +132,9 @@ export class ProfileService {
     const existing = await this.store.getById(ctx.tenantId, id);
     if (!existing) throw new ServiceError(`No profile with id ${id}`, 404);
 
-    if (patch.name !== undefined && !NAME_RE.test(patch.name)) {
+    if (patch.name !== undefined && !isValidProfileName(patch.name)) {
       throw new ServiceError(
-        `Invalid profile name "${patch.name}" — lowercase letters, digits, and hyphens (max 64).`,
+        `Invalid profile name "${patch.name}" — must be a non-empty string.`,
         400,
       );
     }
