@@ -1,6 +1,6 @@
 {
   "name": "@utdk/remote",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "Vendor-neutral UTDK remote client: namespace proxies, gateway transport, execution policy, pagination, and specifier parsing",
   "keywords": [

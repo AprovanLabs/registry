@@ -40,7 +40,7 @@ export interface CredentialRowWithPayload extends CredentialRow {
   payload: string;
 }
 
-export type ProfileTargetKind = "interface" | "provider";
+export type ProfileTargetKind = "interface" | "provider" | "path";
 
 export interface ProfileRow {
   id: string;

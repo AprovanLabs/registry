@@ -64,7 +64,7 @@ Installed as guest source before user code:
 - **Namespace proxies** for every granted namespace, with punctuation-safe
   aliases (`synthetic.new` → `synthetic_new`).
 - **`ns.client(name)`** — the Profile factory on namespace roots (replaces
-  `getClient({profile})`; `client` is a RESERVED root-level name). Every call
+  `client(name)`; `client` is a RESERVED root-level name). Every call
   through the returned proxy carries `name` as the 4th `__dispatch` argument.
   `client()` with no argument is legal and equivalent to the bare namespace.
 - **`console`**, **`input`**, **`agent`**.

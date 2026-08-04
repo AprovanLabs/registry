@@ -56,7 +56,15 @@ export function createGatewayTransport(options: GatewayTransportOptions): Transp
           {
             method: "POST",
             headers,
-            body: JSON.stringify({ args }),
+            body: JSON.stringify({
+              args,
+              ...(callOptions?.profile !== undefined
+                ? { profile: callOptions.profile }
+                : {}),
+              ...(callOptions?.callSiteOptions !== undefined
+                ? { options: callOptions.callSiteOptions }
+                : {}),
+            }),
             signal: callOptions?.signal ?? null,
           },
         );
