@@ -7,8 +7,8 @@ settings:
 overrides:
   react: 19.2.7
   react-dom: 19.2.7
-  '@aprovan/patchwork': file:../aprovan-editor-consolidation/packages/compiler
-  '@aprovan/editor': file:../aprovan-editor-consolidation/packages/editor
+  '@aprovan/editor': ^0.2.0
+  '@aprovan/patchwork': ^0.2.0
 
 importers:
 
@@ -60,8 +60,8 @@ importers:
   apps/registry:
     dependencies:
       '@aprovan/editor':
-        specifier: file:../../../aprovan-editor-consolidation/packages/editor
-        version: file:../aprovan-editor-consolidation/packages/editor(@codemirror/lint@6.9.7)(@floating-ui/dom@1.7.6)(@shikijs/themes@4.0.2)(@tiptap/extensions@3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+        specifier: ^0.2.0
+        version: 0.2.0(@codemirror/lint@6.9.7)(@floating-ui/dom@1.7.6)(@shikijs/themes@4.0.2)(@tiptap/extensions@3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
       '@aprovan/registry-main':
         specifier: 0.2.0
         version: 0.2.0
@@ -688,8 +688,8 @@ packages:
     peerDependencies:
       ajv: '>=8'
 
-  '@aprovan/editor@file:../aprovan-editor-consolidation/packages/editor':
-    resolution: {directory: ../aprovan-editor-consolidation/packages/editor, type: directory}
+  '@aprovan/editor@0.2.0':
+    resolution: {integrity: sha512-TWPu0s1DXze9BW1bPPEkWBA3jRKnjiHM1xWce5VO8WMsuN2WEhVkbix2B1KMAcmIHa9mIQt6AwvrHBMEvweXtA==}
     peerDependencies:
       react: 19.2.7
       react-dom: 19.2.7
@@ -707,8 +707,8 @@ packages:
       next:
         optional: true
 
-  '@aprovan/patchwork@file:../aprovan-editor-consolidation/packages/compiler':
-    resolution: {directory: ../aprovan-editor-consolidation/packages/compiler, type: directory}
+  '@aprovan/patchwork@0.2.0':
+    resolution: {integrity: sha512-BPIyVg/wplJ0iNqqZov2svk6cISP70R7zo02Ekz+xhULFQP0nbM3vI+k/TzJSsDHmOJxoOcnfywTSiX2N+BgIA==}
     engines: {node: '>=20.0.0'}
 
   '@aprovan/prettier-config@1.0.0':
@@ -8594,9 +8594,9 @@ snapshots:
       jsonpointer: 5.0.1
       leven: 3.1.0
 
-  '@aprovan/editor@file:../aprovan-editor-consolidation/packages/editor(@codemirror/lint@6.9.7)(@floating-ui/dom@1.7.6)(@shikijs/themes@4.0.2)(@tiptap/extensions@3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
+  '@aprovan/editor@0.2.0(@codemirror/lint@6.9.7)(@floating-ui/dom@1.7.6)(@shikijs/themes@4.0.2)(@tiptap/extensions@3.29.2(@tiptap/core@3.29.2(@tiptap/pm@3.29.2))(@tiptap/pm@3.29.2))(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)':
     dependencies:
-      '@aprovan/patchwork': file:../aprovan-editor-consolidation/packages/compiler
+      '@aprovan/patchwork': 0.2.0
       '@codemirror/autocomplete': 6.20.3
       '@codemirror/lang-javascript': 6.2.5
       '@codemirror/state': 6.7.1
@@ -8651,9 +8651,8 @@ snapshots:
       - eslint-plugin-import
       - supports-color
 
-  '@aprovan/patchwork@file:../aprovan-editor-consolidation/packages/compiler':
+  '@aprovan/patchwork@0.2.0':
     dependencies:
-      '@utdk/remote': 0.1.1
       esbuild-wasm: 0.27.7
       zod: 3.25.76
 
