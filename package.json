@@ -44,7 +44,9 @@
   "pnpm": {
     "overrides": {
       "react": "19.2.7",
-      "react-dom": "19.2.7"
+      "react-dom": "19.2.7",
+      "@aprovan/editor": "file:../aprovan-editor-consolidation/packages/editor",
+      "@aprovan/patchwork": "file:../aprovan-editor-consolidation/packages/compiler"
     }
   }
 }

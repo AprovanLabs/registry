@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { HighlightedCode } from "@/lib/highlight";
+import { HighlightedCode } from "@aprovan/editor";
 import { withBasePath } from "@/lib/site";
 import { cn } from "@/lib/utils";
 
@@ -57,11 +57,9 @@ export function SnippetCarousel({ items }: SnippetCarouselProps) {
           View provider
         </a>
       </div>
-      <pre className="overflow-x-auto rounded-lg border bg-muted/60 p-3 text-xs leading-5 sm:text-sm">
-        <code>
-          <HighlightedCode code={activeItem.code} />
-        </code>
-      </pre>
+      <div className="overflow-x-auto rounded-lg border bg-muted/60 p-3 text-xs leading-5 sm:text-sm">
+        <HighlightedCode code={activeItem.code} />
+      </div>
       {safeItems.length > 1 ? (
         <div className="mt-3 flex flex-wrap gap-1.5">
           {safeItems.map((item, itemIndex) => (
