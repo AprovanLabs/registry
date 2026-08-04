@@ -127,6 +127,36 @@ describe("handleToolInfo", () => {
     expect(result.isError).toBeFalsy();
   });
 
+  it("includes outputSchema when the tool has a known response schema", () => {
+    const toolWithOutput = makeTool({
+      mcpName: "stripe__charges_list",
+      providerName: "stripe",
+      description: "List charges",
+      outputSchema: {
+        type: "object",
+        properties: { id: { type: "string" } },
+      },
+    });
+    const toolMap = new Map([[toolWithOutput.mcpName, toolWithOutput]]);
+    const result: CallToolResult = handleToolInfo(toolMap, {
+      tool_name: "stripe__charges_list",
+    });
+    const info = parseText(result) as {
+      outputSchema: { type: string; properties: Record<string, unknown> };
+    };
+    expect(info.outputSchema).toEqual({
+      type: "object",
+      properties: { id: { type: "string" } },
+    });
+  });
+
+  it("omits outputSchema when the tool has no known response schema", () => {
+    const toolMap = new Map(ALL_TOOLS.map((t) => [t.mcpName, t]));
+    const result: CallToolResult = handleToolInfo(toolMap, { tool_name: "github__repos_list" });
+    const info = parseText(result) as Record<string, unknown>;
+    expect(Object.prototype.hasOwnProperty.call(info, "outputSchema")).toBe(false);
+  });
+
   it("returns an error result for an unknown tool", () => {
     const toolMap = new Map(ALL_TOOLS.map((t) => [t.mcpName, t]));
     const result: CallToolResult = handleToolInfo(toolMap, { tool_name: "nope__does_not_exist" });

@@ -51,6 +51,27 @@ export function normalizeInputSchema(schema: Record<string, unknown>): {
   };
 }
 
+/**
+ * Pass through the tool's output JSON Schema for MCP tool_info responses.
+ * Preserves the fields @utcp/http extracts from OpenAPI response schemas.
+ */
+export function normalizeOutputSchema(schema: Record<string, unknown>): Record<string, unknown> {
+  return {
+    ...(schema["type"] !== undefined ? { type: schema["type"] } : {}),
+    ...(schema["properties"]
+      ? { properties: schema["properties"] as Record<string, object> }
+      : {}),
+    ...(schema["required"] ? { required: schema["required"] as string[] } : {}),
+    ...(schema["items"] !== undefined ? { items: schema["items"] } : {}),
+    ...(schema["description"] !== undefined ? { description: schema["description"] } : {}),
+    ...(schema["title"] !== undefined ? { title: schema["title"] } : {}),
+    ...(schema["enum"] !== undefined ? { enum: schema["enum"] } : {}),
+    ...(schema["format"] !== undefined ? { format: schema["format"] } : {}),
+    ...(schema["minimum"] !== undefined ? { minimum: schema["minimum"] } : {}),
+    ...(schema["maximum"] !== undefined ? { maximum: schema["maximum"] } : {}),
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Meta-tool definitions (served by tools/list)
 // ---------------------------------------------------------------------------
@@ -199,6 +220,9 @@ export function handleToolInfo(
             description: tool.description,
             provider: tool.providerName,
             inputSchema: normalizeInputSchema(tool.inputSchema),
+            ...(tool.outputSchema !== undefined
+              ? { outputSchema: normalizeOutputSchema(tool.outputSchema) }
+              : {}),
           },
           null,
           2,

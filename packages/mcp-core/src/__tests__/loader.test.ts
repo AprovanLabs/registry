@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseProviderNames, loadProviders } from "../loader.js";
+import { parseProviderNames, loadProviders, outputSchemaFromOutputs } from "../loader.js";
 
 // ---------------------------------------------------------------------------
 // parseProviderNames
@@ -124,5 +124,48 @@ describe("loadProviders", () => {
         expect(typeof tag).toBe("string");
       }
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// outputSchemaFromOutputs
+// ---------------------------------------------------------------------------
+
+describe("outputSchemaFromOutputs", () => {
+  it("returns the schema when outputs are non-empty", () => {
+    const schema = { type: "object", properties: { id: { type: "string" } } };
+    expect(outputSchemaFromOutputs(schema)).toEqual(schema);
+  });
+
+  it("returns undefined for empty outputs (unknown schema)", () => {
+    expect(outputSchemaFromOutputs({})).toBeUndefined();
+    expect(outputSchemaFromOutputs(undefined)).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// loadProviders — outputSchema
+// ---------------------------------------------------------------------------
+
+describe("loadProviders outputSchema", () => {
+  it("includes outputSchema when the provider operation has a known response schema", async () => {
+    const tools = await loadProviders(["stripe"]);
+    expect(tools.length).toBeGreaterThan(0);
+
+    const withSchema = tools.filter((t) => t.outputSchema !== undefined);
+    expect(withSchema.length).toBeGreaterThan(0);
+    for (const tool of withSchema) {
+      expect(tool.outputSchema).toMatchObject({ type: expect.any(String) });
+    }
+  });
+
+  it("omits outputSchema when the provider operation has no known response schema", async () => {
+    const tools = await loadProviders(["github"]);
+    expect(tools.length).toBeGreaterThan(0);
+
+    const withoutSchema = tools.filter(
+      (t) => !Object.prototype.hasOwnProperty.call(t, "outputSchema"),
+    );
+    expect(withoutSchema.length).toBeGreaterThan(0);
   });
 });
