@@ -7,7 +7,7 @@
  * execution: spans, latency, logs, results.
  */
 
-import type { Transport } from "@aprovan/runtime";
+import type { Transport } from "@utdk/remote";
 
 export const DEMO_SCRIPT = `import geocoding from 'open-meteo/geocoding';
 import forecast from 'open-meteo/forecast';

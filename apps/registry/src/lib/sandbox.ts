@@ -1,26 +1,17 @@
 /**
- * Browser sandbox — run a script inside a sandboxed iframe where the only way
- * out is the service-call postMessage protocol.
+ * Thin local script sandbox host for the registry playground.
  *
- * This is the browser twin of the gateway's server-side isolate
- * (`apps/workspace/src/isolate.ts`): the script gets its declared namespace
- * proxies as globals and nothing else of the host page. Every proxied call
- * crosses the iframe boundary to the parent, which forwards it to a
- * {@link Transport} (normally the gateway, where credentials are resolved
- * server-side).
- *
- * The postMessage protocol is the same one patchwork's widget iframes speak
- * (`service-call` / `service-result`), so a patchwork host can proxy for a
- * registry script and vice versa.
+ * `@utdk/remote` owns transport/proxy/policy; the iframe host lives here until
+ * `@aprovan/patchwork`'s published `runScriptInSandbox` is available, then this
+ * module should re-export that entry point instead.
  */
 
 import type {
   RuntimeDependency,
   RuntimeEventListener,
   Transport,
-} from "./types.js";
+} from "@utdk/remote";
 
-// Message shapes shared with @aprovan/patchwork-compiler's iframe bridge.
 interface ServiceCallMessage {
   type: "service-call";
   id: string;
@@ -29,7 +20,10 @@ interface ServiceCallMessage {
 
 interface SandboxLogMessage {
   type: "sandbox-log";
-  payload: { level: "log" | "info" | "warn" | "error" | "debug"; message: string };
+  payload: {
+    level: "log" | "info" | "warn" | "error" | "debug";
+    message: string;
+  };
 }
 
 interface SandboxDoneMessage {
@@ -54,9 +48,8 @@ function inlineJson(value: unknown): string {
 }
 
 /**
- * The script that boots inside the iframe. Kept dependency-free and inlined
- * into srcdoc; the user code arrives as a JSON string and runs through an
- * AsyncFunction with the dependency proxies bound as parameters.
+ * Bootstrap document for a script sandbox. Depth-0 invocation configures;
+ * depth ≥ 1 dispatches through the service-call protocol.
  */
 function buildSandboxDocument(
   body: string,
@@ -94,26 +87,38 @@ function buildSandboxDocument(
     });
   }
 
-  function createNamespaceProxy(namespace, pathPrefix) {
-    function nested(path) {
+  function createNamespaceNode(namespace, pathPrefix, profile) {
+    function nested(path, pinned) {
       var invoke = function () {
-        return serviceCall(namespace, path || "default", Array.prototype.slice.call(arguments));
+        var args = Array.prototype.slice.call(arguments);
+        if (!path) {
+          var config = args[0];
+          var next = pinned;
+          if (config && typeof config === "object" && config !== null) {
+            if (typeof config.name === "string" && config.name) next = config.name;
+            else if (typeof config.profile === "string" && config.profile) next = config.profile;
+          } else if (typeof config === "string" && config) {
+            next = config;
+          }
+          return nested(pathPrefix || "", next);
+        }
+        return serviceCall(namespace, path, args);
       };
       return new Proxy(invoke, {
         get: function (_t, property) {
           if (typeof property === "symbol") return undefined;
           if (path === "" && property === "then") return undefined;
-          return nested(path ? path + "." + property : property);
+          return nested(path ? path + "." + property : property, pinned);
         },
       });
     }
-    return nested(pathPrefix || "");
+    return nested(pathPrefix || "", profile);
   }
 
   var providers = ${inlineJson([...new Set(dependencies.map((d) => d.provider))])};
   var tools = {};
   providers.forEach(function (p) {
-    tools[p] = createNamespaceProxy(p, "");
+    tools[p] = createNamespaceNode(p, "");
   });
 
   var LEVELS = ["log", "info", "warn", "error", "debug"];
@@ -215,14 +220,18 @@ export function runScriptInSandbox(options: RunScriptOptions): SandboxRun {
     rejectRun = reject;
   });
 
-  const settle = (outcome: { ok: true; value: unknown } | { ok: false; error: Error }) => {
+  const settle = (
+    outcome: { ok: true; value: unknown } | { ok: false; error: Error },
+  ) => {
     if (settled) return;
     settled = true;
     onEvent?.({
       type: "script:end",
       ok: outcome.ok,
       durationMs: Date.now() - startedAt,
-      ...(outcome.ok ? { result: outcome.value } : { error: outcome.error.message }),
+      ...(outcome.ok
+        ? { result: outcome.value }
+        : { error: outcome.error.message }),
       ts: Date.now(),
     });
     cleanup();
@@ -246,7 +255,11 @@ export function runScriptInSandbox(options: RunScriptOptions): SandboxRun {
           .call(namespace, procedure, callArgs)
           .then((value) => {
             iframe.contentWindow?.postMessage(
-              { type: "service-result", id: message.id, payload: { result: value } },
+              {
+                type: "service-result",
+                id: message.id,
+                payload: { result: value },
+              },
               "*",
             );
           })
@@ -255,7 +268,10 @@ export function runScriptInSandbox(options: RunScriptOptions): SandboxRun {
               {
                 type: "service-result",
                 id: message.id,
-                payload: { error: error instanceof Error ? error.message : String(error) },
+                payload: {
+                  error:
+                    error instanceof Error ? error.message : String(error),
+                },
               },
               "*",
             );
@@ -280,7 +296,10 @@ export function runScriptInSandbox(options: RunScriptOptions): SandboxRun {
   };
 
   const timer = setTimeout(() => {
-    settle({ ok: false, error: new Error(`Script timed out after ${timeoutMs}ms`) });
+    settle({
+      ok: false,
+      error: new Error(`Script timed out after ${timeoutMs}ms`),
+    });
   }, timeoutMs);
 
   function cleanup(): void {
