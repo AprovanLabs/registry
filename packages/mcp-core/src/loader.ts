@@ -9,6 +9,8 @@ export interface ProviderTool {
   description: string;
   /** JSON Schema for the tool's inputs */
   inputSchema: Record<string, unknown>;
+  /** JSON Schema for the tool's success response, when known */
+  outputSchema?: Record<string, unknown>;
   /** Provider name (e.g. "github") */
   providerName: string;
   /** OpenAPI operation tags (e.g. ["repos", "issues"]) */
@@ -64,6 +66,14 @@ function extractPathParams(routeTemplate: string): string[] {
 
 function toMcpToolName(utcpName: string): string {
   return utcpName.replace(/\./g, "__").replace(/[^a-zA-Z0-9_-]/g, "_");
+}
+
+/** @utcp/http returns `{}` when no response schema is known — omit rather than fake one. */
+export function outputSchemaFromOutputs(
+  outputs: Record<string, unknown> | undefined,
+): Record<string, unknown> | undefined {
+  if (!outputs || Object.keys(outputs).length === 0) return undefined;
+  return outputs;
 }
 
 /**
@@ -146,11 +156,14 @@ function buildProviderTools(
       ? []
       : allInputKeys.filter((k) => !pathParamKeys.includes(k));
 
+    const outputSchema = outputSchemaFromOutputs(tool.outputs as Record<string, unknown>);
+
     tools.push({
       mcpName: toMcpToolName(tool.name),
       utcpName: tool.name,
       description: tool.description ?? `${method} ${routeTemplate}`,
       inputSchema: tool.inputs as Record<string, unknown>,
+      ...(outputSchema !== undefined ? { outputSchema } : {}),
       providerName,
       tags: (tool.tags as string[] | undefined) ?? [],
       method,
