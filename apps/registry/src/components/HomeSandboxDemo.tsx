@@ -7,12 +7,8 @@
  * view is details-on-demand. No credentials, no gateway, no timers.
  */
 
-import {
-  instrument,
-  runScriptInSandbox,
-  type RuntimeEvent,
-  type SandboxRun,
-} from "@aprovan/runtime";
+import { instrument, type RuntimeEvent } from "@utdk/remote";
+import { runScriptInSandbox, type SandboxRun } from "@/lib/sandbox";
 import {
   INITIAL_RUN,
   reduceRunEvent,

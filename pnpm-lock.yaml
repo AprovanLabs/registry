@@ -63,9 +63,6 @@ importers:
       '@aprovan/registry-ui':
         specifier: 0.6.0
         version: 0.6.0(@codemirror/lint@6.9.7)(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
-      '@aprovan/runtime':
-        specifier: workspace:*
-        version: link:../../packages/runtime
       '@aprovan/ui':
         specifier: 0.5.0
         version: 0.5.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
@@ -93,6 +90,9 @@ importers:
       '@utdk/llm':
         specifier: workspace:*
         version: link:../../packages/contracts/llm
+      '@utdk/remote':
+        specifier: ^0.1.1
+        version: 0.1.1
       '@utdk/sandbox':
         specifier: workspace:*
         version: link:../../packages/contracts/sandbox
@@ -450,21 +450,6 @@ importers:
 
   packages/remote:
     devDependencies:
-      tsup:
-        specifier: ^8.5.0
-        version: 8.5.0(jiti@2.7.0)(postcss@8.5.14)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.4)
-      typescript:
-        specifier: ^5.7.3
-        version: 5.9.3
-      vitest:
-        specifier: 2.1.5
-        version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
-
-  packages/runtime:
-    devDependencies:
-      '@aprovan/tsconfig':
-        specifier: ^0.1.0
-        version: 0.1.0
       tsup:
         specifier: ^8.5.0
         version: 8.5.0(jiti@2.7.0)(postcss@8.5.14)(tsx@4.21.0)(typescript@5.9.3)(yaml@2.8.4)
@@ -4075,6 +4060,10 @@ packages:
 
   '@utdk/mcp-core@0.1.0':
     resolution: {integrity: sha512-mv41aZxedt2cNlvVSyJ3fE/Oo8RysqLmhFKsJaYP3V75PIh0bdGF0okY1AvqbCNUsBU0wvT+ch43SQ1ais10Og==}
+    engines: {node: '>=20.0.0'}
+
+  '@utdk/remote@0.1.1':
+    resolution: {integrity: sha512-KGTIFoGENtVQL+PVu7s3AqEb0U4Ad1/cX9rrszsONcouGIYidmi+VadjfjSTPTW+ZiNcIY+QPJyZBpP6SCyTBA==}
     engines: {node: '>=20.0.0'}
 
   '@utdk/sandbox@0.2.0':
@@ -12103,6 +12092,8 @@ snapshots:
     transitivePeerDependencies:
       - '@opentelemetry/api'
       - debug
+
+  '@utdk/remote@0.1.1': {}
 
   '@utdk/sandbox@0.2.0': {}
 

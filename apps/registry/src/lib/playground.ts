@@ -2,16 +2,16 @@
  * Playground compilation glue: TypeScript source → sandbox-ready body +
  * runtime dependencies.
  *
- * The runtime package is compiler-agnostic; the app strips TS types with
+ * `@utdk/remote` is compiler-agnostic; the app strips TS types with
  * sucrase (imports preserved), then hands the source to
- * `parseScriptDependencies` / `rewriteDefaultExport` from `@aprovan/runtime`.
+ * `parseScriptDependencies` / `rewriteDefaultExport` from `@utdk/remote`.
  */
 
 import {
   parseScriptDependencies,
   rewriteDefaultExport,
   type RuntimeDependency,
-} from "@aprovan/runtime";
+} from "@utdk/remote";
 import { transform } from "sucrase";
 
 export interface CompiledScript {

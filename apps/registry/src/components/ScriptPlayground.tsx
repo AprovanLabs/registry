@@ -2,22 +2,24 @@
  * ScriptPlayground — write a script against `@utdk/*` providers and run it in
  * the browser sandbox.
  *
- * The script executes inside a sandboxed iframe (`@aprovan/runtime`); every
- * namespaced call crosses the iframe boundary and is proxied to the gateway.
- * The sample script uses public endpoints only — saved credentials and workspace
+ * The script executes inside a sandboxed iframe; every namespaced call crosses
+ * the iframe boundary and is proxied to the gateway via `@utdk/remote`. The
+ * sample script uses public endpoints only — saved credentials and workspace
  * files live in the product app.
  */
 
 import {
   instrument,
-  runScriptInSandbox,
   TransportError,
   withPolicy,
   type RuntimeEvent,
-  type SandboxRun,
   type Transport,
   type TransportCallOptions,
-} from "@aprovan/runtime";
+} from "@utdk/remote";
+import {
+  runScriptInSandbox,
+  type SandboxRun,
+} from "@/lib/sandbox";
 import {
   DependencyPanel,
   type ProviderCatalogInfo,
