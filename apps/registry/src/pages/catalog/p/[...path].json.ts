@@ -38,6 +38,13 @@ export const GET: APIRoute = async ({ params }) => {
     });
   }
 
+  const registryOutputs = new Map(
+    entry.operations.map((op) => [
+      op.operationId,
+      { outputs: op.outputs, responseUnknown: op.responseUnknown },
+    ]),
+  );
+
   const body: CatalogProviderDetail = {
     id: entry.providerPath,
     title: entry.title,
@@ -50,17 +57,22 @@ export const GET: APIRoute = async ({ params }) => {
     scorecardDomain: entry.scorecardDomain,
     scorecardInfrastructure: entry.scorecardInfrastructure,
     auth: entry.auth,
-    operations: operations.map((op) => ({
-      operationId: op.operationId,
-      sdkPath: op.sdkPath,
-      httpMethod: op.httpMethod,
-      httpPath: op.httpPath,
-      summary: op.summary,
-      description: op.description,
-      tags: op.tags,
-      parameters: op.parameters,
-      requestBodyFields: op.requestBodyFields,
-    })),
+    operations: operations.map((op) => {
+      const registry = registryOutputs.get(op.operationId);
+      return {
+        operationId: op.operationId,
+        sdkPath: op.sdkPath,
+        httpMethod: op.httpMethod,
+        httpPath: op.httpPath,
+        summary: op.summary,
+        description: op.description,
+        tags: op.tags,
+        parameters: op.parameters,
+        requestBodyFields: op.requestBodyFields,
+        outputs: registry?.outputs ?? op.outputs,
+        responseUnknown: registry?.responseUnknown ?? op.responseUnknown,
+      };
+    }),
   };
 
   return new Response(JSON.stringify(body), {

@@ -63,6 +63,8 @@ export type RegistryOperation = {
   parameters: RegistryParameter[];
   input: RegistryRequestBody | null;
   outputs: Record<string, RegistryResponse>;
+  /** True when the upstream OpenAPI operation omits a `responses` object. */
+  responseUnknown: boolean;
   tags: string[];
 };
 
@@ -691,6 +693,8 @@ function extractOperations(openApiDocument: OpenApiDocument | null): RegistryOpe
         };
       }
 
+      const responseUnknown =
+        !raw.responses || Object.keys(raw.responses).length === 0;
       const outputs: Record<string, RegistryResponse> = {};
 
       for (const [statusCode, responseObj] of Object.entries(raw.responses ?? {})) {
@@ -718,6 +722,7 @@ function extractOperations(openApiDocument: OpenApiDocument | null): RegistryOpe
         parameters,
         input,
         outputs,
+        responseUnknown,
         tags: raw.tags ?? [],
       });
     }

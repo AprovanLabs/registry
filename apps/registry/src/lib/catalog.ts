@@ -96,6 +96,11 @@ export interface CatalogRequestBodyField {
   schema: CatalogSchemaType;
 }
 
+export interface CatalogOperationOutput {
+  description: string | null;
+  schema: CatalogSchemaType | null;
+}
+
 export interface CatalogOperation {
   operationId: string;
   sdkPath: string;
@@ -106,6 +111,9 @@ export interface CatalogOperation {
   tags: string[];
   parameters: CatalogOperationParameter[];
   requestBodyFields: CatalogRequestBodyField[];
+  outputs: Record<string, CatalogOperationOutput>;
+  /** True when the upstream OpenAPI operation omits a `responses` object. */
+  responseUnknown: boolean;
 }
 
 export interface CatalogProviderDetail {
