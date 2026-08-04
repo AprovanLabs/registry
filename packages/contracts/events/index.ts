@@ -177,7 +177,7 @@ export function validateListArgs(args: EventsListArgs): void {
  */
 export function eventsToolEntries(
   provider: string,
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> {
+): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
   const channel = {
     type: "string",
     description: "Channel name (append-only stream; created implicitly on first emit)",

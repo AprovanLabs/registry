@@ -51,6 +51,8 @@ export interface ToolEntry {
   description?: string;
   inputSchema?: unknown;
   outputSchema?: unknown;
+  /** When true, the operation returns a stream and carries no outputSchema. */
+  streaming?: boolean;
 }
 
 /**

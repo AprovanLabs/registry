@@ -231,7 +231,7 @@ function chatCompletionSchema(modelDescription: string) {
 export function llmToolEntries(
   provider: string,
   details: { label?: string; defaultModel?: string; interfaceNamespace?: boolean } = {},
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown> }> {
+): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
   const interfaceNs = details.interfaceNamespace === true || provider === "llm";
   const label = details.label ?? provider;
   const defaultModel = details.defaultModel ?? "provider default";
