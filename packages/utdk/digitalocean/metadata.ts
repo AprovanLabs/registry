@@ -1,9 +1,9 @@
 import type { ToolRuntimeMetadataMap } from "../client.js";
 
 export const toolMetadata = {
-  "get_v2_1_clicks": {
+  "oneClicks_list": {
     "accessPath": [
-      "getV21Clicks"
+      "oneClicksList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -15,15 +15,24 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "type"
+    ],
+    "description": "List 1-Click Applications",
+    "parameterDescriptions": {
+      "type": "Restrict results to a certain type of 1-Click."
+    }
   },
-  "post_v2_1_clicks_kubernetes": {
+  "oneClicks_install_kubernetes": {
     "accessPath": [
-      "postV21ClicksKubernetes"
+      "oneClicksInstallKubernetes"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "addon_slugs",
+      "cluster_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -31,11 +40,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Install Kubernetes 1-Click Applications"
   },
-  "get_v2_account": {
+  "account_get": {
     "accessPath": [
-      "getV2Account"
+      "accountGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -47,11 +57,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get User Information"
   },
-  "get_v2_account_keys": {
+  "sshKeys_list": {
     "accessPath": [
-      "getV2AccountKeys"
+      "sshKeysList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -63,15 +74,28 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All SSH Keys",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_account_keys": {
+  "sshKeys_create": {
     "accessPath": [
-      "postV2AccountKeys"
+      "sshKeysCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "fingerprint",
+      "public_key",
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -79,11 +103,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New SSH Key"
   },
-  "get_v2_account_keys_ssh_key_identifier": {
+  "sshKeys_get": {
     "accessPath": [
-      "getV2AccountKeysSshKeyIdentifier"
+      "sshKeysGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -93,29 +118,43 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/account/keys/{ssh_key_identifier}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "ssh_key_identifier"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing SSH Key",
+    "parameterDescriptions": {
+      "ssh_key_identifier": "Either the ID or the fingerprint of an existing SSH key."
+    }
   },
-  "put_v2_account_keys_ssh_key_identifier": {
+  "sshKeys_update": {
     "accessPath": [
-      "putV2AccountKeysSshKeyIdentifier"
+      "sshKeysUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/account/keys/{ssh_key_identifier}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "ssh_key_identifier"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update an SSH Key's Name",
+    "parameterDescriptions": {
+      "ssh_key_identifier": "Either the ID or the fingerprint of an existing SSH key."
+    }
   },
-  "delete_v2_account_keys_ssh_key_identifier": {
+  "sshKeys_delete": {
     "accessPath": [
-      "deleteV2AccountKeysSshKeyIdentifier"
+      "sshKeysDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -125,13 +164,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/account/keys/{ssh_key_identifier}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "ssh_key_identifier"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete an SSH Key",
+    "parameterDescriptions": {
+      "ssh_key_identifier": "Either the ID or the fingerprint of an existing SSH key."
+    }
   },
-  "get_v2_actions": {
+  "actions_list": {
     "accessPath": [
-      "getV2Actions"
+      "actionsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -143,11 +188,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Actions",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_actions_action_id": {
+  "actions_get": {
     "accessPath": [
-      "getV2ActionsActionId"
+      "actionsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -157,13 +210,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/actions/{action_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "action_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Action",
+    "parameterDescriptions": {
+      "action_id": "A unique numeric ID that can be used to identify and reference an action."
+    }
   },
-  "get_v2_add_ons_apps": {
+  "addons_get_app": {
     "accessPath": [
-      "getV2AddOnsApps"
+      "addonsGetApp"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -175,11 +234,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Available Add-On Applications"
   },
-  "get_v2_add_ons_apps_app_slug_metadata": {
+  "addons_get_app_metadata": {
     "accessPath": [
-      "getV2AddOnsAppsAppSlugMetadata"
+      "addonsGetAppMetadata"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -189,13 +249,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/add-ons/apps/{app_slug}/metadata",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_slug"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Metadata for an Add-On Application",
+    "parameterDescriptions": {
+      "app_slug": "The slug identifier for the application whose metadata is being requested."
+    }
   },
-  "get_v2_add_ons_saas": {
+  "addons_list": {
     "accessPath": [
-      "getV2AddOnsSaas"
+      "addonsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -207,15 +273,23 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List all Add-On Resources"
   },
-  "post_v2_add_ons_saas": {
+  "addons_create": {
     "accessPath": [
-      "postV2AddOnsSaas"
+      "addonsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "app_slug",
+      "plan_slug",
+      "name",
+      "metadata",
+      "linked_droplet_id",
+      "fleet_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -223,11 +297,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create/Provision a New Add-on Resource"
   },
-  "get_v2_add_ons_saas_resource_uuid": {
+  "addons_get": {
     "accessPath": [
-      "getV2AddOnsSaasResourceUuid"
+      "addonsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -237,13 +312,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/add-ons/saas/{resource_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "resource_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get details on an Add-On Resource",
+    "parameterDescriptions": {
+      "resource_uuid": "The UUID of the add-on resource to retrieve."
+    }
   },
-  "delete_v2_add_ons_saas_resource_uuid": {
+  "addons_delete": {
     "accessPath": [
-      "deleteV2AddOnsSaasResourceUuid"
+      "addonsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -253,45 +334,67 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/add-ons/saas/{resource_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "resource_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete/Deprovision an Add-on Resource",
+    "parameterDescriptions": {
+      "resource_uuid": "A unique identifier for the add-on resource."
+    }
   },
-  "patch_v2_add_ons_saas_resource_uuid": {
+  "addons_patch": {
     "accessPath": [
-      "patchV2AddOnsSaasResourceUuid"
+      "addonsPatch"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/add-ons/saas/{resource_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "resource_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update the name for an Add-On Resource",
+    "parameterDescriptions": {
+      "resource_uuid": "The UUID of the add-on resource to rename."
+    }
   },
-  "patch_v2_add_ons_saas_resource_uuid_plan": {
+  "addons_patch_plan": {
     "accessPath": [
-      "patchV2AddOnsSaasResourceUuidPlan"
+      "addonsPatchPlan"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "plan_slug"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/add-ons/saas/{resource_uuid}/plan",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "resource_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update the plan for an Add-On Resource",
+    "parameterDescriptions": {
+      "resource_uuid": "The UUID of the add-on resource to update."
+    }
   },
-  "get_v2_apps": {
+  "apps_list": {
     "accessPath": [
-      "getV2Apps"
+      "appsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -303,27 +406,48 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page",
+      "with_projects"
+    ],
+    "description": "List All Apps",
+    "parameterDescriptions": {
+      "page": "Which 'page' of paginated results to return.",
+      "per_page": "Number of items returned per page",
+      "with_projects": "Whether the project_id of listed apps should be fetched and included."
+    }
   },
-  "post_v2_apps": {
+  "apps_create": {
     "accessPath": [
-      "postV2Apps"
+      "appsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "spec",
+      "project_id"
+    ],
     "contentType": "application/json",
-    "headerParameterKeys": [],
+    "headerParameterKeys": [
+      "Accept",
+      "Content-Type"
+    ],
     "method": "POST",
     "routeTemplate": "/v2/apps",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New App",
+    "parameterDescriptions": {
+      "Accept": "The content-type that should be used by the response. By default, the response will be `application/json`. `application/yaml` is also supported.",
+      "Content-Type": "The content-type used for the request. By default, the requests are assumed to use `application/json`. `application/yaml` is also supported."
+    }
   },
-  "delete_v2_apps_id": {
+  "apps_delete": {
     "accessPath": [
-      "deleteV2AppsId"
+      "appsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -333,13 +457,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/apps/{id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete an App",
+    "parameterDescriptions": {
+      "id": "The ID of the app"
+    }
   },
-  "get_v2_apps_id": {
+  "apps_get": {
     "accessPath": [
-      "getV2AppsId"
+      "appsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -349,45 +479,71 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "name"
+    ],
+    "description": "Retrieve an Existing App",
+    "parameterDescriptions": {
+      "id": "The ID of the app",
+      "name": "The name of the app to retrieve."
+    }
   },
-  "put_v2_apps_id": {
+  "apps_update": {
     "accessPath": [
-      "putV2AppsId"
+      "appsUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "spec",
+      "update_all_source_versions"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/apps/{id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update an App",
+    "parameterDescriptions": {
+      "id": "The ID of the app"
+    }
   },
-  "post_v2_apps_app_id_restart": {
+  "apps_restart": {
     "accessPath": [
-      "postV2AppsAppIdRestart"
+      "appsRestart"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "components"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/apps/{app_id}/restart",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Restart an App",
+    "parameterDescriptions": {
+      "app_id": "The app ID"
+    }
   },
-  "get_v2_apps_app_id_components_component_name_logs": {
+  "apps_get_logs_active_deployment": {
     "accessPath": [
-      "getV2AppsAppIdComponentsComponentNameLogs"
+      "appsGetLogsActiveDeployment"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -397,13 +553,28 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/components/{component_name}/logs",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "component_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "follow",
+      "type",
+      "pod_connection_timeout"
+    ],
+    "description": "Retrieve Active Deployment Logs",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "component_name": "An optional component name. If set, logs will be limited to this component only.",
+      "follow": "Whether the logs should follow live updates.",
+      "type": "The type of logs to retrieve\n- BUILD: Build-time logs\n- DEPLOY: Deploy-time logs\n- RUN: Live run-time logs\n- RUN_RESTARTED: Logs of crashed/restarted instances during runtime\n- AUTOSCALE_EVENT: Logs of an autoscaling event (requires event_id)",
+      "pod_connection_timeout": "An optional time duration to wait if the underlying component instance is not immediately available. Default: `3m`."
+    }
   },
-  "get_v2_apps_app_id_components_component_name_exec": {
+  "apps_get_exec_active_deployment": {
     "accessPath": [
-      "getV2AppsAppIdComponentsComponentNameExec"
+      "appsGetExecActiveDeployment"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -413,13 +584,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/components/{component_name}/exec",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "component_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "instance_name"
+    ],
+    "description": "Retrieve Exec URL",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "component_name": "An optional component name. If set, logs will be limited to this component only.",
+      "instance_name": "The name of the actively running ephemeral compute instance"
+    }
   },
-  "get_v2_apps_app_id_instances": {
+  "apps_get_instances": {
     "accessPath": [
-      "getV2AppsAppIdInstances"
+      "appsGetInstances"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -429,13 +611,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/instances",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve App Instances",
+    "parameterDescriptions": {
+      "app_id": "The app ID"
+    }
   },
-  "get_v2_apps_app_id_deployments": {
+  "apps_list_deployments": {
     "accessPath": [
-      "getV2AppsAppIdDeployments"
+      "appsListDeployments"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -445,29 +633,50 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/deployments",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page",
+      "deployment_types"
+    ],
+    "description": "List App Deployments",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "page": "Which 'page' of paginated results to return.",
+      "per_page": "Number of items returned per page",
+      "deployment_types": "Optional. Filter deployments by deployment_type\n  - MANUAL: manual deployment\n  - DEPLOY_ON_PUSH: deployment triggered by a push to the app's repository\n  - MAINTENANCE: deployment for maintenance purposes\n  - MANUAL_ROLLBACK: manual revert to a previous deployment\n  - AUTO_ROLLBACK: automatic revert to a previous deployment\n  - UPDATE_DATABASE_TRUSTED_SOURCES: update database trusted sources\n  - AUTOSCALED: deployment that has been autoscaled"
+    }
   },
-  "post_v2_apps_app_id_deployments": {
+  "apps_create_deployment": {
     "accessPath": [
-      "postV2AppsAppIdDeployments"
+      "appsCreateDeployment"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "force_build"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/apps/{app_id}/deployments",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create an App Deployment",
+    "parameterDescriptions": {
+      "app_id": "The app ID"
+    }
   },
-  "get_v2_apps_app_id_deployments_deployment_id": {
+  "apps_get_deployment": {
     "accessPath": [
-      "getV2AppsAppIdDeploymentsDeploymentId"
+      "appsGetDeployment"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -477,13 +686,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/deployments/{deployment_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "deployment_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an App Deployment",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "deployment_id": "The deployment ID"
+    }
   },
-  "post_v2_apps_app_id_deployments_deployment_id_cancel": {
+  "apps_cancel_deployment": {
     "accessPath": [
-      "postV2AppsAppIdDeploymentsDeploymentIdCancel"
+      "appsCancelDeployment"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -493,13 +710,21 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v2/apps/{app_id}/deployments/{deployment_id}/cancel",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "deployment_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Cancel a Deployment",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "deployment_id": "The deployment ID"
+    }
   },
-  "get_v2_apps_app_id_deployments_deployment_id_components_component_name_logs": {
+  "apps_get_logs": {
     "accessPath": [
-      "getV2AppsAppIdDeploymentsDeploymentIdComponentsComponentNameLogs"
+      "appsGetLogs"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -509,13 +734,30 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/deployments/{deployment_id}/components/{component_name}/logs",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "deployment_id",
+      "component_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "follow",
+      "type",
+      "pod_connection_timeout"
+    ],
+    "description": "Retrieve Deployment Logs",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "deployment_id": "The deployment ID",
+      "component_name": "An optional component name. If set, logs will be limited to this component only.",
+      "follow": "Whether the logs should follow live updates.",
+      "type": "The type of logs to retrieve\n- BUILD: Build-time logs\n- DEPLOY: Deploy-time logs\n- RUN: Live run-time logs\n- RUN_RESTARTED: Logs of crashed/restarted instances during runtime\n- AUTOSCALE_EVENT: Logs of an autoscaling event (requires event_id)",
+      "pod_connection_timeout": "An optional time duration to wait if the underlying component instance is not immediately available. Default: `3m`."
+    }
   },
-  "get_v2_apps_app_id_deployments_deployment_id_logs": {
+  "apps_get_logs_aggregate": {
     "accessPath": [
-      "getV2AppsAppIdDeploymentsDeploymentIdLogs"
+      "appsGetLogsAggregate"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -525,13 +767,28 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/deployments/{deployment_id}/logs",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "deployment_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "follow",
+      "type",
+      "pod_connection_timeout"
+    ],
+    "description": "Retrieve Aggregate Deployment Logs",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "deployment_id": "The deployment ID",
+      "follow": "Whether the logs should follow live updates.",
+      "type": "The type of logs to retrieve\n- BUILD: Build-time logs\n- DEPLOY: Deploy-time logs\n- RUN: Live run-time logs\n- RUN_RESTARTED: Logs of crashed/restarted instances during runtime\n- AUTOSCALE_EVENT: Logs of an autoscaling event (requires event_id)",
+      "pod_connection_timeout": "An optional time duration to wait if the underlying component instance is not immediately available. Default: `3m`."
+    }
   },
-  "get_v2_apps_app_id_deployments_deployment_id_components_component_name_exec": {
+  "apps_get_exec": {
     "accessPath": [
-      "getV2AppsAppIdDeploymentsDeploymentIdComponentsComponentNameExec"
+      "appsGetExec"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -541,13 +798,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/deployments/{deployment_id}/components/{component_name}/exec",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "deployment_id",
+      "component_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "instance_name"
+    ],
+    "description": "Retrieve Exec URL for Deployment",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "deployment_id": "The deployment ID",
+      "component_name": "An optional component name. If set, logs will be limited to this component only.",
+      "instance_name": "The name of the actively running ephemeral compute instance"
+    }
   },
-  "get_v2_apps_app_id_logs": {
+  "apps_get_logs_active_deployment_aggregate": {
     "accessPath": [
-      "getV2AppsAppIdLogs"
+      "appsGetLogsActiveDeploymentAggregate"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -557,13 +827,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/logs",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "follow",
+      "type",
+      "pod_connection_timeout"
+    ],
+    "description": "Retrieve Active Deployment Aggregate Logs",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "follow": "Whether the logs should follow live updates.",
+      "type": "The type of logs to retrieve\n- BUILD: Build-time logs\n- DEPLOY: Deploy-time logs\n- RUN: Live run-time logs\n- RUN_RESTARTED: Logs of crashed/restarted instances during runtime\n- AUTOSCALE_EVENT: Logs of an autoscaling event (requires event_id)",
+      "pod_connection_timeout": "An optional time duration to wait if the underlying component instance is not immediately available. Default: `3m`."
+    }
   },
-  "get_v2_apps_app_id_job_invocations": {
+  "apps_list_job_invocations": {
     "accessPath": [
-      "getV2AppsAppIdJobInvocations"
+      "appsListJobInvocations"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -573,13 +856,28 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/job-invocations",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "job_names",
+      "deployment_id",
+      "page",
+      "per_page"
+    ],
+    "description": "List Job Invocations",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "job_names": "The job names to list job invocations for.",
+      "deployment_id": "The deployment ID",
+      "page": "Which 'page' of paginated results to return.",
+      "per_page": "Number of items returned per page"
+    }
   },
-  "get_v2_apps_app_id_job_invocations_job_invocation_id": {
+  "apps_get_job_invocation": {
     "accessPath": [
-      "getV2AppsAppIdJobInvocationsJobInvocationId"
+      "appsGetJobInvocation"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -589,13 +887,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/job-invocations/{job_invocation_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "job_invocation_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "job_name"
+    ],
+    "description": "Get Job Invocations",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "job_invocation_id": "The ID of the job invocation to retrieve.",
+      "job_name": "The job name to list job invocations for."
+    }
   },
-  "post_v2_apps_app_id_job_invocations_job_invocation_id_cancel": {
+  "apps_cancel_job_invocation": {
     "accessPath": [
-      "postV2AppsAppIdJobInvocationsJobInvocationIdCancel"
+      "appsCancelJobInvocation"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -605,13 +914,24 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v2/apps/{app_id}/job-invocations/{job_invocation_id}/cancel",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "job_invocation_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "job_name"
+    ],
+    "description": "Cancel Job Invocation",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "job_invocation_id": "The ID of the job invocation to retrieve.",
+      "job_name": "The job name to list job invocations for."
+    }
   },
-  "get_v2_apps_app_id_jobs_job_name_invocations_job_invocation_id_logs": {
+  "apps_get_job_invocation_logs": {
     "accessPath": [
-      "getV2AppsAppIdJobsJobNameInvocationsJobInvocationIdLogs"
+      "appsGetJobInvocationLogs"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -621,13 +941,34 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/jobs/{job_name}/invocations/{job_invocation_id}/logs",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "job_name",
+      "job_invocation_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "deployment_id",
+      "follow",
+      "type",
+      "pod_connection_timeout",
+      "tail_lines"
+    ],
+    "description": "Retrieve Job Invocation Logs",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "job_name": "The job name to list job invocations for.",
+      "job_invocation_id": "The ID of the job invocation to retrieve.",
+      "deployment_id": "The deployment ID",
+      "follow": "Whether the logs should follow live updates.",
+      "type": "The type of logs to retrieve",
+      "pod_connection_timeout": "An optional time duration to wait if the underlying component instance is not immediately available. Default: `3m`.",
+      "tail_lines": "The number of lines from the end of the logs to retrieve."
+    }
   },
-  "get_v2_apps_app_id_events": {
+  "apps_list_events": {
     "accessPath": [
-      "getV2AppsAppIdEvents"
+      "appsListEvents"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -637,13 +978,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/events",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page",
+      "event_types"
+    ],
+    "description": "List App Events",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "page": "Which 'page' of paginated results to return.",
+      "per_page": "Number of items returned per page",
+      "event_types": "Filter events by event type."
+    }
   },
-  "get_v2_apps_app_id_events_event_id": {
+  "apps_get_event": {
     "accessPath": [
-      "getV2AppsAppIdEventsEventId"
+      "appsGetEvent"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -653,13 +1007,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/events/{event_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "event_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get an Event",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "event_id": "The event ID"
+    }
   },
-  "post_v2_apps_app_id_events_event_id_cancel": {
+  "apps_cancel_event": {
     "accessPath": [
-      "postV2AppsAppIdEventsEventIdCancel"
+      "appsCancelEvent"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -669,13 +1031,21 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v2/apps/{app_id}/events/{event_id}/cancel",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "event_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Cancel an Event",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "event_id": "The event ID"
+    }
   },
-  "get_v2_apps_app_id_events_event_id_logs": {
+  "apps_get_event_logs": {
     "accessPath": [
-      "getV2AppsAppIdEventsEventIdLogs"
+      "appsGetEventLogs"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -685,13 +1055,28 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/events/{event_id}/logs",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "event_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "follow",
+      "type",
+      "pod_connection_timeout"
+    ],
+    "description": "Retrieve Event Logs",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "event_id": "The event ID",
+      "follow": "Whether the logs should follow live updates.",
+      "type": "The type of logs to retrieve\n- BUILD: Build-time logs\n- DEPLOY: Deploy-time logs\n- RUN: Live run-time logs\n- RUN_RESTARTED: Logs of crashed/restarted instances during runtime\n- AUTOSCALE_EVENT: Logs of an autoscaling event (requires event_id)",
+      "pod_connection_timeout": "An optional time duration to wait if the underlying component instance is not immediately available. Default: `3m`."
+    }
   },
-  "get_v2_apps_tiers_instance_sizes": {
+  "apps_list_instanceSizes": {
     "accessPath": [
-      "getV2AppsTiersInstanceSizes"
+      "appsListInstanceSizes"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -703,11 +1088,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Instance Sizes"
   },
-  "get_v2_apps_tiers_instance_sizes_slug": {
+  "apps_get_instanceSize": {
     "accessPath": [
-      "getV2AppsTiersInstanceSizesSlug"
+      "appsGetInstanceSize"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -717,13 +1103,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/tiers/instance_sizes/{slug}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "slug"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Instance Size",
+    "parameterDescriptions": {
+      "slug": "The slug of the instance size"
+    }
   },
-  "get_v2_apps_regions": {
+  "apps_list_regions": {
     "accessPath": [
-      "getV2AppsRegions"
+      "appsListRegions"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -735,15 +1127,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List App Regions"
   },
-  "post_v2_apps_propose": {
+  "apps_validate_appSpec": {
     "accessPath": [
-      "postV2AppsPropose"
+      "appsValidateAppSpec"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "spec",
+      "app_id"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -751,11 +1147,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Propose an App Spec"
   },
-  "get_v2_apps_app_id_alerts": {
+  "apps_list_alerts": {
     "accessPath": [
-      "getV2AppsAppIdAlerts"
+      "appsListAlerts"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -765,61 +1162,96 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/alerts",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List all app alerts",
+    "parameterDescriptions": {
+      "app_id": "The app ID"
+    }
   },
-  "post_v2_apps_app_id_alerts_alert_id_destinations": {
+  "apps_assign_alertDestinations": {
     "accessPath": [
-      "postV2AppsAppIdAlertsAlertIdDestinations"
+      "appsAssignAlertDestinations"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "emails",
+      "slack_webhooks"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/apps/{app_id}/alerts/{alert_id}/destinations",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id",
+      "alert_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update destinations for alerts",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "alert_id": "The alert ID"
+    }
   },
-  "post_v2_apps_app_id_rollback": {
+  "apps_create_rollback": {
     "accessPath": [
-      "postV2AppsAppIdRollback"
+      "appsCreateRollback"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "deployment_id",
+      "skip_pin"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/apps/{app_id}/rollback",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Rollback App",
+    "parameterDescriptions": {
+      "app_id": "The app ID"
+    }
   },
-  "post_v2_apps_app_id_rollback_validate": {
+  "apps_validate_rollback": {
     "accessPath": [
-      "postV2AppsAppIdRollbackValidate"
+      "appsValidateRollback"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "deployment_id",
+      "skip_pin"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/apps/{app_id}/rollback/validate",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Validate App Rollback",
+    "parameterDescriptions": {
+      "app_id": "The app ID"
+    }
   },
-  "post_v2_apps_app_id_rollback_commit": {
+  "apps_commit_rollback": {
     "accessPath": [
-      "postV2AppsAppIdRollbackCommit"
+      "appsCommitRollback"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -829,13 +1261,19 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v2/apps/{app_id}/rollback/commit",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Commit App Rollback",
+    "parameterDescriptions": {
+      "app_id": "The app ID"
+    }
   },
-  "post_v2_apps_app_id_rollback_revert": {
+  "apps_revert_rollback": {
     "accessPath": [
-      "postV2AppsAppIdRollbackRevert"
+      "appsRevertRollback"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -845,13 +1283,19 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v2/apps/{app_id}/rollback/revert",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Revert App Rollback",
+    "parameterDescriptions": {
+      "app_id": "The app ID"
+    }
   },
-  "get_v2_apps_app_id_metrics_bandwidth_daily": {
+  "apps_get_metrics_bandwidth_daily": {
     "accessPath": [
-      "getV2AppsAppIdMetricsBandwidthDaily"
+      "appsGetMetricsBandwidthDaily"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -861,17 +1305,29 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/metrics/bandwidth_daily",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "date"
+    ],
+    "description": "Retrieve App Daily Bandwidth Metrics",
+    "parameterDescriptions": {
+      "app_id": "The app ID",
+      "date": "Optional day to query. Only the date component of the timestamp will be considered. Default: yesterday."
+    }
   },
-  "post_v2_apps_metrics_bandwidth_daily": {
+  "apps_list_metrics_bandwidth_daily": {
     "accessPath": [
-      "postV2AppsMetricsBandwidthDaily"
+      "appsListMetricsBandwidthDaily"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "app_ids",
+      "date"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -879,11 +1335,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Multiple Apps' Daily Bandwidth Metrics"
   },
-  "get_v2_apps_app_id_health": {
+  "apps_get_health": {
     "accessPath": [
-      "getV2AppsAppIdHealth"
+      "appsGetHealth"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -893,13 +1350,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/apps/{app_id}/health",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "app_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve App Health",
+    "parameterDescriptions": {
+      "app_id": "The app ID"
+    }
   },
-  "get_v2_cdn_endpoints": {
+  "cdn_list_endpoints": {
     "accessPath": [
-      "getV2CdnEndpoints"
+      "cdnListEndpoints"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -911,15 +1374,31 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All CDN Endpoints",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_cdn_endpoints": {
+  "cdn_create_endpoint": {
     "accessPath": [
-      "postV2CdnEndpoints"
+      "cdnCreateEndpoint"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "origin",
+      "endpoint",
+      "ttl",
+      "certificate_id",
+      "custom_domain",
+      "created_at"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -927,11 +1406,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New CDN Endpoint"
   },
-  "get_v2_cdn_endpoints_cdn_id": {
+  "cdn_get_endpoint": {
     "accessPath": [
-      "getV2CdnEndpointsCdnId"
+      "cdnGetEndpoint"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -941,29 +1421,45 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/cdn/endpoints/{cdn_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cdn_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing CDN Endpoint",
+    "parameterDescriptions": {
+      "cdn_id": "A unique identifier for a CDN endpoint."
+    }
   },
-  "put_v2_cdn_endpoints_cdn_id": {
+  "cdn_update_endpoints": {
     "accessPath": [
-      "putV2CdnEndpointsCdnId"
+      "cdnUpdateEndpoints"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "ttl",
+      "certificate_id",
+      "custom_domain"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/cdn/endpoints/{cdn_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cdn_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a CDN Endpoint",
+    "parameterDescriptions": {
+      "cdn_id": "A unique identifier for a CDN endpoint."
+    }
   },
-  "delete_v2_cdn_endpoints_cdn_id": {
+  "cdn_delete_endpoint": {
     "accessPath": [
-      "deleteV2CdnEndpointsCdnId"
+      "cdnDeleteEndpoint"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -973,29 +1469,43 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/cdn/endpoints/{cdn_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cdn_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a CDN Endpoint",
+    "parameterDescriptions": {
+      "cdn_id": "A unique identifier for a CDN endpoint."
+    }
   },
-  "delete_v2_cdn_endpoints_cdn_id_cache": {
+  "cdn_purge_cache": {
     "accessPath": [
-      "deleteV2CdnEndpointsCdnIdCache"
+      "cdnPurgeCache"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "files"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v2/cdn/endpoints/{cdn_id}/cache",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cdn_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Purge the Cache for an Existing CDN Endpoint",
+    "parameterDescriptions": {
+      "cdn_id": "A unique identifier for a CDN endpoint."
+    }
   },
-  "get_v2_certificates": {
+  "certificates_list": {
     "accessPath": [
-      "getV2Certificates"
+      "certificatesList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1007,14 +1517,24 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "name"
+    ],
+    "description": "List All Certificates",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "name": "Name of expected certificate"
+    }
   },
-  "post_v2_certificates": {
+  "certificates_create": {
     "accessPath": [
-      "postV2Certificates"
+      "certificatesCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -1023,11 +1543,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Certificate"
   },
-  "get_v2_certificates_certificate_id": {
+  "certificates_get": {
     "accessPath": [
-      "getV2CertificatesCertificateId"
+      "certificatesGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1037,13 +1558,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/certificates/{certificate_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "certificate_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Certificate",
+    "parameterDescriptions": {
+      "certificate_id": "A unique identifier for a certificate."
+    }
   },
-  "delete_v2_certificates_certificate_id": {
+  "certificates_delete": {
     "accessPath": [
-      "deleteV2CertificatesCertificateId"
+      "certificatesDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1053,13 +1580,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/certificates/{certificate_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "certificate_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Certificate",
+    "parameterDescriptions": {
+      "certificate_id": "A unique identifier for a certificate."
+    }
   },
-  "get_v2_customers_my_balance": {
+  "balance_get": {
     "accessPath": [
-      "getV2CustomersMyBalance"
+      "balanceGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1071,11 +1604,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Customer Balance"
   },
-  "get_v2_customers_my_billing_history": {
+  "billingHistory_list": {
     "accessPath": [
-      "getV2CustomersMyBillingHistory"
+      "billingHistoryList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1087,11 +1621,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Billing History"
   },
-  "get_v2_customers_my_invoices": {
+  "invoices_list": {
     "accessPath": [
-      "getV2CustomersMyInvoices"
+      "invoicesList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1103,11 +1638,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Invoices",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_customers_my_invoices_invoice_uuid": {
+  "invoices_get_byUUID": {
     "accessPath": [
-      "getV2CustomersMyInvoicesInvoiceUuid"
+      "invoicesGetByUuid"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1117,13 +1660,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/customers/my/invoices/{invoice_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "invoice_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "Retrieve an Invoice by UUID",
+    "parameterDescriptions": {
+      "invoice_uuid": "UUID of the invoice",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_customers_my_invoices_invoice_uuid_csv": {
+  "invoices_get_csvByUUID": {
     "accessPath": [
-      "getV2CustomersMyInvoicesInvoiceUuidCsv"
+      "invoicesGetCsvByUuid"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1133,13 +1687,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/customers/my/invoices/{invoice_uuid}/csv",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "invoice_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Invoice CSV by UUID",
+    "parameterDescriptions": {
+      "invoice_uuid": "UUID of the invoice"
+    }
   },
-  "get_v2_customers_my_invoices_invoice_uuid_pdf": {
+  "invoices_get_pdfByUUID": {
     "accessPath": [
-      "getV2CustomersMyInvoicesInvoiceUuidPdf"
+      "invoicesGetPdfByUuid"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1149,13 +1709,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/customers/my/invoices/{invoice_uuid}/pdf",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "invoice_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Invoice PDF by UUID",
+    "parameterDescriptions": {
+      "invoice_uuid": "UUID of the invoice"
+    }
   },
-  "get_v2_customers_my_invoices_invoice_uuid_summary": {
+  "invoices_get_summaryByUUID": {
     "accessPath": [
-      "getV2CustomersMyInvoicesInvoiceUuidSummary"
+      "invoicesGetSummaryByUuid"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1165,13 +1731,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/customers/my/invoices/{invoice_uuid}/summary",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "invoice_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Invoice Summary by UUID",
+    "parameterDescriptions": {
+      "invoice_uuid": "UUID of the invoice"
+    }
   },
-  "get_v2_billing_account_urn_insights_start_date_end_date": {
+  "billingInsights_list": {
     "accessPath": [
-      "getV2BillingAccountUrnInsightsStartDateEndDate"
+      "billingInsightsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1181,13 +1753,28 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/billing/{account_urn}/insights/{start_date}/{end_date}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "account_urn",
+      "start_date",
+      "end_date"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Billing Insights",
+    "parameterDescriptions": {
+      "account_urn": "URN of the customer account, can be a team (do:team:uuid) or an organization (do:teamgroup:uuid)",
+      "start_date": "Start date for billing insights in YYYY-MM-DD format",
+      "end_date": "End date for billing insights in YYYY-MM-DD format. Must be within 31 days of start_date",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_databases_options": {
+  "databases_list_options": {
     "accessPath": [
-      "getV2DatabasesOptions"
+      "databasesListOptions"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1199,11 +1786,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Database Options"
   },
-  "get_v2_databases": {
+  "databases_list_clusters": {
     "accessPath": [
-      "getV2Databases"
+      "databasesListClusters"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1215,15 +1803,52 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "tag_name"
+    ],
+    "description": "List All Database Clusters",
+    "parameterDescriptions": {
+      "tag_name": "Limits the results to database clusters with a specific tag.<br><br>Requires `tag:read` scope."
+    }
   },
-  "post_v2_databases": {
+  "databases_create_cluster": {
     "accessPath": [
-      "postV2Databases"
+      "databasesCreateCluster"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "name",
+      "engine",
+      "version",
+      "semantic_version",
+      "num_nodes",
+      "size",
+      "region",
+      "status",
+      "created_at",
+      "private_network_uuid",
+      "tags",
+      "db_names",
+      "ui_connection",
+      "schema_registry_connection",
+      "connection",
+      "private_connection",
+      "standby_connection",
+      "standby_private_connection",
+      "users",
+      "maintenance_window",
+      "project_id",
+      "rules",
+      "version_end_of_life",
+      "version_end_of_availability",
+      "storage_size_mib",
+      "metrics_endpoints",
+      "autoscale",
+      "do_settings",
+      "backup_restore"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -1231,11 +1856,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Database Cluster"
   },
-  "get_v2_databases_database_cluster_uuid": {
+  "databases_get_cluster": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuid"
+      "databasesGetCluster"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1245,13 +1871,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Database Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "delete_v2_databases_database_cluster_uuid": {
+  "databases_destroy_cluster": {
     "accessPath": [
-      "deleteV2DatabasesDatabaseClusterUuid"
+      "databasesDestroyCluster"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1261,13 +1893,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Destroy a Database Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_config": {
+  "databases_get_config": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidConfig"
+      "databasesGetConfig"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1277,29 +1915,43 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/config",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Database Cluster Configuration",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "patch_v2_databases_database_cluster_uuid_config": {
+  "databases_patch_config": {
     "accessPath": [
-      "patchV2DatabasesDatabaseClusterUuidConfig"
+      "databasesPatchConfig"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "config"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/config",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update the Database Configuration for an Existing Database",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_ca": {
+  "databases_get_ca": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidCa"
+      "databasesGetCa"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1309,13 +1961,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/ca",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve the Public Certificate",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_online_migration": {
+  "databases_get_migrationStatus": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidOnlineMigration"
+      "databasesGetMigrationStatus"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1325,29 +1983,45 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/online-migration",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve the Status of an Online Migration",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_online_migration": {
+  "databases_update_onlineMigration": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidOnlineMigration"
+      "databasesUpdateOnlineMigration"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "source",
+      "disable_ssl",
+      "ignore_dbs"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/online-migration",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Start an Online Migration",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "delete_v2_databases_database_cluster_uuid_online_migration_migration_id": {
+  "databases_delete_onlineMigration": {
     "accessPath": [
-      "deleteV2DatabasesDatabaseClusterUuidOnlineMigrationMigrationId"
+      "databasesDeleteOnlineMigration"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1357,45 +2031,71 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/online-migration/{migration_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "migration_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Stop an Online Migration",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "migration_id": "A unique identifier assigned to the online migration."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_migrate": {
+  "databases_update_region": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidMigrate"
+      "databasesUpdateRegion"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "region"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/migrate",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Migrate a Database Cluster to a New Region",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_resize": {
+  "databases_update_clusterSize": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidResize"
+      "databasesUpdateClusterSize"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "size",
+      "num_nodes",
+      "storage_size_mib"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/resize",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Resize a Database Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_firewall": {
+  "databases_list_firewall_rules": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidFirewall"
+      "databasesListFirewallRules"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1405,45 +2105,116 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/firewall",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Firewall Rules (Trusted Sources) for a Database Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_firewall": {
+  "databases_update_firewall_rules": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidFirewall"
+      "databasesUpdateFirewallRules"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "rules"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/firewall",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Firewall Rules (Trusted Sources) for a Database",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_maintenance": {
+  "databases_get_do_settings": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidMaintenance"
+      "databasesGetDoSettings"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/v2/databases/{database_cluster_uuid}/do_settings",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Retrieve DO Settings for a Database Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
+  },
+  "databases_update_do_settings": {
+    "accessPath": [
+      "databasesUpdateDoSettings"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "do_settings"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "PUT",
+    "routeTemplate": "/v2/databases/{database_cluster_uuid}/do_settings",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Update DO Settings for a Database Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
+  },
+  "databases_update_maintenanceWindow": {
+    "accessPath": [
+      "databasesUpdateMaintenanceWindow"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "day",
+      "hour",
+      "pending",
+      "description"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/maintenance",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Configure a Database Cluster's Maintenance Window",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_install_update": {
+  "databases_install_update": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidInstallUpdate"
+      "databasesInstallUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1453,13 +2224,19 @@ export const toolMetadata = {
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/install_update",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Start Database Maintenance",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_backups": {
+  "databases_list_backups": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidBackups"
+      "databasesListBackups"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1469,13 +2246,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/backups",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Backups for a Database Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_replicas": {
+  "databases_list_replicas": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidReplicas"
+      "databasesListReplicas"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1485,29 +2268,54 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/replicas",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List All Read-only Replicas",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "post_v2_databases_database_cluster_uuid_replicas": {
+  "databases_create_replica": {
     "accessPath": [
-      "postV2DatabasesDatabaseClusterUuidReplicas"
+      "databasesCreateReplica"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "name",
+      "region",
+      "size",
+      "status",
+      "tags",
+      "created_at",
+      "private_network_uuid",
+      "connection",
+      "private_connection",
+      "storage_size_mib",
+      "do_settings"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/replicas",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Read-only Replica",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_events": {
+  "databases_list_events_logs": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidEvents"
+      "databasesListEventsLogs"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1517,13 +2325,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/events",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List all Events Logs",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_replicas_replica_name": {
+  "databases_get_replica": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidReplicasReplicaName"
+      "databasesGetReplica"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1533,13 +2347,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/replicas/{replica_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "replica_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Read-only Replica",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "replica_name": "The name of the database replica."
+    }
   },
-  "delete_v2_databases_database_cluster_uuid_replicas_replica_name": {
+  "databases_destroy_replica": {
     "accessPath": [
-      "deleteV2DatabasesDatabaseClusterUuidReplicasReplicaName"
+      "databasesDestroyReplica"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1549,13 +2371,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/replicas/{replica_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "replica_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Destroy a Read-only Replica",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "replica_name": "The name of the database replica."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_replicas_replica_name_promote": {
+  "databases_promote_replica": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidReplicasReplicaNamePromote"
+      "databasesPromoteReplica"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1565,13 +2395,21 @@ export const toolMetadata = {
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/replicas/{replica_name}/promote",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "replica_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Promote a Read-only Replica to become a Primary Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "replica_name": "The name of the database replica."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_users": {
+  "databases_list_users": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidUsers"
+      "databasesListUsers"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1581,29 +2419,50 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/users",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List all Database Users",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "post_v2_databases_database_cluster_uuid_users": {
+  "databases_add_user": {
     "accessPath": [
-      "postV2DatabasesDatabaseClusterUuidUsers"
+      "databasesAddUser"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "role",
+      "password",
+      "access_cert",
+      "access_key",
+      "mysql_settings",
+      "settings",
+      "readonly"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/users",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add a Database User",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_users_username": {
+  "databases_get_user": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidUsersUsername"
+      "databasesGetUser"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1613,13 +2472,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/users/{username}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "username"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Database User",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "username": "The name of the database user."
+    }
   },
-  "delete_v2_databases_database_cluster_uuid_users_username": {
+  "databases_delete_user": {
     "accessPath": [
-      "deleteV2DatabasesDatabaseClusterUuidUsersUsername"
+      "databasesDeleteUser"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1629,45 +2496,73 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/users/{username}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "username"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Remove a Database User",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "username": "The name of the database user."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_users_username": {
+  "databases_update_user": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidUsersUsername"
+      "databasesUpdateUser"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "settings"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/users/{username}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "username"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Database User",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "username": "The name of the database user."
+    }
   },
-  "post_v2_databases_database_cluster_uuid_users_username_reset_auth": {
+  "databases_reset_auth": {
     "accessPath": [
-      "postV2DatabasesDatabaseClusterUuidUsersUsernameResetAuth"
+      "databasesResetAuth"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "mysql_settings"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/users/{username}/reset_auth",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "username"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Reset a Database User's Password or Authentication Method",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "username": "The name of the database user."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_dbs": {
+  "databases_list": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidDbs"
+      "databasesList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1677,29 +2572,43 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/dbs",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List All Databases",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "post_v2_databases_database_cluster_uuid_dbs": {
+  "databases_add": {
     "accessPath": [
-      "postV2DatabasesDatabaseClusterUuidDbs"
+      "databasesAdd"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/dbs",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add a New Database",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_dbs_database_name": {
+  "databases_get": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidDbsDatabaseName"
+      "databasesGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1709,13 +2618,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/dbs/{database_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "database_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Database",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "database_name": "The name of the database."
+    }
   },
-  "delete_v2_databases_database_cluster_uuid_dbs_database_name": {
+  "databases_delete": {
     "accessPath": [
-      "deleteV2DatabasesDatabaseClusterUuidDbsDatabaseName"
+      "databasesDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1725,13 +2642,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/dbs/{database_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "database_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Database",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "database_name": "The name of the database."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_pools": {
+  "databases_list_connectionPools": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidPools"
+      "databasesListConnectionPools"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1741,29 +2666,51 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/pools",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Connection Pools (PostgreSQL)",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "post_v2_databases_database_cluster_uuid_pools": {
+  "databases_add_connectionPool": {
     "accessPath": [
-      "postV2DatabasesDatabaseClusterUuidPools"
+      "databasesAddConnectionPool"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "mode",
+      "size",
+      "db",
+      "user",
+      "connection",
+      "private_connection",
+      "standby_connection",
+      "standby_private_connection"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/pools",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add a New Connection Pool (PostgreSQL)",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_pools_pool_name": {
+  "databases_get_connectionPool": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidPoolsPoolName"
+      "databasesGetConnectionPool"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1773,29 +2720,50 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/pools/{pool_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "pool_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Existing Connection Pool (PostgreSQL)",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "pool_name": "The name used to identify the connection pool."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_pools_pool_name": {
+  "databases_update_connectionPool": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidPoolsPoolName"
+      "databasesUpdateConnectionPool"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "mode",
+      "size",
+      "db",
+      "user"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/pools/{pool_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "pool_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Connection Pools (PostgreSQL)",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "pool_name": "The name used to identify the connection pool."
+    }
   },
-  "delete_v2_databases_database_cluster_uuid_pools_pool_name": {
+  "databases_delete_connectionPool": {
     "accessPath": [
-      "deleteV2DatabasesDatabaseClusterUuidPoolsPoolName"
+      "databasesDeleteConnectionPool"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1805,13 +2773,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/pools/{pool_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "pool_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Connection Pool (PostgreSQL)",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "pool_name": "The name used to identify the connection pool."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_eviction_policy": {
+  "databases_get_evictionPolicy": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidEvictionPolicy"
+      "databasesGetEvictionPolicy"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1821,29 +2797,43 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/eviction_policy",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve the Eviction Policy for a Caching or Valkey Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_eviction_policy": {
+  "databases_update_evictionPolicy": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidEvictionPolicy"
+      "databasesUpdateEvictionPolicy"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "eviction_policy"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/eviction_policy",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Configure the Eviction Policy for a Caching or Valkey Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_sql_mode": {
+  "databases_get_sql_mode": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidSqlMode"
+      "databasesGetSqlMode"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1853,45 +2843,67 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/sql_mode",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve the SQL Modes for a MySQL Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_sql_mode": {
+  "databases_update_sql_mode": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidSqlMode"
+      "databasesUpdateSqlMode"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "sql_mode"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/sql_mode",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update SQL Mode for a Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_upgrade": {
+  "databases_update_major_version": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidUpgrade"
+      "databasesUpdateMajorVersion"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "version"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/upgrade",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Upgrade Major Version for a Database",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_autoscale": {
+  "databases_get_autoscale": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidAutoscale"
+      "databasesGetAutoscale"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1901,29 +2913,43 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/autoscale",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Autoscale Configuration for a Database Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_autoscale": {
+  "databases_update_autoscale": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidAutoscale"
+      "databasesUpdateAutoscale"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "storage"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/autoscale",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Configure Autoscale Settings for a Database Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_topics": {
+  "databases_list_kafka_topics": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidTopics"
+      "databasesListKafkaTopics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1933,29 +2959,46 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/topics",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Topics for a Kafka Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "post_v2_databases_database_cluster_uuid_topics": {
+  "databases_create_kafka_topic": {
     "accessPath": [
-      "postV2DatabasesDatabaseClusterUuidTopics"
+      "databasesCreateKafkaTopic"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "replication_factor",
+      "partition_count",
+      "config"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/topics",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Topic for a Kafka Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_topics_topic_name": {
+  "databases_get_kafka_topic": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidTopicsTopicName"
+      "databasesGetKafkaTopic"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1965,29 +3008,49 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/topics/{topic_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "topic_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Topic for a Kafka Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "topic_name": "The name used to identify the Kafka topic."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_topics_topic_name": {
+  "databases_update_kafka_topic": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidTopicsTopicName"
+      "databasesUpdateKafkaTopic"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "replication_factor",
+      "partition_count",
+      "config"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/topics/{topic_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "topic_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Topic for a Kafka Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "topic_name": "The name used to identify the Kafka topic."
+    }
   },
-  "delete_v2_databases_database_cluster_uuid_topics_topic_name": {
+  "databases_delete_kafka_topic": {
     "accessPath": [
-      "deleteV2DatabasesDatabaseClusterUuidTopicsTopicName"
+      "databasesDeleteKafkaTopic"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -1997,13 +3060,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/topics/{topic_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "topic_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Topic for a Kafka Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "topic_name": "The name used to identify the Kafka topic."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_logsink": {
+  "databases_list_logsink": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidLogsink"
+      "databasesListLogsink"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2013,29 +3084,45 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/logsink",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Logsinks for a Database Cluster\n",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "post_v2_databases_database_cluster_uuid_logsink": {
+  "databases_create_logsink": {
     "accessPath": [
-      "postV2DatabasesDatabaseClusterUuidLogsink"
+      "databasesCreateLogsink"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "sink_name",
+      "sink_type",
+      "config"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/logsink",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Logsink for a Database Cluster\n",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_logsink_logsink_id": {
+  "databases_get_logsink": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidLogsinkLogsinkId"
+      "databasesGetLogsink"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2045,29 +3132,47 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/logsink/{logsink_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "logsink_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Logsink for a Database Cluster\n",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "logsink_id": "A unique identifier for a logsink of a database cluster"
+    }
   },
-  "put_v2_databases_database_cluster_uuid_logsink_logsink_id": {
+  "databases_update_logsink": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidLogsinkLogsinkId"
+      "databasesUpdateLogsink"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "config"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/logsink/{logsink_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "logsink_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Logsink for a Database Cluster\n",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "logsink_id": "A unique identifier for a logsink of a database cluster"
+    }
   },
-  "delete_v2_databases_database_cluster_uuid_logsink_logsink_id": {
+  "databases_delete_logsink": {
     "accessPath": [
-      "deleteV2DatabasesDatabaseClusterUuidLogsinkLogsinkId"
+      "databasesDeleteLogsink"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2077,13 +3182,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/logsink/{logsink_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "logsink_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Logsink for a Database Cluster\n",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "logsink_id": "A unique identifier for a logsink of a database cluster"
+    }
   },
-  "get_v2_databases_database_cluster_uuid_schema_registry": {
+  "databases_list_kafka_schemas": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidSchemaRegistry"
+      "databasesListKafkaSchemas"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2093,29 +3206,45 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/schema-registry",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Schemas for Kafka Cluster\n",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "post_v2_databases_database_cluster_uuid_schema_registry": {
+  "databases_create_kafka_schema": {
     "accessPath": [
-      "postV2DatabasesDatabaseClusterUuidSchemaRegistry"
+      "databasesCreateKafkaSchema"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "subject_name",
+      "schema_type",
+      "schema"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/schema-registry",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Schema Registry for Kafka Cluster\n",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_schema_registry_subject_name": {
+  "databases_get_kafka_schema": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidSchemaRegistrySubjectName"
+      "databasesGetKafkaSchema"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2125,13 +3254,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/schema-registry/{subject_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "subject_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get a Kafka Schema by Subject Name\n",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "subject_name": "The name of the Kafka schema subject."
+    }
   },
-  "delete_v2_databases_database_cluster_uuid_schema_registry_subject_name": {
+  "databases_delete_kafka_schema": {
     "accessPath": [
-      "deleteV2DatabasesDatabaseClusterUuidSchemaRegistrySubjectName"
+      "databasesDeleteKafkaSchema"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2141,13 +3278,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/schema-registry/{subject_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "subject_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Kafka Schema by Subject Name\n",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "subject_name": "The name of the Kafka schema subject."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_schema_registry_subject_name_versions_version": {
+  "databases_get_kafka_schema_version": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidSchemaRegistrySubjectNameVersionsVersion"
+      "databasesGetKafkaSchemaVersion"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2157,13 +3302,23 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/schema-registry/{subject_name}/versions/{version}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "subject_name",
+      "version"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Kafka Schema by Subject Version",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "subject_name": "The name of the Kafka schema subject.",
+      "version": "The version of the Kafka schema subject."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_schema_registry_config": {
+  "databases_get_kafka_schema_config": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidSchemaRegistryConfig"
+      "databasesGetKafkaSchemaConfig"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2173,29 +3328,43 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/schema-registry/config",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Schema Registry Configuration for a kafka Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_schema_registry_config": {
+  "databases_update_kafka_schema_config": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidSchemaRegistryConfig"
+      "databasesUpdateKafkaSchemaConfig"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "compatibility_level"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/schema-registry/config",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Schema Registry Configuration for a kafka Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "get_v2_databases_database_cluster_uuid_schema_registry_config_subject_name": {
+  "databases_get_kafka_schema_subject_config": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidSchemaRegistryConfigSubjectName"
+      "databasesGetKafkaSchemaSubjectConfig"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2205,29 +3374,47 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/schema-registry/config/{subject_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "subject_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Schema Registry Configuration for a Subject of kafka Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "subject_name": "The name of the Kafka schema subject."
+    }
   },
-  "put_v2_databases_database_cluster_uuid_schema_registry_config_subject_name": {
+  "databases_update_kafka_schema_subject_config": {
     "accessPath": [
-      "putV2DatabasesDatabaseClusterUuidSchemaRegistryConfigSubjectName"
+      "databasesUpdateKafkaSchemaSubjectConfig"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "compatibility_level"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/schema-registry/config/{subject_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "subject_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Schema Registry Configuration for a Subject of kafka Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "subject_name": "The name of the Kafka schema subject."
+    }
   },
-  "get_v2_databases_metrics_credentials": {
+  "databases_get_cluster_metrics_credentials": {
     "accessPath": [
-      "getV2DatabasesMetricsCredentials"
+      "databasesGetClusterMetricsCredentials"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2239,15 +3426,18 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Database Clusters' Metrics Endpoint Credentials"
   },
-  "put_v2_databases_metrics_credentials": {
+  "databases_update_cluster_metrics_credentials": {
     "accessPath": [
-      "putV2DatabasesMetricsCredentials"
+      "databasesUpdateClusterMetricsCredentials"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "credentials"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
@@ -2255,11 +3445,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Database Clusters' Metrics Endpoint Credentials"
   },
-  "get_v2_databases_database_cluster_uuid_indexes": {
+  "databases_list_opeasearch_indexes": {
     "accessPath": [
-      "getV2DatabasesDatabaseClusterUuidIndexes"
+      "databasesListOpeasearchIndexes"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2269,13 +3460,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/indexes",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Indexes for a OpenSearch Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster."
+    }
   },
-  "delete_v2_databases_database_cluster_uuid_indexes_index_name": {
+  "databases_delete_opensearch_index": {
     "accessPath": [
-      "deleteV2DatabasesDatabaseClusterUuidIndexesIndexName"
+      "databasesDeleteOpensearchIndex"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2285,13 +3482,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/databases/{database_cluster_uuid}/indexes/{index_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "database_cluster_uuid",
+      "index_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Index for OpenSearch Cluster",
+    "parameterDescriptions": {
+      "database_cluster_uuid": "A unique identifier for a database cluster.",
+      "index_name": "The name of the OpenSearch index."
+    }
   },
-  "get_v2_dedicated_inferences_dedicated_inference_id": {
+  "dedicatedInferences_get": {
     "accessPath": [
-      "getV2DedicatedInferencesDedicatedInferenceId"
+      "dedicatedInferencesGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2301,29 +3506,44 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/dedicated-inferences/{dedicated_inference_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "dedicated_inference_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get a Dedicated Inference",
+    "parameterDescriptions": {
+      "dedicated_inference_id": "A unique identifier for a Dedicated Inference instance."
+    }
   },
-  "patch_v2_dedicated_inferences_dedicated_inference_id": {
+  "dedicatedInferences_patch": {
     "accessPath": [
-      "patchV2DedicatedInferencesDedicatedInferenceId"
+      "dedicatedInferencesPatch"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "spec",
+      "access_tokens"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/dedicated-inferences/{dedicated_inference_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "dedicated_inference_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Dedicated Inference",
+    "parameterDescriptions": {
+      "dedicated_inference_id": "A unique identifier for a Dedicated Inference instance."
+    }
   },
-  "delete_v2_dedicated_inferences_dedicated_inference_id": {
+  "dedicatedInferences_delete": {
     "accessPath": [
-      "deleteV2DedicatedInferencesDedicatedInferenceId"
+      "dedicatedInferencesDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2333,13 +3553,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/dedicated-inferences/{dedicated_inference_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "dedicated_inference_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Dedicated Inference",
+    "parameterDescriptions": {
+      "dedicated_inference_id": "A unique identifier for a Dedicated Inference instance."
+    }
   },
-  "get_v2_dedicated_inferences": {
+  "dedicatedInferences_list": {
     "accessPath": [
-      "getV2DedicatedInferences"
+      "dedicatedInferencesList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2351,15 +3577,28 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "region"
+    ],
+    "description": "List Dedicated Inferences",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "region": "Filter by region. Dedicated Inference is only available in nyc2, tor1, and atl1."
+    }
   },
-  "post_v2_dedicated_inferences": {
+  "dedicatedInferences_create": {
     "accessPath": [
-      "postV2DedicatedInferences"
+      "dedicatedInferencesCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "spec",
+      "access_tokens"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -2367,11 +3606,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Dedicated Inference"
   },
-  "get_v2_dedicated_inferences_dedicated_inference_id_accelerators": {
+  "dedicatedInferences_list_accelerators": {
     "accessPath": [
-      "getV2DedicatedInferencesDedicatedInferenceIdAccelerators"
+      "dedicatedInferencesListAccelerators"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2381,13 +3621,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/dedicated-inferences/{dedicated_inference_id}/accelerators",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "dedicated_inference_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "slug"
+    ],
+    "description": "List Dedicated Inference Accelerators",
+    "parameterDescriptions": {
+      "dedicated_inference_id": "A unique identifier for a Dedicated Inference instance.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "slug": "Filter accelerators by GPU slug."
+    }
   },
-  "get_v2_dedicated_inferences_dedicated_inference_id_accelerators_accelerator_id": {
+  "dedicatedInferences_get_accelerator": {
     "accessPath": [
-      "getV2DedicatedInferencesDedicatedInferenceIdAcceleratorsAcceleratorId"
+      "dedicatedInferencesGetAccelerator"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2397,13 +3650,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/dedicated-inferences/{dedicated_inference_id}/accelerators/{accelerator_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "dedicated_inference_id",
+      "accelerator_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get a Dedicated Inference Accelerator",
+    "parameterDescriptions": {
+      "dedicated_inference_id": "A unique identifier for a Dedicated Inference instance.",
+      "accelerator_id": "A unique identifier for a Dedicated Inference accelerator."
+    }
   },
-  "get_v2_dedicated_inferences_dedicated_inference_id_ca": {
+  "dedicatedInferences_get_ca": {
     "accessPath": [
-      "getV2DedicatedInferencesDedicatedInferenceIdCa"
+      "dedicatedInferencesGetCa"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2413,13 +3674,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/dedicated-inferences/{dedicated_inference_id}/ca",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "dedicated_inference_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Dedicated Inference CA Certificate",
+    "parameterDescriptions": {
+      "dedicated_inference_id": "A unique identifier for a Dedicated Inference instance."
+    }
   },
-  "get_v2_dedicated_inferences_dedicated_inference_id_tokens": {
+  "dedicatedInferences_list_tokens": {
     "accessPath": [
-      "getV2DedicatedInferencesDedicatedInferenceIdTokens"
+      "dedicatedInferencesListTokens"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2429,29 +3696,48 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/dedicated-inferences/{dedicated_inference_id}/tokens",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "dedicated_inference_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Dedicated Inference Tokens",
+    "parameterDescriptions": {
+      "dedicated_inference_id": "A unique identifier for a Dedicated Inference instance.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_dedicated_inferences_dedicated_inference_id_tokens": {
+  "dedicatedInferences_create_tokens": {
     "accessPath": [
-      "postV2DedicatedInferencesDedicatedInferenceIdTokens"
+      "dedicatedInferencesCreateTokens"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/dedicated-inferences/{dedicated_inference_id}/tokens",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "dedicated_inference_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Dedicated Inference Token",
+    "parameterDescriptions": {
+      "dedicated_inference_id": "A unique identifier for a Dedicated Inference instance."
+    }
   },
-  "delete_v2_dedicated_inferences_dedicated_inference_id_tokens_token_id": {
+  "dedicatedInferences_delete_tokens": {
     "accessPath": [
-      "deleteV2DedicatedInferencesDedicatedInferenceIdTokensTokenId"
+      "dedicatedInferencesDeleteTokens"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2461,13 +3747,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/dedicated-inferences/{dedicated_inference_id}/tokens/{token_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "dedicated_inference_id",
+      "token_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Revoke a Dedicated Inference Token",
+    "parameterDescriptions": {
+      "dedicated_inference_id": "A unique identifier for a Dedicated Inference instance.",
+      "token_id": "A unique identifier for a Dedicated Inference access token."
+    }
   },
-  "get_v2_dedicated_inferences_sizes": {
+  "dedicatedInferences_list_sizes": {
     "accessPath": [
-      "getV2DedicatedInferencesSizes"
+      "dedicatedInferencesListSizes"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2479,11 +3773,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Dedicated Inference Sizes"
   },
-  "get_v2_dedicated_inferences_gpu_model_config": {
+  "dedicatedInferences_get_gpu_model_config": {
     "accessPath": [
-      "getV2DedicatedInferencesGpuModelConfig"
+      "dedicatedInferencesGetGpuModelConfig"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2495,11 +3790,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Dedicated Inference GPU Model Config"
   },
-  "get_v2_domains": {
+  "domains_list": {
     "accessPath": [
-      "getV2Domains"
+      "domainsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2511,15 +3807,28 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Domains",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_domains": {
+  "domains_create": {
     "accessPath": [
-      "postV2Domains"
+      "domainsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "ip_address",
+      "ttl",
+      "zone_file"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -2527,11 +3836,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Domain"
   },
-  "get_v2_domains_domain_name": {
+  "domains_get": {
     "accessPath": [
-      "getV2DomainsDomainName"
+      "domainsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2541,13 +3851,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/domains/{domain_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "domain_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Domain",
+    "parameterDescriptions": {
+      "domain_name": "The name of the domain itself."
+    }
   },
-  "delete_v2_domains_domain_name": {
+  "domains_delete": {
     "accessPath": [
-      "deleteV2DomainsDomainName"
+      "domainsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2557,13 +3873,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/domains/{domain_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "domain_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Domain",
+    "parameterDescriptions": {
+      "domain_name": "The name of the domain itself."
+    }
   },
-  "get_v2_domains_domain_name_records": {
+  "domains_list_records": {
     "accessPath": [
-      "getV2DomainsDomainNameRecords"
+      "domainsListRecords"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2573,29 +3895,50 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/domains/{domain_name}/records",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "domain_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "name",
+      "type",
+      "per_page",
+      "page"
+    ],
+    "description": "List All Domain Records",
+    "parameterDescriptions": {
+      "domain_name": "The name of the domain itself.",
+      "name": "A fully qualified record name. For example, to only include records matching sub.example.com, send a GET request to `/v2/domains/$DOMAIN_NAME/records?name=sub.example.com`.",
+      "type": "The type of the DNS record. For example: A, CNAME, TXT, ...",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_domains_domain_name_records": {
+  "domains_create_record": {
     "accessPath": [
-      "postV2DomainsDomainNameRecords"
+      "domainsCreateRecord"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/domains/{domain_name}/records",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "domain_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Domain Record",
+    "parameterDescriptions": {
+      "domain_name": "The name of the domain itself."
+    }
   },
-  "get_v2_domains_domain_name_records_domain_record_id": {
+  "domains_get_record": {
     "accessPath": [
-      "getV2DomainsDomainNameRecordsDomainRecordId"
+      "domainsGetRecord"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2605,45 +3948,91 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/domains/{domain_name}/records/{domain_record_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "domain_name",
+      "domain_record_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Domain Record",
+    "parameterDescriptions": {
+      "domain_name": "The name of the domain itself.",
+      "domain_record_id": "The unique identifier of the domain record."
+    }
   },
-  "patch_v2_domains_domain_name_records_domain_record_id": {
+  "domains_patch_record": {
     "accessPath": [
-      "patchV2DomainsDomainNameRecordsDomainRecordId"
+      "domainsPatchRecord"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "type",
+      "name",
+      "data",
+      "priority",
+      "port",
+      "ttl",
+      "weight",
+      "flags",
+      "tag"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/domains/{domain_name}/records/{domain_record_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "domain_name",
+      "domain_record_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Domain Record",
+    "parameterDescriptions": {
+      "domain_name": "The name of the domain itself.",
+      "domain_record_id": "The unique identifier of the domain record."
+    }
   },
-  "put_v2_domains_domain_name_records_domain_record_id": {
+  "domains_update_record": {
     "accessPath": [
-      "putV2DomainsDomainNameRecordsDomainRecordId"
+      "domainsUpdateRecord"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "type",
+      "name",
+      "data",
+      "priority",
+      "port",
+      "ttl",
+      "weight",
+      "flags",
+      "tag"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/domains/{domain_name}/records/{domain_record_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "domain_name",
+      "domain_record_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Domain Record",
+    "parameterDescriptions": {
+      "domain_name": "The name of the domain itself.",
+      "domain_record_id": "The unique identifier of the domain record."
+    }
   },
-  "delete_v2_domains_domain_name_records_domain_record_id": {
+  "domains_delete_record": {
     "accessPath": [
-      "deleteV2DomainsDomainNameRecordsDomainRecordId"
+      "domainsDeleteRecord"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2653,13 +4042,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/domains/{domain_name}/records/{domain_record_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "domain_name",
+      "domain_record_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Domain Record",
+    "parameterDescriptions": {
+      "domain_name": "The name of the domain itself.",
+      "domain_record_id": "The unique identifier of the domain record."
+    }
   },
-  "get_v2_droplets": {
+  "droplets_list": {
     "accessPath": [
-      "getV2Droplets"
+      "dropletsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2671,14 +4068,28 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "tag_name",
+      "name",
+      "type"
+    ],
+    "description": "List All Droplets",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "tag_name": "Used to filter Droplets by a specific tag. Can not be combined with `name` or `type`.<br>Requires `tag:read` scope.",
+      "name": "Used to filter list response by Droplet name returning only exact matches. It is case-insensitive and can not be combined with `tag_name`.",
+      "type": "When `type` is set to `gpus`, only GPU Droplets will be returned. By default, only non-GPU Droplets are returned. Can not be combined with `tag_name`."
+    }
   },
-  "post_v2_droplets": {
+  "droplets_create": {
     "accessPath": [
-      "postV2Droplets"
+      "dropletsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -2687,11 +4098,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Droplet"
   },
-  "delete_v2_droplets": {
+  "droplets_destroy_byTag": {
     "accessPath": [
-      "deleteV2Droplets"
+      "dropletsDestroyByTag"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2703,11 +4115,17 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "tag_name"
+    ],
+    "description": "Deleting Droplets by Tag",
+    "parameterDescriptions": {
+      "tag_name": "Specifies Droplets to be deleted by tag."
+    }
   },
-  "get_v2_droplets_droplet_id": {
+  "droplets_get": {
     "accessPath": [
-      "getV2DropletsDropletId"
+      "dropletsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2717,13 +4135,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Droplet",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance."
+    }
   },
-  "delete_v2_droplets_droplet_id": {
+  "droplets_destroy": {
     "accessPath": [
-      "deleteV2DropletsDropletId"
+      "dropletsDestroy"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2733,13 +4157,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/droplets/{droplet_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete an Existing Droplet",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance."
+    }
   },
-  "get_v2_droplets_droplet_id_backups": {
+  "droplets_list_backups": {
     "accessPath": [
-      "getV2DropletsDropletIdBackups"
+      "dropletsListBackups"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2749,13 +4179,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}/backups",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Backups for a Droplet",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_droplets_droplet_id_backups_policy": {
+  "droplets_get_backup_policy": {
     "accessPath": [
-      "getV2DropletsDropletIdBackupsPolicy"
+      "dropletsGetBackupPolicy"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2765,13 +4206,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}/backups/policy",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve the Backup Policy for an Existing Droplet",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance."
+    }
   },
-  "get_v2_droplets_backups_policies": {
+  "droplets_list_backup_policies": {
     "accessPath": [
-      "getV2DropletsBackupsPolicies"
+      "dropletsListBackupPolicies"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2783,11 +4230,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Backup Policies for All Existing Droplets",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_droplets_backups_supported_policies": {
+  "droplets_list_supported_backup_policies": {
     "accessPath": [
-      "getV2DropletsBackupsSupportedPolicies"
+      "dropletsListSupportedBackupPolicies"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2799,11 +4254,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Supported Droplet Backup Policies"
   },
-  "get_v2_droplets_droplet_id_snapshots": {
+  "droplets_list_snapshots": {
     "accessPath": [
-      "getV2DropletsDropletIdSnapshots"
+      "dropletsListSnapshots"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2813,13 +4269,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}/snapshots",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Snapshots for a Droplet",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_droplets_droplet_id_actions": {
+  "dropletActions_list": {
     "accessPath": [
-      "getV2DropletsDropletIdActions"
+      "dropletActionsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2829,32 +4296,49 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Actions for a Droplet",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_droplets_droplet_id_actions": {
+  "dropletActions_post": {
     "accessPath": [
-      "postV2DropletsDropletIdActions"
+      "dropletActionsPost"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/droplets/{droplet_id}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Initiate a Droplet Action",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance."
+    }
   },
-  "post_v2_droplets_actions": {
+  "dropletActions_post_byTag": {
     "accessPath": [
-      "postV2DropletsActions"
+      "dropletActionsPostByTag"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -2863,11 +4347,17 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "tag_name"
+    ],
+    "description": "Acting on Tagged Droplets",
+    "parameterDescriptions": {
+      "tag_name": "Used to filter Droplets by a specific tag. Can not be combined with `name` or `type`.<br>Requires `tag:read` scope."
+    }
   },
-  "get_v2_droplets_droplet_id_actions_action_id": {
+  "dropletActions_get": {
     "accessPath": [
-      "getV2DropletsDropletIdActionsActionId"
+      "dropletActionsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2877,13 +4367,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}/actions/{action_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id",
+      "action_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve a Droplet Action",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance.",
+      "action_id": "A unique numeric ID that can be used to identify and reference an action."
+    }
   },
-  "get_v2_droplets_droplet_id_kernels": {
+  "droplets_list_kernels": {
     "accessPath": [
-      "getV2DropletsDropletIdKernels"
+      "dropletsListKernels"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2893,13 +4391,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}/kernels",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Available Kernels for a Droplet",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_droplets_droplet_id_firewalls": {
+  "droplets_list_firewalls": {
     "accessPath": [
-      "getV2DropletsDropletIdFirewalls"
+      "dropletsListFirewalls"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2909,13 +4418,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}/firewalls",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List all Firewalls Applied to a Droplet",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_droplets_droplet_id_neighbors": {
+  "droplets_list_neighbors": {
     "accessPath": [
-      "getV2DropletsDropletIdNeighbors"
+      "dropletsListNeighbors"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2925,13 +4445,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}/neighbors",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Neighbors for a Droplet",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance."
+    }
   },
-  "get_v2_droplets_droplet_id_destroy_with_associated_resources": {
+  "droplets_list_associatedResources": {
     "accessPath": [
-      "getV2DropletsDropletIdDestroyWithAssociatedResources"
+      "dropletsListAssociatedResources"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2941,45 +4467,72 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}/destroy_with_associated_resources",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Associated Resources for a Droplet",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance."
+    }
   },
-  "delete_v2_droplets_droplet_id_destroy_with_associated_resources_selective": {
+  "droplets_destroy_withAssociatedResourcesSelective": {
     "accessPath": [
-      "deleteV2DropletsDropletIdDestroyWithAssociatedResourcesSelective"
+      "dropletsDestroyWithAssociatedResourcesSelective"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "floating_ips",
+      "reserved_ips",
+      "snapshots",
+      "volumes",
+      "volume_snapshots"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v2/droplets/{droplet_id}/destroy_with_associated_resources/selective",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Selectively Destroy a Droplet and its Associated Resources",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance."
+    }
   },
-  "delete_v2_droplets_droplet_id_destroy_with_associated_resources_dangerous": {
+  "droplets_destroy_withAssociatedResourcesDangerous": {
     "accessPath": [
-      "deleteV2DropletsDropletIdDestroyWithAssociatedResourcesDangerous"
+      "dropletsDestroyWithAssociatedResourcesDangerous"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
-    "headerParameterKeys": [],
+    "headerParameterKeys": [
+      "X-Dangerous"
+    ],
     "method": "DELETE",
     "routeTemplate": "/v2/droplets/{droplet_id}/destroy_with_associated_resources/dangerous",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Destroy a Droplet and All of its Associated Resources (Dangerous)",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance.",
+      "X-Dangerous": "Acknowledge this action will destroy the Droplet and all associated resources and _can not_ be reversed."
+    }
   },
-  "get_v2_droplets_droplet_id_destroy_with_associated_resources_status": {
+  "droplets_get_DestroyAssociatedResourcesStatus": {
     "accessPath": [
-      "getV2DropletsDropletIdDestroyWithAssociatedResourcesStatus"
+      "dropletsGetDestroyAssociatedResourcesStatus"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -2989,13 +4542,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/{droplet_id}/destroy_with_associated_resources/status",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Check Status of a Droplet Destroy with Associated Resources Request",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance."
+    }
   },
-  "post_v2_droplets_droplet_id_destroy_with_associated_resources_retry": {
+  "droplets_destroy_retryWithAssociatedResources": {
     "accessPath": [
-      "postV2DropletsDropletIdDestroyWithAssociatedResourcesRetry"
+      "dropletsDestroyRetryWithAssociatedResources"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3005,13 +4564,19 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v2/droplets/{droplet_id}/destroy_with_associated_resources/retry",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "droplet_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retry a Droplet Destroy with Associated Resources Request",
+    "parameterDescriptions": {
+      "droplet_id": "A unique identifier for a Droplet instance."
+    }
   },
-  "get_v2_droplets_autoscale": {
+  "autoscalepools_list": {
     "accessPath": [
-      "getV2DropletsAutoscale"
+      "autoscalepoolsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3023,15 +4588,29 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "name"
+    ],
+    "description": "List All Autoscale Pools",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "name": "The name of the autoscale pool"
+    }
   },
-  "post_v2_droplets_autoscale": {
+  "autoscalepools_create": {
     "accessPath": [
-      "postV2DropletsAutoscale"
+      "autoscalepoolsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "config",
+      "droplet_template"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -3039,11 +4618,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Autoscale Pool"
   },
-  "get_v2_droplets_autoscale_autoscale_pool_id": {
+  "autoscalepools_get": {
     "accessPath": [
-      "getV2DropletsAutoscaleAutoscalePoolId"
+      "autoscalepoolsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3053,29 +4633,45 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/autoscale/{autoscale_pool_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "autoscale_pool_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Autoscale Pool",
+    "parameterDescriptions": {
+      "autoscale_pool_id": "A unique identifier for an autoscale pool."
+    }
   },
-  "put_v2_droplets_autoscale_autoscale_pool_id": {
+  "autoscalepools_update": {
     "accessPath": [
-      "putV2DropletsAutoscaleAutoscalePoolId"
+      "autoscalepoolsUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "config",
+      "droplet_template"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/droplets/autoscale/{autoscale_pool_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "autoscale_pool_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Autoscale Pool",
+    "parameterDescriptions": {
+      "autoscale_pool_id": "A unique identifier for an autoscale pool."
+    }
   },
-  "delete_v2_droplets_autoscale_autoscale_pool_id": {
+  "autoscalepools_delete": {
     "accessPath": [
-      "deleteV2DropletsAutoscaleAutoscalePoolId"
+      "autoscalepoolsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3085,29 +4681,44 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/droplets/autoscale/{autoscale_pool_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "autoscale_pool_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete autoscale pool",
+    "parameterDescriptions": {
+      "autoscale_pool_id": "A unique identifier for an autoscale pool."
+    }
   },
-  "delete_v2_droplets_autoscale_autoscale_pool_id_dangerous": {
+  "autoscalepools_delete_dangerous": {
     "accessPath": [
-      "deleteV2DropletsAutoscaleAutoscalePoolIdDangerous"
+      "autoscalepoolsDeleteDangerous"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
-    "headerParameterKeys": [],
+    "headerParameterKeys": [
+      "X-Dangerous"
+    ],
     "method": "DELETE",
     "routeTemplate": "/v2/droplets/autoscale/{autoscale_pool_id}/dangerous",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "autoscale_pool_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete autoscale pool and resources",
+    "parameterDescriptions": {
+      "autoscale_pool_id": "A unique identifier for an autoscale pool.",
+      "X-Dangerous": "Acknowledge this action will destroy the autoscale pool and its associated resources and _can not_ be reversed."
+    }
   },
-  "get_v2_droplets_autoscale_autoscale_pool_id_members": {
+  "autoscalepools_list_members": {
     "accessPath": [
-      "getV2DropletsAutoscaleAutoscalePoolIdMembers"
+      "autoscalepoolsListMembers"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3117,13 +4728,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/autoscale/{autoscale_pool_id}/members",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "autoscale_pool_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List members",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "autoscale_pool_id": "A unique identifier for an autoscale pool."
+    }
   },
-  "get_v2_droplets_autoscale_autoscale_pool_id_history": {
+  "autoscalepools_list_history": {
     "accessPath": [
-      "getV2DropletsAutoscaleAutoscalePoolIdHistory"
+      "autoscalepoolsListHistory"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3133,13 +4755,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/droplets/autoscale/{autoscale_pool_id}/history",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "autoscale_pool_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List history events",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "autoscale_pool_id": "A unique identifier for an autoscale pool."
+    }
   },
-  "get_v2_firewalls": {
+  "firewalls_list": {
     "accessPath": [
-      "getV2Firewalls"
+      "firewallsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3151,14 +4784,22 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Firewalls",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_firewalls": {
+  "firewalls_create": {
     "accessPath": [
-      "postV2Firewalls"
+      "firewallsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -3167,11 +4808,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Firewall"
   },
-  "get_v2_firewalls_firewall_id": {
+  "firewalls_get": {
     "accessPath": [
-      "getV2FirewallsFirewallId"
+      "firewallsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3181,29 +4823,41 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/firewalls/{firewall_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "firewall_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Firewall",
+    "parameterDescriptions": {
+      "firewall_id": "A unique ID that can be used to identify and reference a firewall."
+    }
   },
-  "put_v2_firewalls_firewall_id": {
+  "firewalls_update": {
     "accessPath": [
-      "putV2FirewallsFirewallId"
+      "firewallsUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/firewalls/{firewall_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "firewall_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Firewall",
+    "parameterDescriptions": {
+      "firewall_id": "A unique ID that can be used to identify and reference a firewall."
+    }
   },
-  "delete_v2_firewalls_firewall_id": {
+  "firewalls_delete": {
     "accessPath": [
-      "deleteV2FirewallsFirewallId"
+      "firewallsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3213,109 +4867,159 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/firewalls/{firewall_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "firewall_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Firewall",
+    "parameterDescriptions": {
+      "firewall_id": "A unique ID that can be used to identify and reference a firewall."
+    }
   },
-  "post_v2_firewalls_firewall_id_droplets": {
+  "firewalls_assign_droplets": {
     "accessPath": [
-      "postV2FirewallsFirewallIdDroplets"
+      "firewallsAssignDroplets"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "droplet_ids"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/firewalls/{firewall_id}/droplets",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "firewall_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Droplets to a Firewall",
+    "parameterDescriptions": {
+      "firewall_id": "A unique ID that can be used to identify and reference a firewall."
+    }
   },
-  "delete_v2_firewalls_firewall_id_droplets": {
+  "firewalls_delete_droplets": {
     "accessPath": [
-      "deleteV2FirewallsFirewallIdDroplets"
+      "firewallsDeleteDroplets"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "droplet_ids"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v2/firewalls/{firewall_id}/droplets",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "firewall_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Remove Droplets from a Firewall",
+    "parameterDescriptions": {
+      "firewall_id": "A unique ID that can be used to identify and reference a firewall."
+    }
   },
-  "post_v2_firewalls_firewall_id_tags": {
+  "firewalls_add_tags": {
     "accessPath": [
-      "postV2FirewallsFirewallIdTags"
+      "firewallsAddTags"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "tags"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/firewalls/{firewall_id}/tags",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "firewall_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Tags to a Firewall",
+    "parameterDescriptions": {
+      "firewall_id": "A unique ID that can be used to identify and reference a firewall."
+    }
   },
-  "delete_v2_firewalls_firewall_id_tags": {
+  "firewalls_delete_tags": {
     "accessPath": [
-      "deleteV2FirewallsFirewallIdTags"
+      "firewallsDeleteTags"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "tags"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v2/firewalls/{firewall_id}/tags",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "firewall_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Remove Tags from a Firewall",
+    "parameterDescriptions": {
+      "firewall_id": "A unique ID that can be used to identify and reference a firewall."
+    }
   },
-  "post_v2_firewalls_firewall_id_rules": {
+  "firewalls_add_rules": {
     "accessPath": [
-      "postV2FirewallsFirewallIdRules"
+      "firewallsAddRules"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/firewalls/{firewall_id}/rules",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "firewall_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Rules to a Firewall",
+    "parameterDescriptions": {
+      "firewall_id": "A unique ID that can be used to identify and reference a firewall."
+    }
   },
-  "delete_v2_firewalls_firewall_id_rules": {
+  "firewalls_delete_rules": {
     "accessPath": [
-      "deleteV2FirewallsFirewallIdRules"
+      "firewallsDeleteRules"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v2/firewalls/{firewall_id}/rules",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "firewall_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Remove Rules from a Firewall",
+    "parameterDescriptions": {
+      "firewall_id": "A unique ID that can be used to identify and reference a firewall."
+    }
   },
-  "get_v2_floating_ips": {
+  "floatingIPs_list": {
     "accessPath": [
-      "getV2FloatingIps"
+      "floatingIPsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3327,14 +5031,22 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Floating IPs",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_floating_ips": {
+  "floatingIPs_create": {
     "accessPath": [
-      "postV2FloatingIps"
+      "floatingIPsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -3343,11 +5055,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Floating IP"
   },
-  "get_v2_floating_ips_floating_ip": {
+  "floatingIPs_get": {
     "accessPath": [
-      "getV2FloatingIpsFloatingIp"
+      "floatingIPsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3357,13 +5070,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/floating_ips/{floating_ip}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "floating_ip"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Floating IP",
+    "parameterDescriptions": {
+      "floating_ip": "A floating IP address."
+    }
   },
-  "delete_v2_floating_ips_floating_ip": {
+  "floatingIPs_delete": {
     "accessPath": [
-      "deleteV2FloatingIpsFloatingIp"
+      "floatingIPsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3373,13 +5092,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/floating_ips/{floating_ip}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "floating_ip"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Floating IP",
+    "parameterDescriptions": {
+      "floating_ip": "A floating IP address."
+    }
   },
-  "get_v2_floating_ips_floating_ip_actions": {
+  "floatingIPsAction_list": {
     "accessPath": [
-      "getV2FloatingIpsFloatingIpActions"
+      "floatingIPsActionList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3389,29 +5114,41 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/floating_ips/{floating_ip}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "floating_ip"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List All Actions for a Floating IP",
+    "parameterDescriptions": {
+      "floating_ip": "A floating IP address."
+    }
   },
-  "post_v2_floating_ips_floating_ip_actions": {
+  "floatingIPsAction_post": {
     "accessPath": [
-      "postV2FloatingIpsFloatingIpActions"
+      "floatingIPsActionPost"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/floating_ips/{floating_ip}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "floating_ip"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Initiate a Floating IP Action",
+    "parameterDescriptions": {
+      "floating_ip": "A floating IP address."
+    }
   },
-  "get_v2_floating_ips_floating_ip_actions_action_id": {
+  "floatingIPsAction_get": {
     "accessPath": [
-      "getV2FloatingIpsFloatingIpActionsActionId"
+      "floatingIPsActionGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3421,13 +5158,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/floating_ips/{floating_ip}/actions/{action_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "floating_ip",
+      "action_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Floating IP Action",
+    "parameterDescriptions": {
+      "floating_ip": "A floating IP address.",
+      "action_id": "A unique numeric ID that can be used to identify and reference an action."
+    }
   },
-  "get_v2_functions_namespaces": {
+  "functions_list_namespaces": {
     "accessPath": [
-      "getV2FunctionsNamespaces"
+      "functionsListNamespaces"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3439,15 +5184,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Namespaces"
   },
-  "post_v2_functions_namespaces": {
+  "functions_create_namespace": {
     "accessPath": [
-      "postV2FunctionsNamespaces"
+      "functionsCreateNamespace"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "region",
+      "label"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -3455,11 +5204,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Namespace"
   },
-  "get_v2_functions_namespaces_namespace_id": {
+  "functions_get_namespace": {
     "accessPath": [
-      "getV2FunctionsNamespacesNamespaceId"
+      "functionsGetNamespace"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3469,13 +5219,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Namespace",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed."
+    }
   },
-  "delete_v2_functions_namespaces_namespace_id": {
+  "functions_delete_namespace": {
     "accessPath": [
-      "deleteV2FunctionsNamespacesNamespaceId"
+      "functionsDeleteNamespace"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3485,13 +5241,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Namespace",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed."
+    }
   },
-  "get_v2_functions_namespaces_namespace_id_triggers": {
+  "functions_list_triggers": {
     "accessPath": [
-      "getV2FunctionsNamespacesNamespaceIdTriggers"
+      "functionsListTriggers"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3501,29 +5263,47 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}/triggers",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Triggers",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed."
+    }
   },
-  "post_v2_functions_namespaces_namespace_id_triggers": {
+  "functions_create_trigger": {
     "accessPath": [
-      "postV2FunctionsNamespacesNamespaceIdTriggers"
+      "functionsCreateTrigger"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "function",
+      "type",
+      "is_enabled",
+      "scheduled_details"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}/triggers",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Trigger",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed."
+    }
   },
-  "get_v2_functions_namespaces_namespace_id_triggers_trigger_name": {
+  "functions_get_trigger": {
     "accessPath": [
-      "getV2FunctionsNamespacesNamespaceIdTriggersTriggerName"
+      "functionsGetTrigger"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3533,29 +5313,48 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}/triggers/{trigger_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id",
+      "trigger_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Trigger",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed.",
+      "trigger_name": "The name of the trigger to be managed."
+    }
   },
-  "put_v2_functions_namespaces_namespace_id_triggers_trigger_name": {
+  "functions_update_trigger": {
     "accessPath": [
-      "putV2FunctionsNamespacesNamespaceIdTriggersTriggerName"
+      "functionsUpdateTrigger"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "is_enabled",
+      "scheduled_details"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}/triggers/{trigger_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id",
+      "trigger_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Trigger",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed.",
+      "trigger_name": "The name of the trigger to be managed."
+    }
   },
-  "delete_v2_functions_namespaces_namespace_id_triggers_trigger_name": {
+  "functions_delete_trigger": {
     "accessPath": [
-      "deleteV2FunctionsNamespacesNamespaceIdTriggersTriggerName"
+      "functionsDeleteTrigger"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3565,13 +5364,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}/triggers/{trigger_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id",
+      "trigger_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Trigger",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed.",
+      "trigger_name": "The name of the trigger to be managed."
+    }
   },
-  "get_v2_functions_namespaces_namespace_id_keys": {
+  "functionsAccessKey_list": {
     "accessPath": [
-      "getV2FunctionsNamespacesNamespaceIdKeys"
+      "functionsAccessKeyList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3581,45 +5388,70 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}/keys",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Namespace Access Keys",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed."
+    }
   },
-  "post_v2_functions_namespaces_namespace_id_keys": {
+  "functionsAccessKey_create": {
     "accessPath": [
-      "postV2FunctionsNamespacesNamespaceIdKeys"
+      "functionsAccessKeyCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "expires_in"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}/keys",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Namespace Access Key",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed."
+    }
   },
-  "put_v2_functions_namespaces_namespace_id_keys_key_id": {
+  "functionsAccessKey_update": {
     "accessPath": [
-      "putV2FunctionsNamespacesNamespaceIdKeysKeyId"
+      "functionsAccessKeyUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}/keys/{key_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id",
+      "key_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Namespace Access Key",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed.",
+      "key_id": "The ID of the access key to be managed."
+    }
   },
-  "delete_v2_functions_namespaces_namespace_id_keys_key_id": {
+  "functionsAccessKey_delete": {
     "accessPath": [
-      "deleteV2FunctionsNamespacesNamespaceIdKeysKeyId"
+      "functionsAccessKeyDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3629,13 +5461,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/functions/namespaces/{namespace_id}/keys/{key_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "namespace_id",
+      "key_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Namespace Access Key",
+    "parameterDescriptions": {
+      "namespace_id": "The ID of the namespace to be managed.",
+      "key_id": "The ID of the access key to be managed."
+    }
   },
-  "get_v2_images": {
+  "images_list": {
     "accessPath": [
-      "getV2Images"
+      "imagesList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3647,15 +5487,36 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "type",
+      "private",
+      "tag_name",
+      "per_page",
+      "page"
+    ],
+    "description": "List All Images",
+    "parameterDescriptions": {
+      "type": "Filters results based on image type which can be either `application` or `distribution`.",
+      "private": "Used to filter only user images.",
+      "tag_name": "Used to filter images by a specific tag.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_images": {
+  "images_create_custom": {
     "accessPath": [
-      "postV2Images"
+      "imagesCreateCustom"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "distribution",
+      "description",
+      "url",
+      "region",
+      "tags"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -3663,11 +5524,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Custom Image"
   },
-  "get_v2_images_image_id": {
+  "images_get": {
     "accessPath": [
-      "getV2ImagesImageId"
+      "imagesGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3677,29 +5539,45 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/images/{image_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "image_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Image",
+    "parameterDescriptions": {
+      "image_id": "A unique number (id) or string (slug) used to identify and reference a\nspecific image.\n\n**Public** images can be identified by image `id` or `slug`.\n\n**Private** images *must* be identified by image `id`.\n"
+    }
   },
-  "put_v2_images_image_id": {
+  "images_update": {
     "accessPath": [
-      "putV2ImagesImageId"
+      "imagesUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "distribution",
+      "description"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/images/{image_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "image_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update an Image",
+    "parameterDescriptions": {
+      "image_id": "A unique number that can be used to identify and reference a specific image."
+    }
   },
-  "delete_v2_images_image_id": {
+  "images_delete": {
     "accessPath": [
-      "deleteV2ImagesImageId"
+      "imagesDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3709,77 +5587,114 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/images/{image_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "image_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete an Image",
+    "parameterDescriptions": {
+      "image_id": "A unique number that can be used to identify and reference a specific image."
+    }
   },
-  "post_v2_images_image_id_account_transfer": {
+  "images_post_account_transfer_create": {
     "accessPath": [
-      "postV2ImagesImageIdAccountTransfer"
+      "imagesPostAccountTransferCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/images/{image_id}/account_transfer",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "image_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Initiate an Image Account Transfer",
+    "parameterDescriptions": {
+      "image_id": "A unique number that can be used to identify and reference a specific image."
+    }
   },
-  "post_v2_images_image_id_account_transfer_accept": {
+  "images_post_account_transfer_accept": {
     "accessPath": [
-      "postV2ImagesImageIdAccountTransferAccept"
+      "imagesPostAccountTransferAccept"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "transfer_id",
+      "recipient_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/images/{image_id}/account_transfer/accept",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "image_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Accept an Image Account Transfer",
+    "parameterDescriptions": {
+      "image_id": "A unique number that can be used to identify and reference a specific image."
+    }
   },
-  "post_v2_images_image_id_account_transfer_cancel": {
+  "images_post_account_transfer_cancel": {
     "accessPath": [
-      "postV2ImagesImageIdAccountTransferCancel"
+      "imagesPostAccountTransferCancel"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "transfer_id"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/images/{image_id}/account_transfer/cancel",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "image_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Cancel an Image Account Transfer",
+    "parameterDescriptions": {
+      "image_id": "A unique number that can be used to identify and reference a specific image."
+    }
   },
-  "post_v2_images_image_id_account_transfer_decline": {
+  "images_post_account_transfer_decline": {
     "accessPath": [
-      "postV2ImagesImageIdAccountTransferDecline"
+      "imagesPostAccountTransferDecline"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "transfer_id"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/images/{image_id}/account_transfer/decline",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "image_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Decline an Image Account Transfer",
+    "parameterDescriptions": {
+      "image_id": "A unique number that can be used to identify and reference a specific image."
+    }
   },
-  "get_v2_images_image_id_actions": {
+  "imageActions_list": {
     "accessPath": [
-      "getV2ImagesImageIdActions"
+      "imageActionsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3789,29 +5704,41 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/images/{image_id}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "image_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List All Actions for an Image",
+    "parameterDescriptions": {
+      "image_id": "A unique number that can be used to identify and reference a specific image."
+    }
   },
-  "post_v2_images_image_id_actions": {
+  "imageActions_post": {
     "accessPath": [
-      "postV2ImagesImageIdActions"
+      "imageActionsPost"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/images/{image_id}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "image_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Initiate an Image Action",
+    "parameterDescriptions": {
+      "image_id": "A unique number that can be used to identify and reference a specific image."
+    }
   },
-  "get_v2_images_image_id_actions_action_id": {
+  "imageActions_get": {
     "accessPath": [
-      "getV2ImagesImageIdActionsActionId"
+      "imageActionsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3821,13 +5748,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/images/{image_id}/actions/{action_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "image_id",
+      "action_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Action",
+    "parameterDescriptions": {
+      "image_id": "A unique number that can be used to identify and reference a specific image.",
+      "action_id": "A unique numeric ID that can be used to identify and reference an action."
+    }
   },
-  "get_v2_kubernetes_clusters": {
+  "kubernetes_list_clusters": {
     "accessPath": [
-      "getV2KubernetesClusters"
+      "kubernetesListClusters"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3839,15 +5774,55 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Kubernetes Clusters",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_kubernetes_clusters": {
+  "kubernetes_create_cluster": {
     "accessPath": [
-      "postV2KubernetesClusters"
+      "kubernetesCreateCluster"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "name",
+      "region",
+      "version",
+      "cluster_subnet",
+      "service_subnet",
+      "vpc_uuid",
+      "worker_subnet_uuid",
+      "ipv4",
+      "endpoint",
+      "tags",
+      "node_pools",
+      "maintenance_policy",
+      "auto_upgrade",
+      "isolated_workers",
+      "status",
+      "created_at",
+      "updated_at",
+      "surge_upgrade",
+      "ha",
+      "registry_enabled",
+      "control_plane_firewall",
+      "cluster_autoscaler_configuration",
+      "sso",
+      "routing_agent",
+      "p2p_oci_registry_plugin",
+      "amd_gpu_device_plugin",
+      "amd_gpu_device_metrics_exporter_plugin",
+      "nvidia_gpu_device_plugin",
+      "rdma_shared_dev_plugin",
+      "coredns_autoscaler"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -3855,11 +5830,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Kubernetes Cluster"
   },
-  "get_v2_kubernetes_clusters_cluster_id": {
+  "kubernetes_get_cluster": {
     "accessPath": [
-      "getV2KubernetesClustersClusterId"
+      "kubernetesGetCluster"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3869,29 +5845,58 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "put_v2_kubernetes_clusters_cluster_id": {
+  "kubernetes_update_cluster": {
     "accessPath": [
-      "putV2KubernetesClustersClusterId"
+      "kubernetesUpdateCluster"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "tags",
+      "maintenance_policy",
+      "auto_upgrade",
+      "surge_upgrade",
+      "ha",
+      "control_plane_firewall",
+      "cluster_autoscaler_configuration",
+      "sso",
+      "routing_agent",
+      "p2p_oci_registry_plugin",
+      "amd_gpu_device_plugin",
+      "amd_gpu_device_metrics_exporter_plugin",
+      "nvidia_gpu_device_plugin",
+      "rdma_shared_dev_plugin",
+      "coredns_autoscaler"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "delete_v2_kubernetes_clusters_cluster_id": {
+  "kubernetes_delete_cluster": {
     "accessPath": [
-      "deleteV2KubernetesClustersClusterId"
+      "kubernetesDeleteCluster"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3901,13 +5906,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "get_v2_kubernetes_clusters_cluster_id_destroy_with_associated_resources": {
+  "kubernetes_list_associatedResources": {
     "accessPath": [
-      "getV2KubernetesClustersClusterIdDestroyWithAssociatedResources"
+      "kubernetesListAssociatedResources"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3917,29 +5928,45 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/destroy_with_associated_resources",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Associated Resources for Cluster Deletion",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "delete_v2_kubernetes_clusters_cluster_id_destroy_with_associated_resources_selective": {
+  "kubernetes_destroy_associatedResourcesSelective": {
     "accessPath": [
-      "deleteV2KubernetesClustersClusterIdDestroyWithAssociatedResourcesSelective"
+      "kubernetesDestroyAssociatedResourcesSelective"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "load_balancers",
+      "volumes",
+      "volume_snapshots"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/destroy_with_associated_resources/selective",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Selectively Delete a Cluster and its Associated Resources",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "delete_v2_kubernetes_clusters_cluster_id_destroy_with_associated_resources_dangerous": {
+  "kubernetes_destroy_associatedResourcesDangerous": {
     "accessPath": [
-      "deleteV2KubernetesClustersClusterIdDestroyWithAssociatedResourcesDangerous"
+      "kubernetesDestroyAssociatedResourcesDangerous"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3949,13 +5976,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/destroy_with_associated_resources/dangerous",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Cluster and All of its Associated Resources (Dangerous)",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "get_v2_kubernetes_clusters_cluster_id_kubeconfig": {
+  "kubernetes_get_kubeconfig": {
     "accessPath": [
-      "getV2KubernetesClustersClusterIdKubeconfig"
+      "kubernetesGetKubeconfig"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3965,13 +5998,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/kubeconfig",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "expiry_seconds",
+      "type"
+    ],
+    "description": "Retrieve the kubeconfig for a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster.",
+      "expiry_seconds": "The duration in seconds that the returned Kubernetes credentials will be valid. If not set or 0, the credentials will have a 7 day expiry.",
+      "type": "The type of credentials to return in the kubeconfig. When omitted, the\ndefault credential type for the cluster is used: `sso` for clusters with SSO enabled, `token` for clusters without SSO enabled.\n"
+    }
   },
-  "get_v2_kubernetes_clusters_cluster_id_credentials": {
+  "kubernetes_get_credentials": {
     "accessPath": [
-      "getV2KubernetesClustersClusterIdCredentials"
+      "kubernetesGetCredentials"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3981,13 +6025,22 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/credentials",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "expiry_seconds"
+    ],
+    "description": "Retrieve Credentials for a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster.",
+      "expiry_seconds": "The duration in seconds that the returned Kubernetes credentials will be valid. If not set or 0, the credentials will have a 7 day expiry."
+    }
   },
-  "get_v2_kubernetes_clusters_cluster_id_upgrades": {
+  "kubernetes_get_availableUpgrades": {
     "accessPath": [
-      "getV2KubernetesClustersClusterIdUpgrades"
+      "kubernetesGetAvailableUpgrades"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -3997,29 +6050,43 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/upgrades",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Available Upgrades for an Existing Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "post_v2_kubernetes_clusters_cluster_id_upgrade": {
+  "kubernetes_upgrade_cluster": {
     "accessPath": [
-      "postV2KubernetesClustersClusterIdUpgrade"
+      "kubernetesUpgradeCluster"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "version"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/upgrade",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Upgrade a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "get_v2_kubernetes_clusters_cluster_id_node_pools": {
+  "kubernetes_list_nodePools": {
     "accessPath": [
-      "getV2KubernetesClustersClusterIdNodePools"
+      "kubernetesListNodePools"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4029,29 +6096,53 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/node_pools",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List All Node Pools in a Kubernetes Clusters",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "post_v2_kubernetes_clusters_cluster_id_node_pools": {
+  "kubernetes_add_nodePool": {
     "accessPath": [
-      "postV2KubernetesClustersClusterIdNodePools"
+      "kubernetesAddNodePool"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "size",
+      "id",
+      "name",
+      "count",
+      "tags",
+      "labels",
+      "taints",
+      "auto_scale",
+      "min_nodes",
+      "max_nodes",
+      "nodes"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/node_pools",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add a Node Pool to a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "get_v2_kubernetes_clusters_cluster_id_node_pools_node_pool_id": {
+  "kubernetes_get_nodePool": {
     "accessPath": [
-      "getV2KubernetesClustersClusterIdNodePoolsNodePoolId"
+      "kubernetesGetNodePool"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4061,29 +6152,56 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/node_pools/{node_pool_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id",
+      "node_pool_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve a Node Pool for a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster.",
+      "node_pool_id": "A unique ID that can be used to reference a Kubernetes node pool."
+    }
   },
-  "put_v2_kubernetes_clusters_cluster_id_node_pools_node_pool_id": {
+  "kubernetes_update_nodePool": {
     "accessPath": [
-      "putV2KubernetesClustersClusterIdNodePoolsNodePoolId"
+      "kubernetesUpdateNodePool"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "name",
+      "count",
+      "tags",
+      "labels",
+      "taints",
+      "auto_scale",
+      "min_nodes",
+      "max_nodes",
+      "nodes"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/node_pools/{node_pool_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id",
+      "node_pool_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Node Pool in a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster.",
+      "node_pool_id": "A unique ID that can be used to reference a Kubernetes node pool."
+    }
   },
-  "delete_v2_kubernetes_clusters_cluster_id_node_pools_node_pool_id": {
+  "kubernetes_delete_nodePool": {
     "accessPath": [
-      "deleteV2KubernetesClustersClusterIdNodePoolsNodePoolId"
+      "kubernetesDeleteNodePool"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4093,13 +6211,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/node_pools/{node_pool_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id",
+      "node_pool_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Node Pool in a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster.",
+      "node_pool_id": "A unique ID that can be used to reference a Kubernetes node pool."
+    }
   },
-  "delete_v2_kubernetes_clusters_cluster_id_node_pools_node_pool_id_nodes_node_id": {
+  "kubernetes_delete_node": {
     "accessPath": [
-      "deleteV2KubernetesClustersClusterIdNodePoolsNodePoolIdNodesNodeId"
+      "kubernetesDeleteNode"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4109,29 +6235,54 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/node_pools/{node_pool_id}/nodes/{node_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id",
+      "node_pool_id",
+      "node_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "skip_drain",
+      "replace"
+    ],
+    "description": "Delete a Node in a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster.",
+      "node_pool_id": "A unique ID that can be used to reference a Kubernetes node pool.",
+      "node_id": "A unique ID that can be used to reference a node in a Kubernetes node pool.",
+      "skip_drain": "Specifies whether or not to drain workloads from a node before it is deleted. Setting it to `1` causes node draining to be skipped. Omitting the query parameter or setting its value to `0` carries out draining prior to deletion.",
+      "replace": "Specifies whether or not to replace a node after it has been deleted. Setting it to `1` causes the node to be replaced by a new one after deletion. Omitting the query parameter or setting its value to `0` deletes without replacement."
+    }
   },
-  "post_v2_kubernetes_clusters_cluster_id_node_pools_node_pool_id_recycle": {
+  "kubernetes_recycle_node_pool": {
     "accessPath": [
-      "postV2KubernetesClustersClusterIdNodePoolsNodePoolIdRecycle"
+      "kubernetesRecycleNodePool"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "nodes"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/node_pools/{node_pool_id}/recycle",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id",
+      "node_pool_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Recycle a Kubernetes Node Pool",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster.",
+      "node_pool_id": "A unique ID that can be used to reference a Kubernetes node pool."
+    }
   },
-  "get_v2_kubernetes_clusters_cluster_id_user": {
+  "kubernetes_get_clusterUser": {
     "accessPath": [
-      "getV2KubernetesClustersClusterIdUser"
+      "kubernetesGetClusterUser"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4141,13 +6292,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/user",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve User Information for a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "get_v2_kubernetes_options": {
+  "kubernetes_list_options": {
     "accessPath": [
-      "getV2KubernetesOptions"
+      "kubernetesListOptions"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4159,27 +6316,39 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Available Regions, Node Sizes, and Versions of Kubernetes"
   },
-  "post_v2_kubernetes_clusters_cluster_id_clusterlint": {
+  "kubernetes_run_clusterLint": {
     "accessPath": [
-      "postV2KubernetesClustersClusterIdClusterlint"
+      "kubernetesRunClusterLint"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "include_groups",
+      "include_checks",
+      "exclude_groups",
+      "exclude_checks"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/clusterlint",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Run Clusterlint Checks on a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster."
+    }
   },
-  "get_v2_kubernetes_clusters_cluster_id_clusterlint": {
+  "kubernetes_get_clusterLintResults": {
     "accessPath": [
-      "getV2KubernetesClustersClusterIdClusterlint"
+      "kubernetesGetClusterLintResults"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4189,17 +6358,28 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/clusterlint",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "run_id"
+    ],
+    "description": "Fetch Clusterlint Diagnostics for a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster.",
+      "run_id": "Specifies the clusterlint run whose results will be retrieved."
+    }
   },
-  "post_v2_kubernetes_registry": {
+  "kubernetes_add_registry": {
     "accessPath": [
-      "postV2KubernetesRegistry"
+      "kubernetesAddRegistry"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "cluster_uuids"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -4207,15 +6387,18 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Container Registry to Kubernetes Clusters"
   },
-  "delete_v2_kubernetes_registry": {
+  "kubernetes_remove_registry": {
     "accessPath": [
-      "deleteV2KubernetesRegistry"
+      "kubernetesRemoveRegistry"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "cluster_uuids"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
@@ -4223,15 +6406,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Remove Container Registry from Kubernetes Clusters"
   },
-  "post_v2_kubernetes_registries": {
+  "kubernetes_add_registries": {
     "accessPath": [
-      "postV2KubernetesRegistries"
+      "kubernetesAddRegistries"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "cluster_uuids",
+      "registries"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -4239,15 +6426,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Container Registries to Kubernetes Clusters"
   },
-  "delete_v2_kubernetes_registries": {
+  "kubernetes_remove_registries": {
     "accessPath": [
-      "deleteV2KubernetesRegistries"
+      "kubernetesRemoveRegistries"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "cluster_uuids",
+      "registries"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
@@ -4255,11 +6446,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Remove Container Registries from Kubernetes Clusters"
   },
-  "get_v2_kubernetes_clusters_cluster_id_status_messages": {
+  "kubernetes_get_status_messages": {
     "accessPath": [
-      "getV2KubernetesClustersClusterIdStatusMessages"
+      "kubernetesGetStatusMessages"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4269,16 +6461,25 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/kubernetes/clusters/{cluster_id}/status_messages",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "cluster_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "since"
+    ],
+    "description": "Fetch Status Messages for a Kubernetes Cluster",
+    "parameterDescriptions": {
+      "cluster_id": "A unique ID that can be used to reference a Kubernetes cluster.",
+      "since": "A timestamp used to return status messages emitted since the specified time. The timestamp should be in ISO8601 format."
+    }
   },
-  "post_v2_load_balancers": {
+  "loadBalancers_create": {
     "accessPath": [
-      "postV2LoadBalancers"
+      "loadBalancersCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -4287,11 +6488,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Load Balancer"
   },
-  "get_v2_load_balancers": {
+  "loadBalancers_list": {
     "accessPath": [
-      "getV2LoadBalancers"
+      "loadBalancersList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4303,11 +6505,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Load Balancers",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_load_balancers_lb_id": {
+  "loadBalancers_get": {
     "accessPath": [
-      "getV2LoadBalancersLbId"
+      "loadBalancersGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4317,29 +6527,41 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/load_balancers/{lb_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "lb_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Load Balancer",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer."
+    }
   },
-  "put_v2_load_balancers_lb_id": {
+  "loadBalancers_update": {
     "accessPath": [
-      "putV2LoadBalancersLbId"
+      "loadBalancersUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/load_balancers/{lb_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "lb_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Load Balancer",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer."
+    }
   },
-  "delete_v2_load_balancers_lb_id": {
+  "loadBalancers_delete": {
     "accessPath": [
-      "deleteV2LoadBalancersLbId"
+      "loadBalancersDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4349,13 +6571,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/load_balancers/{lb_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "lb_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Load Balancer",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer."
+    }
   },
-  "delete_v2_load_balancers_lb_id_cache": {
+  "loadBalancers_delete_cache": {
     "accessPath": [
-      "deleteV2LoadBalancersLbIdCache"
+      "loadBalancersDeleteCache"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4365,77 +6593,115 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/load_balancers/{lb_id}/cache",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "lb_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Global Load Balancer CDN Cache",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer."
+    }
   },
-  "post_v2_load_balancers_lb_id_droplets": {
+  "loadBalancers_add_droplets": {
     "accessPath": [
-      "postV2LoadBalancersLbIdDroplets"
+      "loadBalancersAddDroplets"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "droplet_ids"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/load_balancers/{lb_id}/droplets",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "lb_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Droplets to a Load Balancer",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer."
+    }
   },
-  "delete_v2_load_balancers_lb_id_droplets": {
+  "loadBalancers_remove_droplets": {
     "accessPath": [
-      "deleteV2LoadBalancersLbIdDroplets"
+      "loadBalancersRemoveDroplets"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "droplet_ids"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v2/load_balancers/{lb_id}/droplets",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "lb_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Remove Droplets from a Load Balancer",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer."
+    }
   },
-  "post_v2_load_balancers_lb_id_forwarding_rules": {
+  "loadBalancers_add_forwardingRules": {
     "accessPath": [
-      "postV2LoadBalancersLbIdForwardingRules"
+      "loadBalancersAddForwardingRules"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "forwarding_rules"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/load_balancers/{lb_id}/forwarding_rules",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "lb_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Forwarding Rules to a Load Balancer",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer."
+    }
   },
-  "delete_v2_load_balancers_lb_id_forwarding_rules": {
+  "loadBalancers_remove_forwardingRules": {
     "accessPath": [
-      "deleteV2LoadBalancersLbIdForwardingRules"
+      "loadBalancersRemoveForwardingRules"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "forwarding_rules"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v2/load_balancers/{lb_id}/forwarding_rules",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "lb_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Remove Forwarding Rules from a Load Balancer",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer."
+    }
   },
-  "get_v2_monitoring_alerts": {
+  "monitoring_list_alertPolicy": {
     "accessPath": [
-      "getV2MonitoringAlerts"
+      "monitoringListAlertPolicy"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4447,15 +6713,33 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Alert Policies",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_monitoring_alerts": {
+  "monitoring_create_alertPolicy": {
     "accessPath": [
-      "postV2MonitoringAlerts"
+      "monitoringCreateAlertPolicy"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "alerts",
+      "compare",
+      "description",
+      "enabled",
+      "entities",
+      "tags",
+      "type",
+      "value",
+      "window"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -4463,11 +6747,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Alert Policy"
   },
-  "get_v2_monitoring_alerts_alert_uuid": {
+  "monitoring_get_alertPolicy": {
     "accessPath": [
-      "getV2MonitoringAlertsAlertUuid"
+      "monitoringGetAlertPolicy"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4477,29 +6762,51 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/monitoring/alerts/{alert_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "alert_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Alert Policy",
+    "parameterDescriptions": {
+      "alert_uuid": "A unique identifier for an alert policy."
+    }
   },
-  "put_v2_monitoring_alerts_alert_uuid": {
+  "monitoring_update_alertPolicy": {
     "accessPath": [
-      "putV2MonitoringAlertsAlertUuid"
+      "monitoringUpdateAlertPolicy"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "alerts",
+      "compare",
+      "description",
+      "enabled",
+      "entities",
+      "tags",
+      "type",
+      "value",
+      "window"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/monitoring/alerts/{alert_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "alert_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update an Alert Policy",
+    "parameterDescriptions": {
+      "alert_uuid": "A unique identifier for an alert policy."
+    }
   },
-  "delete_v2_monitoring_alerts_alert_uuid": {
+  "monitoring_delete_alertPolicy": {
     "accessPath": [
-      "deleteV2MonitoringAlertsAlertUuid"
+      "monitoringDeleteAlertPolicy"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4509,13 +6816,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/monitoring/alerts/{alert_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "alert_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete an Alert Policy",
+    "parameterDescriptions": {
+      "alert_uuid": "A unique identifier for an alert policy."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_bandwidth": {
+  "monitoring_get_dropletBandwidthMetrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletBandwidth"
+      "monitoringGetDropletBandwidthMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4527,11 +6840,25 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "interface",
+      "direction",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Bandwidth Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "interface": "The network interface.",
+      "direction": "The traffic direction.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_cpu": {
+  "monitoring_get_DropletCpuMetrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletCpu"
+      "monitoringGetDropletCpuMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4543,11 +6870,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet CPU Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_filesystem_free": {
+  "monitoring_get_dropletFilesystemFreeMetrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletFilesystemFree"
+      "monitoringGetDropletFilesystemFreeMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4559,11 +6896,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Filesystem Free Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_filesystem_size": {
+  "monitoring_get_dropletFilesystemSizeMetrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletFilesystemSize"
+      "monitoringGetDropletFilesystemSizeMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4575,11 +6922,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Filesystem Size Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_load_1": {
+  "monitoring_get_dropletLoad1Metrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletLoad1"
+      "monitoringGetDropletLoad1Metrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4591,11 +6948,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Load1 Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_load_5": {
+  "monitoring_get_dropletLoad5Metrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletLoad5"
+      "monitoringGetDropletLoad5Metrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4607,11 +6974,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Load5 Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_load_15": {
+  "monitoring_get_dropletLoad15Metrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletLoad15"
+      "monitoringGetDropletLoad15Metrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4623,11 +7000,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Load15 Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_memory_cached": {
+  "monitoring_get_dropletMemoryCachedMetrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletMemoryCached"
+      "monitoringGetDropletMemoryCachedMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4639,11 +7026,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Cached Memory Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_memory_free": {
+  "monitoring_get_dropletMemoryFreeMetrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletMemoryFree"
+      "monitoringGetDropletMemoryFreeMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4655,11 +7052,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Free Memory Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_memory_total": {
+  "monitoring_get_dropletMemoryTotalMetrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletMemoryTotal"
+      "monitoringGetDropletMemoryTotalMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4671,11 +7078,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Total Memory Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_memory_available": {
+  "monitoring_get_dropletMemoryAvailableMetrics": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletMemoryAvailable"
+      "monitoringGetDropletMemoryAvailableMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4687,11 +7104,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "host_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Available Memory Metrics",
+    "parameterDescriptions": {
+      "host_id": "The droplet ID.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_apps_memory_percentage": {
+  "monitoring_get_appMemoryPercentageMetrics": {
     "accessPath": [
-      "getV2MonitoringMetricsAppsMemoryPercentage"
+      "monitoringGetAppMemoryPercentageMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4703,11 +7130,23 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "app_id",
+      "app_component",
+      "start",
+      "end"
+    ],
+    "description": "Get App Memory Percentage Metrics",
+    "parameterDescriptions": {
+      "app_id": "The app UUID.",
+      "app_component": "The app component name.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_apps_cpu_percentage": {
+  "monitoring_get_appCPUPercentageMetrics": {
     "accessPath": [
-      "getV2MonitoringMetricsAppsCpuPercentage"
+      "monitoringGetAppCpuPercentageMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4719,11 +7158,23 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "app_id",
+      "app_component",
+      "start",
+      "end"
+    ],
+    "description": "Get App CPU Percentage Metrics",
+    "parameterDescriptions": {
+      "app_id": "The app UUID.",
+      "app_component": "The app component name.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_apps_restart_count": {
+  "monitoring_get_appRestartCountMetrics.yml": {
     "accessPath": [
-      "getV2MonitoringMetricsAppsRestartCount"
+      "monitoringGetAppRestartCountMetricsYml"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4735,11 +7186,23 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "app_id",
+      "app_component",
+      "start",
+      "end"
+    ],
+    "description": "Get App Restart Count Metrics",
+    "parameterDescriptions": {
+      "app_id": "The app UUID.",
+      "app_component": "The app component name.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_connections_current": {
+  "monitoring_get_lb_frontend_connections_current": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendConnectionsCurrent"
+      "monitoringGetLbFrontendConnectionsCurrent"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4751,11 +7214,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend Total Current Active Connections Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_connections_limit": {
+  "monitoring_get_lb_frontend_connections_limit": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendConnectionsLimit"
+      "monitoringGetLbFrontendConnectionsLimit"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4767,11 +7240,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend Max Connections Limit Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_cpu_utilization": {
+  "monitoring_get_lb_frontend_cpu_utilization": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendCpuUtilization"
+      "monitoringGetLbFrontendCpuUtilization"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4783,11 +7266,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend Average Percentage CPU Utilization Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_firewall_dropped_bytes": {
+  "monitoring_get_lb_frontend_firewall_dropped_bytes": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendFirewallDroppedBytes"
+      "monitoringGetLbFrontendFirewallDroppedBytes"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4799,11 +7292,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend Firewall Dropped Bytes Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_firewall_dropped_packets": {
+  "monitoring_get_lb_frontend_firewall_dropped_packets": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendFirewallDroppedPackets"
+      "monitoringGetLbFrontendFirewallDroppedPackets"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4815,11 +7318,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend Firewall Dropped Packets Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_http_responses": {
+  "monitoring_get_lb_frontend_http_responses": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendHttpResponses"
+      "monitoringGetLbFrontendHttpResponses"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4831,11 +7344,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend HTTP Rate Of Response Code Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_http_requests_per_second": {
+  "monitoring_get_lb_frontend_http_requests_per_second": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendHttpRequestsPerSecond"
+      "monitoringGetLbFrontendHttpRequestsPerSecond"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4847,11 +7370,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend HTTP Requests Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_network_throughput_http": {
+  "monitoring_get_lb_frontend_network_throughput_http": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendNetworkThroughputHttp"
+      "monitoringGetLbFrontendNetworkThroughputHttp"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4863,11 +7396,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend HTTP Throughput Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_network_throughput_udp": {
+  "monitoring_get_lb_frontend_network_throughput_udp": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendNetworkThroughputUdp"
+      "monitoringGetLbFrontendNetworkThroughputUdp"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4879,11 +7422,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend UDP Throughput Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_network_throughput_tcp": {
+  "monitoring_get_lb_frontend_network_throughput_tcp": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendNetworkThroughputTcp"
+      "monitoringGetLbFrontendNetworkThroughputTcp"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4895,11 +7448,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend TCP Throughput Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_nlb_tcp_network_throughput": {
+  "monitoring_get_lb_frontend_nlb_tcp_network_throughput": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendNlbTcpNetworkThroughput"
+      "monitoringGetLbFrontendNlbTcpNetworkThroughput"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4911,11 +7474,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Network Load Balancer Frontend TCP Throughput Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_nlb_udp_network_throughput": {
+  "monitoring_get_lb_frontend_nlb_udp_network_throughput": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendNlbUdpNetworkThroughput"
+      "monitoringGetLbFrontendNlbUdpNetworkThroughput"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4927,11 +7500,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Network Load Balancer Frontend UDP Throughput Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_tls_connections_current": {
+  "monitoring_get_lb_frontend_tls_connections_current": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendTlsConnectionsCurrent"
+      "monitoringGetLbFrontendTlsConnectionsCurrent"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4943,11 +7526,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend Current TLS Connections Rate Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_tls_connections_limit": {
+  "monitoring_get_lb_frontend_tls_connections_limit": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendTlsConnectionsLimit"
+      "monitoringGetLbFrontendTlsConnectionsLimit"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4959,11 +7552,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend Max TLS Connections Limit Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_frontend_tls_connections_exceeding_rate_limit": {
+  "monitoring_get_lb_frontend_tls_connections_exceeding_rate_limit": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerFrontendTlsConnectionsExceedingRateLimit"
+      "monitoringGetLbFrontendTlsConnectionsExceedingRateLimit"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4975,11 +7578,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Frontend Closed TLS Connections For Exceeded Rate Limit Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_http_session_duration_avg": {
+  "monitoring_get_lb_droplets_http_session_duration_avg": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsHttpSessionDurationAvg"
+      "monitoringGetLbDropletsHttpSessionDurationAvg"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -4991,11 +7604,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets Average HTTP Session Duration Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_http_session_duration_50p": {
+  "monitoring_get_lb_droplets_http_session_duration_50p": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsHttpSessionDuration50P"
+      "monitoringGetLbDropletsHttpSessionDuration50P"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5007,11 +7630,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets 50th Percentile HTTP Session Duration Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_http_session_duration_95p": {
+  "monitoring_get_lb_droplets_http_session_duration_95p": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsHttpSessionDuration95P"
+      "monitoringGetLbDropletsHttpSessionDuration95P"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5023,11 +7656,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets 95th Percentile HTTP Session Duration Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_http_response_time_avg": {
+  "monitoring_get_lb_droplets_http_response_time_avg": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsHttpResponseTimeAvg"
+      "monitoringGetLbDropletsHttpResponseTimeAvg"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5039,11 +7682,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets Average HTTP Response Time Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_http_response_time_50p": {
+  "monitoring_get_lb_droplets_http_response_time_50p": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsHttpResponseTime50P"
+      "monitoringGetLbDropletsHttpResponseTime50P"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5055,11 +7708,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets 50th Percentile HTTP Response Time Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_http_response_time_95p": {
+  "monitoring_get_lb_droplets_http_response_time_95p": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsHttpResponseTime95P"
+      "monitoringGetLbDropletsHttpResponseTime95P"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5071,11 +7734,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets 95th Percentile HTTP Response Time Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_http_response_time_99p": {
+  "monitoring_get_lb_droplets_http_response_time_99p": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsHttpResponseTime99P"
+      "monitoringGetLbDropletsHttpResponseTime99P"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5087,11 +7760,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets 99th Percentile HTTP Response Time Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_queue_size": {
+  "monitoring_get_lb_droplets_queue_size": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsQueueSize"
+      "monitoringGetLbDropletsQueueSize"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5103,11 +7786,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets Queue Size Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_http_responses": {
+  "monitoring_get_lb_droplets_http_responses": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsHttpResponses"
+      "monitoringGetLbDropletsHttpResponses"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5119,11 +7812,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets HTTP Rate Of Response Code Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_connections": {
+  "monitoring_get_lb_droplets_connections": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsConnections"
+      "monitoringGetLbDropletsConnections"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5135,11 +7838,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets Active Connections Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_health_checks": {
+  "monitoring_get_lb_droplets_health_checks": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsHealthChecks"
+      "monitoringGetLbDropletsHealthChecks"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5151,11 +7864,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets Health Check Status Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_load_balancer_droplets_downtime": {
+  "monitoring_get_lb_droplets_downtime": {
     "accessPath": [
-      "getV2MonitoringMetricsLoadBalancerDropletsDowntime"
+      "monitoringGetLbDropletsDowntime"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5167,11 +7890,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "lb_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Load Balancer Droplets Downtime Status Metrics",
+    "parameterDescriptions": {
+      "lb_id": "A unique identifier for a load balancer.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_autoscale_current_instances": {
+  "monitoring_get_droplet_autoscale_current_instances": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletAutoscaleCurrentInstances"
+      "monitoringGetDropletAutoscaleCurrentInstances"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5183,11 +7916,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "autoscale_pool_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Autoscale Pool Current Size",
+    "parameterDescriptions": {
+      "autoscale_pool_id": "A unique identifier for an autoscale pool.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_autoscale_target_instances": {
+  "monitoring_get_droplet_autoscale_target_instances": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletAutoscaleTargetInstances"
+      "monitoringGetDropletAutoscaleTargetInstances"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5199,11 +7942,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "autoscale_pool_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Autoscale Pool Target Size",
+    "parameterDescriptions": {
+      "autoscale_pool_id": "A unique identifier for an autoscale pool.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_autoscale_current_cpu_utilization": {
+  "monitoring_get_droplet_autoscale_current_cpu_utilization.yml": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletAutoscaleCurrentCpuUtilization"
+      "monitoringGetDropletAutoscaleCurrentCpuUtilizationYml"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5215,11 +7968,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "autoscale_pool_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Autoscale Pool Current Average CPU utilization",
+    "parameterDescriptions": {
+      "autoscale_pool_id": "A unique identifier for an autoscale pool.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_autoscale_target_cpu_utilization": {
+  "monitoring_get_droplet_autoscale_target_cpu_utilization": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletAutoscaleTargetCpuUtilization"
+      "monitoringGetDropletAutoscaleTargetCpuUtilization"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5231,11 +7994,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "autoscale_pool_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Autoscale Pool Target Average CPU utilization",
+    "parameterDescriptions": {
+      "autoscale_pool_id": "A unique identifier for an autoscale pool.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_autoscale_current_memory_utilization": {
+  "monitoring_get_droplet_autoscale_current_memory_utilization": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletAutoscaleCurrentMemoryUtilization"
+      "monitoringGetDropletAutoscaleCurrentMemoryUtilization"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5247,11 +8020,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "autoscale_pool_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Autoscale Pool Current Average Memory utilization",
+    "parameterDescriptions": {
+      "autoscale_pool_id": "A unique identifier for an autoscale pool.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_droplet_autoscale_target_memory_utilization": {
+  "monitoring_get_droplet_autoscale_target_memory_utilization": {
     "accessPath": [
-      "getV2MonitoringMetricsDropletAutoscaleTargetMemoryUtilization"
+      "monitoringGetDropletAutoscaleTargetMemoryUtilization"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5263,11 +8046,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "autoscale_pool_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Droplet Autoscale Pool Target Average Memory utilization",
+    "parameterDescriptions": {
+      "autoscale_pool_id": "A unique identifier for an autoscale pool.",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_cpu_usage": {
+  "monitoring_get_database_mysql_cpu_usage": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlCpuUsage"
+      "monitoringGetDatabaseMysqlCpuUsage"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5279,11 +8072,23 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "aggregate",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL CPU Usage Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "aggregate": "Aggregation over the time range (avg, max, or min).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_load": {
+  "monitoring_get_database_mysql_load": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlLoad"
+      "monitoringGetDatabaseMysqlLoad"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5295,11 +8100,25 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "metric",
+      "aggregate",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL Load Average Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "metric": "Load window: **load1** (1-minute), **load5** (5-minute), **load15** (15-minute). The value is either average or max over that window, depending on the **aggregate** parameter (avg or max).",
+      "aggregate": "Aggregation over the time range (avg or max).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_memory_usage": {
+  "monitoring_get_database_mysql_memory_usage": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlMemoryUsage"
+      "monitoringGetDatabaseMysqlMemoryUsage"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5311,11 +8130,23 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "aggregate",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL Memory Usage Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "aggregate": "Aggregation over the time range (avg, max, or min).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_disk_usage": {
+  "monitoring_get_database_mysql_disk_usage": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlDiskUsage"
+      "monitoringGetDatabaseMysqlDiskUsage"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5327,11 +8158,23 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "aggregate",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL Disk Usage Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "aggregate": "Aggregation over the time range (avg, max, or min).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_threads_connected": {
+  "monitoring_get_database_mysql_threads_connected": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlThreadsConnected"
+      "monitoringGetDatabaseMysqlThreadsConnected"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5343,11 +8186,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL Threads Connected Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_threads_created_rate": {
+  "monitoring_get_database_mysql_threads_created_rate": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlThreadsCreatedRate"
+      "monitoringGetDatabaseMysqlThreadsCreatedRate"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5359,11 +8212,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL Threads Created Rate Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_threads_active": {
+  "monitoring_get_database_mysql_threads_active": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlThreadsActive"
+      "monitoringGetDatabaseMysqlThreadsActive"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5375,11 +8238,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL Threads Active Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_index_vs_sequential_reads": {
+  "monitoring_get_database_mysql_index_vs_sequential_reads": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlIndexVsSequentialReads"
+      "monitoringGetDatabaseMysqlIndexVsSequentialReads"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5391,11 +8264,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL Index vs Sequential Reads Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_op_rates": {
+  "monitoring_get_database_mysql_op_rates": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlOpRates"
+      "monitoringGetDatabaseMysqlOpRates"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5407,11 +8290,23 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "metric",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL Operations Throughput Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "metric": "Operation type (select, insert, update, or delete).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_schema_throughput": {
+  "monitoring_get_database_mysql_schema_throughput": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlSchemaThroughput"
+      "monitoringGetDatabaseMysqlSchemaThroughput"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5423,11 +8318,25 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "schema",
+      "metric",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL Schema Throughput Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "schema": "The schema (database) name.",
+      "metric": "Table I/O operation (insert, fetch, update, or delete).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "get_v2_monitoring_metrics_database_mysql_schema_latency": {
+  "monitoring_get_database_mysql_schema_latency": {
     "accessPath": [
-      "getV2MonitoringMetricsDatabaseMysqlSchemaLatency"
+      "monitoringGetDatabaseMysqlSchemaLatency"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5439,15 +8348,33 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "db_id",
+      "schema",
+      "metric",
+      "start",
+      "end"
+    ],
+    "description": "Get Database MySQL Schema Latency Metrics",
+    "parameterDescriptions": {
+      "db_id": "The DBaaS cluster UUID (database ID).",
+      "schema": "The schema (database) name.",
+      "metric": "Table I/O operation (insert, fetch, update, or delete).",
+      "start": "UNIX timestamp to start metric window.",
+      "end": "UNIX timestamp to end metric window."
+    }
   },
-  "post_v2_monitoring_sinks_destinations": {
+  "monitoring_create_destination": {
     "accessPath": [
-      "postV2MonitoringSinksDestinations"
+      "monitoringCreateDestination"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "type",
+      "config"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -5455,11 +8382,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Logging Destination"
   },
-  "get_v2_monitoring_sinks_destinations": {
+  "monitoring_list_destinations": {
     "accessPath": [
-      "getV2MonitoringSinksDestinations"
+      "monitoringListDestinations"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5471,11 +8399,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Logging Destinations"
   },
-  "get_v2_monitoring_sinks_destinations_destination_uuid": {
+  "monitoring_get_destination": {
     "accessPath": [
-      "getV2MonitoringSinksDestinationsDestinationUuid"
+      "monitoringGetDestination"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5485,29 +8414,45 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/monitoring/sinks/destinations/{destination_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "destination_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Logging Destination",
+    "parameterDescriptions": {
+      "destination_uuid": "A unique identifier for a destination."
+    }
   },
-  "post_v2_monitoring_sinks_destinations_destination_uuid": {
+  "monitoring_update_destination": {
     "accessPath": [
-      "postV2MonitoringSinksDestinationsDestinationUuid"
+      "monitoringUpdateDestination"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "type",
+      "config"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/monitoring/sinks/destinations/{destination_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "destination_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Logging Destination",
+    "parameterDescriptions": {
+      "destination_uuid": "A unique identifier for a destination."
+    }
   },
-  "delete_v2_monitoring_sinks_destinations_destination_uuid": {
+  "monitoring_delete_destination": {
     "accessPath": [
-      "deleteV2MonitoringSinksDestinationsDestinationUuid"
+      "monitoringDeleteDestination"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5517,17 +8462,26 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/monitoring/sinks/destinations/{destination_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "destination_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Logging Destination",
+    "parameterDescriptions": {
+      "destination_uuid": "A unique identifier for a destination."
+    }
   },
-  "post_v2_monitoring_sinks": {
+  "monitoring_create_sink": {
     "accessPath": [
-      "postV2MonitoringSinks"
+      "monitoringCreateSink"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "destination_uuid",
+      "resources"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -5535,11 +8489,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Sink"
   },
-  "get_v2_monitoring_sinks": {
+  "monitoring_list_sinks": {
     "accessPath": [
-      "getV2MonitoringSinks"
+      "monitoringListSinks"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5551,11 +8506,17 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "resource_id"
+    ],
+    "description": "Lists all sinks",
+    "parameterDescriptions": {
+      "resource_id": "A unique URN for a resource."
+    }
   },
-  "get_v2_monitoring_sinks_sink_uuid": {
+  "monitoring_get_sink": {
     "accessPath": [
-      "getV2MonitoringSinksSinkUuid"
+      "monitoringGetSink"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5565,13 +8526,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/monitoring/sinks/{sink_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "sink_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Sink",
+    "parameterDescriptions": {
+      "sink_uuid": "A unique identifier for a sink."
+    }
   },
-  "delete_v2_monitoring_sinks_sink_uuid": {
+  "monitoring_delete_sink": {
     "accessPath": [
-      "deleteV2MonitoringSinksSinkUuid"
+      "monitoringDeleteSink"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5581,17 +8548,29 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/monitoring/sinks/{sink_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "sink_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Sink",
+    "parameterDescriptions": {
+      "sink_uuid": "A unique identifier for a sink."
+    }
   },
-  "post_v2_nfs": {
+  "nfs_create": {
     "accessPath": [
-      "postV2Nfs"
+      "nfsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "size_gib",
+      "region",
+      "vpc_ids",
+      "performance_tier"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -5599,11 +8578,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a new NFS share"
   },
-  "get_v2_nfs": {
+  "nfs_list": {
     "accessPath": [
-      "getV2Nfs"
+      "nfsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5615,11 +8595,17 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "region"
+    ],
+    "description": "List NFS shares per region",
+    "parameterDescriptions": {
+      "region": "The DigitalOcean region slug (e.g., nyc2, atl1) where the NFS share resides."
+    }
   },
-  "get_v2_nfs_nfs_id": {
+  "nfs_get": {
     "accessPath": [
-      "getV2NfsNfsId"
+      "nfsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5629,13 +8615,22 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/nfs/{nfs_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "nfs_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "region"
+    ],
+    "description": "Get an NFS share",
+    "parameterDescriptions": {
+      "nfs_id": "The unique ID of the NFS share",
+      "region": "The DigitalOcean region slug (e.g., nyc2, atl1) where the NFS share resides."
+    }
   },
-  "delete_v2_nfs_nfs_id": {
+  "nfs_delete": {
     "accessPath": [
-      "deleteV2NfsNfsId"
+      "nfsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5645,29 +8640,44 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/nfs/{nfs_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "nfs_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "region"
+    ],
+    "description": "Delete an NFS share",
+    "parameterDescriptions": {
+      "nfs_id": "The unique ID of the NFS share",
+      "region": "The DigitalOcean region slug (e.g., nyc2, atl1) where the NFS share resides."
+    }
   },
-  "post_v2_nfs_nfs_id_actions": {
+  "nfs_create_action": {
     "accessPath": [
-      "postV2NfsNfsIdActions"
+      "nfsCreateAction"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/nfs/{nfs_id}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "nfs_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Initiate an NFS action",
+    "parameterDescriptions": {
+      "nfs_id": "The unique ID of the NFS share"
+    }
   },
-  "get_v2_nfs_snapshots": {
+  "nfs_list_snapshot": {
     "accessPath": [
-      "getV2NfsSnapshots"
+      "nfsListSnapshot"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5679,11 +8689,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "region",
+      "share_id"
+    ],
+    "description": "List NFS snapshots per region",
+    "parameterDescriptions": {
+      "region": "The DigitalOcean region slug (e.g., nyc2, atl1) where the NFS share resides.",
+      "share_id": "The unique ID of an NFS share. If provided, only snapshots of this specific share will be returned."
+    }
   },
-  "get_v2_nfs_snapshots_nfs_snapshot_id": {
+  "nfs_get_snapshot": {
     "accessPath": [
-      "getV2NfsSnapshotsNfsSnapshotId"
+      "nfsGetSnapshot"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5693,13 +8711,22 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/nfs/snapshots/{nfs_snapshot_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "nfs_snapshot_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "region"
+    ],
+    "description": "Get an NFS snapshot by ID",
+    "parameterDescriptions": {
+      "nfs_snapshot_id": "The unique ID of the NFS snapshot",
+      "region": "The DigitalOcean region slug (e.g., nyc2, atl1) where the NFS share resides."
+    }
   },
-  "delete_v2_nfs_snapshots_nfs_snapshot_id": {
+  "nfs_delete_snapshot": {
     "accessPath": [
-      "deleteV2NfsSnapshotsNfsSnapshotId"
+      "nfsDeleteSnapshot"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5709,13 +8736,155 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/nfs/snapshots/{nfs_snapshot_id}",
     "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "nfs_snapshot_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [
+      "region"
+    ],
+    "description": "Delete an NFS snapshot",
+    "parameterDescriptions": {
+      "nfs_snapshot_id": "The unique ID of the NFS snapshot",
+      "region": "The DigitalOcean region slug (e.g., nyc2, atl1) where the NFS share resides."
+    }
+  },
+  "nfs_create_access_point": {
+    "accessPath": [
+      "nfsCreateAccessPoint"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "path",
+      "access_policy",
+      "vpc_id"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "POST",
+    "routeTemplate": "/v2/nfs/shares/{share_id}/access_points",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "share_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Create an NFS access point",
+    "parameterDescriptions": {
+      "share_id": "The unique identifier of the NFS share."
+    }
+  },
+  "nfs_list_access_points": {
+    "accessPath": [
+      "nfsListAccessPoints"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/v2/nfs/shares/{share_id}/access_points",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "share_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [
+      "status"
+    ],
+    "description": "List NFS access points for a share",
+    "parameterDescriptions": {
+      "share_id": "The unique identifier of the NFS share.",
+      "status": "Filter access points by status."
+    }
+  },
+  "nfs_get_access_point": {
+    "accessPath": [
+      "nfsGetAccessPoint"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/v2/nfs/access_points/{access_point_id}",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "access_point_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Get an NFS access point",
+    "parameterDescriptions": {
+      "access_point_id": "The unique identifier of the NFS access point."
+    }
+  },
+  "nfs_delete_access_point": {
+    "accessPath": [
+      "nfsDeleteAccessPoint"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "DELETE",
+    "routeTemplate": "/v2/nfs/access_points/{access_point_id}",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "access_point_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Delete an NFS access point",
+    "parameterDescriptions": {
+      "access_point_id": "The unique identifier of the NFS access point."
+    }
+  },
+  "organizations_create_team": {
+    "accessPath": [
+      "organizationsCreateTeam"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "invitations"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "POST",
+    "routeTemplate": "/v2/organizations/team",
+    "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Team in an Organization"
   },
-  "get_v2_partner_network_connect_attachments": {
+  "organizations_list_teams": {
     "accessPath": [
-      "getV2PartnerNetworkConnectAttachments"
+      "organizationsListTeams"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/v2/organizations/teams",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "List Teams in an Organization"
+  },
+  "partnerAttachments_list": {
+    "accessPath": [
+      "partnerAttachmentsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5727,15 +8896,32 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List all partner attachments",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_partner_network_connect_attachments": {
+  "partnerAttachments_create": {
     "accessPath": [
-      "postV2PartnerNetworkConnectAttachments"
+      "partnerAttachmentsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "connection_bandwidth_in_mbps",
+      "region",
+      "naas_provider",
+      "vpc_ids",
+      "parent_uuid",
+      "bgp",
+      "redundancy_zone"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -5743,11 +8929,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a new partner attachment"
   },
-  "get_v2_partner_network_connect_attachments_pa_id": {
+  "partnerAttachments_get": {
     "accessPath": [
-      "getV2PartnerNetworkConnectAttachmentsPaId"
+      "partnerAttachmentsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5757,29 +8944,41 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/partner_network_connect/attachments/{pa_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "pa_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an existing partner attachment",
+    "parameterDescriptions": {
+      "pa_id": "A unique identifier for a partner attachment."
+    }
   },
-  "patch_v2_partner_network_connect_attachments_pa_id": {
+  "partnerAttachments_patch": {
     "accessPath": [
-      "patchV2PartnerNetworkConnectAttachmentsPaId"
+      "partnerAttachmentsPatch"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/partner_network_connect/attachments/{pa_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "pa_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update an existing partner attachment",
+    "parameterDescriptions": {
+      "pa_id": "A unique identifier for a partner attachment."
+    }
   },
-  "delete_v2_partner_network_connect_attachments_pa_id": {
+  "partnerAttachments_delete": {
     "accessPath": [
-      "deleteV2PartnerNetworkConnectAttachmentsPaId"
+      "partnerAttachmentsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5789,13 +8988,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/partner_network_connect/attachments/{pa_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "pa_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete an existing partner attachment",
+    "parameterDescriptions": {
+      "pa_id": "A unique identifier for a partner attachment."
+    }
   },
-  "get_v2_partner_network_connect_attachments_pa_id_bgp_auth_key": {
+  "partnerAttachments_get_bgp_auth_key": {
     "accessPath": [
-      "getV2PartnerNetworkConnectAttachmentsPaIdBgpAuthKey"
+      "partnerAttachmentsGetBgpAuthKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5805,13 +9010,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/partner_network_connect/attachments/{pa_id}/bgp_auth_key",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "pa_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get current BGP auth key for the partner attachment",
+    "parameterDescriptions": {
+      "pa_id": "A unique identifier for a partner attachment."
+    }
   },
-  "get_v2_partner_network_connect_attachments_pa_id_remote_routes": {
+  "partnerAttachments_list_remote_routes": {
     "accessPath": [
-      "getV2PartnerNetworkConnectAttachmentsPaIdRemoteRoutes"
+      "partnerAttachmentsListRemoteRoutes"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5821,13 +9032,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/partner_network_connect/attachments/{pa_id}/remote_routes",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "pa_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List remote routes for a partner attachment",
+    "parameterDescriptions": {
+      "pa_id": "A unique identifier for a partner attachment.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_partner_network_connect_attachments_pa_id_service_key": {
+  "partnerAttachments_get_service_key": {
     "accessPath": [
-      "getV2PartnerNetworkConnectAttachmentsPaIdServiceKey"
+      "partnerAttachmentsGetServiceKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5837,13 +9059,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/partner_network_connect/attachments/{pa_id}/service_key",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "pa_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get the current service key for the partner attachment",
+    "parameterDescriptions": {
+      "pa_id": "A unique identifier for a partner attachment."
+    }
   },
-  "post_v2_partner_network_connect_attachments_pa_id_service_key": {
+  "partnerAttachments_create_service_key": {
     "accessPath": [
-      "postV2PartnerNetworkConnectAttachmentsPaIdServiceKey"
+      "partnerAttachmentsCreateServiceKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5853,13 +9081,19 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v2/partner_network_connect/attachments/{pa_id}/service_key",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "pa_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Regenerate the service key for the partner attachment",
+    "parameterDescriptions": {
+      "pa_id": "A unique identifier for a partner attachment."
+    }
   },
-  "get_v2_projects": {
+  "projects_list": {
     "accessPath": [
-      "getV2Projects"
+      "projectsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5871,15 +9105,33 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Projects",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_projects": {
+  "projects_create": {
     "accessPath": [
-      "postV2Projects"
+      "projectsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "owner_uuid",
+      "owner_id",
+      "name",
+      "description",
+      "purpose",
+      "environment",
+      "created_at",
+      "updated_at"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -5887,11 +9139,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Project"
   },
-  "get_v2_projects_default": {
+  "projects_get_default": {
     "accessPath": [
-      "getV2ProjectsDefault"
+      "projectsGetDefault"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5903,15 +9156,27 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve the Default Project"
   },
-  "put_v2_projects_default": {
+  "projects_update_default": {
     "accessPath": [
-      "putV2ProjectsDefault"
+      "projectsUpdateDefault"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "owner_uuid",
+      "owner_id",
+      "name",
+      "description",
+      "purpose",
+      "environment",
+      "created_at",
+      "updated_at",
+      "is_default"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
@@ -5919,15 +9184,27 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update the Default Project"
   },
-  "patch_v2_projects_default": {
+  "projects_patch_default": {
     "accessPath": [
-      "patchV2ProjectsDefault"
+      "projectsPatchDefault"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "owner_uuid",
+      "owner_id",
+      "name",
+      "description",
+      "purpose",
+      "environment",
+      "created_at",
+      "updated_at",
+      "is_default"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
@@ -5935,11 +9212,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Patch the Default Project"
   },
-  "get_v2_projects_project_id": {
+  "projects_get": {
     "accessPath": [
-      "getV2ProjectsProjectId"
+      "projectsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5949,45 +9227,85 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/projects/{project_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "project_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Project",
+    "parameterDescriptions": {
+      "project_id": "A unique identifier for a project."
+    }
   },
-  "put_v2_projects_project_id": {
+  "projects_update": {
     "accessPath": [
-      "putV2ProjectsProjectId"
+      "projectsUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "owner_uuid",
+      "owner_id",
+      "name",
+      "description",
+      "purpose",
+      "environment",
+      "created_at",
+      "updated_at",
+      "is_default"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/projects/{project_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "project_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Project",
+    "parameterDescriptions": {
+      "project_id": "A unique identifier for a project."
+    }
   },
-  "patch_v2_projects_project_id": {
+  "projects_patch": {
     "accessPath": [
-      "patchV2ProjectsProjectId"
+      "projectsPatch"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "owner_uuid",
+      "owner_id",
+      "name",
+      "description",
+      "purpose",
+      "environment",
+      "created_at",
+      "updated_at",
+      "is_default"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/projects/{project_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "project_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Patch a Project",
+    "parameterDescriptions": {
+      "project_id": "A unique identifier for a project."
+    }
   },
-  "delete_v2_projects_project_id": {
+  "projects_delete": {
     "accessPath": [
-      "deleteV2ProjectsProjectId"
+      "projectsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -5997,13 +9315,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/projects/{project_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "project_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete an Existing Project",
+    "parameterDescriptions": {
+      "project_id": "A unique identifier for a project."
+    }
   },
-  "get_v2_projects_project_id_resources": {
+  "projects_list_resources": {
     "accessPath": [
-      "getV2ProjectsProjectIdResources"
+      "projectsListResources"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6013,29 +9337,48 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/projects/{project_id}/resources",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "project_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Project Resources",
+    "parameterDescriptions": {
+      "project_id": "A unique identifier for a project.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_projects_project_id_resources": {
+  "projects_assign_resources": {
     "accessPath": [
-      "postV2ProjectsProjectIdResources"
+      "projectsAssignResources"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "resources"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/projects/{project_id}/resources",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "project_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Assign Resources to a Project",
+    "parameterDescriptions": {
+      "project_id": "A unique identifier for a project."
+    }
   },
-  "get_v2_projects_default_resources": {
+  "projects_list_resources_default": {
     "accessPath": [
-      "getV2ProjectsDefaultResources"
+      "projectsListResourcesDefault"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6047,15 +9390,18 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Default Project Resources"
   },
-  "post_v2_projects_default_resources": {
+  "projects_assign_resources_default": {
     "accessPath": [
-      "postV2ProjectsDefaultResources"
+      "projectsAssignResourcesDefault"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "resources"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -6063,11 +9409,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Assign Resources to Default Project"
   },
-  "get_v2_regions": {
+  "regions_list": {
     "accessPath": [
-      "getV2Regions"
+      "regionsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6079,11 +9426,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Data Center Regions",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_registries": {
+  "registries_list": {
     "accessPath": [
-      "getV2Registries"
+      "registriesList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6095,15 +9450,20 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List All Container Registries"
   },
-  "post_v2_registries": {
+  "registries_create": {
     "accessPath": [
-      "postV2Registries"
+      "registriesCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "subscription_tier_slug",
+      "region"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -6111,11 +9471,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Container Registry"
   },
-  "get_v2_registries_registry_name": {
+  "registries_get": {
     "accessPath": [
-      "getV2RegistriesRegistryName"
+      "registriesGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6125,13 +9486,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registries/{registry_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get a Container Registry By Name",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry."
+    }
   },
-  "delete_v2_registries_registry_name": {
+  "registries_delete": {
     "accessPath": [
-      "deleteV2RegistriesRegistryName"
+      "registriesDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6141,13 +9508,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/registries/{registry_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Container Registry By Name",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry."
+    }
   },
-  "get_v2_registries_registry_name_docker_credentials": {
+  "registries_get_dockerCredentials": {
     "accessPath": [
-      "getV2RegistriesRegistryNameDockerCredentials"
+      "registriesGetDockerCredentials"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6157,13 +9530,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registries/{registry_name}/docker-credentials",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Docker Credentials By Registry Name",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry."
+    }
   },
-  "get_v2_registries_subscription": {
+  "registries_get_subscription": {
     "accessPath": [
-      "getV2RegistriesSubscription"
+      "registriesGetSubscription"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6175,15 +9554,18 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Subscription Information"
   },
-  "post_v2_registries_subscription": {
+  "registries_update_subscription": {
     "accessPath": [
-      "postV2RegistriesSubscription"
+      "registriesUpdateSubscription"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "tier_slug"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -6191,11 +9573,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Subscription Tier"
   },
-  "get_v2_registries_options": {
+  "registries_get_options": {
     "accessPath": [
-      "getV2RegistriesOptions"
+      "registriesGetOptions"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6207,11 +9590,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Registry Options (Subscription Tiers and Available Regions)"
   },
-  "get_v2_registries_registry_name_garbage_collection": {
+  "registries_get_garbageCollection": {
     "accessPath": [
-      "getV2RegistriesRegistryNameGarbageCollection"
+      "registriesGetGarbageCollection"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6221,13 +9605,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registries/{registry_name}/garbage-collection",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Active Garbage Collection",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry."
+    }
   },
-  "post_v2_registries_registry_name_garbage_collection": {
+  "registries_run_garbageCollection": {
     "accessPath": [
-      "postV2RegistriesRegistryNameGarbageCollection"
+      "registriesRunGarbageCollection"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6237,13 +9627,19 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v2/registries/{registry_name}/garbage-collection",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Start Garbage Collection",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry."
+    }
   },
-  "get_v2_registries_registry_name_garbage_collections": {
+  "registries_list_garbageCollections": {
     "accessPath": [
-      "getV2RegistriesRegistryNameGarbageCollections"
+      "registriesListGarbageCollections"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6253,29 +9649,50 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registries/{registry_name}/garbage-collections",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Garbage Collections",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "put_v2_registries_registry_name_garbage_collection_garbage_collection_uuid": {
+  "registries_update_garbageCollection": {
     "accessPath": [
-      "putV2RegistriesRegistryNameGarbageCollectionGarbageCollectionUuid"
+      "registriesUpdateGarbageCollection"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "cancel"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/registries/{registry_name}/garbage-collection/{garbage_collection_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "garbage_collection_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Garbage Collection",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry.",
+      "garbage_collection_uuid": "The UUID of a garbage collection run."
+    }
   },
-  "get_v2_registries_registry_name_repositoriesv2": {
+  "registries_list_repositoriesV2": {
     "accessPath": [
-      "getV2RegistriesRegistryNameRepositoriesv2"
+      "registriesListRepositoriesV2"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6285,13 +9702,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registries/{registry_name}/repositoriesV2",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "page_token"
+    ],
+    "description": "List All Container Registry Repositories (V2)",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return. Ignored when 'page_token' is provided.",
+      "page_token": "Token to retrieve of the next or previous set of results more quickly than using 'page'.",
+      "registry_name": "The name of a container registry."
+    }
   },
-  "delete_v2_registries_registry_name_repositories_repository_name": {
+  "registries_delete_repository": {
     "accessPath": [
-      "deleteV2RegistriesRegistryNameRepositoriesRepositoryName"
+      "registriesDeleteRepository"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6301,13 +9731,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/registries/{registry_name}/repositories/{repository_name}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "repository_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Container Registry Repository",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry.",
+      "repository_name": "The name of a container registry repository. If the name contains `/` characters, they must be URL-encoded, e.g. `%2F`."
+    }
   },
-  "get_v2_registries_registry_name_repositories_repository_name_tags": {
+  "registries_list_repositoryTags": {
     "accessPath": [
-      "getV2RegistriesRegistryNameRepositoriesRepositoryNameTags"
+      "registriesListRepositoryTags"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6317,13 +9755,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registries/{registry_name}/repositories/{repository_name}/tags",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "repository_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Container Registry Repository Tags",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "registry_name": "The name of a container registry.",
+      "repository_name": "The name of a container registry repository. If the name contains `/` characters, they must be URL-encoded, e.g. `%2F`."
+    }
   },
-  "delete_v2_registries_registry_name_repositories_repository_name_tags_repository_tag": {
+  "registries_delete_repositoryTag": {
     "accessPath": [
-      "deleteV2RegistriesRegistryNameRepositoriesRepositoryNameTagsRepositoryTag"
+      "registriesDeleteRepositoryTag"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6333,13 +9784,23 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/registries/{registry_name}/repositories/{repository_name}/tags/{repository_tag}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "repository_name",
+      "repository_tag"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Container Registry Repository Tag",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry.",
+      "repository_name": "The name of a container registry repository. If the name contains `/` characters, they must be URL-encoded, e.g. `%2F`.",
+      "repository_tag": "The name of a container registry repository tag."
+    }
   },
-  "get_v2_registries_registry_name_repositories_repository_name_digests": {
+  "registries_list_repositoryManifests": {
     "accessPath": [
-      "getV2RegistriesRegistryNameRepositoriesRepositoryNameDigests"
+      "registriesListRepositoryManifests"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6349,13 +9810,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registries/{registry_name}/repositories/{repository_name}/digests",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "repository_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Container Registry Repository Manifests",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "registry_name": "The name of a container registry.",
+      "repository_name": "The name of a container registry repository. If the name contains `/` characters, they must be URL-encoded, e.g. `%2F`."
+    }
   },
-  "delete_v2_registries_registry_name_repositories_repository_name_digests_manifest_digest": {
+  "registries_delete_repositoryManifest": {
     "accessPath": [
-      "deleteV2RegistriesRegistryNameRepositoriesRepositoryNameDigestsManifestDigest"
+      "registriesDeleteRepositoryManifest"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6365,17 +9839,29 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/registries/{registry_name}/repositories/{repository_name}/digests/{manifest_digest}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "repository_name",
+      "manifest_digest"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Container Registry Repository Manifest",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry.",
+      "repository_name": "The name of a container registry repository. If the name contains `/` characters, they must be URL-encoded, e.g. `%2F`.",
+      "manifest_digest": "The manifest digest of a container registry repository tag."
+    }
   },
-  "post_v2_registries_validate_name": {
+  "registries_validate_name": {
     "accessPath": [
-      "postV2RegistriesValidateName"
+      "registriesValidateName"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -6383,11 +9869,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Validate a Container Registry Name"
   },
-  "get_v2_registry": {
+  "registry_get": {
     "accessPath": [
-      "getV2Registry"
+      "registryGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6399,15 +9886,20 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Container Registry Information"
   },
-  "post_v2_registry": {
+  "registry_create": {
     "accessPath": [
-      "postV2Registry"
+      "registryCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "subscription_tier_slug",
+      "region"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -6415,11 +9907,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Container Registry"
   },
-  "delete_v2_registry": {
+  "registry_delete": {
     "accessPath": [
-      "deleteV2Registry"
+      "registryDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6431,11 +9924,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Container Registry"
   },
-  "get_v2_registry_subscription": {
+  "registry_get_subscription": {
     "accessPath": [
-      "getV2RegistrySubscription"
+      "registryGetSubscription"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6447,15 +9941,18 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Subscription"
   },
-  "post_v2_registry_subscription": {
+  "registry_update_subscription": {
     "accessPath": [
-      "postV2RegistrySubscription"
+      "registryUpdateSubscription"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "tier_slug"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -6463,11 +9960,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Subscription Tier"
   },
-  "get_v2_registry_docker_credentials": {
+  "registry_get_dockerCredentials": {
     "accessPath": [
-      "getV2RegistryDockerCredentials"
+      "registryGetDockerCredentials"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6479,15 +9977,25 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "expiry_seconds",
+      "read_write"
+    ],
+    "description": "Get Docker Credentials for Container Registry",
+    "parameterDescriptions": {
+      "expiry_seconds": "The duration in seconds that the returned registry credentials will be valid. If not set or 0, the credentials will not expire.",
+      "read_write": "By default, the registry credentials allow for read-only access. Set this query parameter to `true` to obtain read-write credentials."
+    }
   },
-  "post_v2_registry_validate_name": {
+  "registry_validate_name": {
     "accessPath": [
-      "postV2RegistryValidateName"
+      "registryValidateName"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -6495,11 +10003,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Validate a Container Registry Name"
   },
-  "get_v2_registry_registry_name_repositories": {
+  "registry_list_repositories": {
     "accessPath": [
-      "getV2RegistryRegistryNameRepositories"
+      "registryListRepositories"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6509,13 +10018,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registry/{registry_name}/repositories",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Container Registry Repositories",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "registry_name": "The name of a container registry."
+    }
   },
-  "get_v2_registry_registry_name_repositoriesv2": {
+  "registry_list_repositoriesV2": {
     "accessPath": [
-      "getV2RegistryRegistryNameRepositoriesv2"
+      "registryListRepositoriesV2"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6525,13 +10045,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registry/{registry_name}/repositoriesV2",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "page_token"
+    ],
+    "description": "List All Container Registry Repositories (V2)",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return. Ignored when 'page_token' is provided.",
+      "page_token": "Token to retrieve of the next or previous set of results more quickly than using 'page'.",
+      "registry_name": "The name of a container registry."
+    }
   },
-  "get_v2_registry_registry_name_repositories_repository_name_tags": {
+  "registry_list_repositoryTags": {
     "accessPath": [
-      "getV2RegistryRegistryNameRepositoriesRepositoryNameTags"
+      "registryListRepositoryTags"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6541,13 +10074,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registry/{registry_name}/repositories/{repository_name}/tags",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "repository_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Container Registry Repository Tags",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "registry_name": "The name of a container registry.",
+      "repository_name": "The name of a container registry repository. If the name contains `/` characters, they must be URL-encoded, e.g. `%2F`."
+    }
   },
-  "delete_v2_registry_registry_name_repositories_repository_name_tags_repository_tag": {
+  "registry_delete_repositoryTag": {
     "accessPath": [
-      "deleteV2RegistryRegistryNameRepositoriesRepositoryNameTagsRepositoryTag"
+      "registryDeleteRepositoryTag"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6557,13 +10103,23 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/registry/{registry_name}/repositories/{repository_name}/tags/{repository_tag}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "repository_name",
+      "repository_tag"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Container Registry Repository Tag",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry.",
+      "repository_name": "The name of a container registry repository. If the name contains `/` characters, they must be URL-encoded, e.g. `%2F`.",
+      "repository_tag": "The name of a container registry repository tag."
+    }
   },
-  "get_v2_registry_registry_name_repositories_repository_name_digests": {
+  "registry_list_repositoryManifests": {
     "accessPath": [
-      "getV2RegistryRegistryNameRepositoriesRepositoryNameDigests"
+      "registryListRepositoryManifests"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6573,13 +10129,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registry/{registry_name}/repositories/{repository_name}/digests",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "repository_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Container Registry Repository Manifests",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "registry_name": "The name of a container registry.",
+      "repository_name": "The name of a container registry repository. If the name contains `/` characters, they must be URL-encoded, e.g. `%2F`."
+    }
   },
-  "delete_v2_registry_registry_name_repositories_repository_name_digests_manifest_digest": {
+  "registry_delete_repositoryManifest": {
     "accessPath": [
-      "deleteV2RegistryRegistryNameRepositoriesRepositoryNameDigestsManifestDigest"
+      "registryDeleteRepositoryManifest"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6589,29 +10158,47 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/registry/{registry_name}/repositories/{repository_name}/digests/{manifest_digest}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "repository_name",
+      "manifest_digest"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Container Registry Repository Manifest",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry.",
+      "repository_name": "The name of a container registry repository. If the name contains `/` characters, they must be URL-encoded, e.g. `%2F`.",
+      "manifest_digest": "The manifest digest of a container registry repository tag."
+    }
   },
-  "post_v2_registry_registry_name_garbage_collection": {
+  "registry_run_garbageCollection": {
     "accessPath": [
-      "postV2RegistryRegistryNameGarbageCollection"
+      "registryRunGarbageCollection"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "type"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/registry/{registry_name}/garbage-collection",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Start Garbage Collection",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry."
+    }
   },
-  "get_v2_registry_registry_name_garbage_collection": {
+  "registry_get_garbageCollection": {
     "accessPath": [
-      "getV2RegistryRegistryNameGarbageCollection"
+      "registryGetGarbageCollection"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6621,13 +10208,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registry/{registry_name}/garbage-collection",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Active Garbage Collection",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry."
+    }
   },
-  "get_v2_registry_registry_name_garbage_collections": {
+  "registry_list_garbageCollections": {
     "accessPath": [
-      "getV2RegistryRegistryNameGarbageCollections"
+      "registryListGarbageCollections"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6637,29 +10230,50 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/registry/{registry_name}/garbage-collections",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Garbage Collections",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "put_v2_registry_registry_name_garbage_collection_garbage_collection_uuid": {
+  "registry_update_garbageCollection": {
     "accessPath": [
-      "putV2RegistryRegistryNameGarbageCollectionGarbageCollectionUuid"
+      "registryUpdateGarbageCollection"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "cancel"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/registry/{registry_name}/garbage-collection/{garbage_collection_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "registry_name",
+      "garbage_collection_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Garbage Collection",
+    "parameterDescriptions": {
+      "registry_name": "The name of a container registry.",
+      "garbage_collection_uuid": "The UUID of a garbage collection run."
+    }
   },
-  "get_v2_registry_options": {
+  "registry_get_options": {
     "accessPath": [
-      "getV2RegistryOptions"
+      "registryGetOptions"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6671,11 +10285,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Registry Options (Subscription Tiers and Available Regions)"
   },
-  "get_v2_reports_droplet_neighbors_ids": {
+  "droplets_list_neighborsIds": {
     "accessPath": [
-      "getV2ReportsDropletNeighborsIds"
+      "dropletsListNeighborsIds"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6687,11 +10302,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List All Droplet Neighbors"
   },
-  "get_v2_reserved_ips": {
+  "reservedIPs_list": {
     "accessPath": [
-      "getV2ReservedIps"
+      "reservedIPsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6703,14 +10319,22 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Reserved IPs",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_reserved_ips": {
+  "reservedIPs_create": {
     "accessPath": [
-      "postV2ReservedIps"
+      "reservedIPsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -6719,11 +10343,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Reserved IP"
   },
-  "get_v2_reserved_ips_reserved_ip": {
+  "reservedIPs_get": {
     "accessPath": [
-      "getV2ReservedIpsReservedIp"
+      "reservedIPsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6733,13 +10358,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/reserved_ips/{reserved_ip}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "reserved_ip"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Reserved IP",
+    "parameterDescriptions": {
+      "reserved_ip": "A reserved IP address."
+    }
   },
-  "delete_v2_reserved_ips_reserved_ip": {
+  "reservedIPs_delete": {
     "accessPath": [
-      "deleteV2ReservedIpsReservedIp"
+      "reservedIPsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6749,13 +10380,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/reserved_ips/{reserved_ip}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "reserved_ip"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Reserved IP",
+    "parameterDescriptions": {
+      "reserved_ip": "A reserved IP address."
+    }
   },
-  "get_v2_reserved_ips_reserved_ip_actions": {
+  "reservedIPsActions_list": {
     "accessPath": [
-      "getV2ReservedIpsReservedIpActions"
+      "reservedIPsActionsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6765,29 +10402,41 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/reserved_ips/{reserved_ip}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "reserved_ip"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List All Actions for a Reserved IP",
+    "parameterDescriptions": {
+      "reserved_ip": "A reserved IP address."
+    }
   },
-  "post_v2_reserved_ips_reserved_ip_actions": {
+  "reservedIPsActions_post": {
     "accessPath": [
-      "postV2ReservedIpsReservedIpActions"
+      "reservedIPsActionsPost"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/reserved_ips/{reserved_ip}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "reserved_ip"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Initiate a Reserved IP Action",
+    "parameterDescriptions": {
+      "reserved_ip": "A reserved IP address."
+    }
   },
-  "get_v2_reserved_ips_reserved_ip_actions_action_id": {
+  "reservedIPsActions_get": {
     "accessPath": [
-      "getV2ReservedIpsReservedIpActionsActionId"
+      "reservedIPsActionsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6797,13 +10446,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/reserved_ips/{reserved_ip}/actions/{action_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "reserved_ip",
+      "action_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Reserved IP Action",
+    "parameterDescriptions": {
+      "reserved_ip": "A reserved IP address.",
+      "action_id": "A unique numeric ID that can be used to identify and reference an action."
+    }
   },
-  "get_v2_reserved_ipv6": {
+  "reservedIPv6_list": {
     "accessPath": [
-      "getV2ReservedIpv6"
+      "reservedIPv6List"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6815,15 +10472,25 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Reserved IPv6s",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_reserved_ipv6": {
+  "reservedIPv6_create": {
     "accessPath": [
-      "postV2ReservedIpv6"
+      "reservedIPv6Create"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "region_slug"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -6831,11 +10498,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Reserved IPv6"
   },
-  "get_v2_reserved_ipv6_reserved_ipv6": {
+  "reservedIPv6_get": {
     "accessPath": [
-      "getV2ReservedIpv6ReservedIpv6"
+      "reservedIPv6Get"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6845,13 +10513,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/reserved_ipv6/{reserved_ipv6}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "reserved_ipv6"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Reserved IPv6",
+    "parameterDescriptions": {
+      "reserved_ipv6": "A reserved IPv6 address."
+    }
   },
-  "delete_v2_reserved_ipv6_reserved_ipv6": {
+  "reservedIPv6_delete": {
     "accessPath": [
-      "deleteV2ReservedIpv6ReservedIpv6"
+      "reservedIPv6Delete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6861,33 +10535,49 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/reserved_ipv6/{reserved_ipv6}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "reserved_ipv6"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Reserved IPv6",
+    "parameterDescriptions": {
+      "reserved_ipv6": "A reserved IPv6 address."
+    }
   },
-  "post_v2_reserved_ipv6_reserved_ipv6_actions": {
+  "reservedIPv6Actions_post": {
     "accessPath": [
-      "postV2ReservedIpv6ReservedIpv6Actions"
+      "reservedIPv6ActionsPost"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/reserved_ipv6/{reserved_ipv6}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "reserved_ipv6"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Initiate a Reserved IPv6 Action",
+    "parameterDescriptions": {
+      "reserved_ipv6": "A reserved IPv6 address."
+    }
   },
-  "post_v2_byoip_prefixes": {
+  "byoipPrefixes_create": {
     "accessPath": [
-      "postV2ByoipPrefixes"
+      "byoipPrefixesCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "prefix",
+      "region",
+      "signature"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -6895,11 +10585,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a BYOIP Prefix"
   },
-  "get_v2_byoip_prefixes": {
+  "byoipPrefixes_list": {
     "accessPath": [
-      "getV2ByoipPrefixes"
+      "byoipPrefixesList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6911,11 +10602,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List BYOIP Prefixes",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_byoip_prefixes_byoip_prefix_uuid": {
+  "byoipPrefixes_get": {
     "accessPath": [
-      "getV2ByoipPrefixesByoipPrefixUuid"
+      "byoipPrefixesGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6925,13 +10624,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/byoip_prefixes/{byoip_prefix_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "byoip_prefix_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get a BYOIP Prefix",
+    "parameterDescriptions": {
+      "byoip_prefix_uuid": "The unique identifier for the BYOIP Prefix."
+    }
   },
-  "delete_v2_byoip_prefixes_byoip_prefix_uuid": {
+  "byoipPrefixes_delete": {
     "accessPath": [
-      "deleteV2ByoipPrefixesByoipPrefixUuid"
+      "byoipPrefixesDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6941,29 +10646,43 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/byoip_prefixes/{byoip_prefix_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "byoip_prefix_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a BYOIP Prefix",
+    "parameterDescriptions": {
+      "byoip_prefix_uuid": "The unique identifier for the BYOIP Prefix."
+    }
   },
-  "patch_v2_byoip_prefixes_byoip_prefix_uuid": {
+  "byoipPrefixes_patch": {
     "accessPath": [
-      "patchV2ByoipPrefixesByoipPrefixUuid"
+      "byoipPrefixesPatch"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "advertise"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/byoip_prefixes/{byoip_prefix_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "byoip_prefix_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a BYOIP Prefix",
+    "parameterDescriptions": {
+      "byoip_prefix_uuid": "A unique identifier for a BYOIP prefix."
+    }
   },
-  "get_v2_byoip_prefixes_byoip_prefix_uuid_ips": {
+  "byoipPrefixes_list_resources": {
     "accessPath": [
-      "getV2ByoipPrefixesByoipPrefixUuidIps"
+      "byoipPrefixesListResources"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6973,13 +10692,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/byoip_prefixes/{byoip_prefix_uuid}/ips",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "byoip_prefix_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List BYOIP Prefix Resources",
+    "parameterDescriptions": {
+      "byoip_prefix_uuid": "The unique identifier for the BYOIP Prefix.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_security_scans": {
+  "security_list_scans": {
     "accessPath": [
-      "getV2SecurityScans"
+      "securityListScans"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -6991,11 +10721,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Scans",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_security_scans": {
+  "security_create_scan": {
     "accessPath": [
-      "postV2SecurityScans"
+      "securityCreateScan"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7007,11 +10745,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Scan"
   },
-  "get_v2_security_scans_scan_id": {
+  "security_get_scan": {
     "accessPath": [
-      "getV2SecurityScansScanId"
+      "securityGetScan"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7021,13 +10760,28 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/security/scans/{scan_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "scan_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "severity",
+      "per_page",
+      "page",
+      "type"
+    ],
+    "description": "Get Scan",
+    "parameterDescriptions": {
+      "scan_id": "The scan UUID.",
+      "severity": "The finding severity level to include.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "type": "The finding type to include."
+    }
   },
-  "get_v2_security_scans_latest": {
+  "security_get_latest_scan": {
     "accessPath": [
-      "getV2SecurityScansLatest"
+      "securityGetLatestScan"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7039,15 +10793,29 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "severity",
+      "type"
+    ],
+    "description": "Get Latest Scan",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "severity": "The finding severity level to include.",
+      "type": "The finding type to include."
+    }
   },
-  "post_v2_security_scans_rules": {
+  "security_create_scan_rule": {
     "accessPath": [
-      "postV2SecurityScansRules"
+      "securityCreateScanRule"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "resource"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -7055,11 +10823,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Scan Rule"
   },
-  "get_v2_security_scans_scan_id_findings_finding_uuid_affected_resources": {
+  "security_list_scan_finding_affected_resources": {
     "accessPath": [
-      "getV2SecurityScansScanIdFindingsFindingUuidAffectedResources"
+      "securityListScanFindingAffectedResources"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7069,13 +10838,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/security/scans/{scan_id}/findings/{finding_uuid}/affected_resources",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "scan_id",
+      "finding_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Finding Affected Resources",
+    "parameterDescriptions": {
+      "scan_id": "The scan UUID.",
+      "finding_uuid": "The finding UUID.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_security_settings": {
+  "security_list_settings": {
     "accessPath": [
-      "getV2SecuritySettings"
+      "securityListSettings"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7087,15 +10869,25 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Settings",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "put_v2_security_settings_plan": {
+  "security_update_settings_plan": {
     "accessPath": [
-      "putV2SecuritySettingsPlan"
+      "securityUpdateSettingsPlan"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "tier_coverage"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
@@ -7103,15 +10895,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Plan"
   },
-  "post_v2_security_settings_suppressions": {
+  "security_create_suppression": {
     "accessPath": [
-      "postV2SecuritySettingsSuppressions"
+      "securityCreateSuppression"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "rule_uuid",
+      "resources"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -7119,11 +10915,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Suppression"
   },
-  "delete_v2_security_settings_suppressions_suppression_uuid": {
+  "security_delete_suppression": {
     "accessPath": [
-      "deleteV2SecuritySettingsSuppressionsSuppressionUuid"
+      "securityDeleteSuppression"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7133,13 +10930,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/security/settings/suppressions/{suppression_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "suppression_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Suppression",
+    "parameterDescriptions": {
+      "suppression_uuid": "The suppression UUID to remove."
+    }
   },
-  "get_v2_sizes": {
+  "sizes_list": {
     "accessPath": [
-      "getV2Sizes"
+      "sizesList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7151,11 +10954,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Droplet Sizes",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_snapshots": {
+  "snapshots_list": {
     "accessPath": [
-      "getV2Snapshots"
+      "snapshotsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7167,11 +10978,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "resource_type"
+    ],
+    "description": "List All Snapshots",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "resource_type": "Used to filter snapshots by a resource type."
+    }
   },
-  "get_v2_snapshots_snapshot_id": {
+  "snapshots_get": {
     "accessPath": [
-      "getV2SnapshotsSnapshotId"
+      "snapshotsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7181,13 +11002,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/snapshots/{snapshot_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "snapshot_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Snapshot",
+    "parameterDescriptions": {
+      "snapshot_id": "Either the ID of an existing snapshot. This will be an integer for a Droplet snapshot or a string for a volume snapshot."
+    }
   },
-  "delete_v2_snapshots_snapshot_id": {
+  "snapshots_delete": {
     "accessPath": [
-      "deleteV2SnapshotsSnapshotId"
+      "snapshotsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7197,13 +11024,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/snapshots/{snapshot_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "snapshot_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Snapshot",
+    "parameterDescriptions": {
+      "snapshot_id": "Either the ID of an existing snapshot. This will be an integer for a Droplet snapshot or a string for a volume snapshot."
+    }
   },
-  "get_v2_spaces_keys": {
+  "spacesKey_list": {
     "accessPath": [
-      "getV2SpacesKeys"
+      "spacesKeyList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7215,15 +11048,38 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "sort",
+      "sort_direction",
+      "name",
+      "bucket",
+      "permission"
+    ],
+    "description": "List Spaces Access Keys",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "sort": "The field to sort by.",
+      "sort_direction": "The direction to sort by. Possible values are `asc` or `desc`.",
+      "name": "The access key's name.",
+      "bucket": "The bucket's name.",
+      "permission": "The permission of the access key. Possible values are `read`, `readwrite`, `fullaccess`, or an empty string."
+    }
   },
-  "post_v2_spaces_keys": {
+  "spacesKey_create": {
     "accessPath": [
-      "postV2SpacesKeys"
+      "spacesKeyCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "grants",
+      "access_key",
+      "created_at"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -7231,11 +11087,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Spaces Access Key"
   },
-  "get_v2_spaces_keys_access_key": {
+  "spacesKey_get": {
     "accessPath": [
-      "getV2SpacesKeysAccessKey"
+      "spacesKeyGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7245,13 +11102,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/spaces/keys/{access_key}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "access_key"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get a Spaces Access Key",
+    "parameterDescriptions": {
+      "access_key": "The access key's ID."
+    }
   },
-  "delete_v2_spaces_keys_access_key": {
+  "spacesKey_delete": {
     "accessPath": [
-      "deleteV2SpacesKeysAccessKey"
+      "spacesKeyDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7261,45 +11124,77 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/spaces/keys/{access_key}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "access_key"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Spaces Access Key",
+    "parameterDescriptions": {
+      "access_key": "The access key's ID."
+    }
   },
-  "put_v2_spaces_keys_access_key": {
+  "spacesKey_update": {
     "accessPath": [
-      "putV2SpacesKeysAccessKey"
+      "spacesKeyUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "grants",
+      "access_key",
+      "created_at"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/spaces/keys/{access_key}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "access_key"
+    ],
+    "pathParameterKeys": [
+      "access_key"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Spaces Access Keys",
+    "parameterDescriptions": {
+      "access_key": "The access key's ID."
+    }
   },
-  "patch_v2_spaces_keys_access_key": {
+  "spacesKey_patch": {
     "accessPath": [
-      "patchV2SpacesKeysAccessKey"
+      "spacesKeyPatch"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "grants",
+      "access_key",
+      "created_at"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/spaces/keys/{access_key}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "access_key"
+    ],
+    "pathParameterKeys": [
+      "access_key"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Spaces Access Keys",
+    "parameterDescriptions": {
+      "access_key": "The access key's ID."
+    }
   },
-  "get_v2_tags": {
+  "tags_list": {
     "accessPath": [
-      "getV2Tags"
+      "tagsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7311,15 +11206,26 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Tags",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_tags": {
+  "tags_create": {
     "accessPath": [
-      "postV2Tags"
+      "tagsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "resources"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -7327,11 +11233,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Tag"
   },
-  "get_v2_tags_tag_id": {
+  "tags_get": {
     "accessPath": [
-      "getV2TagsTagId"
+      "tagsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7341,13 +11248,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/tags/{tag_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "tag_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve a Tag",
+    "parameterDescriptions": {
+      "tag_id": "The name of the tag. Tags may contain letters, numbers, colons, dashes, and underscores. There is a limit of 255 characters per tag."
+    }
   },
-  "delete_v2_tags_tag_id": {
+  "tags_delete": {
     "accessPath": [
-      "deleteV2TagsTagId"
+      "tagsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7357,29 +11270,160 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/tags/{tag_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "tag_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Tag",
+    "parameterDescriptions": {
+      "tag_id": "The name of the tag. Tags may contain letters, numbers, colons, dashes, and underscores. There is a limit of 255 characters per tag."
+    }
   },
-  "post_v2_tags_tag_id_resources": {
+  "tags_assign_resources": {
     "accessPath": [
-      "postV2TagsTagIdResources"
+      "tagsAssignResources"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "resources"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "POST",
+    "routeTemplate": "/v2/tags/{tag_id}/resources",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "tag_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Tag a Resource",
+    "parameterDescriptions": {
+      "tag_id": "The name of the tag. Tags may contain letters, numbers, colons, dashes, and underscores. There is a limit of 255 characters per tag."
+    }
+  },
+  "tags_unassign_resources": {
+    "accessPath": [
+      "tagsUnassignResources"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "resources"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "DELETE",
+    "routeTemplate": "/v2/tags/{tag_id}/resources",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "tag_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Untag a Resource",
+    "parameterDescriptions": {
+      "tag_id": "The name of the tag. Tags may contain letters, numbers, colons, dashes, and underscores. There is a limit of 255 characters per tag."
+    }
+  },
+  "vectorDatabases_list": {
+    "accessPath": [
+      "vectorDatabasesList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
-    "method": "POST",
-    "routeTemplate": "/v2/tags/{tag_id}/resources",
+    "method": "GET",
+    "routeTemplate": "/v2/vector-databases",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List All Vector Databases"
   },
-  "delete_v2_tags_tag_id_resources": {
+  "vectorDatabases_create": {
     "accessPath": [
-      "deleteV2TagsTagIdResources"
+      "vectorDatabasesCreate"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "project_id",
+      "region",
+      "size",
+      "tags"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "POST",
+    "routeTemplate": "/v2/vector-databases",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Create a New Vector Database"
+  },
+  "vectorDatabases_get": {
+    "accessPath": [
+      "vectorDatabasesGet"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/v2/vector-databases/{id}",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Vector Database",
+    "parameterDescriptions": {
+      "id": "ID of the vector database."
+    }
+  },
+  "vectorDatabases_update": {
+    "accessPath": [
+      "vectorDatabasesUpdate"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "config",
+      "id",
+      "project_id"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "PUT",
+    "routeTemplate": "/v2/vector-databases/{id}",
+    "pathConflictKeys": [
+      "id"
+    ],
+    "pathParameterKeys": [
+      "id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Update a Vector Database",
+    "parameterDescriptions": {
+      "id": "ID of the vector database."
+    }
+  },
+  "vectorDatabases_delete": {
+    "accessPath": [
+      "vectorDatabasesDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7387,15 +11431,173 @@ export const toolMetadata = {
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "DELETE",
-    "routeTemplate": "/v2/tags/{tag_id}/resources",
+    "routeTemplate": "/v2/vector-databases/{id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Vector Database",
+    "parameterDescriptions": {
+      "id": "ID of the vector database."
+    }
   },
-  "get_v2_volumes": {
+  "vectorDatabases_list_backups": {
     "accessPath": [
-      "getV2Volumes"
+      "vectorDatabasesListBackups"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/v2/vector-databases/{id}/backups",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "List Backups for a Vector Database",
+    "parameterDescriptions": {
+      "id": "Required. ID of the vector database."
+    }
+  },
+  "vectorDatabases_get_restore_status": {
+    "accessPath": [
+      "vectorDatabasesGetRestoreStatus"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/v2/vector-databases/{id}/backups/{backup_id}/restore",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "id",
+      "backup_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Retrieve the Status of a Restore",
+    "parameterDescriptions": {
+      "id": "Required. ID of the vector database.",
+      "backup_id": "Required. ID of the backup being restored."
+    }
+  },
+  "vectorDatabases_post_restore_backup": {
+    "accessPath": [
+      "vectorDatabasesPostRestoreBackup"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "backup_id",
+      "id"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "POST",
+    "routeTemplate": "/v2/vector-databases/{id}/backups/{backup_id}/restore",
+    "pathConflictKeys": [
+      "id",
+      "backup_id"
+    ],
+    "pathParameterKeys": [
+      "id",
+      "backup_id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Restore a Vector Database from a Backup",
+    "parameterDescriptions": {
+      "id": "Required. ID of the vector database.",
+      "backup_id": "Required. ID of the backup to restore from."
+    }
+  },
+  "vectorDatabases_get_credentials": {
+    "accessPath": [
+      "vectorDatabasesGetCredentials"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "GET",
+    "routeTemplate": "/v2/vector-databases/{id}/credentials",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Retrieve Admin Credentials for a Vector Database",
+    "parameterDescriptions": {
+      "id": "ID of the vector database."
+    }
+  },
+  "vectorDatabases_post_resize": {
+    "accessPath": [
+      "vectorDatabasesPostResize"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "size"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "POST",
+    "routeTemplate": "/v2/vector-databases/{id}/resize",
+    "pathConflictKeys": [
+      "id"
+    ],
+    "pathParameterKeys": [
+      "id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Resize a Vector Database",
+    "parameterDescriptions": {
+      "id": "Required. ID of the vector database to resize."
+    }
+  },
+  "vectorDatabases_update_tags": {
+    "accessPath": [
+      "vectorDatabasesUpdateTags"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "tags"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "PUT",
+    "routeTemplate": "/v2/vector-databases/{id}/tags",
+    "pathConflictKeys": [
+      "id"
+    ],
+    "pathParameterKeys": [
+      "id"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Update Tags on a Vector Database",
+    "parameterDescriptions": {
+      "id": "Required. ID of the vector database to update tags for."
+    }
+  },
+  "volumes_list": {
+    "accessPath": [
+      "volumesList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7407,14 +11609,26 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "name",
+      "region",
+      "per_page",
+      "page"
+    ],
+    "description": "List All Block Storage Volumes",
+    "parameterDescriptions": {
+      "name": "The block storage volume's name.",
+      "region": "The slug identifier for the region where the resource is available.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_volumes": {
+  "volumes_create": {
     "accessPath": [
-      "postV2Volumes"
+      "volumesCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -7423,11 +11637,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Block Storage Volume"
   },
-  "delete_v2_volumes": {
+  "volumes_delete_byName": {
     "accessPath": [
-      "deleteV2Volumes"
+      "volumesDeleteByName"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7439,14 +11654,22 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "name",
+      "region"
+    ],
+    "description": "Delete a Block Storage Volume by Name",
+    "parameterDescriptions": {
+      "name": "The block storage volume's name.",
+      "region": "The slug identifier for the region where the resource is available."
+    }
   },
-  "post_v2_volumes_actions": {
+  "volumeActions_post": {
     "accessPath": [
-      "postV2VolumesActions"
+      "volumeActionsPost"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -7455,11 +11678,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "Initiate A Block Storage Action By Volume Name",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_volumes_snapshots_snapshot_id": {
+  "volumeSnapshots_get_byId": {
     "accessPath": [
-      "getV2VolumesSnapshotsSnapshotId"
+      "volumeSnapshotsGetById"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7469,13 +11700,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/volumes/snapshots/{snapshot_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "snapshot_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Volume Snapshot",
+    "parameterDescriptions": {
+      "snapshot_id": "The unique identifier for the snapshot."
+    }
   },
-  "delete_v2_volumes_snapshots_snapshot_id": {
+  "volumeSnapshots_delete_byId": {
     "accessPath": [
-      "deleteV2VolumesSnapshotsSnapshotId"
+      "volumeSnapshotsDeleteById"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7485,13 +11722,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/volumes/snapshots/{snapshot_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "snapshot_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Volume Snapshot",
+    "parameterDescriptions": {
+      "snapshot_id": "The unique identifier for the snapshot."
+    }
   },
-  "get_v2_volumes_volume_id": {
+  "volumes_get": {
     "accessPath": [
-      "getV2VolumesVolumeId"
+      "volumesGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7501,13 +11744,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/volumes/{volume_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "volume_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Block Storage Volume",
+    "parameterDescriptions": {
+      "volume_id": "The ID of the block storage volume."
+    }
   },
-  "delete_v2_volumes_volume_id": {
+  "volumes_delete": {
     "accessPath": [
-      "deleteV2VolumesVolumeId"
+      "volumesDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7517,13 +11766,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/volumes/{volume_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "volume_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Block Storage Volume",
+    "parameterDescriptions": {
+      "volume_id": "The ID of the block storage volume."
+    }
   },
-  "get_v2_volumes_volume_id_actions": {
+  "volumeActions_list": {
     "accessPath": [
-      "getV2VolumesVolumeIdActions"
+      "volumeActionsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7533,29 +11788,51 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/volumes/{volume_id}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "volume_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Actions for a Volume",
+    "parameterDescriptions": {
+      "volume_id": "The ID of the block storage volume.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_volumes_volume_id_actions": {
+  "volumeActions_post_byId": {
     "accessPath": [
-      "postV2VolumesVolumeIdActions"
+      "volumeActionsPostById"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/volumes/{volume_id}/actions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "volume_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "Initiate A Block Storage Action By Volume Id",
+    "parameterDescriptions": {
+      "volume_id": "The ID of the block storage volume.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_volumes_volume_id_actions_action_id": {
+  "volumeActions_get": {
     "accessPath": [
-      "getV2VolumesVolumeIdActionsActionId"
+      "volumeActionsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7565,13 +11842,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/volumes/{volume_id}/actions/{action_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "volume_id",
+      "action_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "Retrieve an Existing Volume Action",
+    "parameterDescriptions": {
+      "volume_id": "The ID of the block storage volume.",
+      "action_id": "A unique numeric ID that can be used to identify and reference an action.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_volumes_volume_id_snapshots": {
+  "volumeSnapshots_list": {
     "accessPath": [
-      "getV2VolumesVolumeIdSnapshots"
+      "volumeSnapshotsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7581,29 +11871,49 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/volumes/{volume_id}/snapshots",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "volume_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List Snapshots for a Volume",
+    "parameterDescriptions": {
+      "volume_id": "The ID of the block storage volume.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_volumes_volume_id_snapshots": {
+  "volumeSnapshots_create": {
     "accessPath": [
-      "postV2VolumesVolumeIdSnapshots"
+      "volumeSnapshotsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "tags"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/volumes/{volume_id}/snapshots",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "volume_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Snapshot from a Volume",
+    "parameterDescriptions": {
+      "volume_id": "The ID of the block storage volume."
+    }
   },
-  "get_v2_vpcs": {
+  "vpcs_list": {
     "accessPath": [
-      "getV2Vpcs"
+      "vpcsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7615,15 +11925,28 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All VPCs",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_vpcs": {
+  "vpcs_create": {
     "accessPath": [
-      "postV2Vpcs"
+      "vpcsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "description",
+      "region",
+      "ip_range"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -7631,11 +11954,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New VPC"
   },
-  "get_v2_vpcs_vpc_id": {
+  "vpcs_get": {
     "accessPath": [
-      "getV2VpcsVpcId"
+      "vpcsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7645,45 +11969,71 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/vpcs/{vpc_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "vpc_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing VPC",
+    "parameterDescriptions": {
+      "vpc_id": "A unique identifier for a VPC."
+    }
   },
-  "put_v2_vpcs_vpc_id": {
+  "vpcs_update": {
     "accessPath": [
-      "putV2VpcsVpcId"
+      "vpcsUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "description",
+      "default"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/vpcs/{vpc_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "vpc_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a VPC",
+    "parameterDescriptions": {
+      "vpc_id": "A unique identifier for a VPC."
+    }
   },
-  "patch_v2_vpcs_vpc_id": {
+  "vpcs_patch": {
     "accessPath": [
-      "patchV2VpcsVpcId"
+      "vpcsPatch"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "description",
+      "default"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/vpcs/{vpc_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "vpc_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Partially Update a VPC",
+    "parameterDescriptions": {
+      "vpc_id": "A unique identifier for a VPC."
+    }
   },
-  "delete_v2_vpcs_vpc_id": {
+  "vpcs_delete": {
     "accessPath": [
-      "deleteV2VpcsVpcId"
+      "vpcsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7693,13 +12043,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/vpcs/{vpc_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "vpc_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a VPC",
+    "parameterDescriptions": {
+      "vpc_id": "A unique identifier for a VPC."
+    }
   },
-  "get_v2_vpcs_vpc_id_members": {
+  "vpcs_list_members": {
     "accessPath": [
-      "getV2VpcsVpcIdMembers"
+      "vpcsListMembers"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7709,13 +12065,26 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/vpcs/{vpc_id}/members",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "vpc_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "resource_type",
+      "per_page",
+      "page"
+    ],
+    "description": "List the Member Resources of a VPC",
+    "parameterDescriptions": {
+      "vpc_id": "A unique identifier for a VPC.",
+      "resource_type": "Used to filter VPC members by a resource type.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "get_v2_vpcs_vpc_id_peerings": {
+  "vpcs_list_peerings": {
     "accessPath": [
-      "getV2VpcsVpcIdPeerings"
+      "vpcsListPeerings"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7725,45 +12094,77 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/vpcs/{vpc_id}/peerings",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "vpc_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List the Peerings of a VPC",
+    "parameterDescriptions": {
+      "vpc_id": "A unique identifier for a VPC.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_vpcs_vpc_id_peerings": {
+  "vpcs_create_peerings": {
     "accessPath": [
-      "postV2VpcsVpcIdPeerings"
+      "vpcsCreatePeerings"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "vpc_id"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/vpcs/{vpc_id}/peerings",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "vpc_id"
+    ],
+    "pathParameterKeys": [
+      "vpc_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Peering with a VPC",
+    "parameterDescriptions": {
+      "vpc_id": "A unique identifier for a VPC."
+    }
   },
-  "patch_v2_vpcs_vpc_id_peerings_vpc_peering_id": {
+  "vpcs_patch_peerings": {
     "accessPath": [
-      "patchV2VpcsVpcIdPeeringsVpcPeeringId"
+      "vpcsPatchPeerings"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/vpcs/{vpc_id}/peerings/{vpc_peering_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "vpc_id",
+      "vpc_peering_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a VPC Peering",
+    "parameterDescriptions": {
+      "vpc_id": "A unique identifier for a VPC.",
+      "vpc_peering_id": "A unique identifier for a VPC peering."
+    }
   },
-  "get_v2_vpc_peerings": {
+  "vpcPeerings_list": {
     "accessPath": [
-      "getV2VpcPeerings"
+      "vpcPeeringsList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7775,15 +12176,28 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "region"
+    ],
+    "description": "List All VPC Peerings",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "region": "The slug identifier for the region where the resource is available."
+    }
   },
-  "post_v2_vpc_peerings": {
+  "vpcPeerings_create": {
     "accessPath": [
-      "postV2VpcPeerings"
+      "vpcPeeringsCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "vpc_ids"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -7791,11 +12205,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New VPC Peering"
   },
-  "get_v2_vpc_peerings_vpc_peering_id": {
+  "vpcPeerings_get": {
     "accessPath": [
-      "getV2VpcPeeringsVpcPeeringId"
+      "vpcPeeringsGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7805,29 +12220,43 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/vpc_peerings/{vpc_peering_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "vpc_peering_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing VPC Peering",
+    "parameterDescriptions": {
+      "vpc_peering_id": "A unique identifier for a VPC peering."
+    }
   },
-  "patch_v2_vpc_peerings_vpc_peering_id": {
+  "vpcPeerings_patch": {
     "accessPath": [
-      "patchV2VpcPeeringsVpcPeeringId"
+      "vpcPeeringsPatch"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/vpc_peerings/{vpc_peering_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "vpc_peering_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a VPC peering",
+    "parameterDescriptions": {
+      "vpc_peering_id": "A unique identifier for a VPC peering."
+    }
   },
-  "delete_v2_vpc_peerings_vpc_peering_id": {
+  "vpcPeerings_delete": {
     "accessPath": [
-      "deleteV2VpcPeeringsVpcPeeringId"
+      "vpcPeeringsDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7837,13 +12266,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/vpc_peerings/{vpc_peering_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "vpc_peering_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a VPC peering",
+    "parameterDescriptions": {
+      "vpc_peering_id": "A unique identifier for a VPC peering."
+    }
   },
-  "get_v2_vpc_nat_gateways": {
+  "vpcnatgateways_list": {
     "accessPath": [
-      "getV2VpcNatGateways"
+      "vpcnatgatewaysList"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7855,15 +12290,40 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page",
+      "state",
+      "region",
+      "type",
+      "name"
+    ],
+    "description": "List All VPC NAT Gateways",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return.",
+      "state": "The current state of the VPC NAT gateway.",
+      "region": "The region where the VPC NAT gateway is located.",
+      "type": "The type of the VPC NAT gateway.",
+      "name": "The name of the VPC NAT gateway."
+    }
   },
-  "post_v2_vpc_nat_gateways": {
+  "vpcnatgateways_create": {
     "accessPath": [
-      "postV2VpcNatGateways"
+      "vpcnatgatewaysCreate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "type",
+      "region",
+      "size",
+      "vpcs",
+      "udp_timeout_seconds",
+      "icmp_timeout_seconds",
+      "tcp_timeout_seconds"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -7871,11 +12331,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New VPC NAT Gateway"
   },
-  "get_v2_vpc_nat_gateways_id": {
+  "vpcnatgateways_get": {
     "accessPath": [
-      "getV2VpcNatGatewaysId"
+      "vpcnatgatewaysGet"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7885,29 +12346,48 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/vpc_nat_gateways/{id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing VPC NAT Gateway",
+    "parameterDescriptions": {
+      "id": "The unique identifier of the VPC NAT gateway."
+    }
   },
-  "put_v2_vpc_nat_gateways_id": {
+  "vpcnatgateways_update": {
     "accessPath": [
-      "putV2VpcNatGatewaysId"
+      "vpcnatgatewaysUpdate"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "size",
+      "vpcs",
+      "udp_timeout_seconds",
+      "icmp_timeout_seconds",
+      "tcp_timeout_seconds"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/vpc_nat_gateways/{id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update VPC NAT Gateway",
+    "parameterDescriptions": {
+      "id": "The unique identifier of the VPC NAT gateway."
+    }
   },
-  "delete_v2_vpc_nat_gateways_id": {
+  "vpcnatgateways_delete": {
     "accessPath": [
-      "deleteV2VpcNatGatewaysId"
+      "vpcnatgatewaysDelete"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7917,13 +12397,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/vpc_nat_gateways/{id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete VPC NAT Gateway",
+    "parameterDescriptions": {
+      "id": "The unique identifier of the VPC NAT gateway."
+    }
   },
-  "get_v2_uptime_checks": {
+  "uptime_list_checks": {
     "accessPath": [
-      "getV2UptimeChecks"
+      "uptimeListChecks"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7935,15 +12421,29 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Checks",
+    "parameterDescriptions": {
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_uptime_checks": {
+  "uptime_create_check": {
     "accessPath": [
-      "postV2UptimeChecks"
+      "uptimeCreateCheck"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "type",
+      "target",
+      "regions",
+      "enabled"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -7951,11 +12451,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Check"
   },
-  "get_v2_uptime_checks_check_id": {
+  "uptime_get_check": {
     "accessPath": [
-      "getV2UptimeChecksCheckId"
+      "uptimeGetCheck"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7965,29 +12466,47 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/uptime/checks/{check_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "check_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Check",
+    "parameterDescriptions": {
+      "check_id": "A unique identifier for a check."
+    }
   },
-  "put_v2_uptime_checks_check_id": {
+  "uptime_update_check": {
     "accessPath": [
-      "putV2UptimeChecksCheckId"
+      "uptimeUpdateCheck"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "type",
+      "target",
+      "regions",
+      "enabled"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/uptime/checks/{check_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "check_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Check",
+    "parameterDescriptions": {
+      "check_id": "A unique identifier for a check."
+    }
   },
-  "delete_v2_uptime_checks_check_id": {
+  "uptime_delete_check": {
     "accessPath": [
-      "deleteV2UptimeChecksCheckId"
+      "uptimeDeleteCheck"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -7997,13 +12516,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/uptime/checks/{check_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "check_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Check",
+    "parameterDescriptions": {
+      "check_id": "A unique identifier for a check."
+    }
   },
-  "get_v2_uptime_checks_check_id_state": {
+  "uptime_get_checkState": {
     "accessPath": [
-      "getV2UptimeChecksCheckIdState"
+      "uptimeGetCheckState"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8013,13 +12538,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/uptime/checks/{check_id}/state",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "check_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Check State",
+    "parameterDescriptions": {
+      "check_id": "A unique identifier for a check."
+    }
   },
-  "get_v2_uptime_checks_check_id_alerts": {
+  "uptime_list_alerts": {
     "accessPath": [
-      "getV2UptimeChecksCheckIdAlerts"
+      "uptimeListAlerts"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8029,29 +12560,54 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/uptime/checks/{check_id}/alerts",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "check_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "per_page",
+      "page"
+    ],
+    "description": "List All Alerts",
+    "parameterDescriptions": {
+      "check_id": "A unique identifier for a check.",
+      "per_page": "Number of items returned per page",
+      "page": "Which 'page' of paginated results to return."
+    }
   },
-  "post_v2_uptime_checks_check_id_alerts": {
+  "uptime_create_alert": {
     "accessPath": [
-      "postV2UptimeChecksCheckIdAlerts"
+      "uptimeCreateAlert"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "id",
+      "name",
+      "type",
+      "threshold",
+      "comparison",
+      "notifications",
+      "period"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/uptime/checks/{check_id}/alerts",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "check_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a New Alert",
+    "parameterDescriptions": {
+      "check_id": "A unique identifier for a check."
+    }
   },
-  "get_v2_uptime_checks_check_id_alerts_alert_id": {
+  "uptime_get_alert": {
     "accessPath": [
-      "getV2UptimeChecksCheckIdAlertsAlertId"
+      "uptimeGetAlert"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8061,29 +12617,52 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/uptime/checks/{check_id}/alerts/{alert_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "check_id",
+      "alert_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Alert",
+    "parameterDescriptions": {
+      "check_id": "A unique identifier for a check.",
+      "alert_id": "A unique identifier for an alert."
+    }
   },
-  "put_v2_uptime_checks_check_id_alerts_alert_id": {
+  "uptime_update_alert": {
     "accessPath": [
-      "putV2UptimeChecksCheckIdAlertsAlertId"
+      "uptimeUpdateAlert"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name",
+      "type",
+      "threshold",
+      "comparison",
+      "notifications",
+      "period"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/uptime/checks/{check_id}/alerts/{alert_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "check_id",
+      "alert_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update an Alert",
+    "parameterDescriptions": {
+      "check_id": "A unique identifier for a check.",
+      "alert_id": "A unique identifier for an alert."
+    }
   },
-  "delete_v2_uptime_checks_check_id_alerts_alert_id": {
+  "uptime_delete_alert": {
     "accessPath": [
-      "deleteV2UptimeChecksCheckIdAlertsAlertId"
+      "uptimeDeleteAlert"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8093,13 +12672,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/uptime/checks/{check_id}/alerts/{alert_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "check_id",
+      "alert_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete an Alert",
+    "parameterDescriptions": {
+      "check_id": "A unique identifier for a check.",
+      "alert_id": "A unique identifier for an alert."
+    }
   },
-  "get_v2_gen_ai_agents": {
+  "genai_list_agents": {
     "accessPath": [
-      "getV2GenAiAgents"
+      "genaiListAgents"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8111,15 +12698,45 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "only_deployed",
+      "page",
+      "per_page"
+    ],
+    "description": "List Agents",
+    "parameterDescriptions": {
+      "only_deployed": "Only list agents that are deployed.",
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "post_v2_gen_ai_agents": {
+  "genai_create_agent": {
     "accessPath": [
-      "postV2GenAiAgents"
+      "genaiCreateAgent"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "anthropic_key_uuid",
+      "description",
+      "instruction",
+      "knowledge_base_uuid",
+      "mcp_servers",
+      "model_provider_key_uuid",
+      "model_router_uuid",
+      "model_uuid",
+      "name",
+      "open_ai_key_uuid",
+      "project_id",
+      "reasoning_effort",
+      "region",
+      "router_preset_slug",
+      "tags",
+      "thinking_token_budget",
+      "web_fetch_enabled",
+      "web_search_enabled",
+      "workspace_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -8127,11 +12744,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create an Agent"
   },
-  "get_v2_gen_ai_agents_agent_uuid_api_keys": {
+  "genai_list_agent_api_keys": {
     "accessPath": [
-      "getV2GenAiAgentsAgentUuidApiKeys"
+      "genaiListAgentApiKeys"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8141,45 +12759,82 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/api_keys",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "agent_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List Agent API Keys",
+    "parameterDescriptions": {
+      "agent_uuid": "Agent id",
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "post_v2_gen_ai_agents_agent_uuid_api_keys": {
+  "genai_create_agent_api_key": {
     "accessPath": [
-      "postV2GenAiAgentsAgentUuidApiKeys"
+      "genaiCreateAgentApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "agent_uuid",
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/api_keys",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "agent_uuid"
+    ],
+    "pathParameterKeys": [
+      "agent_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create an Agent API Key",
+    "parameterDescriptions": {
+      "agent_uuid": "Agent id"
+    }
   },
-  "put_v2_gen_ai_agents_agent_uuid_api_keys_api_key_uuid": {
+  "genai_update_agent_api_key": {
     "accessPath": [
-      "putV2GenAiAgentsAgentUuidApiKeysApiKeyUuid"
+      "genaiUpdateAgentApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "agent_uuid",
+      "api_key_uuid",
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/api_keys/{api_key_uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "agent_uuid",
+      "api_key_uuid"
+    ],
+    "pathParameterKeys": [
+      "agent_uuid",
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update API Key for an Agent",
+    "parameterDescriptions": {
+      "agent_uuid": "Agent id",
+      "api_key_uuid": "API key ID"
+    }
   },
-  "delete_v2_gen_ai_agents_agent_uuid_api_keys_api_key_uuid": {
+  "genai_delete_agent_api_key": {
     "accessPath": [
-      "deleteV2GenAiAgentsAgentUuidApiKeysApiKeyUuid"
+      "genaiDeleteAgentApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8189,13 +12844,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/api_keys/{api_key_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "agent_uuid",
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete API Key for an Agent ",
+    "parameterDescriptions": {
+      "agent_uuid": "A unique identifier for your agent.",
+      "api_key_uuid": "API key for an agent."
+    }
   },
-  "put_v2_gen_ai_agents_agent_uuid_api_keys_api_key_uuid_regenerate": {
+  "genai_regenerate_agent_api_key": {
     "accessPath": [
-      "putV2GenAiAgentsAgentUuidApiKeysApiKeyUuidRegenerate"
+      "genaiRegenerateAgentApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8205,45 +12868,89 @@ export const toolMetadata = {
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/api_keys/{api_key_uuid}/regenerate",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "agent_uuid",
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Regenerate API Key for an Agent",
+    "parameterDescriptions": {
+      "agent_uuid": "Agent id",
+      "api_key_uuid": "API key ID"
+    }
   },
-  "post_v2_gen_ai_agents_agent_uuid_functions": {
+  "genai_attach_agent_function": {
     "accessPath": [
-      "postV2GenAiAgentsAgentUuidFunctions"
+      "genaiAttachAgentFunction"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "agent_uuid",
+      "description",
+      "faas_name",
+      "faas_namespace",
+      "function_name",
+      "input_schema",
+      "output_schema"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/functions",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "agent_uuid"
+    ],
+    "pathParameterKeys": [
+      "agent_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Function Route to an Agent",
+    "parameterDescriptions": {
+      "agent_uuid": "Agent id"
+    }
   },
-  "put_v2_gen_ai_agents_agent_uuid_functions_function_uuid": {
+  "genai_update_agent_function": {
     "accessPath": [
-      "putV2GenAiAgentsAgentUuidFunctionsFunctionUuid"
+      "genaiUpdateAgentFunction"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "agent_uuid",
+      "description",
+      "faas_name",
+      "faas_namespace",
+      "function_name",
+      "function_uuid",
+      "input_schema",
+      "output_schema"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/functions/{function_uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "agent_uuid",
+      "function_uuid"
+    ],
+    "pathParameterKeys": [
+      "agent_uuid",
+      "function_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Function Route for an Agent",
+    "parameterDescriptions": {
+      "agent_uuid": "Agent id",
+      "function_uuid": "Function id"
+    }
   },
-  "delete_v2_gen_ai_agents_agent_uuid_functions_function_uuid": {
+  "genai_detach_agent_function": {
     "accessPath": [
-      "deleteV2GenAiAgentsAgentUuidFunctionsFunctionUuid"
+      "genaiDetachAgentFunction"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8253,29 +12960,48 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/functions/{function_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "agent_uuid",
+      "function_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Function Route for an Agent",
+    "parameterDescriptions": {
+      "agent_uuid": "The id of the agent the function route belongs to.",
+      "function_uuid": "The function route to be destroyed. This does not destroy the function itself."
+    }
   },
-  "post_v2_gen_ai_agents_agent_uuid_guardrails": {
+  "genai_attach_agent_guardrails": {
     "accessPath": [
-      "postV2GenAiAgentsAgentUuidGuardrails"
+      "genaiAttachAgentGuardrails"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "agent_uuid",
+      "guardrails"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/guardrails",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "agent_uuid"
+    ],
+    "pathParameterKeys": [
+      "agent_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Attach Guardrails to an Agent",
+    "parameterDescriptions": {
+      "agent_uuid": "The UUID of the agent."
+    }
   },
-  "delete_v2_gen_ai_agents_agent_uuid_guardrails_guardrail_uuid": {
+  "genai_detach_agent_guardrail": {
     "accessPath": [
-      "deleteV2GenAiAgentsAgentUuidGuardrailsGuardrailUuid"
+      "genaiDetachAgentGuardrail"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8285,13 +13011,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/guardrails/{guardrail_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "agent_uuid",
+      "guardrail_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Detach a Guardrail from an Agent",
+    "parameterDescriptions": {
+      "agent_uuid": "The UUID of the agent.",
+      "guardrail_uuid": "The UUID of the guardrail to detach."
+    }
   },
-  "post_v2_gen_ai_agents_agent_uuid_knowledge_bases": {
+  "genai_attach_knowledge_bases": {
     "accessPath": [
-      "postV2GenAiAgentsAgentUuidKnowledgeBases"
+      "genaiAttachKnowledgeBases"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8301,13 +13035,19 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/knowledge_bases",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "agent_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Attach Knowledge Bases to an Agent",
+    "parameterDescriptions": {
+      "agent_uuid": "A unique identifier for an agent."
+    }
   },
-  "post_v2_gen_ai_agents_agent_uuid_knowledge_bases_knowledge_base_uuid": {
+  "genai_attach_knowledge_base": {
     "accessPath": [
-      "postV2GenAiAgentsAgentUuidKnowledgeBasesKnowledgeBaseUuid"
+      "genaiAttachKnowledgeBase"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8317,13 +13057,21 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/knowledge_bases/{knowledge_base_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "agent_uuid",
+      "knowledge_base_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Attach Knowledge Base to an Agent",
+    "parameterDescriptions": {
+      "agent_uuid": "A unique identifier for an agent.",
+      "knowledge_base_uuid": "A unique identifier for a knowledge base."
+    }
   },
-  "delete_v2_gen_ai_agents_agent_uuid_knowledge_bases_knowledge_base_uuid": {
+  "genai_detach_knowledge_base": {
     "accessPath": [
-      "deleteV2GenAiAgentsAgentUuidKnowledgeBasesKnowledgeBaseUuid"
+      "genaiDetachKnowledgeBase"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8333,45 +13081,86 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/agents/{agent_uuid}/knowledge_bases/{knowledge_base_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "agent_uuid",
+      "knowledge_base_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Detach Knowledge Base from an Agent",
+    "parameterDescriptions": {
+      "agent_uuid": "Agent id",
+      "knowledge_base_uuid": "Knowledge base id"
+    }
   },
-  "post_v2_gen_ai_agents_parent_agent_uuid_child_agents_child_agent_uuid": {
+  "genai_attach_agent": {
     "accessPath": [
-      "postV2GenAiAgentsParentAgentUuidChildAgentsChildAgentUuid"
+      "genaiAttachAgent"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "child_agent_uuid",
+      "if_case",
+      "parent_agent_uuid",
+      "route_name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/gen-ai/agents/{parent_agent_uuid}/child_agents/{child_agent_uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "parent_agent_uuid",
+      "child_agent_uuid"
+    ],
+    "pathParameterKeys": [
+      "parent_agent_uuid",
+      "child_agent_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Agent Route to an Agent",
+    "parameterDescriptions": {
+      "parent_agent_uuid": "A unique identifier for the parent agent.",
+      "child_agent_uuid": "Routed agent id"
+    }
   },
-  "put_v2_gen_ai_agents_parent_agent_uuid_child_agents_child_agent_uuid": {
+  "genai_update_attached_agent": {
     "accessPath": [
-      "putV2GenAiAgentsParentAgentUuidChildAgentsChildAgentUuid"
+      "genaiUpdateAttachedAgent"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "child_agent_uuid",
+      "if_case",
+      "parent_agent_uuid",
+      "route_name",
+      "uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/agents/{parent_agent_uuid}/child_agents/{child_agent_uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "parent_agent_uuid",
+      "child_agent_uuid"
+    ],
+    "pathParameterKeys": [
+      "parent_agent_uuid",
+      "child_agent_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Agent Route for an Agent",
+    "parameterDescriptions": {
+      "parent_agent_uuid": "A unique identifier for the parent agent.",
+      "child_agent_uuid": "Routed agent id"
+    }
   },
-  "delete_v2_gen_ai_agents_parent_agent_uuid_child_agents_child_agent_uuid": {
+  "genai_detach_agent": {
     "accessPath": [
-      "deleteV2GenAiAgentsParentAgentUuidChildAgentsChildAgentUuid"
+      "genaiDetachAgent"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8381,13 +13170,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/agents/{parent_agent_uuid}/child_agents/{child_agent_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "parent_agent_uuid",
+      "child_agent_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Agent Route for an Agent",
+    "parameterDescriptions": {
+      "parent_agent_uuid": "Pagent agent id",
+      "child_agent_uuid": "Routed agent id"
+    }
   },
-  "get_v2_gen_ai_agents_uuid": {
+  "genai_get_agent": {
     "accessPath": [
-      "getV2GenAiAgentsUuid"
+      "genaiGetAgent"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8397,29 +13194,71 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/agents/{uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Agent",
+    "parameterDescriptions": {
+      "uuid": "Unique agent id"
+    }
   },
-  "put_v2_gen_ai_agents_uuid": {
+  "genai_update_agent": {
     "accessPath": [
-      "putV2GenAiAgentsUuid"
+      "genaiUpdateAgent"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "agent_log_insights_enabled",
+      "allowed_domains",
+      "anthropic_key_uuid",
+      "clear_mcp_servers",
+      "conversation_logs_enabled",
+      "description",
+      "instruction",
+      "k",
+      "max_tokens",
+      "mcp_servers",
+      "model_provider_key_uuid",
+      "model_router_uuid",
+      "model_uuid",
+      "name",
+      "open_ai_key_uuid",
+      "project_id",
+      "provide_citations",
+      "reasoning_effort",
+      "retrieval_method",
+      "router_preset_slug",
+      "tags",
+      "temperature",
+      "thinking_token_budget",
+      "top_p",
+      "uuid",
+      "web_fetch_enabled",
+      "web_search_enabled"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/agents/{uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "uuid"
+    ],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update an Agent",
+    "parameterDescriptions": {
+      "uuid": "Unique agent id"
+    }
   },
-  "delete_v2_gen_ai_agents_uuid": {
+  "genai_delete_agent": {
     "accessPath": [
-      "deleteV2GenAiAgentsUuid"
+      "genaiDeleteAgent"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8429,13 +13268,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/agents/{uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete an Agent",
+    "parameterDescriptions": {
+      "uuid": "Unique agent id"
+    }
   },
-  "get_v2_gen_ai_agents_uuid_child_agents": {
+  "genai_get_agent_children": {
     "accessPath": [
-      "getV2GenAiAgentsUuidChildAgents"
+      "genaiGetAgentChildren"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8445,29 +13290,46 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/agents/{uuid}/child_agents",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "View Agent Routes",
+    "parameterDescriptions": {
+      "uuid": "Agent id"
+    }
   },
-  "put_v2_gen_ai_agents_uuid_deployment_visibility": {
+  "genai_update_agent_deployment_visibility": {
     "accessPath": [
-      "putV2GenAiAgentsUuidDeploymentVisibility"
+      "genaiUpdateAgentDeploymentVisibility"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "uuid",
+      "visibility"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/agents/{uuid}/deployment_visibility",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "uuid"
+    ],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Agent Status",
+    "parameterDescriptions": {
+      "uuid": "Unique id"
+    }
   },
-  "get_v2_gen_ai_agents_uuid_usage": {
+  "genai_get_agent_usage": {
     "accessPath": [
-      "getV2GenAiAgentsUuidUsage"
+      "genaiGetAgentUsage"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8477,13 +13339,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/agents/{uuid}/usage",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "start",
+      "stop"
+    ],
+    "description": "Get Agent Usage",
+    "parameterDescriptions": {
+      "uuid": "Agent id",
+      "start": "Return all usage data from this date.",
+      "stop": "Return all usage data up to this date, if omitted, will return up to the current date."
+    }
   },
-  "get_v2_gen_ai_agents_uuid_versions": {
+  "genai_list_agent_versions": {
     "accessPath": [
-      "getV2GenAiAgentsUuidVersions"
+      "genaiListAgentVersions"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8493,29 +13366,51 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/agents/{uuid}/versions",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List Agent Versions",
+    "parameterDescriptions": {
+      "uuid": "Agent uuid",
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "put_v2_gen_ai_agents_uuid_versions": {
+  "genai_rollback_to_agent_version": {
     "accessPath": [
-      "putV2GenAiAgentsUuidVersions"
+      "genaiRollbackToAgentVersion"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "uuid",
+      "version_hash"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/agents/{uuid}/versions",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "uuid"
+    ],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Rollback to Agent Version",
+    "parameterDescriptions": {
+      "uuid": "Agent unique identifier"
+    }
   },
-  "get_v2_gen_ai_anthropic_keys": {
+  "genai_list_anthropic_api_keys": {
     "accessPath": [
-      "getV2GenAiAnthropicKeys"
+      "genaiListAnthropicApiKeys"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8527,15 +13422,26 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List Anthropic API Keys",
+    "parameterDescriptions": {
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "post_v2_gen_ai_anthropic_keys": {
+  "genai_create_anthropic_api_key": {
     "accessPath": [
-      "postV2GenAiAnthropicKeys"
+      "genaiCreateAnthropicApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "api_key",
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -8543,11 +13449,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Anthropic API Key"
   },
-  "get_v2_gen_ai_anthropic_keys_api_key_uuid": {
+  "genai_get_anthropic_api_key": {
     "accessPath": [
-      "getV2GenAiAnthropicKeysApiKeyUuid"
+      "genaiGetAnthropicApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8557,29 +13464,47 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/anthropic/keys/{api_key_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Anthropic API Key",
+    "parameterDescriptions": {
+      "api_key_uuid": "API key ID"
+    }
   },
-  "put_v2_gen_ai_anthropic_keys_api_key_uuid": {
+  "genai_update_anthropic_api_key": {
     "accessPath": [
-      "putV2GenAiAnthropicKeysApiKeyUuid"
+      "genaiUpdateAnthropicApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "api_key",
+      "api_key_uuid",
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/anthropic/keys/{api_key_uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "api_key_uuid"
+    ],
+    "pathParameterKeys": [
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Anthropic API Key",
+    "parameterDescriptions": {
+      "api_key_uuid": "API key ID"
+    }
   },
-  "delete_v2_gen_ai_anthropic_keys_api_key_uuid": {
+  "genai_delete_anthropic_api_key": {
     "accessPath": [
-      "deleteV2GenAiAnthropicKeysApiKeyUuid"
+      "genaiDeleteAnthropicApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8589,13 +13514,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/anthropic/keys/{api_key_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Anthropic API Key",
+    "parameterDescriptions": {
+      "api_key_uuid": "API key ID"
+    }
   },
-  "get_v2_gen_ai_anthropic_keys_uuid_agents": {
+  "genai_list_agents_by_anthropic_key": {
     "accessPath": [
-      "getV2GenAiAnthropicKeysUuidAgents"
+      "genaiListAgentsByAnthropicKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8605,13 +13536,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/anthropic/keys/{uuid}/agents",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List agents by Anthropic key",
+    "parameterDescriptions": {
+      "uuid": "Unique ID of Anthropic key",
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "get_v2_gen_ai_custom_models": {
+  "genai_list_custom_models": {
     "accessPath": [
-      "getV2GenAiCustomModels"
+      "genaiListCustomModels"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8623,15 +13565,34 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page",
+      "status"
+    ],
+    "description": "List Custom Models",
+    "parameterDescriptions": {
+      "page": "Page number for pagination.",
+      "per_page": "Number of items per page.",
+      "status": "Filter by model status."
+    }
   },
-  "post_v2_gen_ai_custom_models_import": {
+  "genai_import_custom_model": {
     "accessPath": [
-      "postV2GenAiCustomModelsImport"
+      "genaiImportCustomModel"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "accept_hf_token_storage",
+      "accept_terms_and_conditions",
+      "description",
+      "name",
+      "preferred_gpu_region",
+      "source_ref",
+      "source_type",
+      "tags"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -8639,11 +13600,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Import Custom Model"
   },
-  "get_v2_gen_ai_custom_models_uuid": {
+  "genai_get_custom_model": {
     "accessPath": [
-      "getV2GenAiCustomModelsUuid"
+      "genaiGetCustomModel"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8653,13 +13615,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/custom_models/{uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Custom Model",
+    "parameterDescriptions": {
+      "uuid": "UUID of the custom model to retrieve"
+    }
   },
-  "delete_v2_gen_ai_custom_models_uuid": {
+  "genai_delete_custom_model": {
     "accessPath": [
-      "deleteV2GenAiCustomModelsUuid"
+      "genaiDeleteCustomModel"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8669,29 +13637,52 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/custom_models/{uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Custom Model",
+    "parameterDescriptions": {
+      "uuid": "UUID of the custom model to delete"
+    }
   },
-  "patch_v2_gen_ai_custom_models_uuid_metadata": {
+  "genai_update_custom_model_metadata": {
     "accessPath": [
-      "patchV2GenAiCustomModelsUuidMetadata"
+      "genaiUpdateCustomModelMetadata"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "description",
+      "input_modalities",
+      "license",
+      "name",
+      "output_modalities",
+      "parameters",
+      "tags",
+      "uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v2/gen-ai/custom_models/{uuid}/metadata",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "uuid"
+    ],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Custom Model Metadata",
+    "parameterDescriptions": {
+      "uuid": "UUID of the custom model to update"
+    }
   },
-  "get_v2_gen_ai_evaluation_datasets": {
+  "genai_list_evaluation_datasets": {
     "accessPath": [
-      "getV2GenAiEvaluationDatasets"
+      "genaiListEvaluationDatasets"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8703,15 +13694,25 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "dataset_type"
+    ],
+    "description": "List Evaluation Datasets",
+    "parameterDescriptions": {
+      "dataset_type": "Filter by evaluation dataset type."
+    }
   },
-  "post_v2_gen_ai_evaluation_datasets": {
+  "genai_create_evaluation_dataset": {
     "accessPath": [
-      "postV2GenAiEvaluationDatasets"
+      "genaiCreateEvaluationDataset"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "dataset_type",
+      "file_upload_dataset",
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -8719,15 +13720,18 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Evaluation Dataset"
   },
-  "post_v2_gen_ai_evaluation_datasets_file_upload_presigned_urls": {
+  "genai_create_evaluation_dataset_file_upload_presigned_urls": {
     "accessPath": [
-      "postV2GenAiEvaluationDatasetsFileUploadPresignedUrls"
+      "genaiCreateEvaluationDatasetFileUploadPresignedUrls"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "files"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -8735,11 +13739,34 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Presigned URLs for Evaluation Dataset File Upload"
   },
-  "get_v2_gen_ai_evaluation_datasets_dataset_uuid_download_url": {
+  "genai_delete_evaluation_dataset": {
     "accessPath": [
-      "getV2GenAiEvaluationDatasetsDatasetUuidDownloadUrl"
+      "genaiDeleteEvaluationDataset"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "none",
+    "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "DELETE",
+    "routeTemplate": "/v2/gen-ai/evaluation_datasets/{dataset_uuid}",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "dataset_uuid"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Delete Evaluation Dataset",
+    "parameterDescriptions": {
+      "dataset_uuid": "UUID of the evaluation dataset to delete."
+    }
+  },
+  "genai_get_evaluation_dataset_download_url": {
+    "accessPath": [
+      "genaiGetEvaluationDatasetDownloadUrl"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8749,13 +13776,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/evaluation_datasets/{dataset_uuid}/download_url",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "dataset_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Download URL for Evaluation Dataset",
+    "parameterDescriptions": {
+      "dataset_uuid": "UUID of the evaluation dataset."
+    }
   },
-  "get_v2_gen_ai_evaluation_metrics": {
+  "genai_list_evaluation_metrics": {
     "accessPath": [
-      "getV2GenAiEvaluationMetrics"
+      "genaiListEvaluationMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8767,15 +13800,93 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Evaluation Metrics"
   },
-  "post_v2_gen_ai_evaluation_runs": {
+  "genai_create_custom_evaluation_metric": {
     "accessPath": [
-      "postV2GenAiEvaluationRuns"
+      "genaiCreateCustomEvaluationMetric"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "config",
+      "description",
+      "metric_name"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "POST",
+    "routeTemplate": "/v2/gen-ai/custom_evaluation_metrics",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Create Custom Evaluation Metric"
+  },
+  "genai_update_custom_evaluation_metric": {
+    "accessPath": [
+      "genaiUpdateCustomEvaluationMetric"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "config",
+      "description",
+      "metric_name",
+      "metric_uuid"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "PUT",
+    "routeTemplate": "/v2/gen-ai/custom_evaluation_metrics/{metric_uuid}",
+    "pathConflictKeys": [
+      "metric_uuid"
+    ],
+    "pathParameterKeys": [
+      "metric_uuid"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Update Custom Evaluation Metric",
+    "parameterDescriptions": {
+      "metric_uuid": "UUID of the custom metric to update."
+    }
+  },
+  "genai_delete_custom_evaluation_metric": {
+    "accessPath": [
+      "genaiDeleteCustomEvaluationMetric"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
     "bodyPropertyKeys": [],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "DELETE",
+    "routeTemplate": "/v2/gen-ai/custom_evaluation_metrics/{metric_uuid}",
+    "pathConflictKeys": [],
+    "pathParameterKeys": [
+      "metric_uuid"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Delete Custom Evaluation Metric",
+    "parameterDescriptions": {
+      "metric_uuid": "UUID of the custom metric to delete."
+    }
+  },
+  "genai_run_evaluation_test_case": {
+    "accessPath": [
+      "genaiRunEvaluationTestCase"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "agent_deployment_names",
+      "agent_uuids",
+      "run_name",
+      "test_case_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -8783,11 +13894,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Run an Evaluation Test Case"
   },
-  "get_v2_gen_ai_evaluation_runs_evaluation_run_uuid": {
+  "genai_get_evaluation_run": {
     "accessPath": [
-      "getV2GenAiEvaluationRunsEvaluationRunUuid"
+      "genaiGetEvaluationRun"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8797,13 +13909,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/evaluation_runs/{evaluation_run_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "evaluation_run_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Information About an Existing Evaluation Run",
+    "parameterDescriptions": {
+      "evaluation_run_uuid": "Evaluation run UUID."
+    }
   },
-  "get_v2_gen_ai_evaluation_runs_evaluation_run_uuid_results": {
+  "genai_get_evaluation_run_results": {
     "accessPath": [
-      "getV2GenAiEvaluationRunsEvaluationRunUuidResults"
+      "genaiGetEvaluationRunResults"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8813,13 +13931,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/evaluation_runs/{evaluation_run_uuid}/results",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "evaluation_run_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "Retrieve Results of an Evaluation Run",
+    "parameterDescriptions": {
+      "evaluation_run_uuid": "Evaluation run UUID.",
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "get_v2_gen_ai_evaluation_runs_evaluation_run_uuid_results_prompt_id": {
+  "genai_get_evaluation_run_prompt_results": {
     "accessPath": [
-      "getV2GenAiEvaluationRunsEvaluationRunUuidResultsPromptId"
+      "genaiGetEvaluationRunPromptResults"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8829,13 +13958,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/evaluation_runs/{evaluation_run_uuid}/results/{prompt_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "evaluation_run_uuid",
+      "prompt_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Results of an Evaluation Run Prompt",
+    "parameterDescriptions": {
+      "evaluation_run_uuid": "Evaluation run UUID.",
+      "prompt_id": "Prompt ID to get results for."
+    }
   },
-  "get_v2_gen_ai_evaluation_test_cases": {
+  "genai_list_evaluation_test_cases": {
     "accessPath": [
-      "getV2GenAiEvaluationTestCases"
+      "genaiListEvaluationTestCases"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8847,15 +13984,24 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Evaluation Test Cases"
   },
-  "post_v2_gen_ai_evaluation_test_cases": {
+  "genai_create_evaluation_test_case": {
     "accessPath": [
-      "postV2GenAiEvaluationTestCases"
+      "genaiCreateEvaluationTestCase"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "agent_workspace_name",
+      "dataset_uuid",
+      "description",
+      "metrics",
+      "name",
+      "star_metric",
+      "workspace_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -8863,11 +14009,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Evaluation Test Case."
   },
-  "get_v2_gen_ai_evaluation_test_cases_evaluation_test_case_uuid_evaluation_runs": {
+  "genai_list_evaluation_runs_by_test_case": {
     "accessPath": [
-      "getV2GenAiEvaluationTestCasesEvaluationTestCaseUuidEvaluationRuns"
+      "genaiListEvaluationRunsByTestCase"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8877,13 +14024,22 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/evaluation_test_cases/{evaluation_test_case_uuid}/evaluation_runs",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "evaluation_test_case_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "evaluation_test_case_version"
+    ],
+    "description": "List Evaluation Runs by Test Case",
+    "parameterDescriptions": {
+      "evaluation_test_case_uuid": "Evaluation run UUID.",
+      "evaluation_test_case_version": "Version of the test case."
+    }
   },
-  "get_v2_gen_ai_evaluation_test_cases_test_case_uuid": {
+  "genai_get_evaluation_test_case": {
     "accessPath": [
-      "getV2GenAiEvaluationTestCasesTestCaseUuid"
+      "genaiGetEvaluationTestCase"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8893,29 +14049,53 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/evaluation_test_cases/{test_case_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "test_case_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "evaluation_test_case_version"
+    ],
+    "description": "Retrieve Information About an Existing Evaluation Test Case",
+    "parameterDescriptions": {
+      "test_case_uuid": "The test case uuid to retrieve.",
+      "evaluation_test_case_version": "Version of the test case."
+    }
   },
-  "put_v2_gen_ai_evaluation_test_cases_test_case_uuid": {
+  "genai_update_evaluation_test_case": {
     "accessPath": [
-      "putV2GenAiEvaluationTestCasesTestCaseUuid"
+      "genaiUpdateEvaluationTestCase"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "dataset_uuid",
+      "description",
+      "metrics",
+      "name",
+      "star_metric",
+      "test_case_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/evaluation_test_cases/{test_case_uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "test_case_uuid"
+    ],
+    "pathParameterKeys": [
+      "test_case_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update an Evaluation Test Case.",
+    "parameterDescriptions": {
+      "test_case_uuid": "Test-case UUID to update"
+    }
   },
-  "get_v2_gen_ai_indexing_jobs": {
+  "genai_list_indexing_jobs": {
     "accessPath": [
-      "getV2GenAiIndexingJobs"
+      "genaiListIndexingJobs"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8927,15 +14107,26 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List Indexing Jobs for a Knowledge Base",
+    "parameterDescriptions": {
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "post_v2_gen_ai_indexing_jobs": {
+  "genai_create_indexing_job": {
     "accessPath": [
-      "postV2GenAiIndexingJobs"
+      "genaiCreateIndexingJob"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "data_source_uuids",
+      "knowledge_base_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -8943,11 +14134,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Start Indexing Job for a Knowledge Base"
   },
-  "get_v2_gen_ai_indexing_jobs_indexing_job_uuid_data_sources": {
+  "genai_list_indexing_job_data_sources": {
     "accessPath": [
-      "getV2GenAiIndexingJobsIndexingJobUuidDataSources"
+      "genaiListIndexingJobDataSources"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8957,13 +14149,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/indexing_jobs/{indexing_job_uuid}/data_sources",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "indexing_job_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Data Sources for Indexing Job for a Knowledge Base",
+    "parameterDescriptions": {
+      "indexing_job_uuid": "Uuid of the indexing job"
+    }
   },
-  "get_v2_gen_ai_indexing_jobs_indexing_job_uuid_details_signed_url": {
+  "genai_get_indexing_job_details_signed_url": {
     "accessPath": [
-      "getV2GenAiIndexingJobsIndexingJobUuidDetailsSignedUrl"
+      "genaiGetIndexingJobDetailsSignedUrl"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8973,13 +14171,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/indexing_jobs/{indexing_job_uuid}/details_signed_url",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "indexing_job_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Signed URL for Indexing Job Details",
+    "parameterDescriptions": {
+      "indexing_job_uuid": "The uuid of the indexing job"
+    }
   },
-  "get_v2_gen_ai_indexing_jobs_uuid": {
+  "genai_get_indexing_job": {
     "accessPath": [
-      "getV2GenAiIndexingJobsUuid"
+      "genaiGetIndexingJob"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -8989,29 +14193,45 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/indexing_jobs/{uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Status of Indexing Job for a Knowledge Base",
+    "parameterDescriptions": {
+      "uuid": "Indexing job id"
+    }
   },
-  "put_v2_gen_ai_indexing_jobs_uuid_cancel": {
+  "genai_cancel_indexing_job": {
     "accessPath": [
-      "putV2GenAiIndexingJobsUuidCancel"
+      "genaiCancelIndexingJob"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/indexing_jobs/{uuid}/cancel",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "uuid"
+    ],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Cancel Indexing Job for a Knowledge Base",
+    "parameterDescriptions": {
+      "uuid": "A unique identifier for an indexing job."
+    }
   },
-  "get_v2_gen_ai_knowledge_bases": {
+  "genai_list_knowledge_bases": {
     "accessPath": [
-      "getV2GenAiKnowledgeBases"
+      "genaiListKnowledgeBases"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9023,15 +14243,34 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List Knowledge Bases",
+    "parameterDescriptions": {
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "post_v2_gen_ai_knowledge_bases": {
+  "genai_create_knowledge_base": {
     "accessPath": [
-      "postV2GenAiKnowledgeBases"
+      "genaiCreateKnowledgeBase"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "database_id",
+      "datasources",
+      "embedding_model_uuid",
+      "name",
+      "project_id",
+      "region",
+      "reranking_config",
+      "size",
+      "tags",
+      "vpc_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9039,15 +14278,18 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Knowledge Base"
   },
-  "post_v2_gen_ai_knowledge_bases_data_sources_file_upload_presigned_urls": {
+  "genai_create_data_source_file_upload_presigned_urls": {
     "accessPath": [
-      "postV2GenAiKnowledgeBasesDataSourcesFileUploadPresignedUrls"
+      "genaiCreateDataSourceFileUploadPresignedUrls"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "files"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9055,11 +14297,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Presigned URLs for Data Source File Upload"
   },
-  "get_v2_gen_ai_knowledge_bases_knowledge_base_uuid_data_sources": {
+  "genai_list_knowledge_base_data_sources": {
     "accessPath": [
-      "getV2GenAiKnowledgeBasesKnowledgeBaseUuidDataSources"
+      "genaiListKnowledgeBaseDataSources"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9069,45 +14312,87 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/knowledge_bases/{knowledge_base_uuid}/data_sources",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "knowledge_base_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List Data Sources for a Knowledge Base",
+    "parameterDescriptions": {
+      "knowledge_base_uuid": "Knowledge base id",
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "post_v2_gen_ai_knowledge_bases_knowledge_base_uuid_data_sources": {
+  "genai_create_knowledge_base_data_source": {
     "accessPath": [
-      "postV2GenAiKnowledgeBasesKnowledgeBaseUuidDataSources"
+      "genaiCreateKnowledgeBaseDataSource"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "aws_data_source",
+      "chunking_algorithm",
+      "chunking_options",
+      "knowledge_base_uuid",
+      "spaces_data_source",
+      "web_crawler_data_source"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/gen-ai/knowledge_bases/{knowledge_base_uuid}/data_sources",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "knowledge_base_uuid"
+    ],
+    "pathParameterKeys": [
+      "knowledge_base_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Data Source to a Knowledge Base",
+    "parameterDescriptions": {
+      "knowledge_base_uuid": "Knowledge base id"
+    }
   },
-  "put_v2_gen_ai_knowledge_bases_knowledge_base_uuid_data_sources_data_source_uuid": {
+  "genai_update_knowledge_base_data_source": {
     "accessPath": [
-      "putV2GenAiKnowledgeBasesKnowledgeBaseUuidDataSourcesDataSourceUuid"
+      "genaiUpdateKnowledgeBaseDataSource"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "chunking_algorithm",
+      "chunking_options",
+      "data_source_uuid",
+      "knowledge_base_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/knowledge_bases/{knowledge_base_uuid}/data_sources/{data_source_uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "knowledge_base_uuid",
+      "data_source_uuid"
+    ],
+    "pathParameterKeys": [
+      "knowledge_base_uuid",
+      "data_source_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update Data Source options",
+    "parameterDescriptions": {
+      "knowledge_base_uuid": "Knowledge Base ID (Path Parameter)",
+      "data_source_uuid": "Data Source ID (Path Parameter)"
+    }
   },
-  "delete_v2_gen_ai_knowledge_bases_knowledge_base_uuid_data_sources_data_source_uuid": {
+  "genai_delete_knowledge_base_data_source": {
     "accessPath": [
-      "deleteV2GenAiKnowledgeBasesKnowledgeBaseUuidDataSourcesDataSourceUuid"
+      "genaiDeleteKnowledgeBaseDataSource"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9117,13 +14402,21 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/knowledge_bases/{knowledge_base_uuid}/data_sources/{data_source_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "knowledge_base_uuid",
+      "data_source_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Data Source from a Knowledge Base",
+    "parameterDescriptions": {
+      "knowledge_base_uuid": "Knowledge base id",
+      "data_source_uuid": "Data source id"
+    }
   },
-  "get_v2_gen_ai_knowledge_bases_knowledge_base_uuid_indexing_jobs": {
+  "genai_list_indexing_jobs_by_knowledge_base": {
     "accessPath": [
-      "getV2GenAiKnowledgeBasesKnowledgeBaseUuidIndexingJobs"
+      "genaiListIndexingJobsByKnowledgeBase"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9133,13 +14426,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/knowledge_bases/{knowledge_base_uuid}/indexing_jobs",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "knowledge_base_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Indexing Jobs for a Knowledge Base",
+    "parameterDescriptions": {
+      "knowledge_base_uuid": "Knowledge base uuid in string"
+    }
   },
-  "get_v2_gen_ai_knowledge_bases_uuid": {
+  "genai_get_knowledge_base": {
     "accessPath": [
-      "getV2GenAiKnowledgeBasesUuid"
+      "genaiGetKnowledgeBase"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9149,29 +14448,50 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/knowledge_bases/{uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Information About an Existing Knowledge Base",
+    "parameterDescriptions": {
+      "uuid": "Knowledge base id"
+    }
   },
-  "put_v2_gen_ai_knowledge_bases_uuid": {
+  "genai_update_knowledge_base": {
     "accessPath": [
-      "putV2GenAiKnowledgeBasesUuid"
+      "genaiUpdateKnowledgeBase"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "database_id",
+      "name",
+      "project_id",
+      "reranking_config",
+      "tags",
+      "uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/knowledge_bases/{uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "uuid"
+    ],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Knowledge Base",
+    "parameterDescriptions": {
+      "uuid": "Knowledge base id"
+    }
   },
-  "delete_v2_gen_ai_knowledge_bases_uuid": {
+  "genai_delete_knowledge_base": {
     "accessPath": [
-      "deleteV2GenAiKnowledgeBasesUuid"
+      "genaiDeleteKnowledgeBase"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9181,17 +14501,25 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/knowledge_bases/{uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Knowledge Base",
+    "parameterDescriptions": {
+      "uuid": "Knowledge base id"
+    }
   },
-  "post_v2_gen_ai_model_evaluation_datasets_file_upload_presigned_urls": {
+  "genai_create_model_eval_dataset_upload_presigned_urls": {
     "accessPath": [
-      "postV2GenAiModelEvaluationDatasetsFileUploadPresignedUrls"
+      "genaiCreateModelEvalDatasetUploadPresignedUrls"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "files"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9199,11 +14527,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Presigned URLs for Model Evaluation Dataset File Upload"
   },
-  "get_v2_gen_ai_model_evaluation_metrics": {
+  "genai_list_model_evaluation_metrics": {
     "accessPath": [
-      "getV2GenAiModelEvaluationMetrics"
+      "genaiListModelEvaluationMetrics"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9215,11 +14544,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Model Evaluation Metrics"
   },
-  "get_v2_gen_ai_model_evaluation_presets": {
+  "genai_list_model_evaluation_presets": {
     "accessPath": [
-      "getV2GenAiModelEvaluationPresets"
+      "genaiListModelEvaluationPresets"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9231,11 +14561,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Model Evaluation Presets"
   },
-  "get_v2_gen_ai_model_evaluation_presets_eval_preset_uuid": {
+  "genai_get_model_evaluation_preset": {
     "accessPath": [
-      "getV2GenAiModelEvaluationPresetsEvalPresetUuid"
+      "genaiGetModelEvaluationPreset"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9245,13 +14576,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/model_evaluation_presets/{eval_preset_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "eval_preset_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve Model Evaluation Preset",
+    "parameterDescriptions": {
+      "eval_preset_uuid": "UUID of the evaluation preset."
+    }
   },
-  "delete_v2_gen_ai_model_evaluation_presets_eval_preset_uuid": {
+  "genai_delete_model_evaluation_preset": {
     "accessPath": [
-      "deleteV2GenAiModelEvaluationPresetsEvalPresetUuid"
+      "genaiDeleteModelEvaluationPreset"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9261,13 +14598,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/model_evaluation_presets/{eval_preset_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "eval_preset_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Model Evaluation Preset",
+    "parameterDescriptions": {
+      "eval_preset_uuid": "UUID of the evaluation preset to delete."
+    }
   },
-  "get_v2_gen_ai_model_evaluation_runs": {
+  "genai_list_model_evaluation_runs": {
     "accessPath": [
-      "getV2GenAiModelEvaluationRuns"
+      "genaiListModelEvaluationRuns"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9279,15 +14622,52 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "eval_preset_uuid",
+      "status",
+      "page",
+      "per_page",
+      "statuses",
+      "candidate_types",
+      "search",
+      "sort_by",
+      "sort_direction"
+    ],
+    "description": "List Model Evaluation Runs",
+    "parameterDescriptions": {
+      "eval_preset_uuid": "UUID of the evaluation preset to filter by.",
+      "status": "Filter by evaluation run status.",
+      "page": "Page number.",
+      "per_page": "Items per page.",
+      "statuses": "Filter by one or more statuses. Empty means no status filter.",
+      "candidate_types": "Filter by one or more candidate model source types\n(serverless, dedicated, router). Empty means no candidate-type filter.",
+      "search": "Free-text search across the eval run name, candidate model name and\ndataset name (case-insensitive substring match). Empty means no search.",
+      "sort_by": "Field to sort by. Defaults to creation date when unspecified.",
+      "sort_direction": "Sort direction. Defaults to descending when unspecified."
+    }
   },
-  "post_v2_gen_ai_model_evaluation_runs": {
+  "genai_create_model_evaluation_run": {
     "accessPath": [
-      "postV2GenAiModelEvaluationRuns"
+      "genaiCreateModelEvaluationRun"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "candidate_inference_config",
+      "candidate_model_name",
+      "candidate_model_source",
+      "candidate_model_uuid",
+      "dataset_uuid",
+      "eval_preset_uuid",
+      "judge_model_uuid",
+      "metric_uuids",
+      "name",
+      "preset_name",
+      "preset_save_sections",
+      "save_as_preset",
+      "source",
+      "star_metric"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9295,11 +14675,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Model Evaluation Run"
   },
-  "get_v2_gen_ai_model_evaluation_runs_eval_run_uuid": {
+  "genai_get_model_evaluation_run": {
     "accessPath": [
-      "getV2GenAiModelEvaluationRunsEvalRunUuid"
+      "genaiGetModelEvaluationRun"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9309,13 +14690,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/model_evaluation_runs/{eval_run_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "eval_run_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "Retrieve Model Evaluation Run",
+    "parameterDescriptions": {
+      "eval_run_uuid": "UUID of the evaluation run.",
+      "page": "Page number for per-prompt results (defaults to 1).",
+      "per_page": "Number of per-prompt results per page (defaults to 50)."
+    }
   },
-  "delete_v2_gen_ai_model_evaluation_runs_eval_run_uuid": {
+  "genai_delete_model_evaluation_run": {
     "accessPath": [
-      "deleteV2GenAiModelEvaluationRunsEvalRunUuid"
+      "genaiDeleteModelEvaluationRun"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9325,29 +14717,72 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/model_evaluation_runs/{eval_run_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "eval_run_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Model Evaluation Run",
+    "parameterDescriptions": {
+      "eval_run_uuid": "UUID of the model evaluation run to delete. The run must be in a terminal\nstatus (`successful`, `partially_successful`, `failed`, or `cancelled`).\nFor runs still in progress, either wait for the run to finish or cancel\nit, then retry the delete."
+    }
   },
-  "put_v2_gen_ai_model_evaluation_runs_eval_run_uuid_cancel": {
+  "genai_update_model_evaluation_run": {
     "accessPath": [
-      "putV2GenAiModelEvaluationRunsEvalRunUuidCancel"
+      "genaiUpdateModelEvaluationRun"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "eval_run_uuid",
+      "name"
+    ],
+    "contentType": "application/json",
+    "headerParameterKeys": [],
+    "method": "PATCH",
+    "routeTemplate": "/v2/gen-ai/model_evaluation_runs/{eval_run_uuid}",
+    "pathConflictKeys": [
+      "eval_run_uuid"
+    ],
+    "pathParameterKeys": [
+      "eval_run_uuid"
+    ],
+    "queryConflictKeys": [],
+    "queryParameterKeys": [],
+    "description": "Update Model Evaluation Run",
+    "parameterDescriptions": {
+      "eval_run_uuid": "UUID of the model evaluation run to update. Returned by `CreateModelEvaluationRun`\nand listed via `ListModelEvaluationRuns`."
+    }
+  },
+  "genai_cancel_model_evaluation_run": {
+    "accessPath": [
+      "genaiCancelModelEvaluationRun"
+    ],
+    "bodyAllowsAdditionalProperties": false,
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "eval_run_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/model_evaluation_runs/{eval_run_uuid}/cancel",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "eval_run_uuid"
+    ],
+    "pathParameterKeys": [
+      "eval_run_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Cancel Model Evaluation Run",
+    "parameterDescriptions": {
+      "eval_run_uuid": "UUID of the model evaluation run to cancel. Returned by `CreateModelEvaluationRun`\nand listed via `ListModelEvaluationRuns`. The run must be in a non-terminal status\n(queued, running_dataset, or evaluating_results); already-terminal runs return an\nerror."
+    }
   },
-  "get_v2_gen_ai_model_evaluation_runs_eval_run_uuid_results_download_url": {
+  "genai_get_model_evaluation_run_results_download_url": {
     "accessPath": [
-      "getV2GenAiModelEvaluationRunsEvalRunUuidResultsDownloadUrl"
+      "genaiGetModelEvaluationRunResultsDownloadUrl"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9357,13 +14792,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/model_evaluation_runs/{eval_run_uuid}/results/download_url",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "eval_run_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Download URL for Model Evaluation Run Results",
+    "parameterDescriptions": {
+      "eval_run_uuid": "UUID of the evaluation run."
+    }
   },
-  "get_v2_gen_ai_models": {
+  "genai_list_models": {
     "accessPath": [
-      "getV2GenAiModels"
+      "genaiListModels"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9375,11 +14816,23 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "usecases",
+      "public_only",
+      "page",
+      "per_page"
+    ],
+    "description": "List Available Models",
+    "parameterDescriptions": {
+      "usecases": "Include only models defined for the listed usecases.\n\n - MODEL_USECASE_UNKNOWN: The use case of the model is unknown\n - MODEL_USECASE_AGENT: The model maybe used in an agent\n - MODEL_USECASE_FINETUNED: The model maybe used for fine tuning\n - MODEL_USECASE_KNOWLEDGEBASE: The model maybe used for knowledge bases (embedding models)\n - MODEL_USECASE_GUARDRAIL: The model maybe used for guardrails\n - MODEL_USECASE_REASONING: The model usecase for reasoning\n - MODEL_USECASE_SERVERLESS: The model usecase for serverless inference",
+      "public_only": "Only include models that are publicly available.",
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "get_v2_gen_ai_models_api_keys": {
+  "genai_list_model_api_keys": {
     "accessPath": [
-      "getV2GenAiModelsApiKeys"
+      "genaiListModelApiKeys"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9391,15 +14844,25 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List Model API Keys",
+    "parameterDescriptions": {
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "post_v2_gen_ai_models_api_keys": {
+  "genai_create_model_api_key": {
     "accessPath": [
-      "postV2GenAiModelsApiKeys"
+      "genaiCreateModelApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9407,27 +14870,39 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Model API Key"
   },
-  "put_v2_gen_ai_models_api_keys_api_key_uuid": {
+  "genai_update_model_api_key": {
     "accessPath": [
-      "putV2GenAiModelsApiKeysApiKeyUuid"
+      "genaiUpdateModelApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "api_key_uuid",
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/models/api_keys/{api_key_uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "api_key_uuid"
+    ],
+    "pathParameterKeys": [
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update API Key for a Model",
+    "parameterDescriptions": {
+      "api_key_uuid": "API key ID"
+    }
   },
-  "delete_v2_gen_ai_models_api_keys_api_key_uuid": {
+  "genai_delete_model_api_key": {
     "accessPath": [
-      "deleteV2GenAiModelsApiKeysApiKeyUuid"
+      "genaiDeleteModelApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9437,13 +14912,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/models/api_keys/{api_key_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete API Key for a Model",
+    "parameterDescriptions": {
+      "api_key_uuid": "API key for an agent."
+    }
   },
-  "put_v2_gen_ai_models_api_keys_api_key_uuid_regenerate": {
+  "genai_regenerate_model_api_key": {
     "accessPath": [
-      "putV2GenAiModelsApiKeysApiKeyUuidRegenerate"
+      "genaiRegenerateModelApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9453,13 +14934,19 @@ export const toolMetadata = {
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/models/api_keys/{api_key_uuid}/regenerate",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Regenerate API Key for a Model",
+    "parameterDescriptions": {
+      "api_key_uuid": "API key ID"
+    }
   },
-  "get_v2_gen_ai_models_catalog": {
+  "genai_list_model_catalog": {
     "accessPath": [
-      "getV2GenAiModelsCatalog"
+      "genaiListModelCatalog"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9471,11 +14958,15 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "limit"
+    ],
+    "description": "List Model Catalog"
   },
-  "get_v2_gen_ai_models_catalog_id": {
+  "genai_get_model_catalog_card": {
     "accessPath": [
-      "getV2GenAiModelsCatalogId"
+      "genaiGetModelCatalogCard"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9485,13 +14976,21 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/models/catalog/{id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "model_id"
+    ],
+    "description": "Get Model Catalog Card",
+    "parameterDescriptions": {
+      "model_id": "Model identifier used for API calls (e.g., \"llama3.1-70b-instruct\"). Alternative to UUID lookup."
+    }
   },
-  "get_v2_gen_ai_models_routers": {
+  "genai_list_model_routers": {
     "accessPath": [
-      "getV2GenAiModelsRouters"
+      "genaiListModelRouters"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9503,15 +15002,29 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List Model Routers",
+    "parameterDescriptions": {
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "post_v2_gen_ai_models_routers": {
+  "genai_create_model_router": {
     "accessPath": [
-      "postV2GenAiModelsRouters"
+      "genaiCreateModelRouter"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "description",
+      "fallback_models",
+      "name",
+      "policies",
+      "regions"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9519,11 +15032,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Model Router"
   },
-  "get_v2_gen_ai_models_routers_presets": {
+  "genai_list_model_router_presets": {
     "accessPath": [
-      "getV2GenAiModelsRoutersPresets"
+      "genaiListModelRouterPresets"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9535,11 +15049,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List Model Router Presets",
+    "parameterDescriptions": {
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "get_v2_gen_ai_models_routers_tasks_presets": {
+  "genai_list_model_router_task_presets": {
     "accessPath": [
-      "getV2GenAiModelsRoutersTasksPresets"
+      "genaiListModelRouterTaskPresets"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9551,11 +15073,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List Model Router Task Presets",
+    "parameterDescriptions": {
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "get_v2_gen_ai_models_routers_uuid": {
+  "genai_get_model_router": {
     "accessPath": [
-      "getV2GenAiModelsRoutersUuid"
+      "genaiGetModelRouter"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9565,29 +15095,50 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/models/routers/{uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Model Router",
+    "parameterDescriptions": {
+      "uuid": "Model router id"
+    }
   },
-  "put_v2_gen_ai_models_routers_uuid": {
+  "genai_update_model_router": {
     "accessPath": [
-      "putV2GenAiModelsRoutersUuid"
+      "genaiUpdateModelRouter"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "description",
+      "fallback_models",
+      "name",
+      "policies",
+      "regions",
+      "uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/models/routers/{uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "uuid"
+    ],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Model Router",
+    "parameterDescriptions": {
+      "uuid": "Model router id"
+    }
   },
-  "delete_v2_gen_ai_models_routers_uuid": {
+  "genai_delete_model_router": {
     "accessPath": [
-      "deleteV2GenAiModelsRoutersUuid"
+      "genaiDeleteModelRouter"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9597,17 +15148,26 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/models/routers/{uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Model Router",
+    "parameterDescriptions": {
+      "uuid": "Model router id"
+    }
   },
-  "post_v2_gen_ai_oauth2_dropbox_tokens": {
+  "genai_create_oauth2_dropbox_tokens": {
     "accessPath": [
-      "postV2GenAiOauth2DropboxTokens"
+      "genaiCreateOauth2DropboxTokens"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "code",
+      "redirect_url"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9615,11 +15175,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Oauth2 Dropbox Tokens"
   },
-  "get_v2_gen_ai_oauth2_url": {
+  "genai_get_oauth2_url": {
     "accessPath": [
-      "getV2GenAiOauth2Url"
+      "genaiGetOauth2Url"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9631,11 +15192,19 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "type",
+      "redirect_url"
+    ],
+    "description": "Get Oauth2 URL",
+    "parameterDescriptions": {
+      "type": "Type \"google\" / \"dropbox\".",
+      "redirect_url": "The redirect url."
+    }
   },
-  "get_v2_gen_ai_openai_keys": {
+  "genai_list_openai_api_keys": {
     "accessPath": [
-      "getV2GenAiOpenaiKeys"
+      "genaiListOpenaiApiKeys"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9647,15 +15216,26 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List OpenAI API Keys",
+    "parameterDescriptions": {
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "post_v2_gen_ai_openai_keys": {
+  "genai_create_openai_api_key": {
     "accessPath": [
-      "postV2GenAiOpenaiKeys"
+      "genaiCreateOpenaiApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "api_key",
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9663,11 +15243,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create OpenAI API Key"
   },
-  "get_v2_gen_ai_openai_keys_api_key_uuid": {
+  "genai_get_openai_api_key": {
     "accessPath": [
-      "getV2GenAiOpenaiKeysApiKeyUuid"
+      "genaiGetOpenaiApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9677,29 +15258,47 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/openai/keys/{api_key_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get OpenAI API Key",
+    "parameterDescriptions": {
+      "api_key_uuid": "API key ID"
+    }
   },
-  "put_v2_gen_ai_openai_keys_api_key_uuid": {
+  "genai_update_openai_api_key": {
     "accessPath": [
-      "putV2GenAiOpenaiKeysApiKeyUuid"
+      "genaiUpdateOpenaiApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "api_key",
+      "api_key_uuid",
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/openai/keys/{api_key_uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "api_key_uuid"
+    ],
+    "pathParameterKeys": [
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update OpenAI API Key",
+    "parameterDescriptions": {
+      "api_key_uuid": "API key ID"
+    }
   },
-  "delete_v2_gen_ai_openai_keys_api_key_uuid": {
+  "genai_delete_openai_api_key": {
     "accessPath": [
-      "deleteV2GenAiOpenaiKeysApiKeyUuid"
+      "genaiDeleteOpenaiApiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9709,13 +15308,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/openai/keys/{api_key_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "api_key_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete OpenAI API Key",
+    "parameterDescriptions": {
+      "api_key_uuid": "API key ID"
+    }
   },
-  "get_v2_gen_ai_openai_keys_uuid_agents": {
+  "genai_list_agents_by_openai_key": {
     "accessPath": [
-      "getV2GenAiOpenaiKeysUuidAgents"
+      "genaiListAgentsByOpenaiKey"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9725,13 +15330,24 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/openai/keys/{uuid}/agents",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "page",
+      "per_page"
+    ],
+    "description": "List agents by OpenAI key",
+    "parameterDescriptions": {
+      "uuid": "Unique ID of OpenAI key",
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "get_v2_gen_ai_regions": {
+  "genai_list_datacenter_regions": {
     "accessPath": [
-      "getV2GenAiRegions"
+      "genaiListDatacenterRegions"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9743,15 +15359,27 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "serves_inference",
+      "serves_batch"
+    ],
+    "description": "List Datacenter Regions",
+    "parameterDescriptions": {
+      "serves_inference": "Include datacenters that serve inference.",
+      "serves_batch": "Include datacenters that are capable of running batch jobs."
+    }
   },
-  "post_v2_gen_ai_scheduled_indexing": {
+  "genai_create_scheduled_indexing": {
     "accessPath": [
-      "postV2GenAiScheduledIndexing"
+      "genaiCreateScheduledIndexing"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "days",
+      "knowledge_base_uuid",
+      "time"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9759,11 +15387,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create scheduled indexing for knowledge base"
   },
-  "get_v2_gen_ai_scheduled_indexing_knowledge_base_knowledge_base_uuid": {
+  "genai_get_scheduled_indexing": {
     "accessPath": [
-      "getV2GenAiScheduledIndexingKnowledgeBaseKnowledgeBaseUuid"
+      "genaiGetScheduledIndexing"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9773,13 +15402,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/scheduled-indexing/knowledge-base/{knowledge_base_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "knowledge_base_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Scheduled Indexing for Knowledge Base",
+    "parameterDescriptions": {
+      "knowledge_base_uuid": "UUID of the scheduled indexing entry"
+    }
   },
-  "delete_v2_gen_ai_scheduled_indexing_uuid": {
+  "genai_delete_scheduled_indexing": {
     "accessPath": [
-      "deleteV2GenAiScheduledIndexingUuid"
+      "genaiDeleteScheduledIndexing"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9789,13 +15424,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/scheduled-indexing/{uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete Scheduled Indexing",
+    "parameterDescriptions": {
+      "uuid": "UUID of the scheduled indexing"
+    }
   },
-  "get_v2_gen_ai_workspaces": {
+  "genai_list_workspaces": {
     "accessPath": [
-      "getV2GenAiWorkspaces"
+      "genaiListWorkspaces"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9807,15 +15448,20 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Workspaces"
   },
-  "post_v2_gen_ai_workspaces": {
+  "genai_create_workspace": {
     "accessPath": [
-      "postV2GenAiWorkspaces"
+      "genaiCreateWorkspace"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "agent_uuids",
+      "description",
+      "name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9823,11 +15469,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Workspace"
   },
-  "get_v2_gen_ai_workspaces_workspace_uuid": {
+  "genai_get_workspace": {
     "accessPath": [
-      "getV2GenAiWorkspacesWorkspaceUuid"
+      "genaiGetWorkspace"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9837,29 +15484,47 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/workspaces/{workspace_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "workspace_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve an Existing Workspace",
+    "parameterDescriptions": {
+      "workspace_uuid": "Workspace UUID."
+    }
   },
-  "put_v2_gen_ai_workspaces_workspace_uuid": {
+  "genai_update_workspace": {
     "accessPath": [
-      "putV2GenAiWorkspacesWorkspaceUuid"
+      "genaiUpdateWorkspace"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "description",
+      "name",
+      "workspace_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/workspaces/{workspace_uuid}",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "workspace_uuid"
+    ],
+    "pathParameterKeys": [
+      "workspace_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Update a Workspace",
+    "parameterDescriptions": {
+      "workspace_uuid": "Workspace UUID."
+    }
   },
-  "delete_v2_gen_ai_workspaces_workspace_uuid": {
+  "genai_delete_workspace": {
     "accessPath": [
-      "deleteV2GenAiWorkspacesWorkspaceUuid"
+      "genaiDeleteWorkspace"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9869,13 +15534,19 @@ export const toolMetadata = {
     "method": "DELETE",
     "routeTemplate": "/v2/gen-ai/workspaces/{workspace_uuid}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "workspace_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Delete a Workspace",
+    "parameterDescriptions": {
+      "workspace_uuid": "Workspace UUID."
+    }
   },
-  "get_v2_gen_ai_workspaces_workspace_uuid_agents": {
+  "genai_list_agents_by_workspace": {
     "accessPath": [
-      "getV2GenAiWorkspacesWorkspaceUuidAgents"
+      "genaiListAgentsByWorkspace"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9885,29 +15556,53 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/workspaces/{workspace_uuid}/agents",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "workspace_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "only_deployed",
+      "page",
+      "per_page"
+    ],
+    "description": "List agents by Workspace",
+    "parameterDescriptions": {
+      "workspace_uuid": "Workspace UUID.",
+      "only_deployed": "Only list agents that are deployed.",
+      "page": "Page number.",
+      "per_page": "Items per page."
+    }
   },
-  "put_v2_gen_ai_workspaces_workspace_uuid_agents": {
+  "genai_update_agents_workspace": {
     "accessPath": [
-      "putV2GenAiWorkspacesWorkspaceUuidAgents"
+      "genaiUpdateAgentsWorkspace"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "agent_uuids",
+      "workspace_uuid"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v2/gen-ai/workspaces/{workspace_uuid}/agents",
-    "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathConflictKeys": [
+      "workspace_uuid"
+    ],
+    "pathParameterKeys": [
+      "workspace_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Move Agents to a Workspace",
+    "parameterDescriptions": {
+      "workspace_uuid": "Workspace uuid to move agents to"
+    }
   },
-  "get_v2_gen_ai_workspaces_workspace_uuid_evaluation_test_cases": {
+  "genai_list_evaluation_test_cases_by_workspace": {
     "accessPath": [
-      "getV2GenAiWorkspacesWorkspaceUuidEvaluationTestCases"
+      "genaiListEvaluationTestCasesByWorkspace"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -9917,17 +15612,45 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v2/gen-ai/workspaces/{workspace_uuid}/evaluation_test_cases",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "workspace_uuid"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List Evaluation Test Cases by Workspace",
+    "parameterDescriptions": {
+      "workspace_uuid": "Workspace UUID."
+    }
   },
-  "post_v1_chat_completions": {
+  "inference_create_chat_completion": {
     "accessPath": [
-      "postV1ChatCompletions"
+      "inferenceCreateChatCompletion"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "messages",
+      "model",
+      "max_tokens",
+      "max_completion_tokens",
+      "frequency_penalty",
+      "presence_penalty",
+      "top_logprobs",
+      "tools",
+      "tool_choice",
+      "stream",
+      "stop",
+      "logit_bias",
+      "logprobs",
+      "n",
+      "stream_options",
+      "reasoning_effort",
+      "seed",
+      "metadata",
+      "temperature",
+      "top_p",
+      "user"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9935,15 +15658,32 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a model response for the given chat conversation"
   },
-  "post_v1_messages": {
+  "inference_create_messages": {
     "accessPath": [
-      "postV1Messages"
+      "inferenceCreateMessages"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "model",
+      "max_tokens",
+      "messages",
+      "system",
+      "stop_sequences",
+      "stream",
+      "temperature",
+      "top_p",
+      "top_k",
+      "tools",
+      "tool_choice",
+      "metadata",
+      "reasoning_effort",
+      "speed",
+      "thinking"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9951,15 +15691,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create the next assistant message"
   },
-  "post_v1_embeddings": {
+  "inference_create_embedding": {
     "accessPath": [
-      "postV1Embeddings"
+      "inferenceCreateEmbedding"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "model",
+      "input",
+      "user",
+      "encoding_format"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9967,15 +15713,38 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create embedding"
   },
-  "post_api_v1_chat_completions": {
+  "agentInference_create_chat_completion": {
     "accessPath": [
-      "postApiV1ChatCompletions"
+      "agentInferenceCreateChatCompletion"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "messages",
+      "model",
+      "max_tokens",
+      "max_completion_tokens",
+      "frequency_penalty",
+      "presence_penalty",
+      "top_logprobs",
+      "tools",
+      "tool_choice",
+      "stream",
+      "stop",
+      "logit_bias",
+      "logprobs",
+      "n",
+      "stream_options",
+      "reasoning_effort",
+      "seed",
+      "metadata",
+      "temperature",
+      "top_p",
+      "user"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9983,15 +15752,34 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "agent"
+    ],
+    "description": "Create a model response for the given chat conversation",
+    "parameterDescriptions": {
+      "agent": "Must be set to true for agent-based completion behavior."
+    }
   },
-  "post_v1_images_generations": {
+  "inference_create_image": {
     "accessPath": [
-      "postV1ImagesGenerations"
+      "inferenceCreateImage"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "prompt",
+      "model",
+      "moderation",
+      "background",
+      "output_format",
+      "output_compression",
+      "n",
+      "quality",
+      "size",
+      "stream",
+      "partial_images",
+      "user"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -9999,11 +15787,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Generate images from text prompts"
   },
-  "get_v1_models": {
+  "inference_list_models": {
     "accessPath": [
-      "getV1Models"
+      "inferenceListModels"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -10015,15 +15804,30 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "List available models"
   },
-  "post_v1_responses": {
+  "inference_create_response": {
     "accessPath": [
-      "postV1Responses"
+      "inferenceCreateResponse"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "model",
+      "input",
+      "max_output_tokens",
+      "temperature",
+      "stream",
+      "instructions",
+      "top_p",
+      "stream_options",
+      "tools",
+      "tool_choice",
+      "stop",
+      "metadata",
+      "user"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -10031,15 +15835,20 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Send Prompt to a Model Using the Responses API"
   },
-  "post_v1_async_invoke": {
+  "inference_create_async_invoke": {
     "accessPath": [
-      "postV1AsyncInvoke"
+      "inferenceCreateAsyncInvoke"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "model_id",
+      "input",
+      "tags"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -10047,15 +15856,18 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Generate Image, Audio, or Text-to-Speech Using fal Models"
   },
-  "post_v1_batches_files": {
+  "inference_create_batch_file": {
     "accessPath": [
-      "postV1BatchesFiles"
+      "inferenceCreateBatchFile"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "file_name"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -10063,14 +15875,15 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Batch Inference Input File"
   },
-  "put_upload_url": {
+  "inference_upload_batch_file": {
     "accessPath": [
-      "putUploadUrl"
+      "inferenceUploadBatchFile"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
+    "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
     "headerParameterKeys": [],
@@ -10079,15 +15892,23 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Upload a Batch Inference Input File"
   },
-  "post_v1_batches": {
+  "inference_create_batch": {
     "accessPath": [
-      "postV1Batches"
+      "inferenceCreateBatch"
     ],
     "bodyAllowsAdditionalProperties": false,
-    "bodyKind": "none",
-    "bodyPropertyKeys": [],
+    "bodyKind": "properties",
+    "bodyPropertyKeys": [
+      "file_id",
+      "provider",
+      "endpoint",
+      "completion_window",
+      "request_id",
+      "metadata"
+    ],
     "contentType": "application/json",
     "headerParameterKeys": [],
     "method": "POST",
@@ -10095,11 +15916,12 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create a Batch Inference Job"
   },
-  "get_v1_batches": {
+  "inference_list_batches": {
     "accessPath": [
-      "getV1Batches"
+      "inferenceListBatches"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -10111,11 +15933,21 @@ export const toolMetadata = {
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [
+      "after",
+      "limit",
+      "status"
+    ],
+    "description": "List Batch Inference Jobs",
+    "parameterDescriptions": {
+      "after": "Cursor for pagination. Pass the `last_id` value from the previous response to fetch the next page. Omit for the first page.\n",
+      "limit": "Maximum number of batches to return per page.",
+      "status": "Optional filter restricting results to batches in the given lifecycle state.\n"
+    }
   },
-  "get_v1_batches_batch_id": {
+  "inference_get_batch": {
     "accessPath": [
-      "getV1BatchesBatchId"
+      "inferenceGetBatch"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -10125,13 +15957,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v1/batches/{batch_id}",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "batch_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Retrieve a Batch Inference Job",
+    "parameterDescriptions": {
+      "batch_id": "The batch job identifier."
+    }
   },
-  "get_v1_batches_batch_id_results": {
+  "inference_get_batch_results": {
     "accessPath": [
-      "getV1BatchesBatchIdResults"
+      "inferenceGetBatchResults"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -10141,13 +15979,19 @@ export const toolMetadata = {
     "method": "GET",
     "routeTemplate": "/v1/batches/{batch_id}/results",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "batch_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Batch Inference Results Download Links",
+    "parameterDescriptions": {
+      "batch_id": "The batch job identifier."
+    }
   },
-  "post_v1_batches_batch_id_cancel": {
+  "inference_cancel_batch": {
     "accessPath": [
-      "postV1BatchesBatchIdCancel"
+      "inferenceCancelBatch"
     ],
     "bodyAllowsAdditionalProperties": false,
     "bodyKind": "none",
@@ -10157,8 +16001,14 @@ export const toolMetadata = {
     "method": "POST",
     "routeTemplate": "/v1/batches/{batch_id}/cancel",
     "pathConflictKeys": [],
-    "pathParameterKeys": [],
+    "pathParameterKeys": [
+      "batch_id"
+    ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Cancel a Batch Inference Job",
+    "parameterDescriptions": {
+      "batch_id": "The batch job identifier."
+    }
   }
 } satisfies ToolRuntimeMetadataMap;

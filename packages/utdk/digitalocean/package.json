@@ -1,8 +1,8 @@
 {
   "name": "@utdk/digitalocean",
-  "version": "2.0.0-20260727.1",
+  "version": "2.0.0-20260804.2",
   "type": "module",
-  "description": "Generated UTDK provider client for DigitalOcean API. Generated UTDK provider types and OpenAPI-backed client for https://raw.githubusercontent.com/digitalocean/openapi/main/specification/DigitalOcean-public.v2.yaml.",
+  "description": "Generated UTDK provider client for DigitalOcean API. Generated UTDK provider types and OpenAPI-backed client for https://api-engineering.nyc3.digitaloceanspaces.com/spec-ci/DigitalOcean-public.v2.yaml.",
   "homepage": "https://docs.digitalocean.com",
   "keywords": [
     "digitalocean",
@@ -13,8 +13,8 @@
   "license": "Apache 2.0",
   "utdk": {
     "provider": "digitalocean",
-    "generation": 1,
-    "generatedAt": "2026-07-27T03:15:24.724Z",
+    "generation": 2,
+    "generatedAt": "2026-08-04T03:59:16.506Z",
     "auth": {
       "schemes": [
         {
@@ -34,17 +34,26 @@
     },
     "openapi": {
       "title": "DigitalOcean API",
-      "url": "https://raw.githubusercontent.com/digitalocean/openapi/main/specification/DigitalOcean-public.v2.yaml",
+      "url": "https://api-engineering.nyc3.digitaloceanspaces.com/spec-ci/DigitalOcean-public.v2.yaml",
       "version": "2.0",
       "termsOfService": "https://www.digitalocean.com/legal/terms-of-service-agreement/"
     },
     "provenance": {
       "source": "printing-press",
       "originDomain": "docs.digitalocean.com",
-      "originSpecUrl": "https://raw.githubusercontent.com/digitalocean/openapi/main/specification/DigitalOcean-public.v2.yaml"
+      "originSpecUrl": "https://api-engineering.nyc3.digitaloceanspaces.com/spec-ci/DigitalOcean-public.v2.yaml"
     },
     "branding": {
       "site": "https://docs.digitalocean.com"
+    },
+    "docs": {
+      "manifestPath": ".registry/digitalocean/manifest.json",
+      "indexPath": ".registry/digitalocean/index.md",
+      "docsPath": "packages/utdk/digitalocean/docs",
+      "generatedAt": "2026-08-04T03:59:16.500Z",
+      "sourceCount": 0,
+      "openApiHash": null,
+      "promptHash": "8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8"
     }
   }
 }

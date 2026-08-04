@@ -16,7 +16,7 @@
 #       resultsKey: items
 
 provider: digitalocean
-specUrl: https://raw.githubusercontent.com/digitalocean/openapi/main/specification/DigitalOcean-public.v2.yaml
+specUrl: https://api-engineering.nyc3.digitaloceanspaces.com/spec-ci/DigitalOcean-public.v2.yaml
 generatedAt: 2026-05-30T22:05:43.355Z
 descriptions: {}
 paginationHints: {}
