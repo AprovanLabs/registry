@@ -1,4 +1,4 @@
-import type { BasicError, Commit, DiffEntry, PullRequest, PullRequestMergeResult, PullRequestReview, PullRequestReviewComment, PullRequestReviewRequest, PullRequestSimple, ReviewComment } from "./schemas.js";
+import type { Commit, DiffEntry, PullRequest, PullRequestMergeResult, PullRequestReview, PullRequestReviewComment, PullRequestReviewRequest, PullRequestSimple, ReviewComment } from "./schemas.js";
 
 export type PullsOperations = {
   /**
@@ -112,7 +112,7 @@ export type PullsOperations = {
     repo: string;
     /** The unique identifier of the comment. */
     comment_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get a pull request
@@ -268,7 +268,7 @@ export type PullsOperations = {
     repo: string;
     /** The number that identifies the pull request. */
     pull_number: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Merge a pull request

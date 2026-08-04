@@ -1,193 +1,60 @@
 # Experiment Saved Metrics
 
-## Operations
-
-### `posthog.experimentSavedMetricsList`
-
-- **HTTP**: `GET /api/projects/{project_id}/experiment_saved_metrics/`
-- **OpenAPI operationId**: `experiment_saved_metrics_list`
-- **Path params**: None
-- **Query params**: `event`, `limit`, `offset`, `search`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; fi...`
-- OpenAPI response codes: `200`
+6 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type ExperimentSavedMetricsListInput = Parameters<typeof posthog.experimentSavedMetricsList> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentSavedMetricsListOutput = Awaited<ReturnType<typeof posthog.experimentSavedMetricsList>>;
-
-const result: ExperimentSavedMetricsListOutput = await posthog.experimentSavedMetricsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; fi...
 ```
 
-### `posthog.experimentSavedMetricsCreate`
-
-- **HTTP**: `POST /api/projects/{project_id}/experiment_saved_metrics/`
-- **OpenAPI operationId**: `experiment_saved_metrics_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: b...`
-- OpenAPI response codes: `201`
+## `posthog.experimentSavedMetricsList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentSavedMetricsCreateInput = Parameters<typeof posthog.experimentSavedMetricsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentSavedMetricsCreateOutput = Awaited<ReturnType<typeof posthog.experimentSavedMetricsCreate>>;
-
-const result: ExperimentSavedMetricsCreateOutput = await posthog.experimentSavedMetricsCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: b...
+posthog.experimentSavedMetricsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" |...>
 ```
 
-### `posthog.experimentSavedMetricsDestroy`
+<sub>`GET /api/projects/{project_id}/experiment_saved_metrics/` · `experiment_saved_metrics_list`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/experiment_saved_metrics/{id}/`
-- **OpenAPI operationId**: `experiment_saved_metrics_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `posthog.experimentSavedMetricsCreate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentSavedMetricsDestroyInput = Parameters<typeof posthog.experimentSavedMetricsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentSavedMetricsDestroyOutput = Awaited<ReturnType<typeof posthog.experimentSavedMetricsDestroy>>;
-
-const result: ExperimentSavedMetricsDestroyOutput = await posthog.experimentSavedMetricsDestroy();
-
-// Result shape (from schema): unknown
+posthog.experimentSavedMetricsCreate(): Promise<{ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "s...>
 ```
 
-### `posthog.experimentSavedMetricsRetrieve`
+<sub>`POST /api/projects/{project_id}/experiment_saved_metrics/` · `experiment_saved_metrics_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/experiment_saved_metrics/{id}/`
-- **OpenAPI operationId**: `experiment_saved_metrics_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: b...`
-- OpenAPI response codes: `200`
+## `posthog.experimentSavedMetricsDestroy`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentSavedMetricsRetrieveInput = Parameters<typeof posthog.experimentSavedMetricsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentSavedMetricsRetrieveOutput = Awaited<ReturnType<typeof posthog.experimentSavedMetricsRetrieve>>;
-
-const result: ExperimentSavedMetricsRetrieveOutput = await posthog.experimentSavedMetricsRetrieve();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: b...
+posthog.experimentSavedMetricsDestroy(): Promise<unknown>
 ```
 
-### `posthog.experimentSavedMetricsPartialUpdate`
+<sub>`DELETE /api/projects/{project_id}/experiment_saved_metrics/{id}/` · `experiment_saved_metrics_destroy`</sub>
 
-- **HTTP**: `PATCH /api/projects/{project_id}/experiment_saved_metrics/{id}/`
-- **OpenAPI operationId**: `experiment_saved_metrics_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: b...`
-- OpenAPI response codes: `200`
+## `posthog.experimentSavedMetricsRetrieve`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentSavedMetricsPartialUpdateInput = Parameters<typeof posthog.experimentSavedMetricsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentSavedMetricsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.experimentSavedMetricsPartialUpdate>>;
-
-const result: ExperimentSavedMetricsPartialUpdateOutput = await posthog.experimentSavedMetricsPartialUpdate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: b...
+posthog.experimentSavedMetricsRetrieve(): Promise<{ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "s...>
 ```
 
-### `posthog.experimentSavedMetricsUpdate`
+<sub>`GET /api/projects/{project_id}/experiment_saved_metrics/{id}/` · `experiment_saved_metrics_retrieve`</sub>
 
-- **HTTP**: `PUT /api/projects/{project_id}/experiment_saved_metrics/{id}/`
-- **OpenAPI operationId**: `experiment_saved_metrics_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: b...`
-- OpenAPI response codes: `200`
+## `posthog.experimentSavedMetricsPartialUpdate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentSavedMetricsUpdateInput = Parameters<typeof posthog.experimentSavedMetricsUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentSavedMetricsUpdateOutput = Awaited<ReturnType<typeof posthog.experimentSavedMetricsUpdate>>;
-
-const result: ExperimentSavedMetricsUpdateOutput = await posthog.experimentSavedMetricsUpdate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: b...
+posthog.experimentSavedMetricsPartialUpdate(): Promise<{ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "s...>
 ```
 
+<sub>`PATCH /api/projects/{project_id}/experiment_saved_metrics/{id}/` · `experiment_saved_metrics_partial_update`</sub>
+
+## `posthog.experimentSavedMetricsUpdate`
+
+```ts
+posthog.experimentSavedMetricsUpdate(): Promise<{ id: number; name: string; description?: string | null; query: unknown; created_by: { id: number; uuid: string; distinct_id?: string | null; first_name?: string; last_name?: string; email: string; is_email_verified?: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization?: "engineering" | "data" | "product" | "founder" | "leadership" | "marketing" | "sales" | "s...>
+```
+
+<sub>`PUT /api/projects/{project_id}/experiment_saved_metrics/{id}/` · `experiment_saved_metrics_update`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

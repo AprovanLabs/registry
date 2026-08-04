@@ -71,7 +71,7 @@ github.secretScanning.bulkDeleteOrgCustomPatterns(input: {
   post_delete_action?: "delete_alerts" | "resolve_alerts";
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/secret-scanning/custom-patterns` · `secret-scanning/bulk-delete-org-custom-patterns`</sub>
@@ -287,7 +287,7 @@ github.secretScanning.bulkDeleteRepoCustomPatterns(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/secret-scanning/custom-patterns` · `secret-scanning/bulk-delete-repo-custom-patterns`</sub>

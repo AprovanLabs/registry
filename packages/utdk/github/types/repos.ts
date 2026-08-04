@@ -1,4 +1,4 @@
-import type { Activity, Autolink, BasicError, BranchProtection, BranchRestrictionPolicy, BranchShort, BranchWithProtection, CheckAutomatedSecurityFixes, CheckImmutableReleases, CloneTraffic, CodeFrequencyStat, CodeownersErrors, Collaborator, CombinedCommitStatus, Commit, CommitActivity, CommitComment, CommitComparison, CommunityProfile, ContentDirectory, ContentFile, ContentSubmodule, ContentSymlink, ContentTraffic, Contributor, ContributorActivity, CustomDeploymentRuleApp, CustomPropertyValue, DeployKey, Deployment, DeploymentBranchPolicy, DeploymentBranchPolicySettings, DeploymentProtectionRule, DeploymentReviewerType, DeploymentStatus, Environment, FileCommit, FullRepository, Hook, HookDelivery, HookDeliveryItem, Integration, IssueType, Language, MergedUpstream, MinimalRepository, OrgRules, OrgRulesetConditions, Page, PageBuild, PageBuildStatus, PageDeployment, PagesDeploymentStatus, PagesHealthCheck, ParticipationStats, PreventSelfReview, ProtectedBranch, ProtectedBranchAdminEnforced, ProtectedBranchPullRequestReview, PullRequestSimple, ReferrerTraffic, Release, ReleaseAsset, ReleaseNotesContent, Repository, RepositoryCollaboratorPermission, RepositoryHashAlgorithm, RepositoryInvitation, RepositoryRule, RepositoryRuleDetailed, RepositoryRuleEnforcement, RepositoryRuleset, RepositoryRulesetBypassActor, RepositoryRulesetConditions, RuleSuite, RuleSuites, RulesetVersion, RulesetVersionWithState, ShortBranch, SimpleUser, Status, StatusCheckPolicy, Tag, Team, Topic, ViewTraffic, WaitTimer, WebhookConfig, WebhookConfigContentType, WebhookConfigInsecureSsl, WebhookConfigSecret, WebhookConfigUrl } from "./schemas.js";
+import type { Activity, Autolink, BranchProtection, BranchRestrictionPolicy, BranchShort, BranchWithProtection, CheckAutomatedSecurityFixes, CheckImmutableReleases, CloneTraffic, CodeFrequencyStat, CodeownersErrors, Collaborator, CombinedCommitStatus, Commit, CommitActivity, CommitComment, CommitComparison, CommunityProfile, ContentDirectory, ContentFile, ContentSubmodule, ContentSymlink, ContentTraffic, Contributor, ContributorActivity, CustomDeploymentRuleApp, CustomPropertyValue, DeployKey, Deployment, DeploymentBranchPolicy, DeploymentBranchPolicySettings, DeploymentProtectionRule, DeploymentReviewerType, DeploymentStatus, Environment, FileCommit, FullRepository, Hook, HookDelivery, HookDeliveryItem, Integration, IssueType, Language, MergedUpstream, MinimalRepository, OrgRules, OrgRulesetConditions, Page, PageBuild, PageBuildStatus, PageDeployment, PagesDeploymentStatus, PagesHealthCheck, ParticipationStats, PreventSelfReview, ProtectedBranch, ProtectedBranchAdminEnforced, ProtectedBranchPullRequestReview, PullRequestSimple, ReferrerTraffic, Release, ReleaseAsset, ReleaseNotesContent, Repository, RepositoryCollaboratorPermission, RepositoryHashAlgorithm, RepositoryInvitation, RepositoryRule, RepositoryRuleDetailed, RepositoryRuleEnforcement, RepositoryRuleset, RepositoryRulesetBypassActor, RepositoryRulesetConditions, RuleSuite, RuleSuites, RulesetVersion, RulesetVersionWithState, ShortBranch, SimpleUser, Status, StatusCheckPolicy, Tag, Team, Topic, ViewTraffic, WaitTimer, WebhookConfig, WebhookConfigContentType, WebhookConfigInsecureSsl, WebhookConfigSecret, WebhookConfigUrl } from "./schemas.js";
 
 export type ReposOperations = {
   /**
@@ -190,7 +190,7 @@ export type ReposOperations = {
     org: string;
     /** The ID of the ruleset. */
     ruleset_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get a repository
@@ -277,7 +277,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repository activities
@@ -392,7 +392,7 @@ export type ReposOperations = {
     repo: string;
     /** The unique identifier of the autolink. */
     autolink_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Check if Dependabot security updates are enabled for a repository
@@ -414,7 +414,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Disable Dependabot security updates
@@ -425,7 +425,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List branches
@@ -516,7 +516,7 @@ export type ReposOperations = {
     repo: string;
     /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
     branch: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get admin branch protection
@@ -555,7 +555,7 @@ export type ReposOperations = {
     repo: string;
     /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
     branch: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get pull request review protection
@@ -606,7 +606,7 @@ export type ReposOperations = {
     repo: string;
     /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
     branch: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get commit signature protection
@@ -645,7 +645,7 @@ export type ReposOperations = {
     repo: string;
     /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
     branch: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get status checks protection
@@ -690,7 +690,7 @@ export type ReposOperations = {
     repo: string;
     /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
     branch: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get all status check contexts
@@ -771,7 +771,7 @@ export type ReposOperations = {
     repo: string;
     /** The name of the branch. Cannot contain wildcard characters. To use wildcard characters in branch names, use [the GraphQL API](https://docs.github.com/graphql). */
     branch: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get apps with access to the protected branch
@@ -1002,7 +1002,7 @@ export type ReposOperations = {
     repo: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Add a repository collaborator
@@ -1030,7 +1030,7 @@ export type ReposOperations = {
     repo: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get repository permissions for a user
@@ -1099,7 +1099,7 @@ export type ReposOperations = {
     repo: string;
     /** The unique identifier of the comment. */
     comment_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List commits
@@ -1430,7 +1430,7 @@ export type ReposOperations = {
     repo: string;
     /** deployment_id parameter */
     deployment_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List deployment statuses
@@ -1503,7 +1503,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List environments
@@ -1562,7 +1562,7 @@ export type ReposOperations = {
     repo: string;
     /** The name of the environment. The name must be URL encoded. For example, any slashes in the name must be replaced with `%2F`. */
     environment_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List deployment branch policies
@@ -1643,7 +1643,7 @@ export type ReposOperations = {
     environment_name: string;
     /** The unique identifier of the branch policy. */
     branch_policy_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get all deployment protection rules for an environment
@@ -1718,7 +1718,7 @@ export type ReposOperations = {
     owner: string;
     /** The unique identifier of the protection rule. */
     protection_rule_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List forks
@@ -1845,7 +1845,7 @@ export type ReposOperations = {
     repo: string;
     /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
     hook_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get a webhook configuration for a repository
@@ -1935,7 +1935,7 @@ export type ReposOperations = {
     repo: string;
     /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
     hook_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Test the push repository webhook
@@ -1948,7 +1948,7 @@ export type ReposOperations = {
     repo: string;
     /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
     hook_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Check if immutable releases are enabled for a repository
@@ -1970,7 +1970,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Disable immutable releases
@@ -1981,7 +1981,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repository invitations
@@ -2024,7 +2024,7 @@ export type ReposOperations = {
     repo: string;
     /** The unique identifier of the invitation. */
     invitation_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List issue types for a repository
@@ -2093,7 +2093,7 @@ export type ReposOperations = {
     repo: string;
     /** The unique identifier of the key. */
     key_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List repository languages
@@ -2170,7 +2170,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Delete a GitHub Pages site
@@ -2181,7 +2181,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List GitHub Pages builds
@@ -2277,7 +2277,7 @@ export type ReposOperations = {
     repo: string;
     /** The ID of the Pages deployment. You can also give the commit SHA of the deployment. */
     pages_deployment_id: number | string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get a DNS health check for GitHub Pages
@@ -2310,7 +2310,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Disable private vulnerability reporting for a repository
@@ -2321,7 +2321,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get all custom property values for a repository
@@ -2345,7 +2345,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get a repository README
@@ -2461,7 +2461,7 @@ export type ReposOperations = {
     repo: string;
     /** The unique identifier of the asset. */
     asset_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Generate release notes content for a release
@@ -2559,7 +2559,7 @@ export type ReposOperations = {
     repo: string;
     /** The unique identifier of the release. */
     release_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List release assets
@@ -2739,7 +2739,7 @@ export type ReposOperations = {
     repo: string;
     /** The ID of the ruleset. */
     ruleset_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get repository ruleset history
@@ -2992,7 +2992,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Enable vulnerability alerts
@@ -3003,7 +3003,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Disable vulnerability alerts
@@ -3014,7 +3014,7 @@ export type ReposOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Download a repository archive (zip)
@@ -3154,7 +3154,7 @@ export type ReposOperations = {
   acceptInvitationForAuthenticatedUser: (input: {
     /** The unique identifier of the invitation. */
     invitation_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Decline a repository invitation
@@ -3163,7 +3163,7 @@ export type ReposOperations = {
   declineInvitationForAuthenticatedUser: (input: {
     /** The unique identifier of the invitation. */
     invitation_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repositories for a user

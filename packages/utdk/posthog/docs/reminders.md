@@ -1,193 +1,60 @@
 # Reminders
 
-## Operations
-
-### `posthog.remindersList`
-
-- **HTTP**: `GET /api/reminders/`
-- **OpenAPI operationId**: `reminders_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string |...`
-- OpenAPI response codes: `200`
+6 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type RemindersListInput = Parameters<typeof posthog.remindersList> extends [infer T, ...unknown[]] ? T : undefined;
-type RemindersListOutput = Awaited<ReturnType<typeof posthog.remindersList>>;
-
-const result: RemindersListOutput = await posthog.remindersList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string |...
 ```
 
-### `posthog.remindersCreate`
-
-- **HTTP**: `POST /api/reminders/`
-- **OpenAPI operationId**: `reminders_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekl...`
-- OpenAPI response codes: `201`
+## `posthog.remindersList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type RemindersCreateInput = Parameters<typeof posthog.remindersCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type RemindersCreateOutput = Awaited<ReturnType<typeof posthog.remindersCreate>>;
-
-const result: RemindersCreateOutput = await posthog.remindersCreate();
-
-// Result shape (from schema): { id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekl...
+posthog.remindersList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekly" | "monthly" | "yearly" | "" | null; cron_expression?: string | null; timezone?: string; end_date?: str...>
 ```
 
-### `posthog.remindersDestroy`
+<sub>`GET /api/reminders/` · `reminders_list`</sub>
 
-- **HTTP**: `DELETE /api/reminders/{id}/`
-- **OpenAPI operationId**: `reminders_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `posthog.remindersCreate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type RemindersDestroyInput = Parameters<typeof posthog.remindersDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type RemindersDestroyOutput = Awaited<ReturnType<typeof posthog.remindersDestroy>>;
-
-const result: RemindersDestroyOutput = await posthog.remindersDestroy();
-
-// Result shape (from schema): unknown
+posthog.remindersCreate(): Promise<{ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekly" | "monthly" | "yearly" | "" | null; cron_expression?: string | null; timezone?: string; end_date?: string | null; next_fire_at: string | null; last_fired_at: string | null; stat...>
 ```
 
-### `posthog.remindersRetrieve`
+<sub>`POST /api/reminders/` · `reminders_create`</sub>
 
-- **HTTP**: `GET /api/reminders/{id}/`
-- **OpenAPI operationId**: `reminders_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekl...`
-- OpenAPI response codes: `200`
+## `posthog.remindersDestroy`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type RemindersRetrieveInput = Parameters<typeof posthog.remindersRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type RemindersRetrieveOutput = Awaited<ReturnType<typeof posthog.remindersRetrieve>>;
-
-const result: RemindersRetrieveOutput = await posthog.remindersRetrieve();
-
-// Result shape (from schema): { id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekl...
+posthog.remindersDestroy(): Promise<unknown>
 ```
 
-### `posthog.remindersPartialUpdate`
+<sub>`DELETE /api/reminders/{id}/` · `reminders_destroy`</sub>
 
-- **HTTP**: `PATCH /api/reminders/{id}/`
-- **OpenAPI operationId**: `reminders_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekl...`
-- OpenAPI response codes: `200`
+## `posthog.remindersRetrieve`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type RemindersPartialUpdateInput = Parameters<typeof posthog.remindersPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type RemindersPartialUpdateOutput = Awaited<ReturnType<typeof posthog.remindersPartialUpdate>>;
-
-const result: RemindersPartialUpdateOutput = await posthog.remindersPartialUpdate();
-
-// Result shape (from schema): { id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekl...
+posthog.remindersRetrieve(): Promise<{ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekly" | "monthly" | "yearly" | "" | null; cron_expression?: string | null; timezone?: string; end_date?: string | null; next_fire_at: string | null; last_fired_at: string | null; stat...>
 ```
 
-### `posthog.remindersUpdate`
+<sub>`GET /api/reminders/{id}/` · `reminders_retrieve`</sub>
 
-- **HTTP**: `PUT /api/reminders/{id}/`
-- **OpenAPI operationId**: `reminders_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekl...`
-- OpenAPI response codes: `200`
+## `posthog.remindersPartialUpdate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type RemindersUpdateInput = Parameters<typeof posthog.remindersUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type RemindersUpdateOutput = Awaited<ReturnType<typeof posthog.remindersUpdate>>;
-
-const result: RemindersUpdateOutput = await posthog.remindersUpdate();
-
-// Result shape (from schema): { id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekl...
+posthog.remindersPartialUpdate(): Promise<{ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekly" | "monthly" | "yearly" | "" | null; cron_expression?: string | null; timezone?: string; end_date?: string | null; next_fire_at: string | null; last_fired_at: string | null; stat...>
 ```
 
+<sub>`PATCH /api/reminders/{id}/` · `reminders_partial_update`</sub>
+
+## `posthog.remindersUpdate`
+
+```ts
+posthog.remindersUpdate(): Promise<{ id: string; organization: string; team?: number | null; title: string; message?: string; resource_type?: string | null; resource_id?: string | null; scheduled_at?: string | null; recurrence_interval?: "daily" | "weekly" | "monthly" | "yearly" | "" | null; cron_expression?: string | null; timezone?: string; end_date?: string | null; next_fire_at: string | null; last_fired_at: string | null; stat...>
+```
+
+<sub>`PUT /api/reminders/{id}/` · `reminders_update`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

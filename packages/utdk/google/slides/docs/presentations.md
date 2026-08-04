@@ -1,9 +1,9 @@
 # Presentations
 
-5 operations · `utdk/google/slides`
+5 operations · `@utdk/clients/google/slides`
 
 ```ts
-import slides from "utdk/google/slides";
+import slides from "@utdk/clients/google/slides";
 ```
 
 ## `slides.slidesPresentationsCreate`

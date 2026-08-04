@@ -1,162 +1,52 @@
 # Event Schemas
 
-## Operations
-
-### `posthog.eventSchemasList`
-
-- **HTTP**: `GET /api/projects/{project_id}/event_schemas/`
-- **OpenAPI operationId**: `event_schemas_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: stri...`
-- OpenAPI response codes: `200`
+5 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type EventSchemasListInput = Parameters<typeof posthog.eventSchemasList> extends [infer T, ...unknown[]] ? T : undefined;
-type EventSchemasListOutput = Awaited<ReturnType<typeof posthog.eventSchemasList>>;
-
-const result: EventSchemasListOutput = await posthog.eventSchemasList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: stri...
 ```
 
-### `posthog.eventSchemasCreate`
-
-- **HTTP**: `POST /api/projects/{project_id}/event_schemas/`
-- **OpenAPI operationId**: `event_schemas_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: string; property_type: "DateTime" | "String" | "Numeric" | "Boolean" | "Object"...`
-- OpenAPI response codes: `201`
+## `posthog.eventSchemasList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EventSchemasCreateInput = Parameters<typeof posthog.eventSchemasCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EventSchemasCreateOutput = Awaited<ReturnType<typeof posthog.eventSchemasCreate>>;
-
-const result: EventSchemasCreateOutput = await posthog.eventSchemasCreate();
-
-// Result shape (from schema): { id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: string; property_type: "DateTime" | "String" | "Numeric" | "Boolean" | "Object"...
+posthog.eventSchemasList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: string; property_type: "DateTime" | "String" | "Numeric" | "Boolean" | "Object"; is_required?: boolean; is_optional_in_types?: boolean; description?: string; created_at: string; update...>
 ```
 
-### `posthog.eventSchemasDestroy`
+<sub>`GET /api/projects/{project_id}/event_schemas/` · `event_schemas_list`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/event_schemas/{id}/`
-- **OpenAPI operationId**: `event_schemas_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `posthog.eventSchemasCreate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EventSchemasDestroyInput = Parameters<typeof posthog.eventSchemasDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type EventSchemasDestroyOutput = Awaited<ReturnType<typeof posthog.eventSchemasDestroy>>;
-
-const result: EventSchemasDestroyOutput = await posthog.eventSchemasDestroy();
-
-// Result shape (from schema): unknown
+posthog.eventSchemasCreate(): Promise<{ id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: string; property_type: "DateTime" | "String" | "Numeric" | "Boolean" | "Object"; is_required?: boolean; is_optional_in_types?: boolean; description?: string; created_at: string; updated_at: string })[]; events: ({ id: string; name: string })[]; created_at: st...>
 ```
 
-### `posthog.eventSchemasPartialUpdate`
+<sub>`POST /api/projects/{project_id}/event_schemas/` · `event_schemas_create`</sub>
 
-- **HTTP**: `PATCH /api/projects/{project_id}/event_schemas/{id}/`
-- **OpenAPI operationId**: `event_schemas_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: string; property_type: "DateTime" | "String" | "Numeric" | "Boolean" | "Object"...`
-- OpenAPI response codes: `200`
+## `posthog.eventSchemasDestroy`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EventSchemasPartialUpdateInput = Parameters<typeof posthog.eventSchemasPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type EventSchemasPartialUpdateOutput = Awaited<ReturnType<typeof posthog.eventSchemasPartialUpdate>>;
-
-const result: EventSchemasPartialUpdateOutput = await posthog.eventSchemasPartialUpdate();
-
-// Result shape (from schema): { id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: string; property_type: "DateTime" | "String" | "Numeric" | "Boolean" | "Object"...
+posthog.eventSchemasDestroy(): Promise<unknown>
 ```
 
-### `posthog.eventSchemasUpdate`
+<sub>`DELETE /api/projects/{project_id}/event_schemas/{id}/` · `event_schemas_destroy`</sub>
 
-- **HTTP**: `PUT /api/projects/{project_id}/event_schemas/{id}/`
-- **OpenAPI operationId**: `event_schemas_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: string; property_type: "DateTime" | "String" | "Numeric" | "Boolean" | "Object"...`
-- OpenAPI response codes: `200`
+## `posthog.eventSchemasPartialUpdate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EventSchemasUpdateInput = Parameters<typeof posthog.eventSchemasUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type EventSchemasUpdateOutput = Awaited<ReturnType<typeof posthog.eventSchemasUpdate>>;
-
-const result: EventSchemasUpdateOutput = await posthog.eventSchemasUpdate();
-
-// Result shape (from schema): { id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: string; property_type: "DateTime" | "String" | "Numeric" | "Boolean" | "Object"...
+posthog.eventSchemasPartialUpdate(): Promise<{ id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: string; property_type: "DateTime" | "String" | "Numeric" | "Boolean" | "Object"; is_required?: boolean; is_optional_in_types?: boolean; description?: string; created_at: string; updated_at: string })[]; events: ({ id: string; name: string })[]; created_at: st...>
 ```
 
+<sub>`PATCH /api/projects/{project_id}/event_schemas/{id}/` · `event_schemas_partial_update`</sub>
+
+## `posthog.eventSchemasUpdate`
+
+```ts
+posthog.eventSchemasUpdate(): Promise<{ id: string; event_definition: string; property_group: { id: string; name: string; description?: string; properties?: ({ id: string; name: string; property_type: "DateTime" | "String" | "Numeric" | "Boolean" | "Object"; is_required?: boolean; is_optional_in_types?: boolean; description?: string; created_at: string; updated_at: string })[]; events: ({ id: string; name: string })[]; created_at: st...>
+```
+
+<sub>`PUT /api/projects/{project_id}/event_schemas/{id}/` · `event_schemas_update`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

@@ -92,7 +92,7 @@ github.codeSecurity.deleteConfigurationForEnterprise(input: {
   enterprise: string;
   /** The unique identifier of the code security configuration. */
   configuration_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /enterprises/{enterprise}/code-security/configurations/{configuration_id}` · `code-security/delete-configuration-for-enterprise`</sub>
@@ -335,7 +335,7 @@ github.codeSecurity.deleteConfiguration(input: {
   org: string;
   /** The unique identifier of the code security configuration. */
   configuration_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/code-security/configurations/{configuration_id}` · `code-security/delete-configuration`</sub>
@@ -502,7 +502,7 @@ github.codeSecurity.detachConfiguration(input: {
   selected_repository_ids: (number)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/code-security/configurations/detach` · `code-security/detach-configuration`</sub>

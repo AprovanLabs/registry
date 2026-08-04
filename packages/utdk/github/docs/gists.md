@@ -47,7 +47,7 @@ Delete a gist — [API reference](https://docs.github.com/rest/gists/gists#delet
 github.gists.delete(input: {
   /** The unique identifier of the gist. */
   gist_id: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gists/{gist_id}` · `gists/delete`</sub>
@@ -138,7 +138,7 @@ github.gists.deleteComment(input: {
   gist_id: string;
   /** The unique identifier of the comment. */
   comment_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gists/{gist_id}/comments/{comment_id}` · `gists/delete-comment`</sub>
@@ -230,7 +230,7 @@ Unstar a gist — [API reference](https://docs.github.com/rest/gists/gists#unsta
 github.gists.unstar(input: {
   /** The unique identifier of the gist. */
   gist_id: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /gists/{gist_id}/star` · `gists/unstar`</sub>
@@ -243,7 +243,7 @@ Check if a gist is starred — [API reference](https://docs.github.com/rest/gist
 github.gists.checkIsStarred(input: {
   /** The unique identifier of the gist. */
   gist_id: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`GET /gists/{gist_id}/star` · `gists/check-is-starred`</sub>
@@ -256,7 +256,7 @@ Star a gist — [API reference](https://docs.github.com/rest/gists/gists#star-a-
 github.gists.star(input: {
   /** The unique identifier of the gist. */
   gist_id: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /gists/{gist_id}/star` · `gists/star`</sub>

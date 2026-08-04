@@ -203,7 +203,7 @@ export type GoogleDriveClient = {
     quotaUser?: string;
     /** Deprecated. Please use quotaUser instead. */
     userIp?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Lists the user's shared drives.
@@ -303,7 +303,7 @@ export type GoogleDriveClient = {
     allowItemDeletion?: boolean;
     /** Issue the request as a domain administrator; if set to true, then the requester will be granted access if they are an administrator of the domain to which the shared drive belongs. */
     useDomainAdminAccess?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets a shared drive's metadata by ID.
@@ -681,7 +681,7 @@ export type GoogleDriveClient = {
     driveId?: string;
     /** Deprecated. If an item is not in a shared drive and its last parent is deleted but the item itself is not, the item will be placed under its owner's root. */
     enforceSingleParent?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Permanently deletes a file owned by the user without moving it to the trash. If the file belongs to a shared drive the user must be an organizer on the parent. If the target is a folder, all descendants owned by the user are also deleted.
@@ -709,7 +709,7 @@ export type GoogleDriveClient = {
     supportsAllDrives?: boolean;
     /** Deprecated use supportsAllDrives instead. */
     supportsTeamDrives?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets a file's metadata or content by ID.
@@ -1007,7 +1007,7 @@ export type GoogleDriveClient = {
     quotaUser?: string;
     /** Deprecated. Please use quotaUser instead. */
     userIp?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets a comment by ID.
@@ -1179,7 +1179,7 @@ export type GoogleDriveClient = {
     quotaUser?: string;
     /** Deprecated. Please use quotaUser instead. */
     userIp?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets a reply by ID.
@@ -1437,7 +1437,7 @@ export type GoogleDriveClient = {
     userIp?: string;
     /** The MIME type of the format requested for this export. */
     mimeType: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Lists the labels on a file.
@@ -1621,7 +1621,7 @@ export type GoogleDriveClient = {
     supportsTeamDrives?: boolean;
     /** Issue the request as a domain administrator; if set to true, then the requester will be granted access if the file ID parameter refers to a shared drive and the requester is an administrator of the domain to which the shared drive belongs. */
     useDomainAdminAccess?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets a permission by ID.
@@ -1765,7 +1765,7 @@ export type GoogleDriveClient = {
     quotaUser?: string;
     /** Deprecated. Please use quotaUser instead. */
     userIp?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Gets a revision's metadata or content by ID.
@@ -1989,7 +1989,7 @@ export type GoogleDriveClient = {
     quotaUser?: string;
     /** Deprecated. Please use quotaUser instead. */
     userIp?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Deprecated use drives.get instead.

@@ -1,4 +1,4 @@
-import type { AdvancedStatsClicks, AdvancedStatsClicksOpens, AdvancedStatsMailboxProvider, AdvancedStatsOpens, AllSegmentsResponse, ApiKeyNameId, ApiKeyNameIdScopes, AuthenticationDomain, AutomationsLinkStatsResponse, AutomationsResponse, BlocksResponse, BounceResponse, CampaignResponse, CategoryStats, CcBccEmailObject, ClickTracking, ContactDetails2, ContactDetails3, ContactExport, ContactImport, ContactRequest, ContactdbCustomFieldWithId, ContactdbList, ContactdbRecipient, ContactdbRecipientCount, ContactdbRecipientResponse, ContactdbSegments, ContactdbSegmentsConditions, ContactdbSegmentsWithId, CustomFieldDefinitionsResponse, DesignOutput, DesignOutputSummary, DomainAuthentication200Response, DomainAuthenticationDomainSpf, EmailActivityResponseCommonFields, EnforcedTlsRequestResponse, Error, ErrorsSegV2, EventWebhookResponse, FromEmailObject, FullSegment, GlobalErrorResponseSchema, GoogleAnalyticsSettings, InvalidEmail, IpAccessResponse, IpPoolResponse, IpWarmupResponse, LinkBranding200Response, List, MailBatchId, MailSettingsAddressWhitelabel, MailSettingsBouncePurge, MailSettingsFooter, MailSettingsForwardBounce, MailSettingsForwardSpam, MailSettingsTemplate, Metadata, Metadata2, Monitor, ParseSetting, PartnerSettingsNewRelic, ReplyToEmailObject, ReservedFieldDefinitionsResponse, ReverseDns, SegmentResponse, SegmentSummary, Selfmetadata, SenderId, SinglesendResponse, SinglesendResponseShort, SinglesendSchedule, SinglesendsLinkStatsResponse, SinglesendsResponse, SpamReportsResponse, SsoCertificateBody, SsoErrorResponse, SsoIntegration, SsoTeammateResponse, SsoTeammatesPatchResponse, StatsAdvancedGlobalStats, SubscriptionTrackingSettings, Subuser, SubuserPost, SubuserStats, SuppressionGroup, SuppressionGroupRequestBase, ToEmailArray, TransactionalTemplate, TransactionalTemplateVersionOutput, TransactionalTemplatesTemplateLean, UserProfile, UserScheduledSendStatus, VerifiedSenderResponseSchema } from "./schemas.js";
+import type { AdvancedStatsClicks, AdvancedStatsClicksOpens, AdvancedStatsMailboxProvider, AdvancedStatsOpens, AllSegmentsResponse, ApiKeyNameId, ApiKeyNameIdScopes, AuthenticationDomain, AutomationsLinkStatsResponse, AutomationsResponse, BlocksResponse, BounceResponse, CampaignResponse, CategoryStats, CcBccEmailObject, ClickTracking, ContactDetails2, ContactDetails3, ContactExport, ContactImport, ContactRequest, ContactdbCustomFieldWithId, ContactdbList, ContactdbRecipient, ContactdbRecipientCount, ContactdbRecipientResponse, ContactdbSegments, ContactdbSegmentsConditions, ContactdbSegmentsWithId, CustomFieldDefinitionsResponse, DesignOutput, DesignOutputSummary, DomainAuthentication200Response, DomainAuthenticationDomainSpf, EmailActivityResponseCommonFields, EnforcedTlsRequestResponse, EventWebhookResponse, FromEmailObject, FullSegment, GlobalErrorResponseSchema, GoogleAnalyticsSettings, InvalidEmail, IpAccessResponse, IpPoolResponse, IpWarmupResponse, LinkBranding200Response, List, MailBatchId, MailSettingsAddressWhitelabel, MailSettingsBouncePurge, MailSettingsFooter, MailSettingsForwardBounce, MailSettingsForwardSpam, MailSettingsTemplate, Metadata, Metadata2, Monitor, ParseSetting, PartnerSettingsNewRelic, ReplyToEmailObject, ReservedFieldDefinitionsResponse, ReverseDns, SegmentResponse, SegmentSummary, Selfmetadata, SenderId, SinglesendResponse, SinglesendResponseShort, SinglesendSchedule, SinglesendsLinkStatsResponse, SinglesendsResponse, SpamReportsResponse, SsoCertificateBody, SsoIntegration, SsoTeammateResponse, SsoTeammatesPatchResponse, StatsAdvancedGlobalStats, SubscriptionTrackingSettings, Subuser, SubuserPost, SubuserStats, SuppressionGroup, SuppressionGroupRequestBase, ToEmailArray, TransactionalTemplate, TransactionalTemplateVersionOutput, TransactionalTemplatesTemplateLean, UserProfile, UserScheduledSendStatus, VerifiedSenderResponseSchema } from "./schemas.js";
 
 export type SendgridClient = {
   /**
@@ -117,7 +117,7 @@ export type SendgridClient = {
    */
   deleteApiKeysApiKeyId: (input: {
     api_key_id: string;
-  }, options?: { headers?: { "on-behalf-of"?: string } }) => Promise<GlobalErrorResponseSchema>;
+  }, options?: { headers?: { "on-behalf-of"?: string } }) => Promise<undefined>;
 
   /**
    * Retrieve an existing API Key
@@ -1081,7 +1081,7 @@ export type SendgridClient = {
     template_id?: string;
     /** Settings to determine how you would like to track the metrics of how your recipients interact with your email. */
     tracking_settings?: { click_tracking?: { enable?: boolean; enable_text?: boolean }; ganalytics?: { enable?: boolean; utm_campaign?: string; utm_content?: string; utm_medium?: string; utm_source?: string; utm_term?: string }; open_tracking?: { enable?: boolean; substitution_tag?: string }; subscription_tracking?: { enable?: boolean; html?: string; substitution_tag?: string; text?: string } };
-  }) => Promise<GlobalErrorResponseSchema>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve all mail settings
@@ -1328,7 +1328,7 @@ export type SendgridClient = {
    */
   deleteMcFieldDefinitionsCustomFieldId: (input: {
     custom_field_id: string;
-  }) => Promise<{ errors: (Error)[] }>;
+  }) => Promise<undefined>;
 
   /**
    * Update Custom Field Definition
@@ -1449,7 +1449,7 @@ export type SendgridClient = {
    */
   deleteSegmentsSegmentId: (input: {
     segment_id: string;
-  }) => Promise<ErrorsSegV2>;
+  }) => Promise<undefined>;
 
   /**
    * Get Segment by ID
@@ -1535,7 +1535,7 @@ export type SendgridClient = {
   deleteMarketingSinglesends: (input: {
     /** Single Send IDs to delete */
     ids?: (string)[];
-  }) => Promise<{ errors?: ({ error_id?: string; field?: string; message?: string })[] }>;
+  }) => Promise<undefined>;
 
   /**
    * Get All Single Sends
@@ -1583,7 +1583,7 @@ export type SendgridClient = {
    */
   deleteMarketingSinglesendsId: (input: {
     id: string;
-  }) => Promise<{ errors?: ({ error_id?: string; field?: string; message?: string })[] }>;
+  }) => Promise<undefined>;
 
   /**
    * Get Single Send by ID
@@ -1852,7 +1852,7 @@ export type SendgridClient = {
   deleteV3ScopesRequestsRequestId: (input: {
     /** The ID of the request that you want to deny. */
     request_id: string;
-  }) => Promise<{ errors?: ({ field?: string; message?: string })[] }>;
+  }) => Promise<undefined>;
 
   /**
    * Approve access request
@@ -1974,7 +1974,7 @@ export type SendgridClient = {
     /** This public certificate allows SendGrid to verify that SAML requests it receives are signed by an IdP that it recognizes. */
     public_certificate?: string;
     cert_id: string;
-  }) => Promise<SsoErrorResponse>;
+  }) => Promise<unknown>;
 
   /**
    * Get All SSO Integrations
@@ -2007,7 +2007,7 @@ export type SendgridClient = {
    */
   deleteSsoIntegrationsId: (input: {
     id: string;
-  }) => Promise<SsoErrorResponse>;
+  }) => Promise<undefined>;
 
   /**
    * Get an SSO Integration
@@ -2468,7 +2468,7 @@ export type SendgridClient = {
   deleteV3TeammatesPendingToken: (input: {
     /** The token for the invite you want to delete. */
     token: string;
-  }, options?: { headers?: { "on-behalf-of"?: string } }) => Promise<{ errors?: ({ field?: string; message?: string })[] }>;
+  }, options?: { headers?: { "on-behalf-of"?: string } }) => Promise<undefined>;
 
   /**
    * Resend teammate invite
@@ -2591,7 +2591,7 @@ export type SendgridClient = {
     template_id: string;
     /** The ID of the template version */
     version_id: string;
-  }, options?: { headers?: { "on-behalf-of"?: string } }) => Promise<unknown>;
+  }, options?: { headers?: { "on-behalf-of"?: string } }) => Promise<undefined>;
 
   /**
    * Retrieve a specific transactional template version.
@@ -2802,7 +2802,7 @@ export type SendgridClient = {
    */
   deleteUserScheduledSendsBatchId: (input: {
     batch_id: string;
-  }, options?: { headers?: { "on-behalf-of"?: string } }) => Promise<{ errors?: ({ field?: string; help?: { [key: string]: unknown }; message?: string })[]; id?: string }>;
+  }, options?: { headers?: { "on-behalf-of"?: string } }) => Promise<undefined>;
 
   /**
    * Retrieve scheduled send
@@ -2915,7 +2915,7 @@ export type SendgridClient = {
     oauth_token_url?: string;
     /** The URL where you would like the test notification to be sent. */
     url?: string;
-  }, options?: { headers?: { "on-behalf-of"?: string } }) => Promise<unknown>;
+  }, options?: { headers?: { "on-behalf-of"?: string } }) => Promise<undefined>;
 
   /**
    * Retrieve all parse settings
@@ -3040,7 +3040,7 @@ export type SendgridClient = {
    */
   getVerifiedSendersVerifyToken: (input: {
     token: string;
-  }) => Promise<GlobalErrorResponseSchema>;
+  }) => Promise<undefined>;
 
   /**
    * Delete Verified Sender
@@ -3078,7 +3078,7 @@ export type SendgridClient = {
     link_id: number;
     /** A custom text block to include in the email body sent with the records. */
     message?: string;
-  }) => Promise<{ errors?: { error?: string; field?: string } }>;
+  }) => Promise<undefined>;
 
   /**
    * List all authenticated domains

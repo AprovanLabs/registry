@@ -1,9 +1,9 @@
 # Comments
 
-6 operations · `utdk/google/youtube`
+6 operations · `@utdk/clients/google/youtube`
 
 ```ts
-import youtube from "utdk/google/youtube";
+import youtube from "@utdk/clients/google/youtube";
 ```
 
 ## `youtube.youtubeCommentsDelete`
@@ -35,7 +35,7 @@ youtube.youtubeCommentsDelete(input: {
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
   id: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /youtube/v3/comments` · `youtube.comments.delete`</sub>
@@ -201,7 +201,7 @@ youtube.youtubeCommentsMarkAsSpam(input: {
   uploadType?: string;
   /** Flags the comments with the given IDs as spam in the caller's opinion. */
   id: (string)[];
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /youtube/v3/comments/markAsSpam` · `youtube.comments.markAsSpam`</sub>
@@ -240,7 +240,7 @@ youtube.youtubeCommentsSetModerationStatus(input: {
   moderationStatus: "published" | "heldForReview" | "likelySpam" | "rejected";
   /** If set to true the author of the comment gets added to the ban list. This means all future comments of the author will autmomatically be rejected. Only valid in combination with STATUS_REJECTED. */
   banAuthor?: boolean;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /youtube/v3/comments/setModerationStatus` · `youtube.comments.setModerationStatus`</sub>

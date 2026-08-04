@@ -1,4 +1,4 @@
-import type { ActivityLogList, Admin, AdminList, AdminReplyTicketRequest, AdminWithApp, AiCallResponse, Article, ArticleList, ArticleSearchResponse, ArticleTranslatedContent, AssignConversationRequest, AwayStatusReason, Brand, BrandList, Call, CallList, CloseConversationRequest, Collection, CollectionList, Company, CompanyAttachedContacts, CompanyAttachedSegments, CompanyList, CompanyScroll, Contact, ContactArchived, ContactAttachedCompanies, ContactBlocked, ContactDeleted, ContactList, ContactReplyTicketRequest, ContactSegments, ContactUnarchived, ContentImportSource, ContentImportSourcesList, Conversation, ConversationDeleted, ConversationList, CreateContactRequest, CreateDataAttributeRequest, CreateDataEventRequest, CreateMessageRequest, CreateOrUpdateTagRequest, CustomAttributes, CustomObjectInstance, CustomObjectInstanceDeleted, CustomerRequest, DataAttribute, DataAttributeList, DataEventSummary, DataExport, DeletedArticleObject, DeletedCollectionObject, DeletedCompanyObject, DeletedInternalArticleObject, DeletedObject, EmailList, EmailSetting, Error, ExternalPage, ExternalPagesList, FinAgentAttachment, FinAgentAttributeErrors, FinAgentConversationMetadata, FinAgentMessage, FinAgentUser, GroupTranslatedContent, HelpCenter, HelpCenterList, InternalArticle, InternalArticleList, InternalArticleSearchResponse, IpAllowlist, Jobs, Message, MultipleFilterSearchRequest, NewsItem, Newsfeed, NewsfeedAssignment, Note, NoteList, OpenConversationRequest, PaginatedResponse, PhoneSwitch, RedactConversationRequest, ReplyConversationRequest, Segment, SegmentList, SingleFilterSearchRequest, SnoozeConversationRequest, StartingAfterPaging, SubscriptionType, SubscriptionTypeList, Tag, TagBasic, TagCompanyRequest, TagList, TagMultipleUsersRequest, Team, TeamList, Ticket, TicketDeleted, TicketList, TicketReply, TicketRequestCustomAttributes, TicketStateList, TicketType, TicketTypeAttribute, TicketTypeList, UntagCompanyRequest, UpdateContactRequest, UpdateDataAttributeRequest, UpdateVisitorRequest, Visitor, WorkflowExport } from "./schemas.js";
+import type { ActivityLogList, Admin, AdminList, AdminReplyTicketRequest, AdminWithApp, AiCallResponse, Article, ArticleList, ArticleSearchResponse, ArticleTranslatedContent, AssignConversationRequest, AwayStatusReason, Brand, BrandList, Call, CallList, CloseConversationRequest, Collection, CollectionList, Company, CompanyAttachedContacts, CompanyAttachedSegments, CompanyList, CompanyScroll, Contact, ContactArchived, ContactAttachedCompanies, ContactBlocked, ContactDeleted, ContactList, ContactReplyTicketRequest, ContactSegments, ContactUnarchived, ContentImportSource, ContentImportSourcesList, Conversation, ConversationDeleted, ConversationList, CreateContactRequest, CreateDataAttributeRequest, CreateDataEventRequest, CreateMessageRequest, CreateOrUpdateTagRequest, CustomAttributes, CustomObjectInstance, CustomObjectInstanceDeleted, CustomerRequest, DataAttribute, DataAttributeList, DataEventSummary, DataExport, DeletedArticleObject, DeletedCollectionObject, DeletedCompanyObject, DeletedInternalArticleObject, DeletedObject, EmailList, EmailSetting, ExternalPage, ExternalPagesList, FinAgentAttachment, FinAgentAttributeErrors, FinAgentConversationMetadata, FinAgentMessage, FinAgentUser, GroupTranslatedContent, HelpCenter, HelpCenterList, InternalArticle, InternalArticleList, InternalArticleSearchResponse, IpAllowlist, Jobs, Message, MultipleFilterSearchRequest, NewsItem, Newsfeed, NewsfeedAssignment, Note, NoteList, OpenConversationRequest, PaginatedResponse, PhoneSwitch, RedactConversationRequest, ReplyConversationRequest, Segment, SegmentList, SingleFilterSearchRequest, SnoozeConversationRequest, StartingAfterPaging, SubscriptionType, SubscriptionTypeList, Tag, TagBasic, TagCompanyRequest, TagList, TagMultipleUsersRequest, Team, TeamList, Ticket, TicketDeleted, TicketList, TicketReply, TicketRequestCustomAttributes, TicketStateList, TicketType, TicketTypeAttribute, TicketTypeList, UntagCompanyRequest, UpdateContactRequest, UpdateDataAttributeRequest, UpdateVisitorRequest, Visitor, WorkflowExport } from "./schemas.js";
 
 export type IntercomClient = {
   /**
@@ -69,7 +69,7 @@ export type IntercomClient = {
   deleteContentImportSource: (input: {
     /** The unique identifier for the content import source which is given by Intercom. */
     source_id: string;
-  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<Error>;
+  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<undefined>;
 
   /**
    * Retrieve a content import source
@@ -274,7 +274,7 @@ export type IntercomClient = {
   getDownloadReportingDataJobIdentifier: (input: {
     app_id: string;
     job_identifier: string;
-  }, options: { headers: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14"; Accept: "application/octet-stream" } }) => Promise<Error>;
+  }, options: { headers: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14"; Accept: "application/octet-stream" } }) => Promise<undefined>;
 
   /**
    * Start a conversation with Fin
@@ -1005,7 +1005,7 @@ export type IntercomClient = {
    */
   createDataEvent: (input: {
     body?: CreateDataEventRequest;
-  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<Error>;
+  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<undefined>;
 
   /**
    * List all data events
@@ -1026,7 +1026,7 @@ export type IntercomClient = {
     user_id?: string;
     /** A list of event summaries for the user. Each event summary should contain the event name, the time the event occurred, and the number of times the event occurred. The event name should be a past tense 'verb-noun' combination, to improve readability, for example `updated-plan`. */
     event_summaries?: { event_name?: string; count?: number; first?: number; last?: number };
-  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<Error>;
+  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<undefined>;
 
   /**
    * Create content data export
@@ -1060,7 +1060,7 @@ export type IntercomClient = {
   downloadDataExport: (input: {
     /** job_identifier */
     job_identifier: string;
-  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<unknown>;
+  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<undefined>;
 
   /**
    * Retrieve job status
@@ -1227,7 +1227,7 @@ export type IntercomClient = {
   showCallRecording: (input: {
     /** The id of the call */
     call_id: string;
-  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<Error>;
+  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<unknown>;
 
   /**
    * Get call transcript by call id
@@ -1271,7 +1271,7 @@ export type IntercomClient = {
   deleteTag: (input: {
     /** The unique identifier of a given tag */
     tag_id: string;
-  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<Error>;
+  }, options?: { headers?: { "Intercom-Version"?: "1.0" | "1.1" | "1.2" | "1.3" | "1.4" | "2.0" | "2.1" | "2.2" | "2.3" | "2.4" | "2.5" | "2.6" | "2.7" | "2.8" | "2.9" | "2.10" | "2.11" | "2.12" | "2.13" | "2.14" } }) => Promise<undefined>;
 
   /**
    * List all teams
@@ -1610,7 +1610,7 @@ export type IntercomClient = {
   collectFinVoiceCallByPhoneNumber: (input: {
     /** Phone number in E.164 format */
     phone_number: string;
-  }) => Promise<Error>;
+  }) => Promise<{ type: string; request_id?: string | null; errors: ({ code: string; message?: string | null; field?: string | null })[] }>;
 
   /**
    * Collect Fin Voice calls by conversation ID

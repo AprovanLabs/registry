@@ -168,7 +168,7 @@ github.projects.deleteItemForOrg(input: {
   org: string;
   /** The unique identifier of the project item. */
   item_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/projectsV2/{project_number}/items/{item_id}` · `projects/delete-item-for-org`</sub>
@@ -444,7 +444,7 @@ github.projects.deleteItemForUser(input: {
   username: string;
   /** The unique identifier of the project item. */
   item_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /users/{username}/projectsV2/{project_number}/items/{item_id}` · `projects/delete-item-for-user`</sub>

@@ -1,0 +1,28 @@
+{
+  "measuredAt": "2026-08-03",
+  "stream": "utdk-output-schemas-4",
+  "method": "Count Promise<return> types in packages/utdk/*/types/index.ts. Known = schema | undefined (no-content) | ReadableStream (streaming). Unknown = explicit unknown.",
+  "before": {
+    "total": 9450,
+    "withSchema": 7721,
+    "noContent": 0,
+    "streaming": 0,
+    "unknown": 1729,
+    "known": 7721,
+    "coveragePct": 81.7
+  },
+  "after": {
+    "total": 9450,
+    "withSchema": 7330,
+    "noContent": 590,
+    "streaming": 4,
+    "unknown": 1526,
+    "known": 7924,
+    "coveragePct": 83.9
+  },
+  "returnTypeChangesVsMain": {
+    "total": 645,
+    "providers": 24
+  },
+  "notes": "Stream 7 (digitalocean $ref resolution) targets ~83.9% → ~89%. withSchema dropped because ~590 ops moved from erroneous error-body types to undefined (204/205 no-content)."
+}

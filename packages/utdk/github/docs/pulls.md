@@ -1,6 +1,6 @@
 # Pulls
 
-27 operations · `@utdk/github`
+32 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
@@ -249,7 +249,7 @@ github.pulls.checkIfMerged(input: {
   repo: string;
   /** The number that identifies the pull request. */
   pull_number: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`GET /repos/{owner}/{repo}/pulls/{pull_number}/merge` · `pulls/check-if-merged`</sub>
@@ -563,7 +563,7 @@ github.pulls.deleteReviewComment(input: {
   repo: string;
   /** The unique identifier of the comment. */
   comment_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/pulls/comments/{comment_id}` · `pulls/delete-review-comment`</sub>
@@ -603,6 +603,97 @@ github.pulls.updateReviewComment(input: {
 ```
 
 <sub>`PATCH /repos/{owner}/{repo}/pulls/comments/{comment_id}` · `pulls/update-review-comment`</sub>
+
+## `github.pullRequestStacks.list`
+
+List pull request stacks — [API reference](https://docs.github.com/rest/pulls/stacks#list-pull-request-stacks)
+
+```ts
+github.pullRequestStacks.list(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** Filter to the stack containing this repository pull request number. */
+  pull_request?: number;
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(PullRequestStackMinimal)[]>
+```
+
+<sub>`GET /repos/{owner}/{repo}/stacks` · `pull-request-stacks/list`</sub>
+
+## `github.pullRequestStacks.create`
+
+Create a pull request stack — [API reference](https://docs.github.com/rest/pulls/stacks#create-a-pull-request-stack)
+
+```ts
+github.pullRequestStacks.create(input: {
+  /** An ordered list of pull request numbers forming the stack from bottom to top. */
+  pull_requests: (number)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+}): Promise<{ id: number; number: number; node_id: string; url: string; base: { ref: string }; open: boolean; created_at: string; pull_requests: (PullRequestStackPullRequest)[] }>
+```
+
+<sub>`POST /repos/{owner}/{repo}/stacks` · `pull-request-stacks/create`</sub>
+
+## `github.pullRequestStacks.get`
+
+Get a pull request stack — [API reference](https://docs.github.com/rest/pulls/stacks#get-a-pull-request-stack)
+
+```ts
+github.pullRequestStacks.get(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request stack. */
+  stack_number: number;
+}): Promise<{ id: number; number: number; node_id: string; url: string; base: { ref: string }; open: boolean; created_at: string; pull_requests: (PullRequestStackPullRequest)[] }>
+```
+
+<sub>`GET /repos/{owner}/{repo}/stacks/{stack_number}` · `pull-request-stacks/get`</sub>
+
+## `github.pullRequestStacks.add`
+
+Add pull requests to a pull request stack — [API reference](https://docs.github.com/rest/pulls/stacks#add-pull-requests-to-a-pull-request-stack)
+
+```ts
+github.pullRequestStacks.add(input: {
+  /** An ordered list of pull request numbers to append to the stack, from the current top upward. */
+  pull_requests: (number)[];
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request stack. */
+  stack_number: number;
+}): Promise<{ id: number; number: number; node_id: string; url: string; base: { ref: string }; open: boolean; created_at: string; pull_requests: (PullRequestStackPullRequest)[] }>
+```
+
+<sub>`POST /repos/{owner}/{repo}/stacks/{stack_number}/add` · `pull-request-stacks/add`</sub>
+
+## `github.pullRequestStacks.unstack`
+
+Remove pull requests from a pull request stack — [API reference](https://docs.github.com/rest/pulls/stacks#remove-pull-requests-from-a-pull-request-stack)
+
+```ts
+github.pullRequestStacks.unstack(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the pull request stack. */
+  stack_number: number;
+}): Promise<{ id: number; number: number; node_id: string; url: string; base: { ref: string }; open: boolean; created_at: string; pull_requests: (PullRequestStackPullRequest)[] }>
+```
+
+<sub>`POST /repos/{owner}/{repo}/stacks/{stack_number}/unstack` · `pull-request-stacks/unstack`</sub>
 
 Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 

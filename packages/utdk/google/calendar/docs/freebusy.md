@@ -1,9 +1,9 @@
 # Freebusy
 
-1 operation · `utdk/google/calendar`
+1 operation · `@utdk/clients/google/calendar`
 
 ```ts
-import calendar from "utdk/google/calendar";
+import calendar from "@utdk/clients/google/calendar";
 ```
 
 ## `calendar.calendarFreebusyQuery`

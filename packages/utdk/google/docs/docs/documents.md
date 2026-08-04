@@ -1,9 +1,9 @@
 # Documents
 
-3 operations · `utdk/google/docs`
+3 operations · `@utdk/clients/google/docs`
 
 ```ts
-import docs from "utdk/google/docs";
+import docs from "@utdk/clients/google/docs";
 ```
 
 ## `docs.docsDocumentsCreate`

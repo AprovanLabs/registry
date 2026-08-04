@@ -1,379 +1,76 @@
 # Accounts
 
-## Operations
-
-### `posthog.environmentsAccountsList`
-
-- **HTTP**: `GET /api/environments/{environment_id}/accounts/`
-- **OpenAPI operationId**: `environments_accounts_list`
-- **Path params**: None
-- **Query params**: `account_executive`, `account_owner`, `all_roles_unassigned`, `csm`, `limit`, `offset`, `ordering`, `search`, `tags`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[...`
-- OpenAPI response codes: `200`
+8 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type EnvironmentsAccountsListInput = Parameters<typeof posthog.environmentsAccountsList> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsAccountsListOutput = Awaited<ReturnType<typeof posthog.environmentsAccountsList>>;
-
-const result: EnvironmentsAccountsListOutput = await posthog.environmentsAccountsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[...
 ```
 
-### `posthog.environmentsAccountsCreate`
-
-- **HTTP**: `POST /api/environments/{environment_id}/accounts/`
-- **OpenAPI operationId**: `environments_accounts_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...`
-- OpenAPI response codes: `201`
+## `posthog.accountsList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsAccountsCreateInput = Parameters<typeof posthog.environmentsAccountsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsAccountsCreateOutput = Awaited<ReturnType<typeof posthog.environmentsAccountsCreate>>;
-
-const result: EnvironmentsAccountsCreateOutput = await posthog.environmentsAccountsCreate();
-
-// Result shape (from schema): { id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...
+posthog.accountsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; slack_summary_cadence?: "daily" | "weekly" | "monthly" | null; created_at: string; created_by: number | null; updated_at: string | null })[] }>
 ```
 
-### `posthog.environmentsAccountsDestroy`
+<sub>`GET /api/projects/{project_id}/accounts/` · `accounts_list`</sub>
 
-- **HTTP**: `DELETE /api/environments/{environment_id}/accounts/{id}/`
-- **OpenAPI operationId**: `environments_accounts_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `posthog.accountsCreate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsAccountsDestroyInput = Parameters<typeof posthog.environmentsAccountsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsAccountsDestroyOutput = Awaited<ReturnType<typeof posthog.environmentsAccountsDestroy>>;
-
-const result: EnvironmentsAccountsDestroyOutput = await posthog.environmentsAccountsDestroy();
-
-// Result shape (from schema): unknown
+posthog.accountsCreate(): Promise<{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; slack_summary_cadence?: "daily" | "weekly" | "monthly" | null; created_at: string; created_by: number | null; updated_at: string | null }>
 ```
 
-### `posthog.environmentsAccountsRetrieve`
+<sub>`POST /api/projects/{project_id}/accounts/` · `accounts_create`</sub>
 
-- **HTTP**: `GET /api/environments/{environment_id}/accounts/{id}/`
-- **OpenAPI operationId**: `environments_accounts_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...`
-- OpenAPI response codes: `200`
+## `posthog.accountsDestroy`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsAccountsRetrieveInput = Parameters<typeof posthog.environmentsAccountsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsAccountsRetrieveOutput = Awaited<ReturnType<typeof posthog.environmentsAccountsRetrieve>>;
-
-const result: EnvironmentsAccountsRetrieveOutput = await posthog.environmentsAccountsRetrieve();
-
-// Result shape (from schema): { id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...
+posthog.accountsDestroy(): Promise<unknown>
 ```
 
-### `posthog.environmentsAccountsPartialUpdate`
+<sub>`DELETE /api/projects/{project_id}/accounts/{id}/` · `accounts_destroy`</sub>
 
-- **HTTP**: `PATCH /api/environments/{environment_id}/accounts/{id}/`
-- **OpenAPI operationId**: `environments_accounts_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...`
-- OpenAPI response codes: `200`
+## `posthog.accountsRetrieve`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsAccountsPartialUpdateInput = Parameters<typeof posthog.environmentsAccountsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsAccountsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.environmentsAccountsPartialUpdate>>;
-
-const result: EnvironmentsAccountsPartialUpdateOutput = await posthog.environmentsAccountsPartialUpdate();
-
-// Result shape (from schema): { id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...
+posthog.accountsRetrieve(): Promise<{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; slack_summary_cadence?: "daily" | "weekly" | "monthly" | null; created_at: string; created_by: number | null; updated_at: string | null }>
 ```
 
-### `posthog.environmentsAccountsUpdate`
+<sub>`GET /api/projects/{project_id}/accounts/{id}/` · `accounts_retrieve`</sub>
 
-- **HTTP**: `PUT /api/environments/{environment_id}/accounts/{id}/`
-- **OpenAPI operationId**: `environments_accounts_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...`
-- OpenAPI response codes: `200`
+## `posthog.accountsPartialUpdate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsAccountsUpdateInput = Parameters<typeof posthog.environmentsAccountsUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsAccountsUpdateOutput = Awaited<ReturnType<typeof posthog.environmentsAccountsUpdate>>;
-
-const result: EnvironmentsAccountsUpdateOutput = await posthog.environmentsAccountsUpdate();
-
-// Result shape (from schema): { id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...
+posthog.accountsPartialUpdate(): Promise<{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; slack_summary_cadence?: "daily" | "weekly" | "monthly" | null; created_at: string; created_by: number | null; updated_at: string | null }>
 ```
 
-### `posthog.accountsList`
+<sub>`PATCH /api/projects/{project_id}/accounts/{id}/` · `accounts_partial_update`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/accounts/`
-- **OpenAPI operationId**: `accounts_list`
-- **Path params**: None
-- **Query params**: `account_executive`, `account_owner`, `all_roles_unassigned`, `csm`, `limit`, `offset`, `ordering`, `search`, `tags`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[...`
-- OpenAPI response codes: `200`
+## `posthog.accountsUpdate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsListInput = Parameters<typeof posthog.accountsList> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsListOutput = Awaited<ReturnType<typeof posthog.accountsList>>;
-
-const result: AccountsListOutput = await posthog.accountsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[...
+posthog.accountsUpdate(): Promise<{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; slack_summary_cadence?: "daily" | "weekly" | "monthly" | null; created_at: string; created_by: number | null; updated_at: string | null }>
 ```
 
-### `posthog.accountsCreate`
+<sub>`PUT /api/projects/{project_id}/accounts/{id}/` · `accounts_update`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/accounts/`
-- **OpenAPI operationId**: `accounts_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...`
-- OpenAPI response codes: `201`
+## `posthog.accountsSummariesList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsCreateInput = Parameters<typeof posthog.accountsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsCreateOutput = Awaited<ReturnType<typeof posthog.accountsCreate>>;
-
-const result: AccountsCreateOutput = await posthog.accountsCreate();
-
-// Result shape (from schema): { id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...
+posthog.accountsSummariesList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; slack_channel_id: string; cadence: "daily" | "weekly" | "monthly"; period_start: string; period_end: string; content: string; message_count: number; messages: ({ author: string; sent_at: string; permalink: string })[]; generated_at: string })[] }>
 ```
 
-### `posthog.accountsDestroy`
+<sub>`GET /api/projects/{project_id}/accounts/{id}/summaries/` · `accounts_summaries_list`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/accounts/{id}/`
-- **OpenAPI operationId**: `accounts_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `posthog.accountsSupportTicketsList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type AccountsDestroyInput = Parameters<typeof posthog.accountsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsDestroyOutput = Awaited<ReturnType<typeof posthog.accountsDestroy>>;
-
-const result: AccountsDestroyOutput = await posthog.accountsDestroy();
-
-// Result shape (from schema): unknown
+posthog.accountsSupportTicketsList(): Promise<({ id: string; ticket_number: number; status: string; last_message_at: string | null; last_message_text: string | null; deep_link: string })[]>
 ```
 
-### `posthog.accountsRetrieve`
+<sub>`GET /api/projects/{project_id}/accounts/{id}/support_tickets/` · `accounts_support_tickets_list`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/accounts/{id}/`
-- **OpenAPI operationId**: `accounts_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type AccountsRetrieveInput = Parameters<typeof posthog.accountsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsRetrieveOutput = Awaited<ReturnType<typeof posthog.accountsRetrieve>>;
-
-const result: AccountsRetrieveOutput = await posthog.accountsRetrieve();
-
-// Result shape (from schema): { id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...
-```
-
-### `posthog.accountsPartialUpdate`
-
-- **HTTP**: `PATCH /api/projects/{project_id}/accounts/{id}/`
-- **OpenAPI operationId**: `accounts_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type AccountsPartialUpdateInput = Parameters<typeof posthog.accountsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.accountsPartialUpdate>>;
-
-const result: AccountsPartialUpdateOutput = await posthog.accountsPartialUpdate();
-
-// Result shape (from schema): { id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...
-```
-
-### `posthog.accountsUpdate`
-
-- **HTTP**: `PUT /api/projects/{project_id}/accounts/{id}/`
-- **OpenAPI operationId**: `accounts_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type AccountsUpdateInput = Parameters<typeof posthog.accountsUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type AccountsUpdateOutput = Awaited<ReturnType<typeof posthog.accountsUpdate>>;
-
-const result: AccountsUpdateOutput = await posthog.accountsUpdate();
-
-// Result shape (from schema): { id: string; name: string; external_id?: string | null; properties?: { [key: string]: unknown } | null; tags?: (string)[]; notebooks: (string)[]; created_at: string; created_by: number | null; updated_at: string | null...
-```
-
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

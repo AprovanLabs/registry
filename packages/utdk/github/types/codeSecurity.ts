@@ -1,4 +1,4 @@
-import type { BasicError, CodeScanningDefaultSetupOptions, CodeScanningOptions, CodeSecurityConfiguration, CodeSecurityConfigurationForRepository, CodeSecurityConfigurationRepositories, CodeSecurityDefaultConfigurations } from "./schemas.js";
+import type { CodeScanningDefaultSetupOptions, CodeScanningOptions, CodeSecurityConfiguration, CodeSecurityConfigurationForRepository, CodeSecurityConfigurationRepositories, CodeSecurityDefaultConfigurations } from "./schemas.js";
 
 export type CodeSecurityOperations = {
   /**
@@ -153,7 +153,7 @@ export type CodeSecurityOperations = {
     enterprise: string;
     /** The unique identifier of the code security configuration. */
     configuration_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Attach an enterprise configuration to repositories
@@ -294,7 +294,7 @@ export type CodeSecurityOperations = {
     selected_repository_ids: (number)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get a code security configuration
@@ -377,7 +377,7 @@ export type CodeSecurityOperations = {
     org: string;
     /** The unique identifier of the code security configuration. */
     configuration_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Attach a configuration to repositories

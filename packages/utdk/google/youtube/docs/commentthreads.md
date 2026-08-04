@@ -1,9 +1,9 @@
 # CommentThreads
 
-2 operations · `utdk/google/youtube`
+2 operations · `@utdk/clients/google/youtube`
 
 ```ts
-import youtube from "utdk/google/youtube";
+import youtube from "@utdk/clients/google/youtube";
 ```
 
 ## `youtube.youtubeCommentThreadsList`

@@ -1,9 +1,9 @@
 # Forms
 
-9 operations · `utdk/google/forms`
+9 operations · `@utdk/clients/google/forms`
 
 ```ts
-import forms from "utdk/google/forms";
+import forms from "@utdk/clients/google/forms";
 ```
 
 ## `forms.formsFormsCreate`

@@ -1,6 +1,6 @@
 # Copilot
 
-29 operations · `@utdk/github`
+31 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
@@ -33,6 +33,21 @@ github.copilot.copilotEnterpriseUsageMetrics(input: {
 ```
 
 <sub>`GET /enterprises/{enterprise}/copilot/metrics/reports/enterprise-28-day/latest` · `copilot/copilot-enterprise-usage-metrics`</sub>
+
+## `github.copilot.copilotEnterpriseReposOneDayReport`
+
+Get Copilot enterprise repository report for a specific day — [API reference](https://docs.github.com/rest/copilot/copilot-usage-metrics#get-copilot-enterprise-repository-report-for-a-specific-day)
+
+```ts
+github.copilot.copilotEnterpriseReposOneDayReport(input: {
+  /** The slug version of the enterprise name. */
+  enterprise: string;
+  /** The day to request data for, in `YYYY-MM-DD` format. */
+  day: string;
+}): Promise<CopilotUsageMetrics1DayReport>
+```
+
+<sub>`GET /enterprises/{enterprise}/copilot/metrics/reports/repos-1-day` · `copilot/copilot-enterprise-repos-one-day-report`</sub>
 
 ## `github.copilot.copilotEnterpriseUserTeamsOneDayReport`
 
@@ -87,7 +102,7 @@ github.copilot.setEnterpriseCodingAgentPolicy(input: {
   policy_state: "enabled_for_all_orgs" | "disabled_for_all_orgs" | "enabled_for_selected_orgs" | "configured_by_org_admins";
   /** The slug version of the enterprise name. */
   enterprise: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /enterprises/{enterprise}/copilot/policies/coding_agent` · `copilot/set-enterprise-coding-agent-policy`</sub>
@@ -104,7 +119,7 @@ github.copilot.removeOrganizationsFromEnterpriseCodingAgentPolicy(input: {
   custom_properties?: ({ property_name: string; values: (string)[] })[];
   /** The slug version of the enterprise name. */
   enterprise: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /enterprises/{enterprise}/copilot/policies/coding_agent/organizations` · `copilot/remove-organizations-from-enterprise-coding-agent-policy`</sub>
@@ -121,7 +136,7 @@ github.copilot.addOrganizationsToEnterpriseCodingAgentPolicy(input: {
   custom_properties?: ({ property_name: string; values: (string)[] })[];
   /** The slug version of the enterprise name. */
   enterprise: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /enterprises/{enterprise}/copilot/policies/coding_agent/organizations` · `copilot/add-organizations-to-enterprise-coding-agent-policy`</sub>
@@ -239,7 +254,7 @@ github.copilot.setCopilotCodingAgentPermissionsOrganization(input: {
   enabled_repositories: "all" | "selected" | "none";
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/copilot/coding-agent/permissions` · `copilot/set-copilot-coding-agent-permissions-organization`</sub>
@@ -271,7 +286,7 @@ github.copilot.setCopilotCodingAgentSelectedRepositoriesForOrganization(input: {
   selected_repository_ids: (number)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/copilot/coding-agent/permissions/repositories` · `copilot/set-copilot-coding-agent-selected-repositories-for-organization`</sub>
@@ -286,7 +301,7 @@ github.copilot.disableCopilotCodingAgentForRepositoryInOrganization(input: {
   org: string;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/copilot/coding-agent/permissions/repositories/{repository_id}` · `copilot/disable-copilot-coding-agent-for-repository-in-organization`</sub>
@@ -301,7 +316,7 @@ github.copilot.enableCopilotCodingAgentForRepositoryInOrganization(input: {
   org: string;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/copilot/coding-agent/permissions/repositories/{repository_id}` · `copilot/enable-copilot-coding-agent-for-repository-in-organization`</sub>
@@ -360,6 +375,21 @@ github.copilot.copilotOrganizationUsageMetrics(input: {
 ```
 
 <sub>`GET /orgs/{org}/copilot/metrics/reports/organization-28-day/latest` · `copilot/copilot-organization-usage-metrics`</sub>
+
+## `github.copilot.copilotOrganizationReposOneDayReport`
+
+Get Copilot organization repository report for a specific day — [API reference](https://docs.github.com/rest/copilot/copilot-usage-metrics#get-copilot-organization-repository-report-for-a-specific-day)
+
+```ts
+github.copilot.copilotOrganizationReposOneDayReport(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The day to request data for, in `YYYY-MM-DD` format. */
+  day: string;
+}): Promise<CopilotUsageMetrics1DayReport>
+```
+
+<sub>`GET /orgs/{org}/copilot/metrics/reports/repos-1-day` · `copilot/copilot-organization-repos-one-day-report`</sub>
 
 ## `github.copilot.copilotOrganizationUserTeamsOneDayReport`
 
@@ -429,7 +459,7 @@ github.copilot.getCopilotCloudAgentConfiguration(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}): Promise<{ mcp_configuration: { [key: string]: unknown } | null; enabled_tools: { codeql: boolean; copilot_code_review: boolean; secret_scanning: boolean; dependency_vulnerability_checks: boolean }; require_actions_workflow_approval: boolean; is_firewall_enabled: boolean; is_firewall_recommended_allowlist_enabled: boolean; custom_allowlist: (string)[] }>
+}): Promise<{ mcp_configuration: { [key: string]: unknown } | null; enabled_tools: { codeql: boolean; copilot_code_review: boolean; secret_scanning: boolean; dependency_vulnerability_checks: boolean }; require_actions_workflow_approval: boolean; is_firewall_enabled: boolean; is_firewall_recommended_allowlist_enabled: boolean; custom_allowlist: (string)[]; is_automations_enabled: boolean; require_write_access...>
 ```
 
 <sub>`GET /repos/{owner}/{repo}/copilot/cloud-agent/configuration` · `copilot/get-copilot-cloud-agent-configuration`</sub>

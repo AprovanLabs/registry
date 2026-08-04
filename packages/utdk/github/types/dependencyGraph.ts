@@ -1,4 +1,4 @@
-import type { BasicError, DependencyGraphDiff, DependencyGraphSpdxSbom, Manifest, Metadata } from "./schemas.js";
+import type { DependencyGraphDiff, DependencyGraphSpdxSbom, Manifest, Metadata } from "./schemas.js";
 
 export type DependencyGraphOperations = {
   /**
@@ -38,7 +38,7 @@ export type DependencyGraphOperations = {
     repo: string;
     /** The unique identifier of the SBOM export. */
     sbom_uuid: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Request generation of a software bill of materials (SBOM) for a repository.

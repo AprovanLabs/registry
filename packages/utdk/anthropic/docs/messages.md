@@ -24,7 +24,7 @@ anthropic.createMessage(input: {
   stop_sequences?: (string)[];
   stream?: boolean;
   metadata?: { user_id?: string };
-}, options: { headers: { "anthropic-version": string } }): Promise<Message>
+}, options: { headers: { "anthropic-version": string } }): Promise<ReadableStream<Uint8Array>>
 ```
 
 <sub>`POST /v1/messages` · `createMessage`</sub>

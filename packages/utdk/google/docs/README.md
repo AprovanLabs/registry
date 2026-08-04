@@ -1,11 +1,11 @@
 # Google Docs API
 
-`utdk/google/docs` — a typed SDK generated from the provider's OpenAPI spec. This client wraps the provider API in typed methods focused on Documents.
+`@utdk/clients/google/docs` — a typed SDK generated from the provider's OpenAPI spec. This client wraps the provider API in typed methods focused on Documents.
 
 ## Quick start
 
 ```ts
-import docs from "utdk/google/docs";
+import docs from "@utdk/clients/google/docs";
 
 const result = await docs.docsDocumentsGet({ /* documentId */ });
 ```

@@ -1,193 +1,90 @@
 # Custom Property Sources
 
-## Operations
-
-### `posthog.customPropertySourcesList`
-
-- **HTTP**: `GET /api/projects/{project_id}/custom_property_sources/`
-- **OpenAPI operationId**: `custom_property_sources_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; definition: string; saved_query: string; source_column: string; key_column: string; is_enabled?: boolean; consecutive_failures: nu...`
-- OpenAPI response codes: `200`
+9 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type CustomPropertySourcesListInput = Parameters<typeof posthog.customPropertySourcesList> extends [infer T, ...unknown[]] ? T : undefined;
-type CustomPropertySourcesListOutput = Awaited<ReturnType<typeof posthog.customPropertySourcesList>>;
-
-const result: CustomPropertySourcesListOutput = await posthog.customPropertySourcesList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: string; definition: string; saved_query: string; source_column: string; key_column: string; is_enabled?: boolean; consecutive_failures: nu...
 ```
 
-### `posthog.customPropertySourcesCreate`
-
-- **HTTP**: `POST /api/projects/{project_id}/custom_property_sources/`
-- **OpenAPI operationId**: `custom_property_sources_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; definition: string; saved_query: string; source_column: string; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; create...`
-- OpenAPI response codes: `201`
+## `posthog.customPropertySourcesList`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type CustomPropertySourcesCreateInput = Parameters<typeof posthog.customPropertySourcesCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type CustomPropertySourcesCreateOutput = Awaited<ReturnType<typeof posthog.customPropertySourcesCreate>>;
-
-const result: CustomPropertySourcesCreateOutput = await posthog.customPropertySourcesCreate();
-
-// Result shape (from schema): { id: string; definition: string; saved_query: string; source_column: string; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; create...
+posthog.customPropertySourcesList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; definition: string; saved_query?: string | null; external_data_schema?: string | null; source_column?: string | null; column_property_map?: unknown; column_descriptions?: unknown; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | n...>
 ```
 
-### `posthog.customPropertySourcesDestroy`
+<sub>`GET /api/projects/{project_id}/custom_property_sources/` · `custom_property_sources_list`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/custom_property_sources/{id}/`
-- **OpenAPI operationId**: `custom_property_sources_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+## `posthog.customPropertySourcesCreate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type CustomPropertySourcesDestroyInput = Parameters<typeof posthog.customPropertySourcesDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type CustomPropertySourcesDestroyOutput = Awaited<ReturnType<typeof posthog.customPropertySourcesDestroy>>;
-
-const result: CustomPropertySourcesDestroyOutput = await posthog.customPropertySourcesDestroy();
-
-// Result shape (from schema): unknown
+posthog.customPropertySourcesCreate(): Promise<{ id: string; definition: string; saved_query?: string | null; external_data_schema?: string | null; source_column?: string | null; column_property_map?: unknown; column_descriptions?: unknown; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; created_at: string; created_by: number | null; updated_at: string | nu...>
 ```
 
-### `posthog.customPropertySourcesRetrieve`
+<sub>`POST /api/projects/{project_id}/custom_property_sources/` · `custom_property_sources_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/custom_property_sources/{id}/`
-- **OpenAPI operationId**: `custom_property_sources_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; definition: string; saved_query: string; source_column: string; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; create...`
-- OpenAPI response codes: `200`
+## `posthog.customPropertySourcesDestroy`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type CustomPropertySourcesRetrieveInput = Parameters<typeof posthog.customPropertySourcesRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type CustomPropertySourcesRetrieveOutput = Awaited<ReturnType<typeof posthog.customPropertySourcesRetrieve>>;
-
-const result: CustomPropertySourcesRetrieveOutput = await posthog.customPropertySourcesRetrieve();
-
-// Result shape (from schema): { id: string; definition: string; saved_query: string; source_column: string; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; create...
+posthog.customPropertySourcesDestroy(): Promise<unknown>
 ```
 
-### `posthog.customPropertySourcesPartialUpdate`
+<sub>`DELETE /api/projects/{project_id}/custom_property_sources/{id}/` · `custom_property_sources_destroy`</sub>
 
-- **HTTP**: `PATCH /api/projects/{project_id}/custom_property_sources/{id}/`
-- **OpenAPI operationId**: `custom_property_sources_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; definition: string; saved_query: string; source_column: string; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; create...`
-- OpenAPI response codes: `200`
+## `posthog.customPropertySourcesRetrieve`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type CustomPropertySourcesPartialUpdateInput = Parameters<typeof posthog.customPropertySourcesPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type CustomPropertySourcesPartialUpdateOutput = Awaited<ReturnType<typeof posthog.customPropertySourcesPartialUpdate>>;
-
-const result: CustomPropertySourcesPartialUpdateOutput = await posthog.customPropertySourcesPartialUpdate();
-
-// Result shape (from schema): { id: string; definition: string; saved_query: string; source_column: string; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; create...
+posthog.customPropertySourcesRetrieve(): Promise<{ id: string; definition: string; saved_query?: string | null; external_data_schema?: string | null; source_column?: string | null; column_property_map?: unknown; column_descriptions?: unknown; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; created_at: string; created_by: number | null; updated_at: string | nu...>
 ```
 
-### `posthog.customPropertySourcesUpdate`
+<sub>`GET /api/projects/{project_id}/custom_property_sources/{id}/` · `custom_property_sources_retrieve`</sub>
 
-- **HTTP**: `PUT /api/projects/{project_id}/custom_property_sources/{id}/`
-- **OpenAPI operationId**: `custom_property_sources_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; definition: string; saved_query: string; source_column: string; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; create...`
-- OpenAPI response codes: `200`
+## `posthog.customPropertySourcesPartialUpdate`
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type CustomPropertySourcesUpdateInput = Parameters<typeof posthog.customPropertySourcesUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type CustomPropertySourcesUpdateOutput = Awaited<ReturnType<typeof posthog.customPropertySourcesUpdate>>;
-
-const result: CustomPropertySourcesUpdateOutput = await posthog.customPropertySourcesUpdate();
-
-// Result shape (from schema): { id: string; definition: string; saved_query: string; source_column: string; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; create...
+posthog.customPropertySourcesPartialUpdate(): Promise<{ id: string; definition: string; saved_query?: string | null; external_data_schema?: string | null; source_column?: string | null; column_property_map?: unknown; column_descriptions?: unknown; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; created_at: string; created_by: number | null; updated_at: string | nu...>
 ```
 
+<sub>`PATCH /api/projects/{project_id}/custom_property_sources/{id}/` · `custom_property_sources_partial_update`</sub>
+
+## `posthog.customPropertySourcesUpdate`
+
+```ts
+posthog.customPropertySourcesUpdate(): Promise<{ id: string; definition: string; saved_query?: string | null; external_data_schema?: string | null; source_column?: string | null; column_property_map?: unknown; column_descriptions?: unknown; key_column: string; is_enabled?: boolean; consecutive_failures: number; last_synced_at: string | null; last_sync_error: string | null; created_at: string; created_by: number | null; updated_at: string | nu...>
+```
+
+<sub>`PUT /api/projects/{project_id}/custom_property_sources/{id}/` · `custom_property_sources_update`</sub>
+
+## `posthog.customPropertySourcesBackfill`
+
+Person and group sources only: start a backfill that reads the whole warehouse table and populates person or group properties for historical rows. Coalesces if one is already running for the table.
+
+```ts
+posthog.customPropertySourcesBackfill(): Promise<unknown>
+```
+
+<sub>`POST /api/projects/{project_id}/custom_property_sources/{id}/backfill/` · `custom_property_sources_backfill`</sub>
+
+## `posthog.customPropertySourcesRunsList`
+
+Person and group sources only: the source's sync/backfill run history, newest first. Gated on the caller's warehouse-source viewer access, since the runs expose its row counts and sync errors.
+
+```ts
+posthog.customPropertySourcesRunsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: string; trigger: string; status: string; started_at: string | null; finished_at: string | null; rows_read: number; changed: number; existing: number; produced: number; skipped_missing_person: number; error: string | null; created_at: string })[] }>
+```
+
+<sub>`GET /api/projects/{project_id}/custom_property_sources/{id}/runs/` · `custom_property_sources_runs_list`</sub>
+
+## `posthog.customPropertySourcesSync`
+
+Person and group sources only: trigger the underlying warehouse schema's sync now. This re-runs a real (billable) warehouse sync; the incremental person/group-property update runs off it.
+
+```ts
+posthog.customPropertySourcesSync(): Promise<unknown>
+```
+
+<sub>`POST /api/projects/{project_id}/custom_property_sources/{id}/sync/` · `custom_property_sources_sync`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

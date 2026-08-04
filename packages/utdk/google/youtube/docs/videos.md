@@ -1,9 +1,9 @@
 # Videos
 
-7 operations · `utdk/google/youtube`
+7 operations · `@utdk/clients/google/youtube`
 
 ```ts
-import youtube from "utdk/google/youtube";
+import youtube from "@utdk/clients/google/youtube";
 ```
 
 ## `youtube.youtubeVideosDelete`
@@ -37,7 +37,7 @@ youtube.youtubeVideosDelete(input: {
   id: string;
   /** *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner. */
   onBehalfOfContentOwner?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /youtube/v3/videos` · `youtube.videos.delete`</sub>
@@ -319,7 +319,7 @@ youtube.youtubeVideosRate(input: {
   uploadType?: string;
   id: string;
   rating: "none" | "like" | "dislike";
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /youtube/v3/videos/rate` · `youtube.videos.rate`</sub>
@@ -364,7 +364,7 @@ youtube.youtubeVideosReportAbuse(input: {
   uploadType?: string;
   /** *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner. */
   onBehalfOfContentOwner?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /youtube/v3/videos/reportAbuse` · `youtube.videos.reportAbuse`</sub>

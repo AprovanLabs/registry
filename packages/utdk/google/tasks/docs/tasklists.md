@@ -1,9 +1,9 @@
 # Tasklists
 
-6 operations · `utdk/google/tasks`
+6 operations · `@utdk/clients/google/tasks`
 
 ```ts
-import tasks from "utdk/google/tasks";
+import tasks from "@utdk/clients/google/tasks";
 ```
 
 ## `tasks.tasksTasklistsList`
@@ -118,7 +118,7 @@ tasks.tasksTasklistsDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /tasks/v1/users/@me/lists/{tasklist}` · `tasks.tasklists.delete`</sub>

@@ -40,7 +40,7 @@ export type EnterpriseTeamOrganizationsOperations = {
     enterprise: string;
     /** The slug version of the enterprise team name. You can also substitute this value with the enterprise team id. */
     "enterprise-team": string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get organization assignment
@@ -79,5 +79,5 @@ export type EnterpriseTeamOrganizationsOperations = {
     "enterprise-team": string;
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 };

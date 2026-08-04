@@ -1,711 +1,312 @@
 # Engineering Analytics
 
-## Operations
-
-### `posthog.engineeringAnalyticsAuthorWorkflowCosts`
-
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/author_workflow_costs/`
-- **What it does**: One author's estimated CI cost split by workflow over a window (date_from default -30d), highest spend first. Runs are attributed to the author through their pull requests (attribution is by PR number). Returns an empty list when the job-level source isn't synced.
-- **OpenAPI operationId**: `engineering_analytics_author_workflow_costs`
-- **Path params**: None
-- **Query params**: `author`, `date_from`, `date_to`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ workflow_name: string; billable_minutes: number; estimated_cost_usd: number | null; costed_jobs: number; unsettled_jobs: number; excluded_jobs: number })[]`
-- OpenAPI response codes: `200`, `400`
+30 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsAuthorWorkflowCostsInput = Parameters<typeof posthog.engineeringAnalyticsAuthorWorkflowCosts> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsAuthorWorkflowCostsOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsAuthorWorkflowCosts>>;
-
-const result: EngineeringAnalyticsAuthorWorkflowCostsOutput = await posthog.engineeringAnalyticsAuthorWorkflowCosts();
-
-// Result shape (from schema): ({ workflow_name: string; billable_minutes: number; estimated_cost_usd: number | null; costed_jobs: number; unsettled_jobs: number; excluded_jobs: number })[]
 ```
 
-### `posthog.engineeringAnalyticsCiCards`
+## `posthog.engineeringAnalyticsAuthorWorkflowCosts`
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/ci_cards/`
-- **What it does**: Headline counts for the open-PR backlog: open PRs, distinct repos, stuck PRs (open, non-draft, non-bot, older than 7 days), and PRs with failing CI. The failing-CI count rests on the head-SHA join and can lag until late CI completions settle.
-- **OpenAPI operationId**: `engineering_analytics_ci_cards`
-- **Path params**: None
-- **Query params**: `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ open_prs: number; repos: number; stuck: number; failing_ci: number }`
-- OpenAPI response codes: `200`, `400`
+One author's estimated CI cost split by workflow over a window (date_from default -30d), highest spend first. Runs are attributed to the author through their pull requests (attribution is by PR number). Returns an empty list when the job-level source isn't synced.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsCiCardsInput = Parameters<typeof posthog.engineeringAnalyticsCiCards> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsCiCardsOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsCiCards>>;
-
-const result: EngineeringAnalyticsCiCardsOutput = await posthog.engineeringAnalyticsCiCards();
-
-// Result shape (from schema): { open_prs: number; repos: number; stuck: number; failing_ci: number }
+posthog.engineeringAnalyticsAuthorWorkflowCosts(): Promise<({ workflow_name: string; billable_minutes: number; estimated_cost_usd: number | null; costed_jobs: number; unsettled_jobs: number; excluded_jobs: number })[]>
 ```
 
-### `posthog.engineeringAnalyticsCiFailureLogs`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/author_workflow_costs/` · `engineering_analytics_author_workflow_costs`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/ci_failure_logs/`
-- **What it does**: The thinned CI failure logs for a pull request, grouped by failed job. Resolves the PR to its workflow runs via the pull_requests association (all of the PR's pushes, not just the latest commit), then reads the Logs product joined on run_id. Returns failed jobs only (the worker fetches logs for failures); logs_available is false when CI hasn't failed, the logs aged out of the short Logs retention, or a fork PR has no run association. Each line carries its original 1-based line number in the full pre-thinning log; lines are the failure region (errors plus surrounding context, with omission markers), capped per job and overall.
-- **OpenAPI operationId**: `engineering_analytics_ci_failure_logs`
-- **Path params**: None
-- **Query params**: `pr_number`, `repo`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsBrokenTests`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ repo: { provider: string; owner: string; name: string }; jobs: ({ lines: ({ original_line: number | null; text: string })[]; job_id: number; run_id: number; conclusion: string; branch: string; original_total_lines: nu...`
-- OpenAPI response codes: `200`, `400`
+The broken-tests triage panel: live CI failures over the last 2 days grouped into distinct failures (by test id + normalized error signature) and classified by how each is behaving right now — breaking trunk, a new failure spreading across branches, probably-resolved, flaky, or one PR's own problem — ranked with the most urgent first. Also returns breaking_master_jobs, the default-branch jobs whose latest run is red. Reach for this to answer 'what CI failures should I care about right now'; expand a row's latest_run_id via run_failure_logs for the failing lines. Fingerprinting is pytest-only for now (jest/playwright/cargo failures aren't grouped yet), and the breaking/resolved distinction needs the job-level source synced — without it those failures fall through to flaky/pr_only rather than being misreported.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsCiFailureLogsInput = Parameters<typeof posthog.engineeringAnalyticsCiFailureLogs> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsCiFailureLogsOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsCiFailureLogs>>;
-
-const result: EngineeringAnalyticsCiFailureLogsOutput = await posthog.engineeringAnalyticsCiFailureLogs();
-
-// Result shape (from schema): { repo: { provider: string; owner: string; name: string }; jobs: ({ lines: ({ original_line: number | null; text: string })[]; job_id: number; run_id: number; conclusion: string; branch: string; original_total_lines: nu...
+posthog.engineeringAnalyticsBrokenTests(): Promise<{ rows: ({ fingerprint: string; test_id: string; error_signature: string; job_name: string; repo: string; state: "breaking_master" | "novel_burst" | "potentially_resolved" | "flaky" | "pr_only"; first_seen: string; last_seen: string; occurrences: number; branches: number; master_hits: number; latest_run_id: number; latest_branch: string; trend_24h?: (number)[] })[]; breaking_master_jobs: (string)...>
 ```
 
-### `posthog.engineeringAnalyticsFlakyTests`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/broken_tests/` · `engineering_analytics_broken_tests`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/flaky_tests/`
-- **What it does**: The flaky-test leaderboard: backend tests ranked by flakiness signal from the per-test CI spans, over a window (default -7d, maximum 30 days). A test qualifies by passing on retry at least min_rerun_passes times OR failing on at least min_failed_prs distinct PRs. All figures are absolute counts, never rates: fast passing runs are not emitted, so denominators are biased. Pass-on-retry counts only flow from CI lanes running with reruns enabled; in other lanes a flake surfaces as a plain failure, which the distinct-PR count catches.
-- **OpenAPI operationId**: `engineering_analytics_flaky_tests`
-- **Path params**: None
-- **Query params**: `date_from`, `date_to`, `limit`, `min_failed_prs`, `min_rerun_passes`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsCiCards`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ items: ({ nodeid: string; selector: string; rerun_passed_count: number; failed_count: number; failed_pr_count: number; branch_count: number; xfailed_count: number; last_seen_at: string })[]; truncated: boolean; limit:...`
-- OpenAPI response codes: `200`, `400`
+Headline counts for the open-PR backlog: open PRs, distinct repos, stuck PRs (open, non-draft, non-bot, older than 7 days), and PRs with failing CI. The failing-CI count rests on the head-SHA join and can lag until late CI completions settle.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsFlakyTestsInput = Parameters<typeof posthog.engineeringAnalyticsFlakyTests> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsFlakyTestsOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsFlakyTests>>;
-
-const result: EngineeringAnalyticsFlakyTestsOutput = await posthog.engineeringAnalyticsFlakyTests();
-
-// Result shape (from schema): { items: ({ nodeid: string; selector: string; rerun_passed_count: number; failed_count: number; failed_pr_count: number; branch_count: number; xfailed_count: number; last_seen_at: string })[]; truncated: boolean; limit:...
+posthog.engineeringAnalyticsCiCards(): Promise<{ open_prs: number; repos: number; stuck: number; failing_ci: number }>
 ```
 
-### `posthog.engineeringAnalyticsJobAggregates`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/ci_cards/` · `engineering_analytics_ci_cards`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/job_aggregates/`
-- **What it does**: Per-job aggregates for one workflow over a window (default -30d), one row per de-sharded job name (matrix shards aggregate together), busiest first: queue p50, duration p50/p95, failure rate, retry pressure, run share (below 1.0 = conditional job), and billable cost. Jobs always need their run as context — this is the aggregate view; use workflow_jobs for one run's jobs. Empty when the job-level source isn't synced.
-- **OpenAPI operationId**: `engineering_analytics_job_aggregates`
-- **Path params**: None
-- **Query params**: `branch`, `date_from`, `date_to`, `source_id`, `workflow_name`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsCiFailureLogs`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ job_name: string; job_count: number; shard_count: number; runs_in: number; run_share: number | null; queue_p50_seconds: number | null; p50_seconds: number | null; p95_seconds: number | null; failure_rate: number | nu...`
-- OpenAPI response codes: `200`, `400`
+The thinned CI failure logs for a pull request, grouped by failed job. Resolves the PR to its workflow runs via the pull_requests association (all of the PR's pushes, not just the latest commit), then reads the Logs product joined on run_id. Returns failed jobs only (the worker fetches logs for failures); logs_available is false when CI hasn't failed, the logs aged out of the short Logs retention, or a fork PR has no run association. Each line carries its original 1-based line number in the full pre-thinning log; lines are the failure region (errors plus surrounding context, with omission markers), capped per job and overall.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsJobAggregatesInput = Parameters<typeof posthog.engineeringAnalyticsJobAggregates> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsJobAggregatesOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsJobAggregates>>;
-
-const result: EngineeringAnalyticsJobAggregatesOutput = await posthog.engineeringAnalyticsJobAggregates();
-
-// Result shape (from schema): ({ job_name: string; job_count: number; shard_count: number; runs_in: number; run_share: number | null; queue_p50_seconds: number | null; p50_seconds: number | null; p95_seconds: number | null; failure_rate: number | nu...
+posthog.engineeringAnalyticsCiFailureLogs(): Promise<{ repo: { provider: string; owner: string; name: string }; jobs: ({ lines: ({ original_line: number | null; text: string })[]; job_id: number; run_id: number; conclusion: string; branch: string; original_total_lines: number; line_count: number; truncated: boolean })[]; pr_number: number; runs_attributed: number; logs_available: boolean; truncated: boolean }>
 ```
 
-### `posthog.engineeringAnalyticsMasterFailures`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/ci_failure_logs/` · `engineering_analytics_ci_failure_logs`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/master_failures/`
-- **What it does**: Default-branch failures over a window (default -24h), grouped error-tracking style by (workflow, de-sharded failing job) with a run count and first/last seen, newest group first. `branch` overrides the detected default branch. PR-branch failures are deliberately excluded — at monorepo volume a flat feed is a firehose; those surface per PR. Groups degrade to workflow level (failed_job '') when the job-level source isn't synced.
-- **OpenAPI operationId**: `engineering_analytics_master_failures`
-- **Path params**: None
-- **Query params**: `branch`, `date_from`, `date_to`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsCiSignalsConfigRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ repo: { provider: string; owner: string; name: string }; workflow_name: string; failed_job: string; run_count: number; first_seen: string; last_seen: string; latest_run_id: number })[]`
-- OpenAPI response codes: `200`, `400`
+Return the atomic CI Signals configuration and aggregate GitHub warehouse sync status.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsMasterFailuresInput = Parameters<typeof posthog.engineeringAnalyticsMasterFailures> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsMasterFailuresOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsMasterFailures>>;
-
-const result: EngineeringAnalyticsMasterFailuresOutput = await posthog.engineeringAnalyticsMasterFailures();
-
-// Result shape (from schema): ({ repo: { provider: string; owner: string; name: string }; workflow_name: string; failed_job: string; run_count: number; first_seen: string; last_seen: string; latest_run_id: number })[]
+posthog.engineeringAnalyticsCiSignalsConfigRetrieve(): Promise<{ configured: boolean; enabled: boolean; sync_status: "running" | "completed" | "failed" | null }>
 ```
 
-### `posthog.engineeringAnalyticsPrCost`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/ci-signals-config/` · `engineering_analytics_ci_signals_config_retrieve`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/pr_cost/`
-- **What it does**: Estimated CI cost for a pull request, summed over the jobs of all its workflow runs. Billable self-hosted Linux runners only — provider-hosted (free GitHub-hosted) and non-Linux jobs are excluded. Every figure is zero/null with `jobs_available` false when the job-level source isn't synced yet.
-- **OpenAPI operationId**: `engineering_analytics_pr_cost`
-- **Path params**: None
-- **Query params**: `pr_number`, `repo`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsCiSignalsConfigUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ by_workflow: ({ workflow_name: string; billable_minutes: number; estimated_cost_usd: number | null; costed_jobs: number; unsettled_jobs: number; excluded_jobs: number })[]; by_run: ({ run_id: number; run_attempt: numb...`
-- OpenAPI response codes: `200`, `400`
+Enable or disable all CI signal detectors in one transaction.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsPrCostInput = Parameters<typeof posthog.engineeringAnalyticsPrCost> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsPrCostOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsPrCost>>;
-
-const result: EngineeringAnalyticsPrCostOutput = await posthog.engineeringAnalyticsPrCost();
-
-// Result shape (from schema): { by_workflow: ({ workflow_name: string; billable_minutes: number; estimated_cost_usd: number | null; costed_jobs: number; unsettled_jobs: number; excluded_jobs: number })[]; by_run: ({ run_id: number; run_attempt: numb...
+posthog.engineeringAnalyticsCiSignalsConfigUpdate(): Promise<{ configured: boolean; enabled: boolean; sync_status: "running" | "completed" | "failed" | null }>
 ```
 
-### `posthog.engineeringAnalyticsPrLifecycle`
+<sub>`PUT /api/projects/{project_id}/engineering_analytics/ci-signals-config/` · `engineering_analytics_ci_signals_config_update`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/pr_lifecycle/`
-- **What it does**: The timeline of a single pull request: header plus ordered events (opened, CI started/finished, merged or closed). Use this to answer 'where is this PR stuck and what happened to it'. This is a partial view: review and comment events are not yet available.
-- **OpenAPI operationId**: `engineering_analytics_pr_lifecycle`
-- **Path params**: None
-- **Query params**: `pr_number`, `repo`, `source_id`
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsCurrentBranchHealth`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ pull_request: { author: { handle: string; display_name: string; avatar_url: string; is_bot: boolean }; repo: { provider: string; owner: string; name: string }; id: number; number: number; title: string; state: "open" ...`
-- OpenAPI response codes: `200`, `400`, `404`
+Current default-branch CI verdict over the fixed last-24-hours window. Counts every workflow whose latest completed run failed or timed out; failing workflow names are a bounded preview. The default branch is detected from the same window, independently of analytics date filters.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsPrLifecycleInput = Parameters<typeof posthog.engineeringAnalyticsPrLifecycle> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsPrLifecycleOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsPrLifecycle>>;
-
-const result: EngineeringAnalyticsPrLifecycleOutput = await posthog.engineeringAnalyticsPrLifecycle();
-
-// Result shape (from schema): { pull_request: { author: { handle: string; display_name: string; avatar_url: string; is_bot: boolean }; repo: { provider: string; owner: string; name: string }; id: number; number: number; title: string; state: "open" ...
+posthog.engineeringAnalyticsCurrentBranchHealth(): Promise<{ default_branch: string; settled_workflows: number; failing_workflows: number; failing_workflow_names: (string)[] }>
 ```
 
-### `posthog.engineeringAnalyticsPrRuns`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/current_branch_health/` · `engineering_analytics_current_branch_health`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/pr_runs/`
-- **What it does**: Every workflow run attributed to a pull request, across all its commits (grouped by head SHA client-side), newest first. Run-level only.
-- **OpenAPI operationId**: `engineering_analytics_pr_runs`
-- **Path params**: None
-- **Query params**: `pr_number`, `repo`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsFlakyTests`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ repo: { provider: string; owner: string; name: string }; id: number; workflow_name: string; head_sha: string; head_branch: string; status: string; conclusion: string | null; run_started_at: string | null; updated_at:...`
-- OpenAPI response codes: `200`, `400`
+The active test-health queue: pytest and Jest tests worth acting on now, from the per-test CI spans, over a window (default -7d, maximum 30 days). Evidence is counted per CI run, never per span or run attempt. A test is a 'confirmed_flake' when one commit both failed and passed it (a 'Re-run failed jobs' attempt went green, or an in-job retry recovered it); 'quarantined' when a tolerated failure is recorded while it is masked; otherwise 'suspected_regression'. It qualifies on any same-commit recovery, any master/main failure, a quarantined failure, or failures on at least min_failed_prs distinct PRs. Counts are absolute, never rates: CI emits every failure but omits ordinary passing spans, so there is no execution denominator. 'suspected_regression' means no recovery was recorded in this data, not that the test never flakes.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsPrRunsInput = Parameters<typeof posthog.engineeringAnalyticsPrRuns> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsPrRunsOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsPrRuns>>;
-
-const result: EngineeringAnalyticsPrRunsOutput = await posthog.engineeringAnalyticsPrRuns();
-
-// Result shape (from schema): ({ repo: { provider: string; owner: string; name: string }; id: number; workflow_name: string; head_sha: string; head_branch: string; status: string; conclusion: string | null; run_started_at: string | null; updated_at:...
+posthog.engineeringAnalyticsFlakyTests(): Promise<{ items: ({ runner: "pytest" | "jest"; nodeid: string; selector: string; classification: "confirmed_flake" | "suspected_regression" | "quarantined"; same_commit_recovery_run_count: number; failed_run_count: number; failed_pr_count: number; master_failed_run_count: number; quarantined_failed_run_count: number; last_signal_at: string })[]; truncated: boolean; limit: number }>
 ```
 
-### `posthog.engineeringAnalyticsPullRequests`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/flaky_tests/` · `engineering_analytics_flaky_tests`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/pull_requests/`
-- **What it does**: Open pull requests plus any merged or closed since date_from (default -30d), newest first, each with its head-SHA CI rollup. The list is capped; when more match, `truncated` is true and the ci_cards counts can exceed it. open_to_merge_seconds is coarse — it fuses draft and ready-for-review time; CI counts can lag until late completions settle.
-- **OpenAPI operationId**: `engineering_analytics_pull_requests`
-- **Path params**: None
-- **Query params**: `author`, `date_from`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsJobAggregates`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ items: ({ author: { handle: string; display_name: string; avatar_url: string; is_bot: boolean }; repo: { provider: string; owner: string; name: string }; ci: { runs: number; passing: number; failing: number; pending: ...`
-- OpenAPI response codes: `200`, `400`
+Per-job aggregates for one workflow over a window (default -30d), one row per de-sharded job name (matrix shards aggregate together), busiest first: queue p50, duration p50/p95, failure rate, retry pressure, run share (below 1.0 = conditional job), and billable cost. Jobs always need their run as context — this is the aggregate view; use workflow_jobs for one run's jobs. Empty when the job-level source isn't synced.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsPullRequestsInput = Parameters<typeof posthog.engineeringAnalyticsPullRequests> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsPullRequestsOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsPullRequests>>;
-
-const result: EngineeringAnalyticsPullRequestsOutput = await posthog.engineeringAnalyticsPullRequests();
-
-// Result shape (from schema): { items: ({ author: { handle: string; display_name: string; avatar_url: string; is_bot: boolean }; repo: { provider: string; owner: string; name: string }; ci: { runs: number; passing: number; failing: number; pending: ...
+posthog.engineeringAnalyticsJobAggregates(): Promise<({ job_name: string; job_count: number; shard_count: number; runs_in: number; run_share: number | null; queue_p50_seconds: number | null; p50_seconds: number | null; p95_seconds: number | null; failure_rate: number | null; retry_job_count: number; billable_minutes: number | null; estimated_cost_usd: number | null })[]>
 ```
 
-### `posthog.engineeringAnalyticsQuarantine`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/job_aggregates/` · `engineering_analytics_job_aggregates`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/quarantine/`
-- **What it does**: Flaky-test quarantine file
-- **OpenAPI operationId**: `engineering_analytics_quarantine`
-- **Path params**: None
-- **Query params**: `repo`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsMasterFailures`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ entries: ({ id: string; runner: string; reason: string; owner: string; issue: string; added: string; expires: string; mode: "run" | "skip"; lifecycle: "active" | "expiring_soon" | "in_grace" | "overdue"; days_until_ex...`
-- OpenAPI response codes: `200`, `400`
+Default-branch failures over a window (default -24h), grouped error-tracking style by (workflow, de-sharded failing job) with a run count and first/last seen, newest group first. `branch` overrides the detected default branch. PR-branch failures are deliberately excluded — at monorepo volume a flat feed is a firehose; those surface per PR. Groups degrade to workflow level (failed_job '') when the job-level source isn't synced.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsQuarantineInput = Parameters<typeof posthog.engineeringAnalyticsQuarantine> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsQuarantineOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsQuarantine>>;
-
-const result: EngineeringAnalyticsQuarantineOutput = await posthog.engineeringAnalyticsQuarantine();
-
-// Result shape (from schema): { entries: ({ id: string; runner: string; reason: string; owner: string; issue: string; added: string; expires: string; mode: "run" | "skip"; lifecycle: "active" | "expiring_soon" | "in_grace" | "overdue"; days_until_ex...
+posthog.engineeringAnalyticsMasterFailures(): Promise<({ repo: { provider: string; owner: string; name: string }; workflow_name: string; failed_job: string; run_count: number; first_seen: string; last_seen: string; latest_run_id: number })[]>
 ```
 
-### `posthog.engineeringAnalyticsQuarantineRequest`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/master_failures/` · `engineering_analytics_master_failures`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/engineering_analytics/quarantine/request/`
-- **What it does**: Quarantine, extend, or unquarantine a flaky test
-- **OpenAPI operationId**: `engineering_analytics_quarantine_request`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsPrCost`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ pr_url: string; issue_url: string; branch: string }`
-- OpenAPI response codes: `201`, `400`
+Estimated CI cost for a pull request, summed over the jobs of all its workflow runs. Billable self-hosted Linux runners only — provider-hosted (free GitHub-hosted) and non-Linux jobs are excluded. Every figure is zero/null with `jobs_available` false when the job-level source isn't synced yet. `llm_spend` carries the agent LLM token spend attributed to the PR by git branch, or null when no `$ai_generation` event matched.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsQuarantineRequestInput = Parameters<typeof posthog.engineeringAnalyticsQuarantineRequest> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsQuarantineRequestOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsQuarantineRequest>>;
-
-const result: EngineeringAnalyticsQuarantineRequestOutput = await posthog.engineeringAnalyticsQuarantineRequest();
-
-// Result shape (from schema): { pr_url: string; issue_url: string; branch: string }
+posthog.engineeringAnalyticsPrCost(): Promise<{ by_workflow: ({ workflow_name: string; billable_minutes: number; estimated_cost_usd: number | null; costed_jobs: number; unsettled_jobs: number; excluded_jobs: number })[]; by_run: ({ run_id: number; run_attempt: number; billable_minutes: number; estimated_cost_usd: number | null })[]; llm_spend?: { cost_usd: number; input_tokens: number; output_tokens: number; generations: number } | null; job...>
 ```
 
-### `posthog.engineeringAnalyticsRepoOverview`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/pr_cost/` · `engineering_analytics_pr_cost`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/repo_overview/`
-- **What it does**: Repo-level headline aggregates over a window (default -30d): run count, success rate, re-run cycles, median PR open-to-merge (bots and drafts excluded; coarse — draft and ready time fused), and billable minutes + estimated cost — each with its equal-length previous-window twin so a caller can render honest deltas. Also carries the detected default branch and its completed-run history series. Cost figures are null until the job-level source is synced.
-- **OpenAPI operationId**: `engineering_analytics_repo_overview`
-- **Path params**: None
-- **Query params**: `date_from`, `date_to`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsPrLifecycle`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ cost_series: ({ bucket_start: string; estimated_cost_usd: number | null; merges: number; cost_per_merge_usd: number | null })[]; time_to_green_series: ({ bucket_start: string; p50_seconds: number | null })[]; success_...`
-- OpenAPI response codes: `200`, `400`
+The timeline of a single pull request: header plus ordered events (opened, CI started/finished, merged or closed). Use this to answer 'where is this PR stuck and what happened to it'. This is a partial view: review and comment events are not yet available.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsRepoOverviewInput = Parameters<typeof posthog.engineeringAnalyticsRepoOverview> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsRepoOverviewOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsRepoOverview>>;
-
-const result: EngineeringAnalyticsRepoOverviewOutput = await posthog.engineeringAnalyticsRepoOverview();
-
-// Result shape (from schema): { cost_series: ({ bucket_start: string; estimated_cost_usd: number | null; merges: number; cost_per_merge_usd: number | null })[]; time_to_green_series: ({ bucket_start: string; p50_seconds: number | null })[]; success_...
+posthog.engineeringAnalyticsPrLifecycle(): Promise<{ pull_request: { author: { handle: string; display_name: string; avatar_url: string; is_bot: boolean }; repo: { provider: string; owner: string; name: string }; id: number; number: number; title: string; state: "open" | "closed" | "merged"; is_draft: boolean; created_at: string; merged_at: string | null; closed_at: string | null }; events: ({ kind: "opened" | "ci_started" | "ci_finished" | "merg...>
 ```
 
-### `posthog.engineeringAnalyticsRepoRunActivity`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/pr_lifecycle/` · `engineering_analytics_pr_lifecycle`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/repo_run_activity/`
-- **What it does**: Default-branch health as compact chart points over a window (default -30d), newest first, for the repo-hub run-activity chart. All of a commit's workflow runs are collapsed into ONE point per commit (head SHA): its earliest workflow start, wall-clock duration until the last workflow settled (null while any is still running), and an overall conclusion that is 'failure' if any workflow decisively failed, else 'success' when at least one passed, else 'neutral'. `branch` overrides the detected default branch. `truncated` is true when more commits matched than the cap, so the chart covers only the most recent commits.
-- **OpenAPI operationId**: `engineering_analytics_repo_run_activity`
-- **Path params**: None
-- **Query params**: `branch`, `date_from`, `date_to`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsPrRuns`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ points: ({ run_id: number; conclusion: string | null; run_started_at: string; duration_seconds: number | null; head_branch: string; pr_number: number; head_sha: string })[]; truncated: boolean; limit: number }`
-- OpenAPI response codes: `200`, `400`
+Every workflow run attributed to a pull request, across all its commits (grouped by head SHA client-side), newest first. Run-level only.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsRepoRunActivityInput = Parameters<typeof posthog.engineeringAnalyticsRepoRunActivity> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsRepoRunActivityOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsRepoRunActivity>>;
-
-const result: EngineeringAnalyticsRepoRunActivityOutput = await posthog.engineeringAnalyticsRepoRunActivity();
-
-// Result shape (from schema): { points: ({ run_id: number; conclusion: string | null; run_started_at: string; duration_seconds: number | null; head_branch: string; pr_number: number; head_sha: string })[]; truncated: boolean; limit: number }
+posthog.engineeringAnalyticsPrRuns(): Promise<({ repo: { provider: string; owner: string; name: string }; id: number; workflow_name: string; head_sha: string; head_branch: string; status: string; conclusion: string | null; run_started_at: string | null; updated_at: string | null; duration_seconds: number | null; run_attempt: number; pr_number: number; commit_pr_number: number | null })[]>
 ```
 
-### `posthog.engineeringAnalyticsRunFailureLogs`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/pr_runs/` · `engineering_analytics_pr_runs`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/run_failure_logs/`
-- **What it does**: The thinned CI failure logs of one workflow run, grouped by failed job — the run-scoped twin of ci_failure_logs for surfaces that aren't PR-scoped (default-branch failures, the run page). logs_available is false when the run didn't fail or its logs aged out of the short Logs retention.
-- **OpenAPI operationId**: `engineering_analytics_run_failure_logs`
-- **Path params**: None
-- **Query params**: `run_id`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsPullRequests`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ jobs: ({ lines: ({ original_line: number | null; text: string })[]; job_id: number; run_id: number; conclusion: string; branch: string; original_total_lines: number; line_count: number; truncated: boolean })[]; run_id...`
-- OpenAPI response codes: `200`, `400`
+Open pull requests plus any merged or closed since date_from (default -30d), newest first, each with its head-SHA CI rollup. The list is capped; when more match, `truncated` is true and the ci_cards counts can exceed it. open_to_merge_seconds is coarse — it fuses draft and ready-for-review time; CI counts can lag until late completions settle.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsRunFailureLogsInput = Parameters<typeof posthog.engineeringAnalyticsRunFailureLogs> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsRunFailureLogsOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsRunFailureLogs>>;
-
-const result: EngineeringAnalyticsRunFailureLogsOutput = await posthog.engineeringAnalyticsRunFailureLogs();
-
-// Result shape (from schema): { jobs: ({ lines: ({ original_line: number | null; text: string })[]; job_id: number; run_id: number; conclusion: string; branch: string; original_total_lines: number; line_count: number; truncated: boolean })[]; run_id...
+posthog.engineeringAnalyticsPullRequests(): Promise<{ items: ({ author: { handle: string; display_name: string; avatar_url: string; is_bot: boolean }; repo: { provider: string; owner: string; name: string }; ci: { runs: number; passing: number; failing: number; pending: number; failing_workflows?: (string)[] }; push_history: ({ head_sha: string; started_at: string; wall_seconds: number | null; failed: boolean; pending: boolean })[]; number: number...>
 ```
 
-### `posthog.engineeringAnalyticsSources`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/pull_requests/` · `engineering_analytics_pull_requests`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/sources/`
-- **What it does**: The team's connected GitHub data warehouse sources, oldest first. Populate a source picker from this and pass a chosen `id` back as `source_id` to the other endpoints. A team can connect GitHub more than once (e.g. one source per repository); this lists them all, including any whose tables aren't fully synced yet.
-- **OpenAPI operationId**: `engineering_analytics_sources`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsQuarantine`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: string; repo: string; prefix: string })[]`
-- OpenAPI response codes: `200`
+Flaky-test quarantine file
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsSourcesInput = Parameters<typeof posthog.engineeringAnalyticsSources> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsSourcesOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsSources>>;
-
-const result: EngineeringAnalyticsSourcesOutput = await posthog.engineeringAnalyticsSources();
-
-// Result shape (from schema): ({ id: string; repo: string; prefix: string })[]
+posthog.engineeringAnalyticsQuarantine(): Promise<{ entries: ({ id: string; runner: string; reason: string; owner: string; issue: string; added: string; expires: string; mode: "run" | "skip"; lifecycle: "active" | "expiring_soon" | "in_grace" | "overdue"; days_until_expiry: number; selector_kind: "product" | "file" | "directory" | "test" })[]; repo: { provider: string; owner: string; name: string } | null; available: boolean; parse_errors: (stri...>
 ```
 
-### `posthog.engineeringAnalyticsWorkflowHealth`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/quarantine/` · `engineering_analytics_quarantine`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/workflow_health/`
-- **What it does**: Per-workflow CI health over a window (default last 24 hours, maximum 366 days): run count, success rate, p50/p95 duration, last failure time, latest-run status, and a zero-filled run history bucketed by hour/day/week to fit the window. p50/p95 are over successful runs only, so cancelled (superseded) and failed runs never bias the duration trend. Optionally scope to a single git branch via `branch`, or to attributed pull-request runs via `run_scope=pull_request`. Use this for 'is CI getting slower' and 'which workflow is the long pole'; compare two windows to get a trend.
-- **OpenAPI operationId**: `engineering_analytics_workflow_health`
-- **Path params**: None
-- **Query params**: `branch`, `date_from`, `date_to`, `run_scope`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsQuarantineRequest`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ repo: { provider: string; owner: string; name: string }; buckets: ({ bucket_start: string; run_count: number; completed: number; successes: number; failures: number })[]; workflow_name: string; run_count: number; suc...`
-- OpenAPI response codes: `200`, `400`
+Quarantine, extend, or unquarantine a flaky test
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsWorkflowHealthInput = Parameters<typeof posthog.engineeringAnalyticsWorkflowHealth> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsWorkflowHealthOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsWorkflowHealth>>;
-
-const result: EngineeringAnalyticsWorkflowHealthOutput = await posthog.engineeringAnalyticsWorkflowHealth();
-
-// Result shape (from schema): ({ repo: { provider: string; owner: string; name: string }; buckets: ({ bucket_start: string; run_count: number; completed: number; successes: number; failures: number })[]; workflow_name: string; run_count: number; suc...
+posthog.engineeringAnalyticsQuarantineRequest(): Promise<{ pr_url: string; issue_url: string; branch: string }>
 ```
 
-### `posthog.engineeringAnalyticsWorkflowJobs`
+<sub>`POST /api/projects/{project_id}/engineering_analytics/quarantine/request/` · `engineering_analytics_quarantine_request`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/workflow_jobs/`
-- **What it does**: Jobs of a single workflow run attempt, with per-job duration, runner tier, and estimated cost. Scoped to one run_attempt (the latest unless specified) so a re-run's attempts don't merge. Returns an empty list when the job-level source isn't synced yet.
-- **OpenAPI operationId**: `engineering_analytics_workflow_jobs`
-- **Path params**: None
-- **Query params**: `run_attempt`, `run_id`, `source_id`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsRepoOverview`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ id: number; run_id: number; name: string; status: string; conclusion: string | null; started_at: string | null; completed_at: string | null; duration_seconds: number | null; runner_provider: string; runner_label: str...`
-- OpenAPI response codes: `200`, `400`
+Repo-level headline aggregates over a window (default -30d): run count, success rate, re-run cycles, merged-PR count (bots included), median PR open-to-merge (bots and drafts excluded; coarse — draft and ready time fused), and billable minutes + estimated cost — each with its equal-length previous-window twin so a caller can render honest deltas. Also carries the detected default branch and its completed-run history series (skippable via include_series=false). Cost figures are null until the job-level source is synced.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsWorkflowJobsInput = Parameters<typeof posthog.engineeringAnalyticsWorkflowJobs> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsWorkflowJobsOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsWorkflowJobs>>;
-
-const result: EngineeringAnalyticsWorkflowJobsOutput = await posthog.engineeringAnalyticsWorkflowJobs();
-
-// Result shape (from schema): ({ id: number; run_id: number; name: string; status: string; conclusion: string | null; started_at: string | null; completed_at: string | null; duration_seconds: number | null; runner_provider: string; runner_label: str...
+posthog.engineeringAnalyticsRepoOverview(): Promise<{ cost_series: ({ bucket_start: string; estimated_cost_usd: number | null; merges: number; cost_per_merge_usd: number | null })[]; time_to_green_series: ({ bucket_start: string; p50_seconds: number | null })[]; success_rate_series: ({ bucket_start: string; success_rate: number | null })[]; open_to_merge_series: ({ bucket_start: string; p50_seconds: number | null })[]; run_count: number; run_count...>
 ```
 
-### `posthog.engineeringAnalyticsWorkflowRunActivity`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/repo_overview/` · `engineering_analytics_repo_overview`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/workflow_run_activity/`
-- **What it does**: Compact per-run points for a single workflow over a window (date_from default -30d), newest first, for the run-activity chart: each run's start time, duration, conclusion, branch, and attributed PR. Optionally scope to a single git branch via `branch`, matching workflow_runs. Leaner and higher-capped than workflow_runs so the chart spans the full window even on busy workflows; `truncated` is true when the cap is hit, so the chart covers only the most recent runs.
-- **OpenAPI operationId**: `engineering_analytics_workflow_run_activity`
-- **Path params**: None
-- **Query params**: `branch`, `date_from`, `date_to`, `repo`, `source_id`, `workflow_name`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsRepoRunActivity`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ points: ({ run_id: number; conclusion: string | null; run_started_at: string; duration_seconds: number | null; head_branch: string; pr_number: number; head_sha: string })[]; truncated: boolean; limit: number }`
-- OpenAPI response codes: `200`, `400`
+Default-branch health as compact chart points over a window (default -30d), newest first, for the repo-hub run-activity chart. All of a commit's workflow runs are collapsed into ONE point per commit (head SHA): its earliest workflow start, wall-clock duration until the last workflow settled (null while any is still running), and an overall conclusion that is 'failure' if any workflow decisively failed, else 'success' when at least one passed, else 'neutral'. `branch` overrides the detected default branch. `truncated` is true when more commits matched than the cap, so the chart covers only the most recent commits.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsWorkflowRunActivityInput = Parameters<typeof posthog.engineeringAnalyticsWorkflowRunActivity> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsWorkflowRunActivityOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsWorkflowRunActivity>>;
-
-const result: EngineeringAnalyticsWorkflowRunActivityOutput = await posthog.engineeringAnalyticsWorkflowRunActivity();
-
-// Result shape (from schema): { points: ({ run_id: number; conclusion: string | null; run_started_at: string; duration_seconds: number | null; head_branch: string; pr_number: number; head_sha: string })[]; truncated: boolean; limit: number }
+posthog.engineeringAnalyticsRepoRunActivity(): Promise<{ points: ({ run_id: number; conclusion: string | null; run_started_at: string; duration_seconds: number | null; head_branch: string; pr_number: number; head_sha: string })[]; truncated: boolean; limit: number }>
 ```
 
-### `posthog.engineeringAnalyticsWorkflowRun`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/repo_run_activity/` · `engineering_analytics_repo_run_activity`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/workflow_run/`
-- **What it does**: A single workflow run: status, conclusion, duration, branch, attempt, and the attributed pull request. Run-level only — per-job and per-step detail are not tracked yet.
-- **OpenAPI operationId**: `engineering_analytics_workflow_run`
-- **Path params**: None
-- **Query params**: `run_id`, `source_id`
-- **Response codes**: `200`, `400`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsResolveBranch`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ repo: { provider: string; owner: string; name: string }; id: number; workflow_name: string; head_sha: string; head_branch: string; status: string; conclusion: string | null; run_started_at: string | null; updated_at: ...`
-- OpenAPI response codes: `200`, `400`, `404`
+Resolve a git branch to the pull request(s) it belongs to — the cross-product link seam so another product (the LLM analytics UI) can turn a git branch into a PR detail link. Matches the PR's head ref, open PRs first then most recently updated. Pass `timestamp` (the trace's capture time) to prefer the PR that was active at that moment when a branch name has been reused across PRs. `branch` is required. Returns a possibly-empty, possibly-multi list — an empty list is a valid 200 (the caller renders a plain chip).
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsWorkflowRunInput = Parameters<typeof posthog.engineeringAnalyticsWorkflowRun> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsWorkflowRunOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsWorkflowRun>>;
-
-const result: EngineeringAnalyticsWorkflowRunOutput = await posthog.engineeringAnalyticsWorkflowRun();
-
-// Result shape (from schema): { repo: { provider: string; owner: string; name: string }; id: number; workflow_name: string; head_sha: string; head_branch: string; status: string; conclusion: string | null; run_started_at: string | null; updated_at: ...
+posthog.engineeringAnalyticsResolveBranch(): Promise<({ repo: string; number: number; title: string | null; state: string | null })[]>
 ```
 
-### `posthog.engineeringAnalyticsWorkflowRunnerCosts`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/resolve_branch/` · `engineering_analytics_resolve_branch`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/workflow_runner_costs/`
-- **What it does**: A workflow's estimated CI cost broken down by runner tier over a window (date_from default -30d), highest spend first. Optionally scope to a single git branch via `branch`. Returns an empty list when the job-level source isn't synced.
-- **OpenAPI operationId**: `engineering_analytics_workflow_runner_costs`
-- **Path params**: None
-- **Query params**: `branch`, `date_from`, `date_to`, `repo`, `source_id`, `workflow_name`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsRunFailureLogs`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ provider: string; runner_label: string; job_count: number; billable_minutes: number; estimated_cost_usd: number | null })[]`
-- OpenAPI response codes: `200`, `400`
+The thinned CI failure logs of one workflow run, grouped by failed job — the run-scoped twin of ci_failure_logs for surfaces that aren't PR-scoped (default-branch failures, the run page). logs_available is false when the run didn't fail or its logs aged out of the short Logs retention.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsWorkflowRunnerCostsInput = Parameters<typeof posthog.engineeringAnalyticsWorkflowRunnerCosts> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsWorkflowRunnerCostsOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsWorkflowRunnerCosts>>;
-
-const result: EngineeringAnalyticsWorkflowRunnerCostsOutput = await posthog.engineeringAnalyticsWorkflowRunnerCosts();
-
-// Result shape (from schema): ({ provider: string; runner_label: string; job_count: number; billable_minutes: number; estimated_cost_usd: number | null })[]
+posthog.engineeringAnalyticsRunFailureLogs(): Promise<{ jobs: ({ lines: ({ original_line: number | null; text: string })[]; job_id: number; run_id: number; conclusion: string; branch: string; original_total_lines: number; line_count: number; truncated: boolean })[]; run_id: number; logs_available: boolean; truncated: boolean }>
 ```
 
-### `posthog.engineeringAnalyticsWorkflowRuns`
+<sub>`GET /api/projects/{project_id}/engineering_analytics/run_failure_logs/` · `engineering_analytics_run_failure_logs`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/engineering_analytics/workflow_runs/`
-- **What it does**: Runs of a single workflow within a repo over a window (date_from default -30d), newest first. Optionally scope to a single git branch via `branch`. Each row is run-level — per-job and per-step detail are not tracked yet. Use this as the GitHub 'workflow' page between the workflow list and a single run.
-- **OpenAPI operationId**: `engineering_analytics_workflow_runs`
-- **Path params**: None
-- **Query params**: `branch`, `date_from`, `date_to`, `repo`, `source_id`, `workflow_name`
-- **Response codes**: `200`, `400`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.engineeringAnalyticsSources`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ repo: { provider: string; owner: string; name: string }; id: number; workflow_name: string; head_sha: string; head_branch: string; status: string; conclusion: string | null; run_started_at: string | null; updated_at:...`
-- OpenAPI response codes: `200`, `400`
+The team's selectable GitHub repositories, oldest source first — one entry per repository a source is configured to sync, so a source syncing several repositories appears once per repo. Populate a repo picker from this and pass a chosen entry's `id` back as `source_id` and its `repo` back as `repo` to the other endpoints. Includes repositories whose tables aren't fully synced yet.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EngineeringAnalyticsWorkflowRunsInput = Parameters<typeof posthog.engineeringAnalyticsWorkflowRuns> extends [infer T, ...unknown[]] ? T : undefined;
-type EngineeringAnalyticsWorkflowRunsOutput = Awaited<ReturnType<typeof posthog.engineeringAnalyticsWorkflowRuns>>;
-
-const result: EngineeringAnalyticsWorkflowRunsOutput = await posthog.engineeringAnalyticsWorkflowRuns();
-
-// Result shape (from schema): ({ repo: { provider: string; owner: string; name: string }; id: number; workflow_name: string; head_sha: string; head_branch: string; status: string; conclusion: string | null; run_started_at: string | null; updated_at:...
+posthog.engineeringAnalyticsSources(): Promise<({ id: string; repo: string; prefix: string; synced?: boolean })[]>
 ```
 
+<sub>`GET /api/projects/{project_id}/engineering_analytics/sources/` · `engineering_analytics_sources`</sub>
+
+## `posthog.engineeringAnalyticsTeamCiActivity`
+
+One owning team's CI test activity: per-test current-vs-prior signal pairs (the before/after comparison) over the window and its equal-length prior twin. Signal = runs where an owned test failed, errored, or a retry recovered it. Counts are absolute, never rates: CI emits every failure but omits ordinary passing spans, so there is no execution denominator. 'suspected_regression' means no recovery was recorded in this data, not that the test never flakes.
+
+```ts
+posthog.engineeringAnalyticsTeamCiActivity(): Promise<{ tests: ({ runner: "pytest" | "jest"; nodeid: string; selector: string; signal_count: number; signal_count_prior: number; last_seen_at: string })[]; owner_team: string; truncated_tests: boolean }>
+```
+
+<sub>`GET /api/projects/{project_id}/engineering_analytics/team_ci_activity/` · `engineering_analytics_team_ci_activity`</sub>
+
+## `posthog.engineeringAnalyticsTeamCiHealth`
+
+Per-owning-team rollup of the CI test surfaces each team owns, over the same run evidence as flaky_tests and with the same meaning of flaky: flaky_test_count is owned tests one commit was seen both failing and passing in the window, regression_test_count is owned tests that failed with no such proof and still hit the blast-radius bar, plus failed/recovery/quarantined run counts. Each has an equal-length previous-window twin for honest deltas. Ownership is stamped on the spans at CI emission time from the repo's ownership map (products/*/product.yaml + CODEOWNERS); unstamped spans aggregate under the literal team 'unowned', and a re-stamped test lands under its latest owner only. Teams are organizational owners of code surfaces, never authors. Counts are absolute, never rates: CI emits every failure but omits ordinary passing spans, so there is no execution denominator. 'suspected_regression' means no recovery was recorded in this data, not that the test never flakes.
+
+```ts
+posthog.engineeringAnalyticsTeamCiHealth(): Promise<{ items: ({ owner_team: string; flaky_test_count: number; flaky_test_count_prior: number; regression_test_count: number; regression_test_count_prior: number; failed_run_count: number; failed_run_count_prior: number; same_commit_recovery_run_count: number; same_commit_recovery_run_count_prior: number; quarantined_failed_run_count: number; quarantined_failed_run_count_prior: number; last_seen_at: s...>
+```
+
+<sub>`GET /api/projects/{project_id}/engineering_analytics/team_ci_health/` · `engineering_analytics_team_ci_health`</sub>
+
+## `posthog.engineeringAnalyticsTeamMergeTrend`
+
+One team's daily time-to-merge trend: the median and average open→merge seconds over the PRs the team's members merged each day (PR author login → GitHub org team membership). Team-level aggregates only, never per-member figures or cross-team rankings. Timing is the coarse open→merge (draft + review time combined); bots are excluded. Requires the GitHub source's team_members snapshot; has_membership_data is false without it.
+
+```ts
+posthog.engineeringAnalyticsTeamMergeTrend(): Promise<{ points: ({ day: string; median_seconds: number | null; average_seconds: number | null; merged_count: number })[]; owner_team: string; has_membership_data: boolean }>
+```
+
+<sub>`GET /api/projects/{project_id}/engineering_analytics/team_merge_trend/` · `engineering_analytics_team_merge_trend`</sub>
+
+## `posthog.engineeringAnalyticsWorkflowHealth`
+
+Per-workflow CI health over a window (default last 24 hours, maximum 366 days): run count, success rate, p50/p95 duration, last failure time, latest-run status, and a zero-filled run history bucketed by hour/day/week to fit the window. p50/p95 are over successful runs only, so cancelled (superseded) and failed runs never bias the duration trend. Optionally scope to a single git branch via `branch`, or to attributed pull-request runs via `run_scope=pull_request`. Use this for 'is CI getting slower' and 'which workflow is the long pole'; compare two windows to get a trend.
+
+```ts
+posthog.engineeringAnalyticsWorkflowHealth(): Promise<({ repo: { provider: string; owner: string; name: string }; buckets: ({ bucket_start: string; run_count: number; completed: number; successes: number; failures: number })[]; workflow_name: string; run_count: number; successful_run_count: number; conclusive_run_count: number; success_rate: number | null; p50_seconds: number | null; p95_seconds: number | null; last_failure_at: string | null; latest...>
+```
+
+<sub>`GET /api/projects/{project_id}/engineering_analytics/workflow_health/` · `engineering_analytics_workflow_health`</sub>
+
+## `posthog.engineeringAnalyticsWorkflowJobs`
+
+Jobs of a single workflow run attempt, with per-job duration, runner tier, and estimated cost. Scoped to one run_attempt (the latest unless specified) so a re-run's attempts don't merge. Returns an empty list when the job-level source isn't synced yet.
+
+```ts
+posthog.engineeringAnalyticsWorkflowJobs(): Promise<({ id: number; run_id: number; name: string; status: string; conclusion: string | null; started_at: string | null; completed_at: string | null; duration_seconds: number | null; runner_provider: string; runner_label: string; estimated_cost_usd: number | null })[]>
+```
+
+<sub>`GET /api/projects/{project_id}/engineering_analytics/workflow_jobs/` · `engineering_analytics_workflow_jobs`</sub>
+
+## `posthog.engineeringAnalyticsWorkflowRunActivity`
+
+Compact per-run points for a single workflow over a window (date_from default -30d), newest first, for the run-activity chart: each run's start time, duration, conclusion, branch, and attributed PR. Optionally scope to a single git branch via `branch`, matching workflow_runs. Leaner and higher-capped than workflow_runs so the chart spans the full window even on busy workflows; `truncated` is true when the cap is hit, so the chart covers only the most recent runs.
+
+```ts
+posthog.engineeringAnalyticsWorkflowRunActivity(): Promise<{ points: ({ run_id: number; conclusion: string | null; run_started_at: string; duration_seconds: number | null; head_branch: string; pr_number: number; head_sha: string })[]; truncated: boolean; limit: number }>
+```
+
+<sub>`GET /api/projects/{project_id}/engineering_analytics/workflow_run_activity/` · `engineering_analytics_workflow_run_activity`</sub>
+
+## `posthog.engineeringAnalyticsWorkflowRun`
+
+A single workflow run: status, conclusion, duration, branch, attempt, and the attributed pull request. Run-level only — per-job and per-step detail are not tracked yet.
+
+```ts
+posthog.engineeringAnalyticsWorkflowRun(): Promise<{ repo: { provider: string; owner: string; name: string }; id: number; workflow_name: string; head_sha: string; head_branch: string; status: string; conclusion: string | null; run_started_at: string | null; updated_at: string | null; duration_seconds: number | null; run_attempt: number; pr_number: number; commit_pr_number: number | null }>
+```
+
+<sub>`GET /api/projects/{project_id}/engineering_analytics/workflow_run/` · `engineering_analytics_workflow_run`</sub>
+
+## `posthog.engineeringAnalyticsWorkflowRunnerCosts`
+
+A workflow's estimated CI cost broken down by runner tier over a window (date_from default -30d), highest spend first. Optionally scope to a single git branch via `branch`. Returns an empty list when the job-level source isn't synced.
+
+```ts
+posthog.engineeringAnalyticsWorkflowRunnerCosts(): Promise<({ provider: string; runner_label: string; job_count: number; billable_minutes: number; estimated_cost_usd: number | null })[]>
+```
+
+<sub>`GET /api/projects/{project_id}/engineering_analytics/workflow_runner_costs/` · `engineering_analytics_workflow_runner_costs`</sub>
+
+## `posthog.engineeringAnalyticsWorkflowRuns`
+
+Runs of a single workflow within a repo over a window (date_from default -30d), newest first. Optionally scope to a single git branch via `branch`. Each row is run-level — per-job and per-step detail are not tracked yet. Use this as the GitHub 'workflow' page between the workflow list and a single run.
+
+```ts
+posthog.engineeringAnalyticsWorkflowRuns(): Promise<({ repo: { provider: string; owner: string; name: string }; id: number; workflow_name: string; head_sha: string; head_branch: string; status: string; conclusion: string | null; run_started_at: string | null; updated_at: string | null; duration_seconds: number | null; run_attempt: number; pr_number: number; commit_pr_number: number | null })[]>
+```
+
+<sub>`GET /api/projects/{project_id}/engineering_analytics/workflow_runs/` · `engineering_analytics_workflow_runs`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

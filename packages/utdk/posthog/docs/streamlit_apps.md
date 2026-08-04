@@ -1,455 +1,162 @@
 # Streamlit Apps
 
-## Operations
-
-### `posthog.streamlitAppsList`
-
-- **HTTP**: `GET /api/projects/{project_id}/streamlit_apps/`
-- **What it does**: List streamlit apps
-- **OpenAPI operationId**: `streamlit_apps_list`
-- **Path params**: None
-- **Query params**: `limit`, `offset`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: ...`
-- OpenAPI response codes: `200`
+15 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type StreamlitAppsListInput = Parameters<typeof posthog.streamlitAppsList> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsListOutput = Awaited<ReturnType<typeof posthog.streamlitAppsList>>;
-
-const result: StreamlitAppsListOutput = await posthog.streamlitAppsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: ...
 ```
 
-### `posthog.streamlitAppsCreate`
+## `posthog.streamlitAppsList`
 
-- **HTTP**: `POST /api/projects/{project_id}/streamlit_apps/`
-- **What it does**: Create a streamlit app
-- **OpenAPI operationId**: `streamlit_apps_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...`
-- OpenAPI response codes: `201`
+List streamlit apps
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsCreateInput = Parameters<typeof posthog.streamlitAppsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsCreateOutput = Awaited<ReturnType<typeof posthog.streamlitAppsCreate>>;
-
-const result: StreamlitAppsCreateOutput = await posthog.streamlitAppsCreate();
-
-// Result shape (from schema): { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...
+posthog.streamlitAppsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; id: string; short_id: string; name: string; description: string; c...>
 ```
 
-### `posthog.streamlitAppsDestroy`
+<sub>`GET /api/projects/{project_id}/streamlit_apps/` · `streamlit_apps_list`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/streamlit_apps/{short_id}/`
-- **What it does**: Delete a streamlit app
-- **OpenAPI operationId**: `streamlit_apps_destroy`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `204`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `204`
+Create a streamlit app
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsDestroyInput = Parameters<typeof posthog.streamlitAppsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsDestroyOutput = Awaited<ReturnType<typeof posthog.streamlitAppsDestroy>>;
-
-const result: StreamlitAppsDestroyOutput = await posthog.streamlitAppsDestroy();
-
-// Result shape (from schema): unknown
+posthog.streamlitAppsCreate(): Promise<{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; active_version?: { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string;...>
 ```
 
-### `posthog.streamlitAppsRetrieve`
+<sub>`POST /api/projects/{project_id}/streamlit_apps/` · `streamlit_apps_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/streamlit_apps/{short_id}/`
-- **What it does**: Retrieve a streamlit app
-- **OpenAPI operationId**: `streamlit_apps_retrieve`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsDestroy`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...`
-- OpenAPI response codes: `200`
+Delete a streamlit app
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsRetrieveInput = Parameters<typeof posthog.streamlitAppsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsRetrieveOutput = Awaited<ReturnType<typeof posthog.streamlitAppsRetrieve>>;
-
-const result: StreamlitAppsRetrieveOutput = await posthog.streamlitAppsRetrieve();
-
-// Result shape (from schema): { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...
+posthog.streamlitAppsDestroy(): Promise<unknown>
 ```
 
-### `posthog.streamlitAppsPartialUpdate`
+<sub>`DELETE /api/projects/{project_id}/streamlit_apps/{short_id}/` · `streamlit_apps_destroy`</sub>
 
-- **HTTP**: `PATCH /api/projects/{project_id}/streamlit_apps/{short_id}/`
-- **What it does**: Partially update a streamlit app
-- **OpenAPI operationId**: `streamlit_apps_partial_update`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...`
-- OpenAPI response codes: `200`
+Retrieve a streamlit app
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsPartialUpdateInput = Parameters<typeof posthog.streamlitAppsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.streamlitAppsPartialUpdate>>;
-
-const result: StreamlitAppsPartialUpdateOutput = await posthog.streamlitAppsPartialUpdate();
-
-// Result shape (from schema): { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...
+posthog.streamlitAppsRetrieve(): Promise<{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; active_version?: { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string;...>
 ```
 
-### `posthog.streamlitAppsUpdate`
+<sub>`GET /api/projects/{project_id}/streamlit_apps/{short_id}/` · `streamlit_apps_retrieve`</sub>
 
-- **HTTP**: `PUT /api/projects/{project_id}/streamlit_apps/{short_id}/`
-- **What it does**: Update a streamlit app
-- **OpenAPI operationId**: `streamlit_apps_update`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsPartialUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...`
-- OpenAPI response codes: `200`
+Partially update a streamlit app
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsUpdateInput = Parameters<typeof posthog.streamlitAppsUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsUpdateOutput = Awaited<ReturnType<typeof posthog.streamlitAppsUpdate>>;
-
-const result: StreamlitAppsUpdateOutput = await posthog.streamlitAppsUpdate();
-
-// Result shape (from schema): { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...
+posthog.streamlitAppsPartialUpdate(): Promise<{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; active_version?: { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string;...>
 ```
 
-### `posthog.streamlitAppsActivateVersionCreate`
+<sub>`PATCH /api/projects/{project_id}/streamlit_apps/{short_id}/` · `streamlit_apps_partial_update`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/streamlit_apps/{short_id}/activate_version/`
-- **What it does**: Activate an existing app version
-- **OpenAPI operationId**: `streamlit_apps_activate_version_create`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsUpdate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ active_version: { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown...`
-- OpenAPI response codes: `200`
+Update a streamlit app
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsActivateVersionCreateInput = Parameters<typeof posthog.streamlitAppsActivateVersionCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsActivateVersionCreateOutput = Awaited<ReturnType<typeof posthog.streamlitAppsActivateVersionCreate>>;
-
-const result: StreamlitAppsActivateVersionCreateOutput = await posthog.streamlitAppsActivateVersionCreate();
-
-// Result shape (from schema): { active_version: { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown...
+posthog.streamlitAppsUpdate(): Promise<{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; active_version?: { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string;...>
 ```
 
-### `posthog.streamlitAppsConnectInfoRetrieve`
+<sub>`PUT /api/projects/{project_id}/streamlit_apps/{short_id}/` · `streamlit_apps_update`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/streamlit_apps/{short_id}/connect_info/`
-- **What it does**: Get iframe connection info for a running app
-- **OpenAPI operationId**: `streamlit_apps_connect_info_retrieve`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsActivateVersionCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ iframe_url: string; expires_in: number }`
-- OpenAPI response codes: `200`
+Activate an existing app version
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsConnectInfoRetrieveInput = Parameters<typeof posthog.streamlitAppsConnectInfoRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsConnectInfoRetrieveOutput = Awaited<ReturnType<typeof posthog.streamlitAppsConnectInfoRetrieve>>;
-
-const result: StreamlitAppsConnectInfoRetrieveOutput = await posthog.streamlitAppsConnectInfoRetrieve();
-
-// Result shape (from schema): { iframe_url: string; expires_in: number }
+posthog.streamlitAppsActivateVersionCreate(): Promise<{ active_version: { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; id: string; version_number: number; zip_hash: string; snapshot_id: string | null; created_at: string } }>
 ```
 
-### `posthog.streamlitAppsRestartCreate`
+<sub>`POST /api/projects/{project_id}/streamlit_apps/{short_id}/activate_version/` · `streamlit_apps_activate_version_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/streamlit_apps/{short_id}/restart/`
-- **What it does**: Restart the app sandbox
-- **OpenAPI operationId**: `streamlit_apps_restart_create`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `202`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsConnectInfoRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `202`
+Get iframe connection info for a running app
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsRestartCreateInput = Parameters<typeof posthog.streamlitAppsRestartCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsRestartCreateOutput = Awaited<ReturnType<typeof posthog.streamlitAppsRestartCreate>>;
-
-const result: StreamlitAppsRestartCreateOutput = await posthog.streamlitAppsRestartCreate();
-
-// Result shape (from schema): unknown
+posthog.streamlitAppsConnectInfoRetrieve(): Promise<{ iframe_url: string; expires_in: number }>
 ```
 
-### `posthog.streamlitAppsStartCreate`
+<sub>`GET /api/projects/{project_id}/streamlit_apps/{short_id}/connect_info/` · `streamlit_apps_connect_info_retrieve`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/streamlit_apps/{short_id}/start/`
-- **What it does**: Start the app sandbox
-- **OpenAPI operationId**: `streamlit_apps_start_create`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `200`, `202`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsCreateVersionFromSourceCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...`
-- OpenAPI response codes: `200`, `202`
+Create an app version from source code
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsStartCreateInput = Parameters<typeof posthog.streamlitAppsStartCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsStartCreateOutput = Awaited<ReturnType<typeof posthog.streamlitAppsStartCreate>>;
-
-const result: StreamlitAppsStartCreateOutput = await posthog.streamlitAppsStartCreate();
-
-// Result shape (from schema): { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...
+posthog.streamlitAppsCreateVersionFromSourceCreate(): Promise<{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; id: string; version_number: number; zip_hash: string; snapshot_id: string | null; created_at: string }>
 ```
 
-### `posthog.streamlitAppsStatusRetrieve`
+<sub>`POST /api/projects/{project_id}/streamlit_apps/{short_id}/create_version_from_source/` · `streamlit_apps_create_version_from_source_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/streamlit_apps/{short_id}/status/`
-- **What it does**: Get app sandbox status
-- **OpenAPI operationId**: `streamlit_apps_status_retrieve`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsRestartCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ status: string; restart_count: number; last_error: string; started_at: string | null; last_activity_at: string | null; version_number?: number | null }`
-- OpenAPI response codes: `200`
+Restart the app sandbox
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsStatusRetrieveInput = Parameters<typeof posthog.streamlitAppsStatusRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsStatusRetrieveOutput = Awaited<ReturnType<typeof posthog.streamlitAppsStatusRetrieve>>;
-
-const result: StreamlitAppsStatusRetrieveOutput = await posthog.streamlitAppsStatusRetrieve();
-
-// Result shape (from schema): { status: string; restart_count: number; last_error: string; started_at: string | null; last_activity_at: string | null; version_number?: number | null }
+posthog.streamlitAppsRestartCreate(): Promise<unknown>
 ```
 
-### `posthog.streamlitAppsStopCreate`
+<sub>`POST /api/projects/{project_id}/streamlit_apps/{short_id}/restart/` · `streamlit_apps_restart_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/streamlit_apps/{short_id}/stop/`
-- **What it does**: Stop the app sandbox
-- **OpenAPI operationId**: `streamlit_apps_stop_create`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsStartCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...`
-- OpenAPI response codes: `200`
+Start the app sandbox
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsStopCreateInput = Parameters<typeof posthog.streamlitAppsStopCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsStopCreateOutput = Awaited<ReturnType<typeof posthog.streamlitAppsStopCreate>>;
-
-const result: StreamlitAppsStopCreateOutput = await posthog.streamlitAppsStopCreate();
-
-// Result shape (from schema): { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...
+posthog.streamlitAppsStartCreate(): Promise<{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; active_version?: { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string;...>
 ```
 
-### `posthog.streamlitAppsUploadVersionCreate`
+<sub>`POST /api/projects/{project_id}/streamlit_apps/{short_id}/start/` · `streamlit_apps_start_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/streamlit_apps/{short_id}/upload_version/`
-- **What it does**: Upload a new app version
-- **OpenAPI operationId**: `streamlit_apps_upload_version_create`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsStatusRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...`
-- OpenAPI response codes: `201`
+Get app sandbox status
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsUploadVersionCreateInput = Parameters<typeof posthog.streamlitAppsUploadVersionCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsUploadVersionCreateOutput = Awaited<ReturnType<typeof posthog.streamlitAppsUploadVersionCreate>>;
-
-const result: StreamlitAppsUploadVersionCreateOutput = await posthog.streamlitAppsUploadVersionCreate();
-
-// Result shape (from schema): { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at...
+posthog.streamlitAppsStatusRetrieve(): Promise<{ status: string; restart_count: number; last_error: string; started_at: string | null; last_activity_at: string | null; version_number?: number | null }>
 ```
 
-### `posthog.streamlitAppsVersionsRetrieve`
+<sub>`GET /api/projects/{project_id}/streamlit_apps/{short_id}/status/` · `streamlit_apps_status_retrieve`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/streamlit_apps/{short_id}/versions/`
-- **What it does**: List app versions
-- **OpenAPI operationId**: `streamlit_apps_versions_retrieve`
-- **Path params**: `short_id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.streamlitAppsStopCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ results: ({ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | n...`
-- OpenAPI response codes: `200`
+Stop the app sandbox
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type StreamlitAppsVersionsRetrieveInput = Parameters<typeof posthog.streamlitAppsVersionsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type StreamlitAppsVersionsRetrieveOutput = Awaited<ReturnType<typeof posthog.streamlitAppsVersionsRetrieve>>;
-
-const result: StreamlitAppsVersionsRetrieveOutput = await posthog.streamlitAppsVersionsRetrieve();
-
-// Result shape (from schema): { results: ({ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | n...
+posthog.streamlitAppsStopCreate(): Promise<{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; active_version?: { created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string;...>
 ```
 
+<sub>`POST /api/projects/{project_id}/streamlit_apps/{short_id}/stop/` · `streamlit_apps_stop_create`</sub>
+
+## `posthog.streamlitAppsUploadVersionCreate`
+
+Upload a new app version
+
+```ts
+posthog.streamlitAppsUploadVersionCreate(): Promise<{ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; id: string; version_number: number; zip_hash: string; snapshot_id: string | null; created_at: string }>
+```
+
+<sub>`POST /api/projects/{project_id}/streamlit_apps/{short_id}/upload_version/` · `streamlit_apps_upload_version_create`</sub>
+
+## `posthog.streamlitAppsVersionsRetrieve`
+
+List app versions
+
+```ts
+posthog.streamlitAppsVersionsRetrieve(): Promise<{ results: ({ created_by?: { id: number; uuid: string; distinct_id: string | null; first_name: string; last_name: string; email: string; is_email_verified: boolean | null; hedgehog_config: { [key: string]: unknown } | null; role_at_organization: string | null } | null; id: string; version_number: number; zip_hash: string; snapshot_id: string | null; created_at: string })[] }>
+```
+
+<sub>`GET /api/projects/{project_id}/streamlit_apps/{short_id}/versions/` · `streamlit_apps_versions_retrieve`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

@@ -1,4 +1,4 @@
-import type { ActivitiesAttachmentResponse, AfkTimeouts, ApplicationCommandAutocompleteCallbackRequest, ApplicationCommandHandler, ApplicationCommandResponse, ApplicationCommandType, ApplicationExplicitContentFilterTypes, ApplicationIdentityProviderAuthType, ApplicationIncomingWebhookResponse, ApplicationOAuth2InstallParams, ApplicationTypes, ApplicationUserRoleConnectionResponse, AuditLogActionTypes, AuthorType, AvailableLocalesEnum, BulkBanUsersResponse, ChannelFollowerResponse, ChannelFollowerWebhookResponse, ChannelPermissionOverwrites, CommandPermissionsResponse, CreateForumThreadRequest, CreateGroupDmInviteRequest, CreateGuildInviteRequest, CreateMessageInteractionCallbackRequest, CreateTextThreadWithoutMessageRequest, CreatedThreadResponse, CustomClientThemeShareRequest, DefaultKeywordListUpsertRequest, DefaultKeywordListUpsertRequestPartial, DefaultKeywordRuleResponse, EmbeddedActivityInstance, EmojiResponse, EntitlementOwnerTypes, EntitlementResponse, ExternalScheduledEventCreateRequest, ExternalScheduledEventPatchRequestPartial, ExternalScheduledEventResponse, ForumLayout, FriendInviteResponse, GatewayBotResponse, GatewayResponse, GithubCheckRun, GithubCheckSuite, GithubComment, GithubCommit, GithubDiscussion, GithubIssue, GithubRelease, GithubRepository, GithubReview, GithubUser, GroupDmInviteResponse, GuildAuditLogResponse, GuildBanResponse, GuildChannelResponse, GuildExplicitContentFilterTypes, GuildHomeSettingsResponse, GuildIncomingWebhookResponse, GuildInviteResponse, GuildJoinRequestApplicationStatus, GuildJoinRequestResponse, GuildJoinRequestsListResponse, GuildMemberResponse, GuildOnboardingMode, GuildOnboardingResponse, GuildPreviewResponse, GuildPruneResponse, GuildResponse, GuildRoleResponse, GuildSearchResponse, GuildStickerResponse, GuildTemplateResponse, GuildWelcomeScreenResponse, GuildWithCountsResponse, HasOption, IncomingWebhookRequestPartial, IncomingWebhookUpdateRequestPartial, InteractionCallbackResponse, KeywordRuleResponse, KeywordUpsertRequest, KeywordUpsertRequestPartial, LaunchActivityInteractionCallbackRequest, ListApplicationEmojisResponse, ListGuildSoundboardSoundsResponse, LobbyGuildInviteResponse, LobbyMemberResponse, LobbyMessageResponse, LobbyResponse, MentionSpamRuleResponse, MentionSpamUpsertRequest, MentionSpamUpsertRequestPartial, MessageAllowedMentionsRequest, MessageReferenceRequest, MessageResponse, MlSpamRuleResponse, MlSpamUpsertRequest, MlSpamUpsertRequestPartial, ModalInteractionCallbackRequest, OAuth2GetAuthorizationResponse, OAuth2GetKeys, OAuth2GetOpenIdConnectUserInfoResponse, PinnedMessagesResponse, PollAnswerDetailsResponse, PollCreateRequest, PongInteractionCallbackRequest, PrivateApplicationResponse, PrivateChannelResponse, PrivateGroupChannelResponse, PrivateGuildMemberResponse, ProvisionalTokenResponse, RatelimitedResponse, ReactionTypes, RoleColors, SearchableEmbedType, SnowflakeType, SocialLayerSkuPurchaseEligibilityInteractionCallbackRequest, SortingMode, SortingOrder, SoundboardSoundResponse, SpamLinkRuleResponse, StageInstanceResponse, StageInstancesPrivacyLevels, StageScheduledEventCreateRequest, StageScheduledEventPatchRequestPartial, StageScheduledEventResponse, StandardStickerResponse, StickerPackCollectionResponse, StickerPackResponse, TargetUsersJobStatusResponse, ThreadAutoArchiveDuration, ThreadMemberResponse, ThreadResponse, ThreadSearchResponse, ThreadSearchTagSetting, ThreadSortOrder, ThreadSortingMode, ThreadsResponse, TypingIndicatorResponse, UnbanUserFromGuildRequest, UpdateDefaultReactionEmojiRequest, UpdateDmRequestPartial, UpdateGroupDmRequestPartial, UpdateGuildChannelRequestPartial, UpdateMessageInteractionCallbackRequest, UpdateRolePositionsRequest, UpdateThreadRequestPartial, UserGuildOnboardingResponse, UserNotificationSettings, UserPiiResponse, UserResponse, VanityUrlResponse, VerificationLevels, VideoQualityModes, VoiceScheduledEventCreateRequest, VoiceScheduledEventPatchRequestPartial, VoiceScheduledEventResponse, VoiceStateResponse, WidgetImageStyles, WidgetResponse, WidgetSettingsResponse } from "./schemas.js";
+import type { ActivitiesAttachmentResponse, AfkTimeouts, ApplicationCommandAutocompleteCallbackRequest, ApplicationCommandHandler, ApplicationCommandResponse, ApplicationCommandType, ApplicationExplicitContentFilterTypes, ApplicationIdentityProviderAuthType, ApplicationIncomingWebhookResponse, ApplicationOAuth2InstallParams, ApplicationTypes, ApplicationUserRoleConnectionResponse, AuditLogActionTypes, AuthorType, AvailableLocalesEnum, BulkBanUsersResponse, ChannelFollowerResponse, ChannelFollowerWebhookResponse, ChannelPermissionOverwrites, CommandPermissionsResponse, CreateForumThreadRequest, CreateGroupDmInviteRequest, CreateGuildInviteRequest, CreateMessageInteractionCallbackRequest, CreateTextThreadWithoutMessageRequest, CreatedThreadResponse, CustomClientThemeShareRequest, DefaultKeywordListUpsertRequest, DefaultKeywordListUpsertRequestPartial, DefaultKeywordRuleResponse, EmbeddedActivityInstance, EmojiResponse, EntitlementOwnerTypes, EntitlementResponse, ExternalScheduledEventCreateRequest, ExternalScheduledEventPatchRequestPartial, ExternalScheduledEventResponse, ForumLayout, FriendInviteResponse, GatewayBotResponse, GatewayResponse, GithubCheckRun, GithubCheckSuite, GithubComment, GithubCommit, GithubDiscussion, GithubIssue, GithubRelease, GithubRepository, GithubReview, GithubUser, GroupDmInviteResponse, GuildAuditLogResponse, GuildBanResponse, GuildChannelResponse, GuildExplicitContentFilterTypes, GuildHomeSettingsResponse, GuildIncomingWebhookResponse, GuildInviteResponse, GuildJoinRequestApplicationStatus, GuildJoinRequestResponse, GuildJoinRequestsListResponse, GuildMemberResponse, GuildOnboardingMode, GuildOnboardingResponse, GuildPreviewResponse, GuildPruneResponse, GuildResponse, GuildRoleResponse, GuildSearchResponse, GuildStickerResponse, GuildTemplateResponse, GuildWelcomeScreenResponse, GuildWithCountsResponse, HasOption, IncomingWebhookRequestPartial, IncomingWebhookUpdateRequestPartial, InteractionCallbackResponse, KeywordRuleResponse, KeywordUpsertRequest, KeywordUpsertRequestPartial, LaunchActivityInteractionCallbackRequest, ListApplicationEmojisResponse, ListGuildSoundboardSoundsResponse, LobbyGuildInviteResponse, LobbyMemberResponse, LobbyMessageResponse, LobbyResponse, MentionSpamRuleResponse, MentionSpamUpsertRequest, MentionSpamUpsertRequestPartial, MessageAllowedMentionsRequest, MessageReferenceRequest, MessageResponse, MlSpamRuleResponse, MlSpamUpsertRequest, MlSpamUpsertRequestPartial, ModalInteractionCallbackRequest, OAuth2GetAuthorizationResponse, OAuth2GetKeys, OAuth2GetOpenIdConnectUserInfoResponse, PinnedMessagesResponse, PollAnswerDetailsResponse, PollCreateRequest, PongInteractionCallbackRequest, PrivateApplicationResponse, PrivateChannelResponse, PrivateGroupChannelResponse, PrivateGuildMemberResponse, ProvisionalTokenResponse, ReactionTypes, RoleColors, SearchableEmbedType, SnowflakeType, SocialLayerSkuPurchaseEligibilityInteractionCallbackRequest, SortingMode, SortingOrder, SoundboardSoundResponse, SpamLinkRuleResponse, StageInstanceResponse, StageInstancesPrivacyLevels, StageScheduledEventCreateRequest, StageScheduledEventPatchRequestPartial, StageScheduledEventResponse, StandardStickerResponse, StickerPackCollectionResponse, StickerPackResponse, TargetUsersJobStatusResponse, ThreadAutoArchiveDuration, ThreadMemberResponse, ThreadResponse, ThreadSearchResponse, ThreadSearchTagSetting, ThreadSortOrder, ThreadSortingMode, ThreadsResponse, TypingIndicatorResponse, UnbanUserFromGuildRequest, UpdateDefaultReactionEmojiRequest, UpdateDmRequestPartial, UpdateGroupDmRequestPartial, UpdateGuildChannelRequestPartial, UpdateMessageInteractionCallbackRequest, UpdateRolePositionsRequest, UpdateThreadRequestPartial, UserGuildOnboardingResponse, UserNotificationSettings, UserPiiResponse, UserResponse, VanityUrlResponse, VerificationLevels, VideoQualityModes, VoiceScheduledEventCreateRequest, VoiceScheduledEventPatchRequestPartial, VoiceScheduledEventResponse, VoiceStateResponse, WidgetImageStyles, WidgetResponse, WidgetSettingsResponse } from "./schemas.js";
 
 export type DiscordClient = {
   getMyApplication: () => Promise<PrivateApplicationResponse>;
@@ -91,7 +91,7 @@ export type DiscordClient = {
   deleteApplicationCommand: (input: {
     application_id: SnowflakeType;
     command_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateApplicationCommand: (input: {
     name?: string;
@@ -126,7 +126,7 @@ export type DiscordClient = {
   deleteApplicationEmoji: (input: {
     application_id: SnowflakeType;
     emoji_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateApplicationEmoji: (input: {
     name?: string;
@@ -162,12 +162,12 @@ export type DiscordClient = {
   deleteEntitlement: (input: {
     application_id: SnowflakeType;
     entitlement_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   consumeEntitlement: (input: {
     application_id: SnowflakeType;
     entitlement_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   listGuildApplicationCommands: (input: {
     application_id: SnowflakeType;
@@ -212,7 +212,7 @@ export type DiscordClient = {
     application_id: SnowflakeType;
     guild_id: SnowflakeType;
     command_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateGuildApplicationCommand: (input: {
     name?: string;
@@ -307,7 +307,7 @@ export type DiscordClient = {
   bulkDeleteMessages: (input: {
     messages: (SnowflakeType)[];
     channel_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   listPins: (input: {
     channel_id: SnowflakeType;
@@ -318,12 +318,12 @@ export type DiscordClient = {
   createPin: (input: {
     channel_id: SnowflakeType;
     message_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   deletePin: (input: {
     channel_id: SnowflakeType;
     message_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   getMessage: (input: {
     channel_id: SnowflakeType;
@@ -333,7 +333,7 @@ export type DiscordClient = {
   deleteMessage: (input: {
     channel_id: SnowflakeType;
     message_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateMessage: (input: {
     content?: string | null;
@@ -355,7 +355,7 @@ export type DiscordClient = {
   deleteAllMessageReactions: (input: {
     channel_id: SnowflakeType;
     message_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   listMessageReactionsByEmoji: (input: {
     channel_id: SnowflakeType;
@@ -370,26 +370,26 @@ export type DiscordClient = {
     channel_id: SnowflakeType;
     message_id: SnowflakeType;
     emoji_name: string;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   addMyMessageReaction: (input: {
     channel_id: SnowflakeType;
     message_id: SnowflakeType;
     emoji_name: string;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   deleteMyMessageReaction: (input: {
     channel_id: SnowflakeType;
     message_id: SnowflakeType;
     emoji_name: string;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   deleteUserMessageReaction: (input: {
     channel_id: SnowflakeType;
     message_id: SnowflakeType;
     emoji_name: string;
     user_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   createThreadFromMessage: (input: {
     name: string;
@@ -405,12 +405,12 @@ export type DiscordClient = {
     deny?: number | null;
     channel_id: SnowflakeType;
     overwrite_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   deleteChannelPermissionOverwrite: (input: {
     channel_id: SnowflakeType;
     overwrite_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   deprecatedListPins: (input: {
     channel_id: SnowflakeType;
@@ -419,12 +419,12 @@ export type DiscordClient = {
   deprecatedCreatePin: (input: {
     channel_id: SnowflakeType;
     message_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   deprecatedDeletePin: (input: {
     channel_id: SnowflakeType;
     message_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   getAnswerVoters: (input: {
     channel_id: SnowflakeType;
@@ -449,13 +449,13 @@ export type DiscordClient = {
   deleteGroupDmUser: (input: {
     channel_id: SnowflakeType;
     user_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   sendSoundboardSound: (input: {
     sound_id: SnowflakeType;
     source_guild_id?: null | SnowflakeType;
     channel_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   listThreadMembers: (input: {
     channel_id: SnowflakeType;
@@ -466,11 +466,11 @@ export type DiscordClient = {
 
   joinThread: (input: {
     channel_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   leaveThread: (input: {
     channel_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   getThreadMember: (input: {
     channel_id: SnowflakeType;
@@ -481,12 +481,12 @@ export type DiscordClient = {
   addThreadMember: (input: {
     channel_id: SnowflakeType;
     user_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   deleteThreadMember: (input: {
     channel_id: SnowflakeType;
     user_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   createThread: (input: {
     body: CreateForumThreadRequest | CreateTextThreadWithoutMessageRequest;
@@ -537,7 +537,7 @@ export type DiscordClient = {
     /** The new voice channel status */
     status?: string | null;
     channel_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   listChannelWebhooks: (input: {
     channel_id: SnowflakeType;
@@ -614,7 +614,7 @@ export type DiscordClient = {
   deleteAutoModerationRule: (input: {
     guild_id: SnowflakeType;
     rule_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateAutoModerationRule: (input: {
     body: DefaultKeywordListUpsertRequestPartial | KeywordUpsertRequestPartial | MlSpamUpsertRequestPartial | MentionSpamUpsertRequestPartial;
@@ -639,13 +639,13 @@ export type DiscordClient = {
     delete_message_days?: number | null;
     guild_id: SnowflakeType;
     user_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   unbanUserFromGuild: (input: {
     body: UnbanUserFromGuildRequest;
     guild_id: SnowflakeType;
     user_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   bulkBanUsersFromGuild: (input: {
     user_ids: (SnowflakeType)[];
@@ -683,7 +683,7 @@ export type DiscordClient = {
   bulkUpdateGuildChannels: (input: {
     body: ({ id?: null | SnowflakeType; position?: number | null; parent_id?: null | SnowflakeType; lock_permissions?: boolean | null })[];
     guild_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   listGuildEmojis: (input: {
     guild_id: SnowflakeType;
@@ -704,7 +704,7 @@ export type DiscordClient = {
   deleteGuildEmoji: (input: {
     guild_id: SnowflakeType;
     emoji_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateGuildEmoji: (input: {
     name?: string;
@@ -720,7 +720,7 @@ export type DiscordClient = {
   deleteGuildIntegration: (input: {
     guild_id: SnowflakeType;
     integration_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   listGuildInvites: (input: {
     guild_id: SnowflakeType;
@@ -765,7 +765,7 @@ export type DiscordClient = {
   deleteGuildMember: (input: {
     guild_id: SnowflakeType;
     user_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateGuildMember: (input: {
     nick?: string | null;
@@ -783,13 +783,13 @@ export type DiscordClient = {
     guild_id: SnowflakeType;
     user_id: SnowflakeType;
     role_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   deleteGuildMemberRole: (input: {
     guild_id: SnowflakeType;
     user_id: SnowflakeType;
     role_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   guildSearch: (input: {
     guild_id: SnowflakeType;
@@ -912,7 +912,7 @@ export type DiscordClient = {
   deleteGuildRole: (input: {
     guild_id: SnowflakeType;
     role_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateGuildRole: (input: {
     name?: string | null;
@@ -946,7 +946,7 @@ export type DiscordClient = {
   deleteGuildScheduledEvent: (input: {
     guild_id: SnowflakeType;
     guild_scheduled_event_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateGuildScheduledEvent: (input: {
     body: ExternalScheduledEventPatchRequestPartial | StageScheduledEventPatchRequestPartial | VoiceScheduledEventPatchRequestPartial;
@@ -984,7 +984,7 @@ export type DiscordClient = {
   deleteGuildSoundboardSound: (input: {
     guild_id: SnowflakeType;
     sound_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateGuildSoundboardSound: (input: {
     name?: string;
@@ -1015,7 +1015,7 @@ export type DiscordClient = {
   deleteGuildSticker: (input: {
     guild_id: SnowflakeType;
     sticker_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateGuildSticker: (input: {
     name?: string;
@@ -1069,7 +1069,7 @@ export type DiscordClient = {
     suppress?: boolean | null;
     channel_id?: null | SnowflakeType;
     guild_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   getVoiceState: (input: {
     guild_id: SnowflakeType;
@@ -1081,7 +1081,7 @@ export type DiscordClient = {
     channel_id?: null | SnowflakeType;
     guild_id: SnowflakeType;
     user_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   getGuildWebhooks: (input: {
     guild_id: SnowflakeType;
@@ -1147,7 +1147,7 @@ export type DiscordClient = {
   updateInviteTargetUsers: (input: {
     target_users_file: string;
     code: string;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   /**
    * Get the target users job status for an invite.
@@ -1192,7 +1192,7 @@ export type DiscordClient = {
 
   leaveLobby: (input: {
     lobby_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   createLinkedLobbyGuildInviteForSelf: (input: {
     lobby_id: SnowflakeType;
@@ -1213,7 +1213,7 @@ export type DiscordClient = {
   deleteLobbyMember: (input: {
     lobby_id: SnowflakeType;
     user_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   createLinkedLobbyGuildInviteForUser: (input: {
     lobby_id: SnowflakeType;
@@ -1250,7 +1250,7 @@ export type DiscordClient = {
     body: { [key: string]: string | undefined };
     lobby_id: SnowflakeType;
     message_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   getMyOauth2Authorization: () => Promise<OAuth2GetAuthorizationResponse>;
 
@@ -1269,18 +1269,18 @@ export type DiscordClient = {
     user_id_1: SnowflakeType;
     user_id_2: SnowflakeType;
     message_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   partnerSdkUnmergeProvisionalAccount: (input: {
     client_id: SnowflakeType;
     client_secret?: string | null;
     external_auth_token: string;
     external_auth_type: ApplicationIdentityProviderAuthType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   botPartnerSdkUnmergeProvisionalAccount: (input: {
     external_user_id: string;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   partnerSdkToken: (input: {
     client_id: SnowflakeType;
@@ -1311,7 +1311,7 @@ export type DiscordClient = {
 
   deleteStageInstance: (input: {
     channel_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateStageInstance: (input: {
     topic?: string;
@@ -1356,7 +1356,7 @@ export type DiscordClient = {
 
   deleteApplicationUserRoleConnection: (input: {
     application_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   createDm: (input: {
     recipient_id?: null | SnowflakeType;
@@ -1375,7 +1375,7 @@ export type DiscordClient = {
 
   leaveGuild: (input: {
     guild_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   getMyGuildMember: (input: {
     guild_id: SnowflakeType;
@@ -1393,7 +1393,7 @@ export type DiscordClient = {
 
   deleteWebhook: (input: {
     webhook_id: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateWebhook: (input: {
     name?: string;
@@ -1419,7 +1419,7 @@ export type DiscordClient = {
   deleteWebhookByToken: (input: {
     webhook_id: SnowflakeType;
     webhook_token: string;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateWebhookByToken: (input: {
     name?: string;
@@ -1453,7 +1453,7 @@ export type DiscordClient = {
     webhook_token: string;
     wait?: boolean;
     thread_id?: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   getOriginalWebhookMessage: (input: {
     webhook_id: SnowflakeType;
@@ -1465,7 +1465,7 @@ export type DiscordClient = {
     webhook_id: SnowflakeType;
     webhook_token: string;
     thread_id?: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateOriginalWebhookMessage: (input: {
     content?: string | null;
@@ -1493,7 +1493,7 @@ export type DiscordClient = {
     webhook_token: string;
     message_id: SnowflakeType;
     thread_id?: SnowflakeType;
-  }) => Promise<RatelimitedResponse>;
+  }) => Promise<undefined>;
 
   updateWebhookMessage: (input: {
     content?: string | null;

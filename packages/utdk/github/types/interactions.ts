@@ -1,4 +1,4 @@
-import type { BasicError, InteractionExpiry, InteractionGroup, InteractionLimitResponse, SimpleUser } from "./schemas.js";
+import type { InteractionExpiry, InteractionGroup, InteractionLimitResponse, SimpleUser } from "./schemas.js";
 
 export type InteractionsOperations = {
   /**
@@ -28,7 +28,7 @@ export type InteractionsOperations = {
   removeRestrictionsForOrg: (input: {
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get interaction restrictions for a repository
@@ -63,7 +63,7 @@ export type InteractionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get pull request creation cap bypass list for a repository
@@ -87,7 +87,7 @@ export type InteractionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove users from the pull request creation cap bypass list for a repository
@@ -100,7 +100,7 @@ export type InteractionsOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get pull request creation cap for a repository
@@ -147,5 +147,5 @@ export type InteractionsOperations = {
    * Remove interaction restrictions from your public repositories
    * @see https://docs.github.com/rest/interactions/user#remove-interaction-restrictions-from-your-public-repositories
    */
-  removeRestrictionsForAuthenticatedUser: () => Promise<unknown>;
+  removeRestrictionsForAuthenticatedUser: () => Promise<undefined>;
 };

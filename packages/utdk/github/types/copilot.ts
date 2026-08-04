@@ -1,4 +1,4 @@
-import type { BasicError, CopilotOrganizationContentExclusionDetails, CopilotOrganizationDetails, CopilotSeatDetails, CopilotUsageMetrics1DayReport, CopilotUsageMetrics28DayReport, MinimalRepository } from "./schemas.js";
+import type { CopilotOrganizationContentExclusionDetails, CopilotOrganizationDetails, CopilotSeatDetails, CopilotUsageMetrics1DayReport, CopilotUsageMetrics28DayReport, MinimalRepository } from "./schemas.js";
 
 export type CopilotOperations = {
   /**
@@ -61,7 +61,7 @@ export type CopilotOperations = {
     policy_state: "enabled_for_all_orgs" | "disabled_for_all_orgs" | "enabled_for_selected_orgs" | "configured_by_org_admins";
     /** The slug version of the enterprise name. */
     enterprise: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Add organizations to the enterprise coding agent policy
@@ -74,7 +74,7 @@ export type CopilotOperations = {
     custom_properties?: ({ property_name: string; values: (string)[] })[];
     /** The slug version of the enterprise name. */
     enterprise: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove organizations from the enterprise coding agent policy
@@ -87,7 +87,7 @@ export type CopilotOperations = {
     custom_properties?: ({ property_name: string; values: (string)[] })[];
     /** The slug version of the enterprise name. */
     enterprise: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get Copilot seat information and settings for an organization
@@ -173,7 +173,7 @@ export type CopilotOperations = {
     enabled_repositories: "all" | "selected" | "none";
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repositories enabled for Copilot cloud agent in an organization
@@ -197,7 +197,7 @@ export type CopilotOperations = {
     selected_repository_ids: (number)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Enable a repository for Copilot cloud agent in an organization
@@ -208,7 +208,7 @@ export type CopilotOperations = {
     org: string;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Disable a repository for Copilot cloud agent in an organization
@@ -219,7 +219,7 @@ export type CopilotOperations = {
     org: string;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get Copilot content exclusion rules for an organization

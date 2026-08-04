@@ -58,7 +58,7 @@ github.enterpriseTeams.delete(input: {
   enterprise: string;
   /** The slug of the team name. */
   team_slug: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /enterprises/{enterprise}/teams/{team_slug}` · `enterprise-teams/delete`</sub>

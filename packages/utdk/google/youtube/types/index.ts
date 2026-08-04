@@ -106,7 +106,7 @@ export type GoogleYoutubeClient = {
     onBehalfOf?: string;
     /** *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner. */
     onBehalfOfContentOwner?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -270,7 +270,7 @@ export type GoogleYoutubeClient = {
     tfmt?: string;
     /** tlang is the language code; machine translate the captions into this language. */
     tlang?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Inserts a new resource into this collection.
@@ -340,7 +340,7 @@ export type GoogleYoutubeClient = {
     id: string;
     /** *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner. */
     onBehalfOfContentOwner?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -740,7 +740,7 @@ export type GoogleYoutubeClient = {
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
     id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -886,7 +886,7 @@ export type GoogleYoutubeClient = {
     uploadType?: string;
     /** Flags the comments with the given IDs as spam in the caller's opinion. */
     id: (string)[];
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Sets the moderation status of one or more comments.
@@ -920,7 +920,7 @@ export type GoogleYoutubeClient = {
     moderationStatus: "published" | "heldForReview" | "likelySpam" | "rejected";
     /** If set to true the author of the comment gets added to the ban list. This means all future comments of the author will autmomatically be rejected. Only valid in combination with STATUS_REJECTED. */
     banAuthor?: boolean;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -1016,7 +1016,7 @@ export type GoogleYoutubeClient = {
     onBehalfOfContentOwner?: string;
     /** This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel. */
     onBehalfOfContentOwnerChannel?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve the list of broadcasts associated with the given channel.
@@ -1306,7 +1306,7 @@ export type GoogleYoutubeClient = {
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
     id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Inserts a new resource into this collection.
@@ -1373,7 +1373,7 @@ export type GoogleYoutubeClient = {
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
     id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -1482,7 +1482,7 @@ export type GoogleYoutubeClient = {
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
     id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -1589,7 +1589,7 @@ export type GoogleYoutubeClient = {
     onBehalfOfContentOwner?: string;
     /** This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel. */
     onBehalfOfContentOwnerChannel?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve the list of streams associated with the given channel. --
@@ -1827,7 +1827,7 @@ export type GoogleYoutubeClient = {
     id: string;
     /** *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner. */
     onBehalfOfContentOwner?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -1987,7 +1987,7 @@ export type GoogleYoutubeClient = {
     id: string;
     /** *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner. */
     onBehalfOfContentOwner?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -2250,7 +2250,7 @@ export type GoogleYoutubeClient = {
     /** Legacy upload protocol for media (e.g. "media", "multipart"). */
     uploadType?: string;
     id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -2449,7 +2449,7 @@ export type GoogleYoutubeClient = {
     externalChannelId?: string;
     /** Do not use. Required for compatibility. */
     part?: (string)[];
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -2697,7 +2697,7 @@ export type GoogleYoutubeClient = {
     id: string;
     /** *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The actual CMS account that the user authenticates with must be linked to the specified YouTube content owner. */
     onBehalfOfContentOwner?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieves a list of resources, possibly filtered.
@@ -2954,7 +2954,7 @@ export type GoogleYoutubeClient = {
     uploadType?: string;
     id: string;
     rating: "none" | "like" | "dislike";
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Report abuse for a video.
@@ -2994,7 +2994,7 @@ export type GoogleYoutubeClient = {
     uploadType?: string;
     /** *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner. */
     onBehalfOfContentOwner?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Allows upload of watermark image and setting it for a channel.
@@ -3035,7 +3035,7 @@ export type GoogleYoutubeClient = {
     channelId: string;
     /** *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner. */
     onBehalfOfContentOwner?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Allows removal of channel watermark.
@@ -3066,7 +3066,7 @@ export type GoogleYoutubeClient = {
     channelId: string;
     /** *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwner* parameter indicates that the request's authorization credentials identify a YouTube CMS user who is acting on behalf of the content owner specified in the parameter value. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and get access to all their video and channel data, without having to provide authentication credentials for each individual channel. The CMS account that the user authenticates with must be linked to the specified YouTube content owner. */
     onBehalfOfContentOwner?: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 };
 
 export * from "./schemas.js";

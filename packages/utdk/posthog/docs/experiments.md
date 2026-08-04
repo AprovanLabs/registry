@@ -1,1087 +1,352 @@
 # Experiments
 
-## Operations
-
-### `posthog.experimentsList`
-
-- **HTTP**: `GET /api/projects/{project_id}/experiments/`
-- **What it does**: List experiments for the current project. Supports filtering by status and archival state.
-- **OpenAPI operationId**: `experiments_list`
-- **Path params**: None
-- **Query params**: `archived`, `created_by_id`, `event`, `feature_flag_id`, `limit`, `offset`, `order`, `prompt_name`, `search`, `status`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ count: number; next?: string | null; previous?: string | null; results: ({ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature...`
-- OpenAPI response codes: `200`
+34 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type ExperimentsListInput = Parameters<typeof posthog.experimentsList> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsListOutput = Awaited<ReturnType<typeof posthog.experimentsList>>;
-
-const result: ExperimentsListOutput = await posthog.experimentsList();
-
-// Result shape (from schema): { count: number; next?: string | null; previous?: string | null; results: ({ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature...
 ```
 
-### `posthog.experimentsCreate`
+## `posthog.experimentsList`
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/`
-- **What it does**: Create a new experiment in draft status with optional metrics.
-- **OpenAPI operationId**: `experiments_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `201`
+List experiments for the current project. Supports filtering by status and archival state.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsCreateInput = Parameters<typeof posthog.experimentsCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsCreateOutput = Awaited<ReturnType<typeof posthog.experimentsCreate>>;
-
-const result: ExperimentsCreateOutput = await posthog.experimentsCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsList(): Promise<{ count: number; next?: string | null; previous?: string | null; results: ({ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean ...>
 ```
 
-### `posthog.experimentsDestroy`
+<sub>`GET /api/projects/{project_id}/experiments/` · `experiments_list`</sub>
 
-- **HTTP**: `DELETE /api/projects/{project_id}/experiments/{id}/`
-- **What it does**: Hard delete of this model is not allowed. Use a patch API call to set "deleted" to true
-- **OpenAPI operationId**: `experiments_destroy`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `405`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.experimentsCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `405`
+Create a new experiment in draft status with optional metrics.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsDestroyInput = Parameters<typeof posthog.experimentsDestroy> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsDestroyOutput = Awaited<ReturnType<typeof posthog.experimentsDestroy>>;
-
-const result: ExperimentsDestroyOutput = await posthog.experimentsDestroy();
-
-// Result shape (from schema): unknown
+posthog.experimentsCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsRetrieve`
+<sub>`POST /api/projects/{project_id}/experiments/` · `experiments_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/experiments/{id}/`
-- **What it does**: Retrieve a single experiment by ID, including its current status, metrics, feature flag, and results metadata.
-- **OpenAPI operationId**: `experiments_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.experimentsDestroy`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Hard delete of this model is not allowed. Use a patch API call to set "deleted" to true
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsRetrieveInput = Parameters<typeof posthog.experimentsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsRetrieveOutput = Awaited<ReturnType<typeof posthog.experimentsRetrieve>>;
-
-const result: ExperimentsRetrieveOutput = await posthog.experimentsRetrieve();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsDestroy(): Promise<unknown>
 ```
 
-### `posthog.experimentsPartialUpdate`
+<sub>`DELETE /api/projects/{project_id}/experiments/{id}/` · `experiments_destroy`</sub>
 
-- **HTTP**: `PATCH /api/projects/{project_id}/experiments/{id}/`
-- **What it does**: Update an experiment. Use this to modify experiment properties such as name, description, metrics, variants, and configuration. Metrics can be added, changed and removed at any time. Feature-flag config (variants, rollout, payloads) is sent via the feature_flag object.
-- **OpenAPI operationId**: `experiments_partial_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.experimentsRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Retrieve a single experiment by ID, including its current status, metrics, feature flag, and results metadata.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsPartialUpdateInput = Parameters<typeof posthog.experimentsPartialUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsPartialUpdateOutput = Awaited<ReturnType<typeof posthog.experimentsPartialUpdate>>;
-
-const result: ExperimentsPartialUpdateOutput = await posthog.experimentsPartialUpdate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsRetrieve(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsUpdate`
+<sub>`GET /api/projects/{project_id}/experiments/{id}/` · `experiments_retrieve`</sub>
 
-- **HTTP**: `PUT /api/projects/{project_id}/experiments/{id}/`
-- **What it does**: Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers.
+## `posthog.experimentsPartialUpdate`
 
-Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate
-decorator on serializer methods and converts them into the same responses the viewset path
-produces (see decorators._result_to_response), so both paths share one contract.
-- **OpenAPI operationId**: `experiments_update`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Update an experiment. Use this to modify experiment properties such as name, description, metrics, variants, and configuration. Metrics can be added, changed and removed at any time. Feature-flag config (variants, rollout, payloads) is sent via the feature_flag object.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsUpdateInput = Parameters<typeof posthog.experimentsUpdate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsUpdateOutput = Awaited<ReturnType<typeof posthog.experimentsUpdate>>;
-
-const result: ExperimentsUpdateOutput = await posthog.experimentsUpdate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsPartialUpdate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsArchiveCreate`
+<sub>`PATCH /api/projects/{project_id}/experiments/{id}/` · `experiments_partial_update`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/archive/`
-- **What it does**: Archive an ended experiment.
+## `posthog.experimentsUpdate`
 
-Hides the experiment from the default list view. The experiment can be
-restored at any time by updating archived=false. When the linked feature
-flag is still enabled, pass disable_feature_flag=true to also disable and
-archive it. Returns 400 if the experiment is already archived or has not
-ended yet.
-- **OpenAPI operationId**: `experiments_archive_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers. Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate decorator on serializer methods and converts them into the same responses the viewset path produces (see decorators._result_to_response), so both paths share one contract.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsArchiveCreateInput = Parameters<typeof posthog.experimentsArchiveCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsArchiveCreateOutput = Awaited<ReturnType<typeof posthog.experimentsArchiveCreate>>;
-
-const result: ExperimentsArchiveCreateOutput = await posthog.experimentsArchiveCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsUpdate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsCopyToProjectCreate`
+<sub>`PUT /api/projects/{project_id}/experiments/{id}/` · `experiments_update`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/copy_to_project/`
-- **What it does**: Copy an experiment into another project in the same organization as a new draft.
-- **OpenAPI operationId**: `experiments_copy_to_project_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.experimentsActivityRetrieve`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Change history for this experiment. Returns a paginated audit trail of changes to the experiment and its holdouts and shared metrics: who made each change, what changed (field-level before/after values), and when. Ordered newest first.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsCopyToProjectCreateInput = Parameters<typeof posthog.experimentsCopyToProjectCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsCopyToProjectCreateOutput = Awaited<ReturnType<typeof posthog.experimentsCopyToProjectCreate>>;
-
-const result: ExperimentsCopyToProjectCreateOutput = await posthog.experimentsCopyToProjectCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsActivityRetrieve(): Promise<{ results: ({ id: string; user: { [key: string]: unknown } | null; activity: string; scope: string; item_id: string; detail?: { id: string; changes?: ({ type: string; action: string; field: string; before: unknown; after: unknown })[]; merge?: { type: string; source: unknown; target: unknown }; trigger?: { job_type: string; job_id: string; payload: unknown }; name: string; short_id: string; type:...>
 ```
 
-### `posthog.experimentsCreateExposureCohortForExperimentCreate`
+<sub>`GET /api/projects/{project_id}/experiments/{id}/activity/` · `experiments_activity_retrieve`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/create_exposure_cohort_for_experiment/`
-- **What it does**: Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers.
+## `posthog.experimentsArchiveCreate`
 
-Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate
-decorator on serializer methods and converts them into the same responses the viewset path
-produces (see decorators._result_to_response), so both paths share one contract.
-- **OpenAPI operationId**: `experiments_create_exposure_cohort_for_experiment_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+Archive an ended experiment. Hides the experiment from the default list view. The experiment can be restored at any time by updating archived=false. When the linked feature flag is still enabled, pass disable_feature_flag=true to also disable and archive it. Returns 400 if the experiment is already archived or has not ended yet.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsCreateExposureCohortForExperimentCreateInput = Parameters<typeof posthog.experimentsCreateExposureCohortForExperimentCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsCreateExposureCohortForExperimentCreateOutput = Awaited<ReturnType<typeof posthog.experimentsCreateExposureCohortForExperimentCreate>>;
-
-const result: ExperimentsCreateExposureCohortForExperimentCreateOutput = await posthog.experimentsCreateExposureCohortForExperimentCreate();
-
-// Result shape (from schema): unknown
+posthog.experimentsArchiveCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsDuplicateCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/archive/` · `experiments_archive_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/duplicate/`
-- **What it does**: Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers.
+## `posthog.experimentsCopyToProjectCreate`
 
-Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate
-decorator on serializer methods and converts them into the same responses the viewset path
-produces (see decorators._result_to_response), so both paths share one contract.
-- **OpenAPI operationId**: `experiments_duplicate_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+Copy an experiment into another project in the same organization as a new draft.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsDuplicateCreateInput = Parameters<typeof posthog.experimentsDuplicateCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsDuplicateCreateOutput = Awaited<ReturnType<typeof posthog.experimentsDuplicateCreate>>;
-
-const result: ExperimentsDuplicateCreateOutput = await posthog.experimentsDuplicateCreate();
-
-// Result shape (from schema): unknown
+posthog.experimentsCopyToProjectCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsEndCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/copy_to_project/` · `experiments_copy_to_project_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/end/`
-- **What it does**: End a running experiment without shipping a variant.
+## `posthog.experimentsCreateExposureCohortForExperimentCreate`
 
-Sets end_date to now and marks the experiment as stopped. The feature
-flag is NOT modified — users continue to see their assigned variants
-and exposure events ($feature_flag_called) continue to be recorded.
-However, only data up to end_date is included in experiment results.
-
-Use this when:
-
-- You want to freeze the results window without changing which variant
-  users see.
-- A variant was already shipped manually via the feature flag UI and
-  the experiment just needs to be marked complete.
-
-The end_date can be adjusted after ending via PATCH if it needs to be
-backdated (e.g. to match when the flag was actually paused).
-
-Other options:
-- Use ship_variant to end the experiment AND roll out a single variant to 100%% of users.
-- Use pause to deactivate the flag without ending the experiment (stops variant assignment but does not freeze results).
-
-Returns 400 if the experiment is not running.
-- **OpenAPI operationId**: `experiments_end_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers. Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate decorator on serializer methods and converts them into the same responses the viewset path produces (see decorators._result_to_response), so both paths share one contract.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsEndCreateInput = Parameters<typeof posthog.experimentsEndCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsEndCreateOutput = Awaited<ReturnType<typeof posthog.experimentsEndCreate>>;
-
-const result: ExperimentsEndCreateOutput = await posthog.experimentsEndCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsCreateExposureCohortForExperimentCreate(): Promise<unknown>
 ```
 
-### `posthog.experimentsFreezeExposureCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/create_exposure_cohort_for_experiment/` · `experiments_create_exposure_cohort_for_experiment_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/freeze_exposure/`
-- **What it does**: Freeze exposure on a running experiment while metrics keep flowing.
+## `posthog.experimentsDuplicateCreate`
 
-Snapshots the already-exposed users into a static cohort and narrows the
-linked feature flag so only those users keep matching — new users can no
-longer enter the experiment. ``end_date`` is left null so long-term metrics
-(revenue/LTV/renewals/retention) keep accumulating. Enrolled users keep
-their assigned variant. The serialized status becomes 'exposure_frozen'.
-
-Returns 400 if the experiment is not running, exposure is already frozen,
-the experiment is group-aggregated (group flags cannot be frozen with a
-person cohort), or the exposed set is too large to snapshot synchronously.
-- **OpenAPI operationId**: `experiments_freeze_exposure_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers. Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate decorator on serializer methods and converts them into the same responses the viewset path produces (see decorators._result_to_response), so both paths share one contract.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsFreezeExposureCreateInput = Parameters<typeof posthog.experimentsFreezeExposureCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsFreezeExposureCreateOutput = Awaited<ReturnType<typeof posthog.experimentsFreezeExposureCreate>>;
-
-const result: ExperimentsFreezeExposureCreateOutput = await posthog.experimentsFreezeExposureCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsDuplicateCreate(): Promise<unknown>
 ```
 
-### `posthog.experimentsLaunchCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/duplicate/` · `experiments_duplicate_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/launch/`
-- **What it does**: Launch a draft experiment.
+## `posthog.experimentsEndCreate`
 
-Validates the experiment is in draft state, activates its linked feature flag,
-sets start_date to the current server time, and transitions the experiment to running.
-Returns 400 if the experiment has already been launched or if the feature flag
-configuration is invalid (e.g. missing "control" variant or fewer than 2 variants).
-- **OpenAPI operationId**: `experiments_launch_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+End a running experiment without shipping a variant. Sets end_date to now and marks the experiment as stopped. The feature flag is NOT modified — users continue to see their assigned variants and exposure events ($feature_flag_called) continue to be recorded. However, only data up to end_date is included in experiment results. Use this when: - You want to freeze the results window without changing which variant users see. - A variant was already shipped manually via the feature flag UI and the experiment just needs to be marked complete. The end_date can be adjusted after ending via PATCH if it needs to be backdated (e.g. to match when the flag was actually paused). Other options: - Use ship_variant to end the experiment AND roll out a single variant to 100%% of users. - Use pause to deactivate the flag without ending the experiment (stops variant assignment but does not freeze results). Returns 400 if the experiment is not running.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsLaunchCreateInput = Parameters<typeof posthog.experimentsLaunchCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsLaunchCreateOutput = Awaited<ReturnType<typeof posthog.experimentsLaunchCreate>>;
-
-const result: ExperimentsLaunchCreateOutput = await posthog.experimentsLaunchCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsEndCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsMetricsRecalculationCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/end/` · `experiments_end_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/metrics_recalculation/`
-- **What it does**: Trigger a batch recalculation of all metrics for this experiment.
+## `posthog.experimentsFlagCleanupTargetRetrieve`
 
-Returns 201 with the new pending recalculation, or 200 with the active one if a recalculation is
-already pending or in progress for this experiment. The response payload intentionally does not
-include the `results` array — at POST time the workflow has just been queued and no per-metric
-results exist yet. Clients should poll `GET metrics_recalculation/{id}/` for results as the workflow
-progresses.
-- **OpenAPI operationId**: `experiments_metrics_recalculation_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`, `201`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; experiment_id: number; status: "pending" | "in_progress" | "completed" | "failed"; total_metrics: number; completed_metrics: number; failed_metrics: number; metric_errors: unknown; trigger: "manual" | "col...`
-- OpenAPI response codes: `200`, `201`
+Repository a flag-cleanup pull request for this experiment would be opened in. Resolution order: the experiment's saved repository, else the team's only connected GitHub repository. When the team has several repositories and none is saved (source=ambiguous), pass one via `repository` on end/ship_variant. Requires access to PostHog Desktop, like open_cleanup_pr (403 otherwise).
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsMetricsRecalculationCreateInput = Parameters<typeof posthog.experimentsMetricsRecalculationCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsMetricsRecalculationCreateOutput = Awaited<ReturnType<typeof posthog.experimentsMetricsRecalculationCreate>>;
-
-const result: ExperimentsMetricsRecalculationCreateOutput = await posthog.experimentsMetricsRecalculationCreate();
-
-// Result shape (from schema): { id: string; experiment_id: number; status: "pending" | "in_progress" | "completed" | "failed"; total_metrics: number; completed_metrics: number; failed_metrics: number; metric_errors: unknown; trigger: "manual" | "col...
+posthog.experimentsFlagCleanupTargetRetrieve(): Promise<{ repository: string | null; source: "explicit" | "single_repo" | "ambiguous" | "no_integration"; candidates: (string)[] }>
 ```
 
-### `posthog.experimentsMetricsRecalculationRetrieve`
+<sub>`GET /api/projects/{project_id}/experiments/{id}/flag_cleanup_target/` · `experiments_flag_cleanup_target_retrieve`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/experiments/{id}/metrics_recalculation/{recalculation_id}/`
-- **What it does**: Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers.
+## `posthog.experimentsFlagCleanupTaskRetrieve`
 
-Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate
-decorator on serializer methods and converts them into the same responses the viewset path
-produces (see decorators._result_to_response), so both paths share one contract.
-- **OpenAPI operationId**: `experiments_metrics_recalculation_retrieve`
-- **Path params**: `id`, `recalculation_id`
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; experiment_id: number; status: "pending" | "in_progress" | "completed" | "failed"; total_metrics: number; completed_metrics: number; failed_metrics: number; metric_errors: unknown; trigger: "manual" | "col...`
-- OpenAPI response codes: `200`, `404`
+Status of the flag-cleanup Desktop task opened for this experiment. When an experiment was ended or shipped with open_cleanup_pr=true, a Desktop task removes the experiment's feature-flag code and opens a draft pull request. This returns that task's latest run status and the PR URL once one is opened. Poll until is_terminal is true. Returns 404 when no cleanup task was opened.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsMetricsRecalculationRetrieveInput = Parameters<typeof posthog.experimentsMetricsRecalculationRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsMetricsRecalculationRetrieveOutput = Awaited<ReturnType<typeof posthog.experimentsMetricsRecalculationRetrieve>>;
-
-const result: ExperimentsMetricsRecalculationRetrieveOutput = await posthog.experimentsMetricsRecalculationRetrieve();
-
-// Result shape (from schema): { id: string; experiment_id: number; status: "pending" | "in_progress" | "completed" | "failed"; total_metrics: number; completed_metrics: number; failed_metrics: number; metric_errors: unknown; trigger: "manual" | "col...
+posthog.experimentsFlagCleanupTaskRetrieve(): Promise<{ task_id: string; run_status: "not_started" | "queued" | "in_progress" | "completed" | "failed" | "cancelled"; is_terminal: boolean; pr_url: string | null; can_view_task: boolean }>
 ```
 
-### `posthog.experimentsMetricsRecalculationLatestRetrieve`
+<sub>`GET /api/projects/{project_id}/experiments/{id}/flag_cleanup_task/` · `experiments_flag_cleanup_task_retrieve`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/experiments/{id}/metrics_recalculation/latest/`
-- **What it does**: Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers.
+## `posthog.experimentsFreezeExposureCreate`
 
-Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate
-decorator on serializer methods and converts them into the same responses the viewset path
-produces (see decorators._result_to_response), so both paths share one contract.
-- **OpenAPI operationId**: `experiments_metrics_recalculation_latest_retrieve`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`, `404`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: string; experiment_id: number; status: "pending" | "in_progress" | "completed" | "failed"; total_metrics: number; completed_metrics: number; failed_metrics: number; metric_errors: unknown; trigger: "manual" | "col...`
-- OpenAPI response codes: `200`, `404`
+Freeze exposure on a running experiment while metrics keep flowing. Snapshots the already-exposed users into a static cohort and narrows the linked feature flag so only those users keep matching — new users can no longer enter the experiment. ``end_date`` is left null so long-term metrics (revenue/LTV/renewals/retention) keep accumulating. Enrolled users keep their assigned variant. The serialized status becomes 'exposure_frozen'. Returns 400 if the experiment is not running, exposure is already frozen, the experiment is group-aggregated (group flags cannot be frozen with a person cohort), or the exposed set is too large to snapshot synchronously.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsMetricsRecalculationLatestRetrieveInput = Parameters<typeof posthog.experimentsMetricsRecalculationLatestRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsMetricsRecalculationLatestRetrieveOutput = Awaited<ReturnType<typeof posthog.experimentsMetricsRecalculationLatestRetrieve>>;
-
-const result: ExperimentsMetricsRecalculationLatestRetrieveOutput = await posthog.experimentsMetricsRecalculationLatestRetrieve();
-
-// Result shape (from schema): { id: string; experiment_id: number; status: "pending" | "in_progress" | "completed" | "failed"; total_metrics: number; completed_metrics: number; failed_metrics: number; metric_errors: unknown; trigger: "manual" | "col...
+posthog.experimentsFreezeExposureCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsPauseCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/freeze_exposure/` · `experiments_freeze_exposure_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/pause/`
-- **What it does**: Pause a running experiment.
+## `posthog.experimentsLaunchCreate`
 
-Deactivates the linked feature flag so it is no longer returned by the
-/decide endpoint. Users fall back to the application default (typically
-the control experience), and no new exposure events are recorded (i.e.
-$feature_flag_called is not fired).
-Returns 400 if the experiment is not running or is already paused.
-- **OpenAPI operationId**: `experiments_pause_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Launch a draft experiment. Validates the experiment is in draft state, activates its linked feature flag, sets start_date to the current server time, and transitions the experiment to running. Returns 400 if the experiment has already been launched or if the feature flag configuration is invalid (e.g. fewer than 2 variants).
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsPauseCreateInput = Parameters<typeof posthog.experimentsPauseCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsPauseCreateOutput = Awaited<ReturnType<typeof posthog.experimentsPauseCreate>>;
-
-const result: ExperimentsPauseCreateOutput = await posthog.experimentsPauseCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsLaunchCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsRecalculateTimeseriesCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/launch/` · `experiments_launch_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/recalculate_timeseries/`
-- **What it does**: Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers.
+## `posthog.experimentsMetricsRecalculationCreate`
 
-Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate
-decorator on serializer methods and converts them into the same responses the viewset path
-produces (see decorators._result_to_response), so both paths share one contract.
-- **OpenAPI operationId**: `experiments_recalculate_timeseries_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+Trigger a batch recalculation of all metrics for this experiment. Returns 201 with the new pending recalculation, or 200 with the active one if a recalculation is already pending or in progress for this experiment. The response payload intentionally does not include the `results` array — at POST time the workflow has just been queued and no per-metric results exist yet. Clients should poll `GET metrics_recalculation/{id}/` for results as the workflow progresses.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsRecalculateTimeseriesCreateInput = Parameters<typeof posthog.experimentsRecalculateTimeseriesCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsRecalculateTimeseriesCreateOutput = Awaited<ReturnType<typeof posthog.experimentsRecalculateTimeseriesCreate>>;
-
-const result: ExperimentsRecalculateTimeseriesCreateOutput = await posthog.experimentsRecalculateTimeseriesCreate();
-
-// Result shape (from schema): unknown
+posthog.experimentsMetricsRecalculationCreate(): Promise<{ id: string; experiment_id: number; status: "pending" | "in_progress" | "completed" | "failed"; total_metrics: number; completed_metrics: number; failed_metrics: number; metric_errors: unknown; metric_retries: unknown; trigger: "manual" | "agent_mcp" | "cold_run" | "stale_refresh" | "auto_refresh" | "config_change" | "experiment_launch" | "experiment_stop" | "experiment_update"; created_at: stri...>
 ```
 
-### `posthog.experimentsResetCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/metrics_recalculation/` · `experiments_metrics_recalculation_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/reset/`
-- **What it does**: Reset an experiment back to draft state.
+## `posthog.experimentsMetricsRecalculationRetrieve`
 
-Clears start/end dates, conclusion, and archived flag. The feature
-flag is left unchanged — users continue to see their assigned variants.
-
-Previously collected events still exist but won't be included in
-results unless the start date is manually adjusted after re-launch.
-
-Returns 400 if the experiment is already in draft state.
-- **OpenAPI operationId**: `experiments_reset_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers. Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate decorator on serializer methods and converts them into the same responses the viewset path produces (see decorators._result_to_response), so both paths share one contract.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsResetCreateInput = Parameters<typeof posthog.experimentsResetCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsResetCreateOutput = Awaited<ReturnType<typeof posthog.experimentsResetCreate>>;
-
-const result: ExperimentsResetCreateOutput = await posthog.experimentsResetCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsMetricsRecalculationRetrieve(): Promise<{ id: string; experiment_id: number; status: "pending" | "in_progress" | "completed" | "failed"; total_metrics: number; completed_metrics: number; failed_metrics: number; metric_errors: unknown; metric_retries: unknown; trigger: "manual" | "agent_mcp" | "cold_run" | "stale_refresh" | "auto_refresh" | "config_change" | "experiment_launch" | "experiment_stop" | "experiment_update"; created_at: stri...>
 ```
 
-### `posthog.experimentsResumeCreate`
+<sub>`GET /api/projects/{project_id}/experiments/{id}/metrics_recalculation/{recalculation_id}/` · `experiments_metrics_recalculation_retrieve`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/resume/`
-- **What it does**: Resume a paused experiment.
+## `posthog.experimentsMetricsRecalculationLatestRetrieve`
 
-Reactivates the linked feature flag so it is returned by /decide again.
-Users are re-bucketed deterministically into the same variants they had
-before the pause, and exposure tracking resumes.
-Returns 400 if the experiment is not running or is not paused.
-- **OpenAPI operationId**: `experiments_resume_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers. Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate decorator on serializer methods and converts them into the same responses the viewset path produces (see decorators._result_to_response), so both paths share one contract.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsResumeCreateInput = Parameters<typeof posthog.experimentsResumeCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsResumeCreateOutput = Awaited<ReturnType<typeof posthog.experimentsResumeCreate>>;
-
-const result: ExperimentsResumeCreateOutput = await posthog.experimentsResumeCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsMetricsRecalculationLatestRetrieve(): Promise<{ id: string; experiment_id: number; status: "pending" | "in_progress" | "completed" | "failed"; total_metrics: number; completed_metrics: number; failed_metrics: number; metric_errors: unknown; metric_retries: unknown; trigger: "manual" | "agent_mcp" | "cold_run" | "stale_refresh" | "auto_refresh" | "config_change" | "experiment_launch" | "experiment_stop" | "experiment_update"; created_at: stri...>
 ```
 
-### `posthog.experimentsShipVariantCreate`
+<sub>`GET /api/projects/{project_id}/experiments/{id}/metrics_recalculation/latest/` · `experiments_metrics_recalculation_latest_retrieve`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/ship_variant/`
-- **What it does**: Ship a variant and (optionally) end the experiment.
+## `posthog.experimentsPauseCreate`
 
-Updates the feature flag so the selected variant gets 100% of the variant
-distribution. By default, existing release conditions on the flag are preserved
-untouched — the variant is served only to users who already match them. Pass
-``release_to_everyone: true`` to also prepend a catch-all release condition
-that rolls the variant out to 100% of users (overrides any existing release
-conditions on the flag).
-
-Can be called on both running and stopped experiments. If the experiment is
-still running, it will also be ended (end_date set and status marked as stopped).
-If the experiment has already ended, only the flag is rewritten - this supports
-the "end first, ship later" workflow.
-
-If an approval policy requires review before changes on the flag take effect,
-the API returns 409 with a change_request_id. The experiment is NOT ended until
-the change request is approved and the user retries.
-
-Returns 400 if the experiment is in draft state, the variant_key is not found
-on the flag, or the experiment has no linked feature flag.
-- **OpenAPI operationId**: `experiments_ship_variant_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Pause a running experiment. Deactivates the linked feature flag so it is no longer returned by the /decide endpoint. Users fall back to the application default (typically the control experience), and no new exposure events are recorded (i.e. $feature_flag_called is not fired). Returns 400 if the experiment is not running or is already paused.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsShipVariantCreateInput = Parameters<typeof posthog.experimentsShipVariantCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsShipVariantCreateOutput = Awaited<ReturnType<typeof posthog.experimentsShipVariantCreate>>;
-
-const result: ExperimentsShipVariantCreateOutput = await posthog.experimentsShipVariantCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsPauseCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsTimeseriesResultsRetrieve`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/pause/` · `experiments_pause_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/experiments/{id}/timeseries_results/`
-- **What it does**: Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers.
+## `posthog.experimentsRecalculateTimeseriesCreate`
 
-Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate
-decorator on serializer methods and converts them into the same responses the viewset path
-produces (see decorators._result_to_response), so both paths share one contract.
-- **OpenAPI operationId**: `experiments_timeseries_results_retrieve`
-- **Path params**: `id`
-- **Query params**: `fingerprint`, `metric_uuid`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers. Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate decorator on serializer methods and converts them into the same responses the viewset path produces (see decorators._result_to_response), so both paths share one contract.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsTimeseriesResultsRetrieveInput = Parameters<typeof posthog.experimentsTimeseriesResultsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsTimeseriesResultsRetrieveOutput = Awaited<ReturnType<typeof posthog.experimentsTimeseriesResultsRetrieve>>;
-
-const result: ExperimentsTimeseriesResultsRetrieveOutput = await posthog.experimentsTimeseriesResultsRetrieve();
-
-// Result shape (from schema): unknown
+posthog.experimentsRecalculateTimeseriesCreate(): Promise<unknown>
 ```
 
-### `posthog.experimentsUnarchiveCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/recalculate_timeseries/` · `experiments_recalculate_timeseries_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/unarchive/`
-- **What it does**: Unarchive an archived experiment.
+## `posthog.experimentsResetCreate`
 
-Restores the experiment to the default list view. Returns 400 if the
-experiment is not currently archived.
-- **OpenAPI operationId**: `experiments_unarchive_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Reset an experiment back to draft state. Clears start/end dates, conclusion, archived flag, and any flag-cleanup task pointer. The feature flag is left unchanged — users continue to see their assigned variants. Previously collected events still exist but won't be included in results unless the start date is manually adjusted after re-launch. Returns 400 if the experiment is already in draft state.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsUnarchiveCreateInput = Parameters<typeof posthog.experimentsUnarchiveCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsUnarchiveCreateOutput = Awaited<ReturnType<typeof posthog.experimentsUnarchiveCreate>>;
-
-const result: ExperimentsUnarchiveCreateOutput = await posthog.experimentsUnarchiveCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsResetCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsUnfreezeExposureCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/reset/` · `experiments_reset_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/{id}/unfreeze_exposure/`
-- **What it does**: Reopen enrollment on an exposure-frozen experiment.
+## `posthog.experimentsResumeCreate`
 
-Removes the snapshot-cohort condition and freeze markers from every release
-group, restoring the flag's original targeting: new users can enroll again
-and already-enrolled users keep their assigned variant. The snapshot cohort
-is soft-deleted. The serialized status returns to 'running'.
-
-Returns 400 if the experiment is not running or its exposure is not frozen.
-- **OpenAPI operationId**: `experiments_unfreeze_exposure_create`
-- **Path params**: `id`
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Resume a paused experiment. Reactivates the linked feature flag so it is returned by /decide again. Users are re-bucketed deterministically into the same variants they had before the pause, and exposure tracking resumes. Returns 400 if the experiment is not running or is not paused.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsUnfreezeExposureCreateInput = Parameters<typeof posthog.experimentsUnfreezeExposureCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsUnfreezeExposureCreateOutput = Awaited<ReturnType<typeof posthog.experimentsUnfreezeExposureCreate>>;
-
-const result: ExperimentsUnfreezeExposureCreateOutput = await posthog.experimentsUnfreezeExposureCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsResumeCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsCalculateRunningTimeCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/resume/` · `experiments_resume_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/calculate_running_time/`
-- **What it does**: Estimate the recommended sample size and running time for an experiment.
+## `posthog.experimentsSessionBucketsCreate`
 
-Pure statistical calculation — does not read or write any experiment. Pass the metric type, a
-minimum detectable effect, and either a baseline value or raw baseline statistics. When
-`exposure_rate_per_day` is provided, the response also includes the estimated running time in days.
-- **OpenAPI operationId**: `experiments_calculate_running_time_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ baseline_value: number | null; variance: number | null; recommended_sample_size: number | null; recommended_running_time_days: number | null }`
-- OpenAPI response codes: `200`
+Session recordings of this experiment matching a bucket. Answers the questions a recordings query can't express on its own — "fired any of these metrics", "fired none of them", "entered the funnel but never completed it in this session" — by returning a bounded, most-recent-first list of session IDs to pass back as a recordings query's session_ids. POST because the metric list doesn't fit a query string; the endpoint only reads. Session-scoped and goal-free: the set describes what happened in each session, while the experiment analysis counts per person over the whole run window. A session can be in the drop-off bucket while the same person converts in a later one.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsCalculateRunningTimeCreateInput = Parameters<typeof posthog.experimentsCalculateRunningTimeCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsCalculateRunningTimeCreateOutput = Awaited<ReturnType<typeof posthog.experimentsCalculateRunningTimeCreate>>;
-
-const result: ExperimentsCalculateRunningTimeCreateOutput = await posthog.experimentsCalculateRunningTimeCreate();
-
-// Result shape (from schema): { baseline_value: number | null; variance: number | null; recommended_sample_size: number | null; recommended_running_time_days: number | null }
+posthog.experimentsSessionBucketsCreate(): Promise<{ session_ids: (string)[]; truncated: boolean; considered_metrics: ({ metric_uuid: string; metric_name: string })[]; excluded_metrics: ({ metric_uuid: string; metric_name: string; reason: string })[]; date_from: string; date_to: string; filter_test_accounts: boolean; used_exposure_fallback: boolean }>
 ```
 
-### `posthog.experimentsCreateFromPromptCreate`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/session_buckets/` · `experiments_session_buckets_create`</sub>
 
-- **HTTP**: `POST /api/projects/{project_id}/experiments/create_from_prompt/`
-- **What it does**: Create an experiment that compares N versions of an LLM prompt using a metric template.
+## `posthog.experimentsShipVariantCreate`
 
-The user picks 2+ versions of an existing LLMPrompt and 1+ metric templates
-(cost / latency / eval_pass_rate). The endpoint builds the matching variants
-(control + test-N, each named after its prompt version) and attaches one
-metric per selected template, each scoped to the prompt's $ai_prompt_name.
-Resulting experiment is in draft state.
-- **OpenAPI operationId**: `experiments_create_from_prompt_create`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...`
-- OpenAPI response codes: `200`
+Ship a variant and (optionally) end the experiment. Updates the feature flag so the selected variant gets 100% of the variant distribution. By default, existing release conditions on the flag are preserved untouched — the variant is served only to users who already match them. Pass ``release_to_everyone: true`` to also prepend a catch-all release condition that rolls the variant out to 100% of users (overrides any existing release conditions on the flag). Can be called on both running and stopped experiments. If the experiment is still running, it will also be ended (end_date set and status marked as stopped). If the experiment has already ended, only the flag is rewritten - this supports the "end first, ship later" workflow. If an approval policy requires review before changes on the flag take effect, the API returns 409 with a change_request_id. The experiment is NOT ended until the change request is approved and the user retries. Returns 400 if the experiment is in draft state, the variant_key is not found on the flag, or the experiment has no linked feature flag.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsCreateFromPromptCreateInput = Parameters<typeof posthog.experimentsCreateFromPromptCreate> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsCreateFromPromptCreateOutput = Awaited<ReturnType<typeof posthog.experimentsCreateFromPromptCreate>>;
-
-const result: ExperimentsCreateFromPromptCreateOutput = await posthog.experimentsCreateFromPromptCreate();
-
-// Result shape (from schema): { id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?:...
+posthog.experimentsShipVariantCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsEligibleFeatureFlagsRetrieve`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/ship_variant/` · `experiments_ship_variant_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/experiments/eligible_feature_flags/`
-- **What it does**: Returns a paginated list of feature flags eligible for use in experiments.
+## `posthog.experimentsTimeseriesResultsRetrieve`
 
-Eligible flags must:
-- Be multivariate with at least 2 variants
-- Have "control" as the first variant key
-
-Query parameters:
-- search: Filter by flag key or name (case insensitive)
-- limit: Number of results per page (default: 20)
-- offset: Pagination offset (default: 0)
-- active: Filter by active status ("true" or "false")
-- created_by_id: Filter by creator user ID
-- order: Sort order field
-- evaluation_runtime: Filter by evaluation runtime
-- has_evaluation_contexts: Filter by presence of evaluation contexts ("true" or "false")
-- **OpenAPI operationId**: `experiments_eligible_feature_flags_retrieve`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers. Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate decorator on serializer methods and converts them into the same responses the viewset path produces (see decorators._result_to_response), so both paths share one contract.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsEligibleFeatureFlagsRetrieveInput = Parameters<typeof posthog.experimentsEligibleFeatureFlagsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsEligibleFeatureFlagsRetrieveOutput = Awaited<ReturnType<typeof posthog.experimentsEligibleFeatureFlagsRetrieve>>;
-
-const result: ExperimentsEligibleFeatureFlagsRetrieveOutput = await posthog.experimentsEligibleFeatureFlagsRetrieve();
-
-// Result shape (from schema): unknown
+posthog.experimentsTimeseriesResultsRetrieve(): Promise<unknown>
 ```
 
-### `posthog.experimentsPromptTemplatesRetrieve`
+<sub>`GET /api/projects/{project_id}/experiments/{id}/timeseries_results/` · `experiments_timeseries_results_retrieve`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/experiments/prompt_templates/`
-- **What it does**: List the LLM metric templates that can be passed to `create_from_prompt`.
-- **OpenAPI operationId**: `experiments_prompt_templates_retrieve`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.experimentsUnarchiveCreate`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `({ key: string; label: string; description: string })[]`
-- OpenAPI response codes: `200`
+Unarchive an archived experiment. Restores the experiment to the default list view. Returns 400 if the experiment is not currently archived.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsPromptTemplatesRetrieveInput = Parameters<typeof posthog.experimentsPromptTemplatesRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsPromptTemplatesRetrieveOutput = Awaited<ReturnType<typeof posthog.experimentsPromptTemplatesRetrieve>>;
-
-const result: ExperimentsPromptTemplatesRetrieveOutput = await posthog.experimentsPromptTemplatesRetrieve();
-
-// Result shape (from schema): ({ key: string; label: string; description: string })[]
+posthog.experimentsUnarchiveCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
-### `posthog.experimentsStatsRetrieve`
+<sub>`POST /api/projects/{project_id}/experiments/{id}/unarchive/` · `experiments_unarchive_create`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/experiments/stats/`
-- **What it does**: Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers.
+## `posthog.experimentsUnfreezeExposureCreate`
 
-Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate
-decorator on serializer methods and converts them into the same responses the viewset path
-produces (see decorators._result_to_response), so both paths share one contract.
-- **OpenAPI operationId**: `experiments_stats_retrieve`
-- **Path params**: None
-- **Query params**: None
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `unknown`
-- OpenAPI response codes: `200`
+Reopen enrollment on an exposure-frozen experiment. Removes the snapshot-cohort condition and freeze markers from every release group, restoring the flag's original targeting: new users can enroll again and already-enrolled users keep their assigned variant. The snapshot cohort is soft-deleted. The serialized status returns to 'running'. Returns 400 if the experiment is not running or its exposure is not frozen.
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type ExperimentsStatsRetrieveInput = Parameters<typeof posthog.experimentsStatsRetrieve> extends [infer T, ...unknown[]] ? T : undefined;
-type ExperimentsStatsRetrieveOutput = Awaited<ReturnType<typeof posthog.experimentsStatsRetrieve>>;
-
-const result: ExperimentsStatsRetrieveOutput = await posthog.experimentsStatsRetrieve();
-
-// Result shape (from schema): unknown
+posthog.experimentsUnfreezeExposureCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
 ```
 
+<sub>`POST /api/projects/{project_id}/experiments/{id}/unfreeze_exposure/` · `experiments_unfreeze_exposure_create`</sub>
+
+## `posthog.experimentsCalculateRunningTimeCreate`
+
+Estimate the recommended sample size and running time for an experiment. Pure statistical calculation — does not read or write any experiment. Pass the metric type, a minimum detectable effect, and either a baseline value or raw baseline statistics. When `exposure_rate_per_day` is provided, the response also includes the estimated running time in days.
+
+```ts
+posthog.experimentsCalculateRunningTimeCreate(): Promise<{ baseline_value: number | null; variance: number | null; recommended_sample_size: number | null; recommended_running_time_days: number | null }>
+```
+
+<sub>`POST /api/projects/{project_id}/experiments/calculate_running_time/` · `experiments_calculate_running_time_create`</sub>
+
+## `posthog.experimentsCreateFromPromptCreate`
+
+Create an experiment that compares N versions of an LLM prompt using a metric template. The user picks 2+ versions of an existing LLMPrompt and 1+ metric templates (cost / latency / eval_pass_rate). The endpoint builds the matching variants (control + test-N, each named after its prompt version) and attaches one metric per selected template, each scoped to the prompt's $ai_prompt_name. Resulting experiment is in draft state.
+
+```ts
+posthog.experimentsCreateFromPromptCreate(): Promise<{ id: number; name: string; description?: string | null; start_date?: string | null; end_date?: string | null; feature_flag_key: string; feature_flag: { id: number; team_id: number; name?: string; key: string; filters?: { [key: string]: unknown }; deleted?: boolean; active?: boolean; ensure_experience_continuity?: boolean | null; version?: number | null; evaluation_runtime?: "server" | "client" |...>
+```
+
+<sub>`POST /api/projects/{project_id}/experiments/create_from_prompt/` · `experiments_create_from_prompt_create`</sub>
+
+## `posthog.experimentsPromptTemplatesRetrieve`
+
+List the LLM metric templates that can be passed to `create_from_prompt`.
+
+```ts
+posthog.experimentsPromptTemplatesRetrieve(): Promise<({ key: string; label: string; description: string })[]>
+```
+
+<sub>`GET /api/projects/{project_id}/experiments/prompt_templates/` · `experiments_prompt_templates_retrieve`</sub>
+
+## `posthog.experimentsSessionContextRetrieve`
+
+Resolve which experiments (and variants) a session recording saw. Variants come from the session's $feature_flag_called events and stamped $feature/<key> event properties — flag evaluation, which may differ from an experiment's exposure criteria.
+
+```ts
+posthog.experimentsSessionContextRetrieve(): Promise<{ session_id: string; results: ({ experiment_id: number; experiment_name: string; flag_key: string; variant: string; variants_seen: (string)[]; multiple_variants: boolean; first_exposure_timestamp: string | null; experiment_start_date: string | null; experiment_end_date: string | null; metrics_in_session: ({ metric_uuid: string; metric_name: string; event_count: number; first_timestamp: string; t...>
+```
+
+<sub>`GET /api/projects/{project_id}/experiments/session_context/` · `experiments_session_context_retrieve`</sub>
+
+## `posthog.experimentsSessionContextsCreate`
+
+Resolve experiment context for a batch of session recordings. Batch variant of `session_context`, used to prefetch the replay player's experiments box for a whole recordings list in one request. POST because the id list doesn't fit a query string; the endpoint only reads. Already-computed sessions are served from (and cold ones written to) the same short-lived per-viewer cache the single-session endpoint uses, so opening any prefetched recording renders its context instantly. Sessions whose recording metadata doesn't exist yet are omitted from the response, as are recordings the caller can't access and sessions beyond the batch's recording-day budget (each distinct recording day costs its own set of ClickHouse scans, so only the most recent days are computed per request).
+
+```ts
+posthog.experimentsSessionContextsCreate(): Promise<{ results: ({ session_id: string; results: ({ experiment_id: number; experiment_name: string; flag_key: string; variant: string; variants_seen: (string)[]; multiple_variants: boolean; first_exposure_timestamp: string | null; experiment_start_date: string | null; experiment_end_date: string | null; metrics_in_session: ({ metric_uuid: string; metric_name: string; event_count: number; first_timestam...>
+```
+
+<sub>`POST /api/projects/{project_id}/experiments/session_contexts/` · `experiments_session_contexts_create`</sub>
+
+## `posthog.experimentsStatsRetrieve`
+
+Mixin for ViewSets to handle approval-gate exceptions raised from decorated serializers. Intercepts ApprovalRequired (409) and PolicyConflict (400) raised by the @approval_gate decorator on serializer methods and converts them into the same responses the viewset path produces (see decorators._result_to_response), so both paths share one contract.
+
+```ts
+posthog.experimentsStatsRetrieve(): Promise<unknown>
+```
+
+<sub>`GET /api/projects/{project_id}/experiments/stats/` · `experiments_stats_retrieve`</sub>
+
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

@@ -1,4 +1,4 @@
-import type { BasicError, Codespace, CodespaceExportDetails, CodespaceMachine, CodespaceWithFullRepository, CodespacesOrgSecret, CodespacesPermissionsCheckForDevcontainer, CodespacesPublicKey, CodespacesSecret, CodespacesUserPublicKey, EmptyObject, MinimalRepository, RepoCodespacesSecret, SimpleUser } from "./schemas.js";
+import type { Codespace, CodespaceExportDetails, CodespaceMachine, CodespaceWithFullRepository, CodespacesOrgSecret, CodespacesPermissionsCheckForDevcontainer, CodespacesPublicKey, CodespacesSecret, CodespacesUserPublicKey, EmptyObject, MinimalRepository, RepoCodespacesSecret, SimpleUser } from "./schemas.js";
 
 export type CodespacesOperations = {
   /**
@@ -25,7 +25,7 @@ export type CodespacesOperations = {
     selected_usernames?: (string)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Add users to Codespaces access for an organization
@@ -36,7 +36,7 @@ export type CodespacesOperations = {
     selected_usernames: (string)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove users from Codespaces access for an organization
@@ -47,7 +47,7 @@ export type CodespacesOperations = {
     selected_usernames: (string)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List organization secrets
@@ -110,7 +110,7 @@ export type CodespacesOperations = {
     org: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List selected repositories for an organization secret
@@ -138,7 +138,7 @@ export type CodespacesOperations = {
     org: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Add selected repository to an organization secret
@@ -150,7 +150,7 @@ export type CodespacesOperations = {
     /** The name of the secret. */
     secret_name: string;
     repository_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove selected repository from an organization secret
@@ -162,7 +162,7 @@ export type CodespacesOperations = {
     /** The name of the secret. */
     secret_name: string;
     repository_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List codespaces for a user in organization
@@ -382,7 +382,7 @@ export type CodespacesOperations = {
     repo: string;
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create a codespace from a pull request
@@ -486,7 +486,7 @@ export type CodespacesOperations = {
   deleteSecretForAuthenticatedUser: (input: {
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List selected repositories for a user secret
@@ -506,7 +506,7 @@ export type CodespacesOperations = {
     selected_repository_ids: (number)[];
     /** The name of the secret. */
     secret_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Add a selected repository to a user secret
@@ -516,7 +516,7 @@ export type CodespacesOperations = {
     /** The name of the secret. */
     secret_name: string;
     repository_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove a selected repository from a user secret
@@ -526,7 +526,7 @@ export type CodespacesOperations = {
     /** The name of the secret. */
     secret_name: string;
     repository_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get a codespace for the authenticated user

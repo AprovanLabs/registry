@@ -1,9 +1,9 @@
 # People
 
-14 operations · `utdk/google/people`
+14 operations · `@utdk/clients/google/people`
 
 ```ts
-import people from "utdk/google/people";
+import people from "@utdk/clients/google/people";
 ```
 
 ## `people.peoplePeopleGet`

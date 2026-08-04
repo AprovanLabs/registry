@@ -1,4 +1,4 @@
-import type { BasicError, Email, GpgKey, Hovercard, Key, KeySimple, PrivateUser, PublicUser, SimpleUser, SocialAccount, SshSigningKey } from "./schemas.js";
+import type { Email, GpgKey, Hovercard, Key, KeySimple, PrivateUser, PublicUser, SimpleUser, SocialAccount, SshSigningKey } from "./schemas.js";
 
 export type UsersOperations = {
   /**
@@ -48,7 +48,7 @@ export type UsersOperations = {
   checkBlocked: (input: {
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Block a user
@@ -57,7 +57,7 @@ export type UsersOperations = {
   block: (input: {
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Unblock a user
@@ -66,7 +66,7 @@ export type UsersOperations = {
   unblock: (input: {
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Set primary email visibility for the authenticated user
@@ -102,7 +102,7 @@ export type UsersOperations = {
    */
   deleteEmailForAuthenticatedUser: (input: {
     body?: { emails: (string)[] } | (string)[] | string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List followers of the authenticated user
@@ -133,7 +133,7 @@ export type UsersOperations = {
   checkPersonIsFollowedByAuthenticated: (input: {
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Follow a user
@@ -142,7 +142,7 @@ export type UsersOperations = {
   follow: (input: {
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Unfollow a user
@@ -151,7 +151,7 @@ export type UsersOperations = {
   unfollow: (input: {
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List GPG keys for the authenticated user
@@ -191,7 +191,7 @@ export type UsersOperations = {
   deleteGpgKeyForAuthenticatedUser: (input: {
     /** The unique identifier of the GPG key. */
     gpg_key_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List public SSH keys for the authenticated user
@@ -231,7 +231,7 @@ export type UsersOperations = {
   deletePublicSshKeyForAuthenticatedUser: (input: {
     /** The unique identifier of the key. */
     key_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List public email addresses for the authenticated user
@@ -271,7 +271,7 @@ export type UsersOperations = {
   deleteSocialAccountForAuthenticatedUser: (input: {
     /** Full URLs for the social media profiles to delete. */
     account_urls: (string)[];
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List SSH signing keys for the authenticated user
@@ -311,7 +311,7 @@ export type UsersOperations = {
   deleteSshSigningKeyForAuthenticatedUser: (input: {
     /** The unique identifier of the SSH signing key. */
     ssh_signing_key_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get a user using their ID
@@ -370,7 +370,7 @@ export type UsersOperations = {
     body: { subject_digests: (string)[] } | { attestation_ids: (number)[] };
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Delete attestations by subject digest
@@ -381,7 +381,7 @@ export type UsersOperations = {
     username: string;
     /** Subject Digest */
     subject_digest: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Delete attestations by ID
@@ -392,7 +392,7 @@ export type UsersOperations = {
     username: string;
     /** Attestation ID */
     attestation_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List attestations
@@ -447,7 +447,7 @@ export type UsersOperations = {
     /** The handle for the GitHub user account. */
     username: string;
     target_user: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List GPG keys for a user

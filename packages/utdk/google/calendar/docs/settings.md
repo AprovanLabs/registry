@@ -1,9 +1,9 @@
 # Settings
 
-3 operations · `utdk/google/calendar`
+3 operations · `@utdk/clients/google/calendar`
 
 ```ts
-import calendar from "utdk/google/calendar";
+import calendar from "@utdk/clients/google/calendar";
 ```
 
 ## `calendar.calendarSettingsList`

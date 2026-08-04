@@ -44,7 +44,7 @@ github.oidc.deleteOidcCustomPropertyInclusionForEnterprise(input: {
   enterprise: string;
   /** The name of the custom property to remove from OIDC token inclusion */
   custom_property_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /enterprises/{enterprise}/actions/oidc/customization/properties/repo/{custom_property_name}` · `oidc/delete-oidc-custom-property-inclusion-for-enterprise`</sub>
@@ -87,7 +87,7 @@ github.oidc.deleteOidcCustomPropertyInclusionForOrg(input: {
   org: string;
   /** The name of the custom property to remove from OIDC token inclusion */
   custom_property_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/actions/oidc/customization/properties/repo/{custom_property_name}` · `oidc/delete-oidc-custom-property-inclusion-for-org`</sub>

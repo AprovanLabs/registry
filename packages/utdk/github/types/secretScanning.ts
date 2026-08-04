@@ -1,4 +1,4 @@
-import type { AlertNumber, BasicError, OrganizationSecretScanningAlert, SecretScanningAlert, SecretScanningAlertWithMetadata, SecretScanningCustomPattern, SecretScanningCustomPatternToCreate, SecretScanningCustomPatternToDelete, SecretScanningCustomPatternToUpdate, SecretScanningLocation, SecretScanningPatternConfiguration, SecretScanningPushProtectionBypass, SecretScanningPushProtectionBypassPlaceholderId, SecretScanningPushProtectionBypassReason, SecretScanningRowVersion, SecretScanningScanHistory } from "./schemas.js";
+import type { AlertNumber, OrganizationSecretScanningAlert, SecretScanningAlert, SecretScanningAlertWithMetadata, SecretScanningCustomPattern, SecretScanningCustomPatternToCreate, SecretScanningCustomPatternToDelete, SecretScanningCustomPatternToUpdate, SecretScanningLocation, SecretScanningPatternConfiguration, SecretScanningPushProtectionBypass, SecretScanningPushProtectionBypassPlaceholderId, SecretScanningPushProtectionBypassReason, SecretScanningRowVersion, SecretScanningScanHistory } from "./schemas.js";
 
 export type SecretScanningOperations = {
   /**
@@ -93,7 +93,7 @@ export type SecretScanningOperations = {
     post_delete_action?: "delete_alerts" | "resolve_alerts";
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Update an organization custom pattern
@@ -273,7 +273,7 @@ export type SecretScanningOperations = {
     owner: string;
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Update a repository custom pattern

@@ -1,4 +1,4 @@
-import type { AddChapterResponseModel, AddKnowledgeBaseResponseModel, AddProjectResponseModel, AddPronunciationDictionaryResponseModel, AddVoiceIvcResponseModel, AddVoiceResponseModel, AddWorkspaceGroupMemberResponseModel, AddWorkspaceInviteResponseModel, AdditionalFormats, AdhocAgentConfigOverrideForTestRequestModel, AgentBranchResponse, AgentCallLimits, AgentDeploymentRequest, AgentDeploymentResponse, AgentPlatformSettingsRequestModel, AgentSimulatedChatTestResponseModel, AgentSortBy, AgentSummaryBatchSuccessfulResponseModel, AgentVersionMetadata, AgentWorkflowRequestModel, AllowedOutputFormats, ApiIntegrationOAuth2AuthCodeResponse, ApiIntegrationOAuth2CustomAppResponse, AsrConversationalConfig, AudioNativeCreateProjectResponseModel, AudioNativeEditContentResponseModel, AudioWithTimestampsAndVoiceSegmentsResponseModel, AudioWithTimestampsResponseModel, AuthConnectionLocator, BaseTurnConfig, BasicAuthResponse, BatchCallDetailedResponse, BatchCallResponse, BatchCallWhatsAppParams, BatchFailureResponseModel, BearerAuthResponse, BranchProtectionStatus, BreakdownTypes, ChapterContentInputModel, ChapterSnapshotExtendedResponseModel, ChapterSnapshotsResponseModel, ChapterWithContentResponseModel, ClientToolConfigInput, ColumnFilter, ConstantSchemaOverride, ConvAiDynamicVariable, ConvAiEnvVarLocator, ConvAiFileUploadResponseModel, ConvAiSecretLocator, ConvAiWebhooks, ConvAiWorkspaceStoredSecretConfig, ConversationConfigInput, ConversationInitiationClientDataRequestInput, ConversationInitiationClientDataWebhook, ConversationInitiationSource, ConversationSignedUrlResponseModel, ConversationSimulationSpecification, ConversationTagResponseModel, ConversationalConfigApiModelInput, ConvertChapterResponseModel, ConvertProjectResponseModel, CreateAgentBranchResponseModel, CreateAgentResponseModel, CreateAgentTestFolderResponseModel, CreateAgentTestResponseModel, CreateAuthConnectionEnvironmentVariableRequest, CreateBasicAuthRequest, CreateBearerAuthRequest, CreateCustomHeaderAuthRequest, CreateExotelPhoneNumberRequest, CreateMtlsAuthRequest, CreateOAuth2ClientCredsRequest, CreateOAuth2JwtRequest, CreateOrderRequest, CreateOrderResponse, CreatePhoneNumberResponseModel, CreatePrivateKeyJwtRequest, CreatePronunciationDictionaryResponseModel, CreateResponseUnitTestRequest, CreateSecretEnvironmentVariableRequest, CreateSimulationTestRequest, CreateSipTrunkPhoneNumberRequestV2, CreateStringEnvironmentVariableRequest, CreateToolCallUnitTestRequest, CreateTwilioPhoneNumberRequest, CustomHeaderAuthResponse, DashboardCallSuccessChartModel, DashboardCriteriaChartModel, DashboardDataCollectionChartModel, DeleteChapterResponseModel, DeleteDubbingResponseModel, DeleteHistoryItemResponse, DeleteProjectResponseModel, DeleteSampleResponseModel, DeleteVoiceResponseModel, DeleteVoiceSampleResponseModel, DeleteWorkspaceGroupMemberResponseModel, DeleteWorkspaceInviteResponseModel, DeleteWorkspaceWebhookResponseModel, DialogueInput, DoDubbingResponseModel, DubbingMetadataPageResponseModel, DubbingMetadataResponse, DubbingRenderResponseModel, DubbingResource, DubbingTranscriptResponseModel, DubbingTranscriptsResponseModel, DynamicVariableAssignment, DynamicVariableSchemaOverride, EditChapterResponseModel, EditProjectResponseModel, EditVoiceResponseModel, EditVoiceSettingsResponseModel, EmbeddingModelEnum, EnvironmentAuthConnectionLocator, EnvironmentVariableAuthConnectionValueRequest, EnvironmentVariableResponse, EnvironmentVariableSecretValueRequest, EnvironmentVariablesListResponse, EvaluationSuccessResult, ExotelOutboundCallResponse, ExtendedSubscriptionResponseModel, ForcedAlignmentResponseModel, GetAgentEmbedResponseModel, GetAgentKnowledgebaseSizeResponseModel, GetAgentLinkResponseModel, GetAgentResponseModel, GetAgentTestFolderResponseModel, GetAgentTopicsResponseModel, GetAgentsPageResponseModel, GetAudioIsolationHistoryResponseModel, GetAudioNativeProjectSettingsResponseModel, GetChaptersResponseModel, GetConvAiDashboardSettingsResponseModel, GetConvAiSettingsResponseModel, GetConversationResponseModel, GetConversationTagsPageResponseModel, GetConversationUsersPageResponseModel, GetConversationsPageResponseModel, GetKnowledgeBaseDependentAgentsResponseModel, GetKnowledgeBaseFileResponseModel, GetKnowledgeBaseFolderResponseModel, GetKnowledgeBaseListResponseModel, GetKnowledgeBaseTextResponseModel, GetKnowledgeBaseUrlResponseModel, GetLibraryVoicesResponseModel, GetLiveCountResponse, GetOrCreateRagIndexRequestModel, GetPhoneNumberExotelResponseModel, GetPhoneNumberSipTrunkResponseModel, GetPhoneNumberTwilioResponseModel, GetProjectsResponseModel, GetPronunciationDictionariesMetadataResponseModel, GetPronunciationDictionaryMetadataResponseModel, GetPronunciationDictionaryWithRulesResponseModel, GetResponseUnitTestResponseModel, GetSecretDependenciesResponseModel, GetSimulationTestResponseModel, GetSipLogMessagesResponse, GetSpeechHistoryResponseModel, GetTestInvocationsPageResponseModel, GetTestSuiteInvocationResponseModel, GetTestsPageResponseModel, GetTestsSummariesByIdsResponseModel, GetToolCallUnitTestResponseModel, GetToolDependentAgentsResponseModel, GetToolExecutionsPageResponseModel, GetVoicesResponseModel, GetVoicesV2ResponseModel, GetWhatsAppAccountResponse, GetWorkspaceSecretsResponseModel, HttpValidationError, InboundSipTrunkConfigRequestModel, ItemId, KnowledgeBaseContentSearchResponseModel, KnowledgeBaseDependentType, KnowledgeBaseDocumentChunkResponseModel, KnowledgeBaseDocumentChunksResponseModel, KnowledgeBaseDocumentType, KnowledgeBaseSortBy, KnowledgeBaseSourceFileUrlResponseModel, KnowledgeBaseSummaryBatchSuccessfulResponseModel, LanguageAddedResponse, LanguagesResponse, ListAuthConnectionsResponse, ListMcpToolsResponseModel, ListOrdersResponse, ListResponseAgentBranchSummary, ListSpeechEnginesResponse, ListWhatsAppAccountsResponse, LivekitStackType, LlmListResponseModelInput, LlmSchemaOverride, LlmUsageCalculatorResponseModel, McpApprovalPolicy, McpServerConfigInput, McpServerResponseModel, McpServersResponseModel, McpToolApprovalPolicy, McpToolConfigInput, McpToolConfigOverrideOutput, MediaId, MessageSearchSortBy, MessagesSearchResponse, MetricType, ModelResponseModel, ModelSettingsResponseModel, MtlsAuthResponse, MultichannelSpeechToTextResponseModel, MusicGenerationMode, MusicPrompt, MusicUploadResponse, OAuth2ClientCredsResponse, OAuth2JwtResponse, OrderDeliverablesResponse, OrderId, OrderItemKind, OrderMediaResponse, OrderRequestState, OrderResponse, OutboundCallRecipient, OutboundSipTrunkConfigRequestModel, PatchWorkspaceWebhookResponseModel, PermissionType, PodcastBulletinMode, PodcastConversationMode, PodcastProjectResponseModel, PodcastTextSource, PodcastUrlSource, PostAgentAvatarResponseModel, PostWorkspaceSecretResponseModel, PreToolSpeechMode, PrivacyConfigInput, PrivateKeyJwtResponse, ProjectExtendedResponseModel, ProjectMutedTracksResponseModel, ProjectSnapshotExtendedResponseModel, ProjectSnapshotsResponseModel, PromptEvaluationCriteria, PronunciationDictionaryAliasRuleRequestModel, PronunciationDictionaryPhonemeRuleRequestModel, PronunciationDictionaryRulesResponseModel, PronunciationDictionaryVersionLocatorDbModel, PronunciationDictionaryVersionLocatorRequestModel, QualityPresetType, RagDocumentIndexResponseModel, RagDocumentIndexesResponseModel, RagIndexBatchSuccessfulResponseModel, RagIndexOverviewResponseModel, RegisterMediaResponse, RemoveOrderItemResponse, RenderType, RequestPvcManualVerificationResponseModel, ResourceMetadataResponseModel, SampleResponseModel, SeatType, SecretDependencyResourceType, SegmentCreateResponse, SegmentDeleteResponse, SegmentDubResponse, SegmentMigrationResponse, SegmentTranscriptionResponse, SegmentTranslationResponse, SegmentUpdateResponse, SimilarVoicesForSpeakerResponse, SingleTestRunRequestModel, SingleUseTokenResponseModel, SingleUseTokenType, SipTrunkOutboundCallResponse, SlackBotAuthResponse, SortDirection, SpeakerAudioResponseModel, SpeakerCreatedResponse, SpeakerSeparationResponseModel, SpeakerUpdatedResponse, SpeechEngineConfig, SpeechEngineConversationInitiationClientDataConfig, SpeechEngineResponse, SpeechHistoryItemResponseModel, SpeechToTextChunkResponseModel, StartPvcVoiceTrainingResponseModel, StartSpeakerSeparationResponseModel, StreamingAudioChunkWithTimestampsAndVoiceSegmentsResponseModel, StreamingAudioChunkWithTimestampsResponseModel, SubmitOrderResponse, SystemToolConfigInput, TelephonyCallConfig, TelephonyDirection, TestSharingMode, TestType, TokenResponseModel, ToolCallSoundBehavior, ToolCallSoundType, ToolExecutionMode, ToolResponseMockConfigInput, ToolResponseModel, ToolSortBy, ToolTypeFilter, ToolsResponseModel, TtsConversationalConfigInput, TwilioOutboundCallResponse, UpdateBasicAuthRequest, UpdateOAuth2ClientCredsRequest, UpdateOAuth2JwtRequest, UpdateOrderRequest, UpdateOrderResponse, UpdateResponseUnitTestRequest, UpdateSimulationTestRequest, UpdateToolCallUnitTestRequest, UpdateWorkspaceMemberResponseModel, UpsertOrderItemRequest, UpsertOrderItemResponse, UsageAggregationInterval, UsageCharactersResponseModel, UserFeedbackScore, UserResponseModel, UsersSortBy, VerifyPvcVoiceCaptchaResponseModel, VoicePreviewsResponseModel, VoiceResponseModel, VoiceSamplePreviewResponseModel, VoiceSampleVisualWaveformResponseModel, VoiceSettingsResponseModel, WebhookHmacSettings, WebhookToolConfigInput, WhatsAppAuthResponse, WhatsAppOutboundCallResponse, WhatsAppOutboundMessageResponse, WhatsAppTemplateBodyComponentParams, WhatsAppTemplateButtonComponentParams, WhatsAppTemplateHeaderComponentParams, WorkspaceAnalyticsQueryResponseModel, WorkspaceApiKeyListResponseModel, WorkspaceAuditLogsPageResponse, WorkspaceBatchCallsResponse, WorkspaceCreateApiKeyResponseModel, WorkspaceCreateWebhookResponseModel, WorkspaceGroupByNameResponseModel, WorkspaceGroupResponseModel, WorkspaceResourceType, WorkspaceServiceAccountListResponseModel, WorkspaceWebhookListResponseModel } from "./schemas.js";
+import type { AddChapterResponseModel, AddKnowledgeBaseResponseModel, AddProjectResponseModel, AddPronunciationDictionaryResponseModel, AddVoiceIvcResponseModel, AddVoiceResponseModel, AddWorkspaceGroupMemberResponseModel, AddWorkspaceInviteResponseModel, AdditionalFormats, AdhocAgentConfigOverrideForTestRequestModel, AgentBranchResponse, AgentCallLimits, AgentDeploymentRequest, AgentDeploymentResponse, AgentPlatformSettingsRequestModel, AgentSimulatedChatTestResponseModel, AgentSortBy, AgentSummaryBatchSuccessfulResponseModel, AgentVersionMetadata, AgentWorkflowRequestModel, AllowedOutputFormats, ApiIntegrationOAuth2AuthCodeResponse, ApiIntegrationOAuth2CustomAppResponse, AsrConversationalConfig, AudioNativeCreateProjectResponseModel, AudioNativeEditContentResponseModel, AudioWithTimestampsAndVoiceSegmentsResponseModel, AudioWithTimestampsResponseModel, AuthConnectionLocator, BaseTurnConfig, BasicAuthResponse, BatchCallDetailedResponse, BatchCallResponse, BatchCallWhatsAppParams, BatchFailureResponseModel, BearerAuthResponse, BranchProtectionStatus, BreakdownTypes, ChapterContentInputModel, ChapterSnapshotExtendedResponseModel, ChapterSnapshotsResponseModel, ChapterWithContentResponseModel, ClientToolConfigInput, ColumnFilter, ConstantSchemaOverride, ConvAiDynamicVariable, ConvAiEnvVarLocator, ConvAiFileUploadResponseModel, ConvAiSecretLocator, ConvAiWebhooks, ConvAiWorkspaceStoredSecretConfig, ConversationConfigInput, ConversationInitiationClientDataRequestInput, ConversationInitiationClientDataWebhook, ConversationInitiationSource, ConversationSignedUrlResponseModel, ConversationSimulationSpecification, ConversationTagResponseModel, ConversationalConfigApiModelInput, ConvertChapterResponseModel, ConvertProjectResponseModel, CreateAgentBranchResponseModel, CreateAgentResponseModel, CreateAgentTestFolderResponseModel, CreateAgentTestResponseModel, CreateAuthConnectionEnvironmentVariableRequest, CreateBasicAuthRequest, CreateBearerAuthRequest, CreateCustomHeaderAuthRequest, CreateExotelPhoneNumberRequest, CreateMtlsAuthRequest, CreateOAuth2ClientCredsRequest, CreateOAuth2JwtRequest, CreateOrderRequest, CreateOrderResponse, CreatePhoneNumberResponseModel, CreatePrivateKeyJwtRequest, CreatePronunciationDictionaryResponseModel, CreateResponseUnitTestRequest, CreateSecretEnvironmentVariableRequest, CreateSimulationTestRequest, CreateSipTrunkPhoneNumberRequestV2, CreateStringEnvironmentVariableRequest, CreateToolCallUnitTestRequest, CreateTwilioPhoneNumberRequest, CustomHeaderAuthResponse, DashboardCallSuccessChartModel, DashboardCriteriaChartModel, DashboardDataCollectionChartModel, DeleteChapterResponseModel, DeleteDubbingResponseModel, DeleteHistoryItemResponse, DeleteProjectResponseModel, DeleteSampleResponseModel, DeleteVoiceResponseModel, DeleteVoiceSampleResponseModel, DeleteWorkspaceGroupMemberResponseModel, DeleteWorkspaceInviteResponseModel, DeleteWorkspaceWebhookResponseModel, DialogueInput, DoDubbingResponseModel, DubbingMetadataPageResponseModel, DubbingMetadataResponse, DubbingRenderResponseModel, DubbingResource, DubbingTranscriptResponseModel, DubbingTranscriptsResponseModel, DynamicVariableAssignment, DynamicVariableSchemaOverride, EditChapterResponseModel, EditProjectResponseModel, EditVoiceResponseModel, EditVoiceSettingsResponseModel, EmbeddingModelEnum, EnvironmentAuthConnectionLocator, EnvironmentVariableAuthConnectionValueRequest, EnvironmentVariableResponse, EnvironmentVariableSecretValueRequest, EnvironmentVariablesListResponse, EvaluationSuccessResult, ExotelOutboundCallResponse, ExtendedSubscriptionResponseModel, ForcedAlignmentResponseModel, GetAgentEmbedResponseModel, GetAgentKnowledgebaseSizeResponseModel, GetAgentLinkResponseModel, GetAgentResponseModel, GetAgentTestFolderResponseModel, GetAgentTopicsResponseModel, GetAgentsPageResponseModel, GetAudioIsolationHistoryResponseModel, GetAudioNativeProjectSettingsResponseModel, GetChaptersResponseModel, GetConvAiDashboardSettingsResponseModel, GetConvAiSettingsResponseModel, GetConversationResponseModel, GetConversationTagsPageResponseModel, GetConversationUsersPageResponseModel, GetConversationsPageResponseModel, GetKnowledgeBaseDependentAgentsResponseModel, GetKnowledgeBaseFileResponseModel, GetKnowledgeBaseFolderResponseModel, GetKnowledgeBaseListResponseModel, GetKnowledgeBaseTextResponseModel, GetKnowledgeBaseUrlResponseModel, GetLibraryVoicesResponseModel, GetLiveCountResponse, GetOrCreateRagIndexRequestModel, GetPhoneNumberExotelResponseModel, GetPhoneNumberSipTrunkResponseModel, GetPhoneNumberTwilioResponseModel, GetProjectsResponseModel, GetPronunciationDictionariesMetadataResponseModel, GetPronunciationDictionaryMetadataResponseModel, GetPronunciationDictionaryWithRulesResponseModel, GetResponseUnitTestResponseModel, GetSecretDependenciesResponseModel, GetSimulationTestResponseModel, GetSipLogMessagesResponse, GetSpeechHistoryResponseModel, GetTestInvocationsPageResponseModel, GetTestSuiteInvocationResponseModel, GetTestsPageResponseModel, GetTestsSummariesByIdsResponseModel, GetToolCallUnitTestResponseModel, GetToolDependentAgentsResponseModel, GetToolExecutionsPageResponseModel, GetVoicesResponseModel, GetVoicesV2ResponseModel, GetWhatsAppAccountResponse, GetWorkspaceSecretsResponseModel, InboundSipTrunkConfigRequestModel, ItemId, KnowledgeBaseContentSearchResponseModel, KnowledgeBaseDependentType, KnowledgeBaseDocumentChunkResponseModel, KnowledgeBaseDocumentChunksResponseModel, KnowledgeBaseDocumentType, KnowledgeBaseSortBy, KnowledgeBaseSourceFileUrlResponseModel, KnowledgeBaseSummaryBatchSuccessfulResponseModel, LanguageAddedResponse, LanguagesResponse, ListAuthConnectionsResponse, ListMcpToolsResponseModel, ListOrdersResponse, ListResponseAgentBranchSummary, ListSpeechEnginesResponse, ListWhatsAppAccountsResponse, LivekitStackType, LlmListResponseModelInput, LlmSchemaOverride, LlmUsageCalculatorResponseModel, McpApprovalPolicy, McpServerConfigInput, McpServerResponseModel, McpServersResponseModel, McpToolApprovalPolicy, McpToolConfigInput, McpToolConfigOverrideOutput, MediaId, MessageSearchSortBy, MessagesSearchResponse, MetricType, ModelResponseModel, ModelSettingsResponseModel, MtlsAuthResponse, MultichannelSpeechToTextResponseModel, MusicGenerationMode, MusicPrompt, MusicUploadResponse, OAuth2ClientCredsResponse, OAuth2JwtResponse, OrderDeliverablesResponse, OrderId, OrderItemKind, OrderMediaResponse, OrderRequestState, OrderResponse, OutboundCallRecipient, OutboundSipTrunkConfigRequestModel, PatchWorkspaceWebhookResponseModel, PermissionType, PodcastBulletinMode, PodcastConversationMode, PodcastProjectResponseModel, PodcastTextSource, PodcastUrlSource, PostAgentAvatarResponseModel, PostWorkspaceSecretResponseModel, PreToolSpeechMode, PrivacyConfigInput, PrivateKeyJwtResponse, ProjectExtendedResponseModel, ProjectMutedTracksResponseModel, ProjectSnapshotExtendedResponseModel, ProjectSnapshotsResponseModel, PromptEvaluationCriteria, PronunciationDictionaryAliasRuleRequestModel, PronunciationDictionaryPhonemeRuleRequestModel, PronunciationDictionaryRulesResponseModel, PronunciationDictionaryVersionLocatorDbModel, PronunciationDictionaryVersionLocatorRequestModel, QualityPresetType, RagDocumentIndexResponseModel, RagDocumentIndexesResponseModel, RagIndexBatchSuccessfulResponseModel, RagIndexOverviewResponseModel, RegisterMediaResponse, RemoveOrderItemResponse, RenderType, RequestPvcManualVerificationResponseModel, ResourceMetadataResponseModel, SampleResponseModel, SeatType, SecretDependencyResourceType, SegmentCreateResponse, SegmentDeleteResponse, SegmentDubResponse, SegmentMigrationResponse, SegmentTranscriptionResponse, SegmentTranslationResponse, SegmentUpdateResponse, SimilarVoicesForSpeakerResponse, SingleTestRunRequestModel, SingleUseTokenResponseModel, SingleUseTokenType, SipTrunkOutboundCallResponse, SlackBotAuthResponse, SortDirection, SpeakerAudioResponseModel, SpeakerCreatedResponse, SpeakerSeparationResponseModel, SpeakerUpdatedResponse, SpeechEngineConfig, SpeechEngineConversationInitiationClientDataConfig, SpeechEngineResponse, SpeechHistoryItemResponseModel, SpeechToTextChunkResponseModel, StartPvcVoiceTrainingResponseModel, StartSpeakerSeparationResponseModel, StreamingAudioChunkWithTimestampsAndVoiceSegmentsResponseModel, StreamingAudioChunkWithTimestampsResponseModel, SubmitOrderResponse, SystemToolConfigInput, TelephonyCallConfig, TelephonyDirection, TestSharingMode, TestType, TokenResponseModel, ToolCallSoundBehavior, ToolCallSoundType, ToolExecutionMode, ToolResponseMockConfigInput, ToolResponseModel, ToolSortBy, ToolTypeFilter, ToolsResponseModel, TtsConversationalConfigInput, TwilioOutboundCallResponse, UpdateBasicAuthRequest, UpdateOAuth2ClientCredsRequest, UpdateOAuth2JwtRequest, UpdateOrderRequest, UpdateOrderResponse, UpdateResponseUnitTestRequest, UpdateSimulationTestRequest, UpdateToolCallUnitTestRequest, UpdateWorkspaceMemberResponseModel, UpsertOrderItemRequest, UpsertOrderItemResponse, UsageAggregationInterval, UsageCharactersResponseModel, UserFeedbackScore, UserResponseModel, UsersSortBy, VerifyPvcVoiceCaptchaResponseModel, VoicePreviewsResponseModel, VoiceResponseModel, VoiceSamplePreviewResponseModel, VoiceSampleVisualWaveformResponseModel, VoiceSettingsResponseModel, WebhookHmacSettings, WebhookToolConfigInput, WhatsAppAuthResponse, WhatsAppOutboundCallResponse, WhatsAppOutboundMessageResponse, WhatsAppTemplateBodyComponentParams, WhatsAppTemplateButtonComponentParams, WhatsAppTemplateHeaderComponentParams, WorkspaceAnalyticsQueryResponseModel, WorkspaceApiKeyListResponseModel, WorkspaceAuditLogsPageResponse, WorkspaceBatchCallsResponse, WorkspaceCreateApiKeyResponseModel, WorkspaceCreateWebhookResponseModel, WorkspaceGroupByNameResponseModel, WorkspaceGroupResponseModel, WorkspaceResourceType, WorkspaceServiceAccountListResponseModel, WorkspaceWebhookListResponseModel } from "./schemas.js";
 
 export type ElevenlabsClient = {
   /**
@@ -87,7 +87,7 @@ export type ElevenlabsClient = {
     file_format?: "pcm_s16le_16" | "other" | null;
     /** Optional preview image base64 for tracking this generation. */
     preview_b64?: string | null;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Get Audio Isolation History
@@ -107,7 +107,7 @@ export type ElevenlabsClient = {
   deleteAudioIsolationHistoryItem: (input: {
     /** Identifier of the audio isolation history item. */
     history_item_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Audio Isolation Stream
@@ -117,7 +117,7 @@ export type ElevenlabsClient = {
     audio: string;
     /** The format of input audio. Options are 'pcm_s16le_16' or 'other' For `pcm_s16le_16`, the input audio must be 16-bit PCM at a 16kHz sample rate, single channel (mono), and little-endian byte order. Latency will be lower than with passing an encoded waveform. */
     file_format?: "pcm_s16le_16" | "other" | null;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Delete Sample
@@ -137,7 +137,7 @@ export type ElevenlabsClient = {
     voice_id: string;
     /** Sample ID to be used, you can use GET https://api.elevenlabs.io/v1/voices/{voice_id} to list all the available samples for a voice. */
     sample_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Text To Speech
@@ -918,7 +918,7 @@ export type ElevenlabsClient = {
     project_id: string;
     /** The ID of the Studio project snapshot. */
     project_snapshot_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Stream Archive With Studio Project Audio
@@ -2099,7 +2099,7 @@ export type ElevenlabsClient = {
   deleteAgentRoute: (input: {
     /** The id of an agent. This is returned on agent creation. */
     agent_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Get Agent Widget Config
@@ -2207,7 +2207,7 @@ export type ElevenlabsClient = {
     new_turns_limit?: number;
     /** The id of an agent. This is returned on agent creation. */
     agent_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Create Agent Response Test
@@ -2253,7 +2253,7 @@ export type ElevenlabsClient = {
     folder_id: string;
     /** Force delete. Required for deleting non-empty folders. */
     force?: boolean;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Bulk Move Tests To Folder
@@ -2488,7 +2488,7 @@ export type ElevenlabsClient = {
   getConversationAudioRoute: (input: {
     /** The id of the conversation you're taking the action on. */
     conversation_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Send Conversation Feedback
@@ -2575,7 +2575,7 @@ export type ElevenlabsClient = {
     /** Tag IDs to add to the conversation. Re-assigning an existing tag is a no-op. */
     tag_ids: (string)[];
     conversation_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Unassign Conversation Tag
@@ -2583,7 +2583,7 @@ export type ElevenlabsClient = {
   unassignConversationTagRoute: (input: {
     conversation_id: string;
     tag_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * List Conversation Tags
@@ -2628,7 +2628,7 @@ export type ElevenlabsClient = {
    */
   deleteConversationTagRoute: (input: {
     tag_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Import Phone Number
@@ -3000,7 +3000,7 @@ export type ElevenlabsClient = {
     move_to?: string | null;
     /** The id of a document from the knowledge base. This is returned on document addition. */
     document_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Bulk Move Entities To Folder
@@ -3010,7 +3010,7 @@ export type ElevenlabsClient = {
     document_ids: (string)[];
     /** The folder to move the entities to. If not set, the entities will be moved to the root folder. */
     move_to?: string | null;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Get Agent Conversation Topics
@@ -3182,7 +3182,7 @@ export type ElevenlabsClient = {
    */
   deleteSecretRoute: (input: {
     secret_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Update Convai Workspace Secret
@@ -3246,7 +3246,7 @@ export type ElevenlabsClient = {
    */
   deleteBatchCall: (input: {
     batch_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Cancel A Batch Call.
@@ -3688,7 +3688,7 @@ export type ElevenlabsClient = {
   deleteSpeechEngine: (input: {
     /** The speech engine ID (accepts seng_ or agent_ prefix) */
     speech_engine_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Run Conversation Analysis
@@ -4131,7 +4131,7 @@ export type ElevenlabsClient = {
   getPvcVoiceCaptcha: (input: {
     /** Voice ID to be used, you can use https://api.elevenlabs.io/v1/voices to list all the available voices. */
     voice_id: string;
-  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<HttpValidationError>;
+  }, options?: { headers?: { "xi-api-key"?: string | null } }) => Promise<undefined>;
 
   /**
    * Verify Pvc Voice Captcha

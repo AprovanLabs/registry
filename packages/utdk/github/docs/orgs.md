@@ -1,6 +1,6 @@
 # Orgs
 
-108 operations · `@utdk/github`
+110 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
@@ -133,7 +133,7 @@ github.orgs.enableOrDisableSecurityProductOnAllOrgRepos(input: {
   security_product: "dependency_graph" | "dependabot_alerts" | "dependabot_security_updates" | "advanced_security" | "code_scanning_default_setup" | "secret_scanning" | "secret_scanning_push_protection";
   /** The action to take.  `enable_all` means to enable the specified security feature for all repositories in the organization. `disable_all` means to disable the specified security feature for all repositories in the organization. */
   enablement: "enable_all" | "disable_all";
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /orgs/{org}/{security_product}/{enablement}` · `orgs/enable-or-disable-security-product-on-all-org-repos`</sub>
@@ -217,6 +217,8 @@ github.orgs.setClusterDeploymentRecords(input: {
   physical_environment?: string;
   /** The list of deployments to record. */
   deployments: ({ name: string; digest: string; version?: string; status?: "deployed" | "decommissioned"; deployment_name: string; github_repository?: string; tags?: { [key: string]: string | undefined }; runtime_risks?: ("critical-resource" | "internet-exposed" | "lateral-movement" | "sensitive-data")[] })[];
+  /** When enabled, deployments associated with repositories the actor can write to are processed while deployments associated with repositories that cannot be resolved or written to by the actor are skipped and reported in the `errors` array. When false (the default), the endpoint returns an error if any targeted repository cannot be resolved, the actor lacks write access, or no matching attestation can be found.  */
+  partial_success?: boolean;
   /** If true, the endpoint will return the set records in the response body  */
   return_records?: boolean;
   /** The organization name. The name is not case sensitive. */
@@ -227,6 +229,44 @@ github.orgs.setClusterDeploymentRecords(input: {
 ```
 
 <sub>`POST /orgs/{org}/artifacts/metadata/deployment-record/cluster/{cluster}` · `orgs/set-cluster-deployment-records`</sub>
+
+## `github.orgs.createClusterDeploymentRecordsJob`
+
+Create a cluster deployment records job — [API reference](https://docs.github.com/rest/orgs/artifact-metadata#create-a-cluster-deployment-records-job)
+
+```ts
+github.orgs.createClusterDeploymentRecordsJob(input: {
+  /** The stage of the deployment. */
+  logical_environment: string;
+  /** The physical region of the deployment. */
+  physical_environment?: string;
+  /** The list of deployments to record. */
+  deployments: ({ name: string; digest: string; version?: string; status?: "deployed" | "decommissioned"; deployment_name: string; github_repository?: string; tags?: { [key: string]: string | undefined }; runtime_risks?: ("critical-resource" | "internet-exposed" | "lateral-movement" | "sensitive-data")[] })[];
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The cluster name. */
+  cluster: string;
+}): Promise<{ job_id: number; errors?: ({ [key: string]: unknown })[] }>
+```
+
+<sub>`POST /orgs/{org}/artifacts/metadata/deployment-record/cluster/{cluster}/jobs` · `orgs/create-cluster-deployment-records-job`</sub>
+
+## `github.orgs.getClusterDeploymentRecordsJob`
+
+Get cluster deployment records job status — [API reference](https://docs.github.com/rest/orgs/artifact-metadata#get-cluster-deployment-records-job-status)
+
+```ts
+github.orgs.getClusterDeploymentRecordsJob(input: {
+  /** The organization name. The name is not case sensitive. */
+  org: string;
+  /** The cluster name. */
+  cluster: string;
+  /** The ID of the job. */
+  job_id: number;
+}): Promise<{ job_id: number; status: "pending" | "processing" | "completed" | "failed"; started_at?: string; total_count?: number; errors?: ({ [key: string]: unknown })[] }>
+```
+
+<sub>`GET /orgs/{org}/artifacts/metadata/deployment-record/cluster/{cluster}/jobs/{job_id}` · `orgs/get-cluster-deployment-records-job`</sub>
 
 ## `github.orgs.createArtifactStorageRecord`
 
@@ -271,7 +311,7 @@ github.orgs.deleteAttestationsById(input: {
   org: string;
   /** Attestation ID */
   attestation_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/attestations/{attestation_id}` · `orgs/delete-attestations-by-id`</sub>
@@ -332,7 +372,7 @@ github.orgs.deleteAttestationsBulk(input: {
   body: { subject_digests: (string)[] } | { attestation_ids: (number)[] };
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /orgs/{org}/attestations/delete-request` · `orgs/delete-attestations-bulk`</sub>
@@ -347,7 +387,7 @@ github.orgs.deleteAttestationsBySubjectDigest(input: {
   org: string;
   /** Subject Digest */
   subject_digest: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/attestations/digest/{subject_digest}` · `orgs/delete-attestations-by-subject-digest`</sub>
@@ -400,7 +440,7 @@ github.orgs.unblockUser(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/blocks/{username}` · `orgs/unblock-user`</sub>
@@ -415,7 +455,7 @@ github.orgs.checkBlockedUser(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`GET /orgs/{org}/blocks/{username}` · `orgs/check-blocked-user`</sub>
@@ -430,7 +470,7 @@ github.orgs.blockUser(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<ValidationError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/blocks/{username}` · `orgs/block-user`</sub>
@@ -500,7 +540,7 @@ github.orgs.deleteWebhook(input: {
   org: string;
   /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
   hook_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/hooks/{hook_id}` · `orgs/delete-webhook`</sub>
@@ -639,7 +679,7 @@ github.orgs.pingWebhook(input: {
   org: string;
   /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
   hook_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /orgs/{org}/hooks/{hook_id}/pings` · `orgs/ping-webhook`</sub>
@@ -920,7 +960,7 @@ github.orgs.cancelInvitation(input: {
   org: string;
   /** The unique identifier of the invitation. */
   invitation_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/invitations/{invitation_id}` · `orgs/cancel-invitation`</sub>
@@ -990,7 +1030,7 @@ github.orgs.deleteIssueField(input: {
   org: string;
   /** The unique identifier of the issue field. */
   issue_field_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/issue-fields/{issue_field_id}` · `orgs/delete-issue-field`</sub>
@@ -1062,7 +1102,7 @@ github.orgs.deleteIssueType(input: {
   org: string;
   /** The unique identifier of the issue type. */
   issue_type_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/issue-types/{issue_type_id}` · `orgs/delete-issue-type`</sub>
@@ -1121,7 +1161,7 @@ github.orgs.removeMember(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/members/{username}` · `orgs/remove-member`</sub>
@@ -1136,7 +1176,7 @@ github.orgs.checkMembershipForUser(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`GET /orgs/{org}/members/{username}` · `orgs/check-membership-for-user`</sub>
@@ -1151,7 +1191,7 @@ github.orgs.removeMembershipForUser(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/memberships/{username}` · `orgs/remove-membership-for-user`</sub>
@@ -1264,7 +1304,7 @@ github.orgs.revokeAllOrgRolesTeam(input: {
   org: string;
   /** The slug of the team name. */
   team_slug: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/organization-roles/teams/{team_slug}` · `orgs/revoke-all-org-roles-team`</sub>
@@ -1281,7 +1321,7 @@ github.orgs.revokeOrgRoleTeam(input: {
   team_slug: string;
   /** The unique identifier of the role. */
   role_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/organization-roles/teams/{team_slug}/{role_id}` · `orgs/revoke-org-role-team`</sub>
@@ -1298,7 +1338,7 @@ github.orgs.assignTeamToOrgRole(input: {
   team_slug: string;
   /** The unique identifier of the role. */
   role_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/organization-roles/teams/{team_slug}/{role_id}` · `orgs/assign-team-to-org-role`</sub>
@@ -1313,7 +1353,7 @@ github.orgs.revokeAllOrgRolesUser(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/organization-roles/users/{username}` · `orgs/revoke-all-org-roles-user`</sub>
@@ -1330,7 +1370,7 @@ github.orgs.revokeOrgRoleUser(input: {
   username: string;
   /** The unique identifier of the role. */
   role_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/organization-roles/users/{username}/{role_id}` · `orgs/revoke-org-role-user`</sub>
@@ -1347,7 +1387,7 @@ github.orgs.assignUserToOrgRole(input: {
   username: string;
   /** The unique identifier of the role. */
   role_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/organization-roles/users/{username}/{role_id}` · `orgs/assign-user-to-org-role`</sub>
@@ -1381,7 +1421,7 @@ github.orgs.removeOutsideCollaborator(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<{ message?: string; documentation_url?: string }>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/outside_collaborators/{username}` · `orgs/remove-outside-collaborator`</sub>
@@ -1469,7 +1509,7 @@ github.orgs.reviewPatGrantRequest(input: {
   org: string;
   /** Unique identifier of the request for access via fine-grained personal access token. */
   pat_request_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /orgs/{org}/personal-access-token-requests/{pat_request_id}` · `orgs/review-pat-grant-request`</sub>
@@ -1555,7 +1595,7 @@ github.orgs.updatePatAccess(input: {
   org: string;
   /** The unique identifier of the fine-grained personal access token. */
   pat_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`POST /orgs/{org}/personal-access-tokens/{pat_id}` · `orgs/update-pat-access`</sub>
@@ -1617,7 +1657,7 @@ github.orgs.customPropertiesForReposDeleteOrganizationDefinition(input: {
   org: string;
   /** The custom property name */
   custom_property_name: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/properties/schema/{custom_property_name}` · `orgs/custom-properties-for-repos-delete-organization-definition`</sub>
@@ -1697,7 +1737,7 @@ github.orgs.customPropertiesForReposCreateOrUpdateOrganizationValues(input: {
   properties: (CustomPropertyValue)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PATCH /orgs/{org}/properties/values` · `orgs/custom-properties-for-repos-create-or-update-organization-values`</sub>
@@ -1729,7 +1769,7 @@ github.orgs.removePublicMembershipForAuthenticatedUser(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/public_members/{username}` · `orgs/remove-public-membership-for-authenticated-user`</sub>
@@ -1744,7 +1784,7 @@ github.orgs.checkPublicMembershipForUser(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`GET /orgs/{org}/public_members/{username}` · `orgs/check-public-membership-for-user`</sub>
@@ -1759,7 +1799,7 @@ github.orgs.setPublicMembershipForAuthenticatedUser(input: {
   org: string;
   /** The handle for the GitHub user account. */
   username: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/public_members/{username}` · `orgs/set-public-membership-for-authenticated-user`</sub>
@@ -1823,7 +1863,7 @@ github.orgs.removeSecurityManagerTeam(input: {
   org: string;
   /** The slug of the team name. */
   team_slug: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/security-managers/teams/{team_slug}` · `orgs/remove-security-manager-team`</sub>
@@ -1838,7 +1878,7 @@ github.orgs.addSecurityManagerTeam(input: {
   org: string;
   /** The slug of the team name. */
   team_slug: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/security-managers/teams/{team_slug}` · `orgs/add-security-manager-team`</sub>
@@ -1868,7 +1908,7 @@ github.orgs.setImmutableReleasesSettings(input: {
   selected_repository_ids?: (number)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/settings/immutable-releases` · `orgs/set-immutable-releases-settings`</sub>
@@ -1900,7 +1940,7 @@ github.orgs.setImmutableReleasesSettingsRepositories(input: {
   selected_repository_ids: (number)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/settings/immutable-releases/repositories` · `orgs/set-immutable-releases-settings-repositories`</sub>
@@ -1915,7 +1955,7 @@ github.orgs.disableSelectedRepositoryImmutableReleasesOrganization(input: {
   org: string;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/settings/immutable-releases/repositories/{repository_id}` · `orgs/disable-selected-repository-immutable-releases-organization`</sub>
@@ -1930,7 +1970,7 @@ github.orgs.enableSelectedRepositoryImmutableReleasesOrganization(input: {
   org: string;
   /** The unique identifier of the repository. */
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/settings/immutable-releases/repositories/{repository_id}` · `orgs/enable-selected-repository-immutable-releases-organization`</sub>

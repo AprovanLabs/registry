@@ -1,9 +1,9 @@
 # Changes
 
-3 operations · `utdk/google/drive`
+3 operations · `@utdk/clients/google/drive`
 
 ```ts
-import drive from "utdk/google/drive";
+import drive from "@utdk/clients/google/drive";
 ```
 
 ## `drive.driveChangesList`

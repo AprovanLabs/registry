@@ -1,9 +1,9 @@
 # Revisions
 
-4 operations · `utdk/google/drive`
+4 operations · `@utdk/clients/google/drive`
 
 ```ts
-import drive from "utdk/google/drive";
+import drive from "@utdk/clients/google/drive";
 ```
 
 ## `drive.driveRevisionsList`
@@ -61,7 +61,7 @@ drive.driveRevisionsDelete(input: {
   quotaUser?: string;
   /** Deprecated. Please use quotaUser instead. */
   userIp?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /files/{fileId}/revisions/{revisionId}` · `drive.revisions.delete`</sub>

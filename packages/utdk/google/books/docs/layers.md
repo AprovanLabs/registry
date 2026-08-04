@@ -1,9 +1,9 @@
 # Layers
 
-6 operations · `utdk/google/books`
+6 operations · `@utdk/clients/google/books`
 
 ```ts
-import books from "utdk/google/books";
+import books from "@utdk/clients/google/books";
 ```
 
 ## `books.booksLayersVolumeAnnotationsList`

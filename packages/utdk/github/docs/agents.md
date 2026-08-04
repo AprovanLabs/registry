@@ -33,7 +33,7 @@ github.agents.deleteOrgSecret(input: {
   org: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/agents/secrets/{secret_name}` · `agents/delete-org-secret`</sub>
@@ -107,7 +107,7 @@ github.agents.setSelectedReposForOrgSecret(input: {
   org: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/agents/secrets/{secret_name}/repositories` · `agents/set-selected-repos-for-org-secret`</sub>
@@ -123,7 +123,7 @@ github.agents.removeSelectedRepoFromOrgSecret(input: {
   /** The name of the secret. */
   secret_name: string;
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/agents/secrets/{secret_name}/repositories/{repository_id}` · `agents/remove-selected-repo-from-org-secret`</sub>
@@ -139,7 +139,7 @@ github.agents.addSelectedRepoToOrgSecret(input: {
   /** The name of the secret. */
   secret_name: string;
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/agents/secrets/{secret_name}/repositories/{repository_id}` · `agents/add-selected-repo-to-org-secret`</sub>
@@ -205,7 +205,7 @@ github.agents.deleteOrgVariable(input: {
   org: string;
   /** The name of the variable. */
   name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/agents/variables/{name}` · `agents/delete-org-variable`</sub>
@@ -241,7 +241,7 @@ github.agents.updateOrgVariable(input: {
   selected_repository_ids?: (number)[];
   /** The organization name. The name is not case sensitive. */
   org: string;
-}, options: { params: { name: string } }): Promise<unknown>
+}, options: { params: { name: string } }): Promise<undefined>
 ```
 
 <sub>`PATCH /orgs/{org}/agents/variables/{name}` · `agents/update-org-variable`</sub>
@@ -277,7 +277,7 @@ github.agents.setSelectedReposForOrgVariable(input: {
   org: string;
   /** The name of the variable. */
   name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/agents/variables/{name}/repositories` · `agents/set-selected-repos-for-org-variable`</sub>
@@ -293,7 +293,7 @@ github.agents.removeSelectedRepoFromOrgVariable(input: {
   /** The name of the variable. */
   name: string;
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /orgs/{org}/agents/variables/{name}/repositories/{repository_id}` · `agents/remove-selected-repo-from-org-variable`</sub>
@@ -309,7 +309,7 @@ github.agents.addSelectedRepoToOrgVariable(input: {
   /** The name of the variable. */
   name: string;
   repository_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /orgs/{org}/agents/variables/{name}/repositories/{repository_id}` · `agents/add-selected-repo-to-org-variable`</sub>
@@ -383,7 +383,7 @@ github.agents.deleteRepoSecret(input: {
   repo: string;
   /** The name of the secret. */
   secret_name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/agents/secrets/{secret_name}` · `agents/delete-repo-secret`</sub>
@@ -491,7 +491,7 @@ github.agents.deleteRepoVariable(input: {
   repo: string;
   /** The name of the variable. */
   name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/agents/variables/{name}` · `agents/delete-repo-variable`</sub>
@@ -527,7 +527,7 @@ github.agents.updateRepoVariable(input: {
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
-}, options: { params: { name: string } }): Promise<unknown>
+}, options: { params: { name: string } }): Promise<undefined>
 ```
 
 <sub>`PATCH /repos/{owner}/{repo}/agents/variables/{name}` · `agents/update-repo-variable`</sub>

@@ -1,4 +1,4 @@
-import type { BatchResponse, CreateResponse, ErrorList, QueryResult, SObjectDescribe, SObjectList, SearchResult } from "./schemas.js";
+import type { BatchResponse, CreateResponse, QueryResult, SObjectDescribe, SObjectList, SearchResult } from "./schemas.js";
 
 export type SalesforceClient = {
   /**
@@ -46,7 +46,7 @@ export type SalesforceClient = {
     sObjectName: string;
     /** Salesforce record ID */
     id: string;
-  }) => Promise<ErrorList>;
+  }) => Promise<undefined>;
 
   /**
    * Delete a record
@@ -56,7 +56,7 @@ export type SalesforceClient = {
     sObjectName: string;
     /** Salesforce record ID */
     id: string;
-  }) => Promise<ErrorList>;
+  }) => Promise<undefined>;
 
   /**
    * Execute a SOQL query

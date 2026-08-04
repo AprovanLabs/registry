@@ -1,4 +1,4 @@
-import type { BasicError, CopilotSpace, CopilotSpaceCollaborator, CopilotSpaceResource } from "./schemas.js";
+import type { CopilotSpace, CopilotSpaceCollaborator, CopilotSpaceResource } from "./schemas.js";
 
 export type CopilotSpacesOperations = {
   /**
@@ -76,7 +76,7 @@ export type CopilotSpacesOperations = {
     org: string;
     /** The unique identifier of the Copilot Space. */
     space_number: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List collaborators for an organization Copilot Space
@@ -136,7 +136,7 @@ export type CopilotSpacesOperations = {
     actor_type: "User" | "Team";
     /** The username (for users) or team slug (for teams). The numeric ID of a user or team is also accepted. */
     actor_identifier: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List resources for an organization Copilot Space
@@ -203,7 +203,7 @@ export type CopilotSpacesOperations = {
     space_number: number;
     /** The unique identifier of the resource. */
     space_resource_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List Copilot Spaces for a user
@@ -280,7 +280,7 @@ export type CopilotSpacesOperations = {
     username: string;
     /** The unique identifier of the Copilot Space. */
     space_number: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List collaborators for a Copilot Space for a user
@@ -340,7 +340,7 @@ export type CopilotSpacesOperations = {
     actor_type: "User" | "Team";
     /** The username of the collaborator. The numeric user ID is also accepted. */
     actor_identifier: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List resources for a Copilot Space for a user
@@ -407,5 +407,5 @@ export type CopilotSpacesOperations = {
     space_number: number;
     /** The unique identifier of the resource. */
     space_resource_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 };

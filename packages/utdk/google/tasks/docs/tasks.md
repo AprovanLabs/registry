@@ -1,9 +1,9 @@
 # Tasks
 
-8 operations · `utdk/google/tasks`
+8 operations · `@utdk/clients/google/tasks`
 
 ```ts
-import tasks from "utdk/google/tasks";
+import tasks from "@utdk/clients/google/tasks";
 ```
 
 ## `tasks.tasksTasksClear`
@@ -36,7 +36,7 @@ tasks.tasksTasksClear(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /tasks/v1/lists/{tasklist}/clear` · `tasks.tasks.clear`</sub>
@@ -195,7 +195,7 @@ tasks.tasksTasksDelete(input: {
   upload_protocol?: string;
   /** Legacy upload protocol for media (e.g. "media", "multipart"). */
   uploadType?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /tasks/v1/lists/{tasklist}/tasks/{task}` · `tasks.tasks.delete`</sub>

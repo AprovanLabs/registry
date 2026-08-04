@@ -1,4 +1,4 @@
-import type { CommentList, Error, OrganizationList, SearchResults, TicketList, TicketResponse, UserList, UserResponse } from "./schemas.js";
+import type { CommentList, OrganizationList, SearchResults, TicketList, TicketResponse, UserList, UserResponse } from "./schemas.js";
 
 export type ZendeskClient = {
   /**
@@ -45,7 +45,7 @@ export type ZendeskClient = {
   deleteTicket: (input: {
     /** The ticket ID */
     ticketId: number;
-  }) => Promise<Error>;
+  }) => Promise<undefined>;
 
   /**
    * List ticket comments

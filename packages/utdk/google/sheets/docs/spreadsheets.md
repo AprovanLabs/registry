@@ -1,9 +1,9 @@
 # Spreadsheets
 
-17 operations · `utdk/google/sheets`
+17 operations · `@utdk/clients/google/sheets`
 
 ```ts
-import sheets from "utdk/google/sheets";
+import sheets from "@utdk/clients/google/sheets";
 ```
 
 ## `sheets.sheetsSpreadsheetsCreate`

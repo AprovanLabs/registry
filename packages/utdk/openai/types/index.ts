@@ -1,890 +1,2045 @@
+import type { AdminApiKey, ApiKeyList, AssistantObject, AssistantSupportedModels, AssistantToolsCode, AssistantToolsFileSearch, AssistantToolsFileSearchTypeOnly, AssistantToolsFunction, AssistantsApiResponseFormatOption, AssistantsApiToolChoiceOption, AudioResponseFormat, AuditLogEventType, AutoChunkingStrategyRequestParam, Batch, Certificate, ChatCompletionDeleted, ChatCompletionFunctionCallOption, ChatCompletionFunctions, ChatCompletionList, ChatCompletionMessageList, ChatCompletionRequestMessage, ChatCompletionStreamOptions, ChatCompletionTool, ChatCompletionToolChoiceOption, ChunkingStrategyRequestParam, ComparisonFilter, CompoundFilter, CreateChatCompletionResponse, CreateCompletionResponse, CreateEmbeddingResponse, CreateEvalCompletionsRunDataSource, CreateEvalCustomDataSourceConfig, CreateEvalJsonlRunDataSource, CreateEvalLabelModelGrader, CreateEvalLogsDataSourceConfig, CreateEvalResponsesRunDataSource, CreateMessageRequest, CreateModerationResponse, CreateThreadRequest, CreateTranslationResponseJson, CreateTranslationResponseVerboseJson, DeleteAssistantResponse, DeleteCertificateResponse, DeleteFileResponse, DeleteFineTuningCheckpointPermissionResponse, DeleteMessageResponse, DeleteModelResponse, DeleteThreadResponse, DeleteVectorStoreFileResponse, DeleteVectorStoreResponse, Eval, EvalList, EvalPythonGrader, EvalRun, EvalRunList, EvalRunOutputItem, EvalRunOutputItemList, EvalScoreModelGrader, EvalStringCheckGrader, EvalTextSimilarityGrader, FineTuneMethod, FineTuningJob, ImagesResponse, Includable, InputItem, Invite, InviteDeleteResponse, InviteListResponse, ListAssistantsResponse, ListAuditLogsResponse, ListBatchesResponse, ListCertificatesResponse, ListFilesResponse, ListFineTuningCheckpointPermissionResponse, ListFineTuningJobCheckpointsResponse, ListFineTuningJobEventsResponse, ListMessagesResponse, ListModelsResponse, ListPaginatedFineTuningJobsResponse, ListRunStepsResponse, ListRunsResponse, ListVectorStoreFilesResponse, ListVectorStoresResponse, MessageContentImageFileObject, MessageContentImageUrlObject, MessageObject, MessageRequestContentTextObject, Metadata, Model, ModelIdsResponses, ModelIdsShared, OpenAiFile, ParallelToolCalls, PredictionContent, Project, ProjectApiKey, ProjectApiKeyDeleteResponse, ProjectApiKeyListResponse, ProjectListResponse, ProjectRateLimit, ProjectRateLimitListResponse, ProjectServiceAccount, ProjectServiceAccountCreateResponse, ProjectServiceAccountDeleteResponse, ProjectServiceAccountListResponse, ProjectUser, ProjectUserDeleteResponse, ProjectUserListResponse, RealtimeSessionCreateResponse, RealtimeTranscriptionSessionCreateResponse, Reasoning, ReasoningEffort, Response, ResponseFormatJsonObject, ResponseFormatJsonSchema, ResponseFormatText, ResponseItemList, ResponseModalities, RunObject, RunStepObject, ServiceTier, StaticChunkingStrategyRequestParam, StopConfiguration, TextResponseFormatConfiguration, ThreadObject, Tool, ToolChoiceFunction, ToolChoiceOptions, ToolChoiceTypes, TranscriptionInclude, TruncationObject, Upload, UploadPart, UsageResponse, User, UserDeleteResponse, UserListResponse, VectorStoreExpirationAfter, VectorStoreFileAttributes, VectorStoreFileBatchObject, VectorStoreFileContentResponse, VectorStoreFileObject, VectorStoreObject, VectorStoreSearchResultsPage, VoiceIdsShared, WebSearchContextSize, WebSearchLocation } from "./schemas.js";
+
 export type OpenaiClient = {
   /**
-   * Activate certificates at the organization level.  You can atomically and idempotently activate up to 10 certificates at a time. 
-   * Tags: Certificates
-   * Access as: openai.activateOrganizationCertificates(input)
+   * Returns a list of assistants.
    */
-  activateOrganizationCertificates: (input: { certificate_ids: (string)[] }) => Promise<{ data: ({ object: "certificate" | "organization.certificate" | "organization.project.certificate"; id: string; name: string; created_at: number; certificate_details: { valid_at?: number; expires_at?: number; content?: string }; active?: boolean })[]; first_id?: string; last_id?: string; has_more: boolean; object: "list" }>;
-  /**
-   * Activate certificates at the project level.  You can atomically and idempotently activate up to 10 certificates at a time. 
-   * Tags: Certificates
-   * Access as: openai.activateProjectCertificates(input)
-   */
-  activateProjectCertificates: (input: { certificate_ids: (string)[] }) => Promise<{ data: ({ object: "certificate" | "organization.certificate" | "organization.project.certificate"; id: string; name: string; created_at: number; certificate_details: { valid_at?: number; expires_at?: number; content?: string }; active?: boolean })[]; first_id?: string; last_id?: string; has_more: boolean; object: "list" }>;
-  /**
-   * Adds a [Part](/docs/api-reference/uploads/part-object) to an [Upload](/docs/api-reference/uploads/object) object. A Part represents a chunk of bytes from the file you are trying to upload.   Each Part can be at most 64 MB, and you can add Parts until you hit the Upload maximum of 8 GB.  It is possible to add multiple Parts in parallel. You can decide the intended order of the Parts when you [complete the Upload](/docs/api-reference/uploads/complete). 
-   * Tags: Uploads
-   * Access as: openai.addUploadPart(input)
-   */
-  addUploadPart: (input: { data: string; upload_id: string }) => Promise<{ id: string; created_at: number; upload_id: string; object: "upload.part" }>;
-  /**
-   * Create an organization admin API key
-   * Tags: 
-   * Access as: openai.adminApiKeysCreate(input)
-   */
-  adminApiKeysCreate: (input: { name: string }) => Promise<{ object: string; id: string; name: string; redacted_value: string; value?: string; created_at: number; last_used_at: number | null; owner: { type?: string; object?: string; id?: string; name?: string; created_at?: number; role?: string } }>;
-  /**
-   * Delete an organization admin API key
-   * Tags: 
-   * Access as: openai.adminApiKeysDelete(input)
-   */
-  adminApiKeysDelete: (input: { key_id: string }) => Promise<{ id?: string; object?: string; deleted?: boolean }>;
-  /**
-   * Retrieve a single organization API key
-   * Tags: 
-   * Access as: openai.adminApiKeysGet(input)
-   */
-  adminApiKeysGet: (input: { key_id: string }) => Promise<{ object: string; id: string; name: string; redacted_value: string; value?: string; created_at: number; last_used_at: number | null; owner: { type?: string; object?: string; id?: string; name?: string; created_at?: number; role?: string } }>;
-  /**
-   * List organization API keys
-   * Tags: 
-   * Access as: openai.adminApiKeysList(input)
-   */
-  adminApiKeysList: (input: { after?: string | null; order?: "asc" | "desc"; limit?: number }) => Promise<{ object?: string; data?: ({ object: string; id: string; name: string; redacted_value: string; value?: string; created_at: number; last_used_at: number | null; owner: { type?: string; object?: string; id?: string; name?: string; created_at?: number; role?: string } })[]; has_more?: boolean; first_id?: string; last_id?: string }>;
-  /**
-   * Archives a project in the organization. Archived projects cannot be used or updated.
-   * Tags: Projects
-   * Access as: openai.archiveProject(input)
-   */
-  archiveProject: (input: { project_id: string }) => Promise<{ id: string; object: "organization.project"; name: string; created_at: number; archived_at?: number | null; status: "active" | "archived" }>;
-  /**
-   * Cancels an in-progress batch. The batch will be in status `cancelling` for up to 10 minutes, before changing to `cancelled`, where it will have partial results (if any) available in the output file.
-   * Tags: Batch
-   * Access as: openai.cancelBatch(input)
-   */
-  cancelBatch: (input: { batch_id: string }) => Promise<{ id: string; object: "batch"; endpoint: string; errors?: { object?: string; data?: ({ code?: string; message?: string; param?: string | null; line?: number | null })[] }; input_file_id: string; completion_window: string; status: "validating" | "failed" | "in_progress" | "finalizing" | "completed" | "expired" | "cancelling" | "cancelled"; output_file_id?: string; error_file_id?: string; created_at: number; in_progress_at?: number; expires_at?: number; finalizing_at?: number; completed_at?: number; failed_at?: number; expired_at?: number; cancelling_at?: number; cancelled_at?: number; request_counts?: { total: number; completed: number; failed: number }; metadata?: { [key: string]: string | undefined } | null }>;
-  /**
-   * Cancel an ongoing evaluation run. 
-   * Tags: Evals
-   * Access as: openai.cancelEvalRun(input)
-   */
-  cancelEvalRun: (input: { eval_id: string; run_id: string }) => Promise<{ object: "eval.run"; id: string; eval_id: string; status: string; model: string; name: string; created_at: number; report_url: string; result_counts: { total: number; errored: number; failed: number; passed: number }; per_model_usage: ({ model_name: string; invocation_count: number; prompt_tokens: number; completion_tokens: number; total_tokens: number; cached_tokens: number })[]; per_testing_criteria_results: ({ testing_criteria: string; passed: number; failed: number })[]; data_source: { type: "jsonl"; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } } | { type: "completions"; input_messages?: { type: "template"; template: ({ role: "user" | "assistant" | "system" | "developer"; content: string | ({ type: "input_text"; text: string } | { type: "input_image"; image_url?: string | null; file_id?: string | null; detail: "low" | "high" | "auto" } | { type: "input_file"; file_id?: string | null; filename?: string; file_data?: string })[]; type?: "message" } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[] } | { type: "item_reference"; item_reference: string }; sampling_params?: { temperature?: number; max_completion_tokens?: number; top_p?: number; seed?: number }; model?: string; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } | { type: "stored_completions"; metadata?: { [key: string]: string | undefined } | null; model?: string | null; created_after?: number | null; created_before?: number | null; limit?: number | null } } | { type: "completions"; input_messages?: { type: "template"; template: ({ role: string; content: string } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[] } | { type: "item_reference"; item_reference: string }; sampling_params?: { temperature?: number; max_completion_tokens?: number; top_p?: number; seed?: number }; model?: string; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } | { type: "responses"; metadata?: { [key: string]: unknown } | null; model?: string | null; instructions_search?: string | null; created_after?: number | null; created_before?: number | null; has_tool_calls?: boolean | null; reasoning_effort?: "low" | "medium" | "high" | null; temperature?: number | null; top_p?: number | null; users?: (string)[] | null; allow_parallel_tool_calls?: boolean | null } }; metadata: { [key: string]: string | undefined } | null; error: { code: string; message: string } }>;
-  /**
-   * Immediately cancel a fine-tune job. 
-   * Tags: Fine-tuning
-   * Access as: openai.cancelFineTuningJob(input)
-   */
-  cancelFineTuningJob: (input: { fine_tuning_job_id: string }) => Promise<{ id: string; created_at: number; error: { code: string; message: string; param: string | null } | null; fine_tuned_model: string | null; finished_at: number | null; hyperparameters: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number }; model: string; object: "fine_tuning.job"; organization_id: string; result_files: (string)[]; status: "validating_files" | "queued" | "running" | "succeeded" | "failed" | "cancelled"; trained_tokens: number | null; training_file: string; validation_file: string | null; integrations?: ({ type: "wandb"; wandb: { project: string; name?: string | null; entity?: string | null; tags?: (string)[] } })[] | null; seed: number; estimated_finish?: number | null; method?: { type?: "supervised" | "dpo"; supervised?: { hyperparameters?: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number } }; dpo?: { hyperparameters?: { beta?: "auto" | number; batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number } } }; metadata?: { [key: string]: string | undefined } | null }>;
-  /**
-   * Cancels a run that is `in_progress`.
-   * Tags: Assistants
-   * Access as: openai.cancelRun(input)
-   */
-  cancelRun: (input: { thread_id: string; run_id: string }) => Promise<{ id: string; object: "thread.run"; created_at: number; thread_id: string; assistant_id: string; status: "queued" | "in_progress" | "requires_action" | "cancelling" | "cancelled" | "failed" | "completed" | "incomplete" | "expired"; required_action: { type: "submit_tool_outputs"; submit_tool_outputs: { tool_calls: ({ id: string; type: "function"; function: { name: string; arguments: string } })[] } } | null; last_error: { code: "server_error" | "rate_limit_exceeded" | "invalid_prompt"; message: string } | null; expires_at: number | null; started_at: number | null; cancelled_at: number | null; failed_at: number | null; completed_at: number | null; incomplete_details: { reason?: "max_completion_tokens" | "max_prompt_tokens" } | null; model: string; instructions: string; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; metadata: { [key: string]: string | undefined } | null; usage: { completion_tokens: number; prompt_tokens: number; total_tokens: number } | null; temperature?: number | null; top_p?: number | null; max_prompt_tokens: number | null; max_completion_tokens: number | null; truncation_strategy: { type: "auto" | "last_messages"; last_messages?: number | null } & unknown; tool_choice: "none" | "auto" | "required" | { type: "function" | "code_interpreter" | "file_search"; function?: { name: string } } & unknown; parallel_tool_calls: boolean; response_format: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }>;
-  /**
-   * Cancels the Upload. No Parts may be added after an Upload is cancelled. 
-   * Tags: Uploads
-   * Access as: openai.cancelUpload(input)
-   */
-  cancelUpload: (input: { upload_id: string }) => Promise<{ id: string; created_at: number; filename: string; bytes: number; purpose: string; status: "pending" | "completed" | "cancelled" | "expired"; expires_at: number; object?: "upload"; file?: { id: string; bytes: number; created_at: number; expires_at?: number; filename: string; object: "file"; purpose: "assistants" | "assistants_output" | "batch" | "batch_output" | "fine-tune" | "fine-tune-results" | "vision"; status: "uploaded" | "processed" | "error"; status_details?: string } & unknown }>;
-  /**
-   * Cancel a vector store file batch. This attempts to cancel the processing of files in this batch as soon as possible.
-   * Tags: Vector stores
-   * Access as: openai.cancelVectorStoreFileBatch(input)
-   */
-  cancelVectorStoreFileBatch: (input: { vector_store_id: string; batch_id: string }) => Promise<{ id: string; object: "vector_store.files_batch"; created_at: number; vector_store_id: string; status: "in_progress" | "completed" | "cancelled" | "failed"; file_counts: { in_progress: number; completed: number; failed: number; cancelled: number; total: number } }>;
-  /**
-   * Completes the [Upload](/docs/api-reference/uploads/object).   Within the returned Upload object, there is a nested [File](/docs/api-reference/files/object) object that is ready to use in the rest of the platform.  You can specify the order of the Parts by passing in an ordered list of the Part IDs.  The number of bytes uploaded upon completion must match the number of bytes initially specified when creating the Upload object. No Parts may be added after an Upload is completed. 
-   * Tags: Uploads
-   * Access as: openai.completeUpload(input)
-   */
-  completeUpload: (input: { part_ids: (string)[]; md5?: string; upload_id: string }) => Promise<{ id: string; created_at: number; filename: string; bytes: number; purpose: string; status: "pending" | "completed" | "cancelled" | "expired"; expires_at: number; object?: "upload"; file?: { id: string; bytes: number; created_at: number; expires_at?: number; filename: string; object: "file"; purpose: "assistants" | "assistants_output" | "batch" | "batch_output" | "fine-tune" | "fine-tune-results" | "vision"; status: "uploaded" | "processed" | "error"; status_details?: string } & unknown }>;
+  listAssistants: (input: {
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.  */
+    order?: "asc" | "desc";
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.  */
+    before?: string;
+  }) => Promise<ListAssistantsResponse>;
+
   /**
    * Create an assistant with a model and instructions.
-   * Tags: Assistants
-   * Access as: openai.createAssistant(input)
    */
-  createAssistant: (input: { model: string | "gpt-4.1" | "gpt-4.1-mini" | "gpt-4.1-nano" | "gpt-4.1-2025-04-14" | "gpt-4.1-mini-2025-04-14" | "gpt-4.1-nano-2025-04-14" | "o3-mini" | "o3-mini-2025-01-31" | "o1" | "o1-2024-12-17" | "gpt-4o" | "gpt-4o-2024-11-20" | "gpt-4o-2024-08-06" | "gpt-4o-2024-05-13" | "gpt-4o-mini" | "gpt-4o-mini-2024-07-18" | "gpt-4.5-preview" | "gpt-4.5-preview-2025-02-27" | "gpt-4-turbo" | "gpt-4-turbo-2024-04-09" | "gpt-4-0125-preview" | "gpt-4-turbo-preview" | "gpt-4-1106-preview" | "gpt-4-vision-preview" | "gpt-4" | "gpt-4-0314" | "gpt-4-0613" | "gpt-4-32k" | "gpt-4-32k-0314" | "gpt-4-32k-0613" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k" | "gpt-3.5-turbo-0613" | "gpt-3.5-turbo-1106" | "gpt-3.5-turbo-0125" | "gpt-3.5-turbo-16k-0613"; name?: string | null; description?: string | null; instructions?: string | null; reasoning_effort?: "low" | "medium" | "high" | null; tools?: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: unknown | unknown } | null; metadata?: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; response_format?: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }) => Promise<{ id: string; object: "assistant"; created_at: number; name: string | null; description: string | null; model: string; instructions: string | null; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null; metadata: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; response_format?: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }>;
-  /**
-   * Creates and executes a batch from an uploaded file of requests
-   * Tags: Batch
-   * Access as: openai.createBatch(input)
-   */
-  createBatch: (input: { input_file_id: string; endpoint: "/v1/responses" | "/v1/chat/completions" | "/v1/embeddings" | "/v1/completions"; completion_window: "24h"; metadata?: { [key: string]: string | undefined } | null }) => Promise<{ id: string; object: "batch"; endpoint: string; errors?: { object?: string; data?: ({ code?: string; message?: string; param?: string | null; line?: number | null })[] }; input_file_id: string; completion_window: string; status: "validating" | "failed" | "in_progress" | "finalizing" | "completed" | "expired" | "cancelling" | "cancelled"; output_file_id?: string; error_file_id?: string; created_at: number; in_progress_at?: number; expires_at?: number; finalizing_at?: number; completed_at?: number; failed_at?: number; expired_at?: number; cancelling_at?: number; cancelled_at?: number; request_counts?: { total: number; completed: number; failed: number }; metadata?: { [key: string]: string | undefined } | null }>;
-  /**
-   * **Starting a new project?** We recommend trying [Responses](/docs/api-reference/responses)  to take advantage of the latest OpenAI platform features. Compare [Chat Completions with Responses](/docs/guides/responses-vs-chat-completions?api-mode=responses).  ---  Creates a model response for the given chat conversation. Learn more in the [text generation](/docs/guides/text-generation), [vision](/docs/guides/vision), and [audio](/docs/guides/audio) guides.  Parameter support can differ depending on the model used to generate the response, particularly for newer reasoning models. Parameters that are only supported for reasoning models are noted below. For the current state of  unsupported parameters in reasoning models,  [refer to the reasoning guide](/docs/guides/reasoning). 
-   * Tags: Chat
-   * Access as: openai.createChatCompletion(input)
-   */
-  createChatCompletion: (input: { metadata?: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; user?: string; service_tier?: "auto" | "default" | "flex" | null; messages: ({ content: string | ({ type: "text"; text: string })[]; role: "developer"; name?: string } | { content: string | ({ type: "text"; text: string })[]; role: "system"; name?: string } | { content: string | ({ type: "text"; text: string } | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } } | { type: "input_audio"; input_audio: { data: string; format: "wav" | "mp3" } } | { type: "file"; file: { filename?: string; file_data?: string; file_id?: string } })[]; role: "user"; name?: string } | { content?: string | ({ type: "text"; text: string } | { type: "refusal"; refusal: string })[] | null; refusal?: string | null; role: "assistant"; name?: string; audio?: { id: string } | null; tool_calls?: ({ id: string; type: "function"; function: { name: string; arguments: string } })[]; function_call?: { arguments: string; name: string } | null } | { role: "tool"; content: string | ({ type: "text"; text: string })[]; tool_call_id: string } | { role: "function"; content: string | null; name: string })[]; model: string | "gpt-4.1" | "gpt-4.1-mini" | "gpt-4.1-nano" | "gpt-4.1-2025-04-14" | "gpt-4.1-mini-2025-04-14" | "gpt-4.1-nano-2025-04-14" | "o4-mini" | "o4-mini-2025-04-16" | "o3" | "o3-2025-04-16" | "o3-mini" | "o3-mini-2025-01-31" | "o1" | "o1-2024-12-17" | "o1-preview" | "o1-preview-2024-09-12" | "o1-mini" | "o1-mini-2024-09-12" | "gpt-4o" | "gpt-4o-2024-11-20" | "gpt-4o-2024-08-06" | "gpt-4o-2024-05-13" | "gpt-4o-audio-preview" | "gpt-4o-audio-preview-2024-10-01" | "gpt-4o-audio-preview-2024-12-17" | "gpt-4o-mini-audio-preview" | "gpt-4o-mini-audio-preview-2024-12-17" | "gpt-4o-search-preview" | "gpt-4o-mini-search-preview" | "gpt-4o-search-preview-2025-03-11" | "gpt-4o-mini-search-preview-2025-03-11" | "chatgpt-4o-latest" | "gpt-4o-mini" | "gpt-4o-mini-2024-07-18" | "gpt-4-turbo" | "gpt-4-turbo-2024-04-09" | "gpt-4-0125-preview" | "gpt-4-turbo-preview" | "gpt-4-1106-preview" | "gpt-4-vision-preview" | "gpt-4" | "gpt-4-0314" | "gpt-4-0613" | "gpt-4-32k" | "gpt-4-32k-0314" | "gpt-4-32k-0613" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k" | "gpt-3.5-turbo-0301" | "gpt-3.5-turbo-0613" | "gpt-3.5-turbo-1106" | "gpt-3.5-turbo-0125" | "gpt-3.5-turbo-16k-0613"; modalities?: ("text" | "audio")[] | null; reasoning_effort?: "low" | "medium" | "high" | null; max_completion_tokens?: number | null; frequency_penalty?: number | null; presence_penalty?: number | null; web_search_options?: { user_location?: { type: "approximate"; approximate: { country?: string; region?: string; city?: string; timezone?: string } } | null; search_context_size?: "low" | "medium" | "high" }; top_logprobs?: number | null; response_format?: { type: "text" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } | { type: "json_object" }; audio?: { voice: string | "alloy" | "ash" | "ballad" | "coral" | "echo" | "fable" | "onyx" | "nova" | "sage" | "shimmer" | "verse"; format: "wav" | "aac" | "mp3" | "flac" | "opus" | "pcm16" } | null; store?: boolean | null; stream?: boolean | null; stop?: string | null | (string)[] | null; logit_bias?: { [key: string]: number | undefined } | null; logprobs?: boolean | null; max_tokens?: number | null; n?: number | null; prediction?: { type: "content"; content: string | ({ type: "text"; text: string })[] } | null; seed?: number | null; stream_options?: { include_usage?: boolean } | null; tools?: ({ type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; tool_choice?: "none" | "auto" | "required" | { type: "function"; function: { name: string } }; parallel_tool_calls?: boolean; function_call?: "none" | "auto" | { name: string }; functions?: ({ description?: string; name: string; parameters?: { [key: string]: unknown } })[] }) => Promise<{ id: string; choices: ({ finish_reason: "stop" | "length" | "tool_calls" | "content_filter" | "function_call"; index: number; message: { content: string | null; refusal: string | null; tool_calls?: ({ id: string; type: "function"; function: { name: string; arguments: string } })[]; annotations?: ({ type: "url_citation"; url_citation: { end_index: number; start_index: number; url: string; title: string } })[]; role: "assistant"; function_call?: { arguments: string; name: string }; audio?: { id: string; expires_at: number; data: string; transcript: string } | null }; logprobs: { content: ({ token: string; logprob: number; bytes: (number)[] | null; top_logprobs: ({ token: string; logprob: number; bytes: (number)[] | null })[] })[] | null; refusal: ({ token: string; logprob: number; bytes: (number)[] | null; top_logprobs: ({ token: string; logprob: number; bytes: (number)[] | null })[] })[] | null } | null })[]; created: number; model: string; service_tier?: "auto" | "default" | "flex" | null; system_fingerprint?: string; object: "chat.completion"; usage?: { completion_tokens: number; prompt_tokens: number; total_tokens: number; completion_tokens_details?: { accepted_prediction_tokens?: number; audio_tokens?: number; reasoning_tokens?: number; rejected_prediction_tokens?: number }; prompt_tokens_details?: { audio_tokens?: number; cached_tokens?: number } } }>;
-  /**
-   * Creates a completion for the provided prompt and parameters.
-   * Tags: Completions
-   * Access as: openai.createCompletion(input)
-   */
-  createCompletion: (input: { model: string | "gpt-3.5-turbo-instruct" | "davinci-002" | "babbage-002"; prompt: string | (string)[] | (number)[] | ((number)[])[] | null; best_of?: number | null; echo?: boolean | null; frequency_penalty?: number | null; logit_bias?: { [key: string]: number | undefined } | null; logprobs?: number | null; max_tokens?: number | null; n?: number | null; presence_penalty?: number | null; seed?: number | null; stop?: string | null | (string)[] | null; stream?: boolean | null; stream_options?: { include_usage?: boolean } | null; suffix?: string | null; temperature?: number | null; top_p?: number | null; user?: string }) => Promise<{ id: string; choices: ({ finish_reason: "stop" | "length" | "content_filter"; index: number; logprobs: { text_offset?: (number)[]; token_logprobs?: (number)[]; tokens?: (string)[]; top_logprobs?: ({ [key: string]: number | undefined })[] } | null; text: string })[]; created: number; model: string; system_fingerprint?: string; object: "text_completion"; usage?: { completion_tokens: number; prompt_tokens: number; total_tokens: number; completion_tokens_details?: { accepted_prediction_tokens?: number; audio_tokens?: number; reasoning_tokens?: number; rejected_prediction_tokens?: number }; prompt_tokens_details?: { audio_tokens?: number; cached_tokens?: number } } }>;
-  /**
-   * Creates an embedding vector representing the input text.
-   * Tags: Embeddings
-   * Access as: openai.createEmbedding(input)
-   */
-  createEmbedding: (input: { input: string | (string)[] | (number)[] | ((number)[])[]; model: string | "text-embedding-ada-002" | "text-embedding-3-small" | "text-embedding-3-large"; encoding_format?: "float" | "base64"; dimensions?: number; user?: string }) => Promise<{ data: ({ index: number; embedding: (number)[]; object: "embedding" })[]; model: string; object: "list"; usage: { prompt_tokens: number; total_tokens: number } }>;
-  /**
-   * Create the structure of an evaluation that can be used to test a model's performance. An evaluation is a set of testing criteria and a datasource. After creating an evaluation, you can run it on different models and model parameters. We support several types of graders and datasources. For more information, see the [Evals guide](/docs/guides/evals). 
-   * Tags: Evals
-   * Access as: openai.createEval(input)
-   */
-  createEval: (input: { name?: string; metadata?: { [key: string]: string | undefined } | null; data_source_config: { type: "custom"; item_schema: { [key: string]: unknown }; include_sample_schema?: boolean } | { type: "logs"; metadata?: { [key: string]: unknown } }; testing_criteria: ({ type: "label_model"; name: string; model: string; input: ({ role: string; content: string } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[]; labels: (string)[]; passing_labels: (string)[] } | { type: "string_check"; name: string; input: string; reference: string; operation: "eq" | "ne" | "like" | "ilike" } | { type: "text_similarity"; name?: string; input: string; reference: string; pass_threshold: number; evaluation_metric: "fuzzy_match" | "bleu" | "gleu" | "meteor" | "rouge_1" | "rouge_2" | "rouge_3" | "rouge_4" | "rouge_5" | "rouge_l" } | { type: "python"; name: string; source: string; pass_threshold?: number; image_tag?: string } | { type: "score_model"; name: string; model: string; sampling_params?: { [key: string]: unknown }; input: ({ role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[]; pass_threshold?: number; range?: (number)[] })[] }) => Promise<{ object: "eval"; id: string; name: string; data_source_config: { type: "custom"; schema: { [key: string]: unknown } } | { type: "stored_completions"; metadata?: { [key: string]: string | undefined } | null; schema: { [key: string]: unknown } }; testing_criteria: ({ type: "label_model"; name: string; model: string; input: ({ role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[]; labels: (string)[]; passing_labels: (string)[] } | { type: "string_check"; name: string; input: string; reference: string; operation: "eq" | "ne" | "like" | "ilike" } | { type: "text_similarity"; name?: string; input: string; reference: string; pass_threshold: number; evaluation_metric: "fuzzy_match" | "bleu" | "gleu" | "meteor" | "rouge_1" | "rouge_2" | "rouge_3" | "rouge_4" | "rouge_5" | "rouge_l" } | { type: "python"; name: string; source: string; pass_threshold?: number; image_tag?: string } | { type: "score_model"; name: string; model: string; sampling_params?: { [key: string]: unknown }; input: ({ role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[]; pass_threshold?: number; range?: (number)[] })[]; created_at: number; metadata: { [key: string]: string | undefined } | null }>;
-  /**
-   * Create a new evaluation run. This is the endpoint that will kick off grading. 
-   * Tags: Evals
-   * Access as: openai.createEvalRun(input)
-   */
-  createEvalRun: (input: { name?: string; metadata?: { [key: string]: string | undefined } | null; data_source: { type: "jsonl"; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } } | { type: "completions"; input_messages?: { type: "template"; template: ({ role: "user" | "assistant" | "system" | "developer"; content: string | ({ type: "input_text"; text: string } | { type: "input_image"; image_url?: string | null; file_id?: string | null; detail: "low" | "high" | "auto" } | { type: "input_file"; file_id?: string | null; filename?: string; file_data?: string })[]; type?: "message" } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[] } | { type: "item_reference"; item_reference: string }; sampling_params?: { temperature?: number; max_completion_tokens?: number; top_p?: number; seed?: number }; model?: string; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } | { type: "stored_completions"; metadata?: { [key: string]: string | undefined } | null; model?: string | null; created_after?: number | null; created_before?: number | null; limit?: number | null } } | { type: "completions"; input_messages?: { type: "template"; template: ({ role: string; content: string } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[] } | { type: "item_reference"; item_reference: string }; sampling_params?: { temperature?: number; max_completion_tokens?: number; top_p?: number; seed?: number }; model?: string; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } | { type: "responses"; metadata?: { [key: string]: unknown } | null; model?: string | null; instructions_search?: string | null; created_after?: number | null; created_before?: number | null; has_tool_calls?: boolean | null; reasoning_effort?: "low" | "medium" | "high" | null; temperature?: number | null; top_p?: number | null; users?: (string)[] | null; allow_parallel_tool_calls?: boolean | null } }; eval_id: string }) => Promise<{ object: "eval.run"; id: string; eval_id: string; status: string; model: string; name: string; created_at: number; report_url: string; result_counts: { total: number; errored: number; failed: number; passed: number }; per_model_usage: ({ model_name: string; invocation_count: number; prompt_tokens: number; completion_tokens: number; total_tokens: number; cached_tokens: number })[]; per_testing_criteria_results: ({ testing_criteria: string; passed: number; failed: number })[]; data_source: { type: "jsonl"; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } } | { type: "completions"; input_messages?: { type: "template"; template: ({ role: "user" | "assistant" | "system" | "developer"; content: string | ({ type: "input_text"; text: string } | { type: "input_image"; image_url?: string | null; file_id?: string | null; detail: "low" | "high" | "auto" } | { type: "input_file"; file_id?: string | null; filename?: string; file_data?: string })[]; type?: "message" } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[] } | { type: "item_reference"; item_reference: string }; sampling_params?: { temperature?: number; max_completion_tokens?: number; top_p?: number; seed?: number }; model?: string; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } | { type: "stored_completions"; metadata?: { [key: string]: string | undefined } | null; model?: string | null; created_after?: number | null; created_before?: number | null; limit?: number | null } } | { type: "completions"; input_messages?: { type: "template"; template: ({ role: string; content: string } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[] } | { type: "item_reference"; item_reference: string }; sampling_params?: { temperature?: number; max_completion_tokens?: number; top_p?: number; seed?: number }; model?: string; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } | { type: "responses"; metadata?: { [key: string]: unknown } | null; model?: string | null; instructions_search?: string | null; created_after?: number | null; created_before?: number | null; has_tool_calls?: boolean | null; reasoning_effort?: "low" | "medium" | "high" | null; temperature?: number | null; top_p?: number | null; users?: (string)[] | null; allow_parallel_tool_calls?: boolean | null } }; metadata: { [key: string]: string | undefined } | null; error: { code: string; message: string } }>;
-  /**
-   * Upload a file that can be used across various endpoints. Individual files can be up to 512 MB, and the size of all files uploaded by one organization can be up to 100 GB.  The Assistants API supports files up to 2 million tokens and of specific file types. See the [Assistants Tools guide](/docs/assistants/tools) for details.  The Fine-tuning API only supports `.jsonl` files. The input also has certain required formats for fine-tuning [chat](/docs/api-reference/fine-tuning/chat-input) or [completions](/docs/api-reference/fine-tuning/completions-input) models.  The Batch API only supports `.jsonl` files up to 200 MB in size. The input also has a specific required [format](/docs/api-reference/batch/request-input).  Please [contact us](https://help.openai.com/) if you need to increase these storage limits. 
-   * Tags: Files
-   * Access as: openai.createFile(input)
-   */
-  createFile: (input: { file: string; purpose: "assistants" | "batch" | "fine-tune" | "vision" | "user_data" | "evals" }) => Promise<{ id: string; bytes: number; created_at: number; expires_at?: number; filename: string; object: "file"; purpose: "assistants" | "assistants_output" | "batch" | "batch_output" | "fine-tune" | "fine-tune-results" | "vision"; status: "uploaded" | "processed" | "error"; status_details?: string }>;
-  /**
-   * **NOTE:** Calling this endpoint requires an [admin API key](../admin-api-keys).  This enables organization owners to share fine-tuned models with other projects in their organization. 
-   * Tags: Fine-tuning
-   * Access as: openai.createFineTuningCheckpointPermission(input)
-   */
-  createFineTuningCheckpointPermission: (input: { project_ids: (string)[]; fine_tuned_model_checkpoint: string }) => Promise<{ data: ({ id: string; created_at: number; project_id: string; object: "checkpoint.permission" })[]; object: "list"; first_id?: string | null; last_id?: string | null; has_more: boolean }>;
-  /**
-   * Creates a fine-tuning job which begins the process of creating a new model from a given dataset.  Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.  [Learn more about fine-tuning](/docs/guides/fine-tuning) 
-   * Tags: Fine-tuning
-   * Access as: openai.createFineTuningJob(input)
-   */
-  createFineTuningJob: (input: { model: string | "babbage-002" | "davinci-002" | "gpt-3.5-turbo" | "gpt-4o-mini"; training_file: string; hyperparameters?: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number }; suffix?: string | null; validation_file?: string | null; integrations?: ({ type: "wandb"; wandb: { project: string; name?: string | null; entity?: string | null; tags?: (string)[] } })[] | null; seed?: number | null; method?: { type?: "supervised" | "dpo"; supervised?: { hyperparameters?: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number } }; dpo?: { hyperparameters?: { beta?: "auto" | number; batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number } } }; metadata?: { [key: string]: string | undefined } | null }) => Promise<{ id: string; created_at: number; error: { code: string; message: string; param: string | null } | null; fine_tuned_model: string | null; finished_at: number | null; hyperparameters: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number }; model: string; object: "fine_tuning.job"; organization_id: string; result_files: (string)[]; status: "validating_files" | "queued" | "running" | "succeeded" | "failed" | "cancelled"; trained_tokens: number | null; training_file: string; validation_file: string | null; integrations?: ({ type: "wandb"; wandb: { project: string; name?: string | null; entity?: string | null; tags?: (string)[] } })[] | null; seed: number; estimated_finish?: number | null; method?: { type?: "supervised" | "dpo"; supervised?: { hyperparameters?: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number } }; dpo?: { hyperparameters?: { beta?: "auto" | number; batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number } } }; metadata?: { [key: string]: string | undefined } | null }>;
-  /**
-   * Creates an image given a prompt. [Learn more](/docs/guides/images). 
-   * Tags: Images
-   * Access as: openai.createImage(input)
-   */
-  createImage: (input: { prompt: string; model?: string | "dall-e-2" | "dall-e-3" | "gpt-image-1" | null; n?: number | null; quality?: "standard" | "hd" | "low" | "medium" | "high" | "auto" | null; response_format?: "url" | "b64_json" | null; output_format?: "png" | "jpeg" | "webp" | null; output_compression?: number | null; size?: "auto" | "1024x1024" | "1536x1024" | "1024x1536" | "256x256" | "512x512" | "1792x1024" | "1024x1792" | null; moderation?: "low" | "auto" | null; background?: "transparent" | "opaque" | "auto" | null; style?: "vivid" | "natural" | null; user?: string }) => Promise<{ created: number; data?: ({ b64_json?: string; url?: string; revised_prompt?: string })[]; usage?: { total_tokens: number; input_tokens: number; output_tokens: number; input_tokens_details: { text_tokens: number; image_tokens: number } } }>;
-  /**
-   * Creates an edited or extended image given one or more source images and a prompt. This endpoint only supports `gpt-image-1` and `dall-e-2`.
-   * Tags: Images
-   * Access as: openai.createImageEdit(input)
-   */
-  createImageEdit: (input: { image: string | (string)[]; prompt: string; mask?: string; model?: string | "dall-e-2" | "gpt-image-1" | null; n?: number | null; size?: "256x256" | "512x512" | "1024x1024" | "1536x1024" | "1024x1536" | "auto" | null; response_format?: "url" | "b64_json" | null; user?: string; quality?: "standard" | "low" | "medium" | "high" | "auto" | null }) => Promise<{ created: number; data?: ({ b64_json?: string; url?: string; revised_prompt?: string })[]; usage?: { total_tokens: number; input_tokens: number; output_tokens: number; input_tokens_details: { text_tokens: number; image_tokens: number } } }>;
-  /**
-   * Creates a variation of a given image. This endpoint only supports `dall-e-2`.
-   * Tags: Images
-   * Access as: openai.createImageVariation(input)
-   */
-  createImageVariation: (input: { image: string; model?: string | "dall-e-2" | null; n?: number | null; response_format?: "url" | "b64_json" | null; size?: "256x256" | "512x512" | "1024x1024" | null; user?: string }) => Promise<{ created: number; data?: ({ b64_json?: string; url?: string; revised_prompt?: string })[]; usage?: { total_tokens: number; input_tokens: number; output_tokens: number; input_tokens_details: { text_tokens: number; image_tokens: number } } }>;
-  /**
-   * Create a message.
-   * Tags: Assistants
-   * Access as: openai.createMessage(input)
-   */
-  createMessage: (input: { role: "user" | "assistant"; content: string | ({ type: "image_file"; image_file: { file_id: string; detail?: "auto" | "low" | "high" } } | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } } | { type: "text"; text: string })[]; attachments?: ({ file_id?: string; tools?: ({ type: "code_interpreter" } | { type: "file_search" })[] })[] | null; metadata?: { [key: string]: string | undefined } | null; thread_id: string }) => Promise<{ id: string; object: "thread.message"; created_at: number; thread_id: string; status: "in_progress" | "incomplete" | "completed"; incomplete_details: { reason: "content_filter" | "max_tokens" | "run_cancelled" | "run_expired" | "run_failed" } | null; completed_at: number | null; incomplete_at: number | null; role: "user" | "assistant"; content: ({ type: "image_file"; image_file: { file_id: string; detail?: "auto" | "low" | "high" } } | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } } | { type: "text"; text: { value: string; annotations: ({ type: "file_citation"; text: string; file_citation: { file_id: string }; start_index: number; end_index: number } | { type: "file_path"; text: string; file_path: { file_id: string }; start_index: number; end_index: number })[] } } | { type: "refusal"; refusal: string })[]; assistant_id: string | null; run_id: string | null; attachments: ({ file_id?: string; tools?: ({ type: "code_interpreter" } | { type: "file_search" })[] })[] | null; metadata: { [key: string]: string | undefined } | null }>;
-  /**
-   * Classifies if text and/or image inputs are potentially harmful. Learn more in the [moderation guide](/docs/guides/moderation). 
-   * Tags: Moderations
-   * Access as: openai.createModeration(input)
-   */
-  createModeration: (input: { input: string | (string)[] | ({ type: "image_url"; image_url: { url: string } } | { type: "text"; text: string })[]; model?: string | "omni-moderation-latest" | "omni-moderation-2024-09-26" | "text-moderation-latest" | "text-moderation-stable" }) => Promise<{ id: string; model: string; results: ({ flagged: boolean; categories: { hate: boolean; "hate/threatening": boolean; harassment: boolean; "harassment/threatening": boolean; illicit: boolean | null; "illicit/violent": boolean | null; "self-harm": boolean; "self-harm/intent": boolean; "self-harm/instructions": boolean; sexual: boolean; "sexual/minors": boolean; violence: boolean; "violence/graphic": boolean }; category_scores: { hate: number; "hate/threatening": number; harassment: number; "harassment/threatening": number; illicit: number; "illicit/violent": number; "self-harm": number; "self-harm/intent": number; "self-harm/instructions": number; sexual: number; "sexual/minors": number; violence: number; "violence/graphic": number }; category_applied_input_types: { hate: ("text")[]; "hate/threatening": ("text")[]; harassment: ("text")[]; "harassment/threatening": ("text")[]; illicit: ("text")[]; "illicit/violent": ("text")[]; "self-harm": ("text" | "image")[]; "self-harm/intent": ("text" | "image")[]; "self-harm/instructions": ("text" | "image")[]; sexual: ("text" | "image")[]; "sexual/minors": ("text")[]; violence: ("text" | "image")[]; "violence/graphic": ("text" | "image")[] } })[] }>;
-  /**
-   * Create a new project in the organization. Projects can be created and archived, but cannot be deleted.
-   * Tags: Projects
-   * Access as: openai.createProject(input)
-   */
-  createProject: (input: { name: string }) => Promise<{ id: string; object: "organization.project"; name: string; created_at: number; archived_at?: number | null; status: "active" | "archived" }>;
-  /**
-   * Creates a new service account in the project. This also returns an unredacted API key for the service account.
-   * Tags: Projects
-   * Access as: openai.createProjectServiceAccount(input)
-   */
-  createProjectServiceAccount: (input: { name: string; project_id: string }) => Promise<{ object: "organization.project.service_account"; id: string; name: string; role: "member"; created_at: number; api_key: { object: "organization.project.service_account.api_key"; value: string; name: string; created_at: number; id: string } }>;
-  /**
-   * Adds a user to the project. Users must already be members of the organization to be added to a project.
-   * Tags: Projects
-   * Access as: openai.createProjectUser(input)
-   */
-  createProjectUser: (input: { user_id: string; role: "owner" | "member"; project_id: string }) => Promise<{ object: "organization.project.user"; id: string; name: string; email: string; role: "owner" | "member"; added_at: number }>;
-  /**
-   * Create an ephemeral API token for use in client-side applications with the Realtime API. Can be configured with the same session parameters as the `session.update` client event.  It responds with a session object, plus a `client_secret` key which contains a usable ephemeral API token that can be used to authenticate browser clients for the Realtime API. 
-   * Tags: Realtime
-   * Access as: openai.createRealtimeSession(input)
-   */
-  createRealtimeSession: (input: { modalities?: unknown; model?: "gpt-4o-realtime-preview" | "gpt-4o-realtime-preview-2024-10-01" | "gpt-4o-realtime-preview-2024-12-17" | "gpt-4o-mini-realtime-preview" | "gpt-4o-mini-realtime-preview-2024-12-17"; instructions?: string; voice?: string | "alloy" | "ash" | "ballad" | "coral" | "echo" | "fable" | "onyx" | "nova" | "sage" | "shimmer" | "verse"; input_audio_format?: "pcm16" | "g711_ulaw" | "g711_alaw"; output_audio_format?: "pcm16" | "g711_ulaw" | "g711_alaw"; input_audio_transcription?: { model?: string; language?: string; prompt?: string }; turn_detection?: { type?: "server_vad" | "semantic_vad"; eagerness?: "low" | "medium" | "high" | "auto"; threshold?: number; prefix_padding_ms?: number; silence_duration_ms?: number; create_response?: boolean; interrupt_response?: boolean }; input_audio_noise_reduction?: { type?: "near_field" | "far_field" }; tools?: ({ type?: "function"; name?: string; description?: string; parameters?: { [key: string]: unknown } })[]; tool_choice?: string; temperature?: number; max_response_output_tokens?: number | "inf" }) => Promise<{ client_secret: { value: string; expires_at: number }; modalities?: unknown; instructions?: string; voice?: string | "alloy" | "ash" | "ballad" | "coral" | "echo" | "fable" | "onyx" | "nova" | "sage" | "shimmer" | "verse"; input_audio_format?: string; output_audio_format?: string; input_audio_transcription?: { model?: string }; turn_detection?: { type?: string; threshold?: number; prefix_padding_ms?: number; silence_duration_ms?: number }; tools?: ({ type?: "function"; name?: string; description?: string; parameters?: { [key: string]: unknown } })[]; tool_choice?: string; temperature?: number; max_response_output_tokens?: number | "inf" }>;
-  /**
-   * Create an ephemeral API token for use in client-side applications with the Realtime API specifically for realtime transcriptions.  Can be configured with the same session parameters as the `transcription_session.update` client event.  It responds with a session object, plus a `client_secret` key which contains a usable ephemeral API token that can be used to authenticate browser clients for the Realtime API. 
-   * Tags: Realtime
-   * Access as: openai.createRealtimeTranscriptionSession(input)
-   */
-  createRealtimeTranscriptionSession: (input: { modalities?: unknown; input_audio_format?: "pcm16" | "g711_ulaw" | "g711_alaw"; input_audio_transcription?: { model?: "gpt-4o-transcribe" | "gpt-4o-mini-transcribe" | "whisper-1"; language?: string; prompt?: string }; turn_detection?: { type?: "server_vad" | "semantic_vad"; eagerness?: "low" | "medium" | "high" | "auto"; threshold?: number; prefix_padding_ms?: number; silence_duration_ms?: number; create_response?: boolean; interrupt_response?: boolean }; input_audio_noise_reduction?: { type?: "near_field" | "far_field" }; include?: (string)[] }) => Promise<{ client_secret: { value: string; expires_at: number }; modalities?: unknown; input_audio_format?: string; input_audio_transcription?: { model?: "gpt-4o-transcribe" | "gpt-4o-mini-transcribe" | "whisper-1"; language?: string; prompt?: string }; turn_detection?: { type?: string; threshold?: number; prefix_padding_ms?: number; silence_duration_ms?: number } }>;
-  /**
-   * Creates a model response. Provide [text](/docs/guides/text) or [image](/docs/guides/images) inputs to generate [text](/docs/guides/text) or [JSON](/docs/guides/structured-outputs) outputs. Have the model call your own [custom code](/docs/guides/function-calling) or use built-in [tools](/docs/guides/tools) like [web search](/docs/guides/tools-web-search) or [file search](/docs/guides/tools-file-search) to use your own data as input for the model's response. 
-   * Tags: Responses
-   * Access as: openai.createResponse(input)
-   */
-  createResponse: (input: { metadata?: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; user?: string; service_tier?: "auto" | "default" | "flex" | null; previous_response_id?: string | null; model: string | "gpt-4.1" | "gpt-4.1-mini" | "gpt-4.1-nano" | "gpt-4.1-2025-04-14" | "gpt-4.1-mini-2025-04-14" | "gpt-4.1-nano-2025-04-14" | "o4-mini" | "o4-mini-2025-04-16" | "o3" | "o3-2025-04-16" | "o3-mini" | "o3-mini-2025-01-31" | "o1" | "o1-2024-12-17" | "o1-preview" | "o1-preview-2024-09-12" | "o1-mini" | "o1-mini-2024-09-12" | "gpt-4o" | "gpt-4o-2024-11-20" | "gpt-4o-2024-08-06" | "gpt-4o-2024-05-13" | "gpt-4o-audio-preview" | "gpt-4o-audio-preview-2024-10-01" | "gpt-4o-audio-preview-2024-12-17" | "gpt-4o-mini-audio-preview" | "gpt-4o-mini-audio-preview-2024-12-17" | "gpt-4o-search-preview" | "gpt-4o-mini-search-preview" | "gpt-4o-search-preview-2025-03-11" | "gpt-4o-mini-search-preview-2025-03-11" | "chatgpt-4o-latest" | "gpt-4o-mini" | "gpt-4o-mini-2024-07-18" | "gpt-4-turbo" | "gpt-4-turbo-2024-04-09" | "gpt-4-0125-preview" | "gpt-4-turbo-preview" | "gpt-4-1106-preview" | "gpt-4-vision-preview" | "gpt-4" | "gpt-4-0314" | "gpt-4-0613" | "gpt-4-32k" | "gpt-4-32k-0314" | "gpt-4-32k-0613" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k" | "gpt-3.5-turbo-0301" | "gpt-3.5-turbo-0613" | "gpt-3.5-turbo-1106" | "gpt-3.5-turbo-0125" | "gpt-3.5-turbo-16k-0613" | "o1-pro" | "o1-pro-2025-03-19" | "computer-use-preview" | "computer-use-preview-2025-03-11"; reasoning?: { effort?: "low" | "medium" | "high" | null; summary?: "auto" | "concise" | "detailed" | null; generate_summary?: "auto" | "concise" | "detailed" | null }; max_output_tokens?: number | null; instructions?: string | null; text?: { format?: { type: "text" } | { type: "json_schema"; description?: string; name: string; schema: { [key: string]: unknown }; strict?: boolean | null } | { type: "json_object" } }; tools?: ({ type: "file_search"; vector_store_ids: (string)[]; max_num_results?: number; ranking_options?: { ranker?: "auto" | "default-2024-11-15"; score_threshold?: number }; filters?: { type: "eq" | "ne" | "gt" | "gte" | "lt" | "lte"; key: string; value: string | number | boolean } | { type: "and" | "or"; filters: ({ type: "eq" | "ne" | "gt" | "gte" | "lt" | "lte"; key: string; value: string | number | boolean } | unknown)[] } | null } | { type: "function"; name: string; description?: string | null; parameters: { [key: string]: unknown | undefined } | null; strict: boolean | null } | { type: "web_search_preview" | "web_search_preview_2025_03_11"; user_location?: { type: "approximate"; country?: string | null; region?: string | null; city?: string | null; timezone?: string | null } | null; search_context_size?: "low" | "medium" | "high" } | { type: "computer_use_preview"; environment: "windows" | "mac" | "linux" | "ubuntu" | "browser"; display_width: number; display_height: number })[]; tool_choice?: "none" | "auto" | "required" | { type: "file_search" | "web_search_preview" | "computer_use_preview" | "web_search_preview_2025_03_11" } | { type: "function"; name: string }; truncation?: "auto" | "disabled" | null; input: string | ({ role: "user" | "assistant" | "system" | "developer"; content: string | ({ type: "input_text"; text: string } | { type: "input_image"; image_url?: string | null; file_id?: string | null; detail: "low" | "high" | "auto" } | { type: "input_file"; file_id?: string | null; filename?: string; file_data?: string })[]; type?: "message" } | { type?: "message"; role: "user" | "system" | "developer"; status?: "in_progress" | "completed" | "incomplete"; content: ({ type: "input_text"; text: string } | { type: "input_image"; image_url?: string | null; file_id?: string | null; detail: "low" | "high" | "auto" } | { type: "input_file"; file_id?: string | null; filename?: string; file_data?: string })[] } | { id: string; type: "message"; role: "assistant"; content: ({ type: "output_text"; text: string; annotations: ({ type: "file_citation"; file_id: string; index: number } | { type: "url_citation"; url: string; start_index: number; end_index: number; title: string } | { type: "file_path"; file_id: string; index: number })[] } | { type: "refusal"; refusal: string })[]; status: "in_progress" | "completed" | "incomplete" } | { id: string; type: "file_search_call"; status: "in_progress" | "searching" | "completed" | "incomplete" | "failed"; queries: (string)[]; results?: ({ file_id?: string; text?: string; filename?: string; attributes?: { [key: string]: string | number | boolean | undefined } | null; score?: number })[] | null } | { type: "computer_call"; id: string; call_id: string; action: { type: "click"; button: "left" | "right" | "wheel" | "back" | "forward"; x: number; y: number } | { type: "double_click"; x: number; y: number } | { type: "drag"; path: ({ x: number; y: number })[] } | { type: "keypress"; keys: (string)[] } | { type: "move"; x: number; y: number } | { type: "screenshot" } | { type: "scroll"; x: number; y: number; scroll_x: number; scroll_y: number } | { type: "type"; text: string } | { type: "wait" }; pending_safety_checks: ({ id: string; code: string; message: string })[]; status: "in_progress" | "completed" | "incomplete" } | { id?: string | null; call_id: string; type: "computer_call_output"; output: { type: "computer_screenshot"; image_url?: string; file_id?: string }; acknowledged_safety_checks?: ({ id: string; code?: string | null; message?: string | null })[] | null; status?: "in_progress" | "completed" | "incomplete" | null } | { id: string; type: "web_search_call"; status: "in_progress" | "searching" | "completed" | "failed" } | { id?: string; type: "function_call"; call_id: string; name: string; arguments: string; status?: "in_progress" | "completed" | "incomplete" } | { id?: string | null; call_id: string; type: "function_call_output"; output: string; status?: "in_progress" | "completed" | "incomplete" | null } | { type: "reasoning"; id: string; summary: ({ type: "summary_text"; text: string })[]; status?: "in_progress" | "completed" | "incomplete" } | { type?: "item_reference" | null; id: string })[]; include?: ("file_search_call.results" | "message.input_image.image_url" | "computer_call_output.output.image_url")[] | null; parallel_tool_calls?: boolean | null; store?: boolean | null; stream?: boolean | null }) => Promise<{ metadata?: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; user?: string; service_tier?: "auto" | "default" | "flex" | null } & { previous_response_id?: string | null; model?: string | "gpt-4.1" | "gpt-4.1-mini" | "gpt-4.1-nano" | "gpt-4.1-2025-04-14" | "gpt-4.1-mini-2025-04-14" | "gpt-4.1-nano-2025-04-14" | "o4-mini" | "o4-mini-2025-04-16" | "o3" | "o3-2025-04-16" | "o3-mini" | "o3-mini-2025-01-31" | "o1" | "o1-2024-12-17" | "o1-preview" | "o1-preview-2024-09-12" | "o1-mini" | "o1-mini-2024-09-12" | "gpt-4o" | "gpt-4o-2024-11-20" | "gpt-4o-2024-08-06" | "gpt-4o-2024-05-13" | "gpt-4o-audio-preview" | "gpt-4o-audio-preview-2024-10-01" | "gpt-4o-audio-preview-2024-12-17" | "gpt-4o-mini-audio-preview" | "gpt-4o-mini-audio-preview-2024-12-17" | "gpt-4o-search-preview" | "gpt-4o-mini-search-preview" | "gpt-4o-search-preview-2025-03-11" | "gpt-4o-mini-search-preview-2025-03-11" | "chatgpt-4o-latest" | "gpt-4o-mini" | "gpt-4o-mini-2024-07-18" | "gpt-4-turbo" | "gpt-4-turbo-2024-04-09" | "gpt-4-0125-preview" | "gpt-4-turbo-preview" | "gpt-4-1106-preview" | "gpt-4-vision-preview" | "gpt-4" | "gpt-4-0314" | "gpt-4-0613" | "gpt-4-32k" | "gpt-4-32k-0314" | "gpt-4-32k-0613" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k" | "gpt-3.5-turbo-0301" | "gpt-3.5-turbo-0613" | "gpt-3.5-turbo-1106" | "gpt-3.5-turbo-0125" | "gpt-3.5-turbo-16k-0613" | "o1-pro" | "o1-pro-2025-03-19" | "computer-use-preview" | "computer-use-preview-2025-03-11"; reasoning?: { effort?: "low" | "medium" | "high" | null; summary?: "auto" | "concise" | "detailed" | null; generate_summary?: "auto" | "concise" | "detailed" | null }; max_output_tokens?: number | null; instructions?: string | null; text?: { format?: { type: "text" } | { type: "json_schema"; description?: string; name: string; schema: { [key: string]: unknown }; strict?: boolean | null } | { type: "json_object" } }; tools?: ({ type: "file_search"; vector_store_ids: (string)[]; max_num_results?: number; ranking_options?: { ranker?: "auto" | "default-2024-11-15"; score_threshold?: number }; filters?: { type: "eq" | "ne" | "gt" | "gte" | "lt" | "lte"; key: string; value: string | number | boolean } | { type: "and" | "or"; filters: ({ type: "eq" | "ne" | "gt" | "gte" | "lt" | "lte"; key: string; value: string | number | boolean } | unknown)[] } | null } | { type: "function"; name: string; description?: string | null; parameters: { [key: string]: unknown | undefined } | null; strict: boolean | null } | { type: "web_search_preview" | "web_search_preview_2025_03_11"; user_location?: { type: "approximate"; country?: string | null; region?: string | null; city?: string | null; timezone?: string | null } | null; search_context_size?: "low" | "medium" | "high" } | { type: "computer_use_preview"; environment: "windows" | "mac" | "linux" | "ubuntu" | "browser"; display_width: number; display_height: number })[]; tool_choice?: "none" | "auto" | "required" | { type: "file_search" | "web_search_preview" | "computer_use_preview" | "web_search_preview_2025_03_11" } | { type: "function"; name: string }; truncation?: "auto" | "disabled" | null } & { id: string; object: "response"; status?: "completed" | "failed" | "in_progress" | "incomplete"; created_at: number; error: { code: "server_error" | "rate_limit_exceeded" | "invalid_prompt" | "vector_store_timeout" | "invalid_image" | "invalid_image_format" | "invalid_base64_image" | "invalid_image_url" | "image_too_large" | "image_too_small" | "image_parse_error" | "image_content_policy_violation" | "invalid_image_mode" | "image_file_too_large" | "unsupported_image_media_type" | "empty_image_file" | "failed_to_download_image" | "image_file_not_found"; message: string } | null; incomplete_details: { reason?: "max_output_tokens" | "content_filter" } | null; output: ({ id: string; type: "message"; role: "assistant"; content: ({ type: "output_text"; text: string; annotations: ({ type: "file_citation"; file_id: string; index: number } | { type: "url_citation"; url: string; start_index: number; end_index: number; title: string } | { type: "file_path"; file_id: string; index: number })[] } | { type: "refusal"; refusal: string })[]; status: "in_progress" | "completed" | "incomplete" } | { id: string; type: "file_search_call"; status: "in_progress" | "searching" | "completed" | "incomplete" | "failed"; queries: (string)[]; results?: ({ file_id?: string; text?: string; filename?: string; attributes?: { [key: string]: string | number | boolean | undefined } | null; score?: number })[] | null } | { id?: string; type: "function_call"; call_id: string; name: string; arguments: string; status?: "in_progress" | "completed" | "incomplete" } | { id: string; type: "web_search_call"; status: "in_progress" | "searching" | "completed" | "failed" } | { type: "computer_call"; id: string; call_id: string; action: { type: "click"; button: "left" | "right" | "wheel" | "back" | "forward"; x: number; y: number } | { type: "double_click"; x: number; y: number } | { type: "drag"; path: ({ x: number; y: number })[] } | { type: "keypress"; keys: (string)[] } | { type: "move"; x: number; y: number } | { type: "screenshot" } | { type: "scroll"; x: number; y: number; scroll_x: number; scroll_y: number } | { type: "type"; text: string } | { type: "wait" }; pending_safety_checks: ({ id: string; code: string; message: string })[]; status: "in_progress" | "completed" | "incomplete" } | { type: "reasoning"; id: string; summary: ({ type: "summary_text"; text: string })[]; status?: "in_progress" | "completed" | "incomplete" })[]; output_text?: string | null; usage?: { input_tokens: number; input_tokens_details: { cached_tokens: number }; output_tokens: number; output_tokens_details: { reasoning_tokens: number }; total_tokens: number }; parallel_tool_calls: boolean }>;
-  /**
-   * Create a run.
-   * Tags: Assistants
-   * Access as: openai.createRun(input)
-   */
-  createRun: (input: { assistant_id: string; model?: string | "gpt-4.1" | "gpt-4.1-mini" | "gpt-4.1-nano" | "gpt-4.1-2025-04-14" | "gpt-4.1-mini-2025-04-14" | "gpt-4.1-nano-2025-04-14" | "o3-mini" | "o3-mini-2025-01-31" | "o1" | "o1-2024-12-17" | "gpt-4o" | "gpt-4o-2024-11-20" | "gpt-4o-2024-08-06" | "gpt-4o-2024-05-13" | "gpt-4o-mini" | "gpt-4o-mini-2024-07-18" | "gpt-4.5-preview" | "gpt-4.5-preview-2025-02-27" | "gpt-4-turbo" | "gpt-4-turbo-2024-04-09" | "gpt-4-0125-preview" | "gpt-4-turbo-preview" | "gpt-4-1106-preview" | "gpt-4-vision-preview" | "gpt-4" | "gpt-4-0314" | "gpt-4-0613" | "gpt-4-32k" | "gpt-4-32k-0314" | "gpt-4-32k-0613" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k" | "gpt-3.5-turbo-0613" | "gpt-3.5-turbo-1106" | "gpt-3.5-turbo-0125" | "gpt-3.5-turbo-16k-0613" | null; reasoning_effort?: "low" | "medium" | "high" | null; instructions?: string | null; additional_instructions?: string | null; additional_messages?: ({ role: "user" | "assistant"; content: string | ({ type: "image_file"; image_file: { file_id: string; detail?: "auto" | "low" | "high" } } | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } } | { type: "text"; text: string })[]; attachments?: ({ file_id?: string; tools?: ({ type: "code_interpreter" } | { type: "file_search" })[] })[] | null; metadata?: { [key: string]: string | undefined } | null })[] | null; tools?: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[] | null; metadata?: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; stream?: boolean | null; max_prompt_tokens?: number | null; max_completion_tokens?: number | null; truncation_strategy?: { type: "auto" | "last_messages"; last_messages?: number | null } & unknown; tool_choice?: "none" | "auto" | "required" | { type: "function" | "code_interpreter" | "file_search"; function?: { name: string } } & unknown; parallel_tool_calls?: boolean; response_format?: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } }; thread_id: string; "include[]"?: ("step_details.tool_calls[*].file_search.results[*].content")[] }) => Promise<{ id: string; object: "thread.run"; created_at: number; thread_id: string; assistant_id: string; status: "queued" | "in_progress" | "requires_action" | "cancelling" | "cancelled" | "failed" | "completed" | "incomplete" | "expired"; required_action: { type: "submit_tool_outputs"; submit_tool_outputs: { tool_calls: ({ id: string; type: "function"; function: { name: string; arguments: string } })[] } } | null; last_error: { code: "server_error" | "rate_limit_exceeded" | "invalid_prompt"; message: string } | null; expires_at: number | null; started_at: number | null; cancelled_at: number | null; failed_at: number | null; completed_at: number | null; incomplete_details: { reason?: "max_completion_tokens" | "max_prompt_tokens" } | null; model: string; instructions: string; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; metadata: { [key: string]: string | undefined } | null; usage: { completion_tokens: number; prompt_tokens: number; total_tokens: number } | null; temperature?: number | null; top_p?: number | null; max_prompt_tokens: number | null; max_completion_tokens: number | null; truncation_strategy: { type: "auto" | "last_messages"; last_messages?: number | null } & unknown; tool_choice: "none" | "auto" | "required" | { type: "function" | "code_interpreter" | "file_search"; function?: { name: string } } & unknown; parallel_tool_calls: boolean; response_format: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }>;
-  /**
-   * Generates audio from the input text.
-   * Tags: Audio
-   * Access as: openai.createSpeech(input)
-   */
-  createSpeech: (input: { model: string | "tts-1" | "tts-1-hd" | "gpt-4o-mini-tts"; input: string; instructions?: string; voice: string | "alloy" | "ash" | "ballad" | "coral" | "echo" | "fable" | "onyx" | "nova" | "sage" | "shimmer" | "verse"; response_format?: "mp3" | "opus" | "aac" | "flac" | "wav" | "pcm"; speed?: number }) => Promise<string>;
-  /**
-   * Create a thread.
-   * Tags: Assistants
-   * Access as: openai.createThread(input)
-   */
-  createThread: (input: { messages?: ({ role: "user" | "assistant"; content: string | ({ type: "image_file"; image_file: { file_id: string; detail?: "auto" | "low" | "high" } } | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } } | { type: "text"; text: string })[]; attachments?: ({ file_id?: string; tools?: ({ type: "code_interpreter" } | { type: "file_search" })[] })[] | null; metadata?: { [key: string]: string | undefined } | null })[]; tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: unknown | unknown } | null; metadata?: { [key: string]: string | undefined } | null }) => Promise<{ id: string; object: "thread"; created_at: number; tool_resources: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null; metadata: { [key: string]: string | undefined } | null }>;
-  /**
-   * Create a thread and run it in one request.
-   * Tags: Assistants
-   * Access as: openai.createThreadAndRun(input)
-   */
-  createThreadAndRun: (input: { assistant_id: string; thread?: { messages?: ({ role: "user" | "assistant"; content: string | ({ type: "image_file"; image_file: { file_id: string; detail?: "auto" | "low" | "high" } } | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } } | { type: "text"; text: string })[]; attachments?: ({ file_id?: string; tools?: ({ type: "code_interpreter" } | { type: "file_search" })[] })[] | null; metadata?: { [key: string]: string | undefined } | null })[]; tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: unknown | unknown } | null; metadata?: { [key: string]: string | undefined } | null }; model?: string | "gpt-4.1" | "gpt-4.1-mini" | "gpt-4.1-nano" | "gpt-4.1-2025-04-14" | "gpt-4.1-mini-2025-04-14" | "gpt-4.1-nano-2025-04-14" | "gpt-4o" | "gpt-4o-2024-11-20" | "gpt-4o-2024-08-06" | "gpt-4o-2024-05-13" | "gpt-4o-mini" | "gpt-4o-mini-2024-07-18" | "gpt-4.5-preview" | "gpt-4.5-preview-2025-02-27" | "gpt-4-turbo" | "gpt-4-turbo-2024-04-09" | "gpt-4-0125-preview" | "gpt-4-turbo-preview" | "gpt-4-1106-preview" | "gpt-4-vision-preview" | "gpt-4" | "gpt-4-0314" | "gpt-4-0613" | "gpt-4-32k" | "gpt-4-32k-0314" | "gpt-4-32k-0613" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k" | "gpt-3.5-turbo-0613" | "gpt-3.5-turbo-1106" | "gpt-3.5-turbo-0125" | "gpt-3.5-turbo-16k-0613" | null; instructions?: string | null; tools?: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[] | null; tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null; metadata?: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; stream?: boolean | null; max_prompt_tokens?: number | null; max_completion_tokens?: number | null; truncation_strategy?: { type: "auto" | "last_messages"; last_messages?: number | null } & unknown; tool_choice?: "none" | "auto" | "required" | { type: "function" | "code_interpreter" | "file_search"; function?: { name: string } } & unknown; parallel_tool_calls?: boolean; response_format?: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }) => Promise<{ id: string; object: "thread.run"; created_at: number; thread_id: string; assistant_id: string; status: "queued" | "in_progress" | "requires_action" | "cancelling" | "cancelled" | "failed" | "completed" | "incomplete" | "expired"; required_action: { type: "submit_tool_outputs"; submit_tool_outputs: { tool_calls: ({ id: string; type: "function"; function: { name: string; arguments: string } })[] } } | null; last_error: { code: "server_error" | "rate_limit_exceeded" | "invalid_prompt"; message: string } | null; expires_at: number | null; started_at: number | null; cancelled_at: number | null; failed_at: number | null; completed_at: number | null; incomplete_details: { reason?: "max_completion_tokens" | "max_prompt_tokens" } | null; model: string; instructions: string; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; metadata: { [key: string]: string | undefined } | null; usage: { completion_tokens: number; prompt_tokens: number; total_tokens: number } | null; temperature?: number | null; top_p?: number | null; max_prompt_tokens: number | null; max_completion_tokens: number | null; truncation_strategy: { type: "auto" | "last_messages"; last_messages?: number | null } & unknown; tool_choice: "none" | "auto" | "required" | { type: "function" | "code_interpreter" | "file_search"; function?: { name: string } } & unknown; parallel_tool_calls: boolean; response_format: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }>;
-  /**
-   * Transcribes audio into the input language.
-   * Tags: Audio
-   * Access as: openai.createTranscription(input)
-   */
-  createTranscription: (input: { file: string; model: string | "whisper-1" | "gpt-4o-transcribe" | "gpt-4o-mini-transcribe"; language?: string; prompt?: string; response_format?: "json" | "text" | "srt" | "verbose_json" | "vtt"; temperature?: number; "include[]"?: ("logprobs")[]; "timestamp_granularities[]"?: ("word" | "segment")[]; stream?: boolean | null }) => Promise<{ text: string; logprobs?: ({ token?: string; logprob?: number; bytes?: (number)[] })[] } | { language: string; duration: number; text: string; words?: ({ word: string; start: number; end: number })[]; segments?: ({ id: number; seek: number; start: number; end: number; text: string; tokens: (number)[]; temperature: number; avg_logprob: number; compression_ratio: number; no_speech_prob: number })[] }>;
-  /**
-   * Translates audio into English.
-   * Tags: Audio
-   * Access as: openai.createTranslation(input)
-   */
-  createTranslation: (input: { file: string; model: string | "whisper-1"; prompt?: string; response_format?: "json" | "text" | "srt" | "verbose_json" | "vtt"; temperature?: number }) => Promise<{ text: string } | { language: string; duration: number; text: string; segments?: ({ id: number; seek: number; start: number; end: number; text: string; tokens: (number)[]; temperature: number; avg_logprob: number; compression_ratio: number; no_speech_prob: number })[] }>;
-  /**
-   * Creates an intermediate [Upload](/docs/api-reference/uploads/object) object that you can add [Parts](/docs/api-reference/uploads/part-object) to. Currently, an Upload can accept at most 8 GB in total and expires after an hour after you create it.  Once you complete the Upload, we will create a [File](/docs/api-reference/files/object) object that contains all the parts you uploaded. This File is usable in the rest of our platform as a regular File object.  For certain `purpose` values, the correct `mime_type` must be specified.  Please refer to documentation for the  [supported MIME types for your use case](/docs/assistants/tools/file-search#supported-files).  For guidance on the proper filename extensions for each purpose, please follow the documentation on [creating a File](/docs/api-reference/files/create). 
-   * Tags: Uploads
-   * Access as: openai.createUpload(input)
-   */
-  createUpload: (input: { filename: string; purpose: "assistants" | "batch" | "fine-tune" | "vision"; bytes: number; mime_type: string }) => Promise<{ id: string; created_at: number; filename: string; bytes: number; purpose: string; status: "pending" | "completed" | "cancelled" | "expired"; expires_at: number; object?: "upload"; file?: { id: string; bytes: number; created_at: number; expires_at?: number; filename: string; object: "file"; purpose: "assistants" | "assistants_output" | "batch" | "batch_output" | "fine-tune" | "fine-tune-results" | "vision"; status: "uploaded" | "processed" | "error"; status_details?: string } & unknown }>;
-  /**
-   * Create a vector store.
-   * Tags: Vector stores
-   * Access as: openai.createVectorStore(input)
-   */
-  createVectorStore: (input: { file_ids?: (string)[]; name?: string; expires_after?: { anchor: "last_active_at"; days: number }; chunking_strategy?: { type: "auto" } | { type: "static"; static: { max_chunk_size_tokens: number; chunk_overlap_tokens: number } }; metadata?: { [key: string]: string | undefined } | null }) => Promise<{ id: string; object: "vector_store"; created_at: number; name: string; usage_bytes: number; file_counts: { in_progress: number; completed: number; failed: number; cancelled: number; total: number }; status: "expired" | "in_progress" | "completed"; expires_after?: { anchor: "last_active_at"; days: number }; expires_at?: number | null; last_active_at: number | null; metadata: { [key: string]: string | undefined } | null }>;
-  /**
-   * Create a vector store file by attaching a [File](/docs/api-reference/files) to a [vector store](/docs/api-reference/vector-stores/object).
-   * Tags: Vector stores
-   * Access as: openai.createVectorStoreFile(input)
-   */
-  createVectorStoreFile: (input: { file_id: string; chunking_strategy?: { type: "auto" } | { type: "static"; static: { max_chunk_size_tokens: number; chunk_overlap_tokens: number } }; attributes?: { [key: string]: string | number | boolean | undefined } | null; vector_store_id: string }) => Promise<{ id: string; object: "vector_store.file"; usage_bytes: number; created_at: number; vector_store_id: string; status: "in_progress" | "completed" | "cancelled" | "failed"; last_error: { code: "server_error" | "unsupported_file" | "invalid_file"; message: string } | null; chunking_strategy?: { type: "static"; static: { max_chunk_size_tokens: number; chunk_overlap_tokens: number } } | { type: "other" }; attributes?: { [key: string]: string | number | boolean | undefined } | null }>;
-  /**
-   * Create a vector store file batch.
-   * Tags: Vector stores
-   * Access as: openai.createVectorStoreFileBatch(input)
-   */
-  createVectorStoreFileBatch: (input: { file_ids: (string)[]; chunking_strategy?: { type: "auto" } | { type: "static"; static: { max_chunk_size_tokens: number; chunk_overlap_tokens: number } }; attributes?: { [key: string]: string | number | boolean | undefined } | null; vector_store_id: string }) => Promise<{ id: string; object: "vector_store.files_batch"; created_at: number; vector_store_id: string; status: "in_progress" | "completed" | "cancelled" | "failed"; file_counts: { in_progress: number; completed: number; failed: number; cancelled: number; total: number } }>;
-  /**
-   * Deactivate certificates at the organization level.  You can atomically and idempotently deactivate up to 10 certificates at a time. 
-   * Tags: Certificates
-   * Access as: openai.deactivateOrganizationCertificates(input)
-   */
-  deactivateOrganizationCertificates: (input: { certificate_ids: (string)[] }) => Promise<{ data: ({ object: "certificate" | "organization.certificate" | "organization.project.certificate"; id: string; name: string; created_at: number; certificate_details: { valid_at?: number; expires_at?: number; content?: string }; active?: boolean })[]; first_id?: string; last_id?: string; has_more: boolean; object: "list" }>;
-  /**
-   * Deactivate certificates at the project level.  You can atomically and idempotently deactivate up to 10 certificates at a time. 
-   * Tags: Certificates
-   * Access as: openai.deactivateProjectCertificates(input)
-   */
-  deactivateProjectCertificates: (input: { certificate_ids: (string)[] }) => Promise<{ data: ({ object: "certificate" | "organization.certificate" | "organization.project.certificate"; id: string; name: string; created_at: number; certificate_details: { valid_at?: number; expires_at?: number; content?: string }; active?: boolean })[]; first_id?: string; last_id?: string; has_more: boolean; object: "list" }>;
-  /**
-   * Delete an assistant.
-   * Tags: Assistants
-   * Access as: openai.deleteAssistant(input)
-   */
-  deleteAssistant: (input: { assistant_id: string }) => Promise<{ id: string; deleted: boolean; object: "assistant.deleted" }>;
-  /**
-   * Delete a certificate from the organization.  The certificate must be inactive for the organization and all projects. 
-   * Tags: Certificates
-   * Access as: openai.deleteCertificate(input)
-   */
-  deleteCertificate: (input: { [key: string]: unknown }) => Promise<{ object: "certificate.deleted"; id: string }>;
-  /**
-   * Delete a stored chat completion. Only Chat Completions that have been created with the `store` parameter set to `true` can be deleted. 
-   * Tags: Chat
-   * Access as: openai.deleteChatCompletion(input)
-   */
-  deleteChatCompletion: (input: { completion_id: string }) => Promise<{ object: "chat.completion.deleted"; id: string; deleted: boolean }>;
-  /**
-   * Delete an evaluation. 
-   * Tags: Evals
-   * Access as: openai.deleteEval(input)
-   */
-  deleteEval: (input: { eval_id: string }) => Promise<{ object: string; deleted: boolean; eval_id: string }>;
-  /**
-   * Delete an eval run. 
-   * Tags: Evals
-   * Access as: openai.deleteEvalRun(input)
-   */
-  deleteEvalRun: (input: { eval_id: string; run_id: string }) => Promise<{ object?: string; deleted?: boolean; run_id?: string }>;
-  /**
-   * Delete a file.
-   * Tags: Files
-   * Access as: openai.deleteFile(input)
-   */
-  deleteFile: (input: { file_id: string }) => Promise<{ id: string; object: "file"; deleted: boolean }>;
-  /**
-   * **NOTE:** This endpoint requires an [admin API key](../admin-api-keys).  Organization owners can use this endpoint to delete a permission for a fine-tuned model checkpoint. 
-   * Tags: Fine-tuning
-   * Access as: openai.deleteFineTuningCheckpointPermission(input)
-   */
-  deleteFineTuningCheckpointPermission: (input: { fine_tuned_model_checkpoint: string; permission_id: string }) => Promise<{ id: string; object: "checkpoint.permission"; deleted: boolean }>;
-  /**
-   * Delete an invite. If the invite has already been accepted, it cannot be deleted.
-   * Tags: Invites
-   * Access as: openai.deleteInvite(input)
-   */
-  deleteInvite: (input: { invite_id: string }) => Promise<{ object: "organization.invite.deleted"; id: string; deleted: boolean }>;
-  /**
-   * Deletes a message.
-   * Tags: Assistants
-   * Access as: openai.deleteMessage(input)
-   */
-  deleteMessage: (input: { thread_id: string; message_id: string }) => Promise<{ id: string; deleted: boolean; object: "thread.message.deleted" }>;
-  /**
-   * Delete a fine-tuned model. You must have the Owner role in your organization to delete a model.
-   * Tags: Models
-   * Access as: openai.deleteModel(input)
-   */
-  deleteModel: (input: { model: string }) => Promise<{ id: string; deleted: boolean; object: string }>;
-  /**
-   * Deletes an API key from the project.
-   * Tags: Projects
-   * Access as: openai.deleteProjectApiKey(input)
-   */
-  deleteProjectApiKey: (input: { project_id: string; key_id: string }) => Promise<{ object: "organization.project.api_key.deleted"; id: string; deleted: boolean }>;
-  /**
-   * Deletes a service account from the project.
-   * Tags: Projects
-   * Access as: openai.deleteProjectServiceAccount(input)
-   */
-  deleteProjectServiceAccount: (input: { project_id: string; service_account_id: string }) => Promise<{ object: "organization.project.service_account.deleted"; id: string; deleted: boolean }>;
-  /**
-   * Deletes a user from the project.
-   * Tags: Projects
-   * Access as: openai.deleteProjectUser(input)
-   */
-  deleteProjectUser: (input: { project_id: string; user_id: string }) => Promise<{ object: "organization.project.user.deleted"; id: string; deleted: boolean }>;
-  /**
-   * Deletes a model response with the given ID. 
-   * Tags: Responses
-   * Access as: openai.deleteResponse(input)
-   */
-  deleteResponse: (input: { response_id: string }) => Promise<{ code: string | null; message: string; param: string | null; type: string }>;
-  /**
-   * Delete a thread.
-   * Tags: Assistants
-   * Access as: openai.deleteThread(input)
-   */
-  deleteThread: (input: { thread_id: string }) => Promise<{ id: string; deleted: boolean; object: "thread.deleted" }>;
-  /**
-   * Deletes a user from the organization.
-   * Tags: Users
-   * Access as: openai.deleteUser(input)
-   */
-  deleteUser: (input: { user_id: string }) => Promise<{ object: "organization.user.deleted"; id: string; deleted: boolean }>;
-  /**
-   * Delete a vector store.
-   * Tags: Vector stores
-   * Access as: openai.deleteVectorStore(input)
-   */
-  deleteVectorStore: (input: { vector_store_id: string }) => Promise<{ id: string; deleted: boolean; object: "vector_store.deleted" }>;
-  /**
-   * Delete a vector store file. This will remove the file from the vector store but the file itself will not be deleted. To delete the file, use the [delete file](/docs/api-reference/files/delete) endpoint.
-   * Tags: Vector stores
-   * Access as: openai.deleteVectorStoreFile(input)
-   */
-  deleteVectorStoreFile: (input: { vector_store_id: string; file_id: string }) => Promise<{ id: string; deleted: boolean; object: "vector_store.file.deleted" }>;
-  /**
-   * Returns the contents of the specified file.
-   * Tags: Files
-   * Access as: openai.downloadFile(input)
-   */
-  downloadFile: (input: { file_id: string }) => Promise<string>;
+  createAssistant: (input: {
+    /** ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models) for descriptions of them.  */
+    model: string | AssistantSupportedModels;
+    /** The name of the assistant. The maximum length is 256 characters.  */
+    name?: string | null;
+    /** The description of the assistant. The maximum length is 512 characters.  */
+    description?: string | null;
+    /** The system instructions that the assistant uses. The maximum length is 256,000 characters.  */
+    instructions?: string | null;
+    reasoning_effort?: ReasoningEffort;
+    /** A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.  */
+    tools?: (AssistantToolsCode | AssistantToolsFileSearch | AssistantToolsFunction)[];
+    /** A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.  */
+    tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: unknown | unknown } | null;
+    metadata?: Metadata;
+    /** What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.  */
+    temperature?: number | null;
+    /** An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.  We generally recommend altering this or temperature but not both.  */
+    top_p?: number | null;
+    response_format?: AssistantsApiResponseFormatOption;
+  }) => Promise<AssistantObject>;
+
   /**
    * Retrieves an assistant.
-   * Tags: Assistants
-   * Access as: openai.getAssistant(input)
    */
-  getAssistant: (input: { assistant_id: string }) => Promise<{ id: string; object: "assistant"; created_at: number; name: string | null; description: string | null; model: string; instructions: string | null; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null; metadata: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; response_format?: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }>;
-  /**
-   * Get a certificate that has been uploaded to the organization.  You can get a certificate regardless of whether it is active or not. 
-   * Tags: Certificates
-   * Access as: openai.getCertificate(input)
-   */
-  getCertificate: (input: { cert_id: string; include?: ("content")[] }) => Promise<{ object: "certificate" | "organization.certificate" | "organization.project.certificate"; id: string; name: string; created_at: number; certificate_details: { valid_at?: number; expires_at?: number; content?: string }; active?: boolean }>;
-  /**
-   * Get a stored chat completion. Only Chat Completions that have been created with the `store` parameter set to `true` will be returned. 
-   * Tags: Chat
-   * Access as: openai.getChatCompletion(input)
-   */
-  getChatCompletion: (input: { completion_id: string }) => Promise<{ id: string; choices: ({ finish_reason: "stop" | "length" | "tool_calls" | "content_filter" | "function_call"; index: number; message: { content: string | null; refusal: string | null; tool_calls?: ({ id: string; type: "function"; function: { name: string; arguments: string } })[]; annotations?: ({ type: "url_citation"; url_citation: { end_index: number; start_index: number; url: string; title: string } })[]; role: "assistant"; function_call?: { arguments: string; name: string }; audio?: { id: string; expires_at: number; data: string; transcript: string } | null }; logprobs: { content: ({ token: string; logprob: number; bytes: (number)[] | null; top_logprobs: ({ token: string; logprob: number; bytes: (number)[] | null })[] })[] | null; refusal: ({ token: string; logprob: number; bytes: (number)[] | null; top_logprobs: ({ token: string; logprob: number; bytes: (number)[] | null })[] })[] | null } | null })[]; created: number; model: string; service_tier?: "auto" | "default" | "flex" | null; system_fingerprint?: string; object: "chat.completion"; usage?: { completion_tokens: number; prompt_tokens: number; total_tokens: number; completion_tokens_details?: { accepted_prediction_tokens?: number; audio_tokens?: number; reasoning_tokens?: number; rejected_prediction_tokens?: number }; prompt_tokens_details?: { audio_tokens?: number; cached_tokens?: number } } }>;
-  /**
-   * Get the messages in a stored chat completion. Only Chat Completions that have been created with the `store` parameter set to `true` will be returned. 
-   * Tags: Chat
-   * Access as: openai.getChatCompletionMessages(input)
-   */
-  getChatCompletionMessages: (input: { completion_id: string; after?: string; limit?: number; order?: "asc" | "desc" }) => Promise<{ object: "list"; data: ({ content: string | null; refusal: string | null; tool_calls?: ({ id: string; type: "function"; function: { name: string; arguments: string } })[]; annotations?: ({ type: "url_citation"; url_citation: { end_index: number; start_index: number; url: string; title: string } })[]; role: "assistant"; function_call?: { arguments: string; name: string }; audio?: { id: string; expires_at: number; data: string; transcript: string } | null } & { id: string })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Get an evaluation by ID. 
-   * Tags: Evals
-   * Access as: openai.getEval(input)
-   */
-  getEval: (input: { eval_id: string }) => Promise<{ object: "eval"; id: string; name: string; data_source_config: { type: "custom"; schema: { [key: string]: unknown } } | { type: "stored_completions"; metadata?: { [key: string]: string | undefined } | null; schema: { [key: string]: unknown } }; testing_criteria: ({ type: "label_model"; name: string; model: string; input: ({ role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[]; labels: (string)[]; passing_labels: (string)[] } | { type: "string_check"; name: string; input: string; reference: string; operation: "eq" | "ne" | "like" | "ilike" } | { type: "text_similarity"; name?: string; input: string; reference: string; pass_threshold: number; evaluation_metric: "fuzzy_match" | "bleu" | "gleu" | "meteor" | "rouge_1" | "rouge_2" | "rouge_3" | "rouge_4" | "rouge_5" | "rouge_l" } | { type: "python"; name: string; source: string; pass_threshold?: number; image_tag?: string } | { type: "score_model"; name: string; model: string; sampling_params?: { [key: string]: unknown }; input: ({ role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[]; pass_threshold?: number; range?: (number)[] })[]; created_at: number; metadata: { [key: string]: string | undefined } | null }>;
-  /**
-   * Get an evaluation run by ID. 
-   * Tags: Evals
-   * Access as: openai.getEvalRun(input)
-   */
-  getEvalRun: (input: { eval_id: string; run_id: string }) => Promise<{ object: "eval.run"; id: string; eval_id: string; status: string; model: string; name: string; created_at: number; report_url: string; result_counts: { total: number; errored: number; failed: number; passed: number }; per_model_usage: ({ model_name: string; invocation_count: number; prompt_tokens: number; completion_tokens: number; total_tokens: number; cached_tokens: number })[]; per_testing_criteria_results: ({ testing_criteria: string; passed: number; failed: number })[]; data_source: { type: "jsonl"; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } } | { type: "completions"; input_messages?: { type: "template"; template: ({ role: "user" | "assistant" | "system" | "developer"; content: string | ({ type: "input_text"; text: string } | { type: "input_image"; image_url?: string | null; file_id?: string | null; detail: "low" | "high" | "auto" } | { type: "input_file"; file_id?: string | null; filename?: string; file_data?: string })[]; type?: "message" } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[] } | { type: "item_reference"; item_reference: string }; sampling_params?: { temperature?: number; max_completion_tokens?: number; top_p?: number; seed?: number }; model?: string; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } | { type: "stored_completions"; metadata?: { [key: string]: string | undefined } | null; model?: string | null; created_after?: number | null; created_before?: number | null; limit?: number | null } } | { type: "completions"; input_messages?: { type: "template"; template: ({ role: string; content: string } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[] } | { type: "item_reference"; item_reference: string }; sampling_params?: { temperature?: number; max_completion_tokens?: number; top_p?: number; seed?: number }; model?: string; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } | { type: "responses"; metadata?: { [key: string]: unknown } | null; model?: string | null; instructions_search?: string | null; created_after?: number | null; created_before?: number | null; has_tool_calls?: boolean | null; reasoning_effort?: "low" | "medium" | "high" | null; temperature?: number | null; top_p?: number | null; users?: (string)[] | null; allow_parallel_tool_calls?: boolean | null } }; metadata: { [key: string]: string | undefined } | null; error: { code: string; message: string } }>;
-  /**
-   * Get an evaluation run output item by ID. 
-   * Tags: Evals
-   * Access as: openai.getEvalRunOutputItem(input)
-   */
-  getEvalRunOutputItem: (input: { eval_id: string; run_id: string; output_item_id: string }) => Promise<{ object: "eval.run.output_item"; id: string; run_id: string; eval_id: string; created_at: number; status: string; datasource_item_id: number; datasource_item: { [key: string]: unknown }; results: ({ [key: string]: unknown })[]; sample: { input: ({ role: string; content: string })[]; output: ({ role?: string; content?: string })[]; finish_reason: string; model: string; usage: { total_tokens: number; completion_tokens: number; prompt_tokens: number; cached_tokens: number }; error: { code: string; message: string }; temperature: number; max_completion_tokens: number; top_p: number; seed: number } }>;
-  /**
-   * Get a list of output items for an evaluation run. 
-   * Tags: Evals
-   * Access as: openai.getEvalRunOutputItems(input)
-   */
-  getEvalRunOutputItems: (input: { eval_id: string; run_id: string; after?: string; limit?: number; status?: "fail" | "pass"; order?: "asc" | "desc" }) => Promise<{ object: "list"; data: ({ object: "eval.run.output_item"; id: string; run_id: string; eval_id: string; created_at: number; status: string; datasource_item_id: number; datasource_item: { [key: string]: unknown }; results: ({ [key: string]: unknown })[]; sample: { input: ({ role: string; content: string })[]; output: ({ role?: string; content?: string })[]; finish_reason: string; model: string; usage: { total_tokens: number; completion_tokens: number; prompt_tokens: number; cached_tokens: number }; error: { code: string; message: string }; temperature: number; max_completion_tokens: number; top_p: number; seed: number } })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Get a list of runs for an evaluation. 
-   * Tags: Evals
-   * Access as: openai.getEvalRuns(input)
-   */
-  getEvalRuns: (input: { eval_id: string; after?: string; limit?: number; order?: "asc" | "desc"; status?: "queued" | "in_progress" | "completed" | "canceled" | "failed" }) => Promise<{ object: "list"; data: ({ object: "eval.run"; id: string; eval_id: string; status: string; model: string; name: string; created_at: number; report_url: string; result_counts: { total: number; errored: number; failed: number; passed: number }; per_model_usage: ({ model_name: string; invocation_count: number; prompt_tokens: number; completion_tokens: number; total_tokens: number; cached_tokens: number })[]; per_testing_criteria_results: ({ testing_criteria: string; passed: number; failed: number })[]; data_source: { type: "jsonl"; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } } | { type: "completions"; input_messages?: { type: "template"; template: ({ role: "user" | "assistant" | "system" | "developer"; content: string | ({ type: "input_text"; text: string } | { type: "input_image"; image_url?: string | null; file_id?: string | null; detail: "low" | "high" | "auto" } | { type: "input_file"; file_id?: string | null; filename?: string; file_data?: string })[]; type?: "message" } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[] } | { type: "item_reference"; item_reference: string }; sampling_params?: { temperature?: number; max_completion_tokens?: number; top_p?: number; seed?: number }; model?: string; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } | { type: "stored_completions"; metadata?: { [key: string]: string | undefined } | null; model?: string | null; created_after?: number | null; created_before?: number | null; limit?: number | null } } | { type: "completions"; input_messages?: { type: "template"; template: ({ role: string; content: string } | { role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[] } | { type: "item_reference"; item_reference: string }; sampling_params?: { temperature?: number; max_completion_tokens?: number; top_p?: number; seed?: number }; model?: string; source: { type: "file_content"; content: ({ item: { [key: string]: unknown }; sample?: { [key: string]: unknown } })[] } | { type: "file_id"; id: string } | { type: "responses"; metadata?: { [key: string]: unknown } | null; model?: string | null; instructions_search?: string | null; created_after?: number | null; created_before?: number | null; has_tool_calls?: boolean | null; reasoning_effort?: "low" | "medium" | "high" | null; temperature?: number | null; top_p?: number | null; users?: (string)[] | null; allow_parallel_tool_calls?: boolean | null } }; metadata: { [key: string]: string | undefined } | null; error: { code: string; message: string } })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Retrieve a message.
-   * Tags: Assistants
-   * Access as: openai.getMessage(input)
-   */
-  getMessage: (input: { thread_id: string; message_id: string }) => Promise<{ id: string; object: "thread.message"; created_at: number; thread_id: string; status: "in_progress" | "incomplete" | "completed"; incomplete_details: { reason: "content_filter" | "max_tokens" | "run_cancelled" | "run_expired" | "run_failed" } | null; completed_at: number | null; incomplete_at: number | null; role: "user" | "assistant"; content: ({ type: "image_file"; image_file: { file_id: string; detail?: "auto" | "low" | "high" } } | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } } | { type: "text"; text: { value: string; annotations: ({ type: "file_citation"; text: string; file_citation: { file_id: string }; start_index: number; end_index: number } | { type: "file_path"; text: string; file_path: { file_id: string }; start_index: number; end_index: number })[] } } | { type: "refusal"; refusal: string })[]; assistant_id: string | null; run_id: string | null; attachments: ({ file_id?: string; tools?: ({ type: "code_interpreter" } | { type: "file_search" })[] })[] | null; metadata: { [key: string]: string | undefined } | null }>;
-  /**
-   * Retrieves a model response with the given ID. 
-   * Tags: Responses
-   * Access as: openai.getResponse(input)
-   */
-  getResponse: (input: { response_id: string; include?: ("file_search_call.results" | "message.input_image.image_url" | "computer_call_output.output.image_url")[] }) => Promise<{ metadata?: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; user?: string; service_tier?: "auto" | "default" | "flex" | null } & { previous_response_id?: string | null; model?: string | "gpt-4.1" | "gpt-4.1-mini" | "gpt-4.1-nano" | "gpt-4.1-2025-04-14" | "gpt-4.1-mini-2025-04-14" | "gpt-4.1-nano-2025-04-14" | "o4-mini" | "o4-mini-2025-04-16" | "o3" | "o3-2025-04-16" | "o3-mini" | "o3-mini-2025-01-31" | "o1" | "o1-2024-12-17" | "o1-preview" | "o1-preview-2024-09-12" | "o1-mini" | "o1-mini-2024-09-12" | "gpt-4o" | "gpt-4o-2024-11-20" | "gpt-4o-2024-08-06" | "gpt-4o-2024-05-13" | "gpt-4o-audio-preview" | "gpt-4o-audio-preview-2024-10-01" | "gpt-4o-audio-preview-2024-12-17" | "gpt-4o-mini-audio-preview" | "gpt-4o-mini-audio-preview-2024-12-17" | "gpt-4o-search-preview" | "gpt-4o-mini-search-preview" | "gpt-4o-search-preview-2025-03-11" | "gpt-4o-mini-search-preview-2025-03-11" | "chatgpt-4o-latest" | "gpt-4o-mini" | "gpt-4o-mini-2024-07-18" | "gpt-4-turbo" | "gpt-4-turbo-2024-04-09" | "gpt-4-0125-preview" | "gpt-4-turbo-preview" | "gpt-4-1106-preview" | "gpt-4-vision-preview" | "gpt-4" | "gpt-4-0314" | "gpt-4-0613" | "gpt-4-32k" | "gpt-4-32k-0314" | "gpt-4-32k-0613" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k" | "gpt-3.5-turbo-0301" | "gpt-3.5-turbo-0613" | "gpt-3.5-turbo-1106" | "gpt-3.5-turbo-0125" | "gpt-3.5-turbo-16k-0613" | "o1-pro" | "o1-pro-2025-03-19" | "computer-use-preview" | "computer-use-preview-2025-03-11"; reasoning?: { effort?: "low" | "medium" | "high" | null; summary?: "auto" | "concise" | "detailed" | null; generate_summary?: "auto" | "concise" | "detailed" | null }; max_output_tokens?: number | null; instructions?: string | null; text?: { format?: { type: "text" } | { type: "json_schema"; description?: string; name: string; schema: { [key: string]: unknown }; strict?: boolean | null } | { type: "json_object" } }; tools?: ({ type: "file_search"; vector_store_ids: (string)[]; max_num_results?: number; ranking_options?: { ranker?: "auto" | "default-2024-11-15"; score_threshold?: number }; filters?: { type: "eq" | "ne" | "gt" | "gte" | "lt" | "lte"; key: string; value: string | number | boolean } | { type: "and" | "or"; filters: ({ type: "eq" | "ne" | "gt" | "gte" | "lt" | "lte"; key: string; value: string | number | boolean } | unknown)[] } | null } | { type: "function"; name: string; description?: string | null; parameters: { [key: string]: unknown | undefined } | null; strict: boolean | null } | { type: "web_search_preview" | "web_search_preview_2025_03_11"; user_location?: { type: "approximate"; country?: string | null; region?: string | null; city?: string | null; timezone?: string | null } | null; search_context_size?: "low" | "medium" | "high" } | { type: "computer_use_preview"; environment: "windows" | "mac" | "linux" | "ubuntu" | "browser"; display_width: number; display_height: number })[]; tool_choice?: "none" | "auto" | "required" | { type: "file_search" | "web_search_preview" | "computer_use_preview" | "web_search_preview_2025_03_11" } | { type: "function"; name: string }; truncation?: "auto" | "disabled" | null } & { id: string; object: "response"; status?: "completed" | "failed" | "in_progress" | "incomplete"; created_at: number; error: { code: "server_error" | "rate_limit_exceeded" | "invalid_prompt" | "vector_store_timeout" | "invalid_image" | "invalid_image_format" | "invalid_base64_image" | "invalid_image_url" | "image_too_large" | "image_too_small" | "image_parse_error" | "image_content_policy_violation" | "invalid_image_mode" | "image_file_too_large" | "unsupported_image_media_type" | "empty_image_file" | "failed_to_download_image" | "image_file_not_found"; message: string } | null; incomplete_details: { reason?: "max_output_tokens" | "content_filter" } | null; output: ({ id: string; type: "message"; role: "assistant"; content: ({ type: "output_text"; text: string; annotations: ({ type: "file_citation"; file_id: string; index: number } | { type: "url_citation"; url: string; start_index: number; end_index: number; title: string } | { type: "file_path"; file_id: string; index: number })[] } | { type: "refusal"; refusal: string })[]; status: "in_progress" | "completed" | "incomplete" } | { id: string; type: "file_search_call"; status: "in_progress" | "searching" | "completed" | "incomplete" | "failed"; queries: (string)[]; results?: ({ file_id?: string; text?: string; filename?: string; attributes?: { [key: string]: string | number | boolean | undefined } | null; score?: number })[] | null } | { id?: string; type: "function_call"; call_id: string; name: string; arguments: string; status?: "in_progress" | "completed" | "incomplete" } | { id: string; type: "web_search_call"; status: "in_progress" | "searching" | "completed" | "failed" } | { type: "computer_call"; id: string; call_id: string; action: { type: "click"; button: "left" | "right" | "wheel" | "back" | "forward"; x: number; y: number } | { type: "double_click"; x: number; y: number } | { type: "drag"; path: ({ x: number; y: number })[] } | { type: "keypress"; keys: (string)[] } | { type: "move"; x: number; y: number } | { type: "screenshot" } | { type: "scroll"; x: number; y: number; scroll_x: number; scroll_y: number } | { type: "type"; text: string } | { type: "wait" }; pending_safety_checks: ({ id: string; code: string; message: string })[]; status: "in_progress" | "completed" | "incomplete" } | { type: "reasoning"; id: string; summary: ({ type: "summary_text"; text: string })[]; status?: "in_progress" | "completed" | "incomplete" })[]; output_text?: string | null; usage?: { input_tokens: number; input_tokens_details: { cached_tokens: number }; output_tokens: number; output_tokens_details: { reasoning_tokens: number }; total_tokens: number }; parallel_tool_calls: boolean }>;
-  /**
-   * Retrieves a run.
-   * Tags: Assistants
-   * Access as: openai.getRun(input)
-   */
-  getRun: (input: { thread_id: string; run_id: string }) => Promise<{ id: string; object: "thread.run"; created_at: number; thread_id: string; assistant_id: string; status: "queued" | "in_progress" | "requires_action" | "cancelling" | "cancelled" | "failed" | "completed" | "incomplete" | "expired"; required_action: { type: "submit_tool_outputs"; submit_tool_outputs: { tool_calls: ({ id: string; type: "function"; function: { name: string; arguments: string } })[] } } | null; last_error: { code: "server_error" | "rate_limit_exceeded" | "invalid_prompt"; message: string } | null; expires_at: number | null; started_at: number | null; cancelled_at: number | null; failed_at: number | null; completed_at: number | null; incomplete_details: { reason?: "max_completion_tokens" | "max_prompt_tokens" } | null; model: string; instructions: string; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; metadata: { [key: string]: string | undefined } | null; usage: { completion_tokens: number; prompt_tokens: number; total_tokens: number } | null; temperature?: number | null; top_p?: number | null; max_prompt_tokens: number | null; max_completion_tokens: number | null; truncation_strategy: { type: "auto" | "last_messages"; last_messages?: number | null } & unknown; tool_choice: "none" | "auto" | "required" | { type: "function" | "code_interpreter" | "file_search"; function?: { name: string } } & unknown; parallel_tool_calls: boolean; response_format: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }>;
-  /**
-   * Retrieves a run step.
-   * Tags: Assistants
-   * Access as: openai.getRunStep(input)
-   */
-  getRunStep: (input: { thread_id: string; run_id: string; step_id: string; "include[]"?: ("step_details.tool_calls[*].file_search.results[*].content")[] }) => Promise<{ id: string; object: "thread.run.step"; created_at: number; assistant_id: string; thread_id: string; run_id: string; type: "message_creation" | "tool_calls"; status: "in_progress" | "cancelled" | "failed" | "completed" | "expired"; step_details: { type: "message_creation"; message_creation: { message_id: string } } | { type: "tool_calls"; tool_calls: ({ id: string; type: "code_interpreter"; code_interpreter: { input: string; outputs: ({ type: "logs"; logs: string } | { type: "image"; image: { file_id: string } })[] } } | { id: string; type: "file_search"; file_search: { ranking_options?: { ranker: "auto" | "default_2024_08_21"; score_threshold: number }; results?: ({ file_id: string; file_name: string; score: number; content?: ({ type?: "text"; text?: string })[] })[] } } | { id: string; type: "function"; function: { name: string; arguments: string; output: string | null } })[] }; last_error: { code: "server_error" | "rate_limit_exceeded"; message: string } | null; expired_at: number | null; cancelled_at: number | null; failed_at: number | null; completed_at: number | null; metadata: { [key: string]: string | undefined } | null; usage: { completion_tokens: number; prompt_tokens: number; total_tokens: number } | null }>;
-  /**
-   * Retrieves a thread.
-   * Tags: Assistants
-   * Access as: openai.getThread(input)
-   */
-  getThread: (input: { thread_id: string }) => Promise<{ id: string; object: "thread"; created_at: number; tool_resources: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null; metadata: { [key: string]: string | undefined } | null }>;
-  /**
-   * Retrieves a vector store.
-   * Tags: Vector stores
-   * Access as: openai.getVectorStore(input)
-   */
-  getVectorStore: (input: { vector_store_id: string }) => Promise<{ id: string; object: "vector_store"; created_at: number; name: string; usage_bytes: number; file_counts: { in_progress: number; completed: number; failed: number; cancelled: number; total: number }; status: "expired" | "in_progress" | "completed"; expires_after?: { anchor: "last_active_at"; days: number }; expires_at?: number | null; last_active_at: number | null; metadata: { [key: string]: string | undefined } | null }>;
-  /**
-   * Retrieves a vector store file.
-   * Tags: Vector stores
-   * Access as: openai.getVectorStoreFile(input)
-   */
-  getVectorStoreFile: (input: { vector_store_id: string; file_id: string }) => Promise<{ id: string; object: "vector_store.file"; usage_bytes: number; created_at: number; vector_store_id: string; status: "in_progress" | "completed" | "cancelled" | "failed"; last_error: { code: "server_error" | "unsupported_file" | "invalid_file"; message: string } | null; chunking_strategy?: { type: "static"; static: { max_chunk_size_tokens: number; chunk_overlap_tokens: number } } | { type: "other" }; attributes?: { [key: string]: string | number | boolean | undefined } | null }>;
-  /**
-   * Retrieves a vector store file batch.
-   * Tags: Vector stores
-   * Access as: openai.getVectorStoreFileBatch(input)
-   */
-  getVectorStoreFileBatch: (input: { vector_store_id: string; batch_id: string }) => Promise<{ id: string; object: "vector_store.files_batch"; created_at: number; vector_store_id: string; status: "in_progress" | "completed" | "cancelled" | "failed"; file_counts: { in_progress: number; completed: number; failed: number; cancelled: number; total: number } }>;
-  /**
-   * Create an invite for a user to the organization. The invite must be accepted by the user before they have access to the organization.
-   * Tags: Invites
-   * Access as: openai.inviteUser(input)
-   */
-  inviteUser: (input: { email: string; role: "reader" | "owner"; projects?: ({ id: string; role: "member" | "owner" })[] }) => Promise<{ object: "organization.invite"; id: string; email: string; role: "owner" | "reader"; status: "accepted" | "expired" | "pending"; invited_at: number; expires_at: number; accepted_at?: number; projects?: ({ id?: string; role?: "member" | "owner" })[] }>;
-  /**
-   * Returns a list of assistants.
-   * Tags: Assistants
-   * Access as: openai.listAssistants(input)
-   */
-  listAssistants: (input: { limit?: number; order?: "asc" | "desc"; after?: string; before?: string }) => Promise<{ object: string; data: ({ id: string; object: "assistant"; created_at: number; name: string | null; description: string | null; model: string; instructions: string | null; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null; metadata: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; response_format?: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * List user actions and configuration changes within this organization.
-   * Tags: Audit Logs
-   * Access as: openai.listAuditLogs(input)
-   */
-  listAuditLogs: (input: { effective_at?: { gt?: number; gte?: number; lt?: number; lte?: number }; "project_ids[]"?: (string)[]; "event_types[]"?: ("api_key.created" | "api_key.updated" | "api_key.deleted" | "checkpoint_permission.created" | "checkpoint_permission.deleted" | "invite.sent" | "invite.accepted" | "invite.deleted" | "login.succeeded" | "login.failed" | "logout.succeeded" | "logout.failed" | "organization.updated" | "project.created" | "project.updated" | "project.archived" | "service_account.created" | "service_account.updated" | "service_account.deleted" | "rate_limit.updated" | "rate_limit.deleted" | "user.added" | "user.updated" | "user.deleted")[]; "actor_ids[]"?: (string)[]; "actor_emails[]"?: (string)[]; "resource_ids[]"?: (string)[]; limit?: number; after?: string; before?: string }) => Promise<{ object: "list"; data: ({ id: string; type: "api_key.created" | "api_key.updated" | "api_key.deleted" | "checkpoint_permission.created" | "checkpoint_permission.deleted" | "invite.sent" | "invite.accepted" | "invite.deleted" | "login.succeeded" | "login.failed" | "logout.succeeded" | "logout.failed" | "organization.updated" | "project.created" | "project.updated" | "project.archived" | "service_account.created" | "service_account.updated" | "service_account.deleted" | "rate_limit.updated" | "rate_limit.deleted" | "user.added" | "user.updated" | "user.deleted"; effective_at: number; project?: { id?: string; name?: string }; actor: { type?: "session" | "api_key"; session?: { user?: { id?: string; email?: string }; ip_address?: string }; api_key?: { id?: string; type?: "user" | "service_account"; user?: { id?: string; email?: string }; service_account?: { id?: string } } }; "api_key.created"?: { id?: string; data?: { scopes?: (string)[] } }; "api_key.updated"?: { id?: string; changes_requested?: { scopes?: (string)[] } }; "api_key.deleted"?: { id?: string }; "checkpoint_permission.created"?: { id?: string; data?: { project_id?: string; fine_tuned_model_checkpoint?: string } }; "checkpoint_permission.deleted"?: { id?: string }; "invite.sent"?: { id?: string; data?: { email?: string; role?: string } }; "invite.accepted"?: { id?: string }; "invite.deleted"?: { id?: string }; "login.failed"?: { error_code?: string; error_message?: string }; "logout.failed"?: { error_code?: string; error_message?: string }; "organization.updated"?: { id?: string; changes_requested?: { title?: string; description?: string; name?: string; settings?: { threads_ui_visibility?: string; usage_dashboard_visibility?: string } } }; "project.created"?: { id?: string; data?: { name?: string; title?: string } }; "project.updated"?: { id?: string; changes_requested?: { title?: string } }; "project.archived"?: { id?: string }; "rate_limit.updated"?: { id?: string; changes_requested?: { max_requests_per_1_minute?: number; max_tokens_per_1_minute?: number; max_images_per_1_minute?: number; max_audio_megabytes_per_1_minute?: number; max_requests_per_1_day?: number; batch_1_day_max_input_tokens?: number } }; "rate_limit.deleted"?: { id?: string }; "service_account.created"?: { id?: string; data?: { role?: string } }; "service_account.updated"?: { id?: string; changes_requested?: { role?: string } }; "service_account.deleted"?: { id?: string }; "user.added"?: { id?: string; data?: { role?: string } }; "user.updated"?: { id?: string; changes_requested?: { role?: string } }; "user.deleted"?: { id?: string }; "certificate.created"?: { id?: string; name?: string }; "certificate.updated"?: { id?: string; name?: string }; "certificate.deleted"?: { id?: string; name?: string; certificate?: string }; "certificates.activated"?: { certificates?: ({ id?: string; name?: string })[] }; "certificates.deactivated"?: { certificates?: ({ id?: string; name?: string })[] } })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * List your organization's batches.
-   * Tags: Batch
-   * Access as: openai.listBatches(input)
-   */
-  listBatches: (input: { after?: string; limit?: number }) => Promise<{ data: ({ id: string; object: "batch"; endpoint: string; errors?: { object?: string; data?: ({ code?: string; message?: string; param?: string | null; line?: number | null })[] }; input_file_id: string; completion_window: string; status: "validating" | "failed" | "in_progress" | "finalizing" | "completed" | "expired" | "cancelling" | "cancelled"; output_file_id?: string; error_file_id?: string; created_at: number; in_progress_at?: number; expires_at?: number; finalizing_at?: number; completed_at?: number; failed_at?: number; expired_at?: number; cancelling_at?: number; cancelled_at?: number; request_counts?: { total: number; completed: number; failed: number }; metadata?: { [key: string]: string | undefined } | null })[]; first_id?: string; last_id?: string; has_more: boolean; object: "list" }>;
-  /**
-   * List stored Chat Completions. Only Chat Completions that have been stored with the `store` parameter set to `true` will be returned. 
-   * Tags: Chat
-   * Access as: openai.listChatCompletions(input)
-   */
-  listChatCompletions: (input: { model?: string; metadata?: { [key: string]: string | undefined } | null; after?: string; limit?: number; order?: "asc" | "desc" }) => Promise<{ object: "list"; data: ({ id: string; choices: ({ finish_reason: "stop" | "length" | "tool_calls" | "content_filter" | "function_call"; index: number; message: { content: string | null; refusal: string | null; tool_calls?: ({ id: string; type: "function"; function: { name: string; arguments: string } })[]; annotations?: ({ type: "url_citation"; url_citation: { end_index: number; start_index: number; url: string; title: string } })[]; role: "assistant"; function_call?: { arguments: string; name: string }; audio?: { id: string; expires_at: number; data: string; transcript: string } | null }; logprobs: { content: ({ token: string; logprob: number; bytes: (number)[] | null; top_logprobs: ({ token: string; logprob: number; bytes: (number)[] | null })[] })[] | null; refusal: ({ token: string; logprob: number; bytes: (number)[] | null; top_logprobs: ({ token: string; logprob: number; bytes: (number)[] | null })[] })[] | null } | null })[]; created: number; model: string; service_tier?: "auto" | "default" | "flex" | null; system_fingerprint?: string; object: "chat.completion"; usage?: { completion_tokens: number; prompt_tokens: number; total_tokens: number; completion_tokens_details?: { accepted_prediction_tokens?: number; audio_tokens?: number; reasoning_tokens?: number; rejected_prediction_tokens?: number }; prompt_tokens_details?: { audio_tokens?: number; cached_tokens?: number } } })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * List evaluations for a project. 
-   * Tags: Evals
-   * Access as: openai.listEvals(input)
-   */
-  listEvals: (input: { after?: string; limit?: number; order?: "asc" | "desc"; order_by?: "created_at" | "updated_at" }) => Promise<{ object: "list"; data: ({ object: "eval"; id: string; name: string; data_source_config: { type: "custom"; schema: { [key: string]: unknown } } | { type: "stored_completions"; metadata?: { [key: string]: string | undefined } | null; schema: { [key: string]: unknown } }; testing_criteria: ({ type: "label_model"; name: string; model: string; input: ({ role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[]; labels: (string)[]; passing_labels: (string)[] } | { type: "string_check"; name: string; input: string; reference: string; operation: "eq" | "ne" | "like" | "ilike" } | { type: "text_similarity"; name?: string; input: string; reference: string; pass_threshold: number; evaluation_metric: "fuzzy_match" | "bleu" | "gleu" | "meteor" | "rouge_1" | "rouge_2" | "rouge_3" | "rouge_4" | "rouge_5" | "rouge_l" } | { type: "python"; name: string; source: string; pass_threshold?: number; image_tag?: string } | { type: "score_model"; name: string; model: string; sampling_params?: { [key: string]: unknown }; input: ({ role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[]; pass_threshold?: number; range?: (number)[] })[]; created_at: number; metadata: { [key: string]: string | undefined } | null })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Returns a list of files.
-   * Tags: Files
-   * Access as: openai.listFiles(input)
-   */
-  listFiles: (input: { purpose?: string; limit?: number; order?: "asc" | "desc"; after?: string }) => Promise<{ object: string; data: ({ id: string; bytes: number; created_at: number; expires_at?: number; filename: string; object: "file"; purpose: "assistants" | "assistants_output" | "batch" | "batch_output" | "fine-tune" | "fine-tune-results" | "vision"; status: "uploaded" | "processed" | "error"; status_details?: string })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Returns a list of vector store files in a batch.
-   * Tags: Vector stores
-   * Access as: openai.listFilesInVectorStoreBatch(input)
-   */
-  listFilesInVectorStoreBatch: (input: { vector_store_id: string; batch_id: string; limit?: number; order?: "asc" | "desc"; after?: string; before?: string; filter?: "in_progress" | "completed" | "failed" | "cancelled" }) => Promise<{ object: string; data: ({ id: string; object: "vector_store.file"; usage_bytes: number; created_at: number; vector_store_id: string; status: "in_progress" | "completed" | "cancelled" | "failed"; last_error: { code: "server_error" | "unsupported_file" | "invalid_file"; message: string } | null; chunking_strategy?: { type: "static"; static: { max_chunk_size_tokens: number; chunk_overlap_tokens: number } } | { type: "other" }; attributes?: { [key: string]: string | number | boolean | undefined } | null })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * **NOTE:** This endpoint requires an [admin API key](../admin-api-keys).  Organization owners can use this endpoint to view all permissions for a fine-tuned model checkpoint. 
-   * Tags: Fine-tuning
-   * Access as: openai.listFineTuningCheckpointPermissions(input)
-   */
-  listFineTuningCheckpointPermissions: (input: { fine_tuned_model_checkpoint: string; project_id?: string; after?: string; limit?: number; order?: "ascending" | "descending" }) => Promise<{ data: ({ id: string; created_at: number; project_id: string; object: "checkpoint.permission" })[]; object: "list"; first_id?: string | null; last_id?: string | null; has_more: boolean }>;
-  /**
-   * Get status updates for a fine-tuning job. 
-   * Tags: Fine-tuning
-   * Access as: openai.listFineTuningEvents(input)
-   */
-  listFineTuningEvents: (input: { fine_tuning_job_id: string; after?: string; limit?: number }) => Promise<{ data: ({ object: "fine_tuning.job.event"; id: string; created_at: number; level: "info" | "warn" | "error"; message: string; type?: "message" | "metrics"; data?: { [key: string]: unknown } })[]; object: "list"; has_more: boolean }>;
-  /**
-   * List checkpoints for a fine-tuning job. 
-   * Tags: Fine-tuning
-   * Access as: openai.listFineTuningJobCheckpoints(input)
-   */
-  listFineTuningJobCheckpoints: (input: { fine_tuning_job_id: string; after?: string; limit?: number }) => Promise<{ data: ({ id: string; created_at: number; fine_tuned_model_checkpoint: string; step_number: number; metrics: { step?: number; train_loss?: number; train_mean_token_accuracy?: number; valid_loss?: number; valid_mean_token_accuracy?: number; full_valid_loss?: number; full_valid_mean_token_accuracy?: number }; fine_tuning_job_id: string; object: "fine_tuning.job.checkpoint" })[]; object: "list"; first_id?: string | null; last_id?: string | null; has_more: boolean }>;
-  /**
-   * Returns a list of input items for a given response.
-   * Tags: Responses
-   * Access as: openai.listInputItems(input)
-   */
-  listInputItems: (input: { response_id: string; limit?: number; order?: "asc" | "desc"; after?: string; before?: string; include?: ("file_search_call.results" | "message.input_image.image_url" | "computer_call_output.output.image_url")[] }) => Promise<{ object: "list"; data: ({ type?: "message"; role: "user" | "system" | "developer"; status?: "in_progress" | "completed" | "incomplete"; content: ({ type: "input_text"; text: string } | { type: "input_image"; image_url?: string | null; file_id?: string | null; detail: "low" | "high" | "auto" } | { type: "input_file"; file_id?: string | null; filename?: string; file_data?: string })[] } & { id: string } | { id: string; type: "message"; role: "assistant"; content: ({ type: "output_text"; text: string; annotations: ({ type: "file_citation"; file_id: string; index: number } | { type: "url_citation"; url: string; start_index: number; end_index: number; title: string } | { type: "file_path"; file_id: string; index: number })[] } | { type: "refusal"; refusal: string })[]; status: "in_progress" | "completed" | "incomplete" } | { id: string; type: "file_search_call"; status: "in_progress" | "searching" | "completed" | "incomplete" | "failed"; queries: (string)[]; results?: ({ file_id?: string; text?: string; filename?: string; attributes?: { [key: string]: string | number | boolean | undefined } | null; score?: number })[] | null } | { type: "computer_call"; id: string; call_id: string; action: { type: "click"; button: "left" | "right" | "wheel" | "back" | "forward"; x: number; y: number } | { type: "double_click"; x: number; y: number } | { type: "drag"; path: ({ x: number; y: number })[] } | { type: "keypress"; keys: (string)[] } | { type: "move"; x: number; y: number } | { type: "screenshot" } | { type: "scroll"; x: number; y: number; scroll_x: number; scroll_y: number } | { type: "type"; text: string } | { type: "wait" }; pending_safety_checks: ({ id: string; code: string; message: string })[]; status: "in_progress" | "completed" | "incomplete" } | { type: "computer_call_output"; id?: string; call_id: string; acknowledged_safety_checks?: ({ id: string; code: string; message: string })[]; output: { type: "computer_screenshot"; image_url?: string; file_id?: string }; status?: "in_progress" | "completed" | "incomplete" } & { id: string } | { id: string; type: "web_search_call"; status: "in_progress" | "searching" | "completed" | "failed" } | { id?: string; type: "function_call"; call_id: string; name: string; arguments: string; status?: "in_progress" | "completed" | "incomplete" } & { id: string } | { id?: string; type: "function_call_output"; call_id: string; output: string; status?: "in_progress" | "completed" | "incomplete" } & { id: string })[]; has_more: boolean; first_id: string; last_id: string }>;
-  /**
-   * Returns a list of invites in the organization.
-   * Tags: Invites
-   * Access as: openai.listInvites(input)
-   */
-  listInvites: (input: { limit?: number; after?: string }) => Promise<{ object: "list"; data: ({ object: "organization.invite"; id: string; email: string; role: "owner" | "reader"; status: "accepted" | "expired" | "pending"; invited_at: number; expires_at: number; accepted_at?: number; projects?: ({ id?: string; role?: "member" | "owner" })[] })[]; first_id?: string; last_id?: string; has_more?: boolean }>;
-  /**
-   * Returns a list of messages for a given thread.
-   * Tags: Assistants
-   * Access as: openai.listMessages(input)
-   */
-  listMessages: (input: { thread_id: string; limit?: number; order?: "asc" | "desc"; after?: string; before?: string; run_id?: string }) => Promise<{ object: string; data: ({ id: string; object: "thread.message"; created_at: number; thread_id: string; status: "in_progress" | "incomplete" | "completed"; incomplete_details: { reason: "content_filter" | "max_tokens" | "run_cancelled" | "run_expired" | "run_failed" } | null; completed_at: number | null; incomplete_at: number | null; role: "user" | "assistant"; content: ({ type: "image_file"; image_file: { file_id: string; detail?: "auto" | "low" | "high" } } | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } } | { type: "text"; text: { value: string; annotations: ({ type: "file_citation"; text: string; file_citation: { file_id: string }; start_index: number; end_index: number } | { type: "file_path"; text: string; file_path: { file_id: string }; start_index: number; end_index: number })[] } } | { type: "refusal"; refusal: string })[]; assistant_id: string | null; run_id: string | null; attachments: ({ file_id?: string; tools?: ({ type: "code_interpreter" } | { type: "file_search" })[] })[] | null; metadata: { [key: string]: string | undefined } | null })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Lists the currently available models, and provides basic information about each one such as the owner and availability.
-   * Tags: Models
-   * Access as: openai.listModels(input)
-   */
-  listModels: (input: { [key: string]: unknown }) => Promise<{ object: "list"; data: ({ id: string; created: number; object: "model"; owned_by: string })[] }>;
-  /**
-   * List uploaded certificates for this organization.
-   * Tags: Certificates
-   * Access as: openai.listOrganizationCertificates(input)
-   */
-  listOrganizationCertificates: (input: { limit?: number; after?: string; order?: "asc" | "desc" }) => Promise<{ data: ({ object: "certificate" | "organization.certificate" | "organization.project.certificate"; id: string; name: string; created_at: number; certificate_details: { valid_at?: number; expires_at?: number; content?: string }; active?: boolean })[]; first_id?: string; last_id?: string; has_more: boolean; object: "list" }>;
-  /**
-   * List your organization's fine-tuning jobs 
-   * Tags: Fine-tuning
-   * Access as: openai.listPaginatedFineTuningJobs(input)
-   */
-  listPaginatedFineTuningJobs: (input: { after?: string; limit?: number; metadata?: { [key: string]: string | undefined } | null }) => Promise<{ data: ({ id: string; created_at: number; error: { code: string; message: string; param: string | null } | null; fine_tuned_model: string | null; finished_at: number | null; hyperparameters: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number }; model: string; object: "fine_tuning.job"; organization_id: string; result_files: (string)[]; status: "validating_files" | "queued" | "running" | "succeeded" | "failed" | "cancelled"; trained_tokens: number | null; training_file: string; validation_file: string | null; integrations?: ({ type: "wandb"; wandb: { project: string; name?: string | null; entity?: string | null; tags?: (string)[] } })[] | null; seed: number; estimated_finish?: number | null; method?: { type?: "supervised" | "dpo"; supervised?: { hyperparameters?: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number } }; dpo?: { hyperparameters?: { beta?: "auto" | number; batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number } } }; metadata?: { [key: string]: string | undefined } | null })[]; has_more: boolean; object: "list" }>;
-  /**
-   * Returns a list of API keys in the project.
-   * Tags: Projects
-   * Access as: openai.listProjectApiKeys(input)
-   */
-  listProjectApiKeys: (input: { project_id: string; limit?: number; after?: string }) => Promise<{ object: "list"; data: ({ object: "organization.project.api_key"; redacted_value: string; name: string; created_at: number; last_used_at: number; id: string; owner: { type?: "user" | "service_account"; user?: { object: "organization.project.user"; id: string; name: string; email: string; role: "owner" | "member"; added_at: number }; service_account?: { object: "organization.project.service_account"; id: string; name: string; role: "owner" | "member"; created_at: number } } })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * List certificates for this project.
-   * Tags: Certificates
-   * Access as: openai.listProjectCertificates(input)
-   */
-  listProjectCertificates: (input: { limit?: number; after?: string; order?: "asc" | "desc" }) => Promise<{ data: ({ object: "certificate" | "organization.certificate" | "organization.project.certificate"; id: string; name: string; created_at: number; certificate_details: { valid_at?: number; expires_at?: number; content?: string }; active?: boolean })[]; first_id?: string; last_id?: string; has_more: boolean; object: "list" }>;
-  /**
-   * Returns the rate limits per model for a project.
-   * Tags: Projects
-   * Access as: openai.listProjectRateLimits(input)
-   */
-  listProjectRateLimits: (input: { project_id: string; limit?: number; after?: string; before?: string }) => Promise<{ object: "list"; data: ({ object: "project.rate_limit"; id: string; model: string; max_requests_per_1_minute: number; max_tokens_per_1_minute: number; max_images_per_1_minute?: number; max_audio_megabytes_per_1_minute?: number; max_requests_per_1_day?: number; batch_1_day_max_input_tokens?: number })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Returns a list of projects.
-   * Tags: Projects
-   * Access as: openai.listProjects(input)
-   */
-  listProjects: (input: { limit?: number; after?: string; include_archived?: boolean }) => Promise<{ object: "list"; data: ({ id: string; object: "organization.project"; name: string; created_at: number; archived_at?: number | null; status: "active" | "archived" })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Returns a list of service accounts in the project.
-   * Tags: Projects
-   * Access as: openai.listProjectServiceAccounts(input)
-   */
-  listProjectServiceAccounts: (input: { project_id: string; limit?: number; after?: string }) => Promise<{ object: "list"; data: ({ object: "organization.project.service_account"; id: string; name: string; role: "owner" | "member"; created_at: number })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Returns a list of users in the project.
-   * Tags: Projects
-   * Access as: openai.listProjectUsers(input)
-   */
-  listProjectUsers: (input: { project_id: string; limit?: number; after?: string }) => Promise<{ object: string; data: ({ object: "organization.project.user"; id: string; name: string; email: string; role: "owner" | "member"; added_at: number })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Returns a list of runs belonging to a thread.
-   * Tags: Assistants
-   * Access as: openai.listRuns(input)
-   */
-  listRuns: (input: { thread_id: string; limit?: number; order?: "asc" | "desc"; after?: string; before?: string }) => Promise<{ object: string; data: ({ id: string; object: "thread.run"; created_at: number; thread_id: string; assistant_id: string; status: "queued" | "in_progress" | "requires_action" | "cancelling" | "cancelled" | "failed" | "completed" | "incomplete" | "expired"; required_action: { type: "submit_tool_outputs"; submit_tool_outputs: { tool_calls: ({ id: string; type: "function"; function: { name: string; arguments: string } })[] } } | null; last_error: { code: "server_error" | "rate_limit_exceeded" | "invalid_prompt"; message: string } | null; expires_at: number | null; started_at: number | null; cancelled_at: number | null; failed_at: number | null; completed_at: number | null; incomplete_details: { reason?: "max_completion_tokens" | "max_prompt_tokens" } | null; model: string; instructions: string; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; metadata: { [key: string]: string | undefined } | null; usage: { completion_tokens: number; prompt_tokens: number; total_tokens: number } | null; temperature?: number | null; top_p?: number | null; max_prompt_tokens: number | null; max_completion_tokens: number | null; truncation_strategy: { type: "auto" | "last_messages"; last_messages?: number | null } & unknown; tool_choice: "none" | "auto" | "required" | { type: "function" | "code_interpreter" | "file_search"; function?: { name: string } } & unknown; parallel_tool_calls: boolean; response_format: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Returns a list of run steps belonging to a run.
-   * Tags: Assistants
-   * Access as: openai.listRunSteps(input)
-   */
-  listRunSteps: (input: { thread_id: string; run_id: string; limit?: number; order?: "asc" | "desc"; after?: string; before?: string; "include[]"?: ("step_details.tool_calls[*].file_search.results[*].content")[] }) => Promise<{ object: string; data: ({ id: string; object: "thread.run.step"; created_at: number; assistant_id: string; thread_id: string; run_id: string; type: "message_creation" | "tool_calls"; status: "in_progress" | "cancelled" | "failed" | "completed" | "expired"; step_details: { type: "message_creation"; message_creation: { message_id: string } } | { type: "tool_calls"; tool_calls: ({ id: string; type: "code_interpreter"; code_interpreter: { input: string; outputs: ({ type: "logs"; logs: string } | { type: "image"; image: { file_id: string } })[] } } | { id: string; type: "file_search"; file_search: { ranking_options?: { ranker: "auto" | "default_2024_08_21"; score_threshold: number }; results?: ({ file_id: string; file_name: string; score: number; content?: ({ type?: "text"; text?: string })[] })[] } } | { id: string; type: "function"; function: { name: string; arguments: string; output: string | null } })[] }; last_error: { code: "server_error" | "rate_limit_exceeded"; message: string } | null; expired_at: number | null; cancelled_at: number | null; failed_at: number | null; completed_at: number | null; metadata: { [key: string]: string | undefined } | null; usage: { completion_tokens: number; prompt_tokens: number; total_tokens: number } | null })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Lists all of the users in the organization.
-   * Tags: Users
-   * Access as: openai.listUsers(input)
-   */
-  listUsers: (input: { limit?: number; after?: string; emails?: (string)[] }) => Promise<{ object: "list"; data: ({ object: "organization.user"; id: string; name: string; email: string; role: "owner" | "reader"; added_at: number })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Returns a list of vector store files.
-   * Tags: Vector stores
-   * Access as: openai.listVectorStoreFiles(input)
-   */
-  listVectorStoreFiles: (input: { vector_store_id: string; limit?: number; order?: "asc" | "desc"; after?: string; before?: string; filter?: "in_progress" | "completed" | "failed" | "cancelled" }) => Promise<{ object: string; data: ({ id: string; object: "vector_store.file"; usage_bytes: number; created_at: number; vector_store_id: string; status: "in_progress" | "completed" | "cancelled" | "failed"; last_error: { code: "server_error" | "unsupported_file" | "invalid_file"; message: string } | null; chunking_strategy?: { type: "static"; static: { max_chunk_size_tokens: number; chunk_overlap_tokens: number } } | { type: "other" }; attributes?: { [key: string]: string | number | boolean | undefined } | null })[]; first_id: string; last_id: string; has_more: boolean }>;
-  /**
-   * Returns a list of vector stores.
-   * Tags: Vector stores
-   * Access as: openai.listVectorStores(input)
-   */
-  listVectorStores: (input: { limit?: number; order?: "asc" | "desc"; after?: string; before?: string }) => Promise<{ object: string; data: ({ id: string; object: "vector_store"; created_at: number; name: string; usage_bytes: number; file_counts: { in_progress: number; completed: number; failed: number; cancelled: number; total: number }; status: "expired" | "in_progress" | "completed"; expires_after?: { anchor: "last_active_at"; days: number }; expires_at?: number | null; last_active_at: number | null; metadata: { [key: string]: string | undefined } | null })[]; first_id: string; last_id: string; has_more: boolean }>;
+  getAssistant: (input: {
+    /** The ID of the assistant to retrieve. */
+    assistant_id: string;
+  }) => Promise<AssistantObject>;
+
   /**
    * Modifies an assistant.
-   * Tags: Assistants
-   * Access as: openai.modifyAssistant(input)
    */
-  modifyAssistant: (input: { model?: string | "gpt-4.1" | "gpt-4.1-mini" | "gpt-4.1-nano" | "gpt-4.1-2025-04-14" | "gpt-4.1-mini-2025-04-14" | "gpt-4.1-nano-2025-04-14" | "o3-mini" | "o3-mini-2025-01-31" | "o1" | "o1-2024-12-17" | "gpt-4o" | "gpt-4o-2024-11-20" | "gpt-4o-2024-08-06" | "gpt-4o-2024-05-13" | "gpt-4o-mini" | "gpt-4o-mini-2024-07-18" | "gpt-4.5-preview" | "gpt-4.5-preview-2025-02-27" | "gpt-4-turbo" | "gpt-4-turbo-2024-04-09" | "gpt-4-0125-preview" | "gpt-4-turbo-preview" | "gpt-4-1106-preview" | "gpt-4-vision-preview" | "gpt-4" | "gpt-4-0314" | "gpt-4-0613" | "gpt-4-32k" | "gpt-4-32k-0314" | "gpt-4-32k-0613" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k" | "gpt-3.5-turbo-0613" | "gpt-3.5-turbo-1106" | "gpt-3.5-turbo-0125" | "gpt-3.5-turbo-16k-0613"; reasoning_effort?: "low" | "medium" | "high" | null; name?: string | null; description?: string | null; instructions?: string | null; tools?: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null; metadata?: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; response_format?: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } }; assistant_id: string }) => Promise<{ id: string; object: "assistant"; created_at: number; name: string | null; description: string | null; model: string; instructions: string | null; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null; metadata: { [key: string]: string | undefined } | null; temperature?: number | null; top_p?: number | null; response_format?: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }>;
+  modifyAssistant: (input: {
+    /** ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models) for descriptions of them.  */
+    model?: string | AssistantSupportedModels;
+    reasoning_effort?: ReasoningEffort;
+    /** The name of the assistant. The maximum length is 256 characters.  */
+    name?: string | null;
+    /** The description of the assistant. The maximum length is 512 characters.  */
+    description?: string | null;
+    /** The system instructions that the assistant uses. The maximum length is 256,000 characters.  */
+    instructions?: string | null;
+    /** A list of tool enabled on the assistant. There can be a maximum of 128 tools per assistant. Tools can be of types `code_interpreter`, `file_search`, or `function`.  */
+    tools?: (AssistantToolsCode | AssistantToolsFileSearch | AssistantToolsFunction)[];
+    /** A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.  */
+    tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null;
+    metadata?: Metadata;
+    /** What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.  */
+    temperature?: number | null;
+    /** An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.  We generally recommend altering this or temperature but not both.  */
+    top_p?: number | null;
+    response_format?: AssistantsApiResponseFormatOption;
+    /** The ID of the assistant to modify. */
+    assistant_id: string;
+  }) => Promise<AssistantObject>;
+
   /**
-   * Modify a certificate. Note that only the name can be modified. 
-   * Tags: Certificates
-   * Access as: openai.modifyCertificate(input)
+   * Delete an assistant.
    */
-  modifyCertificate: (input: { name: string }) => Promise<{ object: "certificate" | "organization.certificate" | "organization.project.certificate"; id: string; name: string; created_at: number; certificate_details: { valid_at?: number; expires_at?: number; content?: string }; active?: boolean }>;
+  deleteAssistant: (input: {
+    /** The ID of the assistant to delete. */
+    assistant_id: string;
+  }) => Promise<DeleteAssistantResponse>;
+
   /**
-   * Modifies a message.
-   * Tags: Assistants
-   * Access as: openai.modifyMessage(input)
+   * Generates audio from the input text.
    */
-  modifyMessage: (input: { metadata?: { [key: string]: string | undefined } | null; thread_id: string; message_id: string }) => Promise<{ id: string; object: "thread.message"; created_at: number; thread_id: string; status: "in_progress" | "incomplete" | "completed"; incomplete_details: { reason: "content_filter" | "max_tokens" | "run_cancelled" | "run_expired" | "run_failed" } | null; completed_at: number | null; incomplete_at: number | null; role: "user" | "assistant"; content: ({ type: "image_file"; image_file: { file_id: string; detail?: "auto" | "low" | "high" } } | { type: "image_url"; image_url: { url: string; detail?: "auto" | "low" | "high" } } | { type: "text"; text: { value: string; annotations: ({ type: "file_citation"; text: string; file_citation: { file_id: string }; start_index: number; end_index: number } | { type: "file_path"; text: string; file_path: { file_id: string }; start_index: number; end_index: number })[] } } | { type: "refusal"; refusal: string })[]; assistant_id: string | null; run_id: string | null; attachments: ({ file_id?: string; tools?: ({ type: "code_interpreter" } | { type: "file_search" })[] })[] | null; metadata: { [key: string]: string | undefined } | null }>;
+  createSpeech: (input: {
+    /** One of the available [TTS models](/docs/models#tts): `tts-1`, `tts-1-hd` or `gpt-4o-mini-tts`.  */
+    model: string | "tts-1" | "tts-1-hd" | "gpt-4o-mini-tts";
+    /** The text to generate audio for. The maximum length is 4096 characters. */
+    input: string;
+    /** Control the voice of your generated audio with additional instructions. Does not work with `tts-1` or `tts-1-hd`. */
+    instructions?: string;
+    /** The voice to use when generating the audio. Supported voices are `alloy`, `ash`, `ballad`, `coral`, `echo`, `fable`, `onyx`, `nova`, `sage`, `shimmer`, and `verse`. Previews of the voices are available in the [Text to speech guide](/docs/guides/text-to-speech#voice-options). */
+    voice: VoiceIdsShared;
+    /** The format to audio in. Supported formats are `mp3`, `opus`, `aac`, `flac`, `wav`, and `pcm`. */
+    response_format?: "mp3" | "opus" | "aac" | "flac" | "wav" | "pcm";
+    /** The speed of the generated audio. Select a value from `0.25` to `4.0`. `1.0` is the default. */
+    speed?: number;
+  }) => Promise<string>;
+
   /**
-   * Modifies a project in the organization.
-   * Tags: Projects
-   * Access as: openai.modifyProject(input)
+   * Transcribes audio into the input language.
    */
-  modifyProject: (input: { name: string; project_id: string }) => Promise<{ id: string; object: "organization.project"; name: string; created_at: number; archived_at?: number | null; status: "active" | "archived" }>;
+  createTranscription: (input: {
+    /** The audio file object (not file name) to transcribe, in one of these formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm.  */
+    file: string;
+    /** ID of the model to use. The options are `gpt-4o-transcribe`, `gpt-4o-mini-transcribe`, and `whisper-1` (which is powered by our open source Whisper V2 model).  */
+    model: string | "whisper-1" | "gpt-4o-transcribe" | "gpt-4o-mini-transcribe";
+    /** The language of the input audio. Supplying the input language in [ISO-639-1](https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes) (e.g. `en`) format will improve accuracy and latency.  */
+    language?: string;
+    /** An optional text to guide the model's style or continue a previous audio segment. The [prompt](/docs/guides/speech-to-text#prompting) should match the audio language.  */
+    prompt?: string;
+    response_format?: AudioResponseFormat;
+    /** The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use [log probability](https://en.wikipedia.org/wiki/Log_probability) to automatically increase the temperature until certain thresholds are hit.  */
+    temperature?: number;
+    /** Additional information to include in the transcription response.  `logprobs` will return the log probabilities of the tokens in the  response to understand the model's confidence in the transcription.  `logprobs` only works with response_format set to `json` and only with  the models `gpt-4o-transcribe` and `gpt-4o-mini-transcribe`.  */
+    "include[]"?: (TranscriptionInclude)[];
+    /** The timestamp granularities to populate for this transcription. `response_format` must be set `verbose_json` to use timestamp granularities. Either or both of these options are supported: `word`, or `segment`. Note: There is no additional latency for segment timestamps, but generating word timestamps incurs additional latency.  */
+    "timestamp_granularities[]"?: ("word" | "segment")[];
+    /** If set to true, the model response data will be streamed to the client as it is generated using [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format).  See the [Streaming section of the Speech-to-Text guide](/docs/guides/speech-to-text?lang=curl#streaming-transcriptions) for more information.  Note: Streaming is not supported for the `whisper-1` model and will be ignored.  */
+    stream?: boolean | null;
+  }) => Promise<ReadableStream<Uint8Array>>;
+
   /**
-   * Modifies a user's role in the project.
-   * Tags: Projects
-   * Access as: openai.modifyProjectUser(input)
+   * Translates audio into English.
    */
-  modifyProjectUser: (input: { role: "owner" | "member"; project_id: string; user_id: string }) => Promise<{ object: "organization.project.user"; id: string; name: string; email: string; role: "owner" | "member"; added_at: number }>;
+  createTranslation: (input: {
+    /** The audio file object (not file name) translate, in one of these formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, or webm.  */
+    file: string;
+    /** ID of the model to use. Only `whisper-1` (which is powered by our open source Whisper V2 model) is currently available.  */
+    model: string | "whisper-1";
+    /** An optional text to guide the model's style or continue a previous audio segment. The [prompt](/docs/guides/speech-to-text#prompting) should be in English.  */
+    prompt?: string;
+    /** The format of the output, in one of these options: `json`, `text`, `srt`, `verbose_json`, or `vtt`.  */
+    response_format?: "json" | "text" | "srt" | "verbose_json" | "vtt";
+    /** The sampling temperature, between 0 and 1. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. If set to 0, the model will use [log probability](https://en.wikipedia.org/wiki/Log_probability) to automatically increase the temperature until certain thresholds are hit.  */
+    temperature?: number;
+  }) => Promise<CreateTranslationResponseJson | CreateTranslationResponseVerboseJson>;
+
   /**
-   * Modifies a run.
-   * Tags: Assistants
-   * Access as: openai.modifyRun(input)
+   * Creates and executes a batch from an uploaded file of requests
    */
-  modifyRun: (input: { metadata?: { [key: string]: string | undefined } | null; thread_id: string; run_id: string }) => Promise<{ id: string; object: "thread.run"; created_at: number; thread_id: string; assistant_id: string; status: "queued" | "in_progress" | "requires_action" | "cancelling" | "cancelled" | "failed" | "completed" | "incomplete" | "expired"; required_action: { type: "submit_tool_outputs"; submit_tool_outputs: { tool_calls: ({ id: string; type: "function"; function: { name: string; arguments: string } })[] } } | null; last_error: { code: "server_error" | "rate_limit_exceeded" | "invalid_prompt"; message: string } | null; expires_at: number | null; started_at: number | null; cancelled_at: number | null; failed_at: number | null; completed_at: number | null; incomplete_details: { reason?: "max_completion_tokens" | "max_prompt_tokens" } | null; model: string; instructions: string; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; metadata: { [key: string]: string | undefined } | null; usage: { completion_tokens: number; prompt_tokens: number; total_tokens: number } | null; temperature?: number | null; top_p?: number | null; max_prompt_tokens: number | null; max_completion_tokens: number | null; truncation_strategy: { type: "auto" | "last_messages"; last_messages?: number | null } & unknown; tool_choice: "none" | "auto" | "required" | { type: "function" | "code_interpreter" | "file_search"; function?: { name: string } } & unknown; parallel_tool_calls: boolean; response_format: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }>;
+  createBatch: (input: {
+    /** The ID of an uploaded file that contains requests for the new batch.  See [upload file](/docs/api-reference/files/create) for how to upload a file.  Your input file must be formatted as a [JSONL file](/docs/api-reference/batch/request-input), and must be uploaded with the purpose `batch`. The file can contain up to 50,000 requests, and can be up to 200 MB in size.  */
+    input_file_id: string;
+    /** The endpoint to be used for all requests in the batch. Currently `/v1/responses`, `/v1/chat/completions`, `/v1/embeddings`, and `/v1/completions` are supported. Note that `/v1/embeddings` batches are also restricted to a maximum of 50,000 embedding inputs across all requests in the batch. */
+    endpoint: "/v1/responses" | "/v1/chat/completions" | "/v1/embeddings" | "/v1/completions";
+    /** The time frame within which the batch should be processed. Currently only `24h` is supported. */
+    completion_window: "24h";
+    metadata?: Metadata;
+  }) => Promise<Batch>;
+
   /**
-   * Modifies a thread.
-   * Tags: Assistants
-   * Access as: openai.modifyThread(input)
+   * List your organization's batches.
    */
-  modifyThread: (input: { tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null; metadata?: { [key: string]: string | undefined } | null; thread_id: string }) => Promise<{ id: string; object: "thread"; created_at: number; tool_resources: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null; metadata: { [key: string]: string | undefined } | null }>;
-  /**
-   * Modifies a user's role in the organization.
-   * Tags: Users
-   * Access as: openai.modifyUser(input)
-   */
-  modifyUser: (input: { role: "owner" | "reader"; user_id: string }) => Promise<{ object: "organization.user"; id: string; name: string; email: string; role: "owner" | "reader"; added_at: number }>;
-  /**
-   * Modifies a vector store.
-   * Tags: Vector stores
-   * Access as: openai.modifyVectorStore(input)
-   */
-  modifyVectorStore: (input: { name?: string | null; expires_after?: { anchor: "last_active_at"; days: number } & unknown; metadata?: { [key: string]: string | undefined } | null; vector_store_id: string }) => Promise<{ id: string; object: "vector_store"; created_at: number; name: string; usage_bytes: number; file_counts: { in_progress: number; completed: number; failed: number; cancelled: number; total: number }; status: "expired" | "in_progress" | "completed"; expires_after?: { anchor: "last_active_at"; days: number }; expires_at?: number | null; last_active_at: number | null; metadata: { [key: string]: string | undefined } | null }>;
+  listBatches: (input: {
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+  }) => Promise<ListBatchesResponse>;
+
   /**
    * Retrieves a batch.
-   * Tags: Batch
-   * Access as: openai.retrieveBatch(input)
    */
-  retrieveBatch: (input: { batch_id: string }) => Promise<{ id: string; object: "batch"; endpoint: string; errors?: { object?: string; data?: ({ code?: string; message?: string; param?: string | null; line?: number | null })[] }; input_file_id: string; completion_window: string; status: "validating" | "failed" | "in_progress" | "finalizing" | "completed" | "expired" | "cancelling" | "cancelled"; output_file_id?: string; error_file_id?: string; created_at: number; in_progress_at?: number; expires_at?: number; finalizing_at?: number; completed_at?: number; failed_at?: number; expired_at?: number; cancelling_at?: number; cancelled_at?: number; request_counts?: { total: number; completed: number; failed: number }; metadata?: { [key: string]: string | undefined } | null }>;
+  retrieveBatch: (input: {
+    /** The ID of the batch to retrieve. */
+    batch_id: string;
+  }) => Promise<Batch>;
+
   /**
-   * Returns information about a specific file.
-   * Tags: Files
-   * Access as: openai.retrieveFile(input)
+   * Cancels an in-progress batch. The batch will be in status `cancelling` for up to 10 minutes, before changing to `cancelled`, where it will have partial results (if any) available in the output file.
    */
-  retrieveFile: (input: { file_id: string }) => Promise<{ id: string; bytes: number; created_at: number; expires_at?: number; filename: string; object: "file"; purpose: "assistants" | "assistants_output" | "batch" | "batch_output" | "fine-tune" | "fine-tune-results" | "vision"; status: "uploaded" | "processed" | "error"; status_details?: string }>;
+  cancelBatch: (input: {
+    /** The ID of the batch to cancel. */
+    batch_id: string;
+  }) => Promise<Batch>;
+
   /**
-   * Get info about a fine-tuning job.  [Learn more about fine-tuning](/docs/guides/fine-tuning) 
-   * Tags: Fine-tuning
-   * Access as: openai.retrieveFineTuningJob(input)
+   * List stored Chat Completions. Only Chat Completions that have been stored with the `store` parameter set to `true` will be returned. 
    */
-  retrieveFineTuningJob: (input: { fine_tuning_job_id: string }) => Promise<{ id: string; created_at: number; error: { code: string; message: string; param: string | null } | null; fine_tuned_model: string | null; finished_at: number | null; hyperparameters: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number }; model: string; object: "fine_tuning.job"; organization_id: string; result_files: (string)[]; status: "validating_files" | "queued" | "running" | "succeeded" | "failed" | "cancelled"; trained_tokens: number | null; training_file: string; validation_file: string | null; integrations?: ({ type: "wandb"; wandb: { project: string; name?: string | null; entity?: string | null; tags?: (string)[] } })[] | null; seed: number; estimated_finish?: number | null; method?: { type?: "supervised" | "dpo"; supervised?: { hyperparameters?: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number } }; dpo?: { hyperparameters?: { beta?: "auto" | number; batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number } } }; metadata?: { [key: string]: string | undefined } | null }>;
+  listChatCompletions: (input: {
+    /** The model used to generate the Chat Completions. */
+    model?: string;
+    metadata?: Metadata;
+    /** Identifier for the last chat completion from the previous pagination request. */
+    after?: string;
+    /** Number of Chat Completions to retrieve. */
+    limit?: number;
+    /** Sort order for Chat Completions by timestamp. Use `asc` for ascending order or `desc` for descending order. Defaults to `asc`. */
+    order?: "asc" | "desc";
+  }) => Promise<ChatCompletionList>;
+
   /**
-   * Retrieves an invite.
-   * Tags: Invites
-   * Access as: openai.retrieveInvite(input)
+   * **Starting a new project?** We recommend trying [Responses](/docs/api-reference/responses)  to take advantage of the latest OpenAI platform features. Compare [Chat Completions with Responses](/docs/guides/responses-vs-chat-completions?api-mode=responses).  ---  Creates a model response for the given chat conversation. Learn more in the [text generation](/docs/guides/text-generation), [vision](/docs/guides/vision), and [audio](/docs/guides/audio) guides.  Parameter support can differ depending on the model used to generate the response, particularly for newer reasoning models. Parameters that are only supported for reasoning models are noted below. For the current state of  unsupported parameters in reasoning models,  [refer to the reasoning guide](/docs/guides/reasoning). 
    */
-  retrieveInvite: (input: { invite_id: string }) => Promise<{ object: "organization.invite"; id: string; email: string; role: "owner" | "reader"; status: "accepted" | "expired" | "pending"; invited_at: number; expires_at: number; accepted_at?: number; projects?: ({ id?: string; role?: "member" | "owner" })[] }>;
+  createChatCompletion: (input: {
+    metadata?: Metadata;
+    /** What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. We generally recommend altering this or `top_p` but not both.  */
+    temperature?: number | null;
+    /** An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.  We generally recommend altering this or `temperature` but not both.  */
+    top_p?: number | null;
+    /** A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices#end-user-ids).  */
+    user?: string;
+    service_tier?: ServiceTier;
+    /** A list of messages comprising the conversation so far. Depending on the [model](/docs/models) you use, different message types (modalities) are supported, like [text](/docs/guides/text-generation), [images](/docs/guides/vision), and [audio](/docs/guides/audio).  */
+    messages: (ChatCompletionRequestMessage)[];
+    /** Model ID used to generate the response, like `gpt-4o` or `o3`. OpenAI offers a wide range of models with different capabilities, performance characteristics, and price points. Refer to the [model guide](/docs/models) to browse and compare available models.  */
+    model: ModelIdsShared;
+    modalities?: ResponseModalities;
+    reasoning_effort?: ReasoningEffort;
+    /** An upper bound for the number of tokens that can be generated for a completion, including visible output tokens and [reasoning tokens](/docs/guides/reasoning).  */
+    max_completion_tokens?: number | null;
+    /** Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.  */
+    frequency_penalty?: number | null;
+    /** Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.  */
+    presence_penalty?: number | null;
+    /** This tool searches the web for relevant results to use in a response. Learn more about the [web search tool](/docs/guides/tools-web-search?api-mode=chat).  */
+    web_search_options?: { user_location?: { type: "approximate"; approximate: WebSearchLocation } | null; search_context_size?: WebSearchContextSize };
+    /** An integer between 0 and 20 specifying the number of most likely tokens to return at each token position, each with an associated log probability. `logprobs` must be set to `true` if this parameter is used.  */
+    top_logprobs?: number | null;
+    /** An object specifying the format that the model must output.  Setting to `{ "type": "json_schema", "json_schema": {...} }` enables Structured Outputs which ensures the model will match your supplied JSON schema. Learn more in the [Structured Outputs guide](/docs/guides/structured-outputs).  Setting to `{ "type": "json_object" }` enables the older JSON mode, which ensures the message the model generates is valid JSON. Using `json_schema` is preferred for models that support it.  */
+    response_format?: ResponseFormatText | ResponseFormatJsonSchema | ResponseFormatJsonObject;
+    /** Parameters for audio output. Required when audio output is requested with `modalities: ["audio"]`. [Learn more](/docs/guides/audio).  */
+    audio?: { voice: VoiceIdsShared; format: "wav" | "aac" | "mp3" | "flac" | "opus" | "pcm16" } | null;
+    /** Whether or not to store the output of this chat completion request for  use in our [model distillation](/docs/guides/distillation) or [evals](/docs/guides/evals) products.  */
+    store?: boolean | null;
+    /** If set to true, the model response data will be streamed to the client as it is generated using [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format). See the [Streaming section below](/docs/api-reference/chat/streaming) for more information, along with the [streaming responses](/docs/guides/streaming-responses) guide for more information on how to handle the streaming events.  */
+    stream?: boolean | null;
+    stop?: StopConfiguration;
+    /** Modify the likelihood of specified tokens appearing in the completion.  Accepts a JSON object that maps tokens (specified by their token ID in the tokenizer) to an associated bias value from -100 to 100. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.  */
+    logit_bias?: { [key: string]: number | undefined } | null;
+    /** Whether to return log probabilities of the output tokens or not. If true, returns the log probabilities of each output token returned in the `content` of `message`.  */
+    logprobs?: boolean | null;
+    /** The maximum number of [tokens](/tokenizer) that can be generated in the chat completion. This value can be used to control [costs](https://openai.com/api/pricing/) for text generated via API.  This value is now deprecated in favor of `max_completion_tokens`, and is not compatible with [o-series models](/docs/guides/reasoning).  */
+    max_tokens?: number | null;
+    /** How many chat completion choices to generate for each input message. Note that you will be charged based on the number of generated tokens across all of the choices. Keep `n` as `1` to minimize costs. */
+    n?: number | null;
+    /** Configuration for a [Predicted Output](/docs/guides/predicted-outputs), which can greatly improve response times when large parts of the model response are known ahead of time. This is most common when you are regenerating a file with only minor changes to most of the content.  */
+    prediction?: PredictionContent | null;
+    /** This feature is in Beta. If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same `seed` and parameters should return the same result. Determinism is not guaranteed, and you should refer to the `system_fingerprint` response parameter to monitor changes in the backend.  */
+    seed?: number | null;
+    stream_options?: ChatCompletionStreamOptions;
+    /** A list of tools the model may call. Currently, only functions are supported as a tool. Use this to provide a list of functions the model may generate JSON inputs for. A max of 128 functions are supported.  */
+    tools?: (ChatCompletionTool)[];
+    tool_choice?: ChatCompletionToolChoiceOption;
+    parallel_tool_calls?: ParallelToolCalls;
+    /** Deprecated in favor of `tool_choice`.  Controls which (if any) function is called by the model.  `none` means the model will not call a function and instead generates a message.  `auto` means the model can pick between generating a message or calling a function.  Specifying a particular function via `{"name": "my_function"}` forces the model to call that function.  `none` is the default when no functions are present. `auto` is the default if functions are present.  */
+    function_call?: "none" | "auto" | ChatCompletionFunctionCallOption;
+    /** Deprecated in favor of `tools`.  A list of functions the model may generate JSON inputs for.  */
+    functions?: (ChatCompletionFunctions)[];
+  }) => Promise<ReadableStream<Uint8Array>>;
+
   /**
-   * Retrieves a model instance, providing basic information about the model such as the owner and permissioning.
-   * Tags: Models
-   * Access as: openai.retrieveModel(input)
+   * Get a stored chat completion. Only Chat Completions that have been created with the `store` parameter set to `true` will be returned. 
    */
-  retrieveModel: (input: { model: string }) => Promise<{ id: string; created: number; object: "model"; owned_by: string }>;
-  /**
-   * Retrieves a project.
-   * Tags: Projects
-   * Access as: openai.retrieveProject(input)
-   */
-  retrieveProject: (input: { project_id: string }) => Promise<{ id: string; object: "organization.project"; name: string; created_at: number; archived_at?: number | null; status: "active" | "archived" }>;
-  /**
-   * Retrieves an API key in the project.
-   * Tags: Projects
-   * Access as: openai.retrieveProjectApiKey(input)
-   */
-  retrieveProjectApiKey: (input: { project_id: string; key_id: string }) => Promise<{ object: "organization.project.api_key"; redacted_value: string; name: string; created_at: number; last_used_at: number; id: string; owner: { type?: "user" | "service_account"; user?: { object: "organization.project.user"; id: string; name: string; email: string; role: "owner" | "member"; added_at: number }; service_account?: { object: "organization.project.service_account"; id: string; name: string; role: "owner" | "member"; created_at: number } } }>;
-  /**
-   * Retrieves a service account in the project.
-   * Tags: Projects
-   * Access as: openai.retrieveProjectServiceAccount(input)
-   */
-  retrieveProjectServiceAccount: (input: { project_id: string; service_account_id: string }) => Promise<{ object: "organization.project.service_account"; id: string; name: string; role: "owner" | "member"; created_at: number }>;
-  /**
-   * Retrieves a user in the project.
-   * Tags: Projects
-   * Access as: openai.retrieveProjectUser(input)
-   */
-  retrieveProjectUser: (input: { project_id: string; user_id: string }) => Promise<{ object: "organization.project.user"; id: string; name: string; email: string; role: "owner" | "member"; added_at: number }>;
-  /**
-   * Retrieves a user by their identifier.
-   * Tags: Users
-   * Access as: openai.retrieveUser(input)
-   */
-  retrieveUser: (input: { user_id: string }) => Promise<{ object: "organization.user"; id: string; name: string; email: string; role: "owner" | "reader"; added_at: number }>;
-  /**
-   * Retrieve the parsed contents of a vector store file.
-   * Tags: Vector stores
-   * Access as: openai.retrieveVectorStoreFileContent(input)
-   */
-  retrieveVectorStoreFileContent: (input: { vector_store_id: string; file_id: string }) => Promise<{ object: "vector_store.file_content.page"; data: ({ type?: string; text?: string })[]; has_more: boolean; next_page: string | null }>;
-  /**
-   * Search a vector store for relevant chunks based on a query and file attributes filter.
-   * Tags: Vector stores
-   * Access as: openai.searchVectorStore(input)
-   */
-  searchVectorStore: (input: { query: string | (string)[]; rewrite_query?: boolean; max_num_results?: number; filters?: { type: "eq" | "ne" | "gt" | "gte" | "lt" | "lte"; key: string; value: string | number | boolean } | { type: "and" | "or"; filters: ({ type: "eq" | "ne" | "gt" | "gte" | "lt" | "lte"; key: string; value: string | number | boolean } | unknown)[] }; ranking_options?: { ranker?: "auto" | "default-2024-11-15"; score_threshold?: number }; vector_store_id: string }) => Promise<{ object: "vector_store.search_results.page"; search_query: (string)[]; data: ({ file_id: string; filename: string; score: number; attributes: { [key: string]: string | number | boolean | undefined } | null; content: ({ type: "text"; text: string })[] })[]; has_more: boolean; next_page: string | null }>;
-  /**
-   * When a run has the `status: "requires_action"` and `required_action.type` is `submit_tool_outputs`, this endpoint can be used to submit the outputs from the tool calls once they're all completed. All outputs must be submitted in a single request. 
-   * Tags: Assistants
-   * Access as: openai.submitToolOuputsToRun(input)
-   */
-  submitToolOuputsToRun: (input: { tool_outputs: ({ tool_call_id?: string; output?: string })[]; stream?: boolean | null; thread_id: string; run_id: string }) => Promise<{ id: string; object: "thread.run"; created_at: number; thread_id: string; assistant_id: string; status: "queued" | "in_progress" | "requires_action" | "cancelling" | "cancelled" | "failed" | "completed" | "incomplete" | "expired"; required_action: { type: "submit_tool_outputs"; submit_tool_outputs: { tool_calls: ({ id: string; type: "function"; function: { name: string; arguments: string } })[] } } | null; last_error: { code: "server_error" | "rate_limit_exceeded" | "invalid_prompt"; message: string } | null; expires_at: number | null; started_at: number | null; cancelled_at: number | null; failed_at: number | null; completed_at: number | null; incomplete_details: { reason?: "max_completion_tokens" | "max_prompt_tokens" } | null; model: string; instructions: string; tools: ({ type: "code_interpreter" } | { type: "file_search"; file_search?: { max_num_results?: number; ranking_options?: { ranker?: "auto" | "default_2024_08_21"; score_threshold: number } } } | { type: "function"; function: { description?: string; name: string; parameters?: { [key: string]: unknown }; strict?: boolean | null } })[]; metadata: { [key: string]: string | undefined } | null; usage: { completion_tokens: number; prompt_tokens: number; total_tokens: number } | null; temperature?: number | null; top_p?: number | null; max_prompt_tokens: number | null; max_completion_tokens: number | null; truncation_strategy: { type: "auto" | "last_messages"; last_messages?: number | null } & unknown; tool_choice: "none" | "auto" | "required" | { type: "function" | "code_interpreter" | "file_search"; function?: { name: string } } & unknown; parallel_tool_calls: boolean; response_format: "auto" | { type: "text" } | { type: "json_object" } | { type: "json_schema"; json_schema: { description?: string; name: string; schema?: { [key: string]: unknown }; strict?: boolean | null } } }>;
+  getChatCompletion: (input: {
+    /** The ID of the chat completion to retrieve. */
+    completion_id: string;
+  }) => Promise<CreateChatCompletionResponse>;
+
   /**
    * Modify a stored chat completion. Only Chat Completions that have been created with the `store` parameter set to `true` can be modified. Currently, the only supported modification is to update the `metadata` field. 
-   * Tags: Chat
-   * Access as: openai.updateChatCompletion(input)
    */
-  updateChatCompletion: (input: { metadata: { [key: string]: string | undefined } | null; completion_id: string }) => Promise<{ id: string; choices: ({ finish_reason: "stop" | "length" | "tool_calls" | "content_filter" | "function_call"; index: number; message: { content: string | null; refusal: string | null; tool_calls?: ({ id: string; type: "function"; function: { name: string; arguments: string } })[]; annotations?: ({ type: "url_citation"; url_citation: { end_index: number; start_index: number; url: string; title: string } })[]; role: "assistant"; function_call?: { arguments: string; name: string }; audio?: { id: string; expires_at: number; data: string; transcript: string } | null }; logprobs: { content: ({ token: string; logprob: number; bytes: (number)[] | null; top_logprobs: ({ token: string; logprob: number; bytes: (number)[] | null })[] })[] | null; refusal: ({ token: string; logprob: number; bytes: (number)[] | null; top_logprobs: ({ token: string; logprob: number; bytes: (number)[] | null })[] })[] | null } | null })[]; created: number; model: string; service_tier?: "auto" | "default" | "flex" | null; system_fingerprint?: string; object: "chat.completion"; usage?: { completion_tokens: number; prompt_tokens: number; total_tokens: number; completion_tokens_details?: { accepted_prediction_tokens?: number; audio_tokens?: number; reasoning_tokens?: number; rejected_prediction_tokens?: number }; prompt_tokens_details?: { audio_tokens?: number; cached_tokens?: number } } }>;
+  updateChatCompletion: (input: {
+    metadata: Metadata;
+    /** The ID of the chat completion to update. */
+    completion_id: string;
+  }) => Promise<CreateChatCompletionResponse>;
+
+  /**
+   * Delete a stored chat completion. Only Chat Completions that have been created with the `store` parameter set to `true` can be deleted. 
+   */
+  deleteChatCompletion: (input: {
+    /** The ID of the chat completion to delete. */
+    completion_id: string;
+  }) => Promise<ChatCompletionDeleted>;
+
+  /**
+   * Get the messages in a stored chat completion. Only Chat Completions that have been created with the `store` parameter set to `true` will be returned. 
+   */
+  getChatCompletionMessages: (input: {
+    /** The ID of the chat completion to retrieve messages from. */
+    completion_id: string;
+    /** Identifier for the last message from the previous pagination request. */
+    after?: string;
+    /** Number of messages to retrieve. */
+    limit?: number;
+    /** Sort order for messages by timestamp. Use `asc` for ascending order or `desc` for descending order. Defaults to `asc`. */
+    order?: "asc" | "desc";
+  }) => Promise<ChatCompletionMessageList>;
+
+  /**
+   * Creates a completion for the provided prompt and parameters.
+   */
+  createCompletion: (input: {
+    /** ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models) for descriptions of them.  */
+    model: string | "gpt-3.5-turbo-instruct" | "davinci-002" | "babbage-002";
+    /** The prompt(s) to generate completions for, encoded as a string, array of strings, array of tokens, or array of token arrays.  Note that <|endoftext|> is the document separator that the model sees during training, so if a prompt is not specified the model will generate as if from the beginning of a new document.  */
+    prompt: string | (string)[] | (number)[] | ((number)[])[] | null;
+    /** Generates `best_of` completions server-side and returns the "best" (the one with the highest log probability per token). Results cannot be streamed.  When used with `n`, `best_of` controls the number of candidate completions and `n` specifies how many to return – `best_of` must be greater than `n`.  **Note:** Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for `max_tokens` and `stop`.  */
+    best_of?: number | null;
+    /** Echo back the prompt in addition to the completion  */
+    echo?: boolean | null;
+    /** Number between -2.0 and 2.0. Positive values penalize new tokens based on their existing frequency in the text so far, decreasing the model's likelihood to repeat the same line verbatim.  [See more information about frequency and presence penalties.](/docs/guides/text-generation)  */
+    frequency_penalty?: number | null;
+    /** Modify the likelihood of specified tokens appearing in the completion.  Accepts a JSON object that maps tokens (specified by their token ID in the GPT tokenizer) to an associated bias value from -100 to 100. You can use this [tokenizer tool](/tokenizer?view=bpe) to convert text to token IDs. Mathematically, the bias is added to the logits generated by the model prior to sampling. The exact effect will vary per model, but values between -1 and 1 should decrease or increase likelihood of selection; values like -100 or 100 should result in a ban or exclusive selection of the relevant token.  As an example, you can pass `{"50256": -100}` to prevent the <|endoftext|> token from being generated.  */
+    logit_bias?: { [key: string]: number | undefined } | null;
+    /** Include the log probabilities on the `logprobs` most likely output tokens, as well the chosen tokens. For example, if `logprobs` is 5, the API will return a list of the 5 most likely tokens. The API will always return the `logprob` of the sampled token, so there may be up to `logprobs+1` elements in the response.  The maximum value for `logprobs` is 5.  */
+    logprobs?: number | null;
+    /** The maximum number of [tokens](/tokenizer) that can be generated in the completion.  The token count of your prompt plus `max_tokens` cannot exceed the model's context length. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens.  */
+    max_tokens?: number | null;
+    /** How many completions to generate for each prompt.  **Note:** Because this parameter generates many completions, it can quickly consume your token quota. Use carefully and ensure that you have reasonable settings for `max_tokens` and `stop`.  */
+    n?: number | null;
+    /** Number between -2.0 and 2.0. Positive values penalize new tokens based on whether they appear in the text so far, increasing the model's likelihood to talk about new topics.  [See more information about frequency and presence penalties.](/docs/guides/text-generation)  */
+    presence_penalty?: number | null;
+    /** If specified, our system will make a best effort to sample deterministically, such that repeated requests with the same `seed` and parameters should return the same result.  Determinism is not guaranteed, and you should refer to the `system_fingerprint` response parameter to monitor changes in the backend.  */
+    seed?: number | null;
+    stop?: StopConfiguration;
+    /** Whether to stream back partial progress. If set, tokens will be sent as data-only [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format) as they become available, with the stream terminated by a `data: [DONE]` message. [Example Python code](https://cookbook.openai.com/examples/how_to_stream_completions).  */
+    stream?: boolean | null;
+    stream_options?: ChatCompletionStreamOptions;
+    /** The suffix that comes after a completion of inserted text.  This parameter is only supported for `gpt-3.5-turbo-instruct`.  */
+    suffix?: string | null;
+    /** What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.  We generally recommend altering this or `top_p` but not both.  */
+    temperature?: number | null;
+    /** An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.  We generally recommend altering this or `temperature` but not both.  */
+    top_p?: number | null;
+    /** A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices#end-user-ids).  */
+    user?: string;
+  }) => Promise<CreateCompletionResponse>;
+
+  /**
+   * Creates an embedding vector representing the input text.
+   */
+  createEmbedding: (input: {
+    /** Input text to embed, encoded as a string or array of tokens. To embed multiple inputs in a single request, pass an array of strings or array of token arrays. The input must not exceed the max input tokens for the model (8192 tokens for `text-embedding-ada-002`), cannot be an empty string, and any array must be 2048 dimensions or less. [Example Python code](https://cookbook.openai.com/examples/how_to_count_tokens_with_tiktoken) for counting tokens. Some models may also impose a limit on total number of tokens summed across inputs.  */
+    input: string | (string)[] | (number)[] | ((number)[])[];
+    /** ID of the model to use. You can use the [List models](/docs/api-reference/models/list) API to see all of your available models, or see our [Model overview](/docs/models) for descriptions of them.  */
+    model: string | "text-embedding-ada-002" | "text-embedding-3-small" | "text-embedding-3-large";
+    /** The format to return the embeddings in. Can be either `float` or [`base64`](https://pypi.org/project/pybase64/). */
+    encoding_format?: "float" | "base64";
+    /** The number of dimensions the resulting output embeddings should have. Only supported in `text-embedding-3` and later models.  */
+    dimensions?: number;
+    /** A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices#end-user-ids).  */
+    user?: string;
+  }) => Promise<CreateEmbeddingResponse>;
+
+  /**
+   * List evaluations for a project. 
+   */
+  listEvals: (input: {
+    /** Identifier for the last eval from the previous pagination request. */
+    after?: string;
+    /** Number of evals to retrieve. */
+    limit?: number;
+    /** Sort order for evals by timestamp. Use `asc` for ascending order or `desc` for descending order. */
+    order?: "asc" | "desc";
+    /** Evals can be ordered by creation time or last updated time. Use `created_at` for creation time or `updated_at` for last updated time.  */
+    order_by?: "created_at" | "updated_at";
+  }) => Promise<EvalList>;
+
+  /**
+   * Create the structure of an evaluation that can be used to test a model's performance. An evaluation is a set of testing criteria and a datasource. After creating an evaluation, you can run it on different models and model parameters. We support several types of graders and datasources. For more information, see the [Evals guide](/docs/guides/evals). 
+   */
+  createEval: (input: {
+    /** The name of the evaluation. */
+    name?: string;
+    metadata?: Metadata;
+    /** The configuration for the data source used for the evaluation runs. */
+    data_source_config: CreateEvalCustomDataSourceConfig | CreateEvalLogsDataSourceConfig;
+    /** A list of graders for all eval runs in this group. */
+    testing_criteria: (CreateEvalLabelModelGrader | EvalStringCheckGrader | EvalTextSimilarityGrader | EvalPythonGrader | EvalScoreModelGrader)[];
+  }) => Promise<Eval>;
+
+  /**
+   * Get an evaluation by ID. 
+   */
+  getEval: (input: {
+    /** The ID of the evaluation to retrieve. */
+    eval_id: string;
+  }) => Promise<Eval>;
+
   /**
    * Update certain properties of an evaluation. 
-   * Tags: Evals
-   * Access as: openai.updateEval(input)
    */
-  updateEval: (input: { name?: string; metadata?: { [key: string]: string | undefined } | null; eval_id: string }) => Promise<{ object: "eval"; id: string; name: string; data_source_config: { type: "custom"; schema: { [key: string]: unknown } } | { type: "stored_completions"; metadata?: { [key: string]: string | undefined } | null; schema: { [key: string]: unknown } }; testing_criteria: ({ type: "label_model"; name: string; model: string; input: ({ role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[]; labels: (string)[]; passing_labels: (string)[] } | { type: "string_check"; name: string; input: string; reference: string; operation: "eq" | "ne" | "like" | "ilike" } | { type: "text_similarity"; name?: string; input: string; reference: string; pass_threshold: number; evaluation_metric: "fuzzy_match" | "bleu" | "gleu" | "meteor" | "rouge_1" | "rouge_2" | "rouge_3" | "rouge_4" | "rouge_5" | "rouge_l" } | { type: "python"; name: string; source: string; pass_threshold?: number; image_tag?: string } | { type: "score_model"; name: string; model: string; sampling_params?: { [key: string]: unknown }; input: ({ role: "user" | "assistant" | "system" | "developer"; content: string | { type: "input_text"; text: string } | { type: "output_text"; text: string }; type?: "message" })[]; pass_threshold?: number; range?: (number)[] })[]; created_at: number; metadata: { [key: string]: string | undefined } | null }>;
+  updateEval: (input: {
+    /** Rename the evaluation. */
+    name?: string;
+    metadata?: Metadata;
+    /** The ID of the evaluation to update. */
+    eval_id: string;
+  }) => Promise<Eval>;
+
   /**
-   * Updates a project rate limit.
-   * Tags: Projects
-   * Access as: openai.updateProjectRateLimits(input)
+   * Delete an evaluation. 
    */
-  updateProjectRateLimits: (input: { max_requests_per_1_minute?: number; max_tokens_per_1_minute?: number; max_images_per_1_minute?: number; max_audio_megabytes_per_1_minute?: number; max_requests_per_1_day?: number; batch_1_day_max_input_tokens?: number; project_id: string; rate_limit_id: string }) => Promise<{ object: "project.rate_limit"; id: string; model: string; max_requests_per_1_minute: number; max_tokens_per_1_minute: number; max_images_per_1_minute?: number; max_audio_megabytes_per_1_minute?: number; max_requests_per_1_day?: number; batch_1_day_max_input_tokens?: number }>;
+  deleteEval: (input: {
+    /** The ID of the evaluation to delete. */
+    eval_id: string;
+  }) => Promise<{ object: string; deleted: boolean; eval_id: string }>;
+
   /**
-   * Update attributes on a vector store file.
-   * Tags: Vector stores
-   * Access as: openai.updateVectorStoreFileAttributes(input)
+   * Get a list of runs for an evaluation. 
    */
-  updateVectorStoreFileAttributes: (input: { attributes: { [key: string]: string | number | boolean | undefined } | null; vector_store_id: string; file_id: string }) => Promise<{ id: string; object: "vector_store.file"; usage_bytes: number; created_at: number; vector_store_id: string; status: "in_progress" | "completed" | "cancelled" | "failed"; last_error: { code: "server_error" | "unsupported_file" | "invalid_file"; message: string } | null; chunking_strategy?: { type: "static"; static: { max_chunk_size_tokens: number; chunk_overlap_tokens: number } } | { type: "other" }; attributes?: { [key: string]: string | number | boolean | undefined } | null }>;
+  getEvalRuns: (input: {
+    /** The ID of the evaluation to retrieve runs for. */
+    eval_id: string;
+    /** Identifier for the last run from the previous pagination request. */
+    after?: string;
+    /** Number of runs to retrieve. */
+    limit?: number;
+    /** Sort order for runs by timestamp. Use `asc` for ascending order or `desc` for descending order. Defaults to `asc`. */
+    order?: "asc" | "desc";
+    /** Filter runs by status. One of `queued` | `in_progress` | `failed` | `completed` | `canceled`. */
+    status?: "queued" | "in_progress" | "completed" | "canceled" | "failed";
+  }) => Promise<EvalRunList>;
+
+  /**
+   * Create a new evaluation run. This is the endpoint that will kick off grading. 
+   */
+  createEvalRun: (input: {
+    /** The name of the run. */
+    name?: string;
+    metadata?: Metadata;
+    /** Details about the run's data source. */
+    data_source: CreateEvalJsonlRunDataSource | CreateEvalCompletionsRunDataSource | CreateEvalResponsesRunDataSource;
+    /** The ID of the evaluation to create a run for. */
+    eval_id: string;
+  }) => Promise<EvalRun>;
+
+  /**
+   * Get an evaluation run by ID. 
+   */
+  getEvalRun: (input: {
+    /** The ID of the evaluation to retrieve runs for. */
+    eval_id: string;
+    /** The ID of the run to retrieve. */
+    run_id: string;
+  }) => Promise<EvalRun>;
+
+  /**
+   * Cancel an ongoing evaluation run. 
+   */
+  cancelEvalRun: (input: {
+    /** The ID of the evaluation whose run you want to cancel. */
+    eval_id: string;
+    /** The ID of the run to cancel. */
+    run_id: string;
+  }) => Promise<EvalRun>;
+
+  /**
+   * Delete an eval run. 
+   */
+  deleteEvalRun: (input: {
+    /** The ID of the evaluation to delete the run from. */
+    eval_id: string;
+    /** The ID of the run to delete. */
+    run_id: string;
+  }) => Promise<{ object?: string; deleted?: boolean; run_id?: string }>;
+
+  /**
+   * Get a list of output items for an evaluation run. 
+   */
+  getEvalRunOutputItems: (input: {
+    /** The ID of the evaluation to retrieve runs for. */
+    eval_id: string;
+    /** The ID of the run to retrieve output items for. */
+    run_id: string;
+    /** Identifier for the last output item from the previous pagination request. */
+    after?: string;
+    /** Number of output items to retrieve. */
+    limit?: number;
+    /** Filter output items by status. Use `failed` to filter by failed output items or `pass` to filter by passed output items.  */
+    status?: "fail" | "pass";
+    /** Sort order for output items by timestamp. Use `asc` for ascending order or `desc` for descending order. Defaults to `asc`. */
+    order?: "asc" | "desc";
+  }) => Promise<EvalRunOutputItemList>;
+
+  /**
+   * Get an evaluation run output item by ID. 
+   */
+  getEvalRunOutputItem: (input: {
+    /** The ID of the evaluation to retrieve runs for. */
+    eval_id: string;
+    /** The ID of the run to retrieve. */
+    run_id: string;
+    /** The ID of the output item to retrieve. */
+    output_item_id: string;
+  }) => Promise<EvalRunOutputItem>;
+
+  /**
+   * Returns a list of files.
+   */
+  listFiles: (input: {
+    /** Only return files with the given purpose. */
+    purpose?: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 10,000, and the default is 10,000.  */
+    limit?: number;
+    /** Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.  */
+    order?: "asc" | "desc";
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+  }) => Promise<ListFilesResponse>;
+
+  /**
+   * Upload a file that can be used across various endpoints. Individual files can be up to 512 MB, and the size of all files uploaded by one organization can be up to 100 GB.  The Assistants API supports files up to 2 million tokens and of specific file types. See the [Assistants Tools guide](/docs/assistants/tools) for details.  The Fine-tuning API only supports `.jsonl` files. The input also has certain required formats for fine-tuning [chat](/docs/api-reference/fine-tuning/chat-input) or [completions](/docs/api-reference/fine-tuning/completions-input) models.  The Batch API only supports `.jsonl` files up to 200 MB in size. The input also has a specific required [format](/docs/api-reference/batch/request-input).  Please [contact us](https://help.openai.com/) if you need to increase these storage limits. 
+   */
+  createFile: (input: {
+    /** The File object (not file name) to be uploaded.  */
+    file: string;
+    /** The intended purpose of the uploaded file. One of: - `assistants`: Used in the Assistants API - `batch`: Used in the Batch API - `fine-tune`: Used for fine-tuning - `vision`: Images used for vision fine-tuning - `user_data`: Flexible file type for any purpose - `evals`: Used for eval data sets  */
+    purpose: "assistants" | "batch" | "fine-tune" | "vision" | "user_data" | "evals";
+  }) => Promise<OpenAiFile>;
+
+  /**
+   * Delete a file.
+   */
+  deleteFile: (input: {
+    /** The ID of the file to use for this request. */
+    file_id: string;
+  }) => Promise<DeleteFileResponse>;
+
+  /**
+   * Returns information about a specific file.
+   */
+  retrieveFile: (input: {
+    /** The ID of the file to use for this request. */
+    file_id: string;
+  }) => Promise<OpenAiFile>;
+
+  /**
+   * Returns the contents of the specified file.
+   */
+  downloadFile: (input: {
+    /** The ID of the file to use for this request. */
+    file_id: string;
+  }) => Promise<string>;
+
+  /**
+   * **NOTE:** This endpoint requires an [admin API key](../admin-api-keys).  Organization owners can use this endpoint to view all permissions for a fine-tuned model checkpoint. 
+   */
+  listFineTuningCheckpointPermissions: (input: {
+    /** The ID of the fine-tuned model checkpoint to get permissions for.  */
+    fine_tuned_model_checkpoint: string;
+    /** The ID of the project to get permissions for. */
+    project_id?: string;
+    /** Identifier for the last permission ID from the previous pagination request. */
+    after?: string;
+    /** Number of permissions to retrieve. */
+    limit?: number;
+    /** The order in which to retrieve permissions. */
+    order?: "ascending" | "descending";
+  }) => Promise<ListFineTuningCheckpointPermissionResponse>;
+
+  /**
+   * **NOTE:** Calling this endpoint requires an [admin API key](../admin-api-keys).  This enables organization owners to share fine-tuned models with other projects in their organization. 
+   */
+  createFineTuningCheckpointPermission: (input: {
+    /** The project identifiers to grant access to. */
+    project_ids: (string)[];
+    /** The ID of the fine-tuned model checkpoint to create a permission for.  */
+    fine_tuned_model_checkpoint: string;
+  }) => Promise<ListFineTuningCheckpointPermissionResponse>;
+
+  /**
+   * **NOTE:** This endpoint requires an [admin API key](../admin-api-keys).  Organization owners can use this endpoint to delete a permission for a fine-tuned model checkpoint. 
+   */
+  deleteFineTuningCheckpointPermission: (input: {
+    /** The ID of the fine-tuned model checkpoint to delete a permission for.  */
+    fine_tuned_model_checkpoint: string;
+    /** The ID of the fine-tuned model checkpoint permission to delete.  */
+    permission_id: string;
+  }) => Promise<DeleteFineTuningCheckpointPermissionResponse>;
+
+  /**
+   * Creates a fine-tuning job which begins the process of creating a new model from a given dataset.  Response includes details of the enqueued job including job status and the name of the fine-tuned models once complete.  [Learn more about fine-tuning](/docs/guides/fine-tuning) 
+   */
+  createFineTuningJob: (input: {
+    /** The name of the model to fine-tune. You can select one of the [supported models](/docs/guides/fine-tuning#which-models-can-be-fine-tuned).  */
+    model: string | "babbage-002" | "davinci-002" | "gpt-3.5-turbo" | "gpt-4o-mini";
+    /** The ID of an uploaded file that contains training data.  See [upload file](/docs/api-reference/files/create) for how to upload a file.  Your dataset must be formatted as a JSONL file. Additionally, you must upload your file with the purpose `fine-tune`.  The contents of the file should differ depending on if the model uses the [chat](/docs/api-reference/fine-tuning/chat-input), [completions](/docs/api-reference/fine-tuning/completions-input) format, or if the fine-tuning method uses the [preference](/docs/api-reference/fine-tuning/preference-input) format.  See the [fine-tuning guide](/docs/guides/fine-tuning) for more details.  */
+    training_file: string;
+    /** The hyperparameters used for the fine-tuning job. This value is now deprecated in favor of `method`, and should be passed in under the `method` parameter.  */
+    hyperparameters?: { batch_size?: "auto" | number; learning_rate_multiplier?: "auto" | number; n_epochs?: "auto" | number };
+    /** A string of up to 64 characters that will be added to your fine-tuned model name.  For example, a `suffix` of "custom-model-name" would produce a model name like `ft:gpt-4o-mini:openai:custom-model-name:7p4lURel`.  */
+    suffix?: string | null;
+    /** The ID of an uploaded file that contains validation data.  If you provide this file, the data is used to generate validation metrics periodically during fine-tuning. These metrics can be viewed in the fine-tuning results file. The same data should not be present in both train and validation files.  Your dataset must be formatted as a JSONL file. You must upload your file with the purpose `fine-tune`.  See the [fine-tuning guide](/docs/guides/fine-tuning) for more details.  */
+    validation_file?: string | null;
+    /** A list of integrations to enable for your fine-tuning job. */
+    integrations?: ({ type: "wandb"; wandb: { project: string; name?: string | null; entity?: string | null; tags?: (string)[] } })[] | null;
+    /** The seed controls the reproducibility of the job. Passing in the same seed and job parameters should produce the same results, but may differ in rare cases. If a seed is not specified, one will be generated for you.  */
+    seed?: number | null;
+    method?: FineTuneMethod;
+    metadata?: Metadata;
+  }) => Promise<FineTuningJob>;
+
+  /**
+   * List your organization's fine-tuning jobs 
+   */
+  listPaginatedFineTuningJobs: (input: {
+    /** Identifier for the last job from the previous pagination request. */
+    after?: string;
+    /** Number of fine-tuning jobs to retrieve. */
+    limit?: number;
+    /** Optional metadata filter. To filter, use the syntax `metadata[k]=v`. Alternatively, set `metadata=null` to indicate no metadata.  */
+    metadata?: { [key: string]: string | undefined } | null;
+  }) => Promise<ListPaginatedFineTuningJobsResponse>;
+
+  /**
+   * Get info about a fine-tuning job.  [Learn more about fine-tuning](/docs/guides/fine-tuning) 
+   */
+  retrieveFineTuningJob: (input: {
+    /** The ID of the fine-tuning job.  */
+    fine_tuning_job_id: string;
+  }) => Promise<FineTuningJob>;
+
+  /**
+   * Immediately cancel a fine-tune job. 
+   */
+  cancelFineTuningJob: (input: {
+    /** The ID of the fine-tuning job to cancel.  */
+    fine_tuning_job_id: string;
+  }) => Promise<FineTuningJob>;
+
+  /**
+   * List checkpoints for a fine-tuning job. 
+   */
+  listFineTuningJobCheckpoints: (input: {
+    /** The ID of the fine-tuning job to get checkpoints for.  */
+    fine_tuning_job_id: string;
+    /** Identifier for the last checkpoint ID from the previous pagination request. */
+    after?: string;
+    /** Number of checkpoints to retrieve. */
+    limit?: number;
+  }) => Promise<ListFineTuningJobCheckpointsResponse>;
+
+  /**
+   * Get status updates for a fine-tuning job. 
+   */
+  listFineTuningEvents: (input: {
+    /** The ID of the fine-tuning job to get events for.  */
+    fine_tuning_job_id: string;
+    /** Identifier for the last event from the previous pagination request. */
+    after?: string;
+    /** Number of events to retrieve. */
+    limit?: number;
+  }) => Promise<ListFineTuningJobEventsResponse>;
+
+  /**
+   * Creates an edited or extended image given one or more source images and a prompt. This endpoint only supports `gpt-image-1` and `dall-e-2`.
+   */
+  createImageEdit: (input: {
+    /** The image(s) to edit. Must be a supported image file or an array of images.  For `gpt-image-1`, each image should be a `png`, `webp`, or `jpg` file less  than 25MB. You can provide up to 16 images.  For `dall-e-2`, you can only provide one image, and it should be a square  `png` file less than 4MB.  */
+    image: string | (string)[];
+    /** A text description of the desired image(s). The maximum length is 1000 characters for `dall-e-2`, and 32000 characters for `gpt-image-1`. */
+    prompt: string;
+    /** An additional image whose fully transparent areas (e.g. where alpha is zero) indicate where `image` should be edited. If there are multiple images provided, the mask will be applied on the first image. Must be a valid PNG file, less than 4MB, and have the same dimensions as `image`. */
+    mask?: string;
+    /** The model to use for image generation. Only `dall-e-2` and `gpt-image-1` are supported. Defaults to `dall-e-2` unless a parameter specific to `gpt-image-1` is used. */
+    model?: string | "dall-e-2" | "gpt-image-1" | null;
+    /** The number of images to generate. Must be between 1 and 10. */
+    n?: number | null;
+    /** The size of the generated images. Must be one of `1024x1024`, `1536x1024` (landscape), `1024x1536` (portrait), or `auto` (default value) for `gpt-image-1`, and one of `256x256`, `512x512`, or `1024x1024` for `dall-e-2`. */
+    size?: "256x256" | "512x512" | "1024x1024" | "1536x1024" | "1024x1536" | "auto" | null;
+    /** The format in which the generated images are returned. Must be one of `url` or `b64_json`. URLs are only valid for 60 minutes after the image has been generated. This parameter is only supported for `dall-e-2`, as `gpt-image-1` will always return base64-encoded images. */
+    response_format?: "url" | "b64_json" | null;
+    /** A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices#end-user-ids).  */
+    user?: string;
+    /** The quality of the image that will be generated. `high`, `medium` and `low` are only supported for `gpt-image-1`. `dall-e-2` only supports `standard` quality. Defaults to `auto`.  */
+    quality?: "standard" | "low" | "medium" | "high" | "auto" | null;
+  }) => Promise<ImagesResponse>;
+
+  /**
+   * Creates an image given a prompt. [Learn more](/docs/guides/images). 
+   */
+  createImage: (input: {
+    /** A text description of the desired image(s). The maximum length is 32000 characters for `gpt-image-1`, 1000 characters for `dall-e-2` and 4000 characters for `dall-e-3`. */
+    prompt: string;
+    /** The model to use for image generation. One of `dall-e-2`, `dall-e-3`, or `gpt-image-1`. Defaults to `dall-e-2` unless a parameter specific to `gpt-image-1` is used. */
+    model?: string | "dall-e-2" | "dall-e-3" | "gpt-image-1" | null;
+    /** The number of images to generate. Must be between 1 and 10. For `dall-e-3`, only `n=1` is supported. */
+    n?: number | null;
+    /** The quality of the image that will be generated.   - `auto` (default value) will automatically select the best quality for the given model. - `high`, `medium` and `low` are supported for `gpt-image-1`. - `hd` and `standard` are supported for `dall-e-3`. - `standard` is the only option for `dall-e-2`.  */
+    quality?: "standard" | "hd" | "low" | "medium" | "high" | "auto" | null;
+    /** The format in which generated images with `dall-e-2` and `dall-e-3` are returned. Must be one of `url` or `b64_json`. URLs are only valid for 60 minutes after the image has been generated. This parameter isn't supported for `gpt-image-1` which will always return base64-encoded images. */
+    response_format?: "url" | "b64_json" | null;
+    /** The format in which the generated images are returned. This parameter is only supported for `gpt-image-1`. Must be one of `png`, `jpeg`, or `webp`. */
+    output_format?: "png" | "jpeg" | "webp" | null;
+    /** The compression level (0-100%) for the generated images. This parameter is only supported for `gpt-image-1` with the `webp` or `jpeg` output formats, and defaults to 100. */
+    output_compression?: number | null;
+    /** The size of the generated images. Must be one of `1024x1024`, `1536x1024` (landscape), `1024x1536` (portrait), or `auto` (default value) for `gpt-image-1`, one of `256x256`, `512x512`, or `1024x1024` for `dall-e-2`, and one of `1024x1024`, `1792x1024`, or `1024x1792` for `dall-e-3`. */
+    size?: "auto" | "1024x1024" | "1536x1024" | "1024x1536" | "256x256" | "512x512" | "1792x1024" | "1024x1792" | null;
+    /** Control the content-moderation level for images generated by `gpt-image-1`. Must be either `low` for less restrictive filtering or `auto` (default value). */
+    moderation?: "low" | "auto" | null;
+    /** Allows to set transparency for the background of the generated image(s).  This parameter is only supported for `gpt-image-1`. Must be one of  `transparent`, `opaque` or `auto` (default value). When `auto` is used, the  model will automatically determine the best background for the image.  If `transparent`, the output format needs to support transparency, so it  should be set to either `png` (default value) or `webp`.  */
+    background?: "transparent" | "opaque" | "auto" | null;
+    /** The style of the generated images. This parameter is only supported for `dall-e-3`. Must be one of `vivid` or `natural`. Vivid causes the model to lean towards generating hyper-real and dramatic images. Natural causes the model to produce more natural, less hyper-real looking images. */
+    style?: "vivid" | "natural" | null;
+    /** A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices#end-user-ids).  */
+    user?: string;
+  }) => Promise<ImagesResponse>;
+
+  /**
+   * Creates a variation of a given image. This endpoint only supports `dall-e-2`.
+   */
+  createImageVariation: (input: {
+    /** The image to use as the basis for the variation(s). Must be a valid PNG file, less than 4MB, and square. */
+    image: string;
+    /** The model to use for image generation. Only `dall-e-2` is supported at this time. */
+    model?: string | "dall-e-2" | null;
+    /** The number of images to generate. Must be between 1 and 10. */
+    n?: number | null;
+    /** The format in which the generated images are returned. Must be one of `url` or `b64_json`. URLs are only valid for 60 minutes after the image has been generated. */
+    response_format?: "url" | "b64_json" | null;
+    /** The size of the generated images. Must be one of `256x256`, `512x512`, or `1024x1024`. */
+    size?: "256x256" | "512x512" | "1024x1024" | null;
+    /** A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices#end-user-ids).  */
+    user?: string;
+  }) => Promise<ImagesResponse>;
+
+  /**
+   * Lists the currently available models, and provides basic information about each one such as the owner and availability.
+   */
+  listModels: () => Promise<ListModelsResponse>;
+
+  /**
+   * Retrieves a model instance, providing basic information about the model such as the owner and permissioning.
+   */
+  retrieveModel: (input: {
+    /** The ID of the model to use for this request */
+    model: string;
+  }) => Promise<Model>;
+
+  /**
+   * Delete a fine-tuned model. You must have the Owner role in your organization to delete a model.
+   */
+  deleteModel: (input: {
+    /** The model to delete */
+    model: string;
+  }) => Promise<DeleteModelResponse>;
+
+  /**
+   * Classifies if text and/or image inputs are potentially harmful. Learn more in the [moderation guide](/docs/guides/moderation). 
+   */
+  createModeration: (input: {
+    /** Input (or inputs) to classify. Can be a single string, an array of strings, or an array of multi-modal input objects similar to other models.  */
+    input: string | (string)[] | ({ type: "image_url"; image_url: { url: string } } | { type: "text"; text: string })[];
+    /** The content moderation model you would like to use. Learn more in [the moderation guide](/docs/guides/moderation), and learn about available models [here](/docs/models#moderation).  */
+    model?: string | "omni-moderation-latest" | "omni-moderation-2024-09-26" | "text-moderation-latest" | "text-moderation-stable";
+  }) => Promise<CreateModerationResponse>;
+
+  /**
+   * List organization API keys
+   */
+  adminApiKeysList: (input: {
+    /** Return keys with IDs that come after this ID in the pagination order. */
+    after?: string | null;
+    /** Order results by creation time, ascending or descending. */
+    order?: "asc" | "desc";
+    /** Maximum number of keys to return. */
+    limit?: number;
+  }) => Promise<ApiKeyList>;
+
+  /**
+   * Create an organization admin API key
+   */
+  adminApiKeysCreate: (input: {
+    name: string;
+  }) => Promise<AdminApiKey>;
+
+  /**
+   * Retrieve a single organization API key
+   */
+  adminApiKeysGet: (input: {
+    /** The ID of the API key. */
+    key_id: string;
+  }) => Promise<AdminApiKey>;
+
+  /**
+   * Delete an organization admin API key
+   */
+  adminApiKeysDelete: (input: {
+    /** The ID of the API key to be deleted. */
+    key_id: string;
+  }) => Promise<{ id?: string; object?: string; deleted?: boolean }>;
+
+  /**
+   * List user actions and configuration changes within this organization.
+   */
+  listAuditLogs: (input: {
+    /** Return only events whose `effective_at` (Unix seconds) is in this range. */
+    effective_at?: { gt?: number; gte?: number; lt?: number; lte?: number };
+    /** Return only events for these projects. */
+    "project_ids[]"?: (string)[];
+    /** Return only events with a `type` in one of these values. For example, `project.created`. For all options, see the documentation for the [audit log object](/docs/api-reference/audit-logs/object). */
+    "event_types[]"?: (AuditLogEventType)[];
+    /** Return only events performed by these actors. Can be a user ID, a service account ID, or an api key tracking ID. */
+    "actor_ids[]"?: (string)[];
+    /** Return only events performed by users with these emails. */
+    "actor_emails[]"?: (string)[];
+    /** Return only events performed on these targets. For example, a project ID updated. */
+    "resource_ids[]"?: (string)[];
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.  */
+    before?: string;
+  }) => Promise<ListAuditLogsResponse>;
+
+  /**
+   * List uploaded certificates for this organization.
+   */
+  listOrganizationCertificates: (input: {
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.  */
+    order?: "asc" | "desc";
+  }) => Promise<ListCertificatesResponse>;
+
   /**
    * Upload a certificate to the organization. This does **not** automatically activate the certificate.  Organizations can upload up to 50 certificates. 
-   * Tags: Certificates
-   * Access as: openai.uploadCertificate(input)
    */
-  uploadCertificate: (input: { name?: string; content: string }) => Promise<{ object: "certificate" | "organization.certificate" | "organization.project.certificate"; id: string; name: string; created_at: number; certificate_details: { valid_at?: number; expires_at?: number; content?: string }; active?: boolean }>;
+  uploadCertificate: (input: {
+    /** An optional name for the certificate */
+    name?: string;
+    /** The certificate content in PEM format */
+    content: string;
+  }) => Promise<Certificate>;
+
   /**
-   * Get audio speeches usage details for the organization.
-   * Tags: Usage
-   * Access as: openai.usageAudioSpeeches(input)
+   * Activate certificates at the organization level.  You can atomically and idempotently activate up to 10 certificates at a time. 
    */
-  usageAudioSpeeches: (input: { start_time: number; end_time?: number; bucket_width?: "1m" | "1h" | "1d"; project_ids?: (string)[]; user_ids?: (string)[]; api_key_ids?: (string)[]; models?: (string)[]; group_by?: ("project_id" | "user_id" | "api_key_id" | "model")[]; limit?: number; page?: string }) => Promise<{ object: "page"; data: ({ object: "bucket"; start_time: number; end_time: number; result: ({ object: "organization.usage.completions.result"; input_tokens: number; input_cached_tokens?: number; output_tokens: number; input_audio_tokens?: number; output_audio_tokens?: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null; batch?: boolean | null } | { object: "organization.usage.embeddings.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.moderations.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.images.result"; images: number; num_model_requests: number; source?: string | null; size?: string | null; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_speeches.result"; characters: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_transcriptions.result"; seconds: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.vector_stores.result"; usage_bytes: number; project_id?: string | null } | { object: "organization.usage.code_interpreter_sessions.result"; num_sessions?: number; project_id?: string | null } | { object: "organization.costs.result"; amount?: { value?: number; currency?: string }; line_item?: string | null; project_id?: string | null })[] })[]; has_more: boolean; next_page: string }>;
+  activateOrganizationCertificates: (input: {
+    certificate_ids: (string)[];
+  }) => Promise<ListCertificatesResponse>;
+
   /**
-   * Get audio transcriptions usage details for the organization.
-   * Tags: Usage
-   * Access as: openai.usageAudioTranscriptions(input)
+   * Deactivate certificates at the organization level.  You can atomically and idempotently deactivate up to 10 certificates at a time. 
    */
-  usageAudioTranscriptions: (input: { start_time: number; end_time?: number; bucket_width?: "1m" | "1h" | "1d"; project_ids?: (string)[]; user_ids?: (string)[]; api_key_ids?: (string)[]; models?: (string)[]; group_by?: ("project_id" | "user_id" | "api_key_id" | "model")[]; limit?: number; page?: string }) => Promise<{ object: "page"; data: ({ object: "bucket"; start_time: number; end_time: number; result: ({ object: "organization.usage.completions.result"; input_tokens: number; input_cached_tokens?: number; output_tokens: number; input_audio_tokens?: number; output_audio_tokens?: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null; batch?: boolean | null } | { object: "organization.usage.embeddings.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.moderations.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.images.result"; images: number; num_model_requests: number; source?: string | null; size?: string | null; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_speeches.result"; characters: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_transcriptions.result"; seconds: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.vector_stores.result"; usage_bytes: number; project_id?: string | null } | { object: "organization.usage.code_interpreter_sessions.result"; num_sessions?: number; project_id?: string | null } | { object: "organization.costs.result"; amount?: { value?: number; currency?: string }; line_item?: string | null; project_id?: string | null })[] })[]; has_more: boolean; next_page: string }>;
+  deactivateOrganizationCertificates: (input: {
+    certificate_ids: (string)[];
+  }) => Promise<ListCertificatesResponse>;
+
   /**
-   * Get code interpreter sessions usage details for the organization.
-   * Tags: Usage
-   * Access as: openai.usageCodeInterpreterSessions(input)
+   * Get a certificate that has been uploaded to the organization.  You can get a certificate regardless of whether it is active or not. 
    */
-  usageCodeInterpreterSessions: (input: { start_time: number; end_time?: number; bucket_width?: "1m" | "1h" | "1d"; project_ids?: (string)[]; group_by?: ("project_id")[]; limit?: number; page?: string }) => Promise<{ object: "page"; data: ({ object: "bucket"; start_time: number; end_time: number; result: ({ object: "organization.usage.completions.result"; input_tokens: number; input_cached_tokens?: number; output_tokens: number; input_audio_tokens?: number; output_audio_tokens?: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null; batch?: boolean | null } | { object: "organization.usage.embeddings.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.moderations.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.images.result"; images: number; num_model_requests: number; source?: string | null; size?: string | null; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_speeches.result"; characters: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_transcriptions.result"; seconds: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.vector_stores.result"; usage_bytes: number; project_id?: string | null } | { object: "organization.usage.code_interpreter_sessions.result"; num_sessions?: number; project_id?: string | null } | { object: "organization.costs.result"; amount?: { value?: number; currency?: string }; line_item?: string | null; project_id?: string | null })[] })[]; has_more: boolean; next_page: string }>;
+  getCertificate: (input: {
+    /** Unique ID of the certificate to retrieve. */
+    cert_id: string;
+    /** A list of additional fields to include in the response. Currently the only supported value is `content` to fetch the PEM content of the certificate. */
+    include?: ("content")[];
+  }) => Promise<Certificate>;
+
   /**
-   * Get completions usage details for the organization.
-   * Tags: Usage
-   * Access as: openai.usageCompletions(input)
+   * Modify a certificate. Note that only the name can be modified. 
    */
-  usageCompletions: (input: { start_time: number; end_time?: number; bucket_width?: "1m" | "1h" | "1d"; project_ids?: (string)[]; user_ids?: (string)[]; api_key_ids?: (string)[]; models?: (string)[]; batch?: boolean; group_by?: ("project_id" | "user_id" | "api_key_id" | "model" | "batch")[]; limit?: number; page?: string }) => Promise<{ object: "page"; data: ({ object: "bucket"; start_time: number; end_time: number; result: ({ object: "organization.usage.completions.result"; input_tokens: number; input_cached_tokens?: number; output_tokens: number; input_audio_tokens?: number; output_audio_tokens?: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null; batch?: boolean | null } | { object: "organization.usage.embeddings.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.moderations.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.images.result"; images: number; num_model_requests: number; source?: string | null; size?: string | null; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_speeches.result"; characters: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_transcriptions.result"; seconds: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.vector_stores.result"; usage_bytes: number; project_id?: string | null } | { object: "organization.usage.code_interpreter_sessions.result"; num_sessions?: number; project_id?: string | null } | { object: "organization.costs.result"; amount?: { value?: number; currency?: string }; line_item?: string | null; project_id?: string | null })[] })[]; has_more: boolean; next_page: string }>;
+  modifyCertificate: (input: {
+    /** The updated name for the certificate */
+    name: string;
+  }) => Promise<Certificate>;
+
+  /**
+   * Delete a certificate from the organization.  The certificate must be inactive for the organization and all projects. 
+   */
+  deleteCertificate: () => Promise<DeleteCertificateResponse>;
+
   /**
    * Get costs details for the organization.
-   * Tags: Usage
-   * Access as: openai.usageCosts(input)
    */
-  usageCosts: (input: { start_time: number; end_time?: number; bucket_width?: "1d"; project_ids?: (string)[]; group_by?: ("project_id" | "line_item")[]; limit?: number; page?: string }) => Promise<{ object: "page"; data: ({ object: "bucket"; start_time: number; end_time: number; result: ({ object: "organization.usage.completions.result"; input_tokens: number; input_cached_tokens?: number; output_tokens: number; input_audio_tokens?: number; output_audio_tokens?: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null; batch?: boolean | null } | { object: "organization.usage.embeddings.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.moderations.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.images.result"; images: number; num_model_requests: number; source?: string | null; size?: string | null; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_speeches.result"; characters: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_transcriptions.result"; seconds: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.vector_stores.result"; usage_bytes: number; project_id?: string | null } | { object: "organization.usage.code_interpreter_sessions.result"; num_sessions?: number; project_id?: string | null } | { object: "organization.costs.result"; amount?: { value?: number; currency?: string }; line_item?: string | null; project_id?: string | null })[] })[]; has_more: boolean; next_page: string }>;
+  usageCosts: (input: {
+    /** Start time (Unix seconds) of the query time range, inclusive. */
+    start_time: number;
+    /** End time (Unix seconds) of the query time range, exclusive. */
+    end_time?: number;
+    /** Width of each time bucket in response. Currently only `1d` is supported, default to `1d`. */
+    bucket_width?: "1d";
+    /** Return only costs for these projects. */
+    project_ids?: (string)[];
+    /** Group the costs by the specified fields. Support fields include `project_id`, `line_item` and any combination of them. */
+    group_by?: ("project_id" | "line_item")[];
+    /** A limit on the number of buckets to be returned. Limit can range between 1 and 180, and the default is 7.  */
+    limit?: number;
+    /** A cursor for use in pagination. Corresponding to the `next_page` field from the previous response. */
+    page?: string;
+  }) => Promise<UsageResponse>;
+
+  /**
+   * Returns a list of invites in the organization.
+   */
+  listInvites: (input: {
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+  }) => Promise<InviteListResponse>;
+
+  /**
+   * Create an invite for a user to the organization. The invite must be accepted by the user before they have access to the organization.
+   */
+  inviteUser: (input: {
+    /** Send an email to this address */
+    email: string;
+    /** `owner` or `reader` */
+    role: "reader" | "owner";
+    /** An array of projects to which membership is granted at the same time the org invite is accepted. If omitted, the user will be invited to the default project for compatibility with legacy behavior. */
+    projects?: ({ id: string; role: "member" | "owner" })[];
+  }) => Promise<Invite>;
+
+  /**
+   * Retrieves an invite.
+   */
+  retrieveInvite: (input: {
+    /** The ID of the invite to retrieve. */
+    invite_id: string;
+  }) => Promise<Invite>;
+
+  /**
+   * Delete an invite. If the invite has already been accepted, it cannot be deleted.
+   */
+  deleteInvite: (input: {
+    /** The ID of the invite to delete. */
+    invite_id: string;
+  }) => Promise<InviteDeleteResponse>;
+
+  /**
+   * Returns a list of projects.
+   */
+  listProjects: (input: {
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** If `true` returns all projects including those that have been `archived`. Archived projects are not included by default. */
+    include_archived?: boolean;
+  }) => Promise<ProjectListResponse>;
+
+  /**
+   * Create a new project in the organization. Projects can be created and archived, but cannot be deleted.
+   */
+  createProject: (input: {
+    /** The friendly name of the project, this name appears in reports. */
+    name: string;
+  }) => Promise<Project>;
+
+  /**
+   * Retrieves a project.
+   */
+  retrieveProject: (input: {
+    /** The ID of the project. */
+    project_id: string;
+  }) => Promise<Project>;
+
+  /**
+   * Modifies a project in the organization.
+   */
+  modifyProject: (input: {
+    /** The updated name of the project, this name appears in reports. */
+    name: string;
+    /** The ID of the project. */
+    project_id: string;
+  }) => Promise<Project>;
+
+  /**
+   * Returns a list of API keys in the project.
+   */
+  listProjectApiKeys: (input: {
+    /** The ID of the project. */
+    project_id: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+  }) => Promise<ProjectApiKeyListResponse>;
+
+  /**
+   * Retrieves an API key in the project.
+   */
+  retrieveProjectApiKey: (input: {
+    /** The ID of the project. */
+    project_id: string;
+    /** The ID of the API key. */
+    key_id: string;
+  }) => Promise<ProjectApiKey>;
+
+  /**
+   * Deletes an API key from the project.
+   */
+  deleteProjectApiKey: (input: {
+    /** The ID of the project. */
+    project_id: string;
+    /** The ID of the API key. */
+    key_id: string;
+  }) => Promise<ProjectApiKeyDeleteResponse>;
+
+  /**
+   * Archives a project in the organization. Archived projects cannot be used or updated.
+   */
+  archiveProject: (input: {
+    /** The ID of the project. */
+    project_id: string;
+  }) => Promise<Project>;
+
+  /**
+   * List certificates for this project.
+   */
+  listProjectCertificates: (input: {
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.  */
+    order?: "asc" | "desc";
+  }) => Promise<ListCertificatesResponse>;
+
+  /**
+   * Activate certificates at the project level.  You can atomically and idempotently activate up to 10 certificates at a time. 
+   */
+  activateProjectCertificates: (input: {
+    certificate_ids: (string)[];
+  }) => Promise<ListCertificatesResponse>;
+
+  /**
+   * Deactivate certificates at the project level.  You can atomically and idempotently deactivate up to 10 certificates at a time. 
+   */
+  deactivateProjectCertificates: (input: {
+    certificate_ids: (string)[];
+  }) => Promise<ListCertificatesResponse>;
+
+  /**
+   * Returns the rate limits per model for a project.
+   */
+  listProjectRateLimits: (input: {
+    /** The ID of the project. */
+    project_id: string;
+    /** A limit on the number of objects to be returned. The default is 100.  */
+    limit?: number;
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, beginning with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.  */
+    before?: string;
+  }) => Promise<ProjectRateLimitListResponse>;
+
+  /**
+   * Updates a project rate limit.
+   */
+  updateProjectRateLimits: (input: {
+    /** The maximum requests per minute. */
+    max_requests_per_1_minute?: number;
+    /** The maximum tokens per minute. */
+    max_tokens_per_1_minute?: number;
+    /** The maximum images per minute. Only relevant for certain models. */
+    max_images_per_1_minute?: number;
+    /** The maximum audio megabytes per minute. Only relevant for certain models. */
+    max_audio_megabytes_per_1_minute?: number;
+    /** The maximum requests per day. Only relevant for certain models. */
+    max_requests_per_1_day?: number;
+    /** The maximum batch input tokens per day. Only relevant for certain models. */
+    batch_1_day_max_input_tokens?: number;
+    /** The ID of the project. */
+    project_id: string;
+    /** The ID of the rate limit. */
+    rate_limit_id: string;
+  }) => Promise<ProjectRateLimit>;
+
+  /**
+   * Returns a list of service accounts in the project.
+   */
+  listProjectServiceAccounts: (input: {
+    /** The ID of the project. */
+    project_id: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+  }) => Promise<ProjectServiceAccountListResponse>;
+
+  /**
+   * Creates a new service account in the project. This also returns an unredacted API key for the service account.
+   */
+  createProjectServiceAccount: (input: {
+    /** The name of the service account being created. */
+    name: string;
+    /** The ID of the project. */
+    project_id: string;
+  }) => Promise<ProjectServiceAccountCreateResponse>;
+
+  /**
+   * Retrieves a service account in the project.
+   */
+  retrieveProjectServiceAccount: (input: {
+    /** The ID of the project. */
+    project_id: string;
+    /** The ID of the service account. */
+    service_account_id: string;
+  }) => Promise<ProjectServiceAccount>;
+
+  /**
+   * Deletes a service account from the project.
+   */
+  deleteProjectServiceAccount: (input: {
+    /** The ID of the project. */
+    project_id: string;
+    /** The ID of the service account. */
+    service_account_id: string;
+  }) => Promise<ProjectServiceAccountDeleteResponse>;
+
+  /**
+   * Returns a list of users in the project.
+   */
+  listProjectUsers: (input: {
+    /** The ID of the project. */
+    project_id: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+  }) => Promise<ProjectUserListResponse>;
+
+  /**
+   * Adds a user to the project. Users must already be members of the organization to be added to a project.
+   */
+  createProjectUser: (input: {
+    /** The ID of the user. */
+    user_id: string;
+    /** `owner` or `member` */
+    role: "owner" | "member";
+    /** The ID of the project. */
+    project_id: string;
+  }) => Promise<ProjectUser>;
+
+  /**
+   * Retrieves a user in the project.
+   */
+  retrieveProjectUser: (input: {
+    /** The ID of the project. */
+    project_id: string;
+    /** The ID of the user. */
+    user_id: string;
+  }) => Promise<ProjectUser>;
+
+  /**
+   * Modifies a user's role in the project.
+   */
+  modifyProjectUser: (input: {
+    /** `owner` or `member` */
+    role: "owner" | "member";
+    /** The ID of the project. */
+    project_id: string;
+    /** The ID of the user. */
+    user_id: string;
+  }) => Promise<ProjectUser>;
+
+  /**
+   * Deletes a user from the project.
+   */
+  deleteProjectUser: (input: {
+    /** The ID of the project. */
+    project_id: string;
+    /** The ID of the user. */
+    user_id: string;
+  }) => Promise<ProjectUserDeleteResponse>;
+
+  /**
+   * Get audio speeches usage details for the organization.
+   */
+  usageAudioSpeeches: (input: {
+    /** Start time (Unix seconds) of the query time range, inclusive. */
+    start_time: number;
+    /** End time (Unix seconds) of the query time range, exclusive. */
+    end_time?: number;
+    /** Width of each time bucket in response. Currently `1m`, `1h` and `1d` are supported, default to `1d`. */
+    bucket_width?: "1m" | "1h" | "1d";
+    /** Return only usage for these projects. */
+    project_ids?: (string)[];
+    /** Return only usage for these users. */
+    user_ids?: (string)[];
+    /** Return only usage for these API keys. */
+    api_key_ids?: (string)[];
+    /** Return only usage for these models. */
+    models?: (string)[];
+    /** Group the usage data by the specified fields. Support fields include `project_id`, `user_id`, `api_key_id`, `model` or any combination of them. */
+    group_by?: ("project_id" | "user_id" | "api_key_id" | "model")[];
+    /** Specifies the number of buckets to return. - `bucket_width=1d`: default: 7, max: 31 - `bucket_width=1h`: default: 24, max: 168 - `bucket_width=1m`: default: 60, max: 1440  */
+    limit?: number;
+    /** A cursor for use in pagination. Corresponding to the `next_page` field from the previous response. */
+    page?: string;
+  }) => Promise<UsageResponse>;
+
+  /**
+   * Get audio transcriptions usage details for the organization.
+   */
+  usageAudioTranscriptions: (input: {
+    /** Start time (Unix seconds) of the query time range, inclusive. */
+    start_time: number;
+    /** End time (Unix seconds) of the query time range, exclusive. */
+    end_time?: number;
+    /** Width of each time bucket in response. Currently `1m`, `1h` and `1d` are supported, default to `1d`. */
+    bucket_width?: "1m" | "1h" | "1d";
+    /** Return only usage for these projects. */
+    project_ids?: (string)[];
+    /** Return only usage for these users. */
+    user_ids?: (string)[];
+    /** Return only usage for these API keys. */
+    api_key_ids?: (string)[];
+    /** Return only usage for these models. */
+    models?: (string)[];
+    /** Group the usage data by the specified fields. Support fields include `project_id`, `user_id`, `api_key_id`, `model` or any combination of them. */
+    group_by?: ("project_id" | "user_id" | "api_key_id" | "model")[];
+    /** Specifies the number of buckets to return. - `bucket_width=1d`: default: 7, max: 31 - `bucket_width=1h`: default: 24, max: 168 - `bucket_width=1m`: default: 60, max: 1440  */
+    limit?: number;
+    /** A cursor for use in pagination. Corresponding to the `next_page` field from the previous response. */
+    page?: string;
+  }) => Promise<UsageResponse>;
+
+  /**
+   * Get code interpreter sessions usage details for the organization.
+   */
+  usageCodeInterpreterSessions: (input: {
+    /** Start time (Unix seconds) of the query time range, inclusive. */
+    start_time: number;
+    /** End time (Unix seconds) of the query time range, exclusive. */
+    end_time?: number;
+    /** Width of each time bucket in response. Currently `1m`, `1h` and `1d` are supported, default to `1d`. */
+    bucket_width?: "1m" | "1h" | "1d";
+    /** Return only usage for these projects. */
+    project_ids?: (string)[];
+    /** Group the usage data by the specified fields. Support fields include `project_id`. */
+    group_by?: ("project_id")[];
+    /** Specifies the number of buckets to return. - `bucket_width=1d`: default: 7, max: 31 - `bucket_width=1h`: default: 24, max: 168 - `bucket_width=1m`: default: 60, max: 1440  */
+    limit?: number;
+    /** A cursor for use in pagination. Corresponding to the `next_page` field from the previous response. */
+    page?: string;
+  }) => Promise<UsageResponse>;
+
+  /**
+   * Get completions usage details for the organization.
+   */
+  usageCompletions: (input: {
+    /** Start time (Unix seconds) of the query time range, inclusive. */
+    start_time: number;
+    /** End time (Unix seconds) of the query time range, exclusive. */
+    end_time?: number;
+    /** Width of each time bucket in response. Currently `1m`, `1h` and `1d` are supported, default to `1d`. */
+    bucket_width?: "1m" | "1h" | "1d";
+    /** Return only usage for these projects. */
+    project_ids?: (string)[];
+    /** Return only usage for these users. */
+    user_ids?: (string)[];
+    /** Return only usage for these API keys. */
+    api_key_ids?: (string)[];
+    /** Return only usage for these models. */
+    models?: (string)[];
+    /** If `true`, return batch jobs only. If `false`, return non-batch jobs only. By default, return both.  */
+    batch?: boolean;
+    /** Group the usage data by the specified fields. Support fields include `project_id`, `user_id`, `api_key_id`, `model`, `batch` or any combination of them. */
+    group_by?: ("project_id" | "user_id" | "api_key_id" | "model" | "batch")[];
+    /** Specifies the number of buckets to return. - `bucket_width=1d`: default: 7, max: 31 - `bucket_width=1h`: default: 24, max: 168 - `bucket_width=1m`: default: 60, max: 1440  */
+    limit?: number;
+    /** A cursor for use in pagination. Corresponding to the `next_page` field from the previous response. */
+    page?: string;
+  }) => Promise<UsageResponse>;
+
   /**
    * Get embeddings usage details for the organization.
-   * Tags: Usage
-   * Access as: openai.usageEmbeddings(input)
    */
-  usageEmbeddings: (input: { start_time: number; end_time?: number; bucket_width?: "1m" | "1h" | "1d"; project_ids?: (string)[]; user_ids?: (string)[]; api_key_ids?: (string)[]; models?: (string)[]; group_by?: ("project_id" | "user_id" | "api_key_id" | "model")[]; limit?: number; page?: string }) => Promise<{ object: "page"; data: ({ object: "bucket"; start_time: number; end_time: number; result: ({ object: "organization.usage.completions.result"; input_tokens: number; input_cached_tokens?: number; output_tokens: number; input_audio_tokens?: number; output_audio_tokens?: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null; batch?: boolean | null } | { object: "organization.usage.embeddings.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.moderations.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.images.result"; images: number; num_model_requests: number; source?: string | null; size?: string | null; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_speeches.result"; characters: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_transcriptions.result"; seconds: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.vector_stores.result"; usage_bytes: number; project_id?: string | null } | { object: "organization.usage.code_interpreter_sessions.result"; num_sessions?: number; project_id?: string | null } | { object: "organization.costs.result"; amount?: { value?: number; currency?: string }; line_item?: string | null; project_id?: string | null })[] })[]; has_more: boolean; next_page: string }>;
+  usageEmbeddings: (input: {
+    /** Start time (Unix seconds) of the query time range, inclusive. */
+    start_time: number;
+    /** End time (Unix seconds) of the query time range, exclusive. */
+    end_time?: number;
+    /** Width of each time bucket in response. Currently `1m`, `1h` and `1d` are supported, default to `1d`. */
+    bucket_width?: "1m" | "1h" | "1d";
+    /** Return only usage for these projects. */
+    project_ids?: (string)[];
+    /** Return only usage for these users. */
+    user_ids?: (string)[];
+    /** Return only usage for these API keys. */
+    api_key_ids?: (string)[];
+    /** Return only usage for these models. */
+    models?: (string)[];
+    /** Group the usage data by the specified fields. Support fields include `project_id`, `user_id`, `api_key_id`, `model` or any combination of them. */
+    group_by?: ("project_id" | "user_id" | "api_key_id" | "model")[];
+    /** Specifies the number of buckets to return. - `bucket_width=1d`: default: 7, max: 31 - `bucket_width=1h`: default: 24, max: 168 - `bucket_width=1m`: default: 60, max: 1440  */
+    limit?: number;
+    /** A cursor for use in pagination. Corresponding to the `next_page` field from the previous response. */
+    page?: string;
+  }) => Promise<UsageResponse>;
+
   /**
    * Get images usage details for the organization.
-   * Tags: Usage
-   * Access as: openai.usageImages(input)
    */
-  usageImages: (input: { start_time: number; end_time?: number; bucket_width?: "1m" | "1h" | "1d"; sources?: ("image.generation" | "image.edit" | "image.variation")[]; sizes?: ("256x256" | "512x512" | "1024x1024" | "1792x1792" | "1024x1792")[]; project_ids?: (string)[]; user_ids?: (string)[]; api_key_ids?: (string)[]; models?: (string)[]; group_by?: ("project_id" | "user_id" | "api_key_id" | "model" | "size" | "source")[]; limit?: number; page?: string }) => Promise<{ object: "page"; data: ({ object: "bucket"; start_time: number; end_time: number; result: ({ object: "organization.usage.completions.result"; input_tokens: number; input_cached_tokens?: number; output_tokens: number; input_audio_tokens?: number; output_audio_tokens?: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null; batch?: boolean | null } | { object: "organization.usage.embeddings.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.moderations.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.images.result"; images: number; num_model_requests: number; source?: string | null; size?: string | null; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_speeches.result"; characters: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_transcriptions.result"; seconds: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.vector_stores.result"; usage_bytes: number; project_id?: string | null } | { object: "organization.usage.code_interpreter_sessions.result"; num_sessions?: number; project_id?: string | null } | { object: "organization.costs.result"; amount?: { value?: number; currency?: string }; line_item?: string | null; project_id?: string | null })[] })[]; has_more: boolean; next_page: string }>;
+  usageImages: (input: {
+    /** Start time (Unix seconds) of the query time range, inclusive. */
+    start_time: number;
+    /** End time (Unix seconds) of the query time range, exclusive. */
+    end_time?: number;
+    /** Width of each time bucket in response. Currently `1m`, `1h` and `1d` are supported, default to `1d`. */
+    bucket_width?: "1m" | "1h" | "1d";
+    /** Return only usages for these sources. Possible values are `image.generation`, `image.edit`, `image.variation` or any combination of them. */
+    sources?: ("image.generation" | "image.edit" | "image.variation")[];
+    /** Return only usages for these image sizes. Possible values are `256x256`, `512x512`, `1024x1024`, `1792x1792`, `1024x1792` or any combination of them. */
+    sizes?: ("256x256" | "512x512" | "1024x1024" | "1792x1792" | "1024x1792")[];
+    /** Return only usage for these projects. */
+    project_ids?: (string)[];
+    /** Return only usage for these users. */
+    user_ids?: (string)[];
+    /** Return only usage for these API keys. */
+    api_key_ids?: (string)[];
+    /** Return only usage for these models. */
+    models?: (string)[];
+    /** Group the usage data by the specified fields. Support fields include `project_id`, `user_id`, `api_key_id`, `model`, `size`, `source` or any combination of them. */
+    group_by?: ("project_id" | "user_id" | "api_key_id" | "model" | "size" | "source")[];
+    /** Specifies the number of buckets to return. - `bucket_width=1d`: default: 7, max: 31 - `bucket_width=1h`: default: 24, max: 168 - `bucket_width=1m`: default: 60, max: 1440  */
+    limit?: number;
+    /** A cursor for use in pagination. Corresponding to the `next_page` field from the previous response. */
+    page?: string;
+  }) => Promise<UsageResponse>;
+
   /**
    * Get moderations usage details for the organization.
-   * Tags: Usage
-   * Access as: openai.usageModerations(input)
    */
-  usageModerations: (input: { start_time: number; end_time?: number; bucket_width?: "1m" | "1h" | "1d"; project_ids?: (string)[]; user_ids?: (string)[]; api_key_ids?: (string)[]; models?: (string)[]; group_by?: ("project_id" | "user_id" | "api_key_id" | "model")[]; limit?: number; page?: string }) => Promise<{ object: "page"; data: ({ object: "bucket"; start_time: number; end_time: number; result: ({ object: "organization.usage.completions.result"; input_tokens: number; input_cached_tokens?: number; output_tokens: number; input_audio_tokens?: number; output_audio_tokens?: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null; batch?: boolean | null } | { object: "organization.usage.embeddings.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.moderations.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.images.result"; images: number; num_model_requests: number; source?: string | null; size?: string | null; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_speeches.result"; characters: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_transcriptions.result"; seconds: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.vector_stores.result"; usage_bytes: number; project_id?: string | null } | { object: "organization.usage.code_interpreter_sessions.result"; num_sessions?: number; project_id?: string | null } | { object: "organization.costs.result"; amount?: { value?: number; currency?: string }; line_item?: string | null; project_id?: string | null })[] })[]; has_more: boolean; next_page: string }>;
+  usageModerations: (input: {
+    /** Start time (Unix seconds) of the query time range, inclusive. */
+    start_time: number;
+    /** End time (Unix seconds) of the query time range, exclusive. */
+    end_time?: number;
+    /** Width of each time bucket in response. Currently `1m`, `1h` and `1d` are supported, default to `1d`. */
+    bucket_width?: "1m" | "1h" | "1d";
+    /** Return only usage for these projects. */
+    project_ids?: (string)[];
+    /** Return only usage for these users. */
+    user_ids?: (string)[];
+    /** Return only usage for these API keys. */
+    api_key_ids?: (string)[];
+    /** Return only usage for these models. */
+    models?: (string)[];
+    /** Group the usage data by the specified fields. Support fields include `project_id`, `user_id`, `api_key_id`, `model` or any combination of them. */
+    group_by?: ("project_id" | "user_id" | "api_key_id" | "model")[];
+    /** Specifies the number of buckets to return. - `bucket_width=1d`: default: 7, max: 31 - `bucket_width=1h`: default: 24, max: 168 - `bucket_width=1m`: default: 60, max: 1440  */
+    limit?: number;
+    /** A cursor for use in pagination. Corresponding to the `next_page` field from the previous response. */
+    page?: string;
+  }) => Promise<UsageResponse>;
+
   /**
    * Get vector stores usage details for the organization.
-   * Tags: Usage
-   * Access as: openai.usageVectorStores(input)
    */
-  usageVectorStores: (input: { start_time: number; end_time?: number; bucket_width?: "1m" | "1h" | "1d"; project_ids?: (string)[]; group_by?: ("project_id")[]; limit?: number; page?: string }) => Promise<{ object: "page"; data: ({ object: "bucket"; start_time: number; end_time: number; result: ({ object: "organization.usage.completions.result"; input_tokens: number; input_cached_tokens?: number; output_tokens: number; input_audio_tokens?: number; output_audio_tokens?: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null; batch?: boolean | null } | { object: "organization.usage.embeddings.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.moderations.result"; input_tokens: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.images.result"; images: number; num_model_requests: number; source?: string | null; size?: string | null; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_speeches.result"; characters: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.audio_transcriptions.result"; seconds: number; num_model_requests: number; project_id?: string | null; user_id?: string | null; api_key_id?: string | null; model?: string | null } | { object: "organization.usage.vector_stores.result"; usage_bytes: number; project_id?: string | null } | { object: "organization.usage.code_interpreter_sessions.result"; num_sessions?: number; project_id?: string | null } | { object: "organization.costs.result"; amount?: { value?: number; currency?: string }; line_item?: string | null; project_id?: string | null })[] })[]; has_more: boolean; next_page: string }>;
+  usageVectorStores: (input: {
+    /** Start time (Unix seconds) of the query time range, inclusive. */
+    start_time: number;
+    /** End time (Unix seconds) of the query time range, exclusive. */
+    end_time?: number;
+    /** Width of each time bucket in response. Currently `1m`, `1h` and `1d` are supported, default to `1d`. */
+    bucket_width?: "1m" | "1h" | "1d";
+    /** Return only usage for these projects. */
+    project_ids?: (string)[];
+    /** Group the usage data by the specified fields. Support fields include `project_id`. */
+    group_by?: ("project_id")[];
+    /** Specifies the number of buckets to return. - `bucket_width=1d`: default: 7, max: 31 - `bucket_width=1h`: default: 24, max: 168 - `bucket_width=1m`: default: 60, max: 1440  */
+    limit?: number;
+    /** A cursor for use in pagination. Corresponding to the `next_page` field from the previous response. */
+    page?: string;
+  }) => Promise<UsageResponse>;
+
+  /**
+   * Lists all of the users in the organization.
+   */
+  listUsers: (input: {
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** Filter by the email address of users. */
+    emails?: (string)[];
+  }) => Promise<UserListResponse>;
+
+  /**
+   * Retrieves a user by their identifier.
+   */
+  retrieveUser: (input: {
+    /** The ID of the user. */
+    user_id: string;
+  }) => Promise<User>;
+
+  /**
+   * Modifies a user's role in the organization.
+   */
+  modifyUser: (input: {
+    /** `owner` or `reader` */
+    role: "owner" | "reader";
+    /** The ID of the user. */
+    user_id: string;
+  }) => Promise<User>;
+
+  /**
+   * Deletes a user from the organization.
+   */
+  deleteUser: (input: {
+    /** The ID of the user. */
+    user_id: string;
+  }) => Promise<UserDeleteResponse>;
+
+  /**
+   * Create an ephemeral API token for use in client-side applications with the Realtime API. Can be configured with the same session parameters as the `session.update` client event.  It responds with a session object, plus a `client_secret` key which contains a usable ephemeral API token that can be used to authenticate browser clients for the Realtime API. 
+   */
+  createRealtimeSession: (input: {
+    /** The set of modalities the model can respond with. To disable audio, set this to ["text"].  */
+    modalities?: unknown;
+    /** The Realtime model used for this session.  */
+    model?: "gpt-4o-realtime-preview" | "gpt-4o-realtime-preview-2024-10-01" | "gpt-4o-realtime-preview-2024-12-17" | "gpt-4o-mini-realtime-preview" | "gpt-4o-mini-realtime-preview-2024-12-17";
+    /** The default system instructions (i.e. system message) prepended to model  calls. This field allows the client to guide the model on desired  responses. The model can be instructed on response content and format,  (e.g. "be extremely succinct", "act friendly", "here are examples of good  responses") and on audio behavior (e.g. "talk quickly", "inject emotion  into your voice", "laugh frequently"). The instructions are not guaranteed  to be followed by the model, but they provide guidance to the model on the desired behavior.  Note that the server sets default instructions which will be used if this  field is not set and are visible in the `session.created` event at the  start of the session.  */
+    instructions?: string;
+    /** The voice the model uses to respond. Voice cannot be changed during the  session once the model has responded with audio at least once. Current  voice options are `alloy`, `ash`, `ballad`, `coral`, `echo`, `fable`, `onyx`, `nova`, `sage`, `shimmer`, and `verse`.  */
+    voice?: VoiceIdsShared;
+    /** The format of input audio. Options are `pcm16`, `g711_ulaw`, or `g711_alaw`. For `pcm16`, input audio must be 16-bit PCM at a 24kHz sample rate,  single channel (mono), and little-endian byte order.  */
+    input_audio_format?: "pcm16" | "g711_ulaw" | "g711_alaw";
+    /** The format of output audio. Options are `pcm16`, `g711_ulaw`, or `g711_alaw`. For `pcm16`, output audio is sampled at a rate of 24kHz.  */
+    output_audio_format?: "pcm16" | "g711_ulaw" | "g711_alaw";
+    /** Configuration for input audio transcription, defaults to off and can be  set to `null` to turn off once on. Input audio transcription is not native to the model, since the model consumes audio directly. Transcription runs  asynchronously through [the /audio/transcriptions endpoint](https://platform.openai.com/docs/api-reference/audio/createTranscription) and should be treated as guidance of input audio content rather than precisely what the model heard. The client can optionally set the language and prompt for transcription, these offer additional guidance to the transcription service.  */
+    input_audio_transcription?: { model?: string; language?: string; prompt?: string };
+    /** Configuration for turn detection, ether Server VAD or Semantic VAD. This can be set to `null` to turn off, in which case the client must manually trigger model response. Server VAD means that the model will detect the start and end of speech based on audio volume and respond at the end of user speech. Semantic VAD is more advanced and uses a turn detection model (in conjuction with VAD) to semantically estimate whether the user has finished speaking, then dynamically sets a timeout based on this probability. For example, if user audio trails off with "uhhm", the model will score a low probability of turn end and wait longer for the user to continue speaking. This can be useful for more natural conversations, but may have a higher latency.  */
+    turn_detection?: { type?: "server_vad" | "semantic_vad"; eagerness?: "low" | "medium" | "high" | "auto"; threshold?: number; prefix_padding_ms?: number; silence_duration_ms?: number; create_response?: boolean; interrupt_response?: boolean };
+    /** Configuration for input audio noise reduction. This can be set to `null` to turn off. Noise reduction filters audio added to the input audio buffer before it is sent to VAD and the model. Filtering the audio can improve VAD and turn detection accuracy (reducing false positives) and model performance by improving perception of the input audio.  */
+    input_audio_noise_reduction?: { type?: "near_field" | "far_field" };
+    /** Tools (functions) available to the model. */
+    tools?: ({ type?: "function"; name?: string; description?: string; parameters?: { [key: string]: unknown } })[];
+    /** How the model chooses tools. Options are `auto`, `none`, `required`, or  specify a function.  */
+    tool_choice?: string;
+    /** Sampling temperature for the model, limited to [0.6, 1.2]. For audio models a temperature of 0.8 is highly recommended for best performance.  */
+    temperature?: number;
+    /** Maximum number of output tokens for a single assistant response, inclusive of tool calls. Provide an integer between 1 and 4096 to limit output tokens, or `inf` for the maximum available tokens for a given model. Defaults to `inf`.  */
+    max_response_output_tokens?: number | "inf";
+  }) => Promise<RealtimeSessionCreateResponse>;
+
+  /**
+   * Create an ephemeral API token for use in client-side applications with the Realtime API specifically for realtime transcriptions.  Can be configured with the same session parameters as the `transcription_session.update` client event.  It responds with a session object, plus a `client_secret` key which contains a usable ephemeral API token that can be used to authenticate browser clients for the Realtime API. 
+   */
+  createRealtimeTranscriptionSession: (input: {
+    /** The set of modalities the model can respond with. To disable audio, set this to ["text"].  */
+    modalities?: unknown;
+    /** The format of input audio. Options are `pcm16`, `g711_ulaw`, or `g711_alaw`. For `pcm16`, input audio must be 16-bit PCM at a 24kHz sample rate,  single channel (mono), and little-endian byte order.  */
+    input_audio_format?: "pcm16" | "g711_ulaw" | "g711_alaw";
+    /** Configuration for input audio transcription. The client can optionally set the language and prompt for transcription, these offer additional guidance to the transcription service.  */
+    input_audio_transcription?: { model?: "gpt-4o-transcribe" | "gpt-4o-mini-transcribe" | "whisper-1"; language?: string; prompt?: string };
+    /** Configuration for turn detection, ether Server VAD or Semantic VAD. This can be set to `null` to turn off, in which case the client must manually trigger model response. Server VAD means that the model will detect the start and end of speech based on audio volume and respond at the end of user speech. Semantic VAD is more advanced and uses a turn detection model (in conjuction with VAD) to semantically estimate whether the user has finished speaking, then dynamically sets a timeout based on this probability. For example, if user audio trails off with "uhhm", the model will score a low probability of turn end and wait longer for the user to continue speaking. This can be useful for more natural conversations, but may have a higher latency.  */
+    turn_detection?: { type?: "server_vad" | "semantic_vad"; eagerness?: "low" | "medium" | "high" | "auto"; threshold?: number; prefix_padding_ms?: number; silence_duration_ms?: number; create_response?: boolean; interrupt_response?: boolean };
+    /** Configuration for input audio noise reduction. This can be set to `null` to turn off. Noise reduction filters audio added to the input audio buffer before it is sent to VAD and the model. Filtering the audio can improve VAD and turn detection accuracy (reducing false positives) and model performance by improving perception of the input audio.  */
+    input_audio_noise_reduction?: { type?: "near_field" | "far_field" };
+    /** The set of items to include in the transcription. Current available items are: - `item.input_audio_transcription.logprobs`  */
+    include?: (string)[];
+  }) => Promise<RealtimeTranscriptionSessionCreateResponse>;
+
+  /**
+   * Creates a model response. Provide [text](/docs/guides/text) or [image](/docs/guides/images) inputs to generate [text](/docs/guides/text) or [JSON](/docs/guides/structured-outputs) outputs. Have the model call your own [custom code](/docs/guides/function-calling) or use built-in [tools](/docs/guides/tools) like [web search](/docs/guides/tools-web-search) or [file search](/docs/guides/tools-file-search) to use your own data as input for the model's response. 
+   */
+  createResponse: (input: {
+    metadata?: Metadata;
+    /** What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic. We generally recommend altering this or `top_p` but not both.  */
+    temperature?: number | null;
+    /** An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.  We generally recommend altering this or `temperature` but not both.  */
+    top_p?: number | null;
+    /** A unique identifier representing your end-user, which can help OpenAI to monitor and detect abuse. [Learn more](/docs/guides/safety-best-practices#end-user-ids).  */
+    user?: string;
+    service_tier?: ServiceTier;
+    /** The unique ID of the previous response to the model. Use this to create multi-turn conversations. Learn more about  [conversation state](/docs/guides/conversation-state).  */
+    previous_response_id?: string | null;
+    /** Model ID used to generate the response, like `gpt-4o` or `o3`. OpenAI offers a wide range of models with different capabilities, performance characteristics, and price points. Refer to the [model guide](/docs/models) to browse and compare available models.  */
+    model: ModelIdsResponses;
+    reasoning?: Reasoning;
+    /** An upper bound for the number of tokens that can be generated for a response, including visible output tokens and [reasoning tokens](/docs/guides/reasoning).  */
+    max_output_tokens?: number | null;
+    /** Inserts a system (or developer) message as the first item in the model's context.  When using along with `previous_response_id`, the instructions from a previous response will not be carried over to the next response. This makes it simple to swap out system (or developer) messages in new responses.  */
+    instructions?: string | null;
+    /** Configuration options for a text response from the model. Can be plain text or structured JSON data. Learn more: - [Text inputs and outputs](/docs/guides/text) - [Structured Outputs](/docs/guides/structured-outputs)  */
+    text?: { format?: TextResponseFormatConfiguration };
+    /** An array of tools the model may call while generating a response. You  can specify which tool to use by setting the `tool_choice` parameter.  The two categories of tools you can provide the model are:  - **Built-in tools**: Tools that are provided by OpenAI that extend the   model's capabilities, like [web search](/docs/guides/tools-web-search)   or [file search](/docs/guides/tools-file-search). Learn more about   [built-in tools](/docs/guides/tools). - **Function calls (custom tools)**: Functions that are defined by you,   enabling the model to call your own code. Learn more about   [function calling](/docs/guides/function-calling).  */
+    tools?: (Tool)[];
+    /** How the model should select which tool (or tools) to use when generating a response. See the `tools` parameter to see how to specify which tools the model can call.  */
+    tool_choice?: ToolChoiceOptions | ToolChoiceTypes | ToolChoiceFunction;
+    /** The truncation strategy to use for the model response. - `auto`: If the context of this response and previous ones exceeds   the model's context window size, the model will truncate the    response to fit the context window by dropping input items in the   middle of the conversation.  - `disabled` (default): If a model response will exceed the context window    size for a model, the request will fail with a 400 error.  */
+    truncation?: "auto" | "disabled" | null;
+    /** Text, image, or file inputs to the model, used to generate a response.  Learn more: - [Text inputs and outputs](/docs/guides/text) - [Image inputs](/docs/guides/images) - [File inputs](/docs/guides/pdf-files) - [Conversation state](/docs/guides/conversation-state) - [Function calling](/docs/guides/function-calling)  */
+    input: string | (InputItem)[];
+    /** Specify additional output data to include in the model response. Currently supported values are: - `file_search_call.results`: Include the search results of   the file search tool call. - `message.input_image.image_url`: Include image urls from the input message. - `computer_call_output.output.image_url`: Include image urls from the computer call output.  */
+    include?: (Includable)[] | null;
+    /** Whether to allow the model to run tool calls in parallel.  */
+    parallel_tool_calls?: boolean | null;
+    /** Whether to store the generated model response for later retrieval via API.  */
+    store?: boolean | null;
+    /** If set to true, the model response data will be streamed to the client as it is generated using [server-sent events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events#Event_stream_format). See the [Streaming section below](/docs/api-reference/responses-streaming) for more information.  */
+    stream?: boolean | null;
+  }) => Promise<ReadableStream<Uint8Array>>;
+
+  /**
+   * Retrieves a model response with the given ID. 
+   */
+  getResponse: (input: {
+    /** The ID of the response to retrieve. */
+    response_id: string;
+    /** Additional fields to include in the response. See the `include` parameter for Response creation above for more information.  */
+    include?: (Includable)[];
+  }) => Promise<Response>;
+
+  /**
+   * Deletes a model response with the given ID. 
+   */
+  deleteResponse: (input: {
+    /** The ID of the response to delete. */
+    response_id: string;
+  }) => Promise<undefined>;
+
+  /**
+   * Returns a list of input items for a given response.
+   */
+  listInputItems: (input: {
+    /** The ID of the response to retrieve input items for. */
+    response_id: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** The order to return the input items in. Default is `asc`. - `asc`: Return the input items in ascending order. - `desc`: Return the input items in descending order.  */
+    order?: "asc" | "desc";
+    /** An item ID to list items after, used in pagination.  */
+    after?: string;
+    /** An item ID to list items before, used in pagination.  */
+    before?: string;
+    /** Additional fields to include in the response. See the `include` parameter for Response creation above for more information.  */
+    include?: (Includable)[];
+  }) => Promise<ResponseItemList>;
+
+  /**
+   * Create a thread.
+   */
+  createThread: (input: {
+    /** A list of [messages](/docs/api-reference/messages) to start the thread with. */
+    messages?: (CreateMessageRequest)[];
+    /** A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.  */
+    tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: unknown | unknown } | null;
+    metadata?: Metadata;
+  }) => Promise<ThreadObject>;
+
+  /**
+   * Create a thread and run it in one request.
+   */
+  createThreadAndRun: (input: {
+    /** The ID of the [assistant](/docs/api-reference/assistants) to use to execute this run. */
+    assistant_id: string;
+    thread?: CreateThreadRequest;
+    /** The ID of the [Model](/docs/api-reference/models) to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used. */
+    model?: string | "gpt-4.1" | "gpt-4.1-mini" | "gpt-4.1-nano" | "gpt-4.1-2025-04-14" | "gpt-4.1-mini-2025-04-14" | "gpt-4.1-nano-2025-04-14" | "gpt-4o" | "gpt-4o-2024-11-20" | "gpt-4o-2024-08-06" | "gpt-4o-2024-05-13" | "gpt-4o-mini" | "gpt-4o-mini-2024-07-18" | "gpt-4.5-preview" | "gpt-4.5-preview-2025-02-27" | "gpt-4-turbo" | "gpt-4-turbo-2024-04-09" | "gpt-4-0125-preview" | "gpt-4-turbo-preview" | "gpt-4-1106-preview" | "gpt-4-vision-preview" | "gpt-4" | "gpt-4-0314" | "gpt-4-0613" | "gpt-4-32k" | "gpt-4-32k-0314" | "gpt-4-32k-0613" | "gpt-3.5-turbo" | "gpt-3.5-turbo-16k" | "gpt-3.5-turbo-0613" | "gpt-3.5-turbo-1106" | "gpt-3.5-turbo-0125" | "gpt-3.5-turbo-16k-0613" | null;
+    /** Override the default system message of the assistant. This is useful for modifying the behavior on a per-run basis. */
+    instructions?: string | null;
+    /** Override the tools the assistant can use for this run. This is useful for modifying the behavior on a per-run basis. */
+    tools?: (AssistantToolsCode | AssistantToolsFileSearch | AssistantToolsFunction)[] | null;
+    /** A set of resources that are used by the assistant's tools. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.  */
+    tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null;
+    metadata?: Metadata;
+    /** What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.  */
+    temperature?: number | null;
+    /** An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.  We generally recommend altering this or temperature but not both.  */
+    top_p?: number | null;
+    /** If `true`, returns a stream of events that happen during the Run as server-sent events, terminating when the Run enters a terminal state with a `data: [DONE]` message.  */
+    stream?: boolean | null;
+    /** The maximum number of prompt tokens that may be used over the course of the run. The run will make a best effort to use only the number of prompt tokens specified, across multiple turns of the run. If the run exceeds the number of prompt tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.  */
+    max_prompt_tokens?: number | null;
+    /** The maximum number of completion tokens that may be used over the course of the run. The run will make a best effort to use only the number of completion tokens specified, across multiple turns of the run. If the run exceeds the number of completion tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.  */
+    max_completion_tokens?: number | null;
+    truncation_strategy?: TruncationObject & unknown;
+    tool_choice?: AssistantsApiToolChoiceOption & unknown;
+    parallel_tool_calls?: ParallelToolCalls;
+    response_format?: AssistantsApiResponseFormatOption;
+  }) => Promise<RunObject>;
+
+  /**
+   * Retrieves a thread.
+   */
+  getThread: (input: {
+    /** The ID of the thread to retrieve. */
+    thread_id: string;
+  }) => Promise<ThreadObject>;
+
+  /**
+   * Modifies a thread.
+   */
+  modifyThread: (input: {
+    /** A set of resources that are made available to the assistant's tools in this thread. The resources are specific to the type of tool. For example, the `code_interpreter` tool requires a list of file IDs, while the `file_search` tool requires a list of vector store IDs.  */
+    tool_resources?: { code_interpreter?: { file_ids?: (string)[] }; file_search?: { vector_store_ids?: (string)[] } } | null;
+    metadata?: Metadata;
+    /** The ID of the thread to modify. Only the `metadata` can be modified. */
+    thread_id: string;
+  }) => Promise<ThreadObject>;
+
+  /**
+   * Delete a thread.
+   */
+  deleteThread: (input: {
+    /** The ID of the thread to delete. */
+    thread_id: string;
+  }) => Promise<DeleteThreadResponse>;
+
+  /**
+   * Returns a list of messages for a given thread.
+   */
+  listMessages: (input: {
+    /** The ID of the [thread](/docs/api-reference/threads) the messages belong to. */
+    thread_id: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.  */
+    order?: "asc" | "desc";
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.  */
+    before?: string;
+    /** Filter messages by the run ID that generated them.  */
+    run_id?: string;
+  }) => Promise<ListMessagesResponse>;
+
+  /**
+   * Create a message.
+   */
+  createMessage: (input: {
+    /** The role of the entity that is creating the message. Allowed values include: - `user`: Indicates the message is sent by an actual user and should be used in most cases to represent user-generated messages. - `assistant`: Indicates the message is generated by the assistant. Use this value to insert messages from the assistant into the conversation.  */
+    role: "user" | "assistant";
+    content: string | (MessageContentImageFileObject | MessageContentImageUrlObject | MessageRequestContentTextObject)[];
+    /** A list of files attached to the message, and the tools they should be added to. */
+    attachments?: ({ file_id?: string; tools?: (AssistantToolsCode | AssistantToolsFileSearchTypeOnly)[] })[] | null;
+    metadata?: Metadata;
+    /** The ID of the [thread](/docs/api-reference/threads) to create a message for. */
+    thread_id: string;
+  }) => Promise<MessageObject>;
+
+  /**
+   * Retrieve a message.
+   */
+  getMessage: (input: {
+    /** The ID of the [thread](/docs/api-reference/threads) to which this message belongs. */
+    thread_id: string;
+    /** The ID of the message to retrieve. */
+    message_id: string;
+  }) => Promise<MessageObject>;
+
+  /**
+   * Modifies a message.
+   */
+  modifyMessage: (input: {
+    metadata?: Metadata;
+    /** The ID of the thread to which this message belongs. */
+    thread_id: string;
+    /** The ID of the message to modify. */
+    message_id: string;
+  }) => Promise<MessageObject>;
+
+  /**
+   * Deletes a message.
+   */
+  deleteMessage: (input: {
+    /** The ID of the thread to which this message belongs. */
+    thread_id: string;
+    /** The ID of the message to delete. */
+    message_id: string;
+  }) => Promise<DeleteMessageResponse>;
+
+  /**
+   * Returns a list of runs belonging to a thread.
+   */
+  listRuns: (input: {
+    /** The ID of the thread the run belongs to. */
+    thread_id: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.  */
+    order?: "asc" | "desc";
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.  */
+    before?: string;
+  }) => Promise<ListRunsResponse>;
+
+  /**
+   * Create a run.
+   */
+  createRun: (input: {
+    /** The ID of the [assistant](/docs/api-reference/assistants) to use to execute this run. */
+    assistant_id: string;
+    /** The ID of the [Model](/docs/api-reference/models) to be used to execute this run. If a value is provided here, it will override the model associated with the assistant. If not, the model associated with the assistant will be used. */
+    model?: string | AssistantSupportedModels | null;
+    reasoning_effort?: ReasoningEffort;
+    /** Overrides the [instructions](/docs/api-reference/assistants/createAssistant) of the assistant. This is useful for modifying the behavior on a per-run basis. */
+    instructions?: string | null;
+    /** Appends additional instructions at the end of the instructions for the run. This is useful for modifying the behavior on a per-run basis without overriding other instructions. */
+    additional_instructions?: string | null;
+    /** Adds additional messages to the thread before creating the run. */
+    additional_messages?: (CreateMessageRequest)[] | null;
+    /** Override the tools the assistant can use for this run. This is useful for modifying the behavior on a per-run basis. */
+    tools?: (AssistantToolsCode | AssistantToolsFileSearch | AssistantToolsFunction)[] | null;
+    metadata?: Metadata;
+    /** What sampling temperature to use, between 0 and 2. Higher values like 0.8 will make the output more random, while lower values like 0.2 will make it more focused and deterministic.  */
+    temperature?: number | null;
+    /** An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered.  We generally recommend altering this or temperature but not both.  */
+    top_p?: number | null;
+    /** If `true`, returns a stream of events that happen during the Run as server-sent events, terminating when the Run enters a terminal state with a `data: [DONE]` message.  */
+    stream?: boolean | null;
+    /** The maximum number of prompt tokens that may be used over the course of the run. The run will make a best effort to use only the number of prompt tokens specified, across multiple turns of the run. If the run exceeds the number of prompt tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.  */
+    max_prompt_tokens?: number | null;
+    /** The maximum number of completion tokens that may be used over the course of the run. The run will make a best effort to use only the number of completion tokens specified, across multiple turns of the run. If the run exceeds the number of completion tokens specified, the run will end with status `incomplete`. See `incomplete_details` for more info.  */
+    max_completion_tokens?: number | null;
+    truncation_strategy?: TruncationObject & unknown;
+    tool_choice?: AssistantsApiToolChoiceOption & unknown;
+    parallel_tool_calls?: ParallelToolCalls;
+    response_format?: AssistantsApiResponseFormatOption;
+    /** The ID of the thread to run. */
+    thread_id: string;
+    /** A list of additional fields to include in the response. Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content` to fetch the file search result content.  See the [file search tool documentation](/docs/assistants/tools/file-search#customizing-file-search-settings) for more information.  */
+    "include[]"?: ("step_details.tool_calls[*].file_search.results[*].content")[];
+  }) => Promise<RunObject>;
+
+  /**
+   * Retrieves a run.
+   */
+  getRun: (input: {
+    /** The ID of the [thread](/docs/api-reference/threads) that was run. */
+    thread_id: string;
+    /** The ID of the run to retrieve. */
+    run_id: string;
+  }) => Promise<RunObject>;
+
+  /**
+   * Modifies a run.
+   */
+  modifyRun: (input: {
+    metadata?: Metadata;
+    /** The ID of the [thread](/docs/api-reference/threads) that was run. */
+    thread_id: string;
+    /** The ID of the run to modify. */
+    run_id: string;
+  }) => Promise<RunObject>;
+
+  /**
+   * Cancels a run that is `in_progress`.
+   */
+  cancelRun: (input: {
+    /** The ID of the thread to which this run belongs. */
+    thread_id: string;
+    /** The ID of the run to cancel. */
+    run_id: string;
+  }) => Promise<RunObject>;
+
+  /**
+   * Returns a list of run steps belonging to a run.
+   */
+  listRunSteps: (input: {
+    /** The ID of the thread the run and run steps belong to. */
+    thread_id: string;
+    /** The ID of the run the run steps belong to. */
+    run_id: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.  */
+    order?: "asc" | "desc";
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.  */
+    before?: string;
+    /** A list of additional fields to include in the response. Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content` to fetch the file search result content.  See the [file search tool documentation](/docs/assistants/tools/file-search#customizing-file-search-settings) for more information.  */
+    "include[]"?: ("step_details.tool_calls[*].file_search.results[*].content")[];
+  }) => Promise<ListRunStepsResponse>;
+
+  /**
+   * Retrieves a run step.
+   */
+  getRunStep: (input: {
+    /** The ID of the thread to which the run and run step belongs. */
+    thread_id: string;
+    /** The ID of the run to which the run step belongs. */
+    run_id: string;
+    /** The ID of the run step to retrieve. */
+    step_id: string;
+    /** A list of additional fields to include in the response. Currently the only supported value is `step_details.tool_calls[*].file_search.results[*].content` to fetch the file search result content.  See the [file search tool documentation](/docs/assistants/tools/file-search#customizing-file-search-settings) for more information.  */
+    "include[]"?: ("step_details.tool_calls[*].file_search.results[*].content")[];
+  }) => Promise<RunStepObject>;
+
+  /**
+   * When a run has the `status: "requires_action"` and `required_action.type` is `submit_tool_outputs`, this endpoint can be used to submit the outputs from the tool calls once they're all completed. All outputs must be submitted in a single request. 
+   */
+  submitToolOuputsToRun: (input: {
+    /** A list of tools for which the outputs are being submitted. */
+    tool_outputs: ({ tool_call_id?: string; output?: string })[];
+    /** If `true`, returns a stream of events that happen during the Run as server-sent events, terminating when the Run enters a terminal state with a `data: [DONE]` message.  */
+    stream?: boolean | null;
+    /** The ID of the [thread](/docs/api-reference/threads) to which this run belongs. */
+    thread_id: string;
+    /** The ID of the run that requires the tool output submission. */
+    run_id: string;
+  }) => Promise<RunObject>;
+
+  /**
+   * Creates an intermediate [Upload](/docs/api-reference/uploads/object) object that you can add [Parts](/docs/api-reference/uploads/part-object) to. Currently, an Upload can accept at most 8 GB in total and expires after an hour after you create it.  Once you complete the Upload, we will create a [File](/docs/api-reference/files/object) object that contains all the parts you uploaded. This File is usable in the rest of our platform as a regular File object.  For certain `purpose` values, the correct `mime_type` must be specified.  Please refer to documentation for the  [supported MIME types for your use case](/docs/assistants/tools/file-search#supported-files).  For guidance on the proper filename extensions for each purpose, please follow the documentation on [creating a File](/docs/api-reference/files/create). 
+   */
+  createUpload: (input: {
+    /** The name of the file to upload.  */
+    filename: string;
+    /** The intended purpose of the uploaded file.  See the [documentation on File purposes](/docs/api-reference/files/create#files-create-purpose).  */
+    purpose: "assistants" | "batch" | "fine-tune" | "vision";
+    /** The number of bytes in the file you are uploading.  */
+    bytes: number;
+    /** The MIME type of the file.  This must fall within the supported MIME types for your file purpose. See the supported MIME types for assistants and vision.  */
+    mime_type: string;
+  }) => Promise<Upload>;
+
+  /**
+   * Cancels the Upload. No Parts may be added after an Upload is cancelled. 
+   */
+  cancelUpload: (input: {
+    /** The ID of the Upload.  */
+    upload_id: string;
+  }) => Promise<Upload>;
+
+  /**
+   * Completes the [Upload](/docs/api-reference/uploads/object).   Within the returned Upload object, there is a nested [File](/docs/api-reference/files/object) object that is ready to use in the rest of the platform.  You can specify the order of the Parts by passing in an ordered list of the Part IDs.  The number of bytes uploaded upon completion must match the number of bytes initially specified when creating the Upload object. No Parts may be added after an Upload is completed. 
+   */
+  completeUpload: (input: {
+    /** The ordered list of Part IDs.  */
+    part_ids: (string)[];
+    /** The optional md5 checksum for the file contents to verify if the bytes uploaded matches what you expect.  */
+    md5?: string;
+    /** The ID of the Upload.  */
+    upload_id: string;
+  }) => Promise<Upload>;
+
+  /**
+   * Adds a [Part](/docs/api-reference/uploads/part-object) to an [Upload](/docs/api-reference/uploads/object) object. A Part represents a chunk of bytes from the file you are trying to upload.   Each Part can be at most 64 MB, and you can add Parts until you hit the Upload maximum of 8 GB.  It is possible to add multiple Parts in parallel. You can decide the intended order of the Parts when you [complete the Upload](/docs/api-reference/uploads/complete). 
+   */
+  addUploadPart: (input: {
+    /** The chunk of bytes for this Part.  */
+    data: string;
+    /** The ID of the Upload.  */
+    upload_id: string;
+  }) => Promise<UploadPart>;
+
+  /**
+   * Returns a list of vector stores.
+   */
+  listVectorStores: (input: {
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.  */
+    order?: "asc" | "desc";
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.  */
+    before?: string;
+  }) => Promise<ListVectorStoresResponse>;
+
+  /**
+   * Create a vector store.
+   */
+  createVectorStore: (input: {
+    /** A list of [File](/docs/api-reference/files) IDs that the vector store should use. Useful for tools like `file_search` that can access files. */
+    file_ids?: (string)[];
+    /** The name of the vector store. */
+    name?: string;
+    expires_after?: VectorStoreExpirationAfter;
+    /** The chunking strategy used to chunk the file(s). If not set, will use the `auto` strategy. Only applicable if `file_ids` is non-empty. */
+    chunking_strategy?: AutoChunkingStrategyRequestParam | StaticChunkingStrategyRequestParam;
+    metadata?: Metadata;
+  }) => Promise<VectorStoreObject>;
+
+  /**
+   * Retrieves a vector store.
+   */
+  getVectorStore: (input: {
+    /** The ID of the vector store to retrieve. */
+    vector_store_id: string;
+  }) => Promise<VectorStoreObject>;
+
+  /**
+   * Modifies a vector store.
+   */
+  modifyVectorStore: (input: {
+    /** The name of the vector store. */
+    name?: string | null;
+    expires_after?: VectorStoreExpirationAfter & unknown;
+    metadata?: Metadata;
+    /** The ID of the vector store to modify. */
+    vector_store_id: string;
+  }) => Promise<VectorStoreObject>;
+
+  /**
+   * Delete a vector store.
+   */
+  deleteVectorStore: (input: {
+    /** The ID of the vector store to delete. */
+    vector_store_id: string;
+  }) => Promise<DeleteVectorStoreResponse>;
+
+  /**
+   * Create a vector store file batch.
+   */
+  createVectorStoreFileBatch: (input: {
+    /** A list of [File](/docs/api-reference/files) IDs that the vector store should use. Useful for tools like `file_search` that can access files. */
+    file_ids: (string)[];
+    chunking_strategy?: ChunkingStrategyRequestParam;
+    attributes?: VectorStoreFileAttributes;
+    /** The ID of the vector store for which to create a File Batch.  */
+    vector_store_id: string;
+  }) => Promise<VectorStoreFileBatchObject>;
+
+  /**
+   * Retrieves a vector store file batch.
+   */
+  getVectorStoreFileBatch: (input: {
+    /** The ID of the vector store that the file batch belongs to. */
+    vector_store_id: string;
+    /** The ID of the file batch being retrieved. */
+    batch_id: string;
+  }) => Promise<VectorStoreFileBatchObject>;
+
+  /**
+   * Cancel a vector store file batch. This attempts to cancel the processing of files in this batch as soon as possible.
+   */
+  cancelVectorStoreFileBatch: (input: {
+    /** The ID of the vector store that the file batch belongs to. */
+    vector_store_id: string;
+    /** The ID of the file batch to cancel. */
+    batch_id: string;
+  }) => Promise<VectorStoreFileBatchObject>;
+
+  /**
+   * Returns a list of vector store files in a batch.
+   */
+  listFilesInVectorStoreBatch: (input: {
+    /** The ID of the vector store that the files belong to. */
+    vector_store_id: string;
+    /** The ID of the file batch that the files belong to. */
+    batch_id: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.  */
+    order?: "asc" | "desc";
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.  */
+    before?: string;
+    /** Filter by file status. One of `in_progress`, `completed`, `failed`, `cancelled`. */
+    filter?: "in_progress" | "completed" | "failed" | "cancelled";
+  }) => Promise<ListVectorStoreFilesResponse>;
+
+  /**
+   * Returns a list of vector store files.
+   */
+  listVectorStoreFiles: (input: {
+    /** The ID of the vector store that the files belong to. */
+    vector_store_id: string;
+    /** A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 20.  */
+    limit?: number;
+    /** Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and `desc` for descending order.  */
+    order?: "asc" | "desc";
+    /** A cursor for use in pagination. `after` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, ending with obj_foo, your subsequent call can include after=obj_foo in order to fetch the next page of the list.  */
+    after?: string;
+    /** A cursor for use in pagination. `before` is an object ID that defines your place in the list. For instance, if you make a list request and receive 100 objects, starting with obj_foo, your subsequent call can include before=obj_foo in order to fetch the previous page of the list.  */
+    before?: string;
+    /** Filter by file status. One of `in_progress`, `completed`, `failed`, `cancelled`. */
+    filter?: "in_progress" | "completed" | "failed" | "cancelled";
+  }) => Promise<ListVectorStoreFilesResponse>;
+
+  /**
+   * Create a vector store file by attaching a [File](/docs/api-reference/files) to a [vector store](/docs/api-reference/vector-stores/object).
+   */
+  createVectorStoreFile: (input: {
+    /** A [File](/docs/api-reference/files) ID that the vector store should use. Useful for tools like `file_search` that can access files. */
+    file_id: string;
+    chunking_strategy?: ChunkingStrategyRequestParam;
+    attributes?: VectorStoreFileAttributes;
+    /** The ID of the vector store for which to create a File.  */
+    vector_store_id: string;
+  }) => Promise<VectorStoreFileObject>;
+
+  /**
+   * Retrieves a vector store file.
+   */
+  getVectorStoreFile: (input: {
+    /** The ID of the vector store that the file belongs to. */
+    vector_store_id: string;
+    /** The ID of the file being retrieved. */
+    file_id: string;
+  }) => Promise<VectorStoreFileObject>;
+
+  /**
+   * Delete a vector store file. This will remove the file from the vector store but the file itself will not be deleted. To delete the file, use the [delete file](/docs/api-reference/files/delete) endpoint.
+   */
+  deleteVectorStoreFile: (input: {
+    /** The ID of the vector store that the file belongs to. */
+    vector_store_id: string;
+    /** The ID of the file to delete. */
+    file_id: string;
+  }) => Promise<DeleteVectorStoreFileResponse>;
+
+  /**
+   * Update attributes on a vector store file.
+   */
+  updateVectorStoreFileAttributes: (input: {
+    attributes: VectorStoreFileAttributes;
+    /** The ID of the vector store the file belongs to. */
+    vector_store_id: string;
+    /** The ID of the file to update attributes. */
+    file_id: string;
+  }) => Promise<VectorStoreFileObject>;
+
+  /**
+   * Retrieve the parsed contents of a vector store file.
+   */
+  retrieveVectorStoreFileContent: (input: {
+    /** The ID of the vector store. */
+    vector_store_id: string;
+    /** The ID of the file within the vector store. */
+    file_id: string;
+  }) => Promise<VectorStoreFileContentResponse>;
+
+  /**
+   * Search a vector store for relevant chunks based on a query and file attributes filter.
+   */
+  searchVectorStore: (input: {
+    /** A query string for a search */
+    query: string | (string)[];
+    /** Whether to rewrite the natural language query for vector search. */
+    rewrite_query?: boolean;
+    /** The maximum number of results to return. This number should be between 1 and 50 inclusive. */
+    max_num_results?: number;
+    /** A filter to apply based on file attributes. */
+    filters?: ComparisonFilter | CompoundFilter;
+    /** Ranking options for search. */
+    ranking_options?: { ranker?: "auto" | "default-2024-11-15"; score_threshold?: number };
+    /** The ID of the vector store to search. */
+    vector_store_id: string;
+  }) => Promise<VectorStoreSearchResultsPage>;
 };
+
+export * from "./schemas.js";

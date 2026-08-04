@@ -492,7 +492,7 @@ export type SentryClient = {
     organization_id_or_slug: string;
     /** The ID or slug of the team the resource belongs to. */
     team_id_or_slug: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete a team with a SCIM Group DELETE Request.
@@ -502,7 +502,7 @@ export type SentryClient = {
     organization_id_or_slug: string;
     /** The ID or slug of the team the resource belongs to. */
     team_id_or_slug: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Returns a paginated list of members bound to a organization with a SCIM Users GET Request.
@@ -552,7 +552,7 @@ export type SentryClient = {
     organization_id_or_slug: string;
     /** The ID of the member to update. */
     member_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Delete an organization member with a SCIM User DELETE Request.
@@ -562,7 +562,7 @@ export type SentryClient = {
     organization_id_or_slug: string;
     /** The ID of the member to delete. */
     member_id: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve the custom integrations for an organization

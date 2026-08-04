@@ -1,9 +1,9 @@
 # LiveBroadcasts
 
-7 operations · `utdk/google/youtube`
+7 operations · `@utdk/clients/google/youtube`
 
 ```ts
-import youtube from "utdk/google/youtube";
+import youtube from "@utdk/clients/google/youtube";
 ```
 
 ## `youtube.youtubeLiveBroadcastsDelete`
@@ -40,7 +40,7 @@ youtube.youtubeLiveBroadcastsDelete(input: {
   onBehalfOfContentOwner?: string;
   /** This parameter can only be used in a properly authorized request. *Note:* This parameter is intended exclusively for YouTube content partners. The *onBehalfOfContentOwnerChannel* parameter specifies the YouTube channel ID of the channel to which a video is being added. This parameter is required when a request specifies a value for the onBehalfOfContentOwner parameter, and it can only be used in conjunction with that parameter. In addition, the request must be authorized using a CMS account that is linked to the content owner that the onBehalfOfContentOwner parameter specifies. Finally, the channel that the onBehalfOfContentOwnerChannel parameter value specifies must be linked to the content owner that the onBehalfOfContentOwner parameter specifies. This parameter is intended for YouTube content partners that own and manage many different YouTube channels. It allows content owners to authenticate once and perform actions on behalf of the channel specified in the parameter value, without having to provide authentication credentials for each separate channel. */
   onBehalfOfContentOwnerChannel?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /youtube/v3/liveBroadcasts` · `youtube.liveBroadcasts.delete`</sub>

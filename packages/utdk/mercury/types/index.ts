@@ -168,7 +168,7 @@ export type MercuryClient = {
   deleteCustomer: (input: {
     /** The customer who will receive the invoice. Use the /api/v1/ar/customers endpoint to list your customers and find the corresponding id, or create a new customer first. */
     customerId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get a customer
@@ -289,7 +289,7 @@ export type MercuryClient = {
   cancelInvoice: (input: {
     /** ID for the invoice. */
     invoiceId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Download invoice PDF
@@ -649,7 +649,7 @@ export type MercuryClient = {
     file: string;
     /** ID of the recipient to attach the file to */
     recipientId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get all recipients
@@ -778,7 +778,7 @@ export type MercuryClient = {
     file: string;
     /** ID of the transaction to attach the file to */
     transactionId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List all transactions
@@ -924,7 +924,7 @@ export type MercuryClient = {
   deleteWebhook: (input: {
     /** ID for the webhook */
     webhookEndpointId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get webhook endpoint by ID
@@ -956,7 +956,7 @@ export type MercuryClient = {
     eventType?: WebhookEventType & unknown | null;
     /** ID for the webhook */
     webhookEndpointId: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 };
 
 export * from "./schemas.js";

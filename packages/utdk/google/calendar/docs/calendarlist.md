@@ -1,9 +1,9 @@
 # CalendarList
 
-7 operations · `utdk/google/calendar`
+7 operations · `@utdk/clients/google/calendar`
 
 ```ts
-import calendar from "utdk/google/calendar";
+import calendar from "@utdk/clients/google/calendar";
 ```
 
 ## `calendar.calendarCalendarListList`
@@ -130,7 +130,7 @@ calendar.calendarCalendarListDelete(input: {
   quotaUser?: string;
   /** Deprecated. Please use quotaUser instead. */
   userIp?: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /users/me/calendarList/{calendarId}` · `calendar.calendarList.delete`</sub>

@@ -1,4 +1,4 @@
-import type { BasicError, CampaignState, CampaignSummary } from "./schemas.js";
+import type { CampaignState, CampaignSummary } from "./schemas.js";
 
 export type CampaignsOperations = {
   /**
@@ -73,5 +73,5 @@ export type CampaignsOperations = {
     org: string;
     /** The campaign number. */
     campaign_number: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 };

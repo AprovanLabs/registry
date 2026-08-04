@@ -1,4 +1,4 @@
-import type { InputMessage, Message, ModelInfo, Tool } from "./schemas.js";
+import type { InputMessage, ModelInfo, Tool } from "./schemas.js";
 
 export type AnthropicClient = {
   /**
@@ -17,7 +17,7 @@ export type AnthropicClient = {
     stop_sequences?: (string)[];
     stream?: boolean;
     metadata?: { user_id?: string };
-  }, options: { headers: { "anthropic-version": string } }) => Promise<Message>;
+  }, options: { headers: { "anthropic-version": string } }) => Promise<ReadableStream<Uint8Array>>;
 
   /**
    * Count tokens in a message

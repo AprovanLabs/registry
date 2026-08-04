@@ -1,4 +1,4 @@
-import type { ArtifactDeploymentRecord, BasicError, CustomProperty, CustomPropertyValue, HookDelivery, HookDeliveryItem, ImmutableReleasesOrganizationSettings, Installation, IssueField, IssueType, MinimalRepository, OrgHook, OrgMembership, OrgRepoCustomPropertyValues, OrganizationFull, OrganizationInvitation, OrganizationProgrammaticAccessGrant, OrganizationProgrammaticAccessGrantRequest, OrganizationRole, OrganizationSimple, RulesetVersion, RulesetVersionWithState, SimpleUser, Team, TeamRoleAssignment, TeamSimple, UserRoleAssignment, ValidationError, WebhookConfig, WebhookConfigContentType, WebhookConfigInsecureSsl, WebhookConfigSecret, WebhookConfigUrl } from "./schemas.js";
+import type { ArtifactDeploymentRecord, CustomProperty, CustomPropertyValue, HookDelivery, HookDeliveryItem, ImmutableReleasesOrganizationSettings, Installation, IssueField, IssueType, MinimalRepository, OrgHook, OrgMembership, OrgRepoCustomPropertyValues, OrganizationFull, OrganizationInvitation, OrganizationProgrammaticAccessGrant, OrganizationProgrammaticAccessGrantRequest, OrganizationRole, OrganizationSimple, RulesetVersion, RulesetVersionWithState, SimpleUser, Team, TeamRoleAssignment, TeamSimple, UserRoleAssignment, WebhookConfig, WebhookConfigContentType, WebhookConfigInsecureSsl, WebhookConfigSecret, WebhookConfigUrl } from "./schemas.js";
 
 export type OrgsOperations = {
   /**
@@ -229,7 +229,7 @@ export type OrgsOperations = {
     body: { subject_digests: (string)[] } | { attestation_ids: (number)[] };
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Delete attestations by subject digest
@@ -240,7 +240,7 @@ export type OrgsOperations = {
     org: string;
     /** Subject Digest */
     subject_digest: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List attestation repositories
@@ -268,7 +268,7 @@ export type OrgsOperations = {
     org: string;
     /** Attestation ID */
     attestation_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List attestations
@@ -311,7 +311,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Block a user from an organization
@@ -322,7 +322,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<ValidationError>;
+  }) => Promise<undefined>;
 
   /**
    * Unblock a user from an organization
@@ -333,7 +333,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List failed organization invitations
@@ -416,7 +416,7 @@ export type OrgsOperations = {
     org: string;
     /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
     hook_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get a webhook configuration for an organization
@@ -494,7 +494,7 @@ export type OrgsOperations = {
     org: string;
     /** The unique identifier of the hook. You can find this value in the `X-GitHub-Hook-ID` header of a webhook delivery. */
     hook_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List app installations for an organization
@@ -552,7 +552,7 @@ export type OrgsOperations = {
     org: string;
     /** The unique identifier of the invitation. */
     invitation_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List organization invitation teams
@@ -625,7 +625,7 @@ export type OrgsOperations = {
     org: string;
     /** The unique identifier of the issue field. */
     issue_field_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List issue types for an organization
@@ -681,7 +681,7 @@ export type OrgsOperations = {
     org: string;
     /** The unique identifier of the issue type. */
     issue_type_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List organization members
@@ -709,7 +709,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove an organization member
@@ -720,7 +720,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get organization membership for a user
@@ -755,7 +755,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get all organization roles for an organization
@@ -775,7 +775,7 @@ export type OrgsOperations = {
     org: string;
     /** The slug of the team name. */
     team_slug: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Assign an organization role to a team
@@ -788,7 +788,7 @@ export type OrgsOperations = {
     team_slug: string;
     /** The unique identifier of the role. */
     role_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove an organization role from a team
@@ -801,7 +801,7 @@ export type OrgsOperations = {
     team_slug: string;
     /** The unique identifier of the role. */
     role_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove all organization roles for a user
@@ -812,7 +812,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Assign an organization role to a user
@@ -825,7 +825,7 @@ export type OrgsOperations = {
     username: string;
     /** The unique identifier of the role. */
     role_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove an organization role from a user
@@ -838,7 +838,7 @@ export type OrgsOperations = {
     username: string;
     /** The unique identifier of the role. */
     role_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get an organization role
@@ -918,7 +918,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<{ message?: string; documentation_url?: string }>;
+  }) => Promise<undefined>;
 
   /**
    * List requests to access organization resources with fine-grained personal access tokens
@@ -977,7 +977,7 @@ export type OrgsOperations = {
     org: string;
     /** Unique identifier of the request for access via fine-grained personal access token. */
     pat_request_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repositories requested to be accessed by a fine-grained personal access token
@@ -1047,7 +1047,7 @@ export type OrgsOperations = {
     org: string;
     /** The unique identifier of the fine-grained personal access token. */
     pat_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repositories a fine-grained personal access token has access to
@@ -1129,7 +1129,7 @@ export type OrgsOperations = {
     org: string;
     /** The custom property name */
     custom_property_name: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List custom property values for organization repositories
@@ -1157,7 +1157,7 @@ export type OrgsOperations = {
     properties: (CustomPropertyValue)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List public organization members
@@ -1181,7 +1181,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Set public organization membership for the authenticated user
@@ -1192,7 +1192,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove public organization membership for the authenticated user
@@ -1203,7 +1203,7 @@ export type OrgsOperations = {
     org: string;
     /** The handle for the GitHub user account. */
     username: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get organization ruleset history
@@ -1251,7 +1251,7 @@ export type OrgsOperations = {
     org: string;
     /** The slug of the team name. */
     team_slug: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Remove a security manager team
@@ -1262,7 +1262,7 @@ export type OrgsOperations = {
     org: string;
     /** The slug of the team name. */
     team_slug: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get immutable releases settings for an organization
@@ -1284,7 +1284,7 @@ export type OrgsOperations = {
     selected_repository_ids?: (number)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List selected repositories for immutable releases enforcement
@@ -1308,7 +1308,7 @@ export type OrgsOperations = {
     selected_repository_ids: (number)[];
     /** The organization name. The name is not case sensitive. */
     org: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Enable a selected repository for immutable releases in an organization
@@ -1319,7 +1319,7 @@ export type OrgsOperations = {
     org: string;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Disable a selected repository for immutable releases in an organization
@@ -1330,7 +1330,7 @@ export type OrgsOperations = {
     org: string;
     /** The unique identifier of the repository. */
     repository_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Enable or disable a security feature for an organization
@@ -1345,7 +1345,7 @@ export type OrgsOperations = {
     security_product: "dependency_graph" | "dependabot_alerts" | "dependabot_security_updates" | "advanced_security" | "code_scanning_default_setup" | "secret_scanning" | "secret_scanning_push_protection";
     /** The action to take.  `enable_all` means to enable the specified security feature for all repositories in the organization. `disable_all` means to disable the specified security feature for all repositories in the organization. */
     enablement: "enable_all" | "disable_all";
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List organization memberships for the authenticated user

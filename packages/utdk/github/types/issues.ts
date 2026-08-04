@@ -1,4 +1,4 @@
-import type { BasicError, Issue, IssueComment, IssueEvent, IssueEventForIssue, IssueFieldValue, Label, Milestone, SimpleUser, TimelineIssueEvents } from "./schemas.js";
+import type { Issue, IssueComment, IssueEvent, IssueEventForIssue, IssueFieldValue, Label, Milestone, SimpleUser, TimelineIssueEvents } from "./schemas.js";
 
 export type IssuesOperations = {
   /**
@@ -80,7 +80,7 @@ export type IssuesOperations = {
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
     assignee: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List repository issues
@@ -205,7 +205,7 @@ export type IssuesOperations = {
     repo: string;
     /** The unique identifier of the comment. */
     comment_id: number;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Pin an issue comment
@@ -231,7 +231,7 @@ export type IssuesOperations = {
     repo: string;
     /** The unique identifier of the comment. */
     comment_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List issue events for a repository
@@ -349,7 +349,7 @@ export type IssuesOperations = {
     /** The number that identifies the issue. */
     issue_number: number;
     assignee: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List issue comments
@@ -526,7 +526,7 @@ export type IssuesOperations = {
     issue_number: number;
     /** The unique identifier of the issue field. */
     issue_field_id: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List labels for an issue
@@ -584,7 +584,7 @@ export type IssuesOperations = {
     repo: string;
     /** The number that identifies the issue. */
     issue_number: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Remove a label from an issue
@@ -613,7 +613,7 @@ export type IssuesOperations = {
     repo: string;
     /** The number that identifies the issue. */
     issue_number: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Unlock an issue
@@ -626,7 +626,7 @@ export type IssuesOperations = {
     repo: string;
     /** The number that identifies the issue. */
     issue_number: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Get parent issue
@@ -798,7 +798,7 @@ export type IssuesOperations = {
     /** The name of the repository without the `.git` extension. The name is not case sensitive. */
     repo: string;
     name: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * List milestones
@@ -885,7 +885,7 @@ export type IssuesOperations = {
     repo: string;
     /** The number that identifies the milestone. */
     milestone_number: number;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * List labels for issues in a milestone

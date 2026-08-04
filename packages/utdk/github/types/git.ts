@@ -1,4 +1,4 @@
-import type { BasicError, Blob, GitCommit, GitRef, GitTag, GitTree, ShortBlob } from "./schemas.js";
+import type { Blob, GitCommit, GitRef, GitTag, GitTree, ShortBlob } from "./schemas.js";
 
 export type GitOperations = {
   /**
@@ -133,7 +133,7 @@ export type GitOperations = {
     repo: string;
     /** The Git reference. For more information, see "[Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)" in the Git documentation. */
     ref: string;
-  }) => Promise<BasicError>;
+  }) => Promise<undefined>;
 
   /**
    * Create a tag object

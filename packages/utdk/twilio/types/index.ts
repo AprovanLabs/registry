@@ -1,4 +1,4 @@
-import type { AccountEnumStatus, ApiV2010Account, ApiV2010AccountAddress, ApiV2010AccountAddressDependentPhoneNumber, ApiV2010AccountApplication, ApiV2010AccountAuthorizedConnectApp, ApiV2010AccountAvailablePhoneNumberCountry, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberLocal, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberMachineToMachine, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberMobile, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberNational, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberSharedCost, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberTollFree, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberVoip, ApiV2010AccountBalance, ApiV2010AccountCall, ApiV2010AccountCallCallEvent, ApiV2010AccountCallCallNotification, ApiV2010AccountCallCallNotificationInstance, ApiV2010AccountCallCallRecording, ApiV2010AccountCallPayments, ApiV2010AccountCallRealtimeTranscription, ApiV2010AccountCallSiprec, ApiV2010AccountCallStream, ApiV2010AccountCallUserDefinedMessage, ApiV2010AccountCallUserDefinedMessageSubscription, ApiV2010AccountConference, ApiV2010AccountConferenceConferenceRecording, ApiV2010AccountConferenceParticipant, ApiV2010AccountConnectApp, ApiV2010AccountIncomingPhoneNumber, ApiV2010AccountIncomingPhoneNumberIncomingPhoneNumberAssignedAddOn, ApiV2010AccountIncomingPhoneNumberIncomingPhoneNumberAssignedAddOnIncomingPhoneNumberAssignedAddOnExtension, ApiV2010AccountIncomingPhoneNumberIncomingPhoneNumberLocal, ApiV2010AccountIncomingPhoneNumberIncomingPhoneNumberMobile, ApiV2010AccountIncomingPhoneNumberIncomingPhoneNumberTollFree, ApiV2010AccountKey, ApiV2010AccountMessage, ApiV2010AccountMessageMedia, ApiV2010AccountMessageMessageFeedback, ApiV2010AccountNewKey, ApiV2010AccountNewSigningKey, ApiV2010AccountNotification, ApiV2010AccountNotificationInstance, ApiV2010AccountOutgoingCallerId, ApiV2010AccountQueue, ApiV2010AccountQueueMember, ApiV2010AccountRecording, ApiV2010AccountRecordingRecordingAddOnResult, ApiV2010AccountRecordingRecordingAddOnResultRecordingAddOnResultPayload, ApiV2010AccountRecordingRecordingAddOnResultRecordingAddOnResultPayloadRecordingAddOnResultPayloadData, ApiV2010AccountRecordingRecordingTranscription, ApiV2010AccountShortCode, ApiV2010AccountSigningKey, ApiV2010AccountSipSipCredentialList, ApiV2010AccountSipSipCredentialListSipCredential, ApiV2010AccountSipSipDomain, ApiV2010AccountSipSipDomainSipAuthSipAuthCallsSipAuthCallsCredentialListMapping, ApiV2010AccountSipSipDomainSipAuthSipAuthCallsSipAuthCallsIpAccessControlListMapping, ApiV2010AccountSipSipDomainSipAuthSipAuthRegistrationsSipAuthRegistrationsCredentialListMapping, ApiV2010AccountSipSipDomainSipCredentialListMapping, ApiV2010AccountSipSipDomainSipIpAccessControlListMapping, ApiV2010AccountSipSipIpAccessControlList, ApiV2010AccountSipSipIpAccessControlListSipIpAddress, ApiV2010AccountToken, ApiV2010AccountTranscription, ApiV2010AccountUsageUsageRecord, ApiV2010AccountUsageUsageRecordUsageRecordAllTime, ApiV2010AccountUsageUsageRecordUsageRecordDaily, ApiV2010AccountUsageUsageRecordUsageRecordLastMonth, ApiV2010AccountUsageUsageRecordUsageRecordMonthly, ApiV2010AccountUsageUsageRecordUsageRecordThisMonth, ApiV2010AccountUsageUsageRecordUsageRecordToday, ApiV2010AccountUsageUsageRecordUsageRecordYearly, ApiV2010AccountUsageUsageRecordUsageRecordYesterday, ApiV2010AccountUsageUsageTrigger, ApiV2010AccountValidationRequest, CallEnumStatus, CallEnumUpdateStatus, CallRecordingEnumStatus, ConferenceEnumStatus, ConferenceEnumUpdateStatus, ConferenceRecordingEnumStatus, ConnectAppEnumPermission, IncomingPhoneNumberEnumEmergencyStatus, IncomingPhoneNumberEnumVoiceReceiveMode, IncomingPhoneNumberLocalEnumEmergencyStatus, IncomingPhoneNumberLocalEnumVoiceReceiveMode, IncomingPhoneNumberMobileEnumEmergencyStatus, IncomingPhoneNumberMobileEnumVoiceReceiveMode, IncomingPhoneNumberTollFreeEnumEmergencyStatus, IncomingPhoneNumberTollFreeEnumVoiceReceiveMode, MessageEnumAddressRetention, MessageEnumContentRetention, MessageEnumRiskCheck, MessageEnumScheduleType, MessageEnumTrafficType, MessageEnumUpdateStatus, MessageFeedbackEnumOutcome, PaymentsEnumBankAccountType, PaymentsEnumCapture, PaymentsEnumPaymentMethod, PaymentsEnumStatus, PaymentsEnumTokenType, RealtimeTranscriptionEnumTrack, RealtimeTranscriptionEnumUpdateStatus, SiprecEnumTrack, SiprecEnumUpdateStatus, StreamEnumTrack, StreamEnumUpdateStatus, UsageTriggerEnumRecurring, UsageTriggerEnumTriggerField } from "./schemas.js";
+import type { AccountEnumStatus, ApiV2010Account, ApiV2010AccountAddress, ApiV2010AccountAddressDependentPhoneNumber, ApiV2010AccountApplication, ApiV2010AccountAuthorizedConnectApp, ApiV2010AccountAvailablePhoneNumberCountry, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberLocal, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberMachineToMachine, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberMobile, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberNational, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberSharedCost, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberTollFree, ApiV2010AccountAvailablePhoneNumberCountryAvailablePhoneNumberVoip, ApiV2010AccountBalance, ApiV2010AccountCall, ApiV2010AccountCallCallEvent, ApiV2010AccountCallCallNotification, ApiV2010AccountCallCallNotificationInstance, ApiV2010AccountCallCallRecording, ApiV2010AccountCallPayments, ApiV2010AccountCallRealtimeTranscription, ApiV2010AccountCallSiprec, ApiV2010AccountCallStream, ApiV2010AccountCallUserDefinedMessage, ApiV2010AccountCallUserDefinedMessageSubscription, ApiV2010AccountConference, ApiV2010AccountConferenceConferenceRecording, ApiV2010AccountConferenceParticipant, ApiV2010AccountConnectApp, ApiV2010AccountIncomingPhoneNumber, ApiV2010AccountIncomingPhoneNumberIncomingPhoneNumberAssignedAddOn, ApiV2010AccountIncomingPhoneNumberIncomingPhoneNumberAssignedAddOnIncomingPhoneNumberAssignedAddOnExtension, ApiV2010AccountIncomingPhoneNumberIncomingPhoneNumberLocal, ApiV2010AccountIncomingPhoneNumberIncomingPhoneNumberMobile, ApiV2010AccountIncomingPhoneNumberIncomingPhoneNumberTollFree, ApiV2010AccountKey, ApiV2010AccountMessage, ApiV2010AccountMessageMedia, ApiV2010AccountMessageMessageFeedback, ApiV2010AccountNewKey, ApiV2010AccountNewSigningKey, ApiV2010AccountNotification, ApiV2010AccountNotificationInstance, ApiV2010AccountOutgoingCallerId, ApiV2010AccountQueue, ApiV2010AccountQueueMember, ApiV2010AccountRecording, ApiV2010AccountRecordingRecordingAddOnResult, ApiV2010AccountRecordingRecordingAddOnResultRecordingAddOnResultPayload, ApiV2010AccountRecordingRecordingTranscription, ApiV2010AccountShortCode, ApiV2010AccountSigningKey, ApiV2010AccountSipSipCredentialList, ApiV2010AccountSipSipCredentialListSipCredential, ApiV2010AccountSipSipDomain, ApiV2010AccountSipSipDomainSipAuthSipAuthCallsSipAuthCallsCredentialListMapping, ApiV2010AccountSipSipDomainSipAuthSipAuthCallsSipAuthCallsIpAccessControlListMapping, ApiV2010AccountSipSipDomainSipAuthSipAuthRegistrationsSipAuthRegistrationsCredentialListMapping, ApiV2010AccountSipSipDomainSipCredentialListMapping, ApiV2010AccountSipSipDomainSipIpAccessControlListMapping, ApiV2010AccountSipSipIpAccessControlList, ApiV2010AccountSipSipIpAccessControlListSipIpAddress, ApiV2010AccountToken, ApiV2010AccountTranscription, ApiV2010AccountUsageUsageRecord, ApiV2010AccountUsageUsageRecordUsageRecordAllTime, ApiV2010AccountUsageUsageRecordUsageRecordDaily, ApiV2010AccountUsageUsageRecordUsageRecordLastMonth, ApiV2010AccountUsageUsageRecordUsageRecordMonthly, ApiV2010AccountUsageUsageRecordUsageRecordThisMonth, ApiV2010AccountUsageUsageRecordUsageRecordToday, ApiV2010AccountUsageUsageRecordUsageRecordYearly, ApiV2010AccountUsageUsageRecordUsageRecordYesterday, ApiV2010AccountUsageUsageTrigger, ApiV2010AccountValidationRequest, CallEnumStatus, CallEnumUpdateStatus, CallRecordingEnumStatus, ConferenceEnumStatus, ConferenceEnumUpdateStatus, ConferenceRecordingEnumStatus, ConnectAppEnumPermission, IncomingPhoneNumberEnumEmergencyStatus, IncomingPhoneNumberEnumVoiceReceiveMode, IncomingPhoneNumberLocalEnumEmergencyStatus, IncomingPhoneNumberLocalEnumVoiceReceiveMode, IncomingPhoneNumberMobileEnumEmergencyStatus, IncomingPhoneNumberMobileEnumVoiceReceiveMode, IncomingPhoneNumberTollFreeEnumEmergencyStatus, IncomingPhoneNumberTollFreeEnumVoiceReceiveMode, MessageEnumAddressRetention, MessageEnumContentRetention, MessageEnumRiskCheck, MessageEnumScheduleType, MessageEnumTrafficType, MessageEnumUpdateStatus, MessageFeedbackEnumOutcome, PaymentsEnumBankAccountType, PaymentsEnumCapture, PaymentsEnumPaymentMethod, PaymentsEnumStatus, PaymentsEnumTokenType, RealtimeTranscriptionEnumTrack, RealtimeTranscriptionEnumUpdateStatus, SiprecEnumTrack, SiprecEnumUpdateStatus, StreamEnumTrack, StreamEnumUpdateStatus, UsageTriggerEnumRecurring, UsageTriggerEnumTriggerField } from "./schemas.js";
 
 export type TwilioClient = {
   /**
@@ -92,7 +92,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the Address resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   fetchAddress: (input: {
     /** The SID of the [Account](https://www.twilio.com/docs/iam/api/account) that is responsible for the Address resource to fetch. */
@@ -190,7 +190,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the Application resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Fetch the application specified by the provided sid
@@ -760,7 +760,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided Call SID that uniquely identifies the Call resource to delete */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Fetch the call specified by the provided Call SID
@@ -928,7 +928,7 @@ export type TwilioClient = {
     CallSid: string;
     /** The Twilio-provided string that uniquely identifies the Recording resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Fetch an instance of a conference
@@ -1040,7 +1040,7 @@ export type TwilioClient = {
     ConferenceSid: string;
     /** The Twilio-provided string that uniquely identifies the Conference Recording resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Fetch an instance of a connect-app
@@ -1086,7 +1086,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the ConnectApp resource to fetch. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of connect-apps belonging to the account used to make the request
@@ -1185,7 +1185,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the IncomingPhoneNumber resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of incoming-phone-numbers belonging to the account used to make the request.
@@ -1285,7 +1285,7 @@ export type TwilioClient = {
     ResourceSid: string;
     /** The Twilio-provided string that uniquely identifies the resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of Add-on installations currently assigned to this Number.
@@ -1572,7 +1572,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the Key resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   listKey: (input: {
     /** The SID of the [Account](https://www.twilio.com/docs/iam/api/account) that created the Key resources to read. */
@@ -1602,7 +1602,7 @@ export type TwilioClient = {
     MessageSid: string;
     /** The unique identifier of the to-be-deleted Media resource. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Fetch a single Media resource associated with a specific Message resource
@@ -1767,7 +1767,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The SID of the Message resource you wish to delete */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Fetch a specific Message
@@ -1885,7 +1885,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the OutgoingCallerId resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of outgoing-caller-ids belonging to the account used to make the request
@@ -1980,7 +1980,7 @@ export type TwilioClient = {
     ConferenceSid: string;
     /** The [Call](https://www.twilio.com/docs/voice/api/call-resource) SID or label of the participant to delete. Non URL safe characters in a label must be percent encoded, for example, a space character is represented as %20. */
     CallSid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   createParticipant: (input: {
     /** The phone number, Client identifier, or username portion of SIP address that made this call. Phone numbers are in [E.164](https://www.twilio.com/docs/glossary/what-e164) format (e.g., +16175551212). Client identifiers are formatted `client:name`. If using a phone number, it must be a Twilio number or a Verified [outgoing caller id](https://www.twilio.com/docs/voice/api/outgoing-caller-ids) for your account. If the `to` parameter is a phone number, `from` must also be a phone number. If `to` is sip address, this value of `from` should be a username portion to be used to populate the P-Asserted-Identity header that is passed to the SIP endpoint. */
@@ -2206,7 +2206,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the Queue resource to delete */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of queues belonging to the account used to make the request
@@ -2312,7 +2312,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the Recording resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of recordings belonging to the account used to make the request
@@ -2362,7 +2362,7 @@ export type TwilioClient = {
     ReferenceSid: string;
     /** The Twilio-provided string that uniquely identifies the Recording AddOnResult resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of results belonging to the recording
@@ -2406,7 +2406,7 @@ export type TwilioClient = {
     AddOnResultSid: string;
     /** The Twilio-provided string that uniquely identifies the Recording AddOnResult Payload resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of payloads belonging to the AddOnResult
@@ -2438,7 +2438,7 @@ export type TwilioClient = {
     AddOnResultSid: string;
     /** The Twilio-provided string that uniquely identifies the Recording AddOnResult Payload resource to fetch. */
     PayloadSid: string;
-  }) => Promise<ApiV2010AccountRecordingRecordingAddOnResultRecordingAddOnResultPayloadRecordingAddOnResultPayloadData>;
+  }) => Promise<unknown>;
 
   fetchRecordingTranscription: (input: {
     /** The SID of the [Account](https://www.twilio.com/docs/iam/api/account) that created the Transcription resource to fetch. */
@@ -2456,7 +2456,7 @@ export type TwilioClient = {
     RecordingSid: string;
     /** The Twilio-provided string that uniquely identifies the Transcription resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   listRecordingTranscription: (input: {
     /** The SID of the [Account](https://www.twilio.com/docs/iam/api/account) that created the Transcription resources to read. */
@@ -2535,7 +2535,7 @@ export type TwilioClient = {
   deleteSigningKey: (input: {
     AccountSid: string;
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create a new credential list mapping resource
@@ -2587,7 +2587,7 @@ export type TwilioClient = {
     DomainSid: string;
     /** The Twilio-provided string that uniquely identifies the CredentialListMapping resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create a new IP Access Control List mapping
@@ -2639,7 +2639,7 @@ export type TwilioClient = {
     DomainSid: string;
     /** The Twilio-provided string that uniquely identifies the IpAccessControlListMapping resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create a new credential list mapping resource
@@ -2691,7 +2691,7 @@ export type TwilioClient = {
     DomainSid: string;
     /** The Twilio-provided string that uniquely identifies the CredentialListMapping resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of credentials.
@@ -2759,7 +2759,7 @@ export type TwilioClient = {
     CredentialListSid: string;
     /** The unique id that identifies the resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Get All Credential Lists
@@ -2815,7 +2815,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The credential list Sid that uniquely identifies this resource */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create a CredentialListMapping resource for an account.
@@ -2867,7 +2867,7 @@ export type TwilioClient = {
     DomainSid: string;
     /** A 34 character string that uniquely identifies the resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of domains belonging to the account used to make the request
@@ -2971,7 +2971,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the SipDomain resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of IpAccessControlLists that belong to the account used to make the request
@@ -3027,7 +3027,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** A 34 character string that uniquely identifies the resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Fetch an IpAccessControlListMapping resource.
@@ -3051,7 +3051,7 @@ export type TwilioClient = {
     DomainSid: string;
     /** A 34 character string that uniquely identifies the resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create a new IpAccessControlListMapping resource.
@@ -3153,7 +3153,7 @@ export type TwilioClient = {
     IpAccessControlListSid: string;
     /** A 34 character string that uniquely identifies the resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create a Siprec
@@ -4039,7 +4039,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the Transcription resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Retrieve a list of transcriptions belonging to the account used to make the request
@@ -4260,7 +4260,7 @@ export type TwilioClient = {
     AccountSid: string;
     /** The Twilio-provided string that uniquely identifies the UsageTrigger resource to delete. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 
   /**
    * Create a new UsageTrigger
@@ -4340,7 +4340,7 @@ export type TwilioClient = {
     CallSid: string;
     /** The SID that uniquely identifies this User Defined Message Subscription. */
     Sid: string;
-  }) => Promise<unknown>;
+  }) => Promise<undefined>;
 };
 
 export * from "./schemas.js";

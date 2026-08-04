@@ -1,135 +1,32 @@
 # Web Analytics
 
-## Operations
-
-### `posthog.environmentsWebAnalyticsRecap`
-
-- **HTTP**: `GET /api/environments/{environment_id}/web_analytics/recap/`
-- **What it does**: Weekly web analytics recap
-- **OpenAPI operationId**: `environments_web_analytics_recap`
-- **Path params**: None
-- **Query params**: `compare`, `days`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ visitors: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; pageviews: { current: number; previous: number | nu...`
-- OpenAPI response codes: `200`
+2 operations · `@utdk/posthog`
 
 ```ts
 import posthog from "@utdk/posthog";
-
-type EnvironmentsWebAnalyticsRecapInput = Parameters<typeof posthog.environmentsWebAnalyticsRecap> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWebAnalyticsRecapOutput = Awaited<ReturnType<typeof posthog.environmentsWebAnalyticsRecap>>;
-
-const result: EnvironmentsWebAnalyticsRecapOutput = await posthog.environmentsWebAnalyticsRecap();
-
-// Result shape (from schema): { visitors: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; pageviews: { current: number; previous: number | nu...
 ```
 
-### `posthog.environmentsWebAnalyticsWeeklyDigest`
+## `posthog.webAnalyticsRecap`
 
-- **HTTP**: `GET /api/environments/{environment_id}/web_analytics/weekly_digest/`
-- **What it does**: Summarize web analytics
-- **OpenAPI operationId**: `environments_web_analytics_weekly_digest`
-- **Path params**: None
-- **Query params**: `compare`, `days`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ visitors: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; pageviews: { current: number; previous: number | nu...`
-- OpenAPI response codes: `200`
+Weekly web analytics recap
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type EnvironmentsWebAnalyticsWeeklyDigestInput = Parameters<typeof posthog.environmentsWebAnalyticsWeeklyDigest> extends [infer T, ...unknown[]] ? T : undefined;
-type EnvironmentsWebAnalyticsWeeklyDigestOutput = Awaited<ReturnType<typeof posthog.environmentsWebAnalyticsWeeklyDigest>>;
-
-const result: EnvironmentsWebAnalyticsWeeklyDigestOutput = await posthog.environmentsWebAnalyticsWeeklyDigest();
-
-// Result shape (from schema): { visitors: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; pageviews: { current: number; previous: number | nu...
+posthog.webAnalyticsRecap(): Promise<{ visitors: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; pageviews: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; sessions: unknown; bounce_rate: unknown; avg_session_duration: {...>
 ```
 
-### `posthog.webAnalyticsRecap`
+<sub>`GET /api/projects/{project_id}/web_analytics/recap/` · `web_analytics_recap`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/web_analytics/recap/`
-- **What it does**: Weekly web analytics recap
-- **OpenAPI operationId**: `web_analytics_recap`
-- **Path params**: None
-- **Query params**: `compare`, `days`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
+## `posthog.webAnalyticsWeeklyDigest`
 
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ visitors: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; pageviews: { current: number; previous: number | nu...`
-- OpenAPI response codes: `200`
+Summarize web analytics
 
 ```ts
-import posthog from "@utdk/posthog";
-
-type WebAnalyticsRecapInput = Parameters<typeof posthog.webAnalyticsRecap> extends [infer T, ...unknown[]] ? T : undefined;
-type WebAnalyticsRecapOutput = Awaited<ReturnType<typeof posthog.webAnalyticsRecap>>;
-
-const result: WebAnalyticsRecapOutput = await posthog.webAnalyticsRecap();
-
-// Result shape (from schema): { visitors: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; pageviews: { current: number; previous: number | nu...
+posthog.webAnalyticsWeeklyDigest(): Promise<{ visitors: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; pageviews: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; sessions: unknown; bounce_rate: unknown; avg_session_duration: {...>
 ```
 
-### `posthog.webAnalyticsWeeklyDigest`
+<sub>`GET /api/projects/{project_id}/web_analytics/weekly_digest/` · `web_analytics_weekly_digest`</sub>
 
-- **HTTP**: `GET /api/projects/{project_id}/web_analytics/weekly_digest/`
-- **What it does**: Summarize web analytics
-- **OpenAPI operationId**: `web_analytics_weekly_digest`
-- **Path params**: None
-- **Query params**: `compare`, `days`
-- **Response codes**: `200`
-- **Transport options**: None
-- **TypeScript**: [Client interface](../types.ts)
-
-**Inputs**
-
-- Client input type: `{ [key: string]: unknown }`
-- Client transport options: None
-
-**Outputs**
-
-- Client return type: `{ visitors: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; pageviews: { current: number; previous: number | nu...`
-- OpenAPI response codes: `200`
-
-```ts
-import posthog from "@utdk/posthog";
-
-type WebAnalyticsWeeklyDigestInput = Parameters<typeof posthog.webAnalyticsWeeklyDigest> extends [infer T, ...unknown[]] ? T : undefined;
-type WebAnalyticsWeeklyDigestOutput = Awaited<ReturnType<typeof posthog.webAnalyticsWeeklyDigest>>;
-
-const result: WebAnalyticsWeeklyDigestOutput = await posthog.webAnalyticsWeeklyDigest();
-
-// Result shape (from schema): { visitors: { current: number; previous: number | null; change: { percent: number; direction: "Up" | "Down"; color: string; text: string; long_text: string } | null }; pageviews: { current: number; previous: number | nu...
-```
-
+Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 
 <!-- prompt-hash:
 8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8

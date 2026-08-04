@@ -1,6 +1,6 @@
 # Issues
 
-55 operations · `@utdk/github`
+58 operations · `@utdk/github`
 
 ```ts
 import github from "@utdk/github";
@@ -98,7 +98,7 @@ github.issues.checkUserCanBeAssigned(input: {
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
   assignee: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`GET /repos/{owner}/{repo}/assignees/{assignee}` · `issues/check-user-can-be-assigned`</sub>
@@ -211,20 +211,20 @@ github.issues.update(input: {
   duplicate_issue_id?: number;
   milestone?: string | number | null;
   /** Labels to associate with this issue. Pass one or more labels to _replace_ the set of labels on this issue. Send an empty array (`[]`) to clear all labels from the issue. Only users with push access can set labels for issues. Without push access to the repository, label changes are silently dropped. */
-  labels?: (string | { id?: number; name?: string; description?: string | null; color?: string | null })[];
+  labels?: (string | { id?: number; name?: string; description?: string | null; color?: string | null; rationale?: string; suggest?: boolean; confidence?: "low" | "medium" | "high" })[];
   /** Usernames to assign to this issue. Pass one or more user logins to _replace_ the set of assignees on this issue. Send an empty array (`[]`) to clear all assignees from the issue. Only users with push access can set assignees for new issues. Without push access to the repository, assignee changes are silently dropped. */
-  assignees?: (string | { login?: string })[];
+  assignees?: (string | { login?: string; rationale?: string; suggest?: boolean; confidence?: "low" | "medium" | "high" })[];
   /** An array of issue field values to set on this issue. Each field value must include the field ID and the value to set. Only users with push access can set field values for issues */
-  issue_field_values?: ({ field_id: number; value: string | number | (string)[] })[];
-  /** The name of the issue type to associate with this issue or use `null` to remove the current issue type. Only users with push access can set the type for issues. Without push access to the repository, type changes are silently dropped. */
-  type?: string | null;
+  issue_field_values?: ({ field_id: number; value: string | number | (string)[]; rationale?: string; suggest?: boolean; confidence?: "low" | "medium" | "high" })[];
+  /** The issue type to associate with this issue. Only users with push access can set the type for issues. Without push access to the repository, type changes are silently dropped. */
+  type?: string | { value?: string | null; rationale?: string; suggest?: boolean; confidence?: "low" | "medium" | "high" } | null;
   /** The account owner of the repository. The name is not case sensitive. */
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
   /** The number that identifies the issue. */
   issue_number: number;
-}): Promise<Issue & { [key: string]: unknown }>
+}): Promise<Issue & { suggestions?: { type?: ({ value?: string; rationale?: string; suggest?: boolean; confidence?: "low" | "medium" | "high"; already_applied?: boolean })[]; issue_field_values?: ({ field_id?: number; value?: string | number | (string)[]; rationale?: string; suggest?: boolean; confidence?: "low" | "medium" | "high"; already_applied?: boolean })[]; labels?: ({ name?: string; rationale?: strin...>
 ```
 
 <sub>`PATCH /repos/{owner}/{repo}/issues/{issue_number}` · `issues/update`</sub>
@@ -255,7 +255,7 @@ Add assignees to an issue — [API reference](https://docs.github.com/rest/issue
 ```ts
 github.issues.addAssignees(input: {
   /** Usernames of people to assign this issue to. _NOTE: Only users with push access can add assignees to an issue. Assignees are silently ignored otherwise._ */
-  assignees?: (string)[];
+  assignees?: (string | { login: string; rationale?: string; suggest?: boolean; confidence?: "low" | "medium" | "high" })[];
   /** The account owner of the repository. The name is not case sensitive. */
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
@@ -280,7 +280,7 @@ github.issues.checkUserCanBeAssignedToIssue(input: {
   /** The number that identifies the issue. */
   issue_number: number;
   assignee: string;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`GET /repos/{owner}/{repo}/issues/{issue_number}/assignees/{assignee}` · `issues/check-user-can-be-assigned-to-issue`</sub>
@@ -501,7 +501,7 @@ github.issues.deleteIssueFieldValue(input: {
   issue_number: number;
   /** The unique identifier of the issue field. */
   issue_field_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/issues/{issue_number}/issue-field-values/{issue_field_id}` · `issues/delete-issue-field-value`</sub>
@@ -518,7 +518,7 @@ github.issues.removeAllLabels(input: {
   repo: string;
   /** The number that identifies the issue. */
   issue_number: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/issues/{issue_number}/labels` · `issues/remove-all-labels`</sub>
@@ -550,7 +550,7 @@ Add labels to an issue — [API reference](https://docs.github.com/rest/issues/l
 
 ```ts
 github.issues.addLabels(input: {
-  body?: { labels?: (string)[] } | (string)[] | ({ name: string })[];
+  body?: { labels?: (string | { name: string; rationale?: string; suggest?: boolean; confidence?: "low" | "medium" | "high" })[] } | (string)[] | ({ name: string; rationale?: string; suggest?: boolean; confidence?: "low" | "medium" | "high" })[];
   /** The account owner of the repository. The name is not case sensitive. */
   owner: string;
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
@@ -610,7 +610,7 @@ github.issues.unlock(input: {
   repo: string;
   /** The number that identifies the issue. */
   issue_number: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/issues/{issue_number}/lock` · `issues/unlock`</sub>
@@ -629,7 +629,7 @@ github.issues.lock(input: {
   repo: string;
   /** The number that identifies the issue. */
   issue_number: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`PUT /repos/{owner}/{repo}/issues/{issue_number}/lock` · `issues/lock`</sub>
@@ -735,6 +735,69 @@ github.issues.reprioritizeSubIssue(input: {
 
 <sub>`PATCH /repos/{owner}/{repo}/issues/{issue_number}/sub_issues/priority` · `issues/reprioritize-sub-issue`</sub>
 
+## `github.issues.listSuggestions`
+
+List issue suggestions — [API reference](https://docs.github.com/rest/issues/issues#list-issue-suggestions)
+
+```ts
+github.issues.listSuggestions(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the issue. */
+  issue_number: number;
+  /** Filter suggestions by their state. */
+  state?: "pending" | "applied" | "approved" | "dismissed" | "replaced" | "invalidated" | "all";
+  /** Filter suggestions by the change they propose. */
+  action?: "set_type" | "add_label" | "add_field" | "add_assignee" | "close_issue";
+  /** The number of results per page (max 100). For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  per_page?: number;
+  /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
+  page?: number;
+}): Promise<(IssueSuggestion)[]>
+```
+
+<sub>`GET /repos/{owner}/{repo}/issues/{issue_number}/suggestions` · `issues/list-suggestions`</sub>
+
+## `github.issues.approveSuggestion`
+
+Approve an issue suggestion — [API reference](https://docs.github.com/rest/issues/issues#approve-an-issue-suggestion)
+
+```ts
+github.issues.approveSuggestion(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the issue. */
+  issue_number: number;
+  /** The unique identifier of the suggestion. */
+  suggestion_id: number;
+}): Promise<IssueSuggestion>
+```
+
+<sub>`POST /repos/{owner}/{repo}/issues/{issue_number}/suggestions/{suggestion_id}/approve` · `issues/approve-suggestion`</sub>
+
+## `github.issues.dismissSuggestion`
+
+Dismiss an issue suggestion — [API reference](https://docs.github.com/rest/issues/issues#dismiss-an-issue-suggestion)
+
+```ts
+github.issues.dismissSuggestion(input: {
+  /** The account owner of the repository. The name is not case sensitive. */
+  owner: string;
+  /** The name of the repository without the `.git` extension. The name is not case sensitive. */
+  repo: string;
+  /** The number that identifies the issue. */
+  issue_number: number;
+  /** The unique identifier of the suggestion. */
+  suggestion_id: number;
+}): Promise<IssueSuggestion>
+```
+
+<sub>`POST /repos/{owner}/{repo}/issues/{issue_number}/suggestions/{suggestion_id}/dismiss` · `issues/dismiss-suggestion`</sub>
+
 ## `github.issues.listEventsForTimeline`
 
 List timeline events for an issue — [API reference](https://docs.github.com/rest/issues/timeline#list-timeline-events-for-an-issue)
@@ -751,6 +814,8 @@ github.issues.listEventsForTimeline(input: {
   per_page?: number;
   /** The page number of the results to fetch. For more information, see "[Using pagination in the REST API](https://docs.github.com/rest/using-the-rest-api/using-pagination-in-the-rest-api)." */
   page?: number;
+  /** A comma-separated list of timeline event names to exclude from the response. */
+  exclude?: string;
 }): Promise<(TimelineIssueEvents)[]>
 ```
 
@@ -793,7 +858,7 @@ github.issues.deleteComment(input: {
   repo: string;
   /** The unique identifier of the comment. */
   comment_id: number;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}` · `issues/delete-comment`</sub>
@@ -846,7 +911,7 @@ github.issues.unpinComment(input: {
   repo: string;
   /** The unique identifier of the comment. */
   comment_id: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/issues/comments/{comment_id}/pin` · `issues/unpin-comment`</sub>
@@ -954,7 +1019,7 @@ github.issues.deleteLabel(input: {
   /** The name of the repository without the `.git` extension. The name is not case sensitive. */
   repo: string;
   name: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/labels/{name}` · `issues/delete-label`</sub>
@@ -1057,7 +1122,7 @@ github.issues.deleteMilestone(input: {
   repo: string;
   /** The number that identifies the milestone. */
   milestone_number: number;
-}): Promise<BasicError>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /repos/{owner}/{repo}/milestones/{milestone_number}` · `issues/delete-milestone`</sub>

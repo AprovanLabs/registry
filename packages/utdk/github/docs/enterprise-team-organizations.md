@@ -37,7 +37,7 @@ github.enterpriseTeamOrganizations.delete(input: {
   "enterprise-team": string;
   /** The organization name. The name is not case sensitive. */
   org: string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`DELETE /enterprises/{enterprise}/teams/{enterprise-team}/organizations/{org}` · `enterprise-team-organizations/delete`</sub>
@@ -105,7 +105,7 @@ github.enterpriseTeamOrganizations.bulkRemove(input: {
   enterprise: string;
   /** The slug version of the enterprise team name. You can also substitute this value with the enterprise team id. */
   "enterprise-team": string;
-}): Promise<unknown>
+}): Promise<undefined>
 ```
 
 <sub>`POST /enterprises/{enterprise}/teams/{enterprise-team}/organizations/remove` · `enterprise-team-organizations/bulk-remove`</sub>
