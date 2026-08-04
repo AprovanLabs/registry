@@ -1,12 +1,12 @@
 {
   "provider": "digitalocean",
-  "generatedAt": "2026-05-30T22:05:54.649Z",
-  "generation": 1,
+  "generatedAt": "2026-08-04T03:59:16.515Z",
+  "generation": 2,
   "source": {
     "type": "openapi",
-    "url": "https://raw.githubusercontent.com/digitalocean/openapi/main/specification/DigitalOcean-public.v2.yaml",
-    "hash": "sha256:9fac4b70219d9e28ab368c954c3c4e4ffc92ea4e2dfdb0c151d2ca7bbe9e46c9",
-    "fetchedAt": "2026-05-30T22:05:54.649Z"
+    "url": "https://api-engineering.nyc3.digitaloceanspaces.com/spec-ci/DigitalOcean-public.v2.yaml",
+    "hash": "sha256:b5b8dc9183a48c4ecb0d805da9b0759c52b02d800c583c0f888e88ccde84f0f6",
+    "fetchedAt": "2026-08-04T03:59:16.515Z"
   },
   "ingestSource": "printing-press",
   "pipeline": {
@@ -16,9 +16,9 @@
     },
     "scorecard": {
       "infrastructure": "fail",
-      "domain": 70
+      "domain": 80
     },
-    "agentReadiness": "pass"
+    "agentReadiness": "fail"
   },
   "bundlerVersion": "0.1.1"
 }

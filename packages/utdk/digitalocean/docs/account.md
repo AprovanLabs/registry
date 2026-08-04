@@ -1,4 +1,4 @@
-# <Upload Url>
+# Account
 
 1 operation · `@utdk/digitalocean`
 
@@ -6,13 +6,15 @@
 import digitalocean from "@utdk/digitalocean";
 ```
 
-## `digitalocean.putUploadUrl`
+## `digitalocean.accountGet`
+
+Get User Information
 
 ```ts
-digitalocean.putUploadUrl(): Promise<unknown>
+digitalocean.accountGet(): Promise<{ account?: Account }>
 ```
 
-<sub>`PUT /<upload_url>` · `put_upload_url`</sub>
+<sub>`GET /v2/account` · `account_get`</sub>
 
 Named result types are exported from the package — hover them in your editor, or browse `types/schemas.ts`.
 

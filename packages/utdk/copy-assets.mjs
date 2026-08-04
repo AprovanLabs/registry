@@ -7,12 +7,12 @@ const distDir = path.join(rootDir, "dist");
 const skippedRootFiles = new Set(["package.json", "tsconfig.json"]);
 
 /**
- * Mirrors build.mjs's SKIP_DIRS. The contract packages (`@utdk/sql`,
- * `@utdk/llm`, …) live in `packages/contracts/` and are not part of this
- * walk; provider suite directories such as `github/vcs` copy like any other
- * provider content.
+ * Mirrors build.mjs's SKIP_DIRS. Without it this walk copies `llm/package.json`
+ * and `sql/package.json` into dist, creating `dist/llm` and `dist/sql`
+ * directories that contain manifests and no code — enough to look like
+ * providers to anything enumerating dist, and to fail when imported.
  */
-const skippedDirs = new Set(["dist", "node_modules", "__tests__"]);
+const skippedDirs = new Set(["dist", "node_modules", "llm", "sql", "__tests__"]);
 
 async function copyAssets(currentDir, relativeDir = '') {
   const entries = await readdir(currentDir, { withFileTypes: true });

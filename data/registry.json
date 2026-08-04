@@ -896,10 +896,10 @@
     "name": "digitalocean",
     "transport_type": "http",
     "fetch_method": "GET",
-    "url": "https://raw.githubusercontent.com/digitalocean/openapi/main/specification/DigitalOcean-public.v2.yaml",
+    "url": "https://api-engineering.nyc3.digitaloceanspaces.com/spec-ci/DigitalOcean-public.v2.yaml",
     "content_type": "application/x-yaml",
     "ingestSource": "printing-press",
-    "sourceHash": "sha256:10c60ed779769937321a3e3c7717e651776a17d37e46f0d0750bfc6694689f35",
+    "sourceHash": "sha256:aa778db0163ed1c15ce2006a1342ce1402f904f9d656c2761ebb8713b05d4653",
     "tags": [
       "printing-press"
     ],
@@ -920,7 +920,7 @@
       "documentation_url": "https://docs.digitalocean.com/reference/api",
       "version": "2.0",
       "openapi_version": "3.0.0",
-      "last_updated": "2026-05-30"
+      "last_updated": "2026-08-04"
     },
     "branding": {
       "site": "https://docs.digitalocean.com"
@@ -928,7 +928,7 @@
     "provenance": {
       "source": "printing-press",
       "originDomain": "docs.digitalocean.com",
-      "originSpecUrl": "https://raw.githubusercontent.com/digitalocean/openapi/main/specification/DigitalOcean-public.v2.yaml"
+      "originSpecUrl": "https://api-engineering.nyc3.digitaloceanspaces.com/spec-ci/DigitalOcean-public.v2.yaml"
     }
   },
   {
