@@ -33,7 +33,7 @@ import {
 } from "@aprovan/registry-ui/run-view";
 import { PlayIcon, SquareIcon } from "lucide-react";
 import * as React from "react";
-import { CodeEditor } from "@/components/CodeEditor";
+import { CodeEditor } from "@aprovan/editor";
 import {
   createPlaygroundGatewayClient,
   LOCAL_AUTH_SENTINEL,
@@ -53,8 +53,8 @@ import {
   fetchProviderTypes,
   type ProviderTypesBundle,
 } from "@/lib/catalog";
+import { mountReferencedProviderTypes } from "@/lib/provider-types";
 import {
-  BUILTIN_BY_ID,
   BUILTIN_NAMESPACES,
   compileScript,
   detectDependencies,
@@ -188,41 +188,23 @@ export function ScriptPlayground() {
   // automatic type acquisition). Bundles land at
   // /node_modules/@utdk/<provider>/…; bare-name imports get a one-line
   // alias module. Providers without bundles keep the ambient `any` fallback.
+  // Driven by source references only — the full catalogue is never fetched.
   React.useEffect(() => {
     let cancelled = false;
     const providers = [...new Set(dependencies.map((dep) => dep.provider))];
-    void Promise.all(
-      providers.map(async (provider) => {
-        // Built-in namespaces ship their types inline — nothing to fetch.
-        if (BUILTIN_BY_ID.has(provider)) return [provider, null] as const;
+    void mountReferencedProviderTypes({
+      providers,
+      fetchBundle: async (provider) => {
         if (!typeBundlesRef.current.has(provider)) {
           typeBundlesRef.current.set(
             provider,
             await fetchProviderTypes(provider).catch(() => null),
           );
         }
-        return [provider, typeBundlesRef.current.get(provider) ?? null] as const;
-      }),
-    ).then((bundles) => {
+        return typeBundlesRef.current.get(provider) ?? null;
+      },
+    }).then(({ files }) => {
       if (cancelled) return;
-      const files: Record<string, string> = {};
-      for (const dependency of dependencies) {
-        const builtin = BUILTIN_BY_ID.get(dependency.provider);
-        if (builtin) {
-          files[`/node_modules/${dependency.provider}/index.d.ts`] = builtin.types;
-          continue;
-        }
-        const bundle = bundles.find(([p]) => p === dependency.provider)?.[1];
-        if (!bundle) continue;
-        for (const [relative, content] of Object.entries(bundle.files)) {
-          files[`/node_modules/${bundle.module}/${relative}`] = content;
-        }
-        if (dependency.provider !== bundle.module) {
-          files[`/node_modules/@utdk/${dependency.provider}/index.d.ts`] =
-            `export * from "${bundle.module}";\n` +
-            `export { default } from "${bundle.module}";\n`;
-        }
-      }
       setExtraTypeFiles((previous) => {
         const prevKeys = Object.keys(previous);
         const nextKeys = Object.keys(files);

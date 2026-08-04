@@ -87,7 +87,7 @@ export default defineConfig({
         // <script> tags, so it doesn't belong in the install-time shell and
         // would blow past the default 2MB per-file cap. It's picked up by
         // the CacheFirst _astro/* runtime rule the first time it's loaded.
-        globIgnores: ["**/editor.*.js"],
+        globIgnores: ["**/editor.*.js", "**/ts-*.js", "**/ts.*.js"],
         // Default 2MB cap is intentionally left as-is: no core-shell asset
         // (index/playground's own JS+CSS, all well under 100KB each)
         // needs it raised.

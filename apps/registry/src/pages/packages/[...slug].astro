@@ -2,7 +2,7 @@
 import { CopyButton } from "@/components/CopyButton";
 import MarkdownInline from "@/components/MarkdownInline.astro";
 import MarkdownContent from "@/components/MarkdownContent.astro";
-import { HighlightedCode } from "@/lib/highlight";
+import { HighlightedCode } from "@aprovan/editor";
 import { SdkExplorer } from "@/components/SdkExplorer";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -220,7 +220,7 @@ const hiddenWebhookEventCount = webhookIntel
                     text={entry.importSample}
                   />
                 </div>
-                <pre class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><code><HighlightedCode code={entry.importSample} /></code></pre>
+                <div class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><HighlightedCode code={entry.importSample} /></div>
               </div>
 
               {entry.createClientSample ? (
@@ -234,7 +234,7 @@ const hiddenWebhookEventCount = webhookIntel
                       text={entry.createClientSample}
                     />
                   </div>
-                  <pre class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><code><HighlightedCode code={entry.createClientSample} /></code></pre>
+                  <div class="overflow-x-auto rounded-lg bg-background p-3 text-sm"><HighlightedCode code={entry.createClientSample} /></div>
                 </div>
               ) : (
                 <div class="rounded-xl border bg-muted/50 p-4">

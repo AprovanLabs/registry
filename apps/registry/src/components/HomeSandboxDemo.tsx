@@ -18,7 +18,7 @@ import {
 } from "@aprovan/registry-ui/run-view";
 import { ChevronDownIcon, PlayIcon } from "lucide-react";
 import * as React from "react";
-import { CodeEditor } from "@/components/CodeEditor";
+import { CodeEditor } from "@aprovan/editor";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

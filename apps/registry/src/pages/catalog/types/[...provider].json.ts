@@ -15,20 +15,23 @@
  * The package entry (`index.ts`) contains runtime code, so a declaration
  * entry is synthesized instead: named type re-exports plus a typed default
  * client and factory.
+ *
+ * Package-name derivation and index emit share the single algorithm with
+ * `@aprovan/patchwork/namespace-types` (mirrored in `@/lib/type-bundle`).
  */
 
 import { existsSync } from "node:fs";
 import { readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 import type { APIRoute, GetStaticPaths } from "astro";
+import {
+  emitProviderModuleIndex,
+  providerModuleName,
+  type ProviderTypesBundle,
+} from "@/lib/type-bundle";
 import { getRegistryCatalog } from "@/lib/registry";
 
-export interface ProviderTypesBundle {
-  /** Import specifier the bundle types (e.g. `@utdk/github`). */
-  module: string;
-  /** Package-relative virtual file map (`index.d.ts`, `types/….d.ts`). */
-  files: Record<string, string>;
-}
+export type { ProviderTypesBundle };
 
 function findWorkspaceRoot(startDirectory: string): string {
   let current = path.resolve(startDirectory);
@@ -40,22 +43,6 @@ function findWorkspaceRoot(startDirectory: string): string {
     }
     current = parent;
   }
-}
-
-/** Mirror of the bundler's provider→PascalCase identifier derivation. */
-function toPascalCase(name: string): string {
-  return name
-    .replace(/([A-Z]+)([A-Z][a-z])/g, "$1 $2")
-    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
-    .replace(/([A-Za-z])([0-9])/g, "$1 $2")
-    .replace(/([0-9])([A-Za-z])/g, "$1 $2")
-    .replace(/[^a-zA-Z0-9]+/g, " ")
-    .trim()
-    .split(/\s+/)
-    .map((segment) => segment.charAt(0).toUpperCase() + segment.slice(1).toLowerCase())
-    .join("")
-    .replace(/[^a-zA-Z0-9_]/g, "_")
-    .replace(/^[0-9]/, "_$&");
 }
 
 async function buildBundle(providerPath: string): Promise<ProviderTypesBundle | null> {
@@ -92,19 +79,9 @@ async function buildBundle(providerPath: string): Promise<ProviderTypesBundle | 
   }
   if (!typesImportPath) return null;
 
-  const clientTypeName = `${toPascalCase(providerPath)}Client`;
-  files["index.d.ts"] = [
-    `import type { ${clientTypeName} } from "${typesImportPath}";`,
-    `export * from "${typesImportPath}";`,
-    `export declare function create${toPascalCase(providerPath)}Client(`,
-    `  options?: Record<string, unknown>,`,
-    `): Promise<${clientTypeName}>;`,
-    `declare const defaultClient: ${clientTypeName};`,
-    `export default defaultClient;`,
-    ``,
-  ].join("\n");
+  files["index.d.ts"] = emitProviderModuleIndex(providerPath, typesImportPath);
 
-  return { module: `@utdk/${providerPath}`, files };
+  return { module: providerModuleName(providerPath), files };
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {

@@ -11,7 +11,7 @@ import { PlayIcon, SearchIcon } from "lucide-react";
 import * as React from "react";
 import { CopyButton } from "@/components/CopyButton";
 import { TryItPanel } from "@/components/TryItPanel";
-import { HighlightedCode } from "@/lib/highlight";
+import { HighlightedCode } from "@aprovan/editor";
 import {
   Card,
   CardContent,
@@ -258,7 +258,9 @@ export function SdkExplorer({ provider, packageName, symbols }: SdkExplorerProps
                   <p className="text-xs font-medium text-muted-foreground">Import and Run</p>
                   <CopyButton idleLabel="Copy" size="xs" text={active.snippet} />
                 </div>
-                <pre className="overflow-x-auto break-all text-xs leading-5"><code><HighlightedCode code={active.snippet} /></code></pre>
+                <div className="overflow-x-auto break-all text-xs leading-5">
+                  <HighlightedCode code={active.snippet} />
+                </div>
               </div>
               <TryItPanel
                 key={active.sdkPath}
