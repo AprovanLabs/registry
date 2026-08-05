@@ -183,6 +183,19 @@ export class RuntimeTimeoutError extends Error {
   }
 }
 
+/** Alias → canonical provider name, e.g. `"googleDrive"` → `"google/drive"`. */
+export type ProviderAliasMap = ReadonlyMap<string, string>;
+
+/** Thrown when a `tools.` alias cannot be resolved to a canonical provider. */
+export class AliasResolutionError extends Error {
+  constructor(public readonly alias: string) {
+    super(
+      `Unknown tools namespace "${alias}". Use tools.search() to discover available providers.`,
+    );
+    this.name = "AliasResolutionError";
+  }
+}
+
 /** Error from a transport, carrying an HTTP-ish status when known. */
 export class TransportError extends Error {
   constructor(

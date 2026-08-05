@@ -8,11 +8,13 @@
  */
 
 export {
+  AliasResolutionError,
   RuntimeTimeoutError,
   TransportError,
   type ManifestPolicy,
   type RateLimitPolicy,
   type RetryPolicy,
+  type ProviderAliasMap,
   type RuntimeDependency,
   type RuntimeEvent,
   type RuntimeEventListener,
@@ -25,12 +27,16 @@ export {
 export {
   createNamespaceProxy,
   createRuntimeGlobals,
+  createToolsGlobal,
   extractConfigurePin,
   ROOT_OPERATION,
   type NamespaceProxy,
+  type ToolsGlobal,
 } from "./proxy.js";
 
 export {
+  buildProviderAliasMap,
+  deriveGlobalAlias,
   parseScriptDependencies,
   rewriteDefaultExport,
   scanToolsAccess,

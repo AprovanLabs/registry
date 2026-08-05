@@ -14,7 +14,13 @@
  * subsequent calls through {@link TransportCallOptions}.
  */
 
-import type { RuntimeDependency, Transport, TransportCallOptions } from "./types.js";
+import type {
+  ProviderAliasMap,
+  RuntimeDependency,
+  Transport,
+  TransportCallOptions,
+} from "./types.js";
+import { AliasResolutionError } from "./types.js";
 
 /** @deprecated Prefer an explicit `.default` path; kept for callers that still name it. */
 export const ROOT_OPERATION = "default";
@@ -137,4 +143,34 @@ export function createRuntimeGlobals(
     );
   }
   return globals;
+}
+
+export type ToolsGlobal = Record<string, NamespaceProxy>;
+
+/**
+ * Build the full `tools` global from an alias map. Each alias binds to a
+ * namespace proxy rooted at its canonical provider name; unknown aliases
+ * throw rather than returning `undefined`.
+ */
+export function createToolsGlobal(
+  aliases: ProviderAliasMap,
+  transport: Transport,
+): ToolsGlobal {
+  const tools: Record<string, NamespaceProxy> = {};
+  for (const [alias, provider] of aliases) {
+    tools[alias] = createNamespaceProxy(provider, transport);
+  }
+
+  return new Proxy(tools, {
+    get(target, property, receiver) {
+      if (typeof property === "symbol") {
+        return Reflect.get(target, property, receiver);
+      }
+      const key = String(property);
+      if (Object.prototype.hasOwnProperty.call(target, key)) {
+        return target[key];
+      }
+      throw new AliasResolutionError(key);
+    },
+  });
 }
