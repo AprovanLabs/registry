@@ -29675,7 +29675,7 @@
     }
   },
   {
-    "name": "azure/recoveryservices-backup",
+    "name": "azure/recoveryservices-backup-rs",
     "transport_type": "http",
     "fetch_method": "GET",
     "url": "https://api.apis.guru/v2/specs/azure.com/recoveryservices-backup/2016-12-01/swagger.json",
@@ -67828,7 +67828,7 @@
     }
   },
   {
-    "name": "vtex/master-data-api",
+    "name": "vtex/master-data-api-v2",
     "transport_type": "http",
     "fetch_method": "GET",
     "url": "https://api.apis.guru/v2/specs/vtex.local/Master-Data-API-/1.0/openapi.json",

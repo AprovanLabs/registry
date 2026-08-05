@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { assertValidProviderName } from "./naming.js";
+import { assertUniqueGlobalAliases, assertValidProviderName } from "./naming.js";
 
 export type RegistryProvider = {
   name: string;
@@ -178,6 +178,7 @@ export async function loadRegistryProviders(): Promise<RegistryProvider[]> {
   for (const provider of providers) {
     assertValidProviderName(provider.name);
   }
+  assertUniqueGlobalAliases(providers.map((provider) => provider.name));
   return providers;
 }
 

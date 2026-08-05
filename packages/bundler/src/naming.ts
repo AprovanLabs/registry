@@ -72,9 +72,12 @@ export interface ResolvedProviderName {
   packageName: string;
   /** `"@utdk/clients/google/drive"` | `"@utdk/synthetic-new"`. */
   importSpecifier: string;
+  /** `"googleDrive"` — the `tools.` binding derived from {@link name}. */
+  globalAlias: string;
 }
 
 const PROVIDER_NAME_RE = /^[a-z0-9-]+(\/[a-z0-9-]+)*$/u;
+const JS_IDENTIFIER_RE = /^[A-Za-z_$][\w$]*$/u;
 
 /**
  * Throws unless the name is lowercase, dash/slash-only, dot-free. Enforced
@@ -105,6 +108,64 @@ export function sanitizeNameSegment(value: string): string {
     .replace(/^(?=\d)/u, "api-");
 }
 
+function dashSegmentToCamel(segment: string, capitalizeFirst: boolean): string {
+  const parts = segment.split("-").filter(Boolean);
+  if (parts.length === 0) {
+    return "";
+  }
+
+  return parts
+    .map((part, index) => {
+      const lower = part.toLowerCase();
+      if (index === 0 && !capitalizeFirst) {
+        return lower;
+      }
+
+      return lower.charAt(0).toUpperCase() + lower.slice(1);
+    })
+    .join("");
+}
+
+/** Derive the camelCase `tools.` alias from a canonical provider name. */
+export function deriveGlobalAlias(name: string): string {
+  const segments = name.split("/");
+  if (segments.length === 1) {
+    return dashSegmentToCamel(segments[0] ?? name, false);
+  }
+
+  return segments.map((segment, index) => dashSegmentToCamel(segment, index > 0)).join("");
+}
+
+/**
+ * Throws when two provider names derive the same alias (case-insensitive) or
+ * when a derived alias is not a valid JavaScript identifier.
+ */
+export function assertUniqueGlobalAliases(providerNames: readonly string[]): void {
+  const aliasOwners = new Map<string, string[]>();
+
+  for (const name of providerNames) {
+    const alias = deriveGlobalAlias(name);
+    if (!JS_IDENTIFIER_RE.test(alias)) {
+      throw new Error(
+        `Provider "${name}" derives global alias "${alias}" which is not a valid JavaScript identifier.`,
+      );
+    }
+
+    const key = alias.toLowerCase();
+    const owners = aliasOwners.get(key) ?? [];
+    owners.push(name);
+    aliasOwners.set(key, owners);
+  }
+
+  for (const owners of aliasOwners.values()) {
+    if (owners.length > 1) {
+      throw new Error(
+        `Duplicate global alias derived from provider names: ${owners.map((owner) => `"${owner}"`).join(" and ")}.`,
+      );
+    }
+  }
+}
+
 export function resolveProviderNameFromHostname(hostname: string): ResolvedProviderName {
   const normalized = hostname.trim().toLowerCase().replace(/\.$/u, "");
 
@@ -128,5 +189,6 @@ export function resolveProviderNameFromHostname(hostname: string): ResolvedProvi
     name,
     packageName: `@utdk/${root}`,
     importSpecifier: name.includes("/") ? `@utdk/clients/${name}` : `@utdk/${name}`,
+    globalAlias: deriveGlobalAlias(name),
   };
 }

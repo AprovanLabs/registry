@@ -1,10 +1,14 @@
+import { readFile } from "node:fs/promises";
 import { describe, expect, it } from "vitest";
 import {
   HOSTNAME_PACKAGE_MAP,
+  assertUniqueGlobalAliases,
   assertValidProviderName,
+  deriveGlobalAlias,
   resolveProviderNameFromHostname,
   sanitizeNameSegment,
 } from "./naming.js";
+import { REGISTRY_PATH, loadRegistryProviders } from "./provider.js";
 
 describe("resolveProviderNameFromHostname", () => {
   it("resolves github.com to github", () => {
@@ -12,6 +16,7 @@ describe("resolveProviderNameFromHostname", () => {
       name: "github",
       packageName: "@utdk/github",
       importSpecifier: "@utdk/github",
+      globalAlias: "github",
     });
   });
 
@@ -20,6 +25,7 @@ describe("resolveProviderNameFromHostname", () => {
       name: "google/drive",
       packageName: "@utdk/google",
       importSpecifier: "@utdk/clients/google/drive",
+      globalAlias: "googleDrive",
     });
   });
 
@@ -31,6 +37,7 @@ describe("resolveProviderNameFromHostname", () => {
       name: "synthetic-new",
       packageName: "@utdk/synthetic-new",
       importSpecifier: "@utdk/synthetic-new",
+      globalAlias: "syntheticNew",
     });
   });
 
@@ -40,6 +47,7 @@ describe("resolveProviderNameFromHostname", () => {
       name: "linear",
       packageName: "@utdk/linear",
       importSpecifier: "@utdk/linear",
+      globalAlias: "linear",
     });
   });
 
@@ -55,6 +63,7 @@ describe("resolveProviderNameFromHostname", () => {
       name: "github-io",
       packageName: "@utdk/github-io",
       importSpecifier: "@utdk/github-io",
+      globalAlias: "githubIo",
     });
   });
 
@@ -108,6 +117,66 @@ describe("assertValidProviderName", () => {
     expect(() => assertValidProviderName("GitHub")).toThrow(/Invalid provider name/u);
     expect(() => assertValidProviderName("")).toThrow(/Invalid provider name/u);
     expect(() => assertValidProviderName("a//b")).toThrow(/Invalid provider name/u);
+  });
+});
+
+describe("deriveGlobalAlias", () => {
+  it("leaves single-segment names without dashes unchanged", () => {
+    expect(deriveGlobalAlias("github")).toBe("github");
+    expect(deriveGlobalAlias("adyen")).toBe("adyen");
+  });
+
+  it("joins three segments in camelCase", () => {
+    expect(deriveGlobalAlias("google/cloud/storage")).toBe("googleCloudStorage");
+  });
+
+  it("removes internal dashes within segments", () => {
+    expect(deriveGlobalAlias("google/drive")).toBe("googleDrive");
+    expect(deriveGlobalAlias("adyen/checkoutservice")).toBe("adyenCheckoutservice");
+    expect(deriveGlobalAlias("ably-io/platform")).toBe("ablyIoPlatform");
+  });
+
+  it("handles api- prefixed segments from leading-digit sanitization", () => {
+    expect(deriveGlobalAlias("api-1forge")).toBe("api1forge");
+    expect(deriveGlobalAlias("vendor/api-1forge")).toBe("vendorApi1forge");
+  });
+});
+
+describe("assertUniqueGlobalAliases", () => {
+  it("accepts a registry with unique aliases", () => {
+    expect(() => assertUniqueGlobalAliases(["github", "google/drive", "slack"])).not.toThrow();
+  });
+
+  it("rejects case-insensitive alias collisions and names both providers", () => {
+    expect(() => assertUniqueGlobalAliases(["google/drive", "googledrive"])).toThrow(
+      /Duplicate global alias derived from provider names: "google\/drive" and "googledrive"/u,
+    );
+  });
+
+  it("rejects aliases that are not valid JavaScript identifiers", () => {
+    expect(() => assertUniqueGlobalAliases(["123bad"])).toThrow(
+      /Provider "123bad" derives global alias "123bad" which is not a valid JavaScript identifier/u,
+    );
+  });
+});
+
+describe("data/registry.json global aliases", () => {
+  it("derives a valid JS identifier for every provider name", async () => {
+    const raw = await readFile(REGISTRY_PATH, "utf8");
+    const providers = JSON.parse(raw) as { name: string }[];
+
+    for (const provider of providers) {
+      expect(deriveGlobalAlias(provider.name)).toMatch(/^[A-Za-z_$][\w$]*$/u);
+    }
+  });
+
+  it("loads data/registry.json with unique, valid global aliases", async () => {
+    const providers = await loadRegistryProviders();
+    const aliases = providers.map((provider) => deriveGlobalAlias(provider.name));
+    expect(new Set(aliases.map((alias) => alias.toLowerCase())).size).toBe(aliases.length);
+    for (const alias of aliases) {
+      expect(alias).toMatch(/^[A-Za-z_$][\w$]*$/u);
+    }
   });
 });
 
