@@ -46,6 +46,12 @@ class PlatformOAuthSecretStore {
     return row;
   }
 
+  /** Presence check that does NOT trigger the access audit — startup wiring
+   * (which providers are platform-capable) is not a secret access. */
+  has(provider: string): boolean {
+    return this.secrets.has(`${PLATFORM_OAUTH_STORE_PREFIX}${provider}`);
+  }
+
   clear(): void {
     this.secrets.clear();
   }

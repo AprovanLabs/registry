@@ -12,7 +12,7 @@ import { createOAuthTokenCache } from "./credentials/oauth.js";
 import { CredentialService } from "./credentials/service.js";
 import { finalizeCallContext } from "./dispatch/call-context.js";
 import { Dispatcher } from "./dispatch/index.js";
-import { RateLimiter } from "./dispatch/limits.js";
+import { PLATFORM_POOL_RPS, RateLimiter, platformPoolId } from "./dispatch/limits.js";
 import { ProviderExecutor, isCatalogueProvider } from "./executor/index.js";
 import { DiscoveryService } from "./http/discovery.js";
 import { buildRouter, type AuthConfigResponse } from "./http/router.js";
@@ -86,7 +86,9 @@ export async function createRegistryServer(
   }
 
   const storage = await createStorage(options.storage);
-  await wirePlatformOAuthAtStartup({
+  // Providers that actually resolved a platform secret — the ones that will
+  // see origin: "platform" calls and therefore need a rate-limit pool (§4).
+  const platformProviders = await wirePlatformOAuthAtStartup({
     accessAudit: (provider, storeKey) => {
       void storage.audit.append({
         requestId: "platform-oauth",
@@ -129,6 +131,14 @@ export async function createRegistryServer(
   const executor = options.executorInstance ?? new ProviderExecutor(options.executor ?? {});
   configureSandbox(options.sandbox ?? {});
   const limiter = new RateLimiter(options.limits ?? {});
+  // One pool per platform-capable provider, named by the documented scheme
+  // (`platformPoolId`) so dispatch's enforce() call always finds it. The
+  // published ceiling is a deployment-wide default/env override, not a
+  // per-provider real published limit (decisions.md §"Pool published 50 rps").
+  const platformPoolRps = options.limits?.platform?.poolRps ?? PLATFORM_POOL_RPS;
+  for (const provider of platformProviders) {
+    limiter.configurePool(platformPoolId(provider), { rps: platformPoolRps });
+  }
   const natives = new NativeServiceRegistry(options.nativeServices);
   const dispatcher = new Dispatcher({
     catalog: options.catalog,

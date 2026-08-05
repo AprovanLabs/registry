@@ -15,7 +15,7 @@
 
 import { findLlmAlias, type InterfaceCatalog } from "../catalog/types.js";
 import { resolveToInjectable, OAuthExchangeError, type OAuthTokenCache } from "../credentials/oauth.js";
-import { RateLimitExceededError, type RateLimiter } from "./limits.js";
+import { RateLimitExceededError, platformPoolId, type RateLimiter } from "./limits.js";
 import { asStreamBody } from "./stream.js";
 import { resolveProfile, type ResolveDeps, type ResolvedProfile } from "../profiles/resolve.js";
 import { ServiceError, type NativeServiceRegistry, type ServiceContext } from "../kernel/index.js";
@@ -155,10 +155,24 @@ export class Dispatcher {
 
       // Server-side limits: profile limits over tenant defaults, keyed
       // (tenant, profile-or-provider, principal). Enforced before execution
-      // on every surface that reaches this pipeline.
+      // on every surface that reaches this pipeline. A credential resolved
+      // from the platform app (origin: "platform", §1) contends for a
+      // shared pool with its deliberate defaults (§4, decisions.md); BYO
+      // (origin: "tenant") never carries a pool and keeps today's per-tenant
+      // behavior — read fresh off the resolved credential every call, so a
+      // tenant switching apps picks up the right limit with no admin action.
       const limitSubject = resolved.profileId ?? `${resolved.target.kind}:${resolved.target.id}`;
+      const credentialPayload = resolved.credential?.payload;
+      const isPlatformOrigin =
+        (credentialPayload?.type === "oauth2_client" || credentialPayload?.type === "oauth2_authcode") &&
+        credentialPayload.clientOrigin === "platform";
       this.deps.limiter.enforce(
-        `${ctx.tenantId}:${limitSubject}:${ctx.principal}`,
+        {
+          tenant: ctx.tenantId,
+          provider: limitSubject,
+          principal: ctx.principal,
+          ...(isPlatformOrigin ? { pool: platformPoolId(resolved.provider) } : {}),
+        },
         resolved.limits,
       );
 

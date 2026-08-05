@@ -11,7 +11,7 @@ import {
 import { CredentialService } from "../src/credentials/service.js";
 import { createOAuthTokenCache } from "../src/credentials/oauth.js";
 import { Dispatcher, type CompatDispatch } from "../src/dispatch/index.js";
-import { RateLimiter } from "../src/dispatch/limits.js";
+import { RateLimiter, platformPoolId, type PlatformQuotaDefaults } from "../src/dispatch/limits.js";
 import { ProviderExecutor } from "../src/executor/index.js";
 import { NativeServiceRegistry, type CoreService } from "../src/kernel/index.js";
 import { ProfileService } from "../src/profiles/service.js";
@@ -152,7 +152,9 @@ export async function makeDispatchEnv(
     authMode?: "oidc" | "api-key" | "none";
     catalog?: InterfaceCatalog;
     nativeServices?: Record<string, CoreService>;
-    limits?: { defaultRps?: number; defaultBurst?: number };
+    limits?: { defaultRps?: number; defaultBurst?: number; platform?: PlatformQuotaDefaults };
+    /** Pre-configure platform pools (§4) — `configurePool` per provider before any dispatch. */
+    platformPools?: Array<{ provider: string; rps: number; burst?: number }>;
     compatDispatch?: CompatDispatch;
   } = {},
 ): Promise<DispatchEnv> {
@@ -160,6 +162,12 @@ export async function makeDispatchEnv(
   const executor = new ProviderExecutor();
   const natives = new NativeServiceRegistry(options.nativeServices);
   const limiter = new RateLimiter(options.limits ?? {});
+  for (const pool of options.platformPools ?? []) {
+    limiter.configurePool(platformPoolId(pool.provider), {
+      rps: pool.rps,
+      ...(pool.burst !== undefined ? { burst: pool.burst } : {}),
+    });
+  }
   const exporter = new InMemorySpanExporter();
   const telemetry = new RegistryTelemetry({
     spanProcessor: new SimpleSpanProcessor(exporter),

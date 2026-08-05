@@ -8,6 +8,7 @@
  */
 
 import {
+  getPlatformOAuthSecretStore,
   wirePlatformOAuthSecrets,
   type PlatformSecretAccessAudit,
 } from "../credentials/platform-secrets.js";
@@ -19,10 +20,15 @@ export interface WirePlatformOAuthAtStartupOptions {
   accessAudit?: PlatformSecretAccessAudit;
 }
 
-/** Load registry flags + env secrets and wire `setPlatformOAuthLookup`. */
+/**
+ * Load registry flags + env secrets and wire `setPlatformOAuthLookup`.
+ * Returns the subset of `platformApp`-flagged providers that actually got a
+ * secret loaded — the providers that will really see `origin: "platform"`
+ * calls, and therefore need a rate-limit pool (§4, `server.ts`).
+ */
 export async function wirePlatformOAuthAtStartup(
   options: WirePlatformOAuthAtStartupOptions = {},
-): Promise<void> {
+): Promise<string[]> {
   const providers = await loadRegistryManifest(options.env);
   const platformProviders = providers
     .filter((entry) => entry.platformApp === true)
@@ -33,4 +39,6 @@ export async function wirePlatformOAuthAtStartup(
     ...(options.log !== undefined ? { log: options.log } : {}),
     ...(options.accessAudit !== undefined ? { accessAudit: options.accessAudit } : {}),
   });
+  const store = getPlatformOAuthSecretStore();
+  return platformProviders.filter((provider) => store.has(provider));
 }

@@ -9,6 +9,11 @@
  * `PLATFORM_OAUTH_<PROVIDER>_CLIENT_ID` / `_SECRET` (KMS-wrapped secret
  * supported). Provider ids use slash → underscore (`google/drive` →
  * `PLATFORM_OAUTH_GOOGLE_DRIVE_CLIENT_ID`).
+ *
+ * Platform quota defaults (§4, decisions.md) DO get overridden here —
+ * `REGISTRY_PLATFORM_DEFAULT_{RPS,BURST,BUDGET}` and
+ * `REGISTRY_PLATFORM_POOL_RPS` — but only when set; the shipped numeric
+ * defaults live in `dispatch/limits.ts` and apply regardless of env.
  */
 
 import { homedir } from "node:os";
@@ -70,6 +75,22 @@ export function optionsFromEnv(env: NodeJS.ProcessEnv = process.env): Standalone
   const defaultRps = num(env["REGISTRY_DEFAULT_RPS"]);
   const defaultBurst = num(env["REGISTRY_DEFAULT_BURST"]);
 
+  const platformRps = num(env["REGISTRY_PLATFORM_DEFAULT_RPS"]);
+  const platformBurst = num(env["REGISTRY_PLATFORM_DEFAULT_BURST"]);
+  const platformBudget = num(env["REGISTRY_PLATFORM_DEFAULT_BUDGET"]);
+  const platformPoolRps = num(env["REGISTRY_PLATFORM_POOL_RPS"]);
+  const platformOverrides =
+    platformRps || platformBurst || platformBudget || platformPoolRps
+      ? {
+          platform: {
+            ...(platformRps ? { defaultRps: platformRps } : {}),
+            ...(platformBurst ? { defaultBurst: platformBurst } : {}),
+            ...(platformBudget ? { defaultBudget: platformBudget } : {}),
+            ...(platformPoolRps ? { poolRps: platformPoolRps } : {}),
+          },
+        }
+      : undefined;
+
   return {
     port: num(env["REGISTRY_PORT"] ?? env["PORT"]) ?? 4000,
     options: {
@@ -96,11 +117,12 @@ export function optionsFromEnv(env: NodeJS.ProcessEnv = process.env): Standalone
           : {}),
         ...(num(env["SANDBOX_POOL_MAX"]) ? { concurrency: num(env["SANDBOX_POOL_MAX"]) } : {}),
       },
-      ...(defaultRps || defaultBurst
+      ...(defaultRps || defaultBurst || platformOverrides
         ? {
             limits: {
               ...(defaultRps ? { defaultRps } : {}),
               ...(defaultBurst ? { defaultBurst } : {}),
+              ...(platformOverrides ?? {}),
             },
           }
         : {}),
