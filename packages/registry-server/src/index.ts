@@ -18,6 +18,12 @@ export {
   setMcpCatalogForTesting,
   type McpDeps,
 } from "./mcp/server.js";
+export {
+  createSandboxMcpExtensions,
+  withSandboxTool,
+  SANDBOX_TOOL_NAME,
+  type SandboxToolDeps,
+} from "./mcp/sandbox-tool.js";
 
 // Core contexts + construction contract
 export type {
