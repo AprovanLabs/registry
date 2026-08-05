@@ -125,6 +125,14 @@ suite members stay BYO-only.
 | `PLATFORM_OAUTH_GITHUB_CLIENT_ID` | OAuth App client ID |
 | `PLATFORM_OAUTH_GITHUB_CLIENT_SECRET` | OAuth App client secret (KMS-wrap in prod) |
 
+#### Incremental: Slack (§5.3)
+
+Second flag flip after GitHub. Same pattern: `"platformApp": true` on canonical
+`slack`, then load `PLATFORM_OAUTH_SLACK_CLIENT_ID` / `_SECRET` on hosted before
+expecting one-click connect. No formal Slack app verification for the scopes
+shipped today.
+
+
 After deploy, confirm startup log `platform_oauth_secret_loaded` for
 `github` and smoke-test OAuth connect on hosted catalog and/or chat. Without
 these env vars, self-hosters and pre-deploy environments see
