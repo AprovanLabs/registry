@@ -96,11 +96,9 @@ describe("mcp surface", () => {
     setMcpCatalogForTesting([githubTool]);
     const { mod, calls } = fakeProviderModule("createGithubClient");
     env.executor.setModuleForTesting("@utdk/clients/github", mod);
+    // Connecting the credential provisions the granted `default` profile
+    // (grant-enforcement §3) — no separate profiles.create step needed.
     await env.credentials.create("t1", "user-1", { provider: "github", payload: bearer("gh") });
-    await env.profiles.create(adminCtx(), {
-      name: "default",
-      target: { kind: "provider", provider: "github" },
-    });
 
     const server = await makeServer(adminCtx({ source: { type: "mcp" } }));
     const result = await callServerTool(server, "call_tool", {
@@ -123,12 +121,9 @@ describe("mcp surface", () => {
     setMcpCatalogForTesting([githubTool]);
     const { mod } = fakeProviderModule("createGithubClient");
     env.executor.setModuleForTesting("@utdk/clients/github", mod);
-    // A stored default profile the member is NOT granted.
+    // Connecting the credential provisions a `default` profile granted to
+    // "admin" (the connecting principal) — the member below is NOT granted.
     await env.credentials.create("t1", "admin", { provider: "github", payload: bearer("gh") });
-    await env.profiles.create(adminCtx(), {
-      name: "default",
-      target: { kind: "provider", provider: "github" },
-    });
 
     // Listing filters the namespace for the ungranted member...
     const memberServer = await makeServer(ctx({ source: { type: "mcp" } }));

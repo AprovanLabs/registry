@@ -8,7 +8,12 @@
 import { getCredentialCipher } from "./cipher.js";
 import { exchangeAuthorizationCode } from "./oauth.js";
 import type { CredentialPayload } from "./types.js";
-import type { CredentialRow, CredentialStore } from "../storage/types.js";
+import type {
+  CredentialProvisionInput,
+  CredentialRow,
+  CredentialStore,
+  ProvisionedCredential,
+} from "../storage/types.js";
 
 export interface CredentialInput {
   provider: string;
@@ -16,17 +21,34 @@ export interface CredentialInput {
   payload: CredentialPayload;
 }
 
+/** `RegistryStorage.provisionCredential` — injected so this stays storage-agnostic. */
+export type ProvisionCredentialFn = (
+  tenantId: string,
+  input: CredentialProvisionInput,
+) => Promise<ProvisionedCredential>;
+
 export class CredentialResolutionError extends Error {
   readonly status = 400;
 }
 
 export class CredentialService {
-  constructor(private readonly store: CredentialStore) {}
+  /**
+   * `provisionCredential` is `RegistryStorage.provisionCredential` — every
+   * `create()` call routes through it so the `default` profile + grant are
+   * written in the SAME transaction as the credential (grant-enforcement
+   * tech-plan D3, §3 tasks 3.1/3.2). Every construction site MUST wire it;
+   * a credential store without it reopens the hole §1 closed.
+   */
+  constructor(
+    private readonly store: CredentialStore,
+    private readonly provisionCredential: ProvisionCredentialFn,
+  ) {}
 
   /**
    * Create a credential. Authorization-code payloads exchange their one-time
    * code up front (codes expire in minutes) so the stored payload carries
-   * live tokens.
+   * live tokens. Provisions the `default` profile + grant to `createdBy` in
+   * the same transaction as the credential write (tech-plan D3).
    */
   async create(
     tenantId: string,
@@ -48,13 +70,14 @@ export class CredentialService {
         // Store as-is; call-time resolution reports the provider's error.
       }
     }
-    return this.store.create(tenantId, {
+    const { credential } = await this.provisionCredential(tenantId, {
       provider: input.provider,
       ...(input.label !== undefined ? { label: input.label } : {}),
       type: payload.type,
       payload: await getCredentialCipher().encrypt(JSON.stringify(payload)),
       createdBy,
     });
+    return credential;
   }
 
   list(tenantId: string): Promise<CredentialRow[]> {

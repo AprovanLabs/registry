@@ -12,6 +12,7 @@ import type {
   ApiKeyStore,
   AuditRow,
   AuditStore,
+  CredentialProvisionInput,
   CredentialRow,
   CredentialRowWithPayload,
   CredentialStore,
@@ -23,6 +24,7 @@ import type {
   ProfileRow,
   ProfileStore,
   ProfileTargetKind,
+  ProvisionedCredential,
   RegistryStorage,
   TenantRow,
   TenantStore,
@@ -558,6 +560,70 @@ class SqlAuditStore implements AuditStore {
 }
 
 // ---------------------------------------------------------------------------
+// Credential provisioning (grant-enforcement tech-plan D3, §3)
+// ---------------------------------------------------------------------------
+
+const DEFAULT_PROFILE_NAME = "default";
+
+/**
+ * Create a credential and provision its `default` profile + grant in one
+ * transaction. A `default` row for (tenantId, "provider", input.provider) is
+ * created bound to the new credential when none exists; an existing row is
+ * bound only when it has no credential pinned yet — a pinned `default` is
+ * never repointed, and no grant is added when the bind is refused (tasks
+ * 3.1/3.3: a second credential for the same provider must not steal it).
+ */
+async function provisionCredential(
+  db: SqlClient,
+  tenantId: string,
+  input: CredentialProvisionInput,
+): Promise<ProvisionedCredential> {
+  return db.transaction(async (tx) => {
+    const credentialStore = new SqlCredentialStore(tx);
+    const profileStore = new SqlProfileStore(tx);
+    const grantStore = new SqlGrantStore(tx);
+
+    const credential = await credentialStore.create(tenantId, {
+      provider: input.provider,
+      ...(input.label !== undefined ? { label: input.label } : {}),
+      type: input.type,
+      payload: input.payload,
+      createdBy: input.createdBy,
+    });
+
+    const subject: GrantSubject = { kind: "user", id: input.createdBy };
+    const existing = await profileStore.getByName(
+      tenantId,
+      "provider",
+      input.provider,
+      DEFAULT_PROFILE_NAME,
+    );
+
+    if (!existing) {
+      const defaultProfile = await profileStore.create(tenantId, {
+        name: DEFAULT_PROFILE_NAME,
+        targetKind: "provider",
+        targetId: input.provider,
+        credentialId: credential.id,
+        options: {},
+        createdBy: input.createdBy,
+      });
+      const grant = await grantStore.grant(tenantId, defaultProfile.id, subject, input.createdBy);
+      return { credential, defaultProfile, grant };
+    }
+
+    if (existing.credentialId) {
+      // Pinned already — never repoint (task 3.3); no grant follows either.
+      return { credential };
+    }
+
+    const defaultProfile = await profileStore.update(tenantId, existing.id, {
+      credentialId: credential.id,
+    });
+    const grant = await grantStore.grant(tenantId, existing.id, subject, input.createdBy);
+    return { credential, ...(defaultProfile ? { defaultProfile } : {}), grant };
+  });
+}
 
 /** Build the full facade over one SQL client, creating the schema on boot. */
 export async function createSqlStorage(db: SqlClient): Promise<RegistryStorage> {
@@ -569,6 +635,7 @@ export async function createSqlStorage(db: SqlClient): Promise<RegistryStorage> 
     grants: new SqlGrantStore(db),
     apiKeys: new SqlApiKeyStore(db),
     audit: new SqlAuditStore(db),
+    provisionCredential: (tenantId, input) => provisionCredential(db, tenantId, input),
     close: () => db.close(),
   };
 }

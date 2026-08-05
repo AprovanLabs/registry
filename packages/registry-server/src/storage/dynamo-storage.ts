@@ -8,6 +8,7 @@ import { randomBytes } from "node:crypto";
 import type {
   ApiKeyStore,
   AuditStore,
+  CredentialProvisionInput,
   CredentialStore,
   GrantStore,
   GrantSubject,
@@ -16,6 +17,7 @@ import type {
   ProfileRow,
   ProfileStore,
   ProfileTargetKind,
+  ProvisionedCredential,
   RegistryStorage,
   TenantRow,
   TenantStore,
@@ -498,6 +500,141 @@ function isConditionalFailure(err: unknown): boolean {
   );
 }
 
+const DEFAULT_PROFILE_NAME = "default";
+
+/**
+ * Provision the `default` profile + grant for a just-created credential
+ * (grant-enforcement tech-plan D3, §3) — the profile-row + grant half of the
+ * write, atomic via one `TransactWriteCommand`.
+ *
+ * NOTE (interim Dynamo path — see module docstring): `credentials` here is a
+ * host-injected store this file does not own, so its Put cannot join THIS
+ * TransactWriteCommand. The best available guarantee is "no half-state on
+ * this table": on failure the just-created credential is deleted so a
+ * connect that couldn't be provisioned doesn't strand an unreachable
+ * credential (the same "worse than no credential" invariant D3 states for
+ * the fully-atomic SQL path).
+ */
+async function provisionDefaultProfile(
+  tableName: string,
+  send: DynamoSend,
+  commands: DynamoCommands,
+  tenantId: string,
+  provider: string,
+  credentialId: string,
+  createdBy: string,
+): Promise<{ defaultProfile?: ProfileRow; grant?: ProfileGrantRow }> {
+  const { GetCommand, TransactWriteCommand } = commands;
+  const nameSk = profileNameSk("provider", provider, DEFAULT_PROFILE_NAME);
+  const pointer = await send(
+    new GetCommand({ TableName: tableName, Key: { PK: pk(tenantId), SK: nameSk } }),
+  );
+  const existingProfileId = pointer.Item?.["profileId"];
+  const ts = now();
+  const subject: GrantSubject = { kind: "user", id: createdBy };
+
+  if (typeof existingProfileId === "string") {
+    const existing = await send(
+      new GetCommand({
+        TableName: tableName,
+        Key: { PK: pk(tenantId), SK: profileSk(existingProfileId) },
+      }),
+    );
+    const item = existing.Item;
+    if (!item) return {}; // pointer without a row — inconsistent; leave untouched
+    if (item["credentialId"] !== undefined && item["credentialId"] !== null) {
+      return {}; // pinned already — never repoint (task 3.3); no grant either
+    }
+    const updatedItem = { ...item, credentialId, updatedAt: ts };
+    const grantItem = {
+      PK: pk(tenantId),
+      SK: grantSk(existingProfileId, subject),
+      tenantId,
+      profileId: existingProfileId,
+      subjectKind: subject.kind,
+      subjectId: subject.id,
+      grantedBy: createdBy,
+      createdAt: ts,
+    };
+    await send(
+      new TransactWriteCommand({
+        TransactItems: [
+          { Put: { TableName: tableName, Item: updatedItem } },
+          { Put: { TableName: tableName, Item: grantItem } },
+        ],
+      }),
+    );
+    return {
+      defaultProfile: toProfileRow(tenantId, updatedItem),
+      grant: {
+        tenantId,
+        profileId: existingProfileId,
+        subjectKind: subject.kind,
+        subjectId: subject.id,
+        grantedBy: createdBy,
+        createdAt: ts,
+      },
+    };
+  }
+
+  const profileId = newId();
+  const profileItem = {
+    PK: pk(tenantId),
+    SK: profileSk(profileId),
+    id: profileId,
+    name: DEFAULT_PROFILE_NAME,
+    targetKind: "provider",
+    targetId: provider,
+    credentialId,
+    options: "{}",
+    createdBy,
+    createdAt: ts,
+    updatedAt: ts,
+  };
+  const grantItem = {
+    PK: pk(tenantId),
+    SK: grantSk(profileId, subject),
+    tenantId,
+    profileId,
+    subjectKind: subject.kind,
+    subjectId: subject.id,
+    grantedBy: createdBy,
+    createdAt: ts,
+  };
+  await send(
+    new TransactWriteCommand({
+      TransactItems: [
+        {
+          Put: {
+            TableName: tableName,
+            Item: profileItem,
+            ConditionExpression: "attribute_not_exists(PK)",
+          },
+        },
+        {
+          Put: {
+            TableName: tableName,
+            Item: { PK: pk(tenantId), SK: nameSk, profileId },
+            ConditionExpression: "attribute_not_exists(PK)",
+          },
+        },
+        { Put: { TableName: tableName, Item: grantItem } },
+      ],
+    }),
+  );
+  return {
+    defaultProfile: toProfileRow(tenantId, profileItem),
+    grant: {
+      tenantId,
+      profileId,
+      subjectKind: subject.kind,
+      subjectId: subject.id,
+      grantedBy: createdBy,
+      createdAt: ts,
+    },
+  };
+}
+
 export function createDynamoStorage(options: DynamoStorageOptions): RegistryStorage {
   const { tableName, send, credentials, commands } = options;
   return {
@@ -507,6 +644,36 @@ export function createDynamoStorage(options: DynamoStorageOptions): RegistryStor
     grants: new DynamoGrantStore(tableName, send, commands),
     apiKeys: unsupportedApiKeys,
     audit: unsupportedAudit,
+    async provisionCredential(
+      tenantId: string,
+      input: CredentialProvisionInput,
+    ): Promise<ProvisionedCredential> {
+      const credential = await credentials.create(tenantId, {
+        provider: input.provider,
+        ...(input.label !== undefined ? { label: input.label } : {}),
+        type: input.type,
+        payload: input.payload,
+        createdBy: input.createdBy,
+      });
+      try {
+        const { defaultProfile, grant } = await provisionDefaultProfile(
+          tableName,
+          send,
+          commands,
+          tenantId,
+          input.provider,
+          credential.id,
+          input.createdBy,
+        );
+        return { credential, ...(defaultProfile ? { defaultProfile } : {}), ...(grant ? { grant } : {}) };
+      } catch (err) {
+        // No half-state: a credential that couldn't be provisioned is worse
+        // than no credential (tech-plan D3). Best-effort compensating delete —
+        // this table's Put for the credential is outside our TransactWriteCommand.
+        await credentials.delete(tenantId, credential.id).catch(() => undefined);
+        throw err;
+      }
+    },
     close: async () => undefined,
   };
 }

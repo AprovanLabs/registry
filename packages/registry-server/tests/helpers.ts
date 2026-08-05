@@ -91,7 +91,7 @@ export async function makeEnv(
 ): Promise<TestEnv> {
   const storage = await createStorage({ driver: "sqlite", url: "file::memory:" });
   const catalog = options.catalog ?? TEST_CATALOG;
-  const credentials = new CredentialService(storage.credentials);
+  const credentials = new CredentialService(storage.credentials, storage.provisionCredential);
   const profiles = new ProfileService(storage.profiles, storage.grants, credentials, catalog);
   const deps: ResolveDeps = {
     catalog,

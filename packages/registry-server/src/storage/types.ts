@@ -200,6 +200,31 @@ export interface AuditStore {
 }
 
 // ---------------------------------------------------------------------------
+// Credential provisioning (grant-enforcement tech-plan D3)
+// ---------------------------------------------------------------------------
+
+export interface CredentialProvisionInput {
+  provider: string;
+  label?: string;
+  type: CredentialType;
+  payload: string;
+  createdBy: string;
+}
+
+export interface ProvisionedCredential {
+  credential: CredentialRow;
+  /**
+   * Present when a `default` profile ((tenantId, "provider", provider)) was
+   * created or bound to this credential. Absent when an existing `default`
+   * row was already pinned to a different credential — that row is never
+   * repointed (tech-plan D3, tasks 3.1/3.3).
+   */
+  defaultProfile?: ProfileRow;
+  /** Present alongside `defaultProfile` — the grant to the connecting principal. */
+  grant?: ProfileGrantRow;
+}
+
+// ---------------------------------------------------------------------------
 // Facade
 // ---------------------------------------------------------------------------
 
@@ -210,6 +235,17 @@ export interface RegistryStorage {
   grants: GrantStore;
   apiKeys: ApiKeyStore;
   audit: AuditStore;
+  /**
+   * Create a credential and, in the same transaction, provision its
+   * `default` profile + grant to the connecting principal (grant-enforcement
+   * tech-plan D3 / §3). Every `credentials.create()` call site MUST route
+   * through this — a credential without a reachable row reopens the hole
+   * §1 closed.
+   */
+  provisionCredential(
+    tenantId: string,
+    input: CredentialProvisionInput,
+  ): Promise<ProvisionedCredential>;
   close(): Promise<void>;
 }
 
