@@ -11,6 +11,14 @@ export type RegistryProvider = {
   fetch_method?: string;
   url: string;
   content_type?: string;
+  /**
+   * Optional GraphQL SDL source, fetched alongside `url` and shipped as
+   * `schema.graphql` with the same provenance treatment (hash, fetchedAt,
+   * generation). Same scheme conventions as `url` (`https://`, `file://`,
+   * `repo://`). A provider declaring this must also expose a GraphQL
+   * passthrough operation, and vice versa — see `graphql-schema.ts`.
+   */
+  graphqlSchemaUrl?: string;
   /** Ingest source for provenance tracking. Defaults to "manual". */
   ingestSource?: string;
   metadata?: RegistryProviderMetadata;

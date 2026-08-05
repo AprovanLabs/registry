@@ -5,6 +5,11 @@ import { buildClientToolMap } from "./client-api.js";
 import { augmentProviderDocs, type AugmentProviderDocsResult } from "./docs/augment.js";
 import { loadProviderDocs, type LoadProviderDocsOptions, type LoadProviderDocsResult } from "./docs/load.js";
 import { applyProviderOpenApiOptions, buildPublicTypeMap, loadOpenApiDocument } from "./openapi.js";
+import {
+  assertSchemaOperationPairing,
+  assertValidSdl,
+  loadGraphqlSchemaSource,
+} from "./graphql-schema.js";
 import { runAuthIntelPhase, type RunAuthIntelPhaseOptions, type RunAuthIntelPhaseResult } from "./phases/authIntel.js";
 import {
   runWebhookIntelPhase,
@@ -205,6 +210,19 @@ export async function generateRegistryTypes(
   // exact document the build converted — un-normalized, a spec without
   // `operationId`s converts to zero tools at runtime while converting fine here.
   const openApiDocument = normalizeOpenApiDocument(applyProviderOpenApiOptions(rawOpenApiDocument, provider));
+  // A schema source and a GraphQL operation must both be present or neither —
+  // check before any artifact is written so a mismatch fails the whole build,
+  // not just the schema file.
+  assertSchemaOperationPairing(provider, openApiDocument);
+  // Fetched and validated up front, alongside the OpenAPI document: malformed
+  // SDL must fail the build rather than ship (tech-plan D2).
+  const graphqlSchemaSdl = provider.graphqlSchemaUrl
+    ? await (async () => {
+        const { sdl } = await loadGraphqlSchemaSource(provider);
+        assertValidSdl(provider.name, sdl);
+        return sdl.endsWith("\n") ? sdl : `${sdl}\n`;
+      })()
+    : undefined;
   const { tools } = await loadProviderTools(provider, openApiDocument);
   // Built up front so the public type map shares the renderer's named component
   // types. Without it, response `$ref`s get inlined here — unbounded work on
@@ -291,6 +309,9 @@ export async function generateRegistryTypes(
       renderProviderMetadata(provider, clientToolMap, providerClientImportPath),
     ),
     writeTextFile(path.join(providerDir, "openapi.json"), JSON.stringify(openApiDocument, null, 2).concat("\n")),
+    ...(graphqlSchemaSdl !== undefined
+      ? [writeTextFile(path.join(providerDir, "schema.graphql"), graphqlSchemaSdl)]
+      : []),
     ...namespaceOutputPaths,
   ]);
 

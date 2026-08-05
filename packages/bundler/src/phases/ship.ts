@@ -24,6 +24,11 @@ export type ProvenanceSource = {
   fetchedAt: string;
 };
 
+export type ProvenanceGraphqlSchema = {
+  hash: string;
+  fetchedAt: string;
+};
+
 export type ProvenancePipelineResearch = {
   noveltyScore: number;
   competingPackages: number;
@@ -43,6 +48,13 @@ export type ProvenanceManifest = {
   generatedAt: string;
   generation: number;
   source: ProvenanceSource;
+  /**
+   * Present only for providers that declare `graphqlSchemaUrl`. Same
+   * provenance treatment as `source` — hash and fetchedAt of the shipped
+   * `schema.graphql` — but scoped separately since a provider can carry both
+   * an OpenAPI source and a GraphQL schema source at once.
+   */
+  graphqlSchema: ProvenanceGraphqlSchema | null;
   ingestSource: string;
   pipeline: ProvenancePipeline;
   bundlerVersion: string;
@@ -172,10 +184,11 @@ export async function runShipPhase(options: RunShipPhaseOptions): Promise<RunShi
   const providerDir = resolveProviderOutputDir(provider.name, outputRoot);
   const generatedAt = new Date().toISOString();
 
-  const [researchJson, packageJson, openApiJson] = await Promise.all([
+  const [researchJson, packageJson, openApiJson, graphqlSchemaSdl] = await Promise.all([
     readFileSafe(path.join(providerDir, "research.json")),
     readFileSafe(path.join(providerDir, "package.json")),
     readFileSafe(path.join(providerDir, "openapi.json")),
+    readFileSafe(path.join(providerDir, "schema.graphql")),
   ]);
 
   const scorecard =
@@ -189,6 +202,9 @@ export async function runShipPhase(options: RunShipPhaseOptions): Promise<RunShi
   const bundlerVersion = await getBundlerVersion();
   const sourceHash = openApiJson ? `sha256:${hashContent(openApiJson)}` : "";
   const research = parseResearch(researchJson);
+  const graphqlSchema: ProvenanceGraphqlSchema | null = graphqlSchemaSdl
+    ? { hash: `sha256:${hashContent(graphqlSchemaSdl)}`, fetchedAt: generatedAt }
+    : null;
 
   const provenance: ProvenanceManifest = {
     provider: provider.name,
@@ -200,6 +216,7 @@ export async function runShipPhase(options: RunShipPhaseOptions): Promise<RunShi
       hash: sourceHash,
       fetchedAt: generatedAt,
     },
+    graphqlSchema,
     ingestSource: provider.ingestSource ?? "manual",
     pipeline: {
       research,

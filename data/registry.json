@@ -540,6 +540,7 @@
     "fetch_method": "GET",
     "url": "repo://data/openapi/linear.json",
     "content_type": "application/json",
+    "graphqlSchemaUrl": "https://raw.githubusercontent.com/linear/linear/master/packages/sdk/src/schema.graphql",
     "ingestSource": "composio",
     "options": {
       "auth": [
