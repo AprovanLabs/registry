@@ -16,7 +16,32 @@ export interface SqlClient {
   exec(sql: string): Promise<void>;
   all<T = Record<string, unknown>>(sql: string, params?: unknown[]): Promise<T[]>;
   run(sql: string, params?: unknown[]): Promise<{ changes: number }>;
+  /**
+   * Run `fn` inside BEGIN/COMMIT — ROLLBACK and rethrow on failure. `fn`
+   * receives a client scoped to the transaction's connection; every read/write
+   * inside `fn` MUST go through it, not the outer client, or (dsql) it will
+   * run on a different pooled connection outside the transaction.
+   */
+  transaction<T>(fn: (tx: SqlClient) => Promise<T>): Promise<T>;
   close(): Promise<void>;
+}
+
+/**
+ * Serializes transactions on a single logical connection (sqlite/libsql):
+ * both drivers have exactly one connection, so concurrent `BEGIN`s from
+ * different requests would nest and error. A tiny FIFO mutex is enough —
+ * writes are not the hot path.
+ */
+function createTransactionMutex(): <T>(fn: () => Promise<T>) => Promise<T> {
+  let queue: Promise<unknown> = Promise.resolve();
+  return function withLock<T>(fn: () => Promise<T>): Promise<T> {
+    const result = queue.then(fn, fn);
+    queue = result.then(
+      () => undefined,
+      () => undefined,
+    );
+    return result;
+  };
 }
 
 /** Thrown so domain layers can turn constraint hits into friendly errors. */
@@ -61,7 +86,8 @@ export function createSqliteClient(options: { url?: string; dir?: string }): Sql
   const Database = loadBetterSqlite();
   const db = new Database(file);
   db.pragma("journal_mode = WAL");
-  return {
+  const withLock = createTransactionMutex();
+  const client: SqlClient = {
     async exec(sql) {
       db.exec(sql);
     },
@@ -76,10 +102,28 @@ export function createSqliteClient(options: { url?: string; dir?: string }): Sql
         wrapConstraint(err);
       }
     },
+    transaction(fn) {
+      return withLock(async () => {
+        db.exec("BEGIN");
+        try {
+          const result = await fn(client);
+          db.exec("COMMIT");
+          return result;
+        } catch (err) {
+          try {
+            db.exec("ROLLBACK");
+          } catch {
+            // Nothing to roll back (e.g. the failure happened before BEGIN took).
+          }
+          throw err;
+        }
+      });
+    },
     async close() {
       db.close();
     },
   };
+  return client;
 }
 
 // ---------------------------------------------------------------------------
@@ -112,7 +156,8 @@ export async function createLibsqlClient(options: { url?: string; dir?: string }
     mkdirSync(dirname(url.slice("file:".length)), { recursive: true, mode: 0o700 });
   }
   const client = mod.createClient({ url });
-  return {
+  const withLock = createTransactionMutex();
+  const sqlClient: SqlClient = {
     async exec(sql) {
       await client.executeMultiple(sql);
     },
@@ -128,10 +173,28 @@ export async function createLibsqlClient(options: { url?: string; dir?: string }
         wrapConstraint(err);
       }
     },
+    transaction(fn) {
+      return withLock(async () => {
+        await client.execute({ sql: "BEGIN", args: [] });
+        try {
+          const result = await fn(sqlClient);
+          await client.execute({ sql: "COMMIT", args: [] });
+          return result;
+        } catch (err) {
+          try {
+            await client.execute({ sql: "ROLLBACK", args: [] });
+          } catch {
+            // Nothing to roll back (e.g. the failure happened before BEGIN took).
+          }
+          throw err;
+        }
+      });
+    },
     async close() {
       client.close();
     },
   };
+  return sqlClient;
 }
 
 // ---------------------------------------------------------------------------
@@ -170,13 +233,59 @@ export async function createDsqlClient(options: { url: string }): Promise<SqlCli
         wrapConstraint(err);
       }
     },
+    // `pool.query()` grabs an arbitrary connection per call — BEGIN and the
+    // statements inside `fn` must pin ONE checked-out connection, or they
+    // land on different backends and the "transaction" is a no-op.
+    async transaction<T>(fn: (tx: SqlClient) => Promise<T>): Promise<T> {
+      const conn = await pool.connect();
+      try {
+        await conn.query("BEGIN");
+        const tx: SqlClient = {
+          async exec(sql) {
+            await conn.query(sql);
+          },
+          async all<U>(sql: string, params: unknown[] = []): Promise<U[]> {
+            const result = await conn.query(toPgPlaceholders(sql), params);
+            return result.rows as U[];
+          },
+          async run(sql, params = []) {
+            try {
+              const result = await conn.query(toPgPlaceholders(sql), params);
+              return { changes: result.rowCount ?? 0 };
+            } catch (err) {
+              wrapConstraint(err);
+            }
+          },
+          async transaction() {
+            throw new Error("nested transactions are not supported");
+          },
+          async close() {
+            // The outer client owns the pool; a nested close is a no-op.
+          },
+        };
+        const result = await fn(tx);
+        await conn.query("COMMIT");
+        return result;
+      } catch (err) {
+        await conn.query("ROLLBACK").catch(() => undefined);
+        throw err;
+      } finally {
+        conn.release();
+      }
+    },
     async close() {
       await pool.end();
     },
   };
 }
 
+interface PgConnectionLike {
+  query(sql: string, params?: unknown[]): Promise<{ rows: unknown[]; rowCount: number | null }>;
+  release(): void;
+}
+
 interface PgPoolLike {
   query(sql: string, params?: unknown[]): Promise<{ rows: unknown[]; rowCount: number | null }>;
+  connect(): Promise<PgConnectionLike>;
   end(): Promise<void>;
 }

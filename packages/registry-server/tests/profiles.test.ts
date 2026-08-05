@@ -374,18 +374,25 @@ describe("profiles are the allow-listing unit", () => {
     expect(firstForProvider).not.toHaveBeenCalled();
   });
 
-  it("governed provider target with credential but no profile is refused 403", async () => {
-    await env.credentials.create("t1", "user-1", {
+  it("connecting a credential provisions a granted default profile for its provider target (§3)", async () => {
+    // Unlike the interface case above, a provider-target `default` row is
+    // provisioned in the SAME transaction as the credential (tech-plan D3) —
+    // the connecting principal ("user-1", matching ctx()) can dispatch it
+    // immediately, with no admin step.
+    const cred = await env.credentials.create("t1", "user-1", {
       provider: "github",
       payload: bearer("gh"),
     });
-    const firstForProvider = vi.spyOn(env.credentials, "firstForProvider");
-    const error = await resolveProfile(env.deps, ctx(), "github").catch((e) => e);
-    expect(error.status).toBe(403);
-    expect(error.message).toBe(
-      'No default profile for github. Ask a workspace admin to grant a profile.',
+    const resolved = await resolveProfile(env.deps, ctx(), "github");
+    expect(resolved.credential?.id).toBe(cred.id);
+    expect(resolved.profileId).toBeDefined();
+
+    // A caller NOT granted (didn't connect it) still gets the 403 — the
+    // provisioned row is grant-checked like any other stored profile.
+    const error = await resolveProfile(env.deps, ctx({ principal: "someone-else" }), "github").catch(
+      (e) => e,
     );
-    expect(firstForProvider).not.toHaveBeenCalled();
+    expect(error.status).toBe(403);
   });
 
   it("authMode none with connected credential and no row resolves via ungoverned fallback", async () => {
@@ -504,19 +511,28 @@ describe("resolveProfile return paths", () => {
     }
   });
 
-  it("step 5 provider return: only reachable when authMode is none", async () => {
-    await env.credentials.create("t1", "user-1", {
+  it("step 5 provider return: only reachable when authMode is none AND the row was never provisioned", async () => {
+    // `credentials.create()` now provisions a granted `default` row (§3), so
+    // it resolves via step 4 even under governed auth — see the provisioning
+    // test above. Step 5's provider branch survives only for rows that never
+    // went through that path (e.g. a driver-level write bypassing the
+    // service, exercised here directly against storage).
+    await env.storage.credentials.create("t1", {
       provider: "github",
-      payload: bearer("gh"),
+      type: "bearer_token",
+      payload: JSON.stringify(bearer("gh")),
+      createdBy: "user-1",
     });
     const governed = await resolveProfile(env.deps, ctx(), "github").catch((e) => e);
     expect(governed.status).toBe(403);
 
     const none = await makeEnv({ authMode: "none" });
     try {
-      await none.credentials.create("t1", "user-1", {
+      await none.storage.credentials.create("t1", {
         provider: "github",
-        payload: bearer("gh"),
+        type: "bearer_token",
+        payload: JSON.stringify(bearer("gh")),
+        createdBy: "user-1",
       });
       const resolved = await resolveProfile(none.deps, ctx(), "github");
       expect(resolved.credential?.payload).toEqual(bearer("gh"));

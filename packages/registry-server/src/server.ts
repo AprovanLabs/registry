@@ -93,7 +93,7 @@ export async function createRegistryServer(
   await adapter.init();
 
   const telemetry = new RegistryTelemetry(options.telemetry ?? {});
-  const credentials = new CredentialService(storage.credentials);
+  const credentials = new CredentialService(storage.credentials, storage.provisionCredential);
   const profileService = new ProfileService(
     storage.profiles,
     storage.grants,

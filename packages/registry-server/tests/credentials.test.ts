@@ -12,6 +12,7 @@ import {
 } from "../src/credentials/oauth.js";
 import { makeEnv, type TestEnv } from "./helpers.js";
 import type { OAuth2AuthCodePayload, OAuth2ClientPayload } from "../src/credentials/types.js";
+import type { SqlClient } from "../src/storage/sql-client.js";
 
 let env: TestEnv;
 
@@ -137,5 +138,136 @@ describe("oauth resolution", () => {
         { cacheKey: "k" },
       ),
     ).toEqual({ type: "api_key", value: "v", headerName: "X-K" });
+  });
+});
+
+/**
+ * Grant-enforcement tech-plan D3, §3: connecting a credential provisions a
+ * `default` profile + grant to the connecting principal in the SAME
+ * transaction — every `credentials.create()` call site (direct, OAuth
+ * authcode exchange) routes through `RegistryStorage.provisionCredential`.
+ */
+describe("default profile provisioning (grant-enforcement §3)", () => {
+  it("3.1/3.2 direct create writes a default profile + grant bound to the credential", async () => {
+    const cred = await env.credentials.create("t1", "user-1", {
+      provider: "github",
+      payload: { type: "bearer_token", token: "gh" },
+    });
+    const profile = await env.storage.profiles.getByName("t1", "provider", "github", "default");
+    expect(profile).toBeDefined();
+    expect(profile?.credentialId).toBe(cred.id);
+    expect(profile?.createdBy).toBe("user-1");
+    const granted = await env.storage.grants.grantedProfileIds("t1", [
+      { kind: "user", id: "user-1" },
+    ]);
+    expect(granted.has(profile!.id)).toBe(true);
+  });
+
+  it("3.2 the OAuth authcode exchange path provisions the same way as a direct create", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        new Response(JSON.stringify({ access_token: "live", expires_in: 3600 }), { status: 200 }),
+      ),
+    );
+    try {
+      const cred = await env.credentials.create("t1", "user-1", {
+        provider: "github",
+        payload: {
+          type: "oauth2_authcode",
+          clientId: "id",
+          clientSecret: "s",
+          tokenUrl: "https://issuer.example/token",
+          code: "one-time-code",
+          redirectUri: "https://app.example/cb",
+        },
+      });
+      const profile = await env.storage.profiles.getByName("t1", "provider", "github", "default");
+      expect(profile?.credentialId).toBe(cred.id);
+      const granted = await env.storage.grants.grantedProfileIds("t1", [
+        { kind: "user", id: "user-1" },
+      ]);
+      expect(granted.has(profile!.id)).toBe(true);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it("3.3 a second credential for the same provider does not steal the existing default", async () => {
+    const first = await env.credentials.create("t1", "user-1", {
+      provider: "github",
+      payload: { type: "bearer_token", token: "one" },
+    });
+    const second = await env.credentials.create("t1", "user-2", {
+      provider: "github",
+      payload: { type: "bearer_token", token: "two" },
+    });
+    const profile = await env.storage.profiles.getByName("t1", "provider", "github", "default");
+    expect(profile?.credentialId).toBe(first.id);
+    expect(profile?.credentialId).not.toBe(second.id);
+    // No new grant follows a refused bind — "user-2" never connected anything usable.
+    const granted = await env.storage.grants.grantedProfileIds("t1", [
+      { kind: "user", id: "user-2" },
+    ]);
+    expect(granted.has(profile!.id)).toBe(false);
+  });
+
+  it("3.3 binds an existing unpinned default row instead of creating a duplicate", async () => {
+    const preexisting = await env.profiles.create(
+      { tenantId: "t1", principal: "admin", source: { type: "tool" }, role: "admin", groupIds: [] },
+      { name: "default", target: { kind: "provider", provider: "github" } },
+    );
+    const cred = await env.credentials.create("t1", "user-1", {
+      provider: "github",
+      payload: { type: "bearer_token", token: "gh" },
+    });
+    const profile = await env.storage.profiles.getById("t1", preexisting.id);
+    expect(profile?.credentialId).toBe(cred.id);
+    const granted = await env.storage.grants.grantedProfileIds("t1", [
+      { kind: "user", id: "user-1" },
+    ]);
+    expect(granted.has(preexisting.id)).toBe(true);
+  });
+
+  it("3.4 connect → immediately dispatch resolves via the provisioned profile, no admin step", async () => {
+    const { resolveProfile } = await import("../src/profiles/resolve.js");
+    const { ctx } = await import("./helpers.js");
+    const cred = await env.credentials.create("t1", "user-1", {
+      provider: "github",
+      payload: { type: "bearer_token", token: "gh" },
+    });
+    const resolved = await resolveProfile(env.deps, ctx(), "github");
+    expect(resolved.credential?.id).toBe(cred.id);
+    expect(resolved.profileId).toBeDefined();
+  });
+
+  it("3.4 a failed write leaves no half-state: neither the credential nor the profile persist", async () => {
+    // Force the grant write inside the transaction to fail — everything
+    // written before it in the same transaction (credential + profile) must
+    // roll back with it.
+    const db = (env.storage.credentials as unknown as { db: SqlClient }).db;
+    const originalRun = db.run.bind(db);
+    const runSpy = vi
+      .spyOn(db, "run")
+      .mockImplementation(async (sql: string, params?: unknown[]) => {
+        if (sql.includes("INSERT INTO profile_grants")) {
+          throw new Error("simulated failure writing the grant");
+        }
+        return originalRun(sql, params);
+      });
+    try {
+      await expect(
+        env.credentials.create("t1", "user-1", {
+          provider: "github",
+          payload: { type: "bearer_token", token: "gh" },
+        }),
+      ).rejects.toThrow(/simulated failure/);
+    } finally {
+      runSpy.mockRestore();
+    }
+    expect(await env.storage.credentials.list("t1")).toHaveLength(0);
+    expect(
+      await env.storage.profiles.getByName("t1", "provider", "github", "default"),
+    ).toBeUndefined();
   });
 });
