@@ -501,6 +501,7 @@
   },
   {
     "name": "slack",
+    "platformApp": true,
     "transport_type": "http",
     "fetch_method": "GET",
     "url": "https://api.apis.guru/v2/specs/slack.com/1.7.0/openapi.json",
