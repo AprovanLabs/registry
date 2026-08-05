@@ -5,7 +5,8 @@ import { describe, expect, it, vi } from "vitest";
 import { parseScriptDependencies, rewriteDefaultExport } from "../src/imports.js";
 import { scanToolsAccess } from "../src/tools-scan.js";
 import { withPolicy } from "../src/policy.js";
-import { createNamespaceProxy, createRuntimeGlobals } from "../src/proxy.js";
+import { createNamespaceProxy, createRuntimeGlobals, createToolsGlobal } from "../src/proxy.js";
+import { AliasResolutionError } from "../src/types.js";
 import { instrument } from "../src/transport.js";
 import {
   TransportError,
@@ -170,6 +171,33 @@ describe("parseScriptDependencies", () => {
     const body = rewriteDefaultExport("export default async function run() { return 1; }");
     expect(body).toBe("const __default__ = async function run() { return 1; }");
   });
+
+  it("resolves scanned aliases to canonical provider names", () => {
+    const aliases = new Map([["googleDrive", "google/drive"]]);
+    const { dependencies } = parseScriptDependencies(
+      `await tools.googleDrive.files.list({});`,
+      aliases,
+    );
+
+    expect(dependencies).toEqual([
+      {
+        identifier: "googleDrive",
+        specifier: "tools.googleDrive",
+        provider: "google/drive",
+        path: "",
+      },
+    ]);
+  });
+
+  it("errors on unknown aliases when an alias map is provided", () => {
+    const aliases = new Map([["github", "github"]]);
+    expect(() =>
+      parseScriptDependencies(`await tools.unknownAlias.call({});`, aliases),
+    ).toThrow(AliasResolutionError);
+    expect(() =>
+      parseScriptDependencies(`await tools.unknownAlias.call({});`, aliases),
+    ).toThrow(/tools\.search\(\)/);
+  });
 });
 
 describe("createNamespaceProxy", () => {
@@ -279,6 +307,32 @@ describe("createNamespaceProxy", () => {
       operation: "postMessage",
       args: { channel: "#x" },
     });
+  });
+});
+
+describe("createToolsGlobal", () => {
+  it("dispatches slash-named providers under their canonical name", async () => {
+    const transport = recordingTransport();
+    const tools = createToolsGlobal(
+      new Map([
+        ["github", "github"],
+        ["googleDrive", "google/drive"],
+      ]),
+      transport,
+    );
+
+    await (tools.googleDrive as any).files.list({});
+
+    expect(transport.calls).toEqual([
+      { provider: "google/drive", operation: "files.list", args: {}, options: undefined },
+    ]);
+  });
+
+  it("errors on unknown aliases instead of returning undefined", () => {
+    const tools = createToolsGlobal(new Map([["github", "github"]]), recordingTransport());
+
+    expect(() => tools.unknownAlias).toThrow(AliasResolutionError);
+    expect(() => tools.unknownAlias).toThrow(/tools\.search\(\)/);
   });
 });
 
