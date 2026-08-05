@@ -6,7 +6,7 @@ import { parseScriptDependencies, rewriteDefaultExport } from "../src/imports.js
 import { scanToolsAccess } from "../src/tools-scan.js";
 import { withPolicy } from "../src/policy.js";
 import { createNamespaceProxy, createRuntimeGlobals, createToolsGlobal } from "../src/proxy.js";
-import { AliasResolutionError } from "../src/types.js";
+import { AliasResolutionError, DynamicToolsAccessError } from "../src/types.js";
 import { instrument } from "../src/transport.js";
 import {
   TransportError,
@@ -95,7 +95,6 @@ describe("scanToolsAccess", () => {
       `// uses="keyvalue events"\nawait tools.llm.createChatCompletion({ messages: [] });`,
     );
     expect(result.namespaces).toEqual(["llm"]);
-    expect(result.unresolved).toBe(false);
   });
 
   it("ignores tools member access inside string literals", () => {
@@ -104,7 +103,11 @@ describe("scanToolsAccess", () => {
       await tools.vfs.read({ path: "/x" });
     `);
     expect(result.namespaces).toEqual(["vfs"]);
-    expect(result.unresolved).toBe(false);
+  });
+
+  it("ignores tools bracket syntax inside string literals", () => {
+    const result = scanToolsAccess(`const hint = "tools[x]";`);
+    expect(result.namespaces).toEqual([]);
   });
 
   it("sorts and deduplicates namespace names", () => {
@@ -114,7 +117,21 @@ describe("scanToolsAccess", () => {
       await tools.vfs.read({ path: "/c" });
     `);
     expect(result.namespaces).toEqual(["vfs", "zfs"]);
-    expect(result.unresolved).toBe(false);
+  });
+
+  it("rejects dynamic tools[expr] access", () => {
+    expect(() => scanToolsAccess(`await tools[ns].call();`)).toThrow(
+      DynamicToolsAccessError,
+    );
+    expect(() => scanToolsAccess(`await tools[ns].call();`)).toThrow(
+      /tools\[expr\]/,
+    );
+    expect(() => scanToolsAccess(`await tools[ns].call();`)).toThrow(
+      /tools\.search\(\)/,
+    );
+    expect(() => scanToolsAccess(`await tools[ns].call();`)).toThrow(
+      /globalAlias/,
+    );
   });
 });
 
@@ -127,24 +144,26 @@ describe("parseScriptDependencies", () => {
       `}`,
     ].join("\n");
 
-    const { dependencies, body, unresolved } = parseScriptDependencies(source);
+    const { dependencies, body } = parseScriptDependencies(source);
 
     expect(dependencies).toEqual([
       { identifier: "github", specifier: "tools.github", provider: "github", path: "" },
       { identifier: "vfs", specifier: "tools.vfs", provider: "vfs", path: "" },
     ]);
-    expect(unresolved).toBe(false);
     expect(body).toBe(source);
   });
 
-  it("counts configured access once and flags dynamic access", () => {
+  it("rejects dynamic tools[expr] access at parse time", () => {
+    expect(() => parseScriptDependencies(`await tools[ns].call();`)).toThrow(
+      DynamicToolsAccessError,
+    );
+  });
+
+  it("counts configured access once", () => {
     const configured = parseScriptDependencies(
       `await tools.github({ name: "work" }).repos.get({ owner: "a", repo: "b" });`,
     );
     expect(configured.dependencies.map((d) => d.provider)).toEqual(["github"]);
-
-    const dynamic = parseScriptDependencies(`await tools[ns].call();`);
-    expect(dynamic.unresolved).toBe(true);
   });
 
   it("ignores shadowed local tools bindings", () => {

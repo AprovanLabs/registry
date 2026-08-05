@@ -176,11 +176,11 @@ export function ScriptPlayground() {
     return () => sandboxRef.current?.dispose();
   }, []);
 
-  const { dependencies, unresolved } = React.useMemo(() => {
+  const { dependencies } = React.useMemo(() => {
     try {
       return detectDependencies(source);
     } catch {
-      return { dependencies: [], unresolved: false };
+      return { dependencies: [] };
     }
   }, [source]);
 
@@ -307,7 +307,6 @@ export function ScriptPlayground() {
             catalog={catalog}
             className="mt-1"
             dependencies={dependencies}
-            unresolved={unresolved}
             registryBaseUrl={withBasePath("/").replace(/\/$/, "")}
           />
         </CardHeader>

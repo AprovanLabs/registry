@@ -196,6 +196,16 @@ export class AliasResolutionError extends Error {
   }
 }
 
+/** Thrown when script source uses dynamic `tools[expr]` namespace access. */
+export class DynamicToolsAccessError extends Error {
+  constructor() {
+    super(
+      "tools[expr] is not allowed — use tools.<namespace> member access (see globalAlias for slash-named providers) or tools.search() to discover providers.",
+    );
+    this.name = "DynamicToolsAccessError";
+  }
+}
+
 /** Error from a transport, carrying an HTTP-ish status when known. */
 export class TransportError extends Error {
   constructor(

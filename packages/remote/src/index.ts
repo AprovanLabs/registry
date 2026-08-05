@@ -9,6 +9,7 @@
 
 export {
   AliasResolutionError,
+  DynamicToolsAccessError,
   RuntimeTimeoutError,
   TransportError,
   type ManifestPolicy,

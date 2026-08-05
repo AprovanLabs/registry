@@ -1,6 +1,7 @@
+import { DynamicToolsAccessError } from "./types.js";
+
 export interface ToolsAccessScan {
   namespaces: string[];
-  unresolved: boolean;
 }
 
 /** Strip string literals and comments; preserve newlines for line mapping. */
@@ -92,7 +93,6 @@ function isToolsBinding(code: string, start: number, end: number): boolean {
 export function scanToolsAccess(source: string): ToolsAccessScan {
   const code = stripStringsAndComments(source);
   const namespaces = new Set<string>();
-  let unresolved = false;
 
   const shadowStack: boolean[] = [false];
   let i = 0;
@@ -135,7 +135,7 @@ export function scanToolsAccess(source: string): ToolsAccessScan {
           const member = readIdent(code, j);
           if (member) namespaces.add(member.word);
         } else if (code[j] === "[") {
-          unresolved = true;
+          throw new DynamicToolsAccessError();
         }
       }
 
@@ -146,5 +146,7 @@ export function scanToolsAccess(source: string): ToolsAccessScan {
     i = ident.end;
   }
 
-  return { namespaces: [...namespaces].sort(), unresolved };
+  return { namespaces: [...namespaces].sort() };
 }
+
+export { DynamicToolsAccessError } from "./types.js";
