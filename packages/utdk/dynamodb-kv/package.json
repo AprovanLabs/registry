@@ -1,6 +1,7 @@
 {
   "name": "@utdk/dynamodb-kv",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "description": "Amazon DynamoDB key-value provider. Credential: bearer_token JSON with accessKeyId and secretAccessKey (optional sessionToken). Binding options: tableName (required), region, prefix.",
   "keywords": ["dynamodb", "aws", "keyvalue", "kv", "utdk"],

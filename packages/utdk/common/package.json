@@ -1,6 +1,7 @@
 {
   "name": "@utdk/common",
   "version": "0.1.1",
+  "license": "MIT",
   "type": "module",
   "description": "Cross-cutting utilities for @utdk provider packages",
   "scripts": {

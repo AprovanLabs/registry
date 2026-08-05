@@ -1,6 +1,7 @@
 {
   "name": "@utdk/s3",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "description": "S3-compatible vfs provider: read/write/delete/list/stat over object keys. Credential: bearer_token JSON {\"accessKeyId\",\"secretAccessKey\",\"sessionToken\"?}; binding options carry bucket, optional prefix, region, endpoint.",
   "keywords": ["s3", "vfs", "storage", "aws", "utdk"],

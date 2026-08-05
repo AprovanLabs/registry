@@ -1,6 +1,7 @@
 {
   "name": "@utdk/fly-sprites",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "description": "fly.io Sprites provider: persistent, hardware-isolated Linux microVMs with a durable filesystem and a per-sprite URL. Credential: a bearer_token holding a Sprites API token.",
   "keywords": [

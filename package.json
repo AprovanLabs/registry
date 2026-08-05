@@ -1,6 +1,7 @@
 {
   "name": "@aprovan/registry",
   "version": "0.1.1",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "build": "turbo run build",

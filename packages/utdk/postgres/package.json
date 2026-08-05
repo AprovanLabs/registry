@@ -1,6 +1,7 @@
 {
   "name": "@utdk/postgres",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "description": "PostgreSQL provider: sql queries over the wire protocol. Credential: a bearer_token holding the connection string (postgres://user:pass@host:5432/db?sslmode=require).",
   "keywords": ["postgres", "postgresql", "sql", "utdk"],

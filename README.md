@@ -20,3 +20,11 @@ _While the registry prefers TypeScript as the first-party supported language, al
     - View and consume 3rd party API docs as regular MCP tool endpoints _or_ as an SDK for the sandboxed Isolate runtime
 - [apps/tailor](apps/tailor): Generate single-file scripts in a web app which reference the UTDK-generated SDK tooling.
     - Integrates neatly with the UTDK SDK docs by relying on a UTDK MCP endpoint to search documentation as TypeScript files
+
+## License
+
+[MIT](LICENSE) © Aprovan Labs.
+
+Generated provider clients under `packages/utdk/<provider>` are derived from each
+vendor's own OpenAPI specification and carry that spec's license, declared in the
+package's `package.json`. They are not covered by the MIT license above.

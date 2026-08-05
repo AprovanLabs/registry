@@ -1,6 +1,7 @@
 {
   "name": "@utdk/sqs",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "description": "Amazon SQS events provider: append-only channels via a shared queue (optional SNS publish on emit). Credential: bearer_token JSON { accessKeyId, secretAccessKey, sessionToken? }; binding carries queue_url and optional topic_arn.",
   "keywords": ["sqs", "sns", "events", "stream", "aws", "utdk"],

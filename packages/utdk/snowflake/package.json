@@ -1,6 +1,7 @@
 {
   "name": "@utdk/snowflake",
   "version": "0.1.0",
+  "license": "MIT",
   "type": "module",
   "description": "Snowflake provider: sql queries via the SQL API v2. Credential: a bearer_token holding a programmatic access token; connection args carry account/database/warehouse/role.",
   "homepage": "https://docs.snowflake.com/en/developer-guide/sql-api/index",

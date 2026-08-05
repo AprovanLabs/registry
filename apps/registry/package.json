@@ -1,6 +1,7 @@
 {
   "name": "@aprovan/registry-web",
   "version": "0.1.0",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "description": "Registry for versioned 3rd party applications",
