@@ -154,10 +154,14 @@ export async function augmentRegistryProviderDocs(
   const openApiDocument = normalizeOpenApiDocument(applyProviderOpenApiOptions(rawOpenApiDocument, provider));
   const { tools } = await loadProviderTools(provider, openApiDocument);
   const clientToolMap = buildClientToolMap(openApiDocument, tools, provider);
+  const graphqlSchemaSdl = provider.graphqlSchemaUrl
+    ? await readOptionalTextFile(path.join(resolveProviderOutputDir(provider.name, outputRoot), "schema.graphql"))
+    : undefined;
   const augmented = await augmentProviderDocs({
     provider: provider.name,
     providerOptions: provider.options,
     openApiDocument,
+    graphqlSchemaSdl,
     tools,
     clientToolMap,
     docsCacheRoot,

@@ -9,6 +9,7 @@ import { getProviderImportSpecifier, stripProviderToolName, type RegistryProvide
 import { buildPublicTypeMap } from "../openapi.js";
 import { createProviderSchemaTypes, createSchemaRenderContext, type ProviderSchemaTypes } from "../render.js";
 import { schemaToObjectContent, schemaToTypeScriptType, type SchemaRenderContext } from "../schema.js";
+import { buildGraphqlOverviewMarkdown, isGraphqlPassthroughDocsGroup } from "./graphql-overview.js";
 import { groupOpenApiOperations } from "./grouping.js";
 import { getDocsStaleCheckResult } from "./hash.js";
 import { readDocsManifest } from "./manifest.js";
@@ -22,6 +23,8 @@ export type AugmentProviderDocsOptions = {
   provider: string;
   providerOptions?: RegistryProvider["options"];
   openApiDocument: OpenAPIV3.Document;
+  /** Shipped SDL — when present, `docs/graphql.md` is generated from schema conventions. */
+  graphqlSchemaSdl?: string;
   tools?: Tool[];
   clientToolMap?: Map<string, ClientToolDefinition>;
   docsCacheRoot: string;
@@ -445,6 +448,16 @@ function buildAuthSection(openApiDocument: OpenAPIV3.Document): string[] {
 }
 
 /** Pick a friendly first call for the quick start: prefer no-input GETs. */
+function pickGraphqlExecuteMethod(operationLookup: ReturnType<typeof buildOperationLookup>): string {
+  for (const operation of operationLookup.byOperationId.values()) {
+    if (/graphql/iu.test(operation.toolName) || /graphql/iu.test(operation.accessPath.join("."))) {
+      return operation.accessPath.join(".");
+    }
+  }
+
+  return "executeGraphQl";
+}
+
 function pickExampleOperation(
   operationLookup: ReturnType<typeof buildOperationLookup>,
 ): AugmentedOperation | undefined {
@@ -466,8 +479,18 @@ function buildReadme(options: {
   packageSpecifier: string;
   clientVariable: string;
   indexMarkdown: string;
+  hasGraphqlOverview: boolean;
 }): string {
-  const { provider, openApiDocument, groups, operationLookup, packageSpecifier, clientVariable, indexMarkdown } = options;
+  const {
+    provider,
+    openApiDocument,
+    groups,
+    operationLookup,
+    packageSpecifier,
+    clientVariable,
+    indexMarkdown,
+    hasGraphqlOverview,
+  } = options;
   const title = toOptionalString(openApiDocument.info?.title) ?? provider;
   const example = pickExampleOperation(operationLookup);
   const exampleArgs = example
@@ -497,6 +520,14 @@ function buildReadme(options: {
     `In the UTDK isolate runtime, \`${clientVariable}\` is also available directly as a namespace value — no import needed.`,
     "",
     ...buildAuthSection(openApiDocument),
+    ...(hasGraphqlOverview
+      ? [
+          "## GraphQL",
+          "",
+          "Primary API surface is GraphQL. See [GraphQL conventions](./docs/graphql.md) for schema conventions; use `schema_lookup` for per-type fields.",
+          "",
+        ]
+      : []),
     "## Operations",
     "",
     ...groups.map(
@@ -576,7 +607,8 @@ export async function augmentProviderDocs(
     staleReason = staleCheck.reason;
   }
 
-  const groups = groupOpenApiOperations(options.openApiDocument);
+  const allGroups = groupOpenApiOperations(options.openApiDocument);
+  const groups = allGroups.filter((group) => !isGraphqlPassthroughDocsGroup(group));
   const schemaTypes = createProviderSchemaTypes(options.openApiDocument);
   const schemaContext: SchemaRenderContext | undefined = createSchemaRenderContext(schemaTypes);
   // Same context the docs render with, so response `$ref`s collapse to names
@@ -603,6 +635,20 @@ export async function augmentProviderDocs(
     relativePath: `${group.key}.md`,
     content: buildGroupDocContent(group, groupDocOpts),
   }));
+
+  if (options.graphqlSchemaSdl) {
+    const graphqlOverview = buildGraphqlOverviewMarkdown({
+      provider: options.provider,
+      packageSpecifier,
+      clientVariable,
+      executeMethod: pickGraphqlExecuteMethod(operationLookup),
+      sdl: options.graphqlSchemaSdl,
+      openApiDocument: options.openApiDocument,
+      promptsHash: prompts.hash,
+    });
+    docs.push({ relativePath: "graphql.md", content: graphqlOverview.markdown });
+  }
+
   const readme = buildReadme({
     provider: options.provider,
     openApiDocument: options.openApiDocument,
@@ -611,6 +657,7 @@ export async function augmentProviderDocs(
     packageSpecifier,
     clientVariable,
     indexMarkdown,
+    hasGraphqlOverview: Boolean(options.graphqlSchemaSdl),
   });
 
   return {

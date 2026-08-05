@@ -114,4 +114,53 @@ describe("augmentProviderDocs", () => {
     expect(result.metadata.openApiHash).toBeNull();
     expect(result.metadata.promptHash).toMatch(/^[a-f0-9]{64}$/);
   });
+
+  it("replaces the GraphQL passthrough group with an SDL-derived graphql.md overview", async () => {
+    const docsCacheRoot = await createTempDir();
+    const outputRoot = await createTempDir();
+    const provider = "widgets";
+
+    const result = await augmentProviderDocs({
+      provider,
+      docsCacheRoot,
+      outputRoot,
+      graphqlSchemaSdl: `
+        interface Node { id: ID! }
+        type PageInfo { hasNextPage: Boolean! endCursor: String }
+        type ItemConnection { nodes: [Item!]! pageInfo: PageInfo! }
+        type Item implements Node { id: ID! }
+        type Query { item(id: ID!): Item items(first: Int, after: String): ItemConnection! }
+        type Mutation { itemCreate(input: ItemCreateInput!): Item! }
+        input ItemCreateInput { title: String! }
+      `,
+      openApiDocument: {
+        openapi: "3.0.0",
+        info: { title: "Widgets", version: "1.0.0" },
+        paths: {
+          "/graphql": {
+            post: {
+              operationId: "executeGraphQL",
+              summary: "Execute GraphQL",
+              tags: ["GraphQL"],
+              responses: { "200": { description: "ok" } },
+            },
+          },
+          "/health": {
+            get: {
+              operationId: "health.check",
+              summary: "Health",
+              tags: ["Health"],
+              responses: { "200": { description: "ok" } },
+            },
+          },
+        },
+      } as never,
+    });
+
+    expect(result.docs.map((doc) => doc.relativePath)).toEqual(["health.md", "graphql.md"]);
+    expect(result.docs[1]?.content).toContain("## Pagination");
+    expect(result.docs[1]?.content).not.toContain("## `widgets.");
+    expect(result.readme).toContain("## GraphQL");
+    expect(result.readme).not.toContain("./docs/graphql.md) — 1 operation");
+  });
 });
