@@ -26,6 +26,25 @@ export type RegistryProvider = {
    * passthrough operation, and vice versa — see `graphql-schema.ts`.
    */
   graphqlSchemaUrl?: string;
+  /**
+   * Providers that version their API by date/label put the version in the
+   * URL (graphql-schema-surface tech-plan D4, e.g. Shopify's `2024-10`).
+   * `apiVersions` is the supported set; `defaultVersion` (required whenever
+   * `apiVersions` is present) is required iff `apiVersions` is present and
+   * must be one of them. Both are optional — most providers have no version
+   * concept.
+   */
+  apiVersions?: string[];
+  defaultVersion?: string;
+  /**
+   * The endpoint template a resolved version is substituted into (its
+   * `{version}` placeholder), e.g.
+   * `https://{shop}.myshopify.com/admin/api/{version}/graphql.json`.
+   * Registry-server DERIVES `baseUrl` from this rather than accepting one
+   * set alongside a version — see `resolveProviderVersion` in
+   * `@aprovan/registry-server/profiles/versioning`.
+   */
+  versionedBaseUrl?: string;
   /** Ingest source for provenance tracking. Defaults to "manual". */
   ingestSource?: string;
   metadata?: RegistryProviderMetadata;
@@ -193,6 +212,48 @@ function assertValidPlatformApp(provider: RegistryProvider): void {
   }
 }
 
+/**
+ * `apiVersions`/`defaultVersion`/`versionedBaseUrl` are optional but, once
+ * any is declared, must be internally consistent (graphql-schema-surface
+ * tasks.md 5.1/5.4) — caught here, at load time, rather than at first
+ * dispatch against the provider.
+ */
+function assertValidApiVersioning(provider: RegistryProvider): void {
+  const { apiVersions, defaultVersion, versionedBaseUrl } = provider;
+
+  if (apiVersions === undefined) {
+    if (defaultVersion !== undefined) {
+      throw new Error(
+        `Provider "${provider.name}" declares defaultVersion without apiVersions in ${REGISTRY_PATH}.`,
+      );
+    }
+    if (versionedBaseUrl !== undefined) {
+      throw new Error(
+        `Provider "${provider.name}" declares versionedBaseUrl without apiVersions in ${REGISTRY_PATH}.`,
+      );
+    }
+    return;
+  }
+
+  if (!Array.isArray(apiVersions) || apiVersions.length === 0 || !apiVersions.every((v) => typeof v === "string" && v.length > 0)) {
+    throw new Error(
+      `Provider "${provider.name}" has invalid apiVersions in ${REGISTRY_PATH} — must be a non-empty array of strings.`,
+    );
+  }
+  if (defaultVersion === undefined) {
+    throw new Error(
+      `Provider "${provider.name}" declares apiVersions but no defaultVersion in ${REGISTRY_PATH} — ` +
+        `required whenever apiVersions is present.`,
+    );
+  }
+  if (!apiVersions.includes(defaultVersion)) {
+    throw new Error(
+      `Provider "${provider.name}" has defaultVersion "${defaultVersion}" which is not one of its own ` +
+        `apiVersions [${apiVersions.join(", ")}] in ${REGISTRY_PATH}.`,
+    );
+  }
+}
+
 export async function loadRegistryProviders(): Promise<RegistryProvider[]> {
   const rawRegistry = await readFile(REGISTRY_PATH, "utf8");
   const providers = JSON.parse(rawRegistry) as RegistryProvider[];
@@ -201,6 +262,7 @@ export async function loadRegistryProviders(): Promise<RegistryProvider[]> {
   for (const provider of providers) {
     assertValidProviderName(provider.name);
     assertValidPlatformApp(provider);
+    assertValidApiVersioning(provider);
   }
   assertUniqueGlobalAliases(providers.map((provider) => provider.name));
   return providers;

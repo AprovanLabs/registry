@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   target_id     TEXT NOT NULL,
   provider      TEXT,
   credential_id TEXT,
+  version       TEXT,
   options       TEXT NOT NULL DEFAULT '{}',
   limits        TEXT,
   created_by    TEXT NOT NULL,

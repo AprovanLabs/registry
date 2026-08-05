@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   getPrimaryProviderAuthOption,
   getProviderClientImportPath,
@@ -80,5 +80,89 @@ describe("provider naming helpers", () => {
     ];
     expect(resolveProvider(providers, "github").platformApp).toBe(true);
     expect(resolveProvider(providers, "slack").platformApp).toBeUndefined();
+  });
+
+  it("resolves optional apiVersions/defaultVersion/versionedBaseUrl on provider entries", () => {
+    const providers = [
+      {
+        name: "shopify",
+        url: "https://example.com/shopify.json",
+        apiVersions: ["2024-10", "2025-01"],
+        defaultVersion: "2025-01",
+        versionedBaseUrl: "https://{shop}.myshopify.com/admin/api/{version}/graphql.json",
+      },
+      { name: "slack", url: "https://example.com/slack.json" },
+    ];
+    expect(resolveProvider(providers, "shopify").apiVersions).toEqual(["2024-10", "2025-01"]);
+    expect(resolveProvider(providers, "shopify").defaultVersion).toBe("2025-01");
+    expect(resolveProvider(providers, "slack").apiVersions).toBeUndefined();
+  });
+});
+
+describe("registry.json apiVersions consistency (loadRegistryProviders lint)", () => {
+  async function loadWith(providers: unknown[]): Promise<unknown> {
+    vi.resetModules();
+    vi.doMock("node:fs/promises", async () => {
+      const actual = await vi.importActual<typeof import("node:fs/promises")>("node:fs/promises");
+      return { ...actual, readFile: vi.fn().mockResolvedValue(JSON.stringify(providers)) };
+    });
+    const mod = await import("./provider.js");
+    return mod.loadRegistryProviders();
+  }
+
+  afterEach(() => {
+    vi.doUnmock("node:fs/promises");
+    vi.resetModules();
+  });
+
+  it("accepts a provider declaring a consistent apiVersions/defaultVersion pair", async () => {
+    await expect(
+      loadWith([
+        {
+          name: "shopify",
+          url: "https://example.com/shopify.json",
+          apiVersions: ["2024-10", "2025-01"],
+          defaultVersion: "2025-01",
+        },
+      ]),
+    ).resolves.toBeDefined();
+  });
+
+  it("rejects apiVersions with no defaultVersion", async () => {
+    await expect(
+      loadWith([
+        { name: "shopify", url: "https://example.com/shopify.json", apiVersions: ["2024-10"] },
+      ]),
+    ).rejects.toThrow(/shopify.*no defaultVersion/su);
+  });
+
+  it("rejects a defaultVersion absent from apiVersions", async () => {
+    await expect(
+      loadWith([
+        {
+          name: "shopify",
+          url: "https://example.com/shopify.json",
+          apiVersions: ["2024-10"],
+          defaultVersion: "2025-01",
+        },
+      ]),
+    ).rejects.toThrow(/shopify.*not one of its own apiVersions/su);
+  });
+
+  it("rejects defaultVersion or versionedBaseUrl declared without apiVersions", async () => {
+    await expect(
+      loadWith([
+        { name: "shopify", url: "https://example.com/shopify.json", defaultVersion: "2025-01" },
+      ]),
+    ).rejects.toThrow(/shopify.*without apiVersions/su);
+    await expect(
+      loadWith([
+        {
+          name: "shopify",
+          url: "https://example.com/shopify.json",
+          versionedBaseUrl: "https://example.com/{version}",
+        },
+      ]),
+    ).rejects.toThrow(/shopify.*without apiVersions/su);
   });
 });

@@ -460,8 +460,15 @@ describe("resolveProfile return paths", () => {
 
     const step4ReturnIdx = returns[0]!;
     const step4Body = fnBody.slice(0, step4ReturnIdx);
-    expect(step4Body).toMatch(/authMode !== "none"/);
-    expect(step4Body).toMatch(/ctx\.role !== "admin"/);
+    // The grant + role check itself now lives in the extracted
+    // `authorizeCaller` helper (grant-enforcement §4) — step 4 must still
+    // call it before its return, and the helper itself must still gate on
+    // authMode/role.
+    expect(step4Body).toMatch(/authorizeCaller\(/);
+    const authorizeFnStart = source.indexOf("async function authorizeCaller");
+    const authorizeFnBody = source.slice(authorizeFnStart, fnStart);
+    expect(authorizeFnBody).toMatch(/authMode !== "none"/);
+    expect(authorizeFnBody).toMatch(/ctx\.role !== "admin"/);
 
     const governedGate = fnBody.slice(
       fnBody.indexOf("// Governed tenants must have a granted default profile"),
@@ -540,6 +547,172 @@ describe("resolveProfile return paths", () => {
     } finally {
       await none.close();
     }
+  });
+});
+
+describe("provider API version (graphql-schema-surface D4)", () => {
+  const SHOPIFY_VERSIONING = {
+    apiVersions: ["2024-10", "2025-01"],
+    defaultVersion: "2025-01",
+    versionedBaseUrl: "https://{shop}.myshopify.com/admin/api/{version}/graphql.json",
+  };
+
+  it("a pinned version selects its own endpoint via versionedBaseUrl", async () => {
+    const versioned = await makeEnv({
+      authMode: "none",
+      providerVersions: { shopify: SHOPIFY_VERSIONING },
+      knownProviders: ["shopify"],
+    });
+    try {
+      await versioned.storage.credentials.create("t1", {
+        provider: "shopify",
+        type: "bearer_token",
+        payload: JSON.stringify(bearer("shop-token")),
+        createdBy: "user-1",
+      });
+      await versioned.storage.profiles.create("t1", {
+        name: "default",
+        targetKind: "provider",
+        targetId: "shopify",
+        version: "2024-10",
+        options: {},
+        createdBy: "user-1",
+      });
+      const resolved = await resolveProfile(versioned.deps, ctx(), "shopify");
+      expect(resolved.version).toBe("2024-10");
+      expect(resolved.baseUrl).toBe(
+        "https://{shop}.myshopify.com/admin/api/2024-10/graphql.json",
+      );
+    } finally {
+      await versioned.close();
+    }
+  });
+
+  it("no pinned version resolves the provider's defaultVersion", async () => {
+    const versioned = await makeEnv({
+      authMode: "none",
+      providerVersions: { shopify: SHOPIFY_VERSIONING },
+      knownProviders: ["shopify"],
+    });
+    try {
+      await versioned.storage.credentials.create("t1", {
+        provider: "shopify",
+        type: "bearer_token",
+        payload: JSON.stringify(bearer("shop-token")),
+        createdBy: "user-1",
+      });
+      const resolved = await resolveProfile(versioned.deps, ctx(), "shopify");
+      expect(resolved.version).toBe("2025-01");
+      expect(resolved.baseUrl).toBe(
+        "https://{shop}.myshopify.com/admin/api/2025-01/graphql.json",
+      );
+    } finally {
+      await versioned.close();
+    }
+  });
+
+  it("a version with no schema in apiVersions fails loudly naming the supported set", async () => {
+    const versioned = await makeEnv({
+      authMode: "none",
+      providerVersions: { shopify: SHOPIFY_VERSIONING },
+      knownProviders: ["shopify"],
+    });
+    try {
+      await versioned.storage.credentials.create("t1", {
+        provider: "shopify",
+        type: "bearer_token",
+        payload: JSON.stringify(bearer("shop-token")),
+        createdBy: "user-1",
+      });
+      await versioned.storage.profiles.create("t1", {
+        name: "default",
+        targetKind: "provider",
+        targetId: "shopify",
+        version: "2023-07",
+        options: {},
+        createdBy: "user-1",
+      });
+      const error = await resolveProfile(versioned.deps, ctx(), "shopify").catch((e) => e);
+      expect(error).toBeInstanceOf(ServiceError);
+      expect(error.status).toBe(400);
+      expect(error.message).toMatch(/no API version "2023-07"/u);
+      expect(error.message).toMatch(/2024-10, 2025-01/u);
+    } finally {
+      await versioned.close();
+    }
+  });
+
+  it("a profile setting baseUrl on a versioned provider is refused 400 — endpoint must be derived", async () => {
+    const versioned = await makeEnv({
+      authMode: "none",
+      providerVersions: { shopify: SHOPIFY_VERSIONING },
+      knownProviders: ["shopify"],
+    });
+    try {
+      await versioned.storage.credentials.create("t1", {
+        provider: "shopify",
+        type: "bearer_token",
+        payload: JSON.stringify(bearer("shop-token")),
+        createdBy: "user-1",
+      });
+      await versioned.storage.profiles.create("t1", {
+        name: "default",
+        targetKind: "provider",
+        targetId: "shopify",
+        options: { baseUrl: "https://myshop.myshopify.com/admin/api/2024-10/graphql.json" },
+        createdBy: "user-1",
+      });
+      const error = await resolveProfile(versioned.deps, ctx(), "shopify").catch((e) => e);
+      expect(error).toBeInstanceOf(ServiceError);
+      expect(error.status).toBe(400);
+      expect(error.message).toMatch(/derives its endpoint from the resolved API version/u);
+      expect(error.message).toMatch(/may not also set "baseUrl"/u);
+    } finally {
+      await versioned.close();
+    }
+  });
+
+  it("a pinned version on an unversioned provider fails loudly", async () => {
+    const none = await makeEnv({ authMode: "none" });
+    try {
+      await none.storage.credentials.create("t1", {
+        provider: "github",
+        type: "bearer_token",
+        payload: JSON.stringify(bearer("gh")),
+        createdBy: "user-1",
+      });
+      await none.storage.profiles.create("t1", {
+        name: "default",
+        targetKind: "provider",
+        targetId: "github",
+        version: "v4",
+        options: {},
+        createdBy: "user-1",
+      });
+      const error = await resolveProfile(none.deps, ctx(), "github").catch((e) => e);
+      expect(error).toBeInstanceOf(ServiceError);
+      expect(error.status).toBe(400);
+      expect(error.message).toMatch(/declares no apiVersions/u);
+    } finally {
+      await none.close();
+    }
+  });
+
+  it("unversioned providers are unaffected — baseUrl and options pass through unchanged", async () => {
+    const cred = await env.credentials.create("t1", "user-1", {
+      provider: "postgres",
+      payload: bearer("pg-token"),
+    });
+    await env.profiles.create(adminCtx(), {
+      name: "docs",
+      target: { kind: "interface", interface: "sql" },
+      provider: "postgres",
+      credentialId: cred.id,
+      options: { database: "docs" },
+    });
+    const resolved = await resolveProfile(env.deps, adminCtx(), "sql", "docs");
+    expect(resolved.version).toBeUndefined();
+    expect(resolved.options).toEqual({ database: "docs" });
   });
 });
 

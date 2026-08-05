@@ -7,6 +7,7 @@
 
 import { createAuthAdapter } from "./auth/adapters.js";
 import { wirePlatformOAuthAtStartup } from "./config/platform-oauth.js";
+import { loadProviderVersioning } from "./config/provider-versioning.js";
 import { createOAuthTokenCache } from "./credentials/oauth.js";
 import { CredentialService } from "./credentials/service.js";
 import { finalizeCallContext } from "./dispatch/call-context.js";
@@ -121,6 +122,7 @@ export async function createRegistryServer(
     profileService,
     credentials,
     isKnownProvider: isCatalogueProvider,
+    getProviderVersioning: await loadProviderVersioning(),
     authMode: adapter.mode,
   };
   const executor = options.executorInstance ?? new ProviderExecutor(options.executor ?? {});

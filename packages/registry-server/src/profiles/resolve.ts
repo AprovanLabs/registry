@@ -25,6 +25,7 @@ import {
 } from "../catalog/types.js";
 import { CredentialResolutionError, type CredentialService } from "../credentials/service.js";
 import { ProfileService } from "./service.js";
+import { resolveProviderVersion, type GetProviderVersioning } from "./versioning.js";
 import type { CallContext } from "../config/types.js";
 import type { CredentialPayload } from "../credentials/types.js";
 import type { ProfileLimits, ProfileStore } from "../storage/types.js";
@@ -36,6 +37,8 @@ export interface ResolveDeps {
   credentials: CredentialService;
   /** Catalogue guard — is this a known utdk provider id? */
   isKnownProvider: (id: string) => boolean;
+  /** Provider API-version metadata (graphql-schema-surface D4); undefined = unversioned. */
+  getProviderVersioning: GetProviderVersioning;
   /** Whether grants are enforced ("none" skips enforcement). */
   authMode: "oidc" | "api-key" | "none";
 }
@@ -57,6 +60,8 @@ export interface ResolvedProfile {
   moduleSpecifier?: string;
   /** API root override (transport, split out of options). */
   baseUrl?: string;
+  /** Resolved API version (graphql-schema-surface D4); same field `baseUrl` was derived from. */
+  version?: string;
   credential?: { id: string; payload: CredentialPayload };
   options: Record<string, unknown>;
   limits?: ProfileLimits;
@@ -202,6 +207,18 @@ export async function resolveProfile(
 
     const executingProvider = target.kind === "interface" ? compat!.provider : target.id;
 
+    // 4b2. API version — the endpoint and the schema for this call derive
+    // from ONE field (graphql-schema-surface D4); a profile setting both
+    // `version` and `baseUrl` is a loud 400, not silent drift.
+    const explicitBaseUrl =
+      typeof row.options["baseUrl"] === "string" ? (row.options["baseUrl"] as string) : undefined;
+    const versionResolution = resolveProviderVersion(
+      executingProvider,
+      deps.getProviderVersioning(executingProvider),
+      row.version,
+      explicitBaseUrl,
+    );
+
     // 4c. Credential — pinned id resolves loudly; never falls back.
     let credential: { id: string; payload: CredentialPayload } | undefined;
     if (row.credentialId) {
@@ -229,7 +246,11 @@ export async function resolveProfile(
 
     // 4d. options = compat.defaults ⊕ row.options (row wins); baseUrl split out.
     const merged = { ...(compat?.defaults ?? {}), ...row.options };
-    const { options, baseUrl } = splitOptions(merged, compat?.baseUrl ?? aliasBase.baseUrl);
+    const { options, baseUrl: fallbackBaseUrl } = splitOptions(
+      merged,
+      compat?.baseUrl ?? aliasBase.baseUrl,
+    );
+    const baseUrl = versionResolution.baseUrl ?? fallbackBaseUrl;
 
     return {
       target,
@@ -240,6 +261,7 @@ export async function resolveProfile(
         ? { moduleSpecifier: compat!.moduleSpecifier }
         : {}),
       ...(baseUrl ? { baseUrl } : {}),
+      ...(versionResolution.version ? { version: versionResolution.version } : {}),
       ...(credential ? { credential } : {}),
       options,
       ...(row.limits ? { limits: row.limits } : {}),
@@ -321,12 +343,20 @@ export async function resolveProfile(
   // request-supplied credentials remain legal on the HTTP surface).
   assertWithinNarrowedTo(ctx, target.id);
   const credential = await deps.credentials.firstForProvider(ctx.tenantId, target.id);
-  const { options, baseUrl } = splitOptions({}, aliasBase.baseUrl);
+  const versionResolution = resolveProviderVersion(
+    target.id,
+    deps.getProviderVersioning(target.id),
+    undefined,
+    aliasBase.baseUrl,
+  );
+  const { options, baseUrl: fallbackBaseUrl } = splitOptions({}, aliasBase.baseUrl);
+  const baseUrl = versionResolution.baseUrl ?? fallbackBaseUrl;
   return {
     target,
     provider: target.id,
     module: aliasBase.module,
     ...(baseUrl ? { baseUrl } : {}),
+    ...(versionResolution.version ? { version: versionResolution.version } : {}),
     ...(credential ? { credential } : {}),
     options,
     defaultsFor: [],
