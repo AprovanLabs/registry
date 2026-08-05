@@ -7,11 +7,11 @@
  * public registry but no env secrets boot cleanly and fall back to BYO.
  */
 
-import { loadRegistryProviders } from "@aprovan/utdk-bundler/provider";
 import {
   wirePlatformOAuthSecrets,
   type PlatformSecretAccessAudit,
 } from "../credentials/platform-secrets.js";
+import { loadRegistryManifest } from "./registry-manifest.js";
 
 export interface WirePlatformOAuthAtStartupOptions {
   env?: NodeJS.ProcessEnv;
@@ -23,7 +23,7 @@ export interface WirePlatformOAuthAtStartupOptions {
 export async function wirePlatformOAuthAtStartup(
   options: WirePlatformOAuthAtStartupOptions = {},
 ): Promise<void> {
-  const providers = await loadRegistryProviders();
+  const providers = await loadRegistryManifest(options.env);
   const platformProviders = providers
     .filter((entry) => entry.platformApp === true)
     .map((entry) => entry.name);
