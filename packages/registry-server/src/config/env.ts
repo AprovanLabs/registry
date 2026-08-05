@@ -3,6 +3,12 @@
  * code path that exists solely for standalone mode (registry-server spec
  * "Library-first construction"): everything downstream of the parsed options
  * is the same constructor the embedded host calls.
+ *
+ * Platform OAuth app secrets (platform-oauth-apps §2) are NOT parsed here —
+ * they are loaded at server startup via `wirePlatformOAuthAtStartup` from
+ * `PLATFORM_OAUTH_<PROVIDER>_CLIENT_ID` / `_SECRET` (KMS-wrapped secret
+ * supported). Provider ids use slash → underscore (`google/drive` →
+ * `PLATFORM_OAUTH_GOOGLE_DRIVE_CLIENT_ID`).
  */
 
 import { homedir } from "node:os";

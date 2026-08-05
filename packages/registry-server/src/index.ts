@@ -31,6 +31,7 @@ export type {
   McpExtensionTool,
 } from "./config/types.js";
 export { optionsFromEnv, type StandaloneConfig } from "./config/env.js";
+export { wirePlatformOAuthAtStartup } from "./config/platform-oauth.js";
 
 // Service kernel (the contract product services import from the package)
 export {
@@ -106,6 +107,16 @@ export {
   type ResolveOAuthOptions,
   type PlatformOAuthLookup,
 } from "./credentials/oauth.js";
+export {
+  PLATFORM_OAUTH_STORE_PREFIX,
+  platformOAuthEnvKeys,
+  unwrapPlatformOAuthSecret,
+  wirePlatformOAuthSecrets,
+  resetPlatformOAuthSecretStore,
+  resetPlatformOAuthStartupLogs,
+  getPlatformOAuthSecretStore,
+  type PlatformSecretAccessAudit,
+} from "./credentials/platform-secrets.js";
 export {
   CredentialService,
   CredentialResolutionError,

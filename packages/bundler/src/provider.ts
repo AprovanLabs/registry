@@ -6,6 +6,13 @@ import { assertUniqueGlobalAliases, assertValidProviderName } from "./naming.js"
 
 export type RegistryProvider = {
   name: string;
+  /**
+   * Public flag: this provider has a hosted platform OAuth app tenants can
+   * use without registering their own (platform-oauth-apps D2). The secret
+   * never lives in the repo — it is resolved from `PLATFORM_OAUTH_*` env at
+   * hosted startup only.
+   */
+  platformApp?: boolean;
   options?: RegistryProviderOptions;
   transport_type?: string;
   fetch_method?: string;
@@ -178,6 +185,14 @@ export function stripProviderToolName(toolName: string, provider: Pick<RegistryP
   return stripCustomOperationPrefix(fallbackToolName, provider.options);
 }
 
+function assertValidPlatformApp(provider: RegistryProvider): void {
+  if (provider.platformApp !== undefined && typeof provider.platformApp !== "boolean") {
+    throw new Error(
+      `Provider "${provider.name}" has invalid platformApp in ${REGISTRY_PATH} — must be boolean.`,
+    );
+  }
+}
+
 export async function loadRegistryProviders(): Promise<RegistryProvider[]> {
   const rawRegistry = await readFile(REGISTRY_PATH, "utf8");
   const providers = JSON.parse(rawRegistry) as RegistryProvider[];
@@ -185,6 +200,7 @@ export async function loadRegistryProviders(): Promise<RegistryProvider[]> {
   // load time — not later, as a mis-split directory during generation.
   for (const provider of providers) {
     assertValidProviderName(provider.name);
+    assertValidPlatformApp(provider);
   }
   assertUniqueGlobalAliases(providers.map((provider) => provider.name));
   return providers;

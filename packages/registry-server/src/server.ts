@@ -6,6 +6,7 @@
  */
 
 import { createAuthAdapter } from "./auth/adapters.js";
+import { wirePlatformOAuthAtStartup } from "./config/platform-oauth.js";
 import { createOAuthTokenCache } from "./credentials/oauth.js";
 import { CredentialService } from "./credentials/service.js";
 import { finalizeCallContext } from "./dispatch/call-context.js";
@@ -82,6 +83,18 @@ export async function createRegistryServer(
   }
 
   const storage = await createStorage(options.storage);
+  await wirePlatformOAuthAtStartup({
+    accessAudit: (provider, storeKey) => {
+      void storage.audit.append({
+        requestId: "platform-oauth",
+        tenantId: "__platform",
+        principal: "platform-oauth",
+        namespace: storeKey,
+        operation: provider,
+        status: 200,
+      });
+    },
+  });
   const tenancy = new TenantService(
     storage.tenants,
     options.tenancy.mode === "external"
