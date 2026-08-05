@@ -29,6 +29,11 @@ export type ProvenanceGraphqlSchema = {
   fetchedAt: string;
 };
 
+export type ProvenanceGraphqlIndex = {
+  typeCount: number;
+  sizeBytes: number;
+};
+
 export type ProvenancePipelineResearch = {
   noveltyScore: number;
   competingPackages: number;
@@ -55,6 +60,11 @@ export type ProvenanceManifest = {
    * an OpenAPI source and a GraphQL schema source at once.
    */
   graphqlSchema: ProvenanceGraphqlSchema | null;
+  /**
+   * Present only alongside `graphqlSchema`. `sizeBytes` is the number that
+   * tells you when the type-index artifact needs splitting (tasks.md 2.3).
+   */
+  graphqlIndex: ProvenanceGraphqlIndex | null;
   ingestSource: string;
   pipeline: ProvenancePipeline;
   bundlerVersion: string;
@@ -129,6 +139,18 @@ async function getBundlerVersion(): Promise<string> {
   }
 }
 
+function parseGraphqlIndexManifest(graphqlIndexManifestJson: string | undefined): ProvenanceGraphqlIndex | null {
+  if (!graphqlIndexManifestJson) return null;
+  try {
+    const parsed = JSON.parse(graphqlIndexManifestJson) as { typeCount?: unknown; sizeBytes?: unknown };
+    const typeCount = typeof parsed.typeCount === "number" ? parsed.typeCount : 0;
+    const sizeBytes = typeof parsed.sizeBytes === "number" ? parsed.sizeBytes : 0;
+    return { typeCount, sizeBytes };
+  } catch {
+    return null;
+  }
+}
+
 function parseResearch(researchJson: string | undefined): ProvenancePipelineResearch | null {
   if (!researchJson) return null;
   try {
@@ -184,11 +206,12 @@ export async function runShipPhase(options: RunShipPhaseOptions): Promise<RunShi
   const providerDir = resolveProviderOutputDir(provider.name, outputRoot);
   const generatedAt = new Date().toISOString();
 
-  const [researchJson, packageJson, openApiJson, graphqlSchemaSdl] = await Promise.all([
+  const [researchJson, packageJson, openApiJson, graphqlSchemaSdl, graphqlIndexManifestJson] = await Promise.all([
     readFileSafe(path.join(providerDir, "research.json")),
     readFileSafe(path.join(providerDir, "package.json")),
     readFileSafe(path.join(providerDir, "openapi.json")),
     readFileSafe(path.join(providerDir, "schema.graphql")),
+    readFileSafe(path.join(providerDir, "graphql-index.json")),
   ]);
 
   const scorecard =
@@ -205,6 +228,7 @@ export async function runShipPhase(options: RunShipPhaseOptions): Promise<RunShi
   const graphqlSchema: ProvenanceGraphqlSchema | null = graphqlSchemaSdl
     ? { hash: `sha256:${hashContent(graphqlSchemaSdl)}`, fetchedAt: generatedAt }
     : null;
+  const graphqlIndex = parseGraphqlIndexManifest(graphqlIndexManifestJson);
 
   const provenance: ProvenanceManifest = {
     provider: provider.name,
@@ -217,6 +241,7 @@ export async function runShipPhase(options: RunShipPhaseOptions): Promise<RunShi
       fetchedAt: generatedAt,
     },
     graphqlSchema,
+    graphqlIndex,
     ingestSource: provider.ingestSource ?? "manual",
     pipeline: {
       research,

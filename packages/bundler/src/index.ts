@@ -10,6 +10,7 @@ import {
   assertValidSdl,
   loadGraphqlSchemaSource,
 } from "./graphql-schema.js";
+import { buildGraphqlTypeIndex, GRAPHQL_INDEX_MANIFEST_FILENAME, GRAPHQL_INDEX_RECORDS_FILENAME } from "./graphql-index.js";
 import { runAuthIntelPhase, type RunAuthIntelPhaseOptions, type RunAuthIntelPhaseResult } from "./phases/authIntel.js";
 import {
   runWebhookIntelPhase,
@@ -89,6 +90,12 @@ export type GenerateRegistryTypesResult = {
   provider: string;
   outputPaths: string[];
   toolCount: number;
+  /**
+   * Type-index size for providers that ship a GraphQL schema — the number
+   * that tells you when the artifact needs splitting (tasks.md 2.3). `null`
+   * for providers with no `graphqlSchemaUrl`.
+   */
+  graphqlIndex: { typeCount: number; sizeBytes: number } | null;
 };
 
 export type LoadRegistryProviderDocsOptions = LoadProviderDocsOptions;
@@ -223,6 +230,9 @@ export async function generateRegistryTypes(
         return sdl.endsWith("\n") ? sdl : `${sdl}\n`;
       })()
     : undefined;
+  // Built from the same validated SDL the schema.graphql write uses, so the
+  // index and the shipped schema never disagree about what a type looks like.
+  const graphqlTypeIndex = graphqlSchemaSdl !== undefined ? buildGraphqlTypeIndex(provider.name, graphqlSchemaSdl) : undefined;
   const { tools } = await loadProviderTools(provider, openApiDocument);
   // Built up front so the public type map shares the renderer's named component
   // types. Without it, response `$ref`s get inlined here — unbounded work on
@@ -312,6 +322,15 @@ export async function generateRegistryTypes(
     ...(graphqlSchemaSdl !== undefined
       ? [writeTextFile(path.join(providerDir, "schema.graphql"), graphqlSchemaSdl)]
       : []),
+    ...(graphqlTypeIndex !== undefined
+      ? [
+          writeTextFile(
+            path.join(providerDir, GRAPHQL_INDEX_MANIFEST_FILENAME),
+            `${JSON.stringify(graphqlTypeIndex.manifest, null, 2)}\n`,
+          ),
+          writeTextFile(path.join(providerDir, GRAPHQL_INDEX_RECORDS_FILENAME), graphqlTypeIndex.recordsNdjson),
+        ]
+      : []),
     ...namespaceOutputPaths,
   ]);
 
@@ -319,6 +338,9 @@ export async function generateRegistryTypes(
     provider: provider.name,
     outputPaths,
     toolCount: tools.length,
+    graphqlIndex: graphqlTypeIndex
+      ? { typeCount: graphqlTypeIndex.manifest.typeCount, sizeBytes: graphqlTypeIndex.manifest.sizeBytes }
+      : null,
   };
 }
 

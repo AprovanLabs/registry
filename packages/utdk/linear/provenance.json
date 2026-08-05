@@ -12,6 +12,10 @@
     "hash": "sha256:11c549e81063b746b046fa272b4fd018e289768a3a1633e29bfabff77bdc16ec",
     "fetchedAt": "2026-08-05T02:40:56.227Z"
   },
+  "graphqlIndex": {
+    "typeCount": 1203,
+    "sizeBytes": 2312423
+  },
   "ingestSource": "composio",
   "pipeline": {
     "research": {
