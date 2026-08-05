@@ -327,6 +327,40 @@ describe("runShipPhase", () => {
     expect(result.provenance.graphqlSchema?.fetchedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/u);
   });
 
+  it("sets graphqlIndex to null when graphql-index.json is absent", async () => {
+    const outputRoot = await createTempDir();
+
+    const result = await runShipPhase({
+      provider: "openai",
+      outputRoot,
+      scorecardResult: mockScorecardResult,
+      agentReadinessResult: mockAgentReadinessResult,
+    });
+
+    expect(result.provenance.graphqlIndex).toBeNull();
+  });
+
+  it("computes graphqlIndex typeCount and sizeBytes from graphql-index.json when present", async () => {
+    const outputRoot = await createTempDir();
+    const providerDir = path.join(outputRoot, "linear");
+    await mkdir(providerDir, { recursive: true });
+
+    await writeFile(
+      path.join(providerDir, "graphql-index.json"),
+      JSON.stringify({ provider: "linear", typeCount: 42, sizeBytes: 12345, entryPoints: [], types: {} }),
+      "utf8",
+    );
+
+    const result = await runShipPhase({
+      provider: "linear",
+      outputRoot,
+      scorecardResult: mockScorecardResult,
+      agentReadinessResult: mockAgentReadinessResult,
+    });
+
+    expect(result.provenance.graphqlIndex).toEqual({ typeCount: 42, sizeBytes: 12345 });
+  });
+
   it("places provenance.json in the correct provider subdirectory", async () => {
     const outputRoot = await createTempDir();
 
