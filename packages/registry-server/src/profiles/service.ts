@@ -233,4 +233,24 @@ export class ProfileService {
   resolveGrantedProfileIds(ctx: CallContext): Promise<Set<string>> {
     return this.grantStore.grantedProfileIds(ctx.tenantId, ProfileService.subjectsFor(ctx));
   }
+
+  /**
+   * Canonical provider names reachable through this caller's profile grants.
+   * Interface profiles contribute their executing compat provider; provider
+   * profiles contribute their target id.
+   */
+  async grantedProviderNames(ctx: CallContext): Promise<Set<string>> {
+    const ids = await this.resolveGrantedProfileIds(ctx);
+    const providers = new Set<string>();
+    for (const id of ids) {
+      const row = await this.store.getById(ctx.tenantId, id);
+      if (!row) continue;
+      if (row.targetKind === "provider") {
+        providers.add(row.targetId);
+      } else if (row.provider) {
+        providers.add(row.provider);
+      }
+    }
+    return providers;
+  }
 }

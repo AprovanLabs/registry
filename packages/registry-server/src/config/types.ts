@@ -30,6 +30,17 @@ export interface CallContext {
   /** Non-user caller identity, when dispatch originates from a granted subject. */
   actor?: { kind: "app" | "workflow" | "agent"; id: string };
   traceId?: string;
+  /**
+   * Subset of the principal's grant requested by this run (canonical provider
+   * names). Validated at construction; a superset is 400, never a silent clamp.
+   */
+  narrowedTo?: string[];
+  /**
+   * Snapshot of the principal's granted provider names at construction — stamped
+   * when `narrowedTo` is set so audit spans distinguish narrowing from the full
+   * grant.
+   */
+  grantedProviders?: string[];
 }
 
 export type TelemetrySource =

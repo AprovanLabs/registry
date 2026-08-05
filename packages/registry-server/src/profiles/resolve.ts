@@ -73,6 +73,54 @@ export interface ResolvedProfile {
 
 const targetLabel = (target: ResolvedTarget): string => target.id;
 
+/** Executing provider for a stored profile row (canonical credential key). */
+function executingProviderForRow(target: ResolvedTarget, row: { provider?: string }): string {
+  return target.kind === "interface" ? (row.provider ?? "") : target.id;
+}
+
+/**
+ * Grant + run-scoped narrowing — one gate (grant-enforcement §4).
+ * Narrowing applies even when grants are skipped (admin / auth-none).
+ */
+async function authorizeCaller(
+  deps: ResolveDeps,
+  ctx: CallContext,
+  row: { id: string; provider?: string },
+  target: ResolvedTarget,
+  profileName: string,
+): Promise<void> {
+  const executingProvider = executingProviderForRow(target, row);
+
+  if (deps.authMode !== "none" && ctx.role !== "admin") {
+    const granted = await deps.profileService.resolveGrantedProfileIds(ctx);
+    if (!granted.has(row.id)) {
+      throw new ServiceError(
+        `Profile "${profileName}" (${targetLabel(target)}) is not granted to this caller. ` +
+          `Ask a workspace admin to grant it.`,
+        403,
+      );
+    }
+  }
+
+  if (ctx.narrowedTo && !ctx.narrowedTo.includes(executingProvider)) {
+    throw new ServiceError(
+      `Provider "${executingProvider}" is outside this run's narrowed scope ` +
+        `[${ctx.narrowedTo.join(", ")}].`,
+      403,
+    );
+  }
+}
+
+function assertWithinNarrowedTo(ctx: CallContext, executingProvider: string): void {
+  if (ctx.narrowedTo && !ctx.narrowedTo.includes(executingProvider)) {
+    throw new ServiceError(
+      `Provider "${executingProvider}" is outside this run's narrowed scope ` +
+        `[${ctx.narrowedTo.join(", ")}].`,
+      403,
+    );
+  }
+}
+
 /**
  * Split the merged option bag into the API root and the option defaults that
  * get folded into call arguments — `baseUrl` is transport, not an argument.
@@ -131,18 +179,8 @@ export async function resolveProfile(
 
   // Step 4 — stored profile.
   if (row) {
-    // 4a. AUTHORIZE. Skipped when auth mode is "none"; admins pass. An
-    // explicit stored `default` profile is grant-checked like any other.
-    if (deps.authMode !== "none" && ctx.role !== "admin") {
-      const granted = await deps.profileService.resolveGrantedProfileIds(ctx);
-      if (!granted.has(row.id)) {
-        throw new ServiceError(
-          `Profile "${name}" (${targetLabel(target)}) is not granted to this caller. ` +
-            `Ask a workspace admin to grant it.`,
-          403,
-        );
-      }
-    }
+    // 4a. AUTHORIZE + run narrowing — one gate.
+    await authorizeCaller(deps, ctx, row, target, name);
 
     // 4b. Interface target: find the executing compat entry.
     let compat: InterfaceCompat | undefined;
@@ -259,6 +297,7 @@ export async function resolveProfile(
         501,
       );
     }
+    assertWithinNarrowedTo(ctx, compat.provider);
     if (!compat.credentialless) {
       credential = await deps.credentials.firstForProvider(ctx.tenantId, compat.provider);
     }
@@ -280,6 +319,7 @@ export async function resolveProfile(
 
   // Provider target: first tenant credential (may be none — ephemeral
   // request-supplied credentials remain legal on the HTTP surface).
+  assertWithinNarrowedTo(ctx, target.id);
   const credential = await deps.credentials.firstForProvider(ctx.tenantId, target.id);
   const { options, baseUrl } = splitOptions({}, aliasBase.baseUrl);
   return {

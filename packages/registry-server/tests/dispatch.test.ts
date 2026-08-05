@@ -360,4 +360,96 @@ describe("dispatch pipeline", () => {
       expect((calls[0]?.args as Record<string, unknown>)["stream"]).toBe(true);
     });
   });
+
+  describe("run-scoped narrowing (grant-enforcement §4)", () => {
+    it("narrowed run cannot reach a granted-but-excluded namespace", async () => {
+      env = await makeDispatchEnv();
+      const { mod } = fakeProviderModule("createGithubClient");
+      env.executor.setModuleForTesting("@utdk/clients/github", mod);
+      const { mod: pgMod } = fakeProviderModule("createPostgresClient");
+      env.executor.setModuleForTesting("@utdk/clients/postgres", pgMod);
+      await env.credentials.create("t1", "user-1", { provider: "github", payload: bearer("gh") });
+      const pgCred = await env.credentials.create("t1", "admin", {
+        provider: "postgres",
+        payload: bearer("pg"),
+      });
+      const pgProfiles = await env.storage.profiles.list("t1", {
+        targetKind: "provider",
+        targetId: "postgres",
+      });
+      await env.profiles.grant(adminCtx(), pgProfiles[0]!.id, { kind: "user", id: "user-1" });
+      const sqlProfile = await env.profiles.create(adminCtx(), {
+        name: "default",
+        target: { kind: "interface", interface: "sql" },
+        provider: "postgres",
+        credentialId: pgCred.id,
+      });
+      await env.profiles.grant(adminCtx(), sqlProfile.id, { kind: "user", id: "user-1" });
+
+      const { finalizeCallContext } = await import("../src/dispatch/call-context.js");
+      const narrowed = await finalizeCallContext(
+        { authMode: "oidc", profileService: env.profiles },
+        ctx({ narrowedTo: ["github"] }),
+      );
+
+      await env.dispatcher.dispatch(narrowed, "github", "repos.get", { owner: "o" });
+
+      await expect(env.dispatcher.dispatch(narrowed, "postgres", "query", {})).rejects.toThrow(
+        /narrowed scope/u,
+      );
+      await expect(
+        env.dispatcher.dispatch(narrowed, "sql", "query", { sql: "select 1" }),
+      ).rejects.toThrow(/narrowed scope/u);
+    });
+
+    it("a superset narrowing request is rejected at construction, not clamped", async () => {
+      env = await makeDispatchEnv();
+      await env.credentials.create("t1", "user-1", { provider: "github", payload: bearer("gh") });
+
+      const { finalizeCallContext } = await import("../src/dispatch/call-context.js");
+      const error = await finalizeCallContext(
+        { authMode: "oidc", profileService: env.profiles },
+        ctx({ narrowedTo: ["github", "postgres"] }),
+      ).catch((e) => e);
+
+      expect(error).toBeInstanceOf(ServiceError);
+      expect(error.status).toBe(400);
+      expect(error.message).toMatch(/not granted to this caller: postgres/u);
+      expect(error.message).not.toMatch(/clamp|intersect/u);
+    });
+
+    it("records narrowing and full grant distinctly on the dispatch span", async () => {
+      env = await makeDispatchEnv();
+      const { mod } = fakeProviderModule("createGithubClient");
+      env.executor.setModuleForTesting("@utdk/clients/github", mod);
+      await env.credentials.create("t1", "user-1", { provider: "github", payload: bearer("gh") });
+      const pgCred = await env.credentials.create("t1", "admin", {
+        provider: "postgres",
+        payload: bearer("pg"),
+      });
+      const pgProfiles = await env.storage.profiles.list("t1", {
+        targetKind: "provider",
+        targetId: "postgres",
+      });
+      await env.profiles.grant(adminCtx(), pgProfiles[0]!.id, { kind: "user", id: "user-1" });
+      const sqlProfile = await env.profiles.create(adminCtx(), {
+        name: "default",
+        target: { kind: "interface", interface: "sql" },
+        provider: "postgres",
+        credentialId: pgCred.id,
+      });
+      await env.profiles.grant(adminCtx(), sqlProfile.id, { kind: "user", id: "user-1" });
+
+      const { finalizeCallContext } = await import("../src/dispatch/call-context.js");
+      const narrowed = await finalizeCallContext(
+        { authMode: "oidc", profileService: env.profiles },
+        ctx({ narrowedTo: ["github"] }),
+      );
+
+      await env.dispatcher.dispatch(narrowed, "github", "repos.get", {});
+      const span = env.exporter.getFinishedSpans()[0]!;
+      expect(span.attributes["aprovan.narrowed_to"]).toBe("github");
+      expect(span.attributes["aprovan.granted_providers"]).toBe("github,postgres");
+    });
+  });
 });

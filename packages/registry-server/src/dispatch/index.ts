@@ -104,6 +104,8 @@ export class Dispatcher {
           status,
           durationMs,
           ...(error !== undefined ? { error } : {}),
+          ...(ctx.narrowedTo !== undefined ? { narrowedTo: ctx.narrowedTo } : {}),
+          ...(ctx.grantedProviders !== undefined ? { grantedProviders: ctx.grantedProviders } : {}),
         });
       }
     };

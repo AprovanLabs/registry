@@ -8,6 +8,7 @@
 import { createAuthAdapter } from "./auth/adapters.js";
 import { createOAuthTokenCache } from "./credentials/oauth.js";
 import { CredentialService } from "./credentials/service.js";
+import { finalizeCallContext } from "./dispatch/call-context.js";
 import { Dispatcher } from "./dispatch/index.js";
 import { RateLimiter } from "./dispatch/limits.js";
 import { ProviderExecutor, isCatalogueProvider } from "./executor/index.js";
@@ -160,11 +161,19 @@ export async function createRegistryServer(
   ): Promise<DispatchResult> => {
     // Embedded hosts assert tenants; rows auto-provision on first use.
     await tenancy.ensureTenant(ctx.tenantId);
-    return dispatcher.dispatch(ctx, namespace, operation, args, opts ?? {});
+    const finalized = await finalizeCallContext(
+      { authMode: adapter.mode, profileService },
+      ctx,
+    );
+    return dispatcher.dispatch(finalized, namespace, operation, args, opts ?? {});
   };
 
   const runScript = async (ctx: CallContext, opts: RunScriptOptions): Promise<unknown> => {
     await tenancy.ensureTenant(ctx.tenantId);
+    const finalized = await finalizeCallContext(
+      { authMode: adapter.mode, profileService },
+      ctx,
+    );
     return runScriptInSandbox({
       source: opts.source,
       ...(opts.filename !== undefined ? { filename: opts.filename } : {}),
@@ -183,7 +192,7 @@ export async function createRegistryServer(
               ? {}
               : { args };
         const result = await dispatcher.dispatch(
-          ctx,
+          finalized,
           namespace,
           path,
           argObject,
