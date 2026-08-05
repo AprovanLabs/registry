@@ -171,7 +171,7 @@ describe("named profile resolution", () => {
   });
 });
 
-describe("default-name resolution and zero-config fallback", () => {
+describe("default-name resolution and ungoverned-mode fallback", () => {
   it("bare interface call uses the default profile when present — fallback not consulted", async () => {
     const snow = await env.credentials.create("t1", "user-1", {
       provider: "snowflake",
@@ -193,56 +193,81 @@ describe("default-name resolution and zero-config fallback", () => {
     expect(resolved.profileName).toBe("default");
   });
 
-  it("credentialless implementation wins zero-config over a vendor with a credential", async () => {
-    await env.credentials.create("t1", "user-1", {
-      provider: "openai",
-      payload: bearer("oa"),
-    });
-    const resolved = await resolveProfile(env.deps, adminCtx(), "agent");
-    expect(resolved.provider).toBe("native");
-    expect(resolved.credentialless).toBe(true);
-    expect(resolved.credential).toBeUndefined();
+  it("credentialless implementation wins ungoverned fallback over a vendor with a credential", async () => {
+    const none = await makeEnv({ authMode: "none" });
+    try {
+      await none.credentials.create("t1", "user-1", {
+        provider: "openai",
+        payload: bearer("oa"),
+      });
+      const resolved = await resolveProfile(none.deps, ctx(), "agent");
+      expect(resolved.provider).toBe("native");
+      expect(resolved.credentialless).toBe(true);
+      expect(resolved.credential).toBeUndefined();
+    } finally {
+      await none.close();
+    }
   });
 
-  it("zero-config interface fallback picks the first compat provider with a tenant credential", async () => {
-    await env.credentials.create("t1", "user-1", {
-      provider: "snowflake",
-      payload: bearer("snow"),
-    });
-    const resolved = await resolveProfile(env.deps, adminCtx(), "sql");
-    expect(resolved.provider).toBe("snowflake");
-    expect(resolved.profileId).toBeUndefined();
+  it("ungoverned-mode interface fallback picks the first compat provider with a tenant credential", async () => {
+    const none = await makeEnv({ authMode: "none" });
+    try {
+      await none.credentials.create("t1", "user-1", {
+        provider: "snowflake",
+        payload: bearer("snow"),
+      });
+      const resolved = await resolveProfile(none.deps, ctx(), "sql");
+      expect(resolved.provider).toBe("snowflake");
+      expect(resolved.profileId).toBeUndefined();
+    } finally {
+      await none.close();
+    }
   });
 
-  it("zero-config with nothing to resolve fails listing compat providers and the profiles.create fix", async () => {
-    const error = await resolveProfile(env.deps, adminCtx(), "sql").catch((e) => e);
-    expect(error).toBeInstanceOf(ServiceError);
-    expect(error.status).toBe(400);
-    expect(error.message).toMatch(/postgres.*snowflake/su);
-    expect(error.message).toMatch(/profiles\.create/u);
+  it("ungoverned-mode with nothing to resolve fails listing compat providers and the profiles.create fix", async () => {
+    const none = await makeEnv({ authMode: "none" });
+    try {
+      const error = await resolveProfile(none.deps, ctx(), "sql").catch((e) => e);
+      expect(error).toBeInstanceOf(ServiceError);
+      expect(error.status).toBe(400);
+      expect(error.message).toMatch(/postgres.*snowflake/su);
+      expect(error.message).toMatch(/profiles\.create/u);
+    } finally {
+      await none.close();
+    }
   });
 
-  it("provider target zero-config resolves the first tenant credential; none is legal", async () => {
-    const first = await env.credentials.create("t1", "user-1", {
-      provider: "github",
-      payload: bearer("first"),
-    });
-    await env.credentials.create("t1", "user-1", {
-      provider: "github",
-      payload: bearer("second"),
-    });
-    const resolved = await resolveProfile(env.deps, adminCtx(), "github");
-    expect(resolved.credential?.id).toBe(first.id);
+  it("provider target ungoverned-mode resolves the first tenant credential; none is legal", async () => {
+    const none = await makeEnv({ authMode: "none" });
+    try {
+      const first = await none.credentials.create("t1", "user-1", {
+        provider: "github",
+        payload: bearer("first"),
+      });
+      await none.credentials.create("t1", "user-1", {
+        provider: "github",
+        payload: bearer("second"),
+      });
+      const resolved = await resolveProfile(none.deps, ctx(), "github");
+      expect(resolved.credential?.id).toBe(first.id);
 
-    const bare = await resolveProfile(env.deps, adminCtx(), "slack");
-    expect(bare.credential).toBeUndefined();
+      const bare = await resolveProfile(none.deps, ctx(), "slack");
+      expect(bare.credential).toBeUndefined();
+    } finally {
+      await none.close();
+    }
   });
 
   it("llm alias namespaces are provider targets carrying the alias module and baseUrl", async () => {
-    const resolved = await resolveProfile(env.deps, adminCtx(), "anthropic");
-    expect(resolved.target).toEqual({ kind: "provider", id: "anthropic" });
-    expect(resolved.module).toBe("openai");
-    expect(resolved.baseUrl).toBe("https://api.anthropic.com/v1");
+    const none = await makeEnv({ authMode: "none" });
+    try {
+      const resolved = await resolveProfile(none.deps, ctx(), "anthropic");
+      expect(resolved.target).toEqual({ kind: "provider", id: "anthropic" });
+      expect(resolved.module).toBe("openai");
+      expect(resolved.baseUrl).toBe("https://api.anthropic.com/v1");
+    } finally {
+      await none.close();
+    }
   });
 
   it("unavailable compat entry resolved through a profile refuses 501 with the reason", async () => {
@@ -334,13 +359,69 @@ describe("profiles are the allow-listing unit", () => {
     }
   });
 
-  it("an explicit stored default profile IS grant-checked; the synthesized fallback is not", async () => {
+  it("governed tenant with a connected credential but no default profile is refused 403", async () => {
     await env.credentials.create("t1", "user-1", {
       provider: "postgres",
       payload: bearer("pg"),
     });
-    // Synthesized fallback (no stored profile): member passes ungoverned.
-    await expect(resolveProfile(env.deps, ctx(), "sql")).resolves.toBeDefined();
+    const firstForProvider = vi.spyOn(env.credentials, "firstForProvider");
+    const error = await resolveProfile(env.deps, ctx(), "sql").catch((e) => e);
+    expect(error).toBeInstanceOf(ServiceError);
+    expect(error.status).toBe(403);
+    expect(error.message).toBe(
+      'No default profile for sql. Ask a workspace admin to grant a profile.',
+    );
+    expect(firstForProvider).not.toHaveBeenCalled();
+  });
+
+  it("governed provider target with credential but no profile is refused 403", async () => {
+    await env.credentials.create("t1", "user-1", {
+      provider: "github",
+      payload: bearer("gh"),
+    });
+    const firstForProvider = vi.spyOn(env.credentials, "firstForProvider");
+    const error = await resolveProfile(env.deps, ctx(), "github").catch((e) => e);
+    expect(error.status).toBe(403);
+    expect(error.message).toBe(
+      'No default profile for github. Ask a workspace admin to grant a profile.',
+    );
+    expect(firstForProvider).not.toHaveBeenCalled();
+  });
+
+  it("authMode none with connected credential and no row resolves via ungoverned fallback", async () => {
+    const none = await makeEnv({ authMode: "none" });
+    try {
+      await none.credentials.create("t1", "user-1", {
+        provider: "postgres",
+        payload: bearer("pg"),
+      });
+      const resolved = await resolveProfile(none.deps, ctx(), "sql");
+      expect(resolved.provider).toBe("postgres");
+      expect(resolved.credential?.payload).toEqual(bearer("pg"));
+    } finally {
+      await none.close();
+    }
+  });
+
+  it("an explicit stored default profile IS grant-checked; ungoverned fallback only in auth-none", async () => {
+    await env.credentials.create("t1", "user-1", {
+      provider: "postgres",
+      payload: bearer("pg"),
+    });
+    // Governed mode: no stored profile → 403, not a credential.
+    const governed = await resolveProfile(env.deps, ctx(), "sql").catch((e) => e);
+    expect(governed.status).toBe(403);
+    // Ungoverned mode: synthesized fallback still works without a grant.
+    const none = await makeEnv({ authMode: "none" });
+    try {
+      await none.credentials.create("t1", "user-1", {
+        provider: "postgres",
+        payload: bearer("pg"),
+      });
+      await expect(resolveProfile(none.deps, ctx(), "sql")).resolves.toBeDefined();
+    } finally {
+      await none.close();
+    }
     // Stored default: member without a grant is refused.
     await env.profiles.create(adminCtx(), {
       name: "default",
@@ -349,6 +430,100 @@ describe("profiles are the allow-listing unit", () => {
     });
     const error = await resolveProfile(env.deps, ctx(), "sql").catch((e) => e);
     expect(error.status).toBe(403);
+  });
+});
+
+describe("resolveProfile return paths", () => {
+  it("enumerates every return and confirms grant-check coverage", async () => {
+    const { readFileSync } = await import("node:fs");
+    const { fileURLToPath } = await import("node:url");
+    const { dirname, join } = await import("node:path");
+    const sourcePath = join(
+      dirname(fileURLToPath(import.meta.url)),
+      "../src/profiles/resolve.ts",
+    );
+    const source = readFileSync(sourcePath, "utf8");
+    const fnStart = source.indexOf("export async function resolveProfile");
+    const fnBody = source.slice(fnStart);
+    const returns: number[] = [];
+    for (const match of fnBody.matchAll(/\breturn\b/g)) {
+      returns.push(match.index!);
+    }
+    expect(returns).toHaveLength(3);
+
+    const step4ReturnIdx = returns[0]!;
+    const step4Body = fnBody.slice(0, step4ReturnIdx);
+    expect(step4Body).toMatch(/authMode !== "none"/);
+    expect(step4Body).toMatch(/ctx\.role !== "admin"/);
+
+    const governedGate = fnBody.slice(
+      fnBody.indexOf("// Governed tenants must have a granted default profile"),
+      returns[1],
+    );
+    expect(governedGate).toMatch(/authMode !== "none"/);
+    expect(governedGate).toMatch(/403/);
+
+    const step5Block = fnBody.slice(returns[1], returns[2]! + 50);
+    expect(step5Block).not.toMatch(/NOT grant-checked/);
+  });
+
+  it("step 4 return: granted member receives credential", async () => {
+    const profile = await env.profiles.create(adminCtx(), {
+      name: "default",
+      target: { kind: "provider", provider: "github" },
+    });
+    await env.profiles.grant(adminCtx(), profile.id, { kind: "user", id: "user-1" });
+    const cred = await env.credentials.create("t1", "user-1", {
+      provider: "github",
+      payload: bearer("gh"),
+    });
+    const resolved = await resolveProfile(env.deps, ctx(), "github");
+    expect(resolved.credential?.id).toBe(cred.id);
+    expect(resolved.profileId).toBe(profile.id);
+  });
+
+  it("step 5 interface return: only reachable when authMode is none", async () => {
+    await env.credentials.create("t1", "user-1", {
+      provider: "snowflake",
+      payload: bearer("snow"),
+    });
+    const governed = await resolveProfile(env.deps, ctx(), "sql").catch((e) => e);
+    expect(governed.status).toBe(403);
+
+    const none = await makeEnv({ authMode: "none" });
+    try {
+      await none.credentials.create("t1", "user-1", {
+        provider: "snowflake",
+        payload: bearer("snow"),
+      });
+      const resolved = await resolveProfile(none.deps, ctx(), "sql");
+      expect(resolved.provider).toBe("snowflake");
+      expect(resolved.profileId).toBeUndefined();
+    } finally {
+      await none.close();
+    }
+  });
+
+  it("step 5 provider return: only reachable when authMode is none", async () => {
+    await env.credentials.create("t1", "user-1", {
+      provider: "github",
+      payload: bearer("gh"),
+    });
+    const governed = await resolveProfile(env.deps, ctx(), "github").catch((e) => e);
+    expect(governed.status).toBe(403);
+
+    const none = await makeEnv({ authMode: "none" });
+    try {
+      await none.credentials.create("t1", "user-1", {
+        provider: "github",
+        payload: bearer("gh"),
+      });
+      const resolved = await resolveProfile(none.deps, ctx(), "github");
+      expect(resolved.credential?.payload).toEqual(bearer("gh"));
+      expect(resolved.profileId).toBeUndefined();
+    } finally {
+      await none.close();
+    }
   });
 });
 

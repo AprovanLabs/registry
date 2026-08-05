@@ -97,6 +97,10 @@ describe("mcp surface", () => {
     const { mod, calls } = fakeProviderModule("createGithubClient");
     env.executor.setModuleForTesting("@utdk/clients/github", mod);
     await env.credentials.create("t1", "user-1", { provider: "github", payload: bearer("gh") });
+    await env.profiles.create(adminCtx(), {
+      name: "default",
+      target: { kind: "provider", provider: "github" },
+    });
 
     const server = await makeServer(adminCtx({ source: { type: "mcp" } }));
     const result = await callServerTool(server, "call_tool", {
@@ -140,24 +144,30 @@ describe("mcp surface", () => {
     expect(refused.content[0]?.text).toMatch(/forbidden/iu);
   });
 
-  it("permission filtering keeps ungoverned namespaces visible to members", async () => {
+  it("permission filtering hides namespaces with a credential but no granted profile", async () => {
     env = await makeDispatchEnv();
     setMcpCatalogForTesting([githubTool, sqlTool]);
-    // github has a stored default profile granted to nobody; sql is ungoverned.
+    // github: stored default profile, not granted to member.
     await env.profiles.create(adminCtx(), {
       name: "default",
       target: { kind: "provider", provider: "github" },
     });
+    // sql: connected credential, no profile row — previously visible via step 5.
+    await env.credentials.create("t1", "admin", {
+      provider: "postgres",
+      payload: bearer("pg"),
+    });
+
     const memberServer = await makeServer(ctx({ source: { type: "mcp" } }));
     const listed = await callServerTool(memberServer, "list_tools", {});
     const text = listed.content.map((c) => c.text).join("\n");
     expect(text).not.toContain("github__repos_get");
-    expect(text).toContain("sql__query");
+    expect(text).not.toContain("sql__query");
 
-    // Admins see everything.
     const adminServer = await makeServer(adminCtx({ source: { type: "mcp" } }));
     const adminListed = await callServerTool(adminServer, "list_tools", {});
     expect(adminListed.content.map((c) => c.text).join("\n")).toContain("github__repos_get");
+    expect(adminListed.content.map((c) => c.text).join("\n")).toContain("sql__query");
   });
 
   it("host extensions appear alongside meta-tools and dispatch through the hook", async () => {

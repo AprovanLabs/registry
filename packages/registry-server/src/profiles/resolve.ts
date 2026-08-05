@@ -8,9 +8,10 @@
  * 3. look up the stored profile row
  * 4. row present → authorize (grants; admin passes; auth-none passes),
  *    validate compat, resolve the pinned credential LOUDLY
- * 5. row absent + default name → zero-config fallback (credentialless compat
- *    entry first, else first compat provider with a tenant credential;
- *    provider targets: first tenant credential) — NOT grant-checked
+ * 5. row absent + default name + authMode "none" → ungoverned-mode fallback
+ *    (credentialless compat entry first, else first compat provider with a
+ *    tenant credential; provider targets: first tenant credential) — only
+ *    reachable when grants are not enforced
  * 6. row absent + named → 404 listing the names that DO exist. No fallback,
  *    ever.
  */
@@ -225,8 +226,15 @@ export async function resolveProfile(
     );
   }
 
-  // Step 5 — zero-config fallback for the default name only. NOT grant-checked
-  // (it exists precisely for ungoverned tenants).
+  // Governed tenants must have a granted default profile — no silent fallback.
+  if (deps.authMode !== "none") {
+    throw new ServiceError(
+      `No default profile for ${targetLabel(target)}. Ask a workspace admin to grant a profile.`,
+      403,
+    );
+  }
+
+  // Step 5 — ungoverned-mode fallback for the default name only.
   if (target.kind === "interface") {
     const def = interfaceDef!;
     let compat = def.compat.find((entry) => entry.credentialless);
