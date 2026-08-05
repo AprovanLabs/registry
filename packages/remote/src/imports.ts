@@ -3,6 +3,16 @@
  * from `tools.<namespace>` member access in source, and strip legacy import
  * statements so the remaining body can run in a sandbox where `tools` is
  * injected as a global.
+ *
+ * The scan is a **type-loading hint**, not a security boundary: it tells the
+ * editor which provider `.d.ts` files to fetch lazily. Dynamic `tools[expr]`
+ * access can make the list incomplete, and that is acceptable for a hint.
+ * Enforcement of which providers a script may call lives at `resolveProfile`
+ * (see grant-enforcement) — do not treat this dependency list as a scope gate.
+ *
+ * Transport-specific namespace segments (`gql`, `mcp`) were considered and
+ * rejected: GraphQL and MCP are reached through normal operations on the base
+ * provider, not via dotted transport segments in the `tools.` namespace.
  */
 
 import type { ProviderAliasMap, RuntimeDependency } from "./types.js";
