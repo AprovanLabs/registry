@@ -6,8 +6,13 @@
  */
 
 import { getCredentialCipher } from "./cipher.js";
-import { exchangeAuthorizationCode } from "./oauth.js";
-import type { CredentialPayload } from "./types.js";
+import {
+  exchangeAuthorizationCode,
+  OAuthClientResolutionError,
+  prepareOAuthPayloadForStorage,
+  redactTenantCredentialPayload,
+} from "./oauth.js";
+import type { CredentialPayload, OAuth2AuthCodePayload } from "./types.js";
 import type {
   CredentialProvisionInput,
   CredentialRow,
@@ -56,19 +61,40 @@ export class CredentialService {
     input: CredentialInput,
   ): Promise<CredentialRow> {
     let payload = input.payload;
-    if (payload.type === "oauth2_authcode" && payload.code && !payload.accessToken) {
-      try {
-        const tokens = await exchangeAuthorizationCode(payload);
-        payload = {
-          ...payload,
-          code: "",
-          accessToken: tokens.accessToken,
-          ...(tokens.refreshToken ? { refreshToken: tokens.refreshToken } : {}),
-          ...(tokens.expiresAt !== undefined ? { expiresAt: tokens.expiresAt } : {}),
-        };
-      } catch {
-        // Store as-is; call-time resolution reports the provider's error.
+    try {
+      if (payload.type === "oauth2_authcode" || payload.type === "oauth2_client") {
+        const { resolution, payload: stored } = prepareOAuthPayloadForStorage(
+          input.provider,
+          payload,
+        );
+        if (payload.type === "oauth2_authcode" && payload.code && !payload.accessToken) {
+          try {
+            const tokens = await exchangeAuthorizationCode(input.provider, {
+              ...payload,
+              clientId: resolution.clientId,
+              clientSecret: resolution.clientSecret,
+            });
+            const exchanged: OAuth2AuthCodePayload = {
+              ...(stored as OAuth2AuthCodePayload),
+              code: "",
+              accessToken: tokens.accessToken,
+              ...(tokens.refreshToken ? { refreshToken: tokens.refreshToken } : {}),
+              ...(tokens.expiresAt !== undefined ? { expiresAt: tokens.expiresAt } : {}),
+            };
+            payload = exchanged;
+          } catch {
+            // Store as-is; call-time resolution reports the provider's error.
+            payload = stored;
+          }
+        } else {
+          payload = stored;
+        }
       }
+    } catch (err) {
+      if (err instanceof OAuthClientResolutionError) {
+        throw new CredentialResolutionError(err.message);
+      }
+      throw err;
     }
     const { credential } = await this.provisionCredential(tenantId, {
       provider: input.provider,
@@ -95,7 +121,8 @@ export class CredentialService {
   async getPayload(tenantId: string, id: string): Promise<CredentialPayload | undefined> {
     const row = await this.store.getWithPayload(tenantId, id);
     if (!row) return undefined;
-    return JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload;
+    const payload = JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload;
+    return redactTenantCredentialPayload(row.provider, payload);
   }
 
   /**
@@ -122,7 +149,10 @@ export class CredentialService {
     return {
       id: row.id,
       provider: row.provider,
-      payload: JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload,
+      payload: redactTenantCredentialPayload(
+        row.provider,
+        JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload,
+      ),
     };
   }
 
@@ -135,7 +165,10 @@ export class CredentialService {
     if (!row) return undefined;
     return {
       id: row.id,
-      payload: JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload,
+      payload: redactTenantCredentialPayload(
+        provider,
+        JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload,
+      ),
     };
   }
 

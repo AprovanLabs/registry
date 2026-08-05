@@ -94,9 +94,17 @@ export {
   exchangeAuthorizationCode,
   refreshAccessToken,
   clientCredentialsGrant,
+  resolveOAuthClient,
+  redactTenantCredentialPayload,
+  prepareOAuthPayloadForStorage,
+  setPlatformOAuthLookup,
+  resetPlatformOAuthLookup,
+  OAuthClientResolutionError,
+  type OAuthClientResolution,
   type OAuthTokenCache,
   type OAuthTokenSet,
   type ResolveOAuthOptions,
+  type PlatformOAuthLookup,
 } from "./credentials/oauth.js";
 export {
   CredentialService,
@@ -110,6 +118,7 @@ export type {
   ApiKeyPayload,
   OAuth2ClientPayload,
   OAuth2AuthCodePayload,
+  OAuthClientOrigin,
 } from "./credentials/types.js";
 
 // Executor

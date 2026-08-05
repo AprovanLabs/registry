@@ -81,12 +81,24 @@ describe("oauth resolution", () => {
       }),
     );
     const cache = createOAuthTokenCache();
-    const a1 = await resolveToInjectable(payload, { cacheKey: "tenant-a:svc:c1", cache });
-    const a2 = await resolveToInjectable(payload, { cacheKey: "tenant-a:svc:c1", cache });
+    const a1 = await resolveToInjectable(payload, {
+      provider: "github",
+      cacheKey: "tenant-a:svc:c1",
+      cache,
+    });
+    const a2 = await resolveToInjectable(payload, {
+      provider: "github",
+      cacheKey: "tenant-a:svc:c1",
+      cache,
+    });
     expect(a1).toEqual({ type: "bearer_token", token: "tok-1" });
     expect(a2).toEqual({ type: "bearer_token", token: "tok-1" }); // cache hit
     expect(calls).toBe(1);
-    const b1 = await resolveToInjectable(payload, { cacheKey: "tenant-b:svc:c1", cache });
+    const b1 = await resolveToInjectable(payload, {
+      provider: "github",
+      cacheKey: "tenant-b:svc:c1",
+      cache,
+    });
     expect(b1).toEqual({ type: "bearer_token", token: "tok-2" }); // no cross-tenant reuse
     expect(calls).toBe(2);
     vi.unstubAllGlobals();
@@ -115,6 +127,7 @@ describe("oauth resolution", () => {
     );
     const persisted: unknown[] = [];
     const result = await resolveToInjectable(payload, {
+      provider: "github",
       cacheKey: "t:x:c",
       persist: async (p) => {
         persisted.push(p);
@@ -130,12 +143,12 @@ describe("oauth resolution", () => {
 
   it("bearer and api-key payloads pass through untouched", async () => {
     expect(
-      await resolveToInjectable({ type: "bearer_token", token: "t" }, { cacheKey: "k" }),
+      await resolveToInjectable({ type: "bearer_token", token: "t" }, { provider: "github", cacheKey: "k" }),
     ).toEqual({ type: "bearer_token", token: "t" });
     expect(
       await resolveToInjectable(
         { type: "api_key", value: "v", headerName: "X-K" },
-        { cacheKey: "k" },
+        { provider: "github", cacheKey: "k" },
       ),
     ).toEqual({ type: "api_key", value: "v", headerName: "X-K" });
   });
