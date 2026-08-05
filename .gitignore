@@ -162,3 +162,5 @@ context.md
 # `data/`: the repo-root data/ directory holds committed OpenAPI specs.
 apps/workspace/data/*
 !apps/workspace/data/.gitkeep
+
+.DS_Store
