@@ -131,6 +131,7 @@ export {
   type DispatchOptions,
   type CompatDispatch,
 } from "./dispatch/index.js";
+export { finalizeCallContext, type NarrowingDeps } from "./dispatch/call-context.js";
 export { RateLimiter, RateLimitExceededError } from "./dispatch/limits.js";
 export { asStreamBody, sseFromAsyncIterable, SSE_HEADERS, type StreamBody } from "./dispatch/stream.js";
 

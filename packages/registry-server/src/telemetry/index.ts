@@ -31,6 +31,9 @@ export interface DispatchSpanRecord {
   status: number;
   durationMs: number;
   error?: string;
+  /** Run-scoped narrowing — distinct from the principal's full grant. */
+  narrowedTo?: string[];
+  grantedProviders?: string[];
 }
 
 interface ProviderLike {
@@ -116,6 +119,12 @@ export class RegistryTelemetry {
         namespace: record.namespace,
         operation: record.operation,
         ...(record.profile !== undefined ? { profile: record.profile } : {}),
+        ...(record.narrowedTo !== undefined
+          ? { "aprovan.narrowed_to": record.narrowedTo.join(",") }
+          : {}),
+        ...(record.grantedProviders !== undefined
+          ? { "aprovan.granted_providers": record.grantedProviders.join(",") }
+          : {}),
         "http.status": record.status,
       },
     });
