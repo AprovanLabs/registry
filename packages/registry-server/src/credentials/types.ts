@@ -17,18 +17,24 @@ export interface ApiKeyPayload {
   headerName?: string;
 }
 
+export type OAuthClientOrigin = "tenant" | "platform";
+
 export interface OAuth2ClientPayload {
   type: "oauth2_client";
-  clientId: string;
-  clientSecret: string;
+  clientId?: string;
+  clientSecret?: string;
+  /** Set when credentials were resolved from the platform app (secret not stored). */
+  clientOrigin?: OAuthClientOrigin;
   tokenUrl: string;
   scopes?: string[];
 }
 
 export interface OAuth2AuthCodePayload {
   type: "oauth2_authcode";
-  clientId: string;
-  clientSecret: string;
+  clientId?: string;
+  clientSecret?: string;
+  /** Set when credentials were resolved from the platform app (secret not stored). */
+  clientOrigin?: OAuthClientOrigin;
   tokenUrl: string;
   code: string;
   redirectUri: string;

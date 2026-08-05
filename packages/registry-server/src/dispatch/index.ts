@@ -205,6 +205,7 @@ export class Dispatcher {
         if (isOAuth(resolved.credential.payload)) {
           try {
             credentials = await resolveToInjectable(resolved.credential.payload, {
+              provider: resolved.provider,
               cacheKey: `${ctx.tenantId}:${resolved.provider}:${resolved.credential.id}`,
               cache: this.deps.oauthCache,
               persist: (payload) =>

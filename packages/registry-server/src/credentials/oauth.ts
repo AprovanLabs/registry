@@ -24,6 +24,111 @@ import type {
   OAuth2ClientPayload,
 } from "./types.js";
 
+// ---------------------------------------------------------------------------
+// Platform OAuth client resolution (platform-oauth-apps tech-plan D1/D4)
+// ---------------------------------------------------------------------------
+
+export interface OAuthClientResolution {
+  clientId: string;
+  clientSecret: string;
+  origin: "tenant" | "platform";
+}
+
+export class OAuthClientResolutionError extends Error {
+  readonly status = 400;
+  constructor(provider: string) {
+    super(
+      `No OAuth client credentials are available for ${provider}. ` +
+        `Register your own OAuth application (client ID and client secret) and connect with those credentials.`,
+    );
+    this.name = "OAuthClientResolutionError";
+  }
+}
+
+export type PlatformOAuthCredentials = { clientId: string; clientSecret: string };
+
+/**
+ * Hosted platform-app secret lookup. §2 (`PLATFORM_OAUTH_*` env + KMS) will
+ * replace this stub; until then callers/tests inject via
+ * `setPlatformOAuthLookup`.
+ */
+export type PlatformOAuthLookup = (provider: string) => PlatformOAuthCredentials | undefined;
+
+let platformOAuthLookup: PlatformOAuthLookup = () => undefined;
+
+export function setPlatformOAuthLookup(lookup: PlatformOAuthLookup): void {
+  platformOAuthLookup = lookup;
+}
+
+export function resetPlatformOAuthLookup(): void {
+  platformOAuthLookup = () => undefined;
+}
+
+function isNonEmpty(value: string | undefined): value is string {
+  return typeof value === "string" && value.length > 0;
+}
+
+/** Tenant override → platform app → actionable 400 naming the provider. */
+export function resolveOAuthClient(
+  provider: string,
+  tenantClientId: string | undefined,
+  tenantClientSecret: string | undefined,
+): OAuthClientResolution {
+  if (isNonEmpty(tenantClientId) && isNonEmpty(tenantClientSecret)) {
+    return {
+      clientId: tenantClientId,
+      clientSecret: tenantClientSecret,
+      origin: "tenant",
+    };
+  }
+  const platform = platformOAuthLookup(provider);
+  if (platform) {
+    return { ...platform, origin: "platform" };
+  }
+  throw new OAuthClientResolutionError(provider);
+}
+
+/** Strip platform secrets before any tenant-facing credential read (D4). */
+export function redactTenantCredentialPayload(
+  provider: string,
+  payload: CredentialPayload,
+): CredentialPayload {
+  if (payload.type !== "oauth2_authcode" && payload.type !== "oauth2_client") {
+    return payload;
+  }
+  const redacted = { ...payload };
+  if (payload.clientOrigin === "platform") {
+    redacted.clientSecret = "";
+    if (!isNonEmpty(redacted.clientId)) redacted.clientId = "";
+    return redacted;
+  }
+  const platform = platformOAuthLookup(provider);
+  if (platform && payload.clientSecret === platform.clientSecret) {
+    redacted.clientSecret = "";
+  }
+  return redacted;
+}
+
+function storageOAuthPayload<T extends OAuth2AuthCodePayload | OAuth2ClientPayload>(
+  payload: T,
+  resolution: OAuthClientResolution,
+): T {
+  return {
+    ...payload,
+    clientId: resolution.origin === "tenant" ? resolution.clientId : "",
+    clientSecret: resolution.origin === "tenant" ? resolution.clientSecret : "",
+    clientOrigin: resolution.origin,
+  };
+}
+
+export function prepareOAuthPayloadForStorage(
+  provider: string,
+  payload: OAuth2AuthCodePayload | OAuth2ClientPayload,
+): { resolution: OAuthClientResolution; payload: typeof payload } {
+  const resolution = resolveOAuthClient(provider, payload.clientId, payload.clientSecret);
+  return { resolution, payload: storageOAuthPayload(payload, resolution) };
+}
+
 export interface OAuthTokenSet {
   accessToken: string;
   refreshToken?: string;
@@ -116,19 +221,26 @@ async function postTokenRequest(
 
 /** Exchange a one-time authorization code. Call at credential creation. */
 export function exchangeAuthorizationCode(
+  provider: string,
   payload: OAuth2AuthCodePayload,
 ): Promise<OAuthTokenSet> {
+  const { clientId, clientSecret } = resolveOAuthClient(
+    provider,
+    payload.clientId,
+    payload.clientSecret,
+  );
   const params: Record<string, string> = {
     grant_type: "authorization_code",
     code: payload.code,
     redirect_uri: payload.redirectUri,
   };
   if (payload.codeVerifier) params["code_verifier"] = payload.codeVerifier;
-  return postTokenRequest(payload.tokenUrl, params, payload.clientId, payload.clientSecret);
+  return postTokenRequest(payload.tokenUrl, params, clientId, clientSecret);
 }
 
 /** Refresh an expired access token. */
 export function refreshAccessToken(
+  provider: string,
   payload: OAuth2AuthCodePayload & ResolvedOAuthFields,
 ): Promise<OAuthTokenSet> {
   if (!payload.refreshToken) {
@@ -136,23 +248,34 @@ export function refreshAccessToken(
       new OAuthExchangeError("Access token expired and no refresh token is stored — re-authorize the provider."),
     );
   }
+  const { clientId, clientSecret } = resolveOAuthClient(
+    provider,
+    payload.clientId,
+    payload.clientSecret,
+  );
   return postTokenRequest(
     payload.tokenUrl,
     { grant_type: "refresh_token", refresh_token: payload.refreshToken },
-    payload.clientId,
-    payload.clientSecret,
+    clientId,
+    clientSecret,
   );
 }
 
 /** Run a client-credentials grant. */
 export function clientCredentialsGrant(
+  provider: string,
   payload: OAuth2ClientPayload,
 ): Promise<OAuthTokenSet> {
+  const { clientId, clientSecret } = resolveOAuthClient(
+    provider,
+    payload.clientId,
+    payload.clientSecret,
+  );
   const params: Record<string, string> = { grant_type: "client_credentials" };
   if (payload.scopes && payload.scopes.length > 0) {
     params["scope"] = payload.scopes.join(" ");
   }
-  return postTokenRequest(payload.tokenUrl, params, payload.clientId, payload.clientSecret);
+  return postTokenRequest(payload.tokenUrl, params, clientId, clientSecret);
 }
 
 // ---------------------------------------------------------------------------
@@ -183,6 +306,8 @@ export function resetOAuthTokenCache(): void {
 }
 
 export interface ResolveOAuthOptions {
+  /** Provider namespace — used to resolve platform vs tenant OAuth clients. */
+  provider: string;
   /** `tenant:provider:credentialId`. */
   cacheKey: string;
   /** Persist updated tokens back to the credential store. */
@@ -210,7 +335,7 @@ export async function resolveToInjectable(
     if (cached && isFresh(cached.expiresAt)) {
       return { type: "bearer_token", token: cached.accessToken };
     }
-    const tokens = await clientCredentialsGrant(payload);
+    const tokens = await clientCredentialsGrant(options.provider, payload);
     cache.set(options.cacheKey, tokens);
     return { type: "bearer_token", token: tokens.accessToken };
   }
@@ -222,11 +347,11 @@ export async function resolveToInjectable(
   }
 
   const tokens = resolved.accessToken
-    ? await refreshAccessToken(resolved)
+    ? await refreshAccessToken(options.provider, resolved)
     : // Legacy record that still carries an (expired) one-time code — the
       // exchange will fail with the provider's error, which is clearer than
       // calling the API unauthenticated.
-      await exchangeAuthorizationCode(resolved);
+      await exchangeAuthorizationCode(options.provider, resolved);
 
   const updated: CredentialPayload = {
     ...resolved,

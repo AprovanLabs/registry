@@ -30,7 +30,7 @@ import { ServiceError } from "../kernel/index.js";
 import { SSE_HEADERS } from "../dispatch/stream.js";
 import type { CallContext, TelemetrySource } from "../config/types.js";
 import type { CredentialPayload, InjectableCredential } from "../credentials/types.js";
-import type { CredentialService } from "../credentials/service.js";
+import { CredentialResolutionError, type CredentialService } from "../credentials/service.js";
 import type { Dispatcher } from "../dispatch/index.js";
 import type { DiscoveryService } from "./discovery.js";
 import type { ProfileService } from "../profiles/service.js";
@@ -84,6 +84,9 @@ function errorResponse(c: { json: (body: unknown, status?: number) => Response }
   }
   if (err instanceof RateLimitExceededError) {
     return c.json({ error: err.message, retryAfterMs: err.retryAfterMs }, 429);
+  }
+  if (err instanceof CredentialResolutionError) {
+    return c.json({ error: err.message }, 400);
   }
   if (err instanceof ServiceError) {
     return c.json({ error: err.message }, err.status as 400);
