@@ -47,7 +47,8 @@
     "hono": "^4.6.20",
     "jose": "^5.9.6",
     "quickjs-emscripten-core": "0.32.0",
-    "@utdk/clients": "workspace:*"
+    "@utdk/clients": "workspace:*",
+    "@aprovan/utdk-bundler": "workspace:*"
   },
   "optionalDependencies": {
     "@aws-sdk/client-kms": "^3.1077.0"

@@ -1,6 +1,10 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it } from "vitest";
 import { defaultCatalog } from "../src/catalog/default.js";
+import { deriveGlobalAlias, namespaceAliasFields } from "../src/catalog/global-alias.js";
 import { findInterface, findLlmAlias } from "../src/catalog/types.js";
+import { createRegistryServer } from "../src/server.js";
+import { TEST_CATALOG } from "./helpers.js";
+import type { RegistryServer } from "../src/config/types.js";
 import { DEFAULT_TENANT_ID, TenantService } from "../src/tenancy/index.js";
 import { createStorage } from "../src/storage/index.js";
 import { fileURLToPath } from "node:url";
@@ -40,6 +44,63 @@ describe("default catalog (WS-2 compat data)", () => {
     const anthropic = findLlmAlias(catalog, "anthropic")!;
     expect(anthropic.module).toBe("openai");
     expect(anthropic.defaultModel).toBeTruthy();
+  });
+});
+
+describe("namespace catalog globalAlias", () => {
+  let servers: RegistryServer[] = [];
+
+  afterEach(async () => {
+    for (const server of servers) await server.close();
+    servers = [];
+  });
+
+  it("derives globalAlias from the naming authority", () => {
+    expect(namespaceAliasFields("github")).toEqual({ name: "github", globalAlias: "github" });
+    expect(namespaceAliasFields("google/drive")).toEqual({
+      name: "google/drive",
+      globalAlias: "googleDrive",
+    });
+    expect(deriveGlobalAlias("adyen/checkoutservice")).toBe("adyenCheckoutservice");
+  });
+
+  async function makeServer(): Promise<RegistryServer> {
+    const server = await createRegistryServer({
+      storage: { driver: "sqlite", url: "file::memory:" },
+      auth: { mode: "none" },
+      tenancy: { mode: "single" },
+      catalog: TEST_CATALOG,
+    });
+    servers.push(server);
+    return server;
+  }
+
+  it("publishes globalAlias alongside canonical name on GET /tools/namespaces", async () => {
+    const server = await makeServer();
+
+    await server.router.request("/credentials", {
+      method: "POST",
+      body: JSON.stringify({
+        provider: "google/drive",
+        payload: { type: "bearer_token", token: "gd" },
+      }),
+      headers: { "content-type": "application/json" },
+    });
+
+    const res = await server.router.request("/tools/namespaces");
+    expect(res.status).toBe(200);
+    const body = (await res.json()) as {
+      namespaces: Array<{ id: string; name: string; globalAlias: string; kind: string }>;
+    };
+
+    const driveEntries = body.namespaces.filter((ns) => ns.name === "google/drive");
+    expect(driveEntries).toHaveLength(1);
+    expect(driveEntries[0]).toMatchObject({
+      id: "google/drive",
+      name: "google/drive",
+      globalAlias: "googleDrive",
+      kind: "provider",
+    });
   });
 });
 

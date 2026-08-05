@@ -55,6 +55,7 @@ export {
   type LlmAlias,
 } from "./catalog/types.js";
 export { defaultCatalog, defaultLlmAliases } from "./catalog/default.js";
+export { deriveGlobalAlias, namespaceAliasFields } from "./catalog/global-alias.js";
 
 // Tenancy
 export { TenantService, DEFAULT_TENANT_ID } from "./tenancy/index.js";

@@ -384,6 +384,9 @@ importers:
 
   packages/registry-server:
     dependencies:
+      '@aprovan/utdk-bundler':
+        specifier: workspace:*
+        version: link:../bundler
       '@hono/node-server':
         specifier: ^1.13.7
         version: 1.19.14(hono@4.12.18)

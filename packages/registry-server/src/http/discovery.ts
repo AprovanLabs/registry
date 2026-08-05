@@ -12,6 +12,7 @@
 
 import { agentToolEntries as agentDiscoveryEntries } from "@utdk/agent";
 import { llmToolEntries as llmDiscoveryEntries } from "@utdk/llm";
+import { namespaceAliasFields } from "../catalog/global-alias.js";
 import { findLlmAlias, type InterfaceCatalog, type InterfaceDef } from "../catalog/types.js";
 import { resolveProfile, type ResolveDeps, type ResolvedProfile } from "../profiles/resolve.js";
 import type { CallContext } from "../config/types.js";
@@ -107,6 +108,10 @@ interface CachedToolList {
 
 export interface NamespaceInfo {
   id: string;
+  /** Canonical namespace key — same as `id`; stable for profiles, grants, credentials, dispatch. */
+  name: string;
+  /** camelCase `tools.` binding derived from {@link name}. */
+  globalAlias: string;
   kind: "core" | "interface" | "provider" | "llm-alias";
   label: string;
   description: string;
@@ -252,6 +257,7 @@ export class DiscoveryService {
     const connected = new Set(credentials.map((c) => c.provider));
     const infos: NamespaceInfo[] = this.deps.natives.meta().map((meta) => ({
       id: meta.id,
+      ...namespaceAliasFields(meta.id),
       kind: "core",
       label: meta.label,
       description: meta.blurb,
@@ -265,6 +271,7 @@ export class DiscoveryService {
       if (!executable) continue;
       infos.push({
         id: def.id,
+        ...namespaceAliasFields(def.id),
         kind: "interface",
         label: def.label,
         description: def.description,
@@ -285,13 +292,21 @@ export class DiscoveryService {
         alias
           ? {
               id: alias.id,
+              ...namespaceAliasFields(alias.id),
               kind: "llm-alias",
               label: alias.label,
               description: `OpenAI-compatible chat completions via ${alias.label}`,
               defaultModel: alias.defaultModel,
               ...profileMeta,
             }
-          : { id: provider, kind: "provider", label: provider, description: "", ...profileMeta },
+          : {
+              id: provider,
+              ...namespaceAliasFields(provider),
+              kind: "provider",
+              label: provider,
+              description: "",
+              ...profileMeta,
+            },
       );
     }
 
