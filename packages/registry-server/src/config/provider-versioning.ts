@@ -1,19 +1,20 @@
 /**
  * Startup wiring for provider API-version metadata (graphql-schema-surface
  * §5). Reads `apiVersions`/`defaultVersion`/`versionedBaseUrl` straight off
- * the public registry manifest via the bundler's loader — same source, same
- * one-time-load-then-cache shape as `wirePlatformOAuthAtStartup`
- * (platform-oauth-apps §2) and `isCatalogueProvider` (the catalogue guard).
+ * the public registry manifest — same source, same one-time-load-then-cache
+ * shape as `wirePlatformOAuthAtStartup` (platform-oauth-apps §2) and
+ * `isCatalogueProvider` (the catalogue guard). Does not import the private
+ * `@aprovan/utdk-bundler` package (see `registry-manifest.ts`).
  */
 
-import { loadRegistryProviders } from "@aprovan/utdk-bundler/provider";
 import { buildProviderVersioningLookup, type GetProviderVersioning } from "../profiles/versioning.js";
+import { loadRegistryManifest } from "./registry-manifest.js";
 
 let cached: GetProviderVersioning | undefined;
 
 /** Load registry.json's version metadata once and cache the lookup. */
 export async function loadProviderVersioning(): Promise<GetProviderVersioning> {
-  cached ??= buildProviderVersioningLookup(await loadRegistryProviders());
+  cached ??= buildProviderVersioningLookup(await loadRegistryManifest());
   return cached;
 }
 
