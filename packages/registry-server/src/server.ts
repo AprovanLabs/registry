@@ -239,6 +239,8 @@ export async function createRegistryServer(
     stores: storage,
     telemetry,
     executor,
+    dispatcher,
+    resolveDeps,
     async close() {
       await telemetry.shutdown();
       await storage.close();

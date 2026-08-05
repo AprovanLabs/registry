@@ -115,6 +115,15 @@ export interface RegistryServer {
   telemetry: RegistryTelemetry;
   /** The provider-module executor (exposed for host test seams and cache control). */
   executor: ProviderExecutor;
+  /**
+   * The dispatch pipeline and profile-resolution deps backing `dispatch()` —
+   * exposed so a host with its own request/auth plane (session cookies,
+   * membership roles, …) can build its own `McpDeps` and call
+   * `createMcpHandler` directly instead of embedding the package's generic
+   * HTTP `router` (registry-server-extraction §9.4).
+   */
+  dispatcher: import("../dispatch/index.js").Dispatcher;
+  resolveDeps: import("../profiles/resolve.js").ResolveDeps;
   close(): Promise<void>;
 }
 
