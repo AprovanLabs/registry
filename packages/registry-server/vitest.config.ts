@@ -2,7 +2,7 @@ import { defineConfig } from "@aprovan/vitest-config";
 
 export default {
   test: defineConfig("node", {
-    include: ["tests/**/*.test.ts"],
+    include: ["tests/**/*.test.ts", "src/**/*.test.ts"],
     testTimeout: 120_000,
     alias: {
       "@utdk/common/compat": new URL("../utdk/common/compat.ts", import.meta.url).pathname,
