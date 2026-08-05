@@ -75,6 +75,9 @@ function toProfileRow(tenantId: string, item: Record<string, unknown>): ProfileR
     ...(item["credentialId"] !== undefined && item["credentialId"] !== null
       ? { credentialId: String(item["credentialId"]) }
       : {}),
+    ...(item["version"] !== undefined && item["version"] !== null
+      ? { version: String(item["version"]) }
+      : {}),
     options:
       typeof item["options"] === "string"
         ? (JSON.parse(item["options"]) as Record<string, unknown>)
@@ -170,6 +173,7 @@ class DynamoProfileStore implements ProfileStore {
       targetId: input.targetId,
       ...(input.provider !== undefined ? { provider: input.provider } : {}),
       ...(input.credentialId !== undefined ? { credentialId: input.credentialId } : {}),
+      ...(input.version !== undefined ? { version: input.version } : {}),
       options: JSON.stringify(input.options ?? {}),
       ...(input.limits !== undefined ? { limits: JSON.stringify(input.limits) } : {}),
       createdBy: input.createdBy,
@@ -207,7 +211,9 @@ class DynamoProfileStore implements ProfileStore {
   async update(
     tenantId: string,
     id: string,
-    patch: Partial<Pick<ProfileRow, "name" | "provider" | "credentialId" | "options" | "limits">>,
+    patch: Partial<
+      Pick<ProfileRow, "name" | "provider" | "credentialId" | "version" | "options" | "limits">
+    >,
   ): Promise<ProfileRow | undefined> {
     const existing = await this.getById(tenantId, id);
     if (!existing) return undefined;
@@ -227,6 +233,13 @@ class DynamoProfileStore implements ProfileStore {
           : {}
         : existing.credentialId !== undefined
           ? { credentialId: existing.credentialId }
+          : {}),
+      ...("version" in patch
+        ? merged.version !== undefined
+          ? { version: merged.version }
+          : {}
+        : existing.version !== undefined
+          ? { version: existing.version }
           : {}),
       options: JSON.stringify(merged.options ?? {}),
       ...(merged.limits !== undefined ? { limits: JSON.stringify(merged.limits) } : {}),

@@ -222,6 +222,7 @@ function toProfileRow(row: Row): ProfileRow {
     ...(optStr(row["credential_id"]) !== undefined
       ? { credentialId: optStr(row["credential_id"]) }
       : {}),
+    ...(optStr(row["version"]) !== undefined ? { version: optStr(row["version"]) } : {}),
     options: JSON.parse(str(row["options"] ?? "{}")) as Record<string, unknown>,
     ...(optStr(row["limits"]) !== undefined
       ? { limits: JSON.parse(str(row["limits"])) as ProfileLimits }
@@ -233,7 +234,7 @@ function toProfileRow(row: Row): ProfileRow {
 }
 
 const PROFILE_COLS =
-  "id, tenant_id, name, target_kind, target_id, provider, credential_id, options, limits, created_by, created_at, updated_at";
+  "id, tenant_id, name, target_kind, target_id, provider, credential_id, version, options, limits, created_by, created_at, updated_at";
 
 class SqlProfileStore implements ProfileStore {
   constructor(private readonly db: SqlClient) {}
@@ -245,8 +246,8 @@ class SqlProfileStore implements ProfileStore {
     const id = input.id ?? newId();
     const ts = now();
     await this.db.run(
-      `INSERT INTO profiles (id, tenant_id, name, target_kind, target_id, provider, credential_id, options, limits, created_by, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO profiles (id, tenant_id, name, target_kind, target_id, provider, credential_id, version, options, limits, created_by, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         id,
         tenantId,
@@ -255,6 +256,7 @@ class SqlProfileStore implements ProfileStore {
         input.targetId,
         input.provider ?? null,
         input.credentialId ?? null,
+        input.version ?? null,
         JSON.stringify(input.options ?? {}),
         input.limits ? JSON.stringify(input.limits) : null,
         input.createdBy,
@@ -268,19 +270,22 @@ class SqlProfileStore implements ProfileStore {
   async update(
     tenantId: string,
     id: string,
-    patch: Partial<Pick<ProfileRow, "name" | "provider" | "credentialId" | "options" | "limits">>,
+    patch: Partial<
+      Pick<ProfileRow, "name" | "provider" | "credentialId" | "version" | "options" | "limits">
+    >,
   ): Promise<ProfileRow | undefined> {
     const existing = await this.getById(tenantId, id);
     if (!existing) return undefined;
     const merged = { ...existing, ...patch };
     await this.db.run(
-      `UPDATE profiles SET name = ?, provider = ?, credential_id = ?, options = ?, limits = ?, updated_at = ?
+      `UPDATE profiles SET name = ?, provider = ?, credential_id = ?, version = ?, options = ?, limits = ?, updated_at = ?
        WHERE tenant_id = ? AND id = ?`,
       [
         merged.name,
         merged.provider ?? null,
         // An explicit `credentialId: undefined` in the patch clears the pin.
         "credentialId" in patch ? (patch.credentialId ?? null) : (existing.credentialId ?? null),
+        "version" in patch ? (patch.version ?? null) : (existing.version ?? null),
         JSON.stringify(merged.options ?? {}),
         "limits" in patch
           ? patch.limits

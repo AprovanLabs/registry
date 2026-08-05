@@ -54,6 +54,13 @@ export interface ProfileRow {
   provider?: string;
   /** NULL allowed (credentialless compat entries). */
   credentialId?: string;
+  /**
+   * Pinned API version (graphql-schema-surface tech-plan D4) — must be one
+   * of the executing provider's `apiVersions`. `baseUrl` is DERIVED from
+   * this via `versionedBaseUrl`; a profile setting both is a resolution
+   * error (resolve.ts `resolveProviderVersion`).
+   */
+  version?: string;
   /** JSON: model, database, baseUrl, … */
   options: Record<string, unknown>;
   /** JSON: { rps, burst, budget? } server-enforced. */
@@ -143,7 +150,9 @@ export interface ProfileStore {
   update(
     tenantId: string,
     id: string,
-    patch: Partial<Pick<ProfileRow, "name" | "provider" | "credentialId" | "options" | "limits">>,
+    patch: Partial<
+      Pick<ProfileRow, "name" | "provider" | "credentialId" | "version" | "options" | "limits">
+    >,
   ): Promise<ProfileRow | undefined>;
   delete(tenantId: string, id: string): Promise<boolean>;
   getById(tenantId: string, id: string): Promise<ProfileRow | undefined>;
