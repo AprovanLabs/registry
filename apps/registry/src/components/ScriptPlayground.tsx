@@ -3,23 +3,20 @@
  * the browser sandbox.
  *
  * The script executes inside a sandboxed iframe; every namespaced call crosses
- * the iframe boundary and is proxied to the gateway via `@utdk/remote`. The
- * sample script uses public endpoints only — saved credentials and workspace
- * files live in the product app.
+ * the iframe boundary and is dispatched by `@utdk/remote`. Where it goes
+ * depends on the call:
+ *
+ *  - a credential-free operation (see `lib/credential-free.ts`) is fetched
+ *    straight from the browser against the provider's public API. That is what
+ *    lets a signed-out visitor click Run and get real data.
+ *  - anything else goes to the gateway, which injects the workspace credential
+ *    server-side and therefore needs a session.
+ *
+ * The sign-in gate is per-namespace, not per-run: it appears only when the
+ * script actually reaches for something that needs a credential.
  */
 
-import {
-  instrument,
-  TransportError,
-  withPolicy,
-  type RuntimeEvent,
-  type Transport,
-  type TransportCallOptions,
-} from "@utdk/remote";
-import {
-  runScriptInSandbox,
-  type SandboxRun,
-} from "@/lib/sandbox";
+import { CodeEditor } from "@aprovan/editor";
 import {
   DependencyPanel,
   type ProviderCatalogInfo,
@@ -31,15 +28,18 @@ import {
   runViewFromRuntimeEvents,
   type RunState,
 } from "@aprovan/registry-ui/run-view";
+import { StateEffect } from "@codemirror/state";
+import { EditorView } from "@codemirror/view";
+import {
+  instrument,
+  TransportError,
+  withPolicy,
+  type RuntimeEvent,
+  type Transport,
+  type TransportCallOptions,
+} from "@utdk/remote";
 import { PlayIcon, SquareIcon } from "lucide-react";
 import * as React from "react";
-import { CodeEditor } from "@aprovan/editor";
-import {
-  createPlaygroundGatewayClient,
-  LOCAL_AUTH_SENTINEL,
-  loadSession,
-} from "@/lib/gateway-session";
-import { resolveSessionMode } from "@/lib/session";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -53,7 +53,20 @@ import {
   fetchProviderTypes,
   type ProviderTypesBundle,
 } from "@/lib/catalog";
-import { mountReferencedProviderTypes } from "@/lib/provider-types";
+import {
+  namespacesNeedingCredentials,
+  routeKey,
+} from "@/lib/credential-free";
+import {
+  createRoutingTransport,
+  fetchCredentialFreeRoutes,
+  type CredentialFreeRoutes,
+} from "@/lib/direct-dispatch";
+import {
+  createPlaygroundGatewayClient,
+  LOCAL_AUTH_SENTINEL,
+  loadSession,
+} from "@/lib/gateway-session";
 import {
   BUILTIN_NAMESPACES,
   compileScript,
@@ -61,6 +74,12 @@ import {
   SAMPLE_SCRIPT,
   synthesizeWorkflowImports,
 } from "@/lib/playground";
+import { mountReferencedProviderTypes } from "@/lib/provider-types";
+import {
+  runScriptInSandbox,
+  type SandboxRun,
+} from "@/lib/sandbox";
+import { resolveSessionMode } from "@/lib/session";
 import { withBasePath } from "@/lib/site";
 
 /** Sandbox transport backed by the mode-aware playground gateway client (Try-It parity). */
@@ -86,16 +105,67 @@ function createPlaygroundTransport(): Transport {
   };
 }
 
-function hostedSessionError(): string | null {
+function formatNamespaces(namespaces: string[]): string {
+  const labels = namespaces.map((namespace) => `tools.${namespace}`);
+  if (labels.length === 1) return labels[0]!;
+  if (labels.length === 2) return `${labels[0]} and ${labels[1]}`;
+  return `${labels.slice(0, -1).join(", ")}, and ${labels.at(-1)}`;
+}
+
+/**
+ * Sign-in requirement for the namespaces this run needs a credential for.
+ * Null when the run is fully credential-free — the whole point: the sample
+ * script must never see a sign-in wall.
+ */
+function credentialSessionError(namespaces: string[]): string | null {
+  if (namespaces.length === 0) return null;
   if (resolveSessionMode() !== "hosted") return null;
+
   const session = loadSession();
+  const subject = formatNamespaces(namespaces);
+  const verb = namespaces.length === 1 ? "needs" : "need";
+
   if (!session?.token || session.token === LOCAL_AUTH_SENTINEL) {
-    return "Sign in to run scripts in the hosted catalog.";
+    return `${subject} ${verb} a saved credential — sign in to run this script. Public, credential-free calls (like the GitHub sample) run without an account.`;
   }
   if (!session.workspaceId) {
-    return "Select a workspace to run scripts in the hosted catalog.";
+    return `Select a workspace to supply credentials for ${subject}.`;
   }
   return null;
+}
+
+/**
+ * Turn on soft wrapping in whichever CodeMirror editor mounts inside `host`.
+ *
+ * `TsScriptEditor` ships its extension list inside `@aprovan/registry-ui` and
+ * exposes no hook for adding to it, so the extension is appended from here
+ * once the view exists. Without it a long line makes `.cm-content` wider than
+ * its container — at 375px the sample script measured 802px, overflowing the
+ * gutter and scrolling the page sideways. Re-applies whenever the editor
+ * remounts (e.g. the Suspense fallback swapping for the real editor).
+ */
+function useEditorLineWrapping(host: React.RefObject<HTMLElement | null>): void {
+  React.useEffect(() => {
+    const node = host.current;
+    if (!node) return;
+
+    const applied = new WeakSet<EditorView>();
+    const apply = () => {
+      for (const element of node.querySelectorAll<HTMLElement>(".cm-editor")) {
+        const view = EditorView.findFromDOM(element);
+        if (!view || applied.has(view)) continue;
+        applied.add(view);
+        view.dispatch({
+          effects: StateEffect.appendConfig.of(EditorView.lineWrapping),
+        });
+      }
+    };
+
+    apply();
+    const observer = new MutationObserver(apply);
+    observer.observe(node, { childList: true, subtree: true });
+    return () => observer.disconnect();
+  }, [host]);
 }
 
 /**
@@ -127,6 +197,15 @@ export function ScriptPlayground() {
   const typeBundlesRef = React.useRef(
     new Map<string, ProviderTypesBundle | null>(),
   );
+  // Credential-free routing table, fetched once. `start` awaits the promise
+  // rather than reading a state snapshot so a Run click that lands before the
+  // table arrives still routes correctly instead of demanding a sign-in.
+  const [routesPromise] = React.useState<Promise<CredentialFreeRoutes>>(() =>
+    fetchCredentialFreeRoutes(),
+  );
+  const editorHostRef = React.useRef<HTMLDivElement | null>(null);
+
+  useEditorLineWrapping(editorHostRef);
 
   // Built-in namespaces (core services, interfaces, chat aliases) are always
   // in the catalog map so the dependency panel labels them instead of
@@ -219,7 +298,7 @@ export function ScriptPlayground() {
     };
   }, [dependencies]);
 
-  const start = () => {
+  const start = async () => {
     let compiled;
     let inputs: Record<string, unknown>;
     try {
@@ -238,7 +317,17 @@ export function ScriptPlayground() {
       setCompileError("Inputs must be a JSON object.");
       return;
     }
-    const sessionError = hostedSessionError();
+    // Gate on what this script actually needs, not on "is anyone signed in".
+    // Every call the scanner can pin to a credential-free route runs in the
+    // browser; only the rest requires a session, and the message says which
+    // namespace forced it.
+    const activeRoutes = await routesPromise;
+    const credentialNamespaces = namespacesNeedingCredentials(
+      compiled.body,
+      (provider, operation) => activeRoutes.has(routeKey(provider, operation)),
+      compiled.dependencies.map((dependency) => dependency.provider),
+    );
+    const sessionError = credentialSessionError(credentialNamespaces);
     if (sessionError) {
       setCompileError(sessionError);
       return;
@@ -252,7 +341,11 @@ export function ScriptPlayground() {
 
     const transport = instrument(
       withPolicy(
-        createPlaygroundTransport(),
+        createRoutingTransport({
+          routes: activeRoutes,
+          gateway: createPlaygroundTransport(),
+          credentialGuard: (provider) => credentialSessionError([provider]),
+        }),
         { retry: { attempts: 3 } },
         {
           onRetry: (info) =>
@@ -292,16 +385,17 @@ export function ScriptPlayground() {
         <CardHeader>
           <CardTitle className="font-mono text-base">Script</CardTitle>
           <CardDescription>
-            Scripts call providers through the global tools root — each namespace
-            is proxied through the gateway. The sample uses public GitHub data; for
-            credentialed calls,{" "}
+            Scripts call providers through the global tools root. Public,
+            credential-free operations run straight from your browser — no
+            account needed. Calls that need a saved credential are proxied
+            through the gateway;{" "}
             <a
               className="font-medium underline underline-offset-2 hover:text-foreground"
               href="https://aprovan.com/chat/?native=playground"
             >
               open the playground in the product app
-            </a>
-            .
+            </a>{" "}
+            for those.
           </CardDescription>
           <DependencyPanel
             catalog={catalog}
@@ -311,19 +405,21 @@ export function ScriptPlayground() {
           />
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
-          <React.Suspense
-            fallback={
-              <CodeEditor ariaLabel="Script source" onChange={setSource} value={source} />
-            }
-          >
-            <TsScriptEditor
-              ariaLabel="Script source"
-              className="w-full overflow-hidden rounded-lg border border-input focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50"
-              extraFiles={extraTypeFiles}
-              onChange={setSource}
-              value={source}
-            />
-          </React.Suspense>
+          <div className="min-w-0" ref={editorHostRef}>
+            <React.Suspense
+              fallback={
+                <CodeEditor ariaLabel="Script source" onChange={setSource} value={source} />
+              }
+            >
+              <TsScriptEditor
+                ariaLabel="Script source"
+                className="w-full overflow-hidden rounded-lg border border-input focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/50"
+                extraFiles={extraTypeFiles}
+                onChange={setSource}
+                value={source}
+              />
+            </React.Suspense>
+          </div>
           <label className="flex flex-col gap-1.5">
             <span className="text-sm font-medium">
               Inputs <span className="font-normal text-muted-foreground">(passed to the default export)</span>
@@ -340,7 +436,13 @@ export function ScriptPlayground() {
           {compileError && <p className="text-sm text-destructive">{compileError}</p>}
 
           <div className="flex flex-wrap items-center gap-2">
-            <Button disabled={run.running} onClick={start} type="button">
+            <Button
+              disabled={run.running}
+              onClick={() => {
+                void start();
+              }}
+              type="button"
+            >
               <PlayIcon className="size-3.5" />
               {run.running ? "Running…" : "Run in sandbox"}
             </Button>
@@ -363,8 +465,9 @@ export function ScriptPlayground() {
             )}
           </CardTitle>
           <CardDescription>
-            Every gateway call as a span — latency, retries, logs, straight from the
-            runtime event stream.
+            Every provider call as a span — latency, retries, logs, straight from
+            the runtime event stream, whether it went direct or through the
+            gateway.
           </CardDescription>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">

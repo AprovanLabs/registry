@@ -8,6 +8,7 @@ import path from "node:path";
 
 type RawOpenApiDoc = {
   info?: { title?: string; version?: string; description?: string };
+  servers?: Array<{ url?: string }>;
   paths?: Record<string, unknown>;
   components?: {
     parameters?: Record<string, unknown>;
@@ -115,6 +116,36 @@ export function operationIdToSdkPath(operationId: string): string {
 // ---------------------------------------------------------------------------
 
 const HTTP_METHODS = ["get", "post", "put", "patch", "delete", "head", "options"] as const;
+
+/**
+ * The provider's API root — `servers[0].url` from its OpenAPI document, with
+ * any trailing slash removed. Null when the spec is missing or declares no
+ * absolute server. Used to dispatch credential-free calls straight from the
+ * browser instead of through the gateway.
+ */
+export async function loadProviderApiBaseUrl(
+  providerPath: string,
+): Promise<string | null> {
+  const workspaceRoot = findWorkspaceRoot(process.cwd());
+  const specPath = path.join(
+    workspaceRoot,
+    "packages",
+    "utdk",
+    providerPath,
+    "openapi.json",
+  );
+
+  let doc: RawOpenApiDoc;
+  try {
+    doc = JSON.parse(await readFile(specPath, "utf8")) as RawOpenApiDoc;
+  } catch {
+    return null;
+  }
+
+  const url = doc.servers?.[0]?.url;
+  if (typeof url !== "string" || !/^https?:\/\//u.test(url)) return null;
+  return url.replace(/\/$/, "");
+}
 
 export async function loadProviderOperations(providerPath: string): Promise<OperationInfo[]> {
   const workspaceRoot = findWorkspaceRoot(process.cwd());

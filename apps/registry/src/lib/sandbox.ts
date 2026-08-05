@@ -4,6 +4,13 @@
  * `@utdk/remote` owns transport/proxy/policy; the iframe host lives here until
  * `@aprovan/patchwork`'s published `runScriptInSandbox` is available, then this
  * module should re-export that entry point instead.
+ *
+ * Every `service-call` from the iframe is handed to the injected
+ * {@link Transport}; this host deliberately knows nothing about *where* a call
+ * executes. Credential-free operations are fetched directly from the browser
+ * against the provider and everything else goes to the gateway, but that choice
+ * is made one layer up in `lib/direct-dispatch.ts` — above `instrument()`, so
+ * both destinations produce real spans in the live-execution panel.
  */
 
 import type {
