@@ -23,6 +23,7 @@
     "@utcp/http": "^1.1.1",
     "@utcp/sdk": "^1.1.0",
     "@utdk/common": "workspace:*",
+    "graphql": "^16.9.0",
     "openapi-types": "^12.1.3",
     "yaml": "^2.8.3"
   }

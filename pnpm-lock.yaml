@@ -198,6 +198,9 @@ importers:
       '@utdk/common':
         specifier: workspace:*
         version: link:../utdk/common
+      graphql:
+        specifier: ^16.9.0
+        version: 16.14.0
       openapi-types:
         specifier: ^12.1.3
         version: 12.1.3

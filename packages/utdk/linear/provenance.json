@@ -8,6 +8,10 @@
     "hash": "sha256:d2eec16f71a7f3b6931159e83934c040021cccaf2e5b8d4611a4221997ad73b1",
     "fetchedAt": "2026-05-30T12:22:15.091Z"
   },
+  "graphqlSchema": {
+    "hash": "sha256:11c549e81063b746b046fa272b4fd018e289768a3a1633e29bfabff77bdc16ec",
+    "fetchedAt": "2026-08-05T02:40:56.227Z"
+  },
   "ingestSource": "composio",
   "pipeline": {
     "research": {

@@ -294,6 +294,39 @@ describe("runShipPhase", () => {
     expect(result.provenance.generation).toBe(1);
   });
 
+  it("sets graphqlSchema to null when schema.graphql is absent", async () => {
+    const outputRoot = await createTempDir();
+
+    const result = await runShipPhase({
+      provider: "openai",
+      outputRoot,
+      scorecardResult: mockScorecardResult,
+      agentReadinessResult: mockAgentReadinessResult,
+    });
+
+    expect(result.provenance.graphqlSchema).toBeNull();
+  });
+
+  it("computes graphqlSchema hash and fetchedAt from schema.graphql when present", async () => {
+    const outputRoot = await createTempDir();
+    const providerDir = path.join(outputRoot, "linear");
+    await mkdir(providerDir, { recursive: true });
+
+    const sdl = "type Query {\n  issues: [String!]!\n}\n";
+    await writeFile(path.join(providerDir, "schema.graphql"), sdl, "utf8");
+
+    const result = await runShipPhase({
+      provider: "linear",
+      outputRoot,
+      scorecardResult: mockScorecardResult,
+      agentReadinessResult: mockAgentReadinessResult,
+    });
+
+    expect(result.provenance.graphqlSchema).not.toBeNull();
+    expect(result.provenance.graphqlSchema?.hash).toMatch(/^sha256:[a-f0-9]{64}$/u);
+    expect(result.provenance.graphqlSchema?.fetchedAt).toMatch(/^\d{4}-\d{2}-\d{2}T/u);
+  });
+
   it("places provenance.json in the correct provider subdirectory", async () => {
     const outputRoot = await createTempDir();
 
