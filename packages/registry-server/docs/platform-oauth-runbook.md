@@ -6,15 +6,51 @@ provider console work, redirect URIs, scopes, secret rotation, and rollout._
 
 ## Before you ship anything
 
-**Do not flip `platformApp: true` or register a live platform app until §4.1
-is resolved.** The PRD open question — default per-tenant rps and 24h budget
-against a shared platform app — must be decided and implemented (stream 4)
-before the first platform app goes live. Loosening a limit later is easy;
-tightening one tenants have built against is not.
+**§4.1 is resolved — the shipped quota defaults below are live.** A platform
+app's rate limit and budget are no longer inherited or left to arithmetic
+alone; the numbers are deliberate, documented, and enforced automatically the
+moment a provider gets a platform secret. §5.1 (first end-to-end proving run)
+and §5.3 (remaining providers) are unblocked — see the full reasoning in
+[decisions.md](../../../openspec/changes/platform-oauth-apps/decisions.md).
 
-Until §4.1 lands, this runbook is the source of truth for *how* to onboard;
-§5.1 (first end-to-end proving run) and §5.3 (remaining providers) stay
-blocked.
+### Shipped quota defaults (§4)
+
+When a resolved credential's `origin` is `"platform"` (§1), the call contends
+for a per-provider pool (`dispatch/limits.ts`, pool id `<provider>:platform`)
+instead of the plain per-tenant bucket:
+
+| Knob | Default | Env override |
+| --- | --- | --- |
+| Per-tenant rps | **5** | `REGISTRY_PLATFORM_DEFAULT_RPS` |
+| Per-tenant burst | **10** | `REGISTRY_PLATFORM_DEFAULT_BURST` |
+| Per-tenant 24h budget | **10 000** requests | `REGISTRY_PLATFORM_DEFAULT_BUDGET` |
+| Published pool ceiling | **50** rps | `REGISTRY_PLATFORM_POOL_RPS` |
+
+Effective per-tenant rps = `min(publishedPoolRps ÷ activeTenantCount,
+platformDefaultRps)`. The 24h budget always applies on the pool path. All four
+numbers apply even with no env set — they are code-level defaults, not
+optional config — and every deployment (standalone or embedded) gets them for
+free; `optionsFromEnv` only overrides them when the corresponding env var is
+present.
+
+**BYO (`origin: "tenant"`) never inherits any of this.** A tenant that
+connects its own OAuth app keeps today's plain per-tenant behavior (profile
+`limits` / `REGISTRY_DEFAULT_RPS` / `REGISTRY_DEFAULT_BURST`, no default
+unless configured) — the whole point of bringing your own app is owning your
+own upstream quota. Because origin is read fresh off the resolved credential
+on every dispatch, a tenant that reconnects the same credential with its own
+client id/secret picks up the wider BYO limit on the very next call — no
+profile edit, no admin action.
+
+`server.ts` configures one pool per `platformApp`-flagged provider that
+actually resolved a secret (`wirePlatformOAuthAtStartup`'s return value) at
+startup, using the published-ceiling default/env above. A provider flagged in
+`data/registry.json` with no secret loaded never gets a pool — those calls
+fall through to BYO or the actionable 400, same as before §4.
+
+**Do not lower these numbers without a new decision** — raising a limit is
+safe at any time; tightening one tenants have already built against needs a
+migration note (see decisions.md "Consequences").
 
 ## How platform apps work (recap)
 
@@ -52,7 +88,11 @@ Use this for every new platform app after §4.1 is decided.
    `platform_oauth_secret_loaded` for the provider.
 8. **Smoke-test** OAuth connect on hosted (registry catalog and workspace
    chat if both are in scope), then a BYO override for the same provider.
-9. **Configure pool limits** per §4 defaults once stream 4 ships.
+9. **Nothing else to configure** — the §4 quota defaults (5 rps / burst 10 /
+   10 000 24h budget / 50 rps published pool) apply automatically the moment
+   `wirePlatformOAuthAtStartup` loads this provider's secret. Only set
+   `REGISTRY_PLATFORM_*` env if this deployment genuinely needs different
+   numbers (see [Before you ship anything](#before-you-ship-anything)).
 
 ## App review by provider
 
@@ -216,9 +256,15 @@ Env naming is reserved for when that day comes:
 
 ## References
 
-- `openspec/changes/platform-oauth-apps/{prd,tech-plan,tasks}.md` (aprovan repo)
+- `openspec/changes/platform-oauth-apps/{prd,tech-plan,tasks,decisions}.md` (aprovan repo)
 - `packages/registry-server/src/config/platform-oauth.ts` — startup wiring
+  (registry.json → env secrets → rate-limit pools)
+- `packages/registry-server/src/config/env.ts` — `REGISTRY_PLATFORM_*` overrides
 - `packages/registry-server/src/credentials/platform-secrets.ts` — env + store
 - `packages/registry-server/src/credentials/oauth.ts` — resolution + redaction
-- `packages/registry-server/src/dispatch/limits.ts` — pool dimension
+- `packages/registry-server/src/dispatch/limits.ts` — pool dimension + §4
+  quota defaults (`PLATFORM_DEFAULT_RPS` / `_BURST` / `_BUDGET`, `PLATFORM_POOL_RPS`)
+- `packages/registry-server/src/dispatch/index.ts` — reads resolved credential
+  `clientOrigin` fresh on every call to decide platform vs BYO
 - Stream 2 report: env convention table in `briefs/02-report.md`
+- Stream 4 report: `briefs/04-report.md`

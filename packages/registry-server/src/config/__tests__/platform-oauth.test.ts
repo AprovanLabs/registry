@@ -7,6 +7,7 @@ import type { InterfaceCatalog } from "../../catalog/types.js";
 import type { RegistryServer } from "../types.js";
 import { createRegistryServer } from "../../server.js";
 import { resetPlatformOAuthLookup, resolveOAuthClient } from "../../credentials/oauth.js";
+import { wirePlatformOAuthAtStartup } from "../platform-oauth.js";
 import {
   PLATFORM_OAUTH_STORE_PREFIX,
   getPlatformOAuthSecretStore,
@@ -142,6 +143,43 @@ describe("platform secret store (§2.4)", () => {
     expect(`${PLATFORM_OAUTH_STORE_PREFIX}github`).not.toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/u,
     );
+  });
+});
+
+describe("wirePlatformOAuthAtStartup (§4 — pool wiring)", () => {
+  it("returns only the flagged providers that actually resolved a secret", async () => {
+    const { writeFile, mkdtemp } = await import("node:fs/promises");
+    const { tmpdir } = await import("node:os");
+    const { join } = await import("node:path");
+    const dir = await mkdtemp(join(tmpdir(), "registry-manifest-"));
+    const manifestPath = join(dir, "registry.json");
+    await writeFile(
+      manifestPath,
+      JSON.stringify([
+        { name: "github", platformApp: true },
+        { name: "slack", platformApp: true },
+        { name: "postgres" },
+      ]),
+    );
+    const keys = platformOAuthEnvKeys("github");
+
+    const loaded = await wirePlatformOAuthAtStartup({
+      env: {
+        REGISTRY_JSON_PATH: manifestPath,
+        [keys.clientId]: "hosted-id",
+        [keys.clientSecret]: "hosted-secret",
+      },
+    });
+
+    // github has a secret; slack is flagged but has none; postgres isn't flagged.
+    expect(loaded).toEqual(["github"]);
+  });
+
+  it("providers with no secret loaded stay unlisted (self-host, BYO-only)", async () => {
+    const loaded = await wirePlatformOAuthAtStartup({
+      env: { REGISTRY_JSON_PATH: "/nonexistent/registry.json" },
+    });
+    expect(loaded).toEqual([]);
   });
 });
 

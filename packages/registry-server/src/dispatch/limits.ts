@@ -12,6 +12,17 @@
  * against a shared store are the follow-on when static division wastes too
  * much headroom (tech-plan D3).
  *
+ * **Platform quota defaults (decisions.md / tech-plan D5, resolved open
+ * question).** A pool-scoped call is capped at
+ * `min(publishedRps ÷ tenantCount, platformDefaultRps)` plus the platform 24h
+ * budget on the same pool+tenant key — deliberately distinct from BYO, which
+ * uses only profile `limits` / tenant `defaultRps`/`defaultBurst` and never
+ * inherits a platform ceiling. The four numbers below are the shipped
+ * defaults and apply even when a caller passes no `platform` overrides;
+ * `config/env.ts` maps `REGISTRY_PLATFORM_DEFAULT_{RPS,BURST,BUDGET}` /
+ * `REGISTRY_PLATFORM_POOL_RPS` onto them for standalone deployments. Raising
+ * these later is fine; lowering them needs a new decision (see decisions.md).
+ *
  * Profile `limits` override tenant defaults. The token bucket is the seed
  * implementation ported from packages/runtime/src/policy.ts, adapted to
  * reject (429) instead of sleep — the in-sandbox policy layer stays
@@ -25,6 +36,36 @@ export const POOL_RATE_LIMIT_HIT_METRIC = "aprovan.rate_limit.pool_exceeded" as 
 
 /** Metric emitted when a tenant-scoped (BYO / no pool) limit is exceeded. */
 export const TENANT_RATE_LIMIT_HIT_METRIC = "aprovan.rate_limit.tenant_exceeded" as const;
+
+// ---------------------------------------------------------------------------
+// Platform quota defaults (decisions.md — do not change without a new
+// decision; see the module docstring above).
+// ---------------------------------------------------------------------------
+
+/** Platform per-tenant rps default — `REGISTRY_PLATFORM_DEFAULT_RPS`. */
+export const PLATFORM_DEFAULT_RPS = 5;
+/** Platform per-tenant burst default — `REGISTRY_PLATFORM_DEFAULT_BURST`. */
+export const PLATFORM_DEFAULT_BURST = 10;
+/** Platform per-tenant 24h budget default — `REGISTRY_PLATFORM_DEFAULT_BUDGET`. */
+export const PLATFORM_DEFAULT_BUDGET = 10_000;
+/** Published pool ceiling default (arithmetic divisor) — `REGISTRY_PLATFORM_POOL_RPS`. */
+export const PLATFORM_POOL_RPS = 50;
+
+/**
+ * The one documented pool-id scheme (tech-plan D5): every platform-origin
+ * call for a provider contends for the SAME pool, named after that provider.
+ * `dispatch/index.ts` and startup wiring (`server.ts`) both derive the pool
+ * id this way so they always agree on what a call is contending against.
+ */
+export function platformPoolId(provider: string): string {
+  return `${provider}:platform`;
+}
+
+export interface PlatformQuotaDefaults {
+  defaultRps?: number;
+  defaultBurst?: number;
+  defaultBudget?: number;
+}
 
 export type RateLimitKey = {
   tenant: string;
@@ -118,7 +159,12 @@ export class RateLimiter {
   private readonly pools = new Map<string, PoolState>();
 
   constructor(
-    private readonly defaults: { defaultRps?: number; defaultBurst?: number } = {},
+    private readonly defaults: {
+      defaultRps?: number;
+      defaultBurst?: number;
+      /** Platform-origin (pool) calls only — BYO never reads this (decisions.md). */
+      platform?: PlatformQuotaDefaults;
+    } = {},
     private readonly onMetric?: MetricCallback,
   ) {}
 
@@ -201,6 +247,9 @@ export class RateLimiter {
       message: (effectiveRps, retryAfterMs) =>
         `Pool rate limit exceeded (pool=${pool}, ${effectiveRps} rps per tenant) — retry in ${retryAfterMs}ms`,
     });
+    // Platform 24h budget always applies on the pool path (decisions.md) —
+    // BYO never reaches this, it has no pool.
+    this.enforceBudget(storageKey, this.defaults.platform?.defaultBudget ?? PLATFORM_DEFAULT_BUDGET);
   }
 
   private enforceRps(
@@ -250,11 +299,21 @@ export class RateLimiter {
     window.count += 1;
   }
 
+  /**
+   * Effective platform rps = `min(published ÷ tenantCount, platformDefaultRps)`
+   * (decisions.md) — arithmetic pool share, capped by the deliberate
+   * per-tenant ceiling so a low tenant count on a generously published pool
+   * still cannot exceed the product default.
+   */
   private recomputePoolQuota(state: PoolState): void {
     const tenantCount = Math.max(1, state.tenants.size);
     const publishedBurst = state.published.burst ?? state.published.rps;
-    state.perTenantRps = state.published.rps / tenantCount;
-    state.perTenantBurst = Math.max(1, Math.ceil(publishedBurst / tenantCount));
+    const arithmeticRps = state.published.rps / tenantCount;
+    const arithmeticBurst = Math.max(1, Math.ceil(publishedBurst / tenantCount));
+    const platformRps = this.defaults.platform?.defaultRps ?? PLATFORM_DEFAULT_RPS;
+    const platformBurst = this.defaults.platform?.defaultBurst ?? PLATFORM_DEFAULT_BURST;
+    state.perTenantRps = Math.min(arithmeticRps, platformRps);
+    state.perTenantBurst = Math.min(arithmeticBurst, platformBurst);
   }
 
   private invalidatePoolBuckets(pool: string): void {

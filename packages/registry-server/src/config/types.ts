@@ -78,7 +78,25 @@ export interface RegistryServerOptions {
   /** Share the host process executor (test seams, module cache). */
   executorInstance?: ProviderExecutor;
   sandbox?: { memoryLimitMb?: number; concurrency?: number }; // defaults 32 / 2
-  limits?: { defaultRps?: number; defaultBurst?: number }; // tenant-level defaults
+  limits?: {
+    defaultRps?: number;
+    defaultBurst?: number;
+    /**
+     * Platform-origin (shared-pool) calls only — BYO never inherits these
+     * (platform-oauth-apps tech-plan D5). Shipped defaults (5 rps / burst 10
+     * / 10 000 24h budget / 50 rps published pool ceiling) apply even when
+     * this is omitted; see `dispatch/limits.ts`. `optionsFromEnv` fills this
+     * in from `REGISTRY_PLATFORM_DEFAULT_{RPS,BURST,BUDGET}` /
+     * `REGISTRY_PLATFORM_POOL_RPS` for standalone deployments.
+     */
+    platform?: {
+      defaultRps?: number;
+      defaultBurst?: number;
+      defaultBudget?: number;
+      /** Published per-app ceiling divided arithmetically across active tenants. */
+      poolRps?: number;
+    };
+  }; // tenant-level defaults
   /** Gate: networked multi-tenant + auth none. */
   allowInsecure?: boolean;
   /** MCP extension hook — host-attached tools/prompts/resources (product plane). */

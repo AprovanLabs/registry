@@ -164,7 +164,20 @@ export {
   type CompatDispatch,
 } from "./dispatch/index.js";
 export { finalizeCallContext, type NarrowingDeps } from "./dispatch/call-context.js";
-export { RateLimiter, RateLimitExceededError } from "./dispatch/limits.js";
+export {
+  RateLimiter,
+  RateLimitExceededError,
+  platformPoolId,
+  POOL_RATE_LIMIT_HIT_METRIC,
+  TENANT_RATE_LIMIT_HIT_METRIC,
+  PLATFORM_DEFAULT_RPS,
+  PLATFORM_DEFAULT_BURST,
+  PLATFORM_DEFAULT_BUDGET,
+  PLATFORM_POOL_RPS,
+  type RateLimitKey,
+  type PoolPublishedLimits,
+  type PlatformQuotaDefaults,
+} from "./dispatch/limits.js";
 export { asStreamBody, sseFromAsyncIterable, SSE_HEADERS, type StreamBody } from "./dispatch/stream.js";
 
 // HTTP
