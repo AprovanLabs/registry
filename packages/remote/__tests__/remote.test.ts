@@ -3,6 +3,7 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, it, vi } from "vitest";
 import { parseScriptDependencies, rewriteDefaultExport } from "../src/imports.js";
+import { scanToolsAccess } from "../src/tools-scan.js";
 import { withPolicy } from "../src/policy.js";
 import { createNamespaceProxy, createRuntimeGlobals } from "../src/proxy.js";
 import { instrument } from "../src/transport.js";
@@ -84,6 +85,35 @@ describe("package constraints", () => {
         forbidden,
       );
     }
+  });
+});
+
+describe("scanToolsAccess", () => {
+  it("ignores uses attribute semantics — only source matters", () => {
+    const result = scanToolsAccess(
+      `// uses="keyvalue events"\nawait tools.llm.createChatCompletion({ messages: [] });`,
+    );
+    expect(result.namespaces).toEqual(["llm"]);
+    expect(result.unresolved).toBe(false);
+  });
+
+  it("ignores tools member access inside string literals", () => {
+    const result = scanToolsAccess(`
+      const hint = "tools.github is not a call";
+      await tools.vfs.read({ path: "/x" });
+    `);
+    expect(result.namespaces).toEqual(["vfs"]);
+    expect(result.unresolved).toBe(false);
+  });
+
+  it("sorts and deduplicates namespace names", () => {
+    const result = scanToolsAccess(`
+      await tools.zfs.read({ path: "/a" });
+      await tools.vfs.read({ path: "/b" });
+      await tools.vfs.read({ path: "/c" });
+    `);
+    expect(result.namespaces).toEqual(["vfs", "zfs"]);
+    expect(result.unresolved).toBe(false);
   });
 });
 
