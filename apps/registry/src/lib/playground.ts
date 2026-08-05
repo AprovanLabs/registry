@@ -20,17 +20,16 @@ export interface CompiledScript {
   dependencies: RuntimeDependency[];
 }
 
-/** Dependencies and scan completeness — cheap enough to run on every keystroke. */
+/** Dependencies from static tools.* access — cheap enough to run on every keystroke. */
 export function detectDependencies(source: string): {
   dependencies: RuntimeDependency[];
-  unresolved: boolean;
 } {
   const javascript = transform(source, {
     transforms: ["typescript"],
     disableESTransforms: true,
   }).code;
   const parsed = parseScriptDependencies(javascript);
-  return { dependencies: parsed.dependencies, unresolved: parsed.unresolved };
+  return { dependencies: parsed.dependencies };
 }
 
 export function compileScript(source: string): CompiledScript {

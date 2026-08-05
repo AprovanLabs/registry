@@ -6,7 +6,7 @@
  *
  * The scan is a **type-loading hint**, not a security boundary: it tells the
  * editor which provider `.d.ts` files to fetch lazily. Dynamic `tools[expr]`
- * access can make the list incomplete, and that is acceptable for a hint.
+ * access is rejected at parse time ({@link DynamicToolsAccessError}).
  * Enforcement of which providers a script may call lives at `resolveProfile`
  * (see grant-enforcement) — do not treat this dependency list as a scope gate.
  *
@@ -20,7 +20,7 @@ import { AliasResolutionError } from "./types.js";
 import { scanToolsAccess } from "./tools-scan.js";
 
 export type { ProviderAliasMap } from "./types.js";
-export { AliasResolutionError } from "./types.js";
+export { AliasResolutionError, DynamicToolsAccessError } from "./types.js";
 
 const IMPORT_PATTERN =
   /import\s+(?:([A-Za-z_$][\w$]*)|\*\s+as\s+([A-Za-z_$][\w$]*)|\{([^}]*)\})?\s*(?:,\s*\{([^}]*)\})?\s*(?:from\s*)?["']([^"']+)["']\s*;?/g;
@@ -29,8 +29,6 @@ export interface ParsedScript {
   dependencies: RuntimeDependency[];
   /** Source with import statements removed (line structure preserved). */
   body: string;
-  /** True when dynamic `tools[expr]` access makes the dependency list incomplete. */
-  unresolved: boolean;
 }
 
 function dashSegmentToCamel(segment: string, capitalizeFirst: boolean): string {
@@ -93,7 +91,7 @@ export function parseScriptDependencies(
   source: string,
   aliases?: ProviderAliasMap,
 ): ParsedScript {
-  const { namespaces, unresolved } = scanToolsAccess(source);
+  const { namespaces } = scanToolsAccess(source);
   const dependencies = namespacesToDependencies(namespaces, aliases);
 
   const body = source.replace(
@@ -101,7 +99,7 @@ export function parseScriptDependencies(
     (match) => match.replace(/[^\n]/g, ""),
   );
 
-  return { dependencies, body, unresolved };
+  return { dependencies, body };
 }
 
 /**
