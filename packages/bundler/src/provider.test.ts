@@ -72,4 +72,13 @@ describe("provider naming helpers", () => {
     expect(resolveProviderDocsIndexPath("google/books", "/tmp/cache")).toBe("/tmp/cache/google/books/index.md");
     expect(resolveProviderDocsOutputDir("google/books", "/tmp/out")).toBe("/tmp/out/google/books/docs");
   });
+
+  it("accepts optional platformApp boolean on provider entries", () => {
+    const providers = [
+      { name: "github", url: "https://example.com/github.json", platformApp: true },
+      { name: "slack", url: "https://example.com/slack.json" },
+    ];
+    expect(resolveProvider(providers, "github").platformApp).toBe(true);
+    expect(resolveProvider(providers, "slack").platformApp).toBeUndefined();
+  });
 });

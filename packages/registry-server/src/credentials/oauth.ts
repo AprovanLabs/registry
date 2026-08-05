@@ -48,9 +48,9 @@ export class OAuthClientResolutionError extends Error {
 export type PlatformOAuthCredentials = { clientId: string; clientSecret: string };
 
 /**
- * Hosted platform-app secret lookup. §2 (`PLATFORM_OAUTH_*` env + KMS) will
- * replace this stub; until then callers/tests inject via
- * `setPlatformOAuthLookup`.
+ * Hosted platform-app secret lookup. Wired at startup from
+ * `PLATFORM_OAUTH_*` env via `wirePlatformOAuthAtStartup` (§2). Tests inject
+ * via `setPlatformOAuthLookup`.
  */
 export type PlatformOAuthLookup = (provider: string) => PlatformOAuthCredentials | undefined;
 

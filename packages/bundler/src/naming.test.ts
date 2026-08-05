@@ -178,6 +178,15 @@ describe("data/registry.json global aliases", () => {
       expect(alias).toMatch(/^[A-Za-z_$][\w$]*$/u);
     }
   });
+
+  it("loads data/registry.json with boolean platformApp when present", async () => {
+    const providers = await loadRegistryProviders();
+    for (const provider of providers) {
+      if (provider.platformApp !== undefined) {
+        expect(typeof provider.platformApp).toBe("boolean");
+      }
+    }
+  });
 });
 
 describe("sanitizeNameSegment", () => {

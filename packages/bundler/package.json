@@ -8,6 +8,10 @@
     "./naming": {
       "types": "./dist/naming.d.ts",
       "import": "./dist/naming.js"
+    },
+    "./provider": {
+      "types": "./dist/provider.d.ts",
+      "import": "./dist/provider.js"
     }
   },
   "scripts": {
