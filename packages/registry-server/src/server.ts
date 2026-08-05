@@ -19,6 +19,7 @@ import { buildRouter, type AuthConfigResponse } from "./http/router.js";
 import { NativeServiceRegistry, ServiceError } from "./kernel/index.js";
 import { createMcpHandler } from "./mcp/server.js";
 import { withSandboxTool } from "./mcp/sandbox-tool.js";
+import { withSchemaLookupTool } from "./mcp/schema-lookup-tool.js";
 import { ProfileService } from "./profiles/service.js";
 import { configureSandbox, runScriptInSandbox } from "./sandbox/quickjs.js";
 import { createStorage } from "./storage/index.js";
@@ -152,10 +153,15 @@ export async function createRegistryServer(
   const mcpHandler = createMcpHandler({
     dispatcher,
     resolveDeps,
-    // The sandbox tool (grant-enforcement §5) is registered through the same
-    // extension hook a host uses for its own product-plane tools, not as a
-    // special case in buildMcpServer — see mcp/sandbox-tool.ts.
-    extensions: withSandboxTool({ dispatcher, resolveDeps }, options.mcp?.extensions),
+    // The sandbox tool (grant-enforcement §5) and the schema-lookup tool
+    // (graphql-schema-surface §3) are both registered through the same
+    // extension hook a host uses for its own product-plane tools, not as
+    // special cases in buildMcpServer — composed together (neither replaces
+    // the other) — see mcp/sandbox-tool.ts and mcp/schema-lookup-tool.ts.
+    extensions: withSandboxTool(
+      { dispatcher, resolveDeps },
+      withSchemaLookupTool({}, options.mcp?.extensions),
+    ),
   });
 
   const router = buildRouter({

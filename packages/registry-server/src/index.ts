@@ -24,6 +24,12 @@ export {
   SANDBOX_TOOL_NAME,
   type SandboxToolDeps,
 } from "./mcp/sandbox-tool.js";
+export {
+  createSchemaLookupMcpExtensions,
+  withSchemaLookupTool,
+  SCHEMA_LOOKUP_TOOL_NAME,
+  type SchemaLookupToolDeps,
+} from "./mcp/schema-lookup-tool.js";
 
 // Core contexts + construction contract
 export type {

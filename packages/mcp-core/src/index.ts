@@ -9,3 +9,4 @@
 export * from "./loader.js";
 export * from "./search.js";
 export * from "./meta-tools.js";
+export * from "./graphql-index.js";

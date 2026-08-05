@@ -85,7 +85,7 @@ export function outputSchemaFromOutputs(
  * package. The root package's exports map exposes the per-provider
  * openapi.json/package.json from its built dist.
  */
-function getProviderImportBase(providerName: string): string {
+export function getProviderImportBase(providerName: string): string {
   return providerName.includes("/") ? `@utdk/clients/${providerName}` : `@utdk/${providerName}`;
 }
 
