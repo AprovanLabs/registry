@@ -112,6 +112,27 @@ GitHub or Slack as the proving run).
   `github` provider entry, prefer the canonical `github` id over the many
   versioned `github/*` spec entries — one platform app per logical provider.
 
+#### Proving run: GitHub (§5.1)
+
+GitHub is the first live platform app. The canonical `github` entry in
+`data/registry.json` carries `"platformApp": true`; the versioned `github/*`
+suite members stay BYO-only.
+
+**Hosted connect requires ops-loaded secrets — never commit values:**
+
+| Env var | Purpose |
+| --- | --- |
+| `PLATFORM_OAUTH_GITHUB_CLIENT_ID` | OAuth App client ID |
+| `PLATFORM_OAUTH_GITHUB_CLIENT_SECRET` | OAuth App client secret (KMS-wrap in prod) |
+
+After deploy, confirm startup log `platform_oauth_secret_loaded` for
+`github` and smoke-test OAuth connect on hosted catalog and/or chat. Without
+these env vars, self-hosters and pre-deploy environments see
+`platform_oauth_secret_missing` once at boot and tenants fall through to BYO.
+
+§4 quota defaults (5 rps / burst 10 / 10 000 24h budget / 50 rps pool)
+apply automatically once the secret loads — no extra config.
+
 ### Slack
 
 - **Console:** [Slack API → Your Apps](https://api.slack.com/apps)
