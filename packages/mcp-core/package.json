@@ -1,6 +1,6 @@
 {
   "name": "@utdk/mcp-core",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "type": "module",
   "description": "Shared tool catalog and meta-tool handlers for @utdk/mcp packages",
   "license": "MIT",
