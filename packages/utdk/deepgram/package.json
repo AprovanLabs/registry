@@ -1,0 +1,30 @@
+{
+  "name": "@utdk/deepgram",
+  "version": "0.1.0",
+  "license": "MIT",
+  "type": "module",
+  "description": "Deepgram streaming speech-to-text provider for @utdk/stt. Credential: a bearer_token holding a Deepgram API key (UTDK injects Authorization: Bearer; the driver sends Token to Deepgram).",
+  "keywords": [
+    "stt",
+    "speech-to-text",
+    "deepgram",
+    "streaming",
+    "transcription",
+    "utdk"
+  ],
+  "utdk": {
+    "provider": "deepgram",
+    "handwritten": true,
+    "interface": "stt",
+    "auth": {
+      "schemes": [
+        {
+          "id": "api_token",
+          "type": "http",
+          "scheme": "bearer",
+          "description": "Deepgram API key. The UTDK executor injects Authorization: Bearer; this module translates that to Deepgram's Token scheme on the listen WebSocket."
+        }
+      ]
+    }
+  }
+}

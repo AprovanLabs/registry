@@ -46,6 +46,9 @@
       "generatedAt": "2026-05-30T18:16:06.505Z",
       "bundlerVersion": "0.1.1"
     },
+    "deepgram": {
+      "packageName": "@utdk/clients/deepgram"
+    },
     "elevenlabs": {
       "packageName": "@utdk/elevenlabs",
       "provenancePath": "./elevenlabs/provenance.json",
