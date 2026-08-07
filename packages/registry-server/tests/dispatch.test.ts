@@ -233,14 +233,15 @@ describe("dispatch pipeline", () => {
     expect(calls[0]?.headers).toEqual({ Authorization: "Bearer ephemeral" });
   });
 
-  it("unavailable compat entries refuse 501 without reaching the module loader", async () => {
+  it("unavailable compat entries refuse 501 at bind without reaching the module loader", async () => {
     env = await makeDispatchEnv();
-    await env.profiles.create(adminCtx(), {
-      name: "default",
-      target: { kind: "interface", interface: "sql" },
-      provider: "duckdb",
-    });
-    const error = await env.dispatcher.dispatch(adminCtx(), "sql", "query", {}).catch((e) => e);
+    const error = await env.profiles
+      .create(adminCtx(), {
+        name: "default",
+        target: { kind: "interface", interface: "sql" },
+        provider: "duckdb",
+      })
+      .catch((e) => e);
     expect(error.status).toBe(501);
     expect(error.message).toMatch(/declared but not yet built/u);
   });

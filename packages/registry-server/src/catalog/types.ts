@@ -23,6 +23,11 @@ export interface InterfaceCompat {
   credentialless?: boolean;
   /** Declared but has no executable module yet — the reason, for whoever hits it. */
   unavailable?: string;
+  /**
+   * Runtime availability probe id (enumerated in @utdk/common/compat). When
+   * set, bind/resolve consults the host-registered probe.
+   */
+  availabilityProbe?: import("@utdk/common/compat").AvailabilityProbeId;
 }
 
 export interface InterfaceDef {
@@ -46,6 +51,10 @@ export interface LlmAlias {
   /** OpenAI-compat API root; undefined = the module's own spec server. */
   baseUrl?: string;
   defaultModel: string;
+  /** Needs no tenant credential (loopback / on-device providers). */
+  credentialless?: boolean;
+  /** Runtime availability probe id when presence is host-determined. */
+  availabilityProbe?: import("@utdk/common/compat").AvailabilityProbeId;
 }
 
 export interface InterfaceCatalog {

@@ -21,6 +21,7 @@ import type { ResolveDeps } from "../src/profiles/resolve.js";
 import { buildProviderVersioningLookup, type ProviderVersioning } from "../src/profiles/versioning.js";
 import type { CallContext } from "../src/config/types.js";
 import type { InterfaceCatalog } from "../src/catalog/types.js";
+import type { AvailabilityProbeRunner } from "../src/catalog/availability-probe.js";
 import type { RegistryStorage } from "../src/storage/types.js";
 
 export const TEST_CATALOG: InterfaceCatalog = {
@@ -95,12 +96,19 @@ export async function makeEnv(
     providerVersions?: Record<string, ProviderVersioning>;
     /** Extra provider ids the catalogue guard should recognize, beyond KNOWN_PROVIDERS. */
     knownProviders?: string[];
+    runAvailabilityProbe?: AvailabilityProbeRunner;
   } = {},
 ): Promise<TestEnv> {
   const storage = await createStorage({ driver: "sqlite", url: "file::memory:" });
   const catalog = options.catalog ?? TEST_CATALOG;
   const credentials = new CredentialService(storage.credentials, storage.provisionCredential);
-  const profiles = new ProfileService(storage.profiles, storage.grants, credentials, catalog);
+  const profiles = new ProfileService(
+    storage.profiles,
+    storage.grants,
+    credentials,
+    catalog,
+    options.runAvailabilityProbe,
+  );
   const getProviderVersioning = buildProviderVersioningLookup(
     Object.entries(options.providerVersions ?? {}).map(([name, versioning]) => ({
       name,
@@ -116,6 +124,9 @@ export async function makeEnv(
     isKnownProvider: (id) => knownProviders.has(id),
     getProviderVersioning,
     authMode: options.authMode ?? "oidc",
+    ...(options.runAvailabilityProbe
+      ? { runAvailabilityProbe: options.runAvailabilityProbe }
+      : {}),
   };
   return { storage, credentials, profiles, deps, close: () => storage.close() };
 }

@@ -144,6 +144,20 @@ describe("parseCompatDocument", () => {
     );
   });
 
+  it("accepts an enumerated availabilityProbe", () => {
+    const document = structuredClone(validDocument);
+    (document.compat as Array<Record<string, unknown>>)[0]!.availabilityProbe = "helper:llm";
+    const parsed = parseCompatDocument(document, "llm/compat.json");
+    expect(parsed.compat?.[0]?.availabilityProbe).toBe("helper:llm");
+  });
+
+  it("rejects an open-string availabilityProbe", () => {
+    rejects(
+      (doc) => (((doc.compat as Array<Record<string, unknown>>)[0]!).availabilityProbe = "shell:rm"),
+      "compat[0].availabilityProbe",
+    );
+  });
+
   it("rejects a non-object defaults", () => {
     rejects((doc) => (((doc.compat as Array<Record<string, unknown>>)[0]!).defaults = ["model"]), "compat[0].defaults");
   });

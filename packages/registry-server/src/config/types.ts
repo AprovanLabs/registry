@@ -114,6 +114,11 @@ export interface RegistryServerOptions {
       args: Record<string, unknown>,
     ) => Promise<unknown>
   >;
+  /**
+   * Host-registered runners for `availabilityProbe` catalog entries
+   * (macos-native-providers D3). Without a runner, probed entries refuse bind.
+   */
+  runAvailabilityProbe?: import("../catalog/availability-probe.js").AvailabilityProbeRunner;
 }
 
 export interface RegistryServer {

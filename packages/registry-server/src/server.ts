@@ -118,6 +118,7 @@ export async function createRegistryServer(
     storage.grants,
     credentials,
     options.catalog,
+    options.runAvailabilityProbe,
   );
   const resolveDeps: ResolveDeps = {
     catalog: options.catalog,
@@ -127,6 +128,9 @@ export async function createRegistryServer(
     isKnownProvider: isCatalogueProvider,
     getProviderVersioning: await loadProviderVersioning(),
     authMode: adapter.mode,
+    ...(options.runAvailabilityProbe
+      ? { runAvailabilityProbe: options.runAvailabilityProbe }
+      : {}),
   };
   const executor = options.executorInstance ?? new ProviderExecutor(options.executor ?? {});
   configureSandbox(options.sandbox ?? {});

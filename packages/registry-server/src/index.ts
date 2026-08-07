@@ -69,6 +69,14 @@ export {
 } from "./catalog/types.js";
 export { defaultCatalog, defaultLlmAliases } from "./catalog/default.js";
 export { deriveGlobalAlias, namespaceAliasFields } from "./catalog/global-alias.js";
+export {
+  assertProbeAvailable,
+  formatProbeRefusal,
+  type AvailabilityProbeResult,
+  type AvailabilityProbeRunner,
+} from "./catalog/availability-probe.js";
+export type { AvailabilityProbeId } from "@utdk/common/compat";
+export { AVAILABILITY_PROBE_IDS, isAvailabilityProbeId } from "@utdk/common/compat";
 
 // Tenancy
 export { TenantService, DEFAULT_TENANT_ID } from "./tenancy/index.js";
