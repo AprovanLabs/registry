@@ -1,6 +1,6 @@
 {
   "name": "@utdk/stt",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "Shared speech-to-text contract for UTDK: streaming sessions over caller-supplied audio, declared capabilities for diarization and word timestamps, and tool-discovery helpers",
   "keywords": [
@@ -46,6 +46,7 @@
   "files": [
     "dist",
     "compat.json",
+    "AUDIT.md",
     "conformance.ts",
     "index.ts"
   ]

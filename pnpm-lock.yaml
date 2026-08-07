@@ -492,6 +492,9 @@ importers:
       '@utcp/sdk':
         specifier: ^1.1.0
         version: 1.1.0
+      '@utdk/common':
+        specifier: workspace:*
+        version: link:common
       '@utdk/events':
         specifier: workspace:*
         version: link:../contracts/events
@@ -507,6 +510,9 @@ importers:
       '@utdk/sql':
         specifier: workspace:*
         version: link:../contracts/sql
+      '@utdk/stt':
+        specifier: workspace:*
+        version: link:../contracts/stt
       '@utdk/telemetry':
         specifier: workspace:*
         version: link:../contracts/telemetry
@@ -516,6 +522,13 @@ importers:
       '@utdk/vfs':
         specifier: workspace:*
         version: link:../contracts/vfs
+      ws:
+        specifier: ^8.18.0
+        version: 8.21.2
+    devDependencies:
+      '@types/ws':
+        specifier: ^8.5.13
+        version: 8.18.1
 
   packages/utdk-cli:
     dependencies:
@@ -583,6 +596,8 @@ importers:
   packages/utdk/databricks: {}
 
   packages/utdk/datadog: {}
+
+  packages/utdk/deepgram: {}
 
   packages/utdk/digitalocean: {}
 
@@ -4111,6 +4126,9 @@ packages:
 
   '@types/validate-npm-package-name@4.0.2':
     resolution: {integrity: sha512-lrpDziQipxCEeK5kWxvljWYhUvOiB2A9izZd9B2AFarYAkqZshb4lPbRs7zKEic6eGtH8V/2qJW+dPp9OtF6bw==}
+
+  '@types/ws@8.18.1':
+    resolution: {integrity: sha512-ThVF6DCVhA8kUGy+aazFQ4kXQ7E1Ty7A3ypFOe0IcJV8O/M511G99AW24irKrW56Wt44yG9+ij8FaqoBGkuBXg==}
 
   '@typescript-eslint/eslint-plugin@8.61.1':
     resolution: {integrity: sha512-ZPlVl3PB3et/59Ne0fv/sci6ZXz4T4Hp4nTJ56i/Y0gR89ARb+KphojTq6j+56E5PIezmOIOOWyY+aWQFd+IkQ==}
@@ -8508,6 +8526,18 @@ packages:
   wrappy@1.0.2:
     resolution: {integrity: sha512-l4Sp/DRseor9wL6EvV2+TuQn63dMkPjZ/sp9XkghTEbV9KlPS1xUsZ3u7/IQO4wxtcFB4bgpQPRcR3QCvezPcQ==}
 
+  ws@8.21.2:
+    resolution: {integrity: sha512-54dMVAo4WIe6SKy3vBgN+9bJZqqQ8IMRevAkOLQALhi49qkkQDQfWdAZ8KQlXiEabw88ARXXdUrlvtbKQX+aKw==}
+    engines: {node: '>=10.0.0'}
+    peerDependencies:
+      bufferutil: ^4.0.1
+      utf-8-validate: '>=5.0.2'
+    peerDependenciesMeta:
+      bufferutil:
+        optional: true
+      utf-8-validate:
+        optional: true
+
   wsl-utils@0.3.1:
     resolution: {integrity: sha512-g/eziiSUNBSsdDJtCLB8bdYEUMj4jR7AGeUo96p/3dTafgjHhpF4RiCFPiRILwjQoDXx5MqkBr4fwWtR3Ky4Wg==}
     engines: {node: '>=20'}
@@ -12541,6 +12571,10 @@ snapshots:
   '@types/use-sync-external-store@0.0.6': {}
 
   '@types/validate-npm-package-name@4.0.2': {}
+
+  '@types/ws@8.18.1':
+    dependencies:
+      '@types/node': 25.6.2
 
   '@typescript-eslint/eslint-plugin@8.61.1(@typescript-eslint/parser@8.61.1(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3))(eslint@9.39.4(jiti@2.7.0))(typescript@5.9.3)':
     dependencies:
@@ -17760,6 +17794,8 @@ snapshots:
       strip-ansi: 7.2.0
 
   wrappy@1.0.2: {}
+
+  ws@8.21.2: {}
 
   wsl-utils@0.3.1:
     dependencies:

@@ -7,5 +7,13 @@
     "timeoutMs": 300000,
     "defaultsFor": ["open"]
   },
-  "compat": []
+  "compat": [
+    { "provider": "deepgram", "label": "Deepgram", "module": "deepgram" },
+    {
+      "provider": "assemblyai",
+      "label": "AssemblyAI",
+      "module": "assemblyai",
+      "unavailable": "The AssemblyAI adapter module is not built yet."
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 {
   "name": "@utdk/clients",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "Generated UTDK provider clients",
   "files": [
@@ -12,7 +12,8 @@
     "typecheck": "NODE_OPTIONS=--max-old-space-size=4096 tsc -p tsconfig.json --noEmit",
     "clean": "rm -rf dist",
     "build:types": "NODE_OPTIONS=--max-old-space-size=4096 tsc -p tsconfig.json && node ./copy-assets.mjs",
-    "prepublishOnly": "pnpm run build:types"
+    "prepublishOnly": "pnpm run build:types",
+    "test:deepgram": "vitest run deepgram/__tests__/deepgram.test.ts"
   },
   "dependencies": {
     "@utcp/http": "^1.1.1",
@@ -20,11 +21,14 @@
     "@utdk/events": "workspace:*",
     "@utdk/llm": "workspace:*",
     "@utdk/keyvalue": "workspace:*",
+    "@utdk/common": "workspace:*",
     "@utdk/sandbox": "workspace:*",
     "@utdk/sql": "workspace:*",
+    "@utdk/stt": "workspace:*",
     "@utdk/vfs": "workspace:*",
     "@utdk/telemetry": "workspace:*",
-    "@utdk/vcs": "workspace:*"
+    "@utdk/vcs": "workspace:*",
+    "ws": "^8.18.0"
   },
   "exports": {
     ".": {
@@ -94,6 +98,11 @@
       "types": "./dist/discord/index.d.ts",
       "import": "./dist/discord/index.js",
       "default": "./dist/discord/index.js"
+    },
+    "./deepgram": {
+      "types": "./dist/deepgram/index.d.ts",
+      "import": "./dist/deepgram/index.js",
+      "default": "./dist/deepgram/index.js"
     },
     "./elevenlabs": {
       "types": "./dist/elevenlabs/index.d.ts",
@@ -355,5 +364,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@types/ws": "^8.5.13"
+  }
 }
