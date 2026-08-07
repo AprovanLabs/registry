@@ -271,6 +271,16 @@ importers:
         specifier: 2.1.5
         version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
 
+  packages/contracts/stt:
+    dependencies:
+      '@utdk/common':
+        specifier: workspace:^0.1.2
+        version: link:../../utdk/common
+    devDependencies:
+      vitest:
+        specifier: 2.1.5
+        version: 2.1.5(@types/node@25.6.2)(lightningcss@1.32.0)(msw@2.14.5(@types/node@25.6.2)(typescript@5.9.3))(terser@5.49.0)
+
   packages/contracts/telemetry:
     devDependencies:
       vitest:

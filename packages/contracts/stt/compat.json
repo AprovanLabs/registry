@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "interface": {
+    "id": "stt",
+    "label": "Speech to text",
+    "description": "Streaming speech recognition. Callers open a session, push audio, and read partial and final transcripts; diarization and word timestamps are declared capabilities. Audio is always caller-supplied — providers never capture.",
+    "timeoutMs": 300000,
+    "defaultsFor": ["open"]
+  },
+  "compat": []
+}
