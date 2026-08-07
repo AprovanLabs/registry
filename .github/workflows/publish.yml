@@ -61,7 +61,7 @@ jobs:
               echo "$pkg@$version already published — skipping"
             else
               echo "Publishing $pkg@$version"
-              pnpm --filter "$pkg" publish --no-git-checks --access public || failed="$failed $pkg"
+              pnpm --filter "$pkg" publish --no-git-checks --access public --ignore-scripts || failed="$failed $pkg"
             fi
           done
           if [ -n "$failed" ]; then
