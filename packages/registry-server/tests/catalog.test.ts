@@ -22,6 +22,7 @@ describe("default catalog (WS-2 compat data)", () => {
     expect(ids).toContain("llm");
     expect(ids).toContain("sql");
     expect(ids).toContain("agent");
+    expect(ids).toContain("stt");
 
     const sql = findInterface(catalog, "sql")!;
     expect(sql.timeoutMs).toBeGreaterThan(0);
@@ -33,6 +34,10 @@ describe("default catalog (WS-2 compat data)", () => {
     // short-circuit — the field must survive the load.
     const agent = findInterface(catalog, "agent")!;
     expect(agent.compat.some((entry) => entry.credentialless === true)).toBe(true);
+
+    const stt = findInterface(catalog, "stt")!;
+    expect(stt.defaultsFor).toContain("open");
+    expect(stt.compat.some((entry) => entry.unavailable)).toBe(true);
   });
 
   it("composes llm compat from the chat-provider alias table (compatSource indirection)", () => {
