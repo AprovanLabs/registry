@@ -17,6 +17,19 @@
 import { existsSync, readFileSync, readdirSync } from "node:fs";
 import path from "node:path";
 
+/**
+ * Runtime availability probes (macos-native-providers D3). Enumerated — not
+ * an open string — so the loader cannot grow into a general plugin mechanism.
+ */
+export const AVAILABILITY_PROBE_IDS = ["helper:llm"] as const;
+export type AvailabilityProbeId = (typeof AVAILABILITY_PROBE_IDS)[number];
+
+const AVAILABILITY_PROBE_SET: ReadonlySet<string> = new Set(AVAILABILITY_PROBE_IDS);
+
+export function isAvailabilityProbeId(value: string): value is AvailabilityProbeId {
+  return AVAILABILITY_PROBE_SET.has(value);
+}
+
 /** One provider implementing an interface. */
 export interface CompatEntry {
   /** Registry provider id (also the credential-store key). */
@@ -34,6 +47,11 @@ export interface CompatEntry {
   credentialless?: boolean;
   /** Declared but has no executable module yet — the reason, for whoever hits it. */
   unavailable?: string;
+  /**
+   * Runtime availability probe id. When set, bind/resolve must consult the
+   * host-registered probe rather than treating the entry as always available.
+   */
+  availabilityProbe?: AvailabilityProbeId;
   /** Optional capability badges for the catalog (e.g. sandbox flags). */
   capabilities?: string[];
 }
@@ -108,6 +126,7 @@ const ENTRY_KEYS = [
   "defaults",
   "credentialless",
   "unavailable",
+  "availabilityProbe",
   "capabilities",
 ] as const;
 
@@ -142,6 +161,17 @@ function parseEntry(value: unknown, sourcePath: string, field: string): CompatEn
   }
   if (value.unavailable !== undefined) {
     entry.unavailable = requireString(value.unavailable, sourcePath, `${field}.unavailable`);
+  }
+  if (value.availabilityProbe !== undefined) {
+    const probe = requireString(value.availabilityProbe, sourcePath, `${field}.availabilityProbe`);
+    if (!isAvailabilityProbeId(probe)) {
+      throw new CompatValidationError(
+        sourcePath,
+        `${field}.availabilityProbe`,
+        `must be one of: ${AVAILABILITY_PROBE_IDS.join(", ")}`,
+      );
+    }
+    entry.availabilityProbe = probe;
   }
   if (value.capabilities !== undefined) {
     if (!Array.isArray(value.capabilities)) {

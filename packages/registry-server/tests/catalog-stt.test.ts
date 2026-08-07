@@ -9,7 +9,6 @@ import path from "node:path";
 import { sttToolEntries } from "@utdk/stt";
 import { defaultCatalog } from "../src/catalog/default.js";
 import { findInterface } from "../src/catalog/types.js";
-import { resolveProfile } from "../src/profiles/resolve.js";
 import { adminCtx, makeEnv, type TestEnv } from "./helpers.js";
 
 const contractsDir = path.resolve(
@@ -61,13 +60,14 @@ describe("stt catalog registration", () => {
         catalog,
         knownProviders: ["deepgram", "assemblyai"],
       });
-      await env.profiles.create(adminCtx(), {
-        name: "default",
-        target: { kind: "interface", interface: "stt" },
-        provider: "assemblyai",
-      });
+      const error = await env.profiles
+        .create(adminCtx(), {
+          name: "default",
+          target: { kind: "interface", interface: "stt" },
+          provider: "assemblyai",
+        })
+        .catch((e) => e);
 
-      const error = await resolveProfile(env.deps, adminCtx(), "stt").catch((e) => e);
       expect(error.status).toBe(501);
       expect(error.message).toMatch(
         new RegExp(ASSEMBLYAI_UNAVAILABLE.replace(/[.*+?^${}()|[\]\\]/gu, "\\$&"), "u"),

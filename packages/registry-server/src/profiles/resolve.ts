@@ -23,6 +23,10 @@ import {
   type InterfaceCatalog,
   type InterfaceCompat,
 } from "../catalog/types.js";
+import {
+  assertProbeAvailable,
+  type AvailabilityProbeRunner,
+} from "../catalog/availability-probe.js";
 import { CredentialResolutionError, type CredentialService } from "../credentials/service.js";
 import { ProfileService } from "./service.js";
 import { resolveProviderVersion, type GetProviderVersioning } from "./versioning.js";
@@ -41,6 +45,8 @@ export interface ResolveDeps {
   getProviderVersioning: GetProviderVersioning;
   /** Whether grants are enforced ("none" skips enforcement). */
   authMode: "oidc" | "api-key" | "none";
+  /** Host-registered runners for `availabilityProbe` compat entries. */
+  runAvailabilityProbe?: AvailabilityProbeRunner;
 }
 
 export interface ResolvedTarget {
@@ -203,6 +209,19 @@ export async function resolveProfile(
           501,
         );
       }
+      if (compat.availabilityProbe) {
+        await assertProbeAvailable(
+          compat.availabilityProbe,
+          deps.runAvailabilityProbe,
+          `${target.id} / ${compat.provider}`,
+        );
+      }
+    } else if (llmAlias?.availabilityProbe) {
+      await assertProbeAvailable(
+        llmAlias.availabilityProbe,
+        deps.runAvailabilityProbe,
+        llmAlias.id,
+      );
     }
 
     const executingProvider = target.kind === "interface" ? compat!.provider : target.id;
@@ -319,6 +338,13 @@ export async function resolveProfile(
         501,
       );
     }
+    if (compat.availabilityProbe) {
+      await assertProbeAvailable(
+        compat.availabilityProbe,
+        deps.runAvailabilityProbe,
+        `${target.id} / ${compat.provider}`,
+      );
+    }
     assertWithinNarrowedTo(ctx, compat.provider);
     if (!compat.credentialless) {
       credential = await deps.credentials.firstForProvider(ctx.tenantId, compat.provider);
@@ -341,6 +367,13 @@ export async function resolveProfile(
 
   // Provider target: first tenant credential (may be none — ephemeral
   // request-supplied credentials remain legal on the HTTP surface).
+  if (llmAlias?.availabilityProbe) {
+    await assertProbeAvailable(
+      llmAlias.availabilityProbe,
+      deps.runAvailabilityProbe,
+      llmAlias.id,
+    );
+  }
   assertWithinNarrowedTo(ctx, target.id);
   const credential = await deps.credentials.firstForProvider(ctx.tenantId, target.id);
   const versionResolution = resolveProviderVersion(

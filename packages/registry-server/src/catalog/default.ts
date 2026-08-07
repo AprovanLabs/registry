@@ -52,6 +52,17 @@ const CHAT_PROVIDERS: LlmAlias[] = [
     baseUrl: "https://openrouter.ai/api/v1",
     defaultModel: "openrouter/auto",
   },
+  {
+    id: "apple",
+    label: "Apple on-device",
+    module: "openai",
+    // Loopback OpenAI root; desktop sets LLM_APPLE_BASE_URL to the helper's
+    // ephemeral http://127.0.0.1:<port>/v1 when the helper is ready.
+    baseUrl: "http://127.0.0.1:0/v1",
+    defaultModel: "apple-on-device",
+    credentialless: true,
+    availabilityProbe: "helper:llm",
+  },
 ];
 
 function envOverride(id: string, key: "BASE_URL" | "DEFAULT_MODEL"): string | undefined {
@@ -98,6 +109,9 @@ function toInterfaceCompat(entry: CompatEntry): InterfaceCompat {
     ...(entry.defaults !== undefined ? { defaults: entry.defaults } : {}),
     ...(entry.credentialless !== undefined ? { credentialless: entry.credentialless } : {}),
     ...(entry.unavailable !== undefined ? { unavailable: entry.unavailable } : {}),
+    ...(entry.availabilityProbe !== undefined
+      ? { availabilityProbe: entry.availabilityProbe }
+      : {}),
   };
 }
 
@@ -116,6 +130,12 @@ function toInterfaceDef(document: CompatDocument, llmAliases: LlmAlias[]): Inter
             module: alias.module,
             ...(alias.baseUrl ? { baseUrl: alias.baseUrl } : {}),
             defaults: { model: alias.defaultModel },
+            ...(alias.credentialless !== undefined
+              ? { credentialless: alias.credentialless }
+              : {}),
+            ...(alias.availabilityProbe !== undefined
+              ? { availabilityProbe: alias.availabilityProbe }
+              : {}),
           }))
         : (document.compat ?? []).map(toInterfaceCompat),
   };

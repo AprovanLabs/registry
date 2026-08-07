@@ -270,13 +270,14 @@ describe("default-name resolution and ungoverned-mode fallback", () => {
     }
   });
 
-  it("unavailable compat entry resolved through a profile refuses 501 with the reason", async () => {
-    await env.profiles.create(adminCtx(), {
-      name: "default",
-      target: { kind: "interface", interface: "sql" },
-      provider: "duckdb",
-    });
-    const error = await resolveProfile(env.deps, adminCtx(), "sql").catch((e) => e);
+  it("unavailable compat entry refuses at bind time with the reason", async () => {
+    const error = await env.profiles
+      .create(adminCtx(), {
+        name: "default",
+        target: { kind: "interface", interface: "sql" },
+        provider: "duckdb",
+      })
+      .catch((e) => e);
     expect(error.status).toBe(501);
     expect(error.message).toMatch(/declared but not yet built/u);
   });

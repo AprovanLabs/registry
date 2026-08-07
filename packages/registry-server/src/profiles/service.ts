@@ -10,6 +10,10 @@
 import { ServiceError } from "../kernel/index.js";
 import { UniqueConstraintError } from "../storage/sql-client.js";
 import { findInterface, type InterfaceCatalog } from "../catalog/types.js";
+import {
+  assertProbeAvailable,
+  type AvailabilityProbeRunner,
+} from "../catalog/availability-probe.js";
 import type { CredentialService } from "../credentials/service.js";
 import type { CallContext } from "../config/types.js";
 import type {
@@ -52,6 +56,7 @@ export class ProfileService {
     private readonly grantStore: GrantStore,
     private readonly credentials: CredentialService,
     private readonly catalog: InterfaceCatalog,
+    private readonly runAvailabilityProbe?: AvailabilityProbeRunner,
   ) {}
 
   // -------------------------------------------------------------------------
@@ -85,6 +90,19 @@ export class ProfileService {
           400,
         );
       }
+      if (compat.unavailable) {
+        throw new ServiceError(
+          `${targetId} resolves to ${compat.provider}: ${compat.unavailable}`,
+          501,
+        );
+      }
+      if (compat.availabilityProbe) {
+        await assertProbeAvailable(
+          compat.availabilityProbe,
+          this.runAvailabilityProbe,
+          `${targetId} / ${compat.provider}`,
+        );
+      }
       executingProvider = compat.provider;
     } else {
       if (input.provider && input.provider !== targetId) {
@@ -94,6 +112,14 @@ export class ProfileService {
         );
       }
       executingProvider = targetId;
+      const alias = this.catalog.llmAliases.find((entry) => entry.id === targetId);
+      if (alias?.availabilityProbe) {
+        await assertProbeAvailable(
+          alias.availabilityProbe,
+          this.runAvailabilityProbe,
+          alias.id,
+        );
+      }
     }
 
     // Credential existence + provider match, at write time (profiles spec
@@ -152,6 +178,19 @@ export class ProfileService {
           `${patch.provider} does not implement ${existing.targetId}.` +
             (def ? ` Compatible: ${def.compat.map((c) => c.provider).join(", ")}` : ""),
           400,
+        );
+      }
+      if (compat.unavailable) {
+        throw new ServiceError(
+          `${existing.targetId} resolves to ${compat.provider}: ${compat.unavailable}`,
+          501,
+        );
+      }
+      if (compat.availabilityProbe) {
+        await assertProbeAvailable(
+          compat.availabilityProbe,
+          this.runAvailabilityProbe,
+          `${existing.targetId} / ${compat.provider}`,
         );
       }
       executingProvider = compat.provider;
