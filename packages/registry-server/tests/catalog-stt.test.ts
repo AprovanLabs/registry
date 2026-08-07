@@ -34,7 +34,15 @@ describe("stt catalog registration", () => {
     const stt = findInterface(catalog, "stt");
     expect(stt).toBeDefined();
     expect(stt!.defaultsFor).toContain("open");
-    expect(stt!.compat.map((entry) => entry.provider)).toEqual(["deepgram", "assemblyai"]);
+    expect(stt!.compat.map((entry) => entry.provider)).toEqual([
+      "local",
+      "deepgram",
+      "assemblyai",
+    ]);
+    expect(stt!.compat.find((entry) => entry.provider === "local")).toMatchObject({
+      credentialless: true,
+      moduleSpecifier: "@aprovan/native/stt",
+    });
 
     const [open] = sttToolEntries("stt", { interfaceNamespace: true });
     expect(open).toMatchObject({
@@ -58,7 +66,7 @@ describe("stt catalog registration", () => {
 
       env = await makeEnv({
         catalog,
-        knownProviders: ["deepgram", "assemblyai"],
+        knownProviders: ["local", "deepgram", "assemblyai"],
       });
       const error = await env.profiles
         .create(adminCtx(), {

@@ -1,6 +1,6 @@
 {
   "name": "@utdk/stt",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "type": "module",
   "description": "Shared speech-to-text contract for UTDK: streaming sessions over caller-supplied audio, declared capabilities for diarization and word timestamps, and tool-discovery helpers",
   "keywords": [
