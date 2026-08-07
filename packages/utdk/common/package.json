@@ -1,6 +1,6 @@
 {
   "name": "@utdk/common",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "type": "module",
   "description": "Cross-cutting utilities for @utdk provider packages",
@@ -51,6 +51,11 @@
       "types": "./dist/pagination.d.ts",
       "import": "./dist/pagination.js",
       "default": "./dist/pagination.js"
+    },
+    "./streaming": {
+      "types": "./dist/streaming.d.ts",
+      "import": "./dist/streaming.js",
+      "default": "./dist/streaming.js"
     }
   },
   "peerDependencies": {
