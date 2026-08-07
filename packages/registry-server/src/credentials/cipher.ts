@@ -8,6 +8,9 @@
  *   enc:v1:<backend>:<b64 wrapped-key>:<b64 iv>:<b64 ciphertext||gcm-tag>
  *
  * Backends (picked once at startup, most secure available wins):
+ *   - `keystore` — a `KeyProvider` was supplied. AES-256-GCM with a key the
+ *               provider returns (may prompt); the key is cached for the
+ *               process lifetime so a prompt happens at most once.
  *   - `kms`   — CREDENTIALS_KMS_KEY_ID set. Per-payload AES-256-GCM data key
  *               from KMS GenerateDataKey; the wrapped key rides the envelope
  *               and is unwrapped via KMS Decrypt (LRU-cached).
@@ -26,12 +29,29 @@ import type { KMSClient } from "@aws-sdk/client-kms";
 const PREFIX = "enc:v1:";
 const ALGO = "aes-256-gcm";
 const IV_BYTES = 12;
+const KEY_BYTES = 32;
 
 export interface CredentialCipher {
-  readonly backend: "kms" | "local" | "none";
+  readonly backend: "kms" | "local" | "none" | "keystore";
   encrypt(plaintext: string): Promise<string>;
   decrypt(stored: string): Promise<string>;
 }
+
+/** Supplies a 32-byte AES key. May prompt; callers must tolerate latency. */
+export interface KeyProvider {
+  getKey(): Promise<Buffer>;
+  readonly id: string;
+}
+
+export type GetCredentialCipherOptions = {
+  /** When set, preferred over env-based kms/local/none selection. */
+  keyProvider?: KeyProvider;
+  /**
+   * When true, refuse the plaintext `none` backend (local workspaces must
+   * not silently store credentials in the clear).
+   */
+  requireEncryption?: boolean;
+};
 
 function seal(key: Buffer, plaintext: string, backend: string, wrappedKey: Buffer): string {
   const iv = randomBytes(IV_BYTES);
@@ -61,6 +81,62 @@ function parseEnvelope(stored: string): { backend: string; wrappedKey: string; i
   if (parts.length !== 4) return null;
   const [backend, wrappedKey, iv, payload] = parts;
   return { backend: backend!, wrappedKey: wrappedKey!, iv: iv!, payload: payload! };
+}
+
+// ---------------------------------------------------------------------------
+// Keystore backend (external KeyProvider)
+// ---------------------------------------------------------------------------
+
+export class KeystoreCipher implements CredentialCipher {
+  readonly backend = "keystore" as const;
+  private key: Buffer | undefined;
+  private keyPromise: Promise<Buffer> | undefined;
+
+  constructor(private readonly provider: KeyProvider) {}
+
+  private resolveKey(): Promise<Buffer> {
+    if (this.key) return Promise.resolve(this.key);
+    this.keyPromise ??= this.provider.getKey().then((raw) => {
+      if (raw.length !== KEY_BYTES) {
+        throw new Error(
+          `KeyProvider "${this.provider.id}" must return ${KEY_BYTES} bytes, got ${raw.length}`,
+        );
+      }
+      this.key = raw;
+      return raw;
+    });
+    return this.keyPromise;
+  }
+
+  async encrypt(plaintext: string): Promise<string> {
+    const key = await this.resolveKey();
+    return seal(key, plaintext, "keystore", Buffer.alloc(0));
+  }
+
+  async decrypt(stored: string): Promise<string> {
+    const envelope = parseEnvelope(stored);
+    if (!envelope) return stored;
+    const key = await this.resolveKey();
+    return open(key, envelope.iv, envelope.payload);
+  }
+}
+
+/** In-memory KeyProvider for tests — no platform keystore required. */
+export class InMemoryKeyProvider implements KeyProvider {
+  readonly id: string;
+  private readonly key: Buffer;
+
+  constructor(key?: Buffer, id = "in-memory") {
+    this.key = key ?? randomBytes(KEY_BYTES);
+    if (this.key.length !== KEY_BYTES) {
+      throw new Error(`InMemoryKeyProvider requires a ${KEY_BYTES}-byte key`);
+    }
+    this.id = id;
+  }
+
+  async getKey(): Promise<Buffer> {
+    return this.key;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -166,16 +242,37 @@ class NoopCipher implements CredentialCipher {
 
 let cipher: CredentialCipher | undefined;
 
-export function getCredentialCipher(): CredentialCipher {
-  if (!cipher) {
-    const kmsKeyId = process.env["CREDENTIALS_KMS_KEY_ID"];
-    const localSecret = process.env["CREDENTIALS_CIPHER_SECRET"];
-    cipher = kmsKeyId
-      ? new KmsCipher(kmsKeyId)
-      : localSecret
-        ? new LocalCipher(localSecret)
-        : new NoopCipher();
+function selectFromEnv(): CredentialCipher {
+  const kmsKeyId = process.env["CREDENTIALS_KMS_KEY_ID"];
+  const localSecret = process.env["CREDENTIALS_CIPHER_SECRET"];
+  return kmsKeyId
+    ? new KmsCipher(kmsKeyId)
+    : localSecret
+      ? new LocalCipher(localSecret)
+      : new NoopCipher();
+}
+
+/**
+ * Resolve the process credential cipher.
+ *
+ * A supplied `keyProvider` is preferred over env-based kms/local/none.
+ * Without one, selection is unchanged from the prior env-only behaviour.
+ */
+export function getCredentialCipher(options?: GetCredentialCipherOptions): CredentialCipher {
+  if (options?.keyProvider) {
+    if (cipher?.backend !== "keystore") {
+      cipher = new KeystoreCipher(options.keyProvider);
+    }
+  } else if (!cipher) {
+    cipher = selectFromEnv();
   }
+
+  if (options?.requireEncryption && cipher.backend === "none") {
+    throw new Error(
+      "Local workspace requires a key provider; none was supplied and no CREDENTIALS_KMS_KEY_ID or CREDENTIALS_CIPHER_SECRET is set",
+    );
+  }
+
   return cipher;
 }
 

@@ -97,7 +97,11 @@ export {
 export {
   getCredentialCipher,
   resetCredentialCipher,
+  KeystoreCipher,
+  InMemoryKeyProvider,
   type CredentialCipher,
+  type KeyProvider,
+  type GetCredentialCipherOptions,
 } from "./credentials/cipher.js";
 export {
   OAuthExchangeError,
