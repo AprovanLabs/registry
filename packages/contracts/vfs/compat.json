@@ -16,6 +16,13 @@
       "credentialless": true
     },
     {
+      "provider": "local-directory",
+      "label": "Local directory",
+      "module": "local-directory",
+      "moduleSpecifier": "@aprovan/native",
+      "credentialless": true
+    },
+    {
       "provider": "s3",
       "label": "Amazon S3",
       "module": "s3",
