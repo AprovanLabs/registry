@@ -8,6 +8,13 @@
     "defaultsFor": ["open"]
   },
   "compat": [
+    {
+      "provider": "local",
+      "label": "On-device",
+      "module": "local",
+      "moduleSpecifier": "@aprovan/native/stt",
+      "credentialless": true
+    },
     { "provider": "deepgram", "label": "Deepgram", "module": "deepgram" },
     {
       "provider": "assemblyai",
