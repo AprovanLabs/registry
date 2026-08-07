@@ -66,6 +66,19 @@ export async function fetchCitySuggestions(
   }));
 }
 
+/**
+ * Keyed by `<namespace>.<procedure>`, normalised.
+ *
+ * The sandbox dispatches `transport.call(namespace, procedure, args)` where the
+ * namespace comes from the import specifier (`open-meteo/geocoding`) and the
+ * procedure is the dot-joined member path (`search`). The lookup used to build
+ * `` `${provider}/${operation}` `` — `open-meteo/geocoding/search` — while this
+ * map was written with a dot before the procedure, so nothing ever matched and
+ * every run failed. The thrown message used a *third* spelling
+ * (`${provider}.${operation}`) which happened to equal the map key, so the error
+ * looked like the key was present. Normalising both sides is what stops that
+ * class of typo from silently returning undefined.
+ */
 const DEMO_ENDPOINTS: Record<string, (args: Record<string, unknown>) => string> = {
   "open-meteo/geocoding.search": (args) =>
     `https://geocoding-api.open-meteo.com/v1/search?${new URLSearchParams({
@@ -80,14 +93,22 @@ const DEMO_ENDPOINTS: Record<string, (args: Record<string, unknown>) => string> 
     }).toString()}`,
 };
 
+/** One spelling for a call, whichever separator the caller used. */
+function demoKey(namespace: string, procedure: string): string {
+  return `${namespace}.${procedure}`.replace(/\/+/g, "/").replace(/\.+/g, ".");
+}
+
 /** Transport that fetches Open-Meteo's free endpoints directly. */
 export function createDemoTransport(): Transport {
   return {
     async call(provider, operation, args) {
-      const endpoint = DEMO_ENDPOINTS[`${provider}/${operation}`];
+      const key = demoKey(provider, operation);
+      const endpoint = DEMO_ENDPOINTS[key];
       if (!endpoint) {
+        // Quote the key actually looked up, not a re-spelling of it — the old
+        // message printed a different join and sent debugging the wrong way.
         throw new Error(
-          `The homepage demo only maps Open-Meteo endpoints (got ${provider}.${operation}).`,
+          `The homepage demo only maps Open-Meteo endpoints (no mapping for "${key}").`,
         );
       }
       const response = await fetch(endpoint(args));
