@@ -86,7 +86,7 @@ function resolveContractsDir(): string {
 }
 
 /** Pre-instance catalog order; contracts beyond it sort alphabetically after. */
-const INTERFACE_ORDER = ["llm", "sql", "sandbox", "vcs", "agent"];
+const INTERFACE_ORDER = ["llm", "sql", "sandbox", "vcs", "agent", "stt"];
 
 function toInterfaceCompat(entry: CompatEntry): InterfaceCompat {
   return {

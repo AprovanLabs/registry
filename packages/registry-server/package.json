@@ -1,6 +1,6 @@
 {
   "name": "@aprovan/registry-server",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "type": "module",
   "description": "The Aprovan registry server \u2014 multi-tenant execution plane: profiles, credentials, provider dispatch, QuickJS sandbox, MCP surface. Embeddable library + standalone server.",
   "license": "MIT",
@@ -43,6 +43,7 @@
     "@utdk/common": "workspace:*",
     "@utdk/llm": "workspace:*",
     "@utdk/mcp-core": "workspace:*",
+    "@utdk/stt": "workspace:*",
     "better-sqlite3": "^12.11.1",
     "hono": "^4.6.20",
     "jose": "^5.9.6",

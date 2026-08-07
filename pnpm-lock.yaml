@@ -442,6 +442,9 @@ importers:
       '@utdk/mcp-core':
         specifier: workspace:*
         version: link:../mcp-core
+      '@utdk/stt':
+        specifier: workspace:*
+        version: link:../contracts/stt
       better-sqlite3:
         specifier: ^12.11.1
         version: 12.11.1
