@@ -667,6 +667,7 @@ export function createDynamoStorage(options: DynamoStorageOptions): RegistryStor
         type: input.type,
         payload: input.payload,
         createdBy: input.createdBy,
+        ...(input.level !== undefined ? { level: input.level } : {}),
       });
       try {
         const { defaultProfile, grant } = await provisionDefaultProfile(

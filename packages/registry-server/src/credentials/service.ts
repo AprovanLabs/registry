@@ -5,6 +5,7 @@
  * context (profiles spec "Credential owner dimension").
  */
 
+import { UniqueConstraintError } from "../storage/index.js";
 import { getCredentialCipher } from "./cipher.js";
 import {
   exchangeAuthorizationCode,
@@ -12,7 +13,15 @@ import {
   prepareOAuthPayloadForStorage,
   redactTenantCredentialPayload,
 } from "./oauth.js";
-import type { CredentialPayload, OAuth2AuthCodePayload } from "./types.js";
+import {
+  credentialLevelValues,
+  defaultLevelForType,
+  isCredentialLevel,
+  type CredentialLevel,
+  type CredentialPayload,
+  type CredentialType,
+  type OAuth2AuthCodePayload,
+} from "./types.js";
 import type {
   CredentialProvisionInput,
   CredentialRow,
@@ -24,6 +33,8 @@ export interface CredentialInput {
   provider: string;
   label?: string;
   payload: CredentialPayload;
+  /** Validated against the closed `CredentialLevel` vocabulary at create. */
+  level?: string;
 }
 
 /** `RegistryStorage.provisionCredential` — injected so this stays storage-agnostic. */
@@ -34,6 +45,28 @@ export type ProvisionCredentialFn = (
 
 export class CredentialResolutionError extends Error {
   readonly status = 400;
+}
+
+function assertLevelCompatible(level: CredentialLevel, type: CredentialType): void {
+  const compatible =
+    (level === "workspace-token" && (type === "bearer_token" || type === "api_key")) ||
+    (level === "workspace-oauth" && (type === "oauth2_client" || type === "oauth2_authcode")) ||
+    (level === "user-oauth" && type === "oauth2_authcode");
+  if (!compatible) {
+    throw new CredentialResolutionError(
+      `Credential level ${level} is incompatible with payload type ${type}`,
+    );
+  }
+}
+
+function resolveCreateLevel(type: CredentialType, requested: string | undefined): CredentialLevel {
+  if (requested === undefined) return defaultLevelForType(type);
+  if (!isCredentialLevel(requested)) {
+    throw new CredentialResolutionError(
+      `Invalid credential level ${JSON.stringify(requested)}; allowed values: ${credentialLevelValues().join(", ")}`,
+    );
+  }
+  return requested;
 }
 
 export class CredentialService {
@@ -60,6 +93,14 @@ export class CredentialService {
     createdBy: string,
     input: CredentialInput,
   ): Promise<CredentialRow> {
+    const level = resolveCreateLevel(input.payload.type, input.level);
+    assertLevelCompatible(level, input.payload.type);
+    if (level === "user-oauth" && !createdBy) {
+      throw new CredentialResolutionError(
+        "user-oauth credentials require an owner (createdBy)",
+      );
+    }
+
     let payload = input.payload;
     try {
       if (payload.type === "oauth2_authcode" || payload.type === "oauth2_client") {
@@ -96,14 +137,25 @@ export class CredentialService {
       }
       throw err;
     }
-    const { credential } = await this.provisionCredential(tenantId, {
-      provider: input.provider,
-      ...(input.label !== undefined ? { label: input.label } : {}),
-      type: payload.type,
-      payload: await getCredentialCipher().encrypt(JSON.stringify(payload)),
-      createdBy,
-    });
-    return credential;
+
+    try {
+      const { credential } = await this.provisionCredential(tenantId, {
+        provider: input.provider,
+        ...(input.label !== undefined ? { label: input.label } : {}),
+        type: payload.type,
+        payload: await getCredentialCipher().encrypt(JSON.stringify(payload)),
+        createdBy,
+        level,
+      });
+      return credential;
+    } catch (err) {
+      if (err instanceof UniqueConstraintError) {
+        throw new CredentialResolutionError(
+          `${input.provider} is already connected`,
+        );
+      }
+      throw err;
+    }
   }
 
   list(tenantId: string): Promise<CredentialRow[]> {

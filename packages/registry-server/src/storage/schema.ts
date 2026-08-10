@@ -24,10 +24,12 @@ CREATE TABLE IF NOT EXISTS credentials (
   type        TEXT NOT NULL,
   payload     TEXT NOT NULL,
   created_by  TEXT,
+  level       TEXT,
   created_at  TEXT NOT NULL,
   updated_at  TEXT NOT NULL
 );
 CREATE INDEX IF NOT EXISTS credentials_tenant_provider ON credentials(tenant_id, provider);
+CREATE UNIQUE INDEX IF NOT EXISTS credentials_user_oauth_owner ON credentials(tenant_id, provider, created_by) WHERE level = 'user-oauth';
 
 CREATE TABLE IF NOT EXISTS profiles (
   id            TEXT PRIMARY KEY,

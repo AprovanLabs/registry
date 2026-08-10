@@ -19,8 +19,11 @@ export interface TenantRow {
 }
 
 /** Credential types are shared WS-2 vocabulary (@utdk/common/auth). */
+import type { CredentialLevel } from "../credentials/types.js";
 export type { CredentialType } from "@utdk/common/auth";
 import type { CredentialType } from "@utdk/common/auth";
+
+export type { CredentialLevel };
 
 export interface CredentialRow {
   id: string;
@@ -29,6 +32,8 @@ export interface CredentialRow {
   /** Display only; NOT a resolution mechanism. */
   label?: string;
   type: CredentialType;
+  /** IW-9 level; absent on legacy rows — use `effectiveLevel` on read. */
+  level?: CredentialLevel;
   /** NEW user/owner dimension (decision 7); undefined = tenant-shared. */
   createdBy?: string;
   createdAt: string;
@@ -131,6 +136,7 @@ export interface CredentialStore {
       type: CredentialType;
       payload: string;
       createdBy?: string;
+      level?: CredentialLevel;
     },
   ): Promise<CredentialRow>;
   list(tenantId: string): Promise<CredentialRow[]>;
@@ -218,6 +224,7 @@ export interface CredentialProvisionInput {
   type: CredentialType;
   payload: string;
   createdBy: string;
+  level?: CredentialLevel;
 }
 
 export interface ProvisionedCredential {
