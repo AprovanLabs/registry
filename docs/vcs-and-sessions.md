@@ -1,19 +1,5 @@
 # VCS and Chat Sessions — the domain
 
-> **⚠ PARTIALLY STALE (2026-08-09, verified against code).** The model
-> (snapshots/commits/refs/sessions/mounts) is implemented and this document
-> remains the best conceptual description — but the **"Surface" section is
-> wrong**: every documented `vfs.*` VCS verb moved to a `vcs` interface
-> namespace (`aprovan/server/workspace/src/native-dispatch.ts`,
-> `packages/native/src/vcs.ts`), storage is the record store rather than
-> `.services/vcs/*.json` files, `vfs.mount/unmount/mounts` were dropped with
-> no replacement, the promised `auto`-session `diff(base, main)` and the
-> `GET /fs?commit=` form were never built, and session merge commits are
-> single-parent. Forward direction (app-scoped commits, diff UI, verb
-> wiring): `aprovan/openspec/changes/IW-9-APP-FIRST.md` (streams F1/A).
-> Reconciliation is tasked in change `iw9-f6-cleanup-rename`. Verify against
-> code before implementing anything from this document.
-
 _2026-07-25. Companion to [apps-and-workflows.md](./apps-and-workflows.md);
 extends the workspace FS model in [platform.md](./platform.md). Shipped
 2026-07-25 (gateway `src/vcs/*`, chat client SessionBar); the "v1 deltas"
@@ -112,34 +98,43 @@ base short-hash, changed-file count. The chip is the visual indicator of
 
 ## Surface — everything rides existing namespaces
 
-**`vfs` grows the VCS verbs** (capability = namespace; versioning is a
-capability of the filesystem):
+**The VCS verbs live on a `vcs` interface namespace** (capability =
+namespace), separate from `vfs`'s read/write/list surface, bound to the
+workspace commit store by default:
 
 ```
-vfs.commit   { message? }                           → commit on main (no-op when unchanged)
-vfs.log      { ref?, limit? }                       → commits, newest first
-vfs.show     { commit }                             → commit + entries + change status vs parent
-vfs.diff     { from, to }                           → { added[], modified[], removed[] } with hashes
-vfs.branches {}                                     → refs with heads
-vfs.restore  { commit, path? | prefix? }            → non-destructive: old content re-written as latest
+vcs.commit   { message? }                           → commit on main (no-op when unchanged)
+vcs.log      { limit? }                             → commits, newest first
+vcs.show     { commit }                             → commit + entries + change status vs parent
+vcs.diff     { from, to }                           → { added[], modified[], removed[] } with hashes
+vcs.branches {}                                     → refs with heads
+vcs.restore  { commit, path? | prefix? }            → non-destructive: old content re-written as latest
 vfs.read     { path, hash? | commit?, session? }
 vfs.list     { prefix?, commit?, session? }
 vfs.write    { path, content, session? }
 vfs.delete   { path, recursive?, session? }
-vfs.mounts {} | vfs.mount { prefix, type, config, mode } | vfs.unmount { prefix }
 ```
+
+Commits, refs, and snapshots live in the record store (not
+`.services/vcs/*.json` files). There are no `mount`/`unmount`/`mounts`
+verbs on this surface today — the mount concept (see "Mounts" below) has
+implementation groundwork in place but is quarantined pending
+`iw9-b-app-model`, with no dispatchable operation wired yet.
 
 **v1 deltas.** A session's "branch" is the session record itself (base +
 overlay) — there are no `session/<id>` refs and no commits *on* a session;
 its state is always inspectable as base + change summary, and its history
-begins existing on main when it merges. `vfs.commit` therefore takes only a
+begins existing on main when it merges. `vcs.commit` therefore takes only a
 message and always advances `main`. Commit-ish arguments accept a full id,
-an unambiguous ≥8-char prefix, or a ref name.
+an unambiguous ≥8-char prefix, or a ref name. Session-close merge commits
+are currently single-parent (recorded against the session's base), not the
+two-parent `[mainHead, sessionHead]` merge node described above.
 
-`GET/PUT/DELETE /fs` accept the same `?session=` and `?commit=` params —
-the chat client's write-through path needs no new routes. Content diffs are
-client-side: `vfs.diff` returns hashes, `vfs.read {path, hash}` (already
-shipped) fetches either side.
+Still unbuilt (accurate as of this writing, not stale): the promised
+`auto`-session `diff(base, main)` convenience and the `GET /fs?commit=`
+query-param form. `vcs.diff` and `vfs.read {path, hash}` (already shipped)
+cover the same ground today; wiring the shortcuts is tracked forward in
+`aprovan/openspec/changes/IW-9-APP-FIRST.md` (streams F1/A).
 
 **`sessions` is a new core service namespace:**
 

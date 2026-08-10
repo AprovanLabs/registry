@@ -106,11 +106,11 @@ prototype's calls behave identically when moved into a script.
 
 ## Workflows
 
-> **The normative model for Apps, Workflows, and Runs now lives in
-> [apps-and-workflows.md](./apps-and-workflows.md)** — the naming decision, the
-> app SDK contract, `dataScope`, releases/channels, and the three (and only
-> three) ways an app reaches data. **The VCS layer over the workspace FS
-> (commits/refs, chat sessions as branches, mounts) lives in
+> **The normative model for Apps, Workflows, and Runs has moved out of this
+> repo** — see [apps-and-workflows.md](./apps-and-workflows.md) for pointers
+> to the current app-data, native-surfaces, and app-first-platform docs in
+> `aprovan`. **The VCS layer over the workspace FS (commits/refs, chat
+> sessions as branches, mounts) lives in
 > [vcs-and-sessions.md](./vcs-and-sessions.md).** This section and "Apps: published folders"
 > below remain as the orientation summary; where they disagree, that document
 > wins.
