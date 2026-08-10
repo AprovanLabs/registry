@@ -47,3 +47,13 @@ repeated here.
 - The root `docker-compose.yml` (DynamoDB-local + MinIO) exists for the sibling
   `aprovan` workspace app, not for developing this repo. Docker is not installed
   by default and is not required here.
+
+### Refactor rule
+- Delete replaced code in the same change that replaces it — don't leave the
+  old implementation around "just in case."
+- A "delete X" task isn't done until `grep X` returns nothing in **both**
+  this repo and the sibling `aprovan` repo, not just whichever one you're
+  editing.
+- A workspace-glob directory with zero git-tracked files
+  (`git ls-files <dir> | wc -l` = 0) is build residue, not a package — delete
+  it outright instead of deprecating it.
