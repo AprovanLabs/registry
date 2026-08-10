@@ -5,6 +5,11 @@
  */
 
 import { randomBytes } from "node:crypto";
+import {
+  effectiveLevel,
+  isCredentialLevel,
+  type CredentialLevel,
+} from "../credentials/types.js";
 import { SCHEMA_DDL } from "./schema.js";
 import { UniqueConstraintError, type SqlClient } from "./sql-client.js";
 import type {
@@ -103,20 +108,28 @@ class SqlTenantStore implements TenantStore {
 
 // ---------------------------------------------------------------------------
 
+function storedLevel(value: unknown): CredentialLevel | undefined {
+  const raw = optStr(value);
+  return raw !== undefined && isCredentialLevel(raw) ? raw : undefined;
+}
+
 function toCredentialRow(row: Row): CredentialRow {
+  const type = str(row["type"]) as CredentialType;
   return {
     id: str(row["id"]),
     tenantId: str(row["tenant_id"]),
     provider: str(row["provider"]),
     ...(optStr(row["label"]) !== undefined ? { label: optStr(row["label"]) } : {}),
-    type: str(row["type"]) as CredentialType,
+    type,
+    level: effectiveLevel(type, storedLevel(row["level"])),
     ...(optStr(row["created_by"]) !== undefined ? { createdBy: optStr(row["created_by"]) } : {}),
     createdAt: str(row["created_at"]),
     updatedAt: str(row["updated_at"]),
   };
 }
 
-const CRED_COLS = "id, tenant_id, provider, label, type, created_by, created_at, updated_at";
+const CRED_COLS =
+  "id, tenant_id, provider, label, type, level, created_by, created_at, updated_at";
 
 class SqlCredentialStore implements CredentialStore {
   constructor(private readonly db: SqlClient) {}
@@ -129,14 +142,27 @@ class SqlCredentialStore implements CredentialStore {
       type: CredentialType;
       payload: string;
       createdBy?: string;
+      level?: CredentialLevel;
     },
   ): Promise<CredentialRow> {
     const id = newId();
     const ts = now();
+    const level = input.level ?? effectiveLevel(input.type);
     await this.db.run(
-      `INSERT INTO credentials (id, tenant_id, provider, label, type, payload, created_by, created_at, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [id, tenantId, input.provider, input.label ?? null, input.type, input.payload, input.createdBy ?? null, ts, ts],
+      `INSERT INTO credentials (id, tenant_id, provider, label, type, payload, created_by, level, created_at, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        id,
+        tenantId,
+        input.provider,
+        input.label ?? null,
+        input.type,
+        input.payload,
+        input.createdBy ?? null,
+        level,
+        ts,
+        ts,
+      ],
     );
     return {
       id,
@@ -144,6 +170,7 @@ class SqlCredentialStore implements CredentialStore {
       provider: input.provider,
       ...(input.label !== undefined ? { label: input.label } : {}),
       type: input.type,
+      level,
       ...(input.createdBy !== undefined ? { createdBy: input.createdBy } : {}),
       createdAt: ts,
       updatedAt: ts,
@@ -594,6 +621,7 @@ async function provisionCredential(
       type: input.type,
       payload: input.payload,
       createdBy: input.createdBy,
+      ...(input.level !== undefined ? { level: input.level } : {}),
     });
 
     const subject: GrantSubject = { kind: "user", id: input.createdBy };
