@@ -1,5 +1,18 @@
 # Apps and Workflows — the domain
 
+> **⚠ STALE (2026-08-09, verified against code).** This document describes the
+> **pre-`app-model-split`** model and is no longer normative. Known-wrong as
+> of the audit: the Personal pseudo-app is deleted (real code has no
+> `apps/personal.ts`); `dataScope` no longer exists on `AppManifest`; identity
+> is ULID-keyed (`appId`/`installId`), not name-keyed;
+> `NATIVE_APP_NAMESPACES` is six namespaces, not three; the gateway surface
+> shown under "as implemented" has drifted. Current truth:
+> `aprovan/docs/app-data.md`, `aprovan/docs/native-surfaces.md`, and the code
+> under `aprovan/server/workspace/src/apps/`. Forward direction:
+> `aprovan/openspec/changes/IW-9-APP-FIRST.md`. Full rewrite or archival is
+> tasked in change `iw9-f6-cleanup-rename`. Do not implement against this
+> document.
+
 _2026-07-24. Supersedes the "Apps: published folders" and "Workflows" sections
 of [platform.md](./platform.md) as the normative model; platform.md keeps the
 repo/deployment map._

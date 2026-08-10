@@ -1,5 +1,19 @@
 # VCS and Chat Sessions — the domain
 
+> **⚠ PARTIALLY STALE (2026-08-09, verified against code).** The model
+> (snapshots/commits/refs/sessions/mounts) is implemented and this document
+> remains the best conceptual description — but the **"Surface" section is
+> wrong**: every documented `vfs.*` VCS verb moved to a `vcs` interface
+> namespace (`aprovan/server/workspace/src/native-dispatch.ts`,
+> `packages/native/src/vcs.ts`), storage is the record store rather than
+> `.services/vcs/*.json` files, `vfs.mount/unmount/mounts` were dropped with
+> no replacement, the promised `auto`-session `diff(base, main)` and the
+> `GET /fs?commit=` form were never built, and session merge commits are
+> single-parent. Forward direction (app-scoped commits, diff UI, verb
+> wiring): `aprovan/openspec/changes/IW-9-APP-FIRST.md` (streams F1/A).
+> Reconciliation is tasked in change `iw9-f6-cleanup-rename`. Verify against
+> code before implementing anything from this document.
+
 _2026-07-25. Companion to [apps-and-workflows.md](./apps-and-workflows.md);
 extends the workspace FS model in [platform.md](./platform.md). Shipped
 2026-07-25 (gateway `src/vcs/*`, chat client SessionBar); the "v1 deltas"
