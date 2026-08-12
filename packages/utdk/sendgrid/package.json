@@ -1,6 +1,6 @@
 {
   "name": "@utdk/sendgrid",
-  "version": "1.0.0-20260727.1",
+  "version": "1.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Email Activity (beta). The Beta endpoints for the new Email Activity APIs - functionality is subject to change without notice. You may not have access to this Beta endpoint.\n\nEmail Activity offers filtering and search by event type for two days worth of data. There is an optional add-on to store 60 days worth of data. This add-on also gives you access to the ability to download a CSV of the 60 days worth of email event data. The Beta endpoints for the new Email Activity APIs - functionality is subject to change without notice. You may not have access to this Beta endpoint.\n\nEmail Activity offers filtering and search by event type for two days worth of data. There is an optional add-on to store 60 days worth of data. This add-on also gives you access to the ability to download a CSV of the 60 days worth of email event data.",
   "homepage": "https://docs.sendgrid.com",
@@ -13,7 +13,7 @@
   "utdk": {
     "provider": "sendgrid",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:32.495Z",
+    "generatedAt": "2026-08-12T13:38:49.360Z",
     "auth": {
       "schemes": [
         {

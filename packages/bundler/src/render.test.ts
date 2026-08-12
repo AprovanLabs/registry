@@ -49,6 +49,7 @@ function createClientToolDefinition(accessPath: string[]): ClientToolDefinition 
       accessPath,
       bodyKind: "none",
       bodyPropertyKeys: [],
+      effect: "observation",
       method: "GET",
       routeTemplate: "/",
       headerParameterKeys: [],

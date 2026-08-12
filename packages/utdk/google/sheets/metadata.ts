@@ -18,6 +18,7 @@ export const toolMetadata = {
       "spreadsheetUrl"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets",
@@ -47,6 +48,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}",
@@ -85,6 +87,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/developerMetadata/{metadataId}",
@@ -123,6 +126,7 @@ export const toolMetadata = {
       "dataFilters"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/developerMetadata:search",
@@ -159,6 +163,7 @@ export const toolMetadata = {
       "destinationSpreadsheetId"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/sheets/{sheetId}:copyTo",
@@ -195,6 +200,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/values/{range}",
@@ -241,6 +247,7 @@ export const toolMetadata = {
       "values"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/values/{range}",
@@ -291,6 +298,7 @@ export const toolMetadata = {
       "values"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/values/{range}:append",
@@ -339,6 +347,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/values/{range}:clear",
@@ -377,6 +386,7 @@ export const toolMetadata = {
       "ranges"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/values:batchClear",
@@ -413,6 +423,7 @@ export const toolMetadata = {
       "dataFilters"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/values:batchClearByDataFilter",
@@ -447,6 +458,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/values:batchGet",
@@ -494,6 +506,7 @@ export const toolMetadata = {
       "valueRenderOption"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/values:batchGetByDataFilter",
@@ -534,6 +547,7 @@ export const toolMetadata = {
       "valueInputOption"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/values:batchUpdate",
@@ -574,6 +588,7 @@ export const toolMetadata = {
       "valueInputOption"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}/values:batchUpdateByDataFilter",
@@ -613,6 +628,7 @@ export const toolMetadata = {
       "responseRanges"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}:batchUpdate",
@@ -650,6 +666,7 @@ export const toolMetadata = {
       "includeGridData"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v4/spreadsheets/{spreadsheetId}:getByDataFilter",

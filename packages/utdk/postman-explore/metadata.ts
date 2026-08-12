@@ -9,6 +9,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/_api/ws/proxy/v1/api/networkentity",
@@ -21,7 +22,15 @@ export const toolMetadata = {
       "offset",
       "sort",
       "categoryId"
-    ]
+    ],
+    "description": "Browse public entities on the API network",
+    "parameterDescriptions": {
+      "entityType": "Type of entity to browse",
+      "limit": "Number of results per page",
+      "offset": "Pagination offset",
+      "sort": "Sort order for results",
+      "categoryId": "Filter by category ID (numeric, from categories endpoint)"
+    }
   },
   "getNetworkEntityCounts": {
     "accessPath": [
@@ -31,6 +40,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/_api/ws/proxy/v1/api/networkentity/count",
@@ -39,7 +49,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "flattenAPIVersions"
-    ]
+    ],
+    "description": "Get total counts of entities on the network"
   },
   "searchAll": {
     "accessPath": [
@@ -59,13 +70,15 @@ export const toolMetadata = {
       "filter"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/_api/ws/proxy/search-all",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Full-text search across the public API network"
   },
   "listCategories": {
     "accessPath": [
@@ -75,6 +88,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/_api/ws/proxy/v2/api/category",
@@ -83,7 +97,11 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "sort"
-    ]
+    ],
+    "description": "List all API categories",
+    "parameterDescriptions": {
+      "sort": "Sort order"
+    }
   },
   "getCategory": {
     "accessPath": [
@@ -93,6 +111,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/_api/ws/proxy/v2/api/category/{slug}",
@@ -101,7 +120,11 @@ export const toolMetadata = {
       "slug"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get details for a specific category",
+    "parameterDescriptions": {
+      "slug": "Category URL slug (e.g., artificial-intelligence, devops)"
+    }
   },
   "listTeams": {
     "accessPath": [
@@ -111,6 +134,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/_api/ws/proxy/v1/api/team",
@@ -120,6 +144,7 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "limit",
       "sort"
-    ]
+    ],
+    "description": "List publisher teams on the API network"
   }
 } satisfies ToolRuntimeMetadataMap;

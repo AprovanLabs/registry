@@ -9,6 +9,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/connected_apps/clients/{client_id}",
@@ -42,6 +43,7 @@ export const toolMetadata = {
       "bypass_consent_for_offline_access"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/connected_apps/clients/{client_id}",
@@ -64,6 +66,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/connected_apps/clients/{client_id}",
@@ -89,6 +92,7 @@ export const toolMetadata = {
       "limit"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/connected_apps/clients/search",
@@ -118,6 +122,7 @@ export const toolMetadata = {
       "bypass_consent_for_offline_access"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/connected_apps/clients",
@@ -135,6 +140,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/connected_apps/clients/{client_id}/secrets/rotate/start",
@@ -157,6 +163,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/connected_apps/clients/{client_id}/secrets/rotate/cancel",
@@ -179,6 +186,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/connected_apps/clients/{client_id}/secrets/rotate",
@@ -205,6 +213,7 @@ export const toolMetadata = {
       "scim_group_implicit_role_assignments"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -234,6 +243,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -263,6 +273,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -295,6 +306,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -324,6 +336,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -353,6 +366,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -385,6 +399,7 @@ export const toolMetadata = {
       "identity_provider"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -412,6 +427,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -462,6 +478,7 @@ export const toolMetadata = {
       "allowed_third_party_connected_apps"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/organizations",
@@ -479,6 +496,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/organizations/{organization_id}",
@@ -526,6 +544,7 @@ export const toolMetadata = {
       "allowed_third_party_connected_apps"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -553,6 +572,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -584,6 +604,7 @@ export const toolMetadata = {
       "query"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/organizations/search",
@@ -601,6 +622,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/organizations/{organization_id}/metrics",
@@ -620,6 +642,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -647,6 +670,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -676,6 +700,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -715,6 +740,7 @@ export const toolMetadata = {
       "unlink_email"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -744,6 +770,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -773,6 +800,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -802,6 +830,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -831,6 +860,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -865,6 +895,7 @@ export const toolMetadata = {
       "query"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -889,6 +920,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -918,6 +950,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/organizations/members/dangerously_get/{member_id}",
@@ -942,6 +975,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/organizations/{organization_id}/members/{member_id}/oidc_providers",
@@ -971,6 +1005,7 @@ export const toolMetadata = {
       "email_address"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -1006,6 +1041,7 @@ export const toolMetadata = {
       "delivery_method"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -1035,6 +1071,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -1064,6 +1101,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -1102,6 +1140,7 @@ export const toolMetadata = {
       "external_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -1129,6 +1168,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/organizations/{organization_id}/member",
@@ -1154,6 +1194,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/organizations/{organization_id}/members/{member_id}/oauth_providers/google",
@@ -1180,6 +1221,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/organizations/{organization_id}/members/{member_id}/oauth_providers/microsoft",
@@ -1206,6 +1248,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/organizations/{organization_id}/members/{member_id}/oauth_providers/slack",
@@ -1230,6 +1273,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/organizations/{organization_id}/members/{member_id}/oauth_providers/hubspot",
@@ -1256,6 +1300,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/organizations/{organization_id}/members/{member_id}/oauth_providers/github",
@@ -1282,6 +1327,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -1323,6 +1369,7 @@ export const toolMetadata = {
       "prompt"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/idp/oauth/authorize/start",
@@ -1355,6 +1402,7 @@ export const toolMetadata = {
       "resources"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/idp/oauth/authorize",
@@ -1382,6 +1430,7 @@ export const toolMetadata = {
       "roles"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/users",
@@ -1399,6 +1448,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/users/{user_id}",
@@ -1428,6 +1478,7 @@ export const toolMetadata = {
       "roles"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/users/{user_id}",
@@ -1450,6 +1501,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/users/{user_id}",
@@ -1476,6 +1528,7 @@ export const toolMetadata = {
       "query"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/users/search",
@@ -1496,6 +1549,7 @@ export const toolMetadata = {
       "phone_number"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/users/{user_id}/exchange_primary_factor",
@@ -1518,6 +1572,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/users/emails/{email_id}",
@@ -1540,6 +1595,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/users/phone_numbers/{phone_id}",
@@ -1562,6 +1618,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/users/webauthn_registrations/{webauthn_registration_id}",
@@ -1584,6 +1641,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/users/biometric_registrations/{biometric_registration_id}",
@@ -1606,6 +1664,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/users/totps/{totp_id}",
@@ -1628,6 +1687,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/users/crypto_wallets/{crypto_wallet_id}",
@@ -1650,6 +1710,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/users/passwords/{password_id}",
@@ -1672,6 +1733,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/users/oauth/{oauth_user_registration_id}",
@@ -1694,6 +1756,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/users/{user_id}/external_id",
@@ -1713,6 +1776,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/users/{user_id}/connected_apps",
@@ -1735,6 +1799,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/users/{user_id}/connected_apps/{connected_app_id}/revoke",
@@ -1759,6 +1824,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/sessions",
@@ -1784,6 +1850,7 @@ export const toolMetadata = {
       "authorization_check"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/sessions/authenticate",
@@ -1805,6 +1872,7 @@ export const toolMetadata = {
       "session_jwt"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/sessions/revoke",
@@ -1827,6 +1895,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/sessions/migrate",
@@ -1849,6 +1918,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/sessions/exchange_access_token",
@@ -1866,6 +1936,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/sessions/jwks/{project_id}",
@@ -1896,6 +1967,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/sessions/attest",
@@ -1913,6 +1985,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/sessions",
@@ -1939,6 +2012,7 @@ export const toolMetadata = {
       "authorization_check"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/sessions/authenticate",
@@ -1961,6 +2035,7 @@ export const toolMetadata = {
       "member_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -1993,6 +2068,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/sessions/exchange",
@@ -2015,6 +2091,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/sessions/exchange_access_token",
@@ -2041,6 +2118,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/sessions/attest",
@@ -2063,6 +2141,7 @@ export const toolMetadata = {
       "session_custom_claims"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/sessions/migrate",
@@ -2080,6 +2159,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/sessions/jwks/{project_id}",
@@ -2104,6 +2184,7 @@ export const toolMetadata = {
       "impersonation_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/impersonation/authenticate",
@@ -2121,6 +2202,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/rbac/policy",
@@ -2138,6 +2220,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/rbac/organizations/{organization_id}",
@@ -2162,6 +2245,7 @@ export const toolMetadata = {
       "org_policy"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/b2b/rbac/organizations/{organization_id}",
@@ -2194,6 +2278,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/recovery_codes/recover",
@@ -2211,6 +2296,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/b2b/recovery_codes/{organization_id}/{member_id}",
@@ -2238,6 +2324,7 @@ export const toolMetadata = {
       "member_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/recovery_codes/rotate",
@@ -2262,6 +2349,7 @@ export const toolMetadata = {
       "session_jwt"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/totp",
@@ -2291,6 +2379,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/totp/authenticate",
@@ -2313,6 +2402,7 @@ export const toolMetadata = {
       "recovery_codes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/totp/migrate",
@@ -2330,6 +2420,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/rbac/policy",
@@ -2354,6 +2445,7 @@ export const toolMetadata = {
       "siwe_params"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/crypto_wallets/authenticate/start",
@@ -2380,6 +2472,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/crypto_wallets/authenticate",
@@ -2397,6 +2490,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/debug/whoami",
@@ -2421,6 +2515,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/discovery/intermediate_sessions/exchange",
@@ -2464,6 +2559,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/discovery/organizations/create",
@@ -2485,6 +2581,7 @@ export const toolMetadata = {
       "session_jwt"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/discovery/organizations",
@@ -2505,6 +2602,7 @@ export const toolMetadata = {
       "external_metadata"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/fingerprint/lookup",
@@ -2535,6 +2633,7 @@ export const toolMetadata = {
       "asn"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/rules/set",
@@ -2555,6 +2654,7 @@ export const toolMetadata = {
       "limit"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/rules/list",
@@ -2576,6 +2676,7 @@ export const toolMetadata = {
       "override_description"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/verdict_reasons/override",
@@ -2595,6 +2696,7 @@ export const toolMetadata = {
       "overrides_only"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/verdict_reasons/list",
@@ -2614,6 +2716,7 @@ export const toolMetadata = {
       "email_address"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/email/risk",
@@ -2640,6 +2743,7 @@ export const toolMetadata = {
       "prompt"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/idp/oauth/authorize/start",
@@ -2671,6 +2775,7 @@ export const toolMetadata = {
       "resources"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/idp/oauth/authorize",
@@ -2690,6 +2795,7 @@ export const toolMetadata = {
       "impersonation_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/impersonation/authenticate",
@@ -2707,6 +2813,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/m2m/clients/{client_id}",
@@ -2735,6 +2842,7 @@ export const toolMetadata = {
       "trusted_metadata"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/m2m/clients/{client_id}",
@@ -2757,6 +2865,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/m2m/clients/{client_id}",
@@ -2783,6 +2892,7 @@ export const toolMetadata = {
       "query"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/m2m/clients/search",
@@ -2807,6 +2917,7 @@ export const toolMetadata = {
       "trusted_metadata"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/m2m/clients",
@@ -2824,6 +2935,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/m2m/clients/{client_id}/secrets/rotate/start",
@@ -2846,6 +2958,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/m2m/clients/{client_id}/secrets/rotate/cancel",
@@ -2868,6 +2981,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/m2m/clients/{client_id}/secrets/rotate",
@@ -2900,6 +3014,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/magic_links/authenticate",
@@ -2921,6 +3036,7 @@ export const toolMetadata = {
       "attributes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/magic_links",
@@ -2952,6 +3068,7 @@ export const toolMetadata = {
       "signup_template_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/magic_links/email/send",
@@ -2981,6 +3098,7 @@ export const toolMetadata = {
       "locale"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/magic_links/email/login_or_create",
@@ -3008,6 +3126,7 @@ export const toolMetadata = {
       "untrusted_metadata"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/magic_links/email/invite",
@@ -3027,6 +3146,7 @@ export const toolMetadata = {
       "email"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/magic_links/email/revoke_invite",
@@ -3054,6 +3174,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/magic_links/authenticate",
@@ -3082,6 +3203,7 @@ export const toolMetadata = {
       "signup_expiration_minutes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/magic_links/email/login_or_signup",
@@ -3111,6 +3233,7 @@ export const toolMetadata = {
       "invite_expiration_minutes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -3142,6 +3265,7 @@ export const toolMetadata = {
       "discovery_expiration_minutes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/magic_links/email/discovery/send",
@@ -3162,6 +3286,7 @@ export const toolMetadata = {
       "pkce_code_verifier"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/magic_links/discovery/authenticate",
@@ -3189,6 +3314,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/oauth/authenticate",
@@ -3213,6 +3339,7 @@ export const toolMetadata = {
       "pkce_code_verifier"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/oauth/discovery/authenticate",
@@ -3238,6 +3365,7 @@ export const toolMetadata = {
       "session_jwt"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/otps/sms/send",
@@ -3267,6 +3395,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/otps/sms/authenticate",
@@ -3292,6 +3421,7 @@ export const toolMetadata = {
       "signup_expiration_minutes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/otps/email/login_or_signup",
@@ -3320,6 +3450,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/otps/email/authenticate",
@@ -3342,6 +3473,7 @@ export const toolMetadata = {
       "discovery_expiration_minutes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/otps/email/discovery/send",
@@ -3362,6 +3494,7 @@ export const toolMetadata = {
       "code"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/otps/email/discovery/authenticate",
@@ -3388,6 +3521,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/passwords",
@@ -3413,6 +3547,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/passwords/authenticate",
@@ -3433,6 +3568,7 @@ export const toolMetadata = {
       "email"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/passwords/strength_check",
@@ -3468,6 +3604,7 @@ export const toolMetadata = {
       "roles"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/passwords/migrate",
@@ -3494,6 +3631,7 @@ export const toolMetadata = {
       "reset_password_template_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/passwords/email/reset/start",
@@ -3522,6 +3660,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/passwords/email/reset",
@@ -3548,6 +3687,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/passwords/existing_password/reset",
@@ -3572,6 +3712,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/passwords/session/reset",
@@ -3592,6 +3733,7 @@ export const toolMetadata = {
       "email_address"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/passwords/strength_check",
@@ -3628,6 +3770,7 @@ export const toolMetadata = {
       "external_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/passwords/migrate",
@@ -3656,6 +3799,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/passwords/authenticate",
@@ -3683,6 +3827,7 @@ export const toolMetadata = {
       "verify_email_template_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/passwords/email/reset/start",
@@ -3711,6 +3856,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/passwords/email/reset",
@@ -3732,6 +3878,7 @@ export const toolMetadata = {
       "member_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -3765,6 +3912,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/passwords/session/reset",
@@ -3793,6 +3941,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/passwords/existing_password/reset",
@@ -3813,6 +3962,7 @@ export const toolMetadata = {
       "password"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/passwords/discovery/authenticate",
@@ -3839,6 +3989,7 @@ export const toolMetadata = {
       "verify_email_template_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/passwords/discovery/email/reset/start",
@@ -3860,6 +4011,7 @@ export const toolMetadata = {
       "pkce_code_verifier"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/passwords/discovery/email/reset",
@@ -3882,6 +4034,7 @@ export const toolMetadata = {
       "session_jwt"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/oauth/attach",
@@ -3907,6 +4060,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/oauth/authenticate",
@@ -3934,6 +4088,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/otps/authenticate",
@@ -3959,6 +4114,7 @@ export const toolMetadata = {
       "session_jwt"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/otps/sms/send",
@@ -3982,6 +4138,7 @@ export const toolMetadata = {
       "locale"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/otps/sms/login_or_create",
@@ -4007,6 +4164,7 @@ export const toolMetadata = {
       "session_jwt"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/otps/whatsapp/send",
@@ -4030,6 +4188,7 @@ export const toolMetadata = {
       "locale"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/otps/whatsapp/login_or_create",
@@ -4057,6 +4216,7 @@ export const toolMetadata = {
       "signup_template_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/otps/email/send",
@@ -4082,6 +4242,7 @@ export const toolMetadata = {
       "signup_template_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/otps/email/login_or_create",
@@ -4099,6 +4260,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/projects/metrics",
@@ -4116,6 +4278,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4143,6 +4306,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4182,6 +4346,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/b2b/sso/authenticate",
@@ -4202,6 +4367,7 @@ export const toolMetadata = {
       "identity_provider"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4241,6 +4407,7 @@ export const toolMetadata = {
       "attribute_mapping"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4273,6 +4440,7 @@ export const toolMetadata = {
       "identity_provider"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4316,6 +4484,7 @@ export const toolMetadata = {
       "allow_gateway_callback"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4347,6 +4516,7 @@ export const toolMetadata = {
       "metadata_url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4376,6 +4546,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4407,6 +4578,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4444,6 +4616,7 @@ export const toolMetadata = {
       "group_implicit_role_assignments"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4475,6 +4648,7 @@ export const toolMetadata = {
       "external_group_implicit_role_assignments"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "X-Stytch-Member-Session",
       "X-Stytch-Member-SessionJWT"
@@ -4507,6 +4681,7 @@ export const toolMetadata = {
       "expiration_minutes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/totps",
@@ -4532,6 +4707,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/totps/authenticate",
@@ -4551,6 +4727,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/totps/recovery_codes",
@@ -4576,6 +4753,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/totps/recover",
@@ -4603,6 +4781,7 @@ export const toolMetadata = {
       "use_base64_url_encoding"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/webauthn/register/start",
@@ -4628,6 +4807,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/webauthn/register",
@@ -4650,6 +4830,7 @@ export const toolMetadata = {
       "use_base64_url_encoding"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/webauthn/authenticate/start",
@@ -4674,6 +4855,7 @@ export const toolMetadata = {
       "telemetry_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/webauthn/authenticate",
@@ -4693,6 +4875,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/webauthn/{webauthn_registration_id}",
@@ -4715,6 +4898,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/webauthn/credentials/{user_id}/{domain}",

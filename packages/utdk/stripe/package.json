@@ -1,6 +1,6 @@
 {
   "name": "@utdk/stripe",
-  "version": "0.0.1-20260727.1",
+  "version": "0.0.1-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Stripe API. The Stripe REST API. Please see https://stripe.com/docs/api for more details.",
   "homepage": "https://stripe.com",
@@ -13,7 +13,7 @@
   "utdk": {
     "provider": "stripe",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:53:50.166Z",
+    "generatedAt": "2026-08-12T13:38:55.177Z",
     "auth": {
       "schemes": [
         {

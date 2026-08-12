@@ -13,6 +13,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/crm/v3/objects/contacts",
@@ -52,6 +53,7 @@ export const toolMetadata = {
       "properties"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/crm/v3/objects/contacts",
@@ -77,6 +79,7 @@ export const toolMetadata = {
       "inputs"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/crm/v3/objects/contacts/batch/archive",
@@ -102,6 +105,7 @@ export const toolMetadata = {
       "inputs"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/crm/v3/objects/contacts/batch/create",
@@ -130,6 +134,7 @@ export const toolMetadata = {
       "propertiesWithHistory"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/crm/v3/objects/contacts/batch/read",
@@ -160,6 +165,7 @@ export const toolMetadata = {
       "inputs"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/crm/v3/objects/contacts/batch/update",
@@ -185,6 +191,7 @@ export const toolMetadata = {
       "inputs"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/crm/v3/objects/contacts/batch/upsert",
@@ -210,6 +217,7 @@ export const toolMetadata = {
       "objectId"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/crm/v3/objects/contacts/gdpr-delete",
@@ -235,6 +243,7 @@ export const toolMetadata = {
       "primaryObjectId"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/crm/v3/objects/contacts/merge",
@@ -264,6 +273,7 @@ export const toolMetadata = {
       "sorts"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/crm/v3/objects/contacts/search",
@@ -286,6 +296,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/crm/v3/objects/contacts/{contactId}",
@@ -323,6 +334,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/crm/v3/objects/contacts/{contactId}",
@@ -349,6 +361,7 @@ export const toolMetadata = {
       "properties"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/crm/v3/objects/contacts/{contactId}",

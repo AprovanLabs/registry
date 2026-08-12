@@ -1,6 +1,6 @@
 {
   "name": "@utdk/stytch",
-  "version": "2.0.0-20260727.1",
+  "version": "2.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Stytch API. The Stytch API provides endpoints for authentication and user management.",
   "homepage": "https://stytch.com",
@@ -13,7 +13,7 @@
   "utdk": {
     "provider": "stytch",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:18:14.315Z",
+    "generatedAt": "2026-08-12T13:38:56.676Z",
     "auth": {
       "schemes": [
         {

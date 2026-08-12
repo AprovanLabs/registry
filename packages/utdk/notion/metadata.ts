@@ -9,6 +9,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Notion-Version"
     ],
@@ -30,6 +31,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Notion-Version"
     ],
@@ -53,6 +55,7 @@ export const toolMetadata = {
       "paragraph"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Notion-Version"
     ],
@@ -74,6 +77,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Notion-Version"
     ],
@@ -99,6 +103,7 @@ export const toolMetadata = {
       "children"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Notion-Version"
     ],
@@ -120,6 +125,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Notion-Version"
     ],
@@ -142,6 +148,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Notion-Version"
     ],
@@ -166,6 +173,7 @@ export const toolMetadata = {
       "title"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Notion-Version"
     ],
@@ -189,6 +197,7 @@ export const toolMetadata = {
       "filter"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Notion-Version"
     ],
@@ -210,6 +219,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Notion-Version",
       ""
@@ -234,6 +244,7 @@ export const toolMetadata = {
       "properties"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Notion-Version"
     ],
@@ -255,6 +266,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/pages/{page_id}/properties/{property_id}",
@@ -275,6 +287,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Notion-Version"
     ],

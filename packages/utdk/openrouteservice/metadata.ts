@@ -18,6 +18,7 @@ export const toolMetadata = {
       "radiuses"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/directions/{profile}",
@@ -47,6 +48,7 @@ export const toolMetadata = {
       "resolve_locations"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/matrix/{profile}",
@@ -76,6 +78,7 @@ export const toolMetadata = {
       "smoothing"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v2/isochrones/{profile}",
@@ -102,6 +105,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/optimization",
@@ -119,6 +123,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/geocode/search",
@@ -149,6 +154,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/geocode/reverse",

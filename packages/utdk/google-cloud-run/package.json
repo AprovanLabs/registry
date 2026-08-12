@@ -1,6 +1,6 @@
 {
   "name": "@utdk/google-cloud-run",
-  "version": "2.0.0-20260727.1",
+  "version": "2.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Cloud Run Admin API. Deploy and manage user provided container images that scale automatically based on incoming requests. The Cloud Run Admin API v1 follows the Knative Serving API specification, while v2 is aligned with Google Cloud AIP-based API standards, as described in https://google.aip.dev/.",
   "homepage": "https://cloud.google.com",
@@ -14,7 +14,7 @@
   "utdk": {
     "provider": "google-cloud-run",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:27.268Z",
+    "generatedAt": "2026-08-12T13:38:35.735Z",
     "auth": {
       "schemes": [
         {

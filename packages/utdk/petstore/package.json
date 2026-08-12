@@ -1,6 +1,6 @@
 {
   "name": "@utdk/petstore",
-  "version": "1.0.27-20260727.1",
+  "version": "1.0.27-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Swagger Petstore - OpenAPI 3.0. This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about\nSwagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!\nYou can now help us improve the API whether it's by making changes to the definition itself or to the code.\nThat way, with time, we can improve the API in general, and expose some of the new features in OAS3.\n\nSome useful links:\n- [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)\n- [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)",
   "homepage": "https://petstore3.swagger.io",
@@ -14,7 +14,7 @@
   "utdk": {
     "provider": "petstore",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:30.791Z",
+    "generatedAt": "2026-08-12T13:38:42.690Z",
     "auth": {
       "schemes": [
         {

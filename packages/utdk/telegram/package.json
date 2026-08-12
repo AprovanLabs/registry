@@ -1,6 +1,6 @@
 {
   "name": "@utdk/telegram",
-  "version": "5.0.0-20260727.1",
+  "version": "5.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Telegram Bot API. Auto-generated OpenAPI schema",
   "homepage": "https://core.telegram.org",
@@ -13,7 +13,7 @@
   "utdk": {
     "provider": "telegram",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:18:15.952Z",
+    "generatedAt": "2026-08-12T13:38:57.470Z",
     "auth": {
       "schemes": [],
       "operationOverrides": {}

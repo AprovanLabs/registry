@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "0.0.1-20260719.11",
+  "version": "0.0.1-20260812.11",
   "type": "module",
   "description": "Generated UTDK provider clients for google.",
   "keywords": [
@@ -12,7 +12,7 @@
   "utdk": {
     "namespace": "google",
     "generation": 11,
-    "generatedAt": "2026-07-19T23:51:45.966Z",
+    "generatedAt": "2026-08-12T13:39:40.136Z",
     "providers": [
       "google/books",
       "google/calendar",

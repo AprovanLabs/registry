@@ -26,6 +26,7 @@ export const toolMetadata = {
       "title"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/documents",
@@ -55,6 +56,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/documents/{documentId}",
@@ -94,6 +96,7 @@ export const toolMetadata = {
       "writeControl"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/documents/{documentId}:batchUpdate",

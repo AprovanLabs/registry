@@ -9,6 +9,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -50,6 +51,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -75,6 +77,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -100,6 +103,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -128,6 +132,7 @@ export const toolMetadata = {
       "output_format"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -156,6 +161,7 @@ export const toolMetadata = {
       "model_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -185,6 +191,7 @@ export const toolMetadata = {
       "preview_b64"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -207,6 +214,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -236,6 +244,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -264,6 +273,7 @@ export const toolMetadata = {
       "file_format"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -286,6 +296,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -313,6 +324,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -354,6 +366,7 @@ export const toolMetadata = {
       "apply_language_text_normalization"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -400,6 +413,7 @@ export const toolMetadata = {
       "apply_language_text_normalization"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -446,6 +460,7 @@ export const toolMetadata = {
       "apply_language_text_normalization"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -492,6 +507,7 @@ export const toolMetadata = {
       "apply_language_text_normalization"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -532,6 +548,7 @@ export const toolMetadata = {
       "apply_text_normalization"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -565,6 +582,7 @@ export const toolMetadata = {
       "apply_text_normalization"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -598,6 +616,7 @@ export const toolMetadata = {
       "apply_text_normalization"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -631,6 +650,7 @@ export const toolMetadata = {
       "apply_text_normalization"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -663,6 +683,7 @@ export const toolMetadata = {
       "file_format"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -702,6 +723,7 @@ export const toolMetadata = {
       "file_format"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -743,6 +765,7 @@ export const toolMetadata = {
       "should_enhance"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -774,6 +797,7 @@ export const toolMetadata = {
       "played_not_selected_voice_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -811,6 +835,7 @@ export const toolMetadata = {
       "prompt_strength"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -847,6 +872,7 @@ export const toolMetadata = {
       "prompt_strength"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -875,6 +901,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -900,6 +927,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -922,6 +950,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -944,6 +973,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/voices/settings/default",
@@ -961,6 +991,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -992,6 +1023,7 @@ export const toolMetadata = {
       "speed"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1017,6 +1049,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1042,6 +1075,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1087,6 +1121,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1115,6 +1150,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1146,6 +1182,7 @@ export const toolMetadata = {
       "labels"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1175,6 +1212,7 @@ export const toolMetadata = {
       "moderate_metadata"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1203,6 +1241,7 @@ export const toolMetadata = {
       "bookmarked"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1243,6 +1282,7 @@ export const toolMetadata = {
       "apply_text_normalization"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "safety-identifier",
       "xi-api-key"
@@ -1273,6 +1313,7 @@ export const toolMetadata = {
       "sign_with_c2pa"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1301,6 +1342,7 @@ export const toolMetadata = {
       "invalidate_affected_text"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1326,6 +1368,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1378,6 +1421,7 @@ export const toolMetadata = {
       "create_publishing_read"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1408,6 +1452,7 @@ export const toolMetadata = {
       "volume_normalization"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1433,6 +1478,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1461,6 +1507,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1491,6 +1538,7 @@ export const toolMetadata = {
       "auto_convert"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1516,6 +1564,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1541,6 +1590,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1566,6 +1616,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1595,6 +1646,7 @@ export const toolMetadata = {
       "convert_to_mpeg"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1622,6 +1674,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1649,6 +1702,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1677,6 +1731,7 @@ export const toolMetadata = {
       "from_url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1702,6 +1757,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1732,6 +1788,7 @@ export const toolMetadata = {
       "content"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1759,6 +1816,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1786,6 +1844,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1813,6 +1872,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1840,6 +1900,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1871,6 +1932,7 @@ export const toolMetadata = {
       "convert_to_mpeg"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1900,6 +1962,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1925,6 +1988,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1952,6 +2016,7 @@ export const toolMetadata = {
       "language"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -1982,6 +2047,7 @@ export const toolMetadata = {
       "translations"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2013,6 +2079,7 @@ export const toolMetadata = {
       "text"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2045,6 +2112,7 @@ export const toolMetadata = {
       "speaker_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2070,6 +2138,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2099,6 +2168,7 @@ export const toolMetadata = {
       "segments"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2127,6 +2197,7 @@ export const toolMetadata = {
       "languages"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2155,6 +2226,7 @@ export const toolMetadata = {
       "languages"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2187,6 +2259,7 @@ export const toolMetadata = {
       "languages"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2220,6 +2293,7 @@ export const toolMetadata = {
       "voice_style"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2245,6 +2319,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2275,6 +2350,7 @@ export const toolMetadata = {
       "normalize_volume"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2302,6 +2378,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2359,6 +2436,7 @@ export const toolMetadata = {
       "hcaptcha_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2381,6 +2459,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2406,6 +2485,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2431,6 +2511,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2458,6 +2539,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2488,6 +2570,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2517,6 +2600,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2554,6 +2638,7 @@ export const toolMetadata = {
       "pronunciation_dictionary_locators"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2576,6 +2661,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2605,6 +2691,7 @@ export const toolMetadata = {
       "auto_publish"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2634,6 +2721,7 @@ export const toolMetadata = {
       "title"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2656,6 +2744,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2718,6 +2807,7 @@ export const toolMetadata = {
       "top_k"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2740,6 +2830,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2782,6 +2873,7 @@ export const toolMetadata = {
       "workspace_access"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2809,6 +2901,7 @@ export const toolMetadata = {
       "workspace_access"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2834,6 +2927,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2859,6 +2953,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2886,6 +2981,7 @@ export const toolMetadata = {
       "rules"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2913,6 +3009,7 @@ export const toolMetadata = {
       "rules"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2940,6 +3037,7 @@ export const toolMetadata = {
       "rule_strings"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2965,6 +3063,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -2992,6 +3091,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3023,6 +3123,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3048,6 +3149,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3077,6 +3179,7 @@ export const toolMetadata = {
       "allowed_ips"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3107,6 +3210,7 @@ export const toolMetadata = {
       "allowed_ips"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3132,6 +3236,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3157,6 +3262,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3194,6 +3300,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3216,6 +3323,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3238,6 +3346,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3262,6 +3371,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3286,6 +3396,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3308,6 +3419,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3330,6 +3442,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3357,6 +3470,7 @@ export const toolMetadata = {
       "email"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3384,6 +3498,7 @@ export const toolMetadata = {
       "email"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3414,6 +3529,7 @@ export const toolMetadata = {
       "group_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3440,6 +3556,7 @@ export const toolMetadata = {
       "group_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3464,6 +3581,7 @@ export const toolMetadata = {
       "email"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3491,6 +3609,7 @@ export const toolMetadata = {
       "workspace_seat_type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3513,6 +3632,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3547,6 +3667,7 @@ export const toolMetadata = {
       "workspace_api_key_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3577,6 +3698,7 @@ export const toolMetadata = {
       "workspace_api_key_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3602,6 +3724,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3629,6 +3752,7 @@ export const toolMetadata = {
       "settings"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3656,6 +3780,7 @@ export const toolMetadata = {
       "request_headers"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3681,6 +3806,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3731,6 +3857,7 @@ export const toolMetadata = {
       "keyterms"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3756,6 +3883,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3781,6 +3909,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3806,6 +3935,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3833,6 +3963,7 @@ export const toolMetadata = {
       "text"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3855,6 +3986,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3886,6 +4018,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3917,6 +4050,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3955,6 +4089,7 @@ export const toolMetadata = {
       "telephony_call_config"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -3983,6 +4118,7 @@ export const toolMetadata = {
       "conversation_initiation_client_data"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4011,6 +4147,7 @@ export const toolMetadata = {
       "telephony_call_config"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4040,6 +4177,7 @@ export const toolMetadata = {
       "conversation_initiation_client_data"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4070,6 +4208,7 @@ export const toolMetadata = {
       "conversation_initiation_client_data"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4098,6 +4237,7 @@ export const toolMetadata = {
       "tags"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4123,6 +4263,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4148,6 +4289,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4185,6 +4327,7 @@ export const toolMetadata = {
       "version_description"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4215,6 +4358,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4240,6 +4384,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4268,6 +4413,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4295,6 +4441,7 @@ export const toolMetadata = {
       "avatar_file"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4320,6 +4467,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4359,6 +4507,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4387,6 +4536,7 @@ export const toolMetadata = {
       "rag_enabled"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4413,6 +4563,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4442,6 +4593,7 @@ export const toolMetadata = {
       "new_turns_limit"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4471,6 +4623,7 @@ export const toolMetadata = {
       "new_turns_limit"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4496,6 +4649,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4521,6 +4675,7 @@ export const toolMetadata = {
       "parent_folder_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4543,6 +4698,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4570,6 +4726,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4595,6 +4752,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4626,6 +4784,7 @@ export const toolMetadata = {
       "move_to"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4648,6 +4807,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4673,6 +4833,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4698,6 +4859,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4725,6 +4887,7 @@ export const toolMetadata = {
       "test_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4747,6 +4910,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4786,6 +4950,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4820,6 +4985,7 @@ export const toolMetadata = {
       "repeat_count"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4845,6 +5011,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4875,6 +5042,7 @@ export const toolMetadata = {
       "branch_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4900,6 +5068,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -4975,6 +5144,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5014,6 +5184,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5042,6 +5213,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5067,6 +5239,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5096,6 +5269,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5123,6 +5297,7 @@ export const toolMetadata = {
       "feedback"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/convai/conversations/{conversation_id}/feedback",
@@ -5145,6 +5320,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5216,6 +5392,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5249,6 +5426,7 @@ export const toolMetadata = {
       "tag_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5273,6 +5451,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5298,6 +5477,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5328,6 +5508,7 @@ export const toolMetadata = {
       "description"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5350,6 +5531,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5377,6 +5559,7 @@ export const toolMetadata = {
       "description"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5401,6 +5584,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5425,6 +5609,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5447,6 +5632,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5469,6 +5655,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5494,6 +5681,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5528,6 +5716,7 @@ export const toolMetadata = {
       "branch_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5553,6 +5742,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5586,6 +5776,7 @@ export const toolMetadata = {
       "rag_enabled"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/convai/llm-usage/calculate",
@@ -5603,6 +5794,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5627,6 +5819,7 @@ export const toolMetadata = {
       "file"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5651,6 +5844,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5676,6 +5870,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5701,6 +5896,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5730,6 +5926,7 @@ export const toolMetadata = {
       "file"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5754,6 +5951,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5805,6 +6003,7 @@ export const toolMetadata = {
       "auto_remove"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5831,6 +6030,7 @@ export const toolMetadata = {
       "parent_folder_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5857,6 +6057,7 @@ export const toolMetadata = {
       "parent_folder_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5884,6 +6085,7 @@ export const toolMetadata = {
       "auto_remove"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5909,6 +6111,7 @@ export const toolMetadata = {
       "content"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5934,6 +6137,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5961,6 +6165,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -5991,6 +6196,7 @@ export const toolMetadata = {
       "file"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6018,6 +6224,7 @@ export const toolMetadata = {
       "items"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6040,6 +6247,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6062,6 +6270,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6089,6 +6298,7 @@ export const toolMetadata = {
       "model"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6114,6 +6324,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6139,6 +6350,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6166,6 +6378,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6197,6 +6410,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6229,6 +6443,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6254,6 +6469,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6279,6 +6495,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6309,6 +6526,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6343,6 +6561,7 @@ export const toolMetadata = {
       "move_to"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6371,6 +6590,7 @@ export const toolMetadata = {
       "move_to"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6393,6 +6613,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6421,6 +6642,7 @@ export const toolMetadata = {
       "response_mocks"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6443,6 +6665,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6482,6 +6705,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6510,6 +6734,7 @@ export const toolMetadata = {
       "response_mocks"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6535,6 +6760,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6563,6 +6789,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6593,6 +6820,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6633,6 +6861,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6662,6 +6891,7 @@ export const toolMetadata = {
       "default_livekit_stack"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6684,6 +6914,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6708,6 +6939,7 @@ export const toolMetadata = {
       "charts"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6734,6 +6966,7 @@ export const toolMetadata = {
       "value"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6756,6 +6989,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6787,6 +7021,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6811,6 +7046,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6839,6 +7075,7 @@ export const toolMetadata = {
       "value"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6863,6 +7100,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6905,6 +7143,7 @@ export const toolMetadata = {
       "target_concurrency_limit"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6927,6 +7166,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6954,6 +7194,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -6978,6 +7219,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7002,6 +7244,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7026,6 +7269,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7056,6 +7300,7 @@ export const toolMetadata = {
       "telephony_call_config"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7080,6 +7325,7 @@ export const toolMetadata = {
       "config"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7102,6 +7348,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7124,6 +7371,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7149,6 +7397,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7187,6 +7436,7 @@ export const toolMetadata = {
       "auth_connection"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7212,6 +7462,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7239,6 +7490,7 @@ export const toolMetadata = {
       "approval_policy"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7269,6 +7521,7 @@ export const toolMetadata = {
       "approval_policy"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7294,6 +7547,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7333,6 +7587,7 @@ export const toolMetadata = {
       "tool_name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7358,6 +7613,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7396,6 +7652,7 @@ export const toolMetadata = {
       "response_mocks"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7423,6 +7680,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7450,6 +7708,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7478,6 +7737,7 @@ export const toolMetadata = {
       "enable_audio_message_response"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7502,6 +7762,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7526,6 +7787,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7555,6 +7817,7 @@ export const toolMetadata = {
       "workflow"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7580,6 +7843,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7610,6 +7874,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7641,6 +7906,7 @@ export const toolMetadata = {
       "protection_status"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7668,6 +7934,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7698,6 +7965,7 @@ export const toolMetadata = {
       "force"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7730,6 +7998,7 @@ export const toolMetadata = {
       "deployment_request"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7761,6 +8030,7 @@ export const toolMetadata = {
       "tags"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7789,6 +8059,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7817,6 +8088,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7862,6 +8134,7 @@ export const toolMetadata = {
       "overrides"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7884,6 +8157,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7921,6 +8195,7 @@ export const toolMetadata = {
       "overrides"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7946,6 +8221,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7971,6 +8247,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -7996,6 +8273,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8018,6 +8296,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8051,6 +8330,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8077,6 +8357,7 @@ export const toolMetadata = {
       "values"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8106,6 +8387,7 @@ export const toolMetadata = {
       "model_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8144,6 +8426,7 @@ export const toolMetadata = {
       "sign_with_c2pa"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8187,6 +8470,7 @@ export const toolMetadata = {
       "model_style_prefix"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8226,6 +8510,7 @@ export const toolMetadata = {
       "store_for_inpainting"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8254,6 +8539,7 @@ export const toolMetadata = {
       "extract_composition_plan"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8280,6 +8566,7 @@ export const toolMetadata = {
       "sign_with_c2pa"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8305,6 +8592,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8327,6 +8615,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8360,6 +8649,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8387,6 +8677,7 @@ export const toolMetadata = {
       "request"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8418,6 +8709,7 @@ export const toolMetadata = {
       "media_url_content_type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8443,6 +8735,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8472,6 +8765,7 @@ export const toolMetadata = {
       "request"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8497,6 +8791,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8524,6 +8819,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8549,6 +8845,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8574,6 +8871,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8604,6 +8902,7 @@ export const toolMetadata = {
       "labels"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8631,6 +8930,7 @@ export const toolMetadata = {
       "labels"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8659,6 +8959,7 @@ export const toolMetadata = {
       "remove_background_noise"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8690,6 +8991,7 @@ export const toolMetadata = {
       "file_name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8717,6 +9019,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8744,6 +9047,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8774,6 +9078,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8801,6 +9106,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8828,6 +9134,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8855,6 +9162,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8884,6 +9192,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8911,6 +9220,7 @@ export const toolMetadata = {
       "recording"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8938,6 +9248,7 @@ export const toolMetadata = {
       "model_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8966,6 +9277,7 @@ export const toolMetadata = {
       "extra_text"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -8997,6 +9309,7 @@ export const toolMetadata = {
       "filters"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -9026,6 +9339,7 @@ export const toolMetadata = {
       "search"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "xi-api-key"
     ],
@@ -9048,6 +9362,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/docs",

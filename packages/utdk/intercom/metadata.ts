@@ -9,6 +9,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -32,6 +33,7 @@ export const toolMetadata = {
       "away_status_reason_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -56,6 +58,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -82,6 +85,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -106,6 +110,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -130,6 +135,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -153,6 +159,7 @@ export const toolMetadata = {
       "url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -172,6 +179,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -193,6 +201,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -218,6 +227,7 @@ export const toolMetadata = {
       "url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -239,6 +249,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -267,6 +278,7 @@ export const toolMetadata = {
       "external_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -286,6 +298,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -307,6 +320,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -336,6 +350,7 @@ export const toolMetadata = {
       "external_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -357,6 +372,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -385,6 +401,7 @@ export const toolMetadata = {
       "translated_content"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -404,6 +421,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -437,6 +455,7 @@ export const toolMetadata = {
       "translated_content"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -461,6 +480,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -485,6 +505,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -515,6 +536,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -539,6 +561,7 @@ export const toolMetadata = {
       "end_time"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -558,6 +581,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -585,6 +609,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -604,6 +629,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version",
       "Accept"
@@ -636,6 +662,7 @@ export const toolMetadata = {
       "conversation_metadata"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -660,6 +687,7 @@ export const toolMetadata = {
       "attachments"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -679,6 +707,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -704,6 +733,7 @@ export const toolMetadata = {
       "help_center_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -723,6 +753,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -752,6 +783,7 @@ export const toolMetadata = {
       "parent_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -776,6 +808,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -800,6 +833,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -824,6 +858,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -843,6 +878,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -867,6 +903,7 @@ export const toolMetadata = {
       "owner_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -886,6 +923,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -915,6 +953,7 @@ export const toolMetadata = {
       "owner_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -939,6 +978,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -963,6 +1003,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -987,6 +1028,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1010,6 +1052,7 @@ export const toolMetadata = {
       "ip_allowlist"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1039,6 +1082,7 @@ export const toolMetadata = {
       "monthly_spend"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1058,6 +1102,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1092,6 +1137,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1124,6 +1170,7 @@ export const toolMetadata = {
       "monthly_spend"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1148,6 +1195,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1172,6 +1220,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1196,6 +1245,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1220,6 +1270,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1244,6 +1295,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1272,6 +1324,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1295,6 +1348,7 @@ export const toolMetadata = {
       "id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1319,6 +1373,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1343,6 +1398,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1369,6 +1425,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1396,6 +1453,7 @@ export const toolMetadata = {
       "admin_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1420,6 +1478,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1444,6 +1503,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1471,6 +1531,7 @@ export const toolMetadata = {
       "consent_type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1495,6 +1556,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1521,6 +1583,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1547,6 +1610,7 @@ export const toolMetadata = {
       "id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1571,6 +1635,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1597,6 +1662,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1621,6 +1687,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1645,6 +1712,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1672,6 +1740,7 @@ export const toolMetadata = {
       "into"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1694,6 +1763,7 @@ export const toolMetadata = {
       "pagination"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1713,6 +1783,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1732,6 +1803,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1751,6 +1823,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1775,6 +1848,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1799,6 +1873,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1823,6 +1898,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1850,6 +1926,7 @@ export const toolMetadata = {
       "admin_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1876,6 +1953,7 @@ export const toolMetadata = {
       "admin_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1902,6 +1980,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1934,6 +2013,7 @@ export const toolMetadata = {
       "created_at"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1953,6 +2033,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -1987,6 +2068,7 @@ export const toolMetadata = {
       "company_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2014,6 +2096,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2041,6 +2124,7 @@ export const toolMetadata = {
       "pagination"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2060,6 +2144,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2084,6 +2169,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2111,6 +2197,7 @@ export const toolMetadata = {
       "customer"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2137,6 +2224,7 @@ export const toolMetadata = {
       "admin_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2163,6 +2251,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2185,6 +2274,7 @@ export const toolMetadata = {
       "attributes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2214,6 +2304,7 @@ export const toolMetadata = {
       "custom_attributes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2235,6 +2326,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2258,6 +2350,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2281,6 +2374,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2306,6 +2400,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2331,6 +2426,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2357,6 +2453,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2376,6 +2473,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2400,6 +2498,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2419,6 +2518,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2449,6 +2549,7 @@ export const toolMetadata = {
       "event_summaries"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2471,6 +2572,7 @@ export const toolMetadata = {
       "created_at_before"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2490,6 +2592,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2514,6 +2617,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2538,6 +2642,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2562,6 +2667,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2586,6 +2692,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2605,6 +2712,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2633,6 +2741,7 @@ export const toolMetadata = {
       "newsfeed_assignments"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2652,6 +2761,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2685,6 +2795,7 @@ export const toolMetadata = {
       "newsfeed_assignments"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2709,6 +2820,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2733,6 +2845,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2757,6 +2870,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2776,6 +2890,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2800,6 +2915,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2824,6 +2940,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2848,6 +2965,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2872,6 +2990,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2894,6 +3013,7 @@ export const toolMetadata = {
       "custom_attributes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2913,6 +3033,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2939,6 +3060,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2963,6 +3085,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -2987,6 +3110,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3013,6 +3137,7 @@ export const toolMetadata = {
       "conversation_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3032,6 +3157,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3051,6 +3177,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3070,6 +3197,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3094,6 +3222,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3118,6 +3247,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3137,6 +3267,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3161,6 +3292,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3191,6 +3323,7 @@ export const toolMetadata = {
       "allow_multiple_values"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3226,6 +3359,7 @@ export const toolMetadata = {
       "archived"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3252,6 +3386,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3277,6 +3412,7 @@ export const toolMetadata = {
       "is_internal"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3296,6 +3432,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3327,6 +3464,7 @@ export const toolMetadata = {
       "is_internal"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3351,6 +3489,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3375,6 +3514,7 @@ export const toolMetadata = {
       "admin_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3401,6 +3541,7 @@ export const toolMetadata = {
       "admin_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3436,6 +3577,7 @@ export const toolMetadata = {
       "assignment"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3464,6 +3606,7 @@ export const toolMetadata = {
       "assignment"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3493,6 +3636,7 @@ export const toolMetadata = {
       "assignee_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3517,6 +3661,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3541,6 +3686,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3568,6 +3714,7 @@ export const toolMetadata = {
       "pagination"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3587,6 +3734,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3606,6 +3754,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3634,6 +3783,7 @@ export const toolMetadata = {
       "visitor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3653,6 +3803,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3672,6 +3823,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3696,6 +3848,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3715,6 +3868,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],
@@ -3744,6 +3898,7 @@ export const toolMetadata = {
       "data"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/fin_voice/register",
@@ -3761,6 +3916,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/fin_voice/collect/{id}",
@@ -3783,6 +3939,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/fin_voice/external_id/{external_id}",
@@ -3805,6 +3962,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/fin_voice/phone_number/{phone_number}",
@@ -3827,6 +3985,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/fin_voice/conversation/{conversation_id}",
@@ -3849,6 +4008,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Intercom-Version"
     ],

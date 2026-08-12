@@ -21,6 +21,7 @@ export const toolMetadata = {
       "metadata"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "anthropic-version"
     ],
@@ -48,6 +49,7 @@ export const toolMetadata = {
       "tools"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "anthropic-version"
     ],
@@ -70,6 +72,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "anthropic-version"
     ],
@@ -96,6 +99,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "anthropic-version"
     ],

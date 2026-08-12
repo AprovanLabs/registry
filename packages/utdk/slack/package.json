@@ -1,6 +1,6 @@
 {
   "name": "@utdk/slack",
-  "version": "1.7.0-20260727.1",
+  "version": "1.7.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Slack Web API. One way to interact with the Slack platform is its HTTP RPC-based Web API, a collection of methods requiring OAuth 2.0-based user, bot, or workspace tokens blessed with related OAuth scopes.",
   "homepage": "https://api.slack.com",
@@ -13,7 +13,7 @@
   "utdk": {
     "provider": "slack",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:33.500Z",
+    "generatedAt": "2026-08-12T13:38:50.235Z",
     "auth": {
       "schemes": [
         {

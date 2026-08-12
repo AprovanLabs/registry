@@ -1,6 +1,6 @@
 {
   "name": "@utdk/twilio",
-  "version": "1.0.0-20260727.1",
+  "version": "1.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Twilio - Api. This is the public Twilio REST API.",
   "homepage": "https://twilio.com",
@@ -14,7 +14,7 @@
   "utdk": {
     "provider": "twilio",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:18:17.255Z",
+    "generatedAt": "2026-08-12T13:38:57.823Z",
     "auth": {
       "schemes": [
         {
