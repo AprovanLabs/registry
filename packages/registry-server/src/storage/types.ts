@@ -93,6 +93,32 @@ export interface ProfileGrantRow {
   createdAt: string;
 }
 
+/** Resource-grant principal (iw9-c tech-plan Interfaces & Data). */
+export type ResourceGrantSubjectKind = "user" | "group" | "app-install";
+
+export interface ResourceGrantSubject {
+  kind: ResourceGrantSubjectKind;
+  id: string;
+}
+
+/**
+ * Standing grant of (capability, resource-pattern) to a principal.
+ * `resourcePattern: null` means any resource within the capability — only
+ * creatable by explicit approval, never as a migration default.
+ */
+export interface ResourceGrantRow {
+  id: string;
+  tenantId: string;
+  subject: ResourceGrantSubject;
+  /** Tool-pattern vocabulary (e.g. `email.send`, `github.repos.get`). */
+  capability: string;
+  resourcePattern: string | null;
+  credentialLevel: CredentialLevel;
+  grantedBy: string;
+  createdAt: string;
+  revokedAt?: string;
+}
+
 export interface ApiKeyRow {
   id: string;
   tenantId: string;
@@ -198,6 +224,39 @@ export interface GrantStore {
   grantedProfileIds(tenantId: string, subjects: GrantSubject[]): Promise<Set<string>>;
 }
 
+export interface ResourceGrantCreateInput {
+  subject: ResourceGrantSubject;
+  capability: string;
+  resourcePattern: string | null;
+  credentialLevel: CredentialLevel;
+  grantedBy: string;
+  id?: string;
+}
+
+export interface ResourceGrantStore {
+  create(tenantId: string, input: ResourceGrantCreateInput): Promise<ResourceGrantRow>;
+  get(tenantId: string, id: string): Promise<ResourceGrantRow | undefined>;
+  /**
+   * Soft-revoke: stamps `revokedAt`. Returns false when the row is missing
+   * or already revoked.
+   */
+  revoke(tenantId: string, id: string): Promise<boolean>;
+  list(
+    tenantId: string,
+    filter?: {
+      subject?: ResourceGrantSubject;
+      capability?: string;
+      /** When true, include revoked rows (default: active only). */
+      includeRevoked?: boolean;
+    },
+  ): Promise<ResourceGrantRow[]>;
+  /**
+   * Auth-time join: every active resource grant for any of the given
+   * subjects, in ONE indexed query.
+   */
+  listForSubjects(tenantId: string, subjects: ResourceGrantSubject[]): Promise<ResourceGrantRow[]>;
+}
+
 export interface ApiKeyStore {
   create(
     tenantId: string,
@@ -249,6 +308,7 @@ export interface RegistryStorage {
   credentials: CredentialStore;
   profiles: ProfileStore;
   grants: GrantStore;
+  resourceGrants: ResourceGrantStore;
   apiKeys: ApiKeyStore;
   audit: AuditStore;
   /**

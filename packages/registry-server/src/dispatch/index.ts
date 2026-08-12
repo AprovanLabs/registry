@@ -15,6 +15,7 @@
 
 import { findLlmAlias, type InterfaceCatalog } from "../catalog/types.js";
 import { resolveToInjectable, OAuthExchangeError, type OAuthTokenCache } from "../credentials/oauth.js";
+import { assertResourceAccess } from "./call-context.js";
 import { RateLimitExceededError, platformPoolId, type RateLimiter } from "./limits.js";
 import { asStreamBody } from "./stream.js";
 import { resolveProfile, type ResolveDeps, type ResolvedProfile } from "../profiles/resolve.js";
@@ -23,7 +24,7 @@ import type { CallContext, DispatchResult } from "../config/types.js";
 import type { CredentialService } from "../credentials/service.js";
 import type { InjectableCredential } from "../credentials/types.js";
 import type { ProviderExecutor } from "../executor/index.js";
-import type { AuditStore } from "../storage/types.js";
+import type { AuditStore, ResourceGrantStore } from "../storage/types.js";
 import type { RegistryTelemetry } from "../telemetry/index.js";
 
 export interface DispatchOptions {
@@ -31,6 +32,12 @@ export interface DispatchOptions {
   stream?: boolean;
   /** Ephemeral request-supplied credential (HTTP surface only). */
   credential?: InjectableCredential;
+  /**
+   * Canonical resource URL (or mailto:/opaque id) this call touches.
+   * When omitted, `args.resource` is used if it is a string. Resource-grant
+   * enforcement (iw9-c) reads this via the same predicate as profile grants.
+   */
+  resource?: string;
 }
 
 /**
@@ -53,6 +60,12 @@ export interface DispatcherDeps {
   audit: AuditStore;
   oauthCache: OAuthTokenCache;
   compatDispatch?: CompatDispatch;
+  /**
+   * When present, every dispatch passes through `assertResourceAccess`
+   * (iw9-c) — the same predicate family as grant-enforcement §4, not a
+   * second gate.
+   */
+  resourceGrants?: ResourceGrantStore;
 }
 
 const isOAuth = (payload: { type: string }): boolean =>
@@ -124,6 +137,22 @@ export class Dispatcher {
     };
 
     try {
+      // ---- Resource-grant check (iw9-c) — same predicate family as §4. ----
+      if (this.deps.resourceGrants) {
+        const resource =
+          opts.resource ??
+          (typeof args["resource"] === "string" ? (args["resource"] as string) : undefined);
+        await assertResourceAccess(
+          {
+            authMode: this.deps.resolveDeps.authMode,
+            resourceGrants: this.deps.resourceGrants,
+          },
+          ctx,
+          `${namespace}.${operation}`,
+          resource,
+        );
+      }
+
       // ---- Native services: no profile machinery; host-registered. --------
       const native = this.deps.natives.get(namespace);
       if (native) {

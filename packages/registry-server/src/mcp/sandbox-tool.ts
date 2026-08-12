@@ -11,6 +11,11 @@
  * would be a second implementation of the same predicate — the gate is
  * dispatch, exactly as everywhere else.
  *
+ * Resource-pattern checks (iw9-c) ride the same path: the sandbox forwards
+ * a string `resource` arg into `DispatchOptions` and the Dispatcher runs
+ * `assertResourceAccess` when a `resourceGrants` store is wired — one
+ * extended predicate, not a second gate.
+ *
  * Refuses to register when `authMode === "none"` (PRD D5): unauthenticated
  * arbitrary TypeScript with ambient tenant credentials is the vulnerability
  * this stream closes, so the tool must not exist in that mode at all — not
@@ -22,12 +27,21 @@ import { runScriptInSandbox } from "../sandbox/quickjs.js";
 import type { Dispatcher } from "../dispatch/index.js";
 import type { ResolveDeps } from "../profiles/resolve.js";
 import type { CallContext, McpExtensions, McpExtensionTool } from "../config/types.js";
+import type { ResourceGrantStore } from "../storage/types.js";
 
 export const SANDBOX_TOOL_NAME = "run_script";
 
 export interface SandboxToolDeps {
   dispatcher: Dispatcher;
   resolveDeps: ResolveDeps;
+  /**
+   * Optional resource-grant store. When provided, it is passed through to
+   * the shared dispatch predicate via `DispatchOptions` forwarding of
+   * `resource` — the store itself must also be on `DispatcherDeps` for
+   * enforcement (single chokepoint). Kept here so hosts compose the MCP
+   * extension with the same store reference they give the Dispatcher.
+   */
+  resourceGrants?: ResourceGrantStore;
   /** Wall-clock budget applied when the caller omits `timeoutMs` (default 30_000). */
   defaultTimeoutMs?: number;
 }
@@ -42,7 +56,7 @@ const SANDBOX_TOOL_SCHEMA: McpExtensionTool = {
     "dispatches through the same pipeline as call_tool — a namespace hidden from list_tools is " +
     "unreachable here too; listing it in `namespaces` does not grant it. Pass `narrowedTo` to " +
     "voluntarily run under a subset of your grant; a superset of your grant is rejected, never " +
-    "silently clamped.",
+    "silently clamped. Pass `resource` on an operation's args to scope resource-grant checks.",
   inputSchema: {
     type: "object",
     properties: {
@@ -130,12 +144,19 @@ async function handleRunScript(
             : dispatchArgs.length === 0
               ? {}
               : { args: dispatchArgs };
+        // Forward resource into DispatchOptions so the shared
+        // assertResourceAccess predicate (iw9-c) sees it — not a second gate.
+        const resource =
+          typeof argObject["resource"] === "string" ? (argObject["resource"] as string) : undefined;
         const dispatched = await deps.dispatcher.dispatch(
           scopedCtx,
           namespace,
           path,
           argObject,
-          profile !== undefined ? { profile } : {},
+          {
+            ...(profile !== undefined ? { profile } : {}),
+            ...(resource !== undefined ? { resource } : {}),
+          },
         );
         if (dispatched.kind === "stream") return new Response(dispatched.stream).text();
         return dispatched.data;

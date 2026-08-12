@@ -19,6 +19,10 @@ import type {
   ProfileTargetKind,
   ProvisionedCredential,
   RegistryStorage,
+  ResourceGrantCreateInput,
+  ResourceGrantRow,
+  ResourceGrantStore,
+  ResourceGrantSubject,
   TenantRow,
   TenantStore,
 } from "./types.js";
@@ -61,6 +65,7 @@ const profileNameSk = (
 ): string => `PROFILENAME#${targetKind}#${targetId}#${name}`;
 const grantSk = (profileId: string, subject: GrantSubject): string =>
   `GRANT#${profileId}#${subject.kind}#${subject.id}`;
+const resourceGrantSk = (id: string): string => `RGRANT#${id}`;
 
 function toProfileRow(tenantId: string, item: Record<string, unknown>): ProfileRow {
   return {
@@ -482,6 +487,146 @@ class DynamoGrantStore implements GrantStore {
   }
 }
 
+class DynamoResourceGrantStore implements ResourceGrantStore {
+  constructor(
+    private readonly tableName: string,
+    private readonly send: DynamoSend,
+    private readonly commands: DynamoCommands,
+  ) {}
+
+  async create(tenantId: string, input: ResourceGrantCreateInput): Promise<ResourceGrantRow> {
+    const id = input.id ?? newId();
+    const ts = now();
+    const row: ResourceGrantRow = {
+      id,
+      tenantId,
+      subject: { kind: input.subject.kind, id: input.subject.id },
+      capability: input.capability,
+      resourcePattern: input.resourcePattern,
+      credentialLevel: input.credentialLevel,
+      grantedBy: input.grantedBy,
+      createdAt: ts,
+    };
+    const { PutCommand } = this.commands;
+    await this.send(
+      new PutCommand({
+        TableName: this.tableName,
+        Item: {
+          PK: pk(tenantId),
+          SK: resourceGrantSk(id),
+          ...row,
+          subjectKind: row.subject.kind,
+          subjectId: row.subject.id,
+        },
+      }),
+    );
+    return row;
+  }
+
+  async get(tenantId: string, id: string): Promise<ResourceGrantRow | undefined> {
+    const { GetCommand } = this.commands;
+    const result = await this.send(
+      new GetCommand({
+        TableName: this.tableName,
+        Key: { PK: pk(tenantId), SK: resourceGrantSk(id) },
+      }),
+    );
+    return result.Item ? toResourceGrantRow(tenantId, result.Item) : undefined;
+  }
+
+  async revoke(tenantId: string, id: string): Promise<boolean> {
+    const existing = await this.get(tenantId, id);
+    if (!existing || existing.revokedAt) return false;
+    const ts = now();
+    const { PutCommand } = this.commands;
+    await this.send(
+      new PutCommand({
+        TableName: this.tableName,
+        Item: {
+          PK: pk(tenantId),
+          SK: resourceGrantSk(id),
+          ...existing,
+          subjectKind: existing.subject.kind,
+          subjectId: existing.subject.id,
+          revokedAt: ts,
+        },
+      }),
+    );
+    return true;
+  }
+
+  async list(
+    tenantId: string,
+    filter?: {
+      subject?: ResourceGrantSubject;
+      capability?: string;
+      includeRevoked?: boolean;
+    },
+  ): Promise<ResourceGrantRow[]> {
+    const rows = await this.queryAll(tenantId);
+    return rows
+      .filter((row) => {
+        if (!filter?.includeRevoked && row.revokedAt) return false;
+        if (filter?.subject) {
+          if (row.subject.kind !== filter.subject.kind || row.subject.id !== filter.subject.id) {
+            return false;
+          }
+        }
+        if (filter?.capability !== undefined && row.capability !== filter.capability) return false;
+        return true;
+      })
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  }
+
+  async listForSubjects(
+    tenantId: string,
+    subjects: ResourceGrantSubject[],
+  ): Promise<ResourceGrantRow[]> {
+    if (subjects.length === 0) return [];
+    const keys = new Set(subjects.map((s) => `${s.kind}#${s.id}`));
+    const rows = await this.queryAll(tenantId);
+    return rows
+      .filter((row) => !row.revokedAt && keys.has(`${row.subject.kind}#${row.subject.id}`))
+      .sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+  }
+
+  private async queryAll(tenantId: string): Promise<ResourceGrantRow[]> {
+    const { QueryCommand } = this.commands;
+    const result = await this.send(
+      new QueryCommand({
+        TableName: this.tableName,
+        KeyConditionExpression: "PK = :pk AND begins_with(SK, :sk)",
+        ExpressionAttributeValues: {
+          ":pk": pk(tenantId),
+          ":sk": "RGRANT#",
+        },
+      }),
+    );
+    return (result.Items ?? []).map((item) => toResourceGrantRow(tenantId, item));
+  }
+}
+
+function toResourceGrantRow(tenantId: string, item: Record<string, unknown>): ResourceGrantRow {
+  const subjectKind = String(item["subjectKind"] ?? (item["subject"] as ResourceGrantSubject | undefined)?.kind);
+  const subjectId = String(item["subjectId"] ?? (item["subject"] as ResourceGrantSubject | undefined)?.id);
+  return {
+    id: String(item["id"]),
+    tenantId,
+    subject: { kind: subjectKind as ResourceGrantSubject["kind"], id: subjectId },
+    capability: String(item["capability"]),
+    resourcePattern:
+      item["resourcePattern"] === null || item["resourcePattern"] === undefined
+        ? null
+        : String(item["resourcePattern"]),
+    credentialLevel: item["credentialLevel"] as ResourceGrantRow["credentialLevel"],
+    grantedBy: String(item["grantedBy"]),
+    createdAt: String(item["createdAt"]),
+    ...(item["revokedAt"] !== undefined && item["revokedAt"] !== null
+      ? { revokedAt: String(item["revokedAt"]) }
+      : {}),
+  };
+}
+
 const unsupportedApiKeys: ApiKeyStore = {
   async create() {
     throw new Error("API keys are not stored in the interim Dynamo profile table");
@@ -655,6 +800,7 @@ export function createDynamoStorage(options: DynamoStorageOptions): RegistryStor
     credentials,
     profiles: new DynamoProfileStore(tableName, send, commands),
     grants: new DynamoGrantStore(tableName, send, commands),
+    resourceGrants: new DynamoResourceGrantStore(tableName, send, commands),
     apiKeys: unsupportedApiKeys,
     audit: unsupportedAudit,
     async provisionCredential(

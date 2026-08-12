@@ -59,6 +59,21 @@ CREATE TABLE IF NOT EXISTS profile_grants (
 );
 CREATE INDEX IF NOT EXISTS profile_grants_subject ON profile_grants(tenant_id, subject_kind, subject_id);
 
+CREATE TABLE IF NOT EXISTS resource_grants (
+  id                TEXT PRIMARY KEY,
+  tenant_id         TEXT NOT NULL,
+  subject_kind      TEXT NOT NULL CHECK (subject_kind IN ('user','group','app-install')),
+  subject_id        TEXT NOT NULL,
+  capability        TEXT NOT NULL,
+  resource_pattern  TEXT,
+  credential_level  TEXT NOT NULL,
+  granted_by        TEXT NOT NULL,
+  created_at        TEXT NOT NULL,
+  revoked_at        TEXT
+);
+CREATE INDEX IF NOT EXISTS resource_grants_subject ON resource_grants(tenant_id, subject_kind, subject_id);
+CREATE INDEX IF NOT EXISTS resource_grants_capability ON resource_grants(tenant_id, capability);
+
 CREATE TABLE IF NOT EXISTS api_keys (
   id          TEXT PRIMARY KEY,
   tenant_id   TEXT NOT NULL,
