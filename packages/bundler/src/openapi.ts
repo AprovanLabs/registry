@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { fileURLToPath } from "node:url";
 import { parse as parseYaml } from "yaml";
+import { toolCallHttpMethod } from "./client-api.js";
 import { getDocumentPathItem } from "./openapi-path.js";
 import { resolveRepoPath } from "./provider.js";
 import { schemaToTypeScriptType, type SchemaRenderContext } from "./schema.js";
@@ -134,10 +135,7 @@ function getOperation(
   document: OpenAPIV3.Document,
   tool: Tool,
 ): OpenAPIV3.OperationObject | undefined {
-  const method =
-    tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
-      ? tool.tool_call_template.http_method.toLowerCase()
-      : undefined;
+  const method = toolCallHttpMethod(tool)?.toLowerCase();
   const rawUrl =
     tool.tool_call_template && typeof tool.tool_call_template.url === "string" ? tool.tool_call_template.url : undefined;
 

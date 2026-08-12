@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { effectFromHttpMethod, toolCallHttpMethod } from "./client-api.js";
 import {
   applyProviderOpenApiOptions,
   buildPublicTypeMap,
@@ -331,5 +332,81 @@ describe("extractResponse", () => {
       },
     };
     expect(extractResponse(document, operation)).toEqual({ kind: "streaming" });
+  });
+});
+
+describe("toolCallHttpMethod + effectFromHttpMethod (openapi extraction mirror)", () => {
+  it("derives observation for GET tools resolved via OpenAPI", () => {
+    const tool = createTool("example.get", "GET", "https://api.example.com/v1/items");
+    const document = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/items": {
+          get: {
+            responses: {
+              "200": {
+                description: "ok",
+                content: {
+                  "application/json": {
+                    schema: { type: "object", properties: { id: { type: "string" } } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    expect(toolCallHttpMethod(tool)).toBe("GET");
+    expect(effectFromHttpMethod(toolCallHttpMethod(tool))).toBe("observation");
+    expect(buildPublicTypeMap(document, [tool]).has(tool.name)).toBe(true);
+  });
+
+  it("derives action for POST tools resolved via OpenAPI", () => {
+    const tool = createTool("example.create", "POST", "https://api.example.com/v1/items");
+    const document = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/items": {
+          post: {
+            responses: {
+              "200": {
+                description: "ok",
+                content: {
+                  "application/json": {
+                    schema: { type: "object", properties: { id: { type: "string" } } },
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    expect(toolCallHttpMethod(tool)).toBe("POST");
+    expect(effectFromHttpMethod(toolCallHttpMethod(tool))).toBe("action");
+    expect(buildPublicTypeMap(document, [tool]).has(tool.name)).toBe(true);
+  });
+
+  it("fails closed to action when http_method is missing", () => {
+    const tool = {
+      name: "example.mystery",
+      description: "mystery",
+      tags: [],
+      tool_call_template: {
+        call_template_type: "http",
+        url: "https://api.example.com/v1/items",
+        content_type: "application/json",
+      },
+      inputs: { type: "object", properties: {} },
+      outputs: { type: "object", properties: {} },
+    } as unknown as Tool;
+
+    expect(toolCallHttpMethod(tool)).toBeUndefined();
+    expect(effectFromHttpMethod(toolCallHttpMethod(tool))).toBe("action");
   });
 });

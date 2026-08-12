@@ -4,6 +4,24 @@ import { schemaToTypeScriptType } from "./schema.js";
 import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
 
+export type Effect = "observation" | "action";
+
+/** GET/HEAD → observation; everything else (incl. missing) → action (fail closed). */
+export function effectFromHttpMethod(method: string | undefined): Effect {
+  const normalized = typeof method === "string" ? method.trim().toUpperCase() : undefined;
+  if (normalized === "GET" || normalized === "HEAD") {
+    return "observation";
+  }
+  return "action";
+}
+
+/** Raw `http_method` from a tool call template, if present. */
+export function toolCallHttpMethod(tool: Tool): string | undefined {
+  return tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
+    ? tool.tool_call_template.http_method
+    : undefined;
+}
+
 export type ToolRuntimeMetadata = {
   accessPath: string[];
   bodyAllowsAdditionalProperties?: boolean;
@@ -11,6 +29,7 @@ export type ToolRuntimeMetadata = {
   bodyPropertyKeys: string[];
   contentType?: string;
   description?: string;
+  effect: Effect;
   headerParameterKeys: string[];
   method: string;
   parameterDescriptions?: Record<string, string>;
@@ -150,10 +169,7 @@ function getOperationContext(
   document: OpenAPIV3.Document,
   tool: Tool,
 ): { operation?: OpenAPIV3.OperationObject; pathItem?: OpenAPIV3.PathItemObject } {
-  const method =
-    tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
-      ? tool.tool_call_template.http_method.toLowerCase()
-      : undefined;
+  const method = toolCallHttpMethod(tool)?.toLowerCase();
   const rawUrl =
     tool.tool_call_template && typeof tool.tool_call_template.url === "string" ? tool.tool_call_template.url : undefined;
 
@@ -583,6 +599,7 @@ function buildInputSchema(document: OpenAPIV3.Document, request: RequestDefiniti
       bodyKind: bodyPropertySchemas ? "properties" : request.bodySchema ? "raw" : "none",
       bodyPropertyKeys,
       contentType: undefined,
+      effect: effectFromHttpMethod("GET"),
       headerParameterKeys: headerParameters.map((parameter) => parameter.name),
       method: "GET",
       routeTemplate: "/",
@@ -684,6 +701,7 @@ export function buildClientToolMap(
       const parameterDescriptions = collectParameterDescriptions(document, tool);
       const { operation } = getOperationContext(document, tool);
       const operationDescription = operation?.summary ?? operation?.description ?? tool.description;
+      const httpMethod = toolCallHttpMethod(tool);
 
       return [
         tool.name,
@@ -704,10 +722,8 @@ export function buildClientToolMap(
                 ? tool.tool_call_template.content_type
                 : undefined,
             description: operationDescription || undefined,
-            method:
-              tool.tool_call_template && typeof tool.tool_call_template.http_method === "string"
-                ? tool.tool_call_template.http_method
-                : "GET",
+            effect: effectFromHttpMethod(httpMethod),
+            method: httpMethod ?? "GET",
             parameterDescriptions: Object.keys(parameterDescriptions).length > 0 ? parameterDescriptions : undefined,
             routeTemplate:
               tool.tool_call_template && typeof tool.tool_call_template.url === "string"
