@@ -9,6 +9,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -35,6 +36,7 @@ export const toolMetadata = {
       "ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -54,6 +56,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -75,6 +78,7 @@ export const toolMetadata = {
       "ips"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -94,6 +98,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -115,6 +120,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -136,6 +142,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Authorization",
       "on-behalf-of"
@@ -161,6 +168,7 @@ export const toolMetadata = {
       "type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Authorization",
       "on-behalf-of"
@@ -181,6 +189,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -202,6 +211,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Authorization",
       "on-behalf-of"
@@ -228,6 +238,7 @@ export const toolMetadata = {
       "percentage"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -249,6 +260,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -273,6 +285,7 @@ export const toolMetadata = {
       "scopes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -292,6 +305,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -313,6 +327,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -336,6 +351,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -360,6 +376,7 @@ export const toolMetadata = {
       "scopes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -381,6 +398,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -406,6 +424,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -425,6 +444,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -446,6 +466,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -471,6 +492,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -492,6 +514,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -515,6 +538,7 @@ export const toolMetadata = {
       "recipient_emails"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -538,6 +562,7 @@ export const toolMetadata = {
       "recipient_emails"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -559,6 +584,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -581,6 +607,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -602,6 +629,7 @@ export const toolMetadata = {
       "recipient_emails"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -621,6 +649,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -642,6 +671,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -663,6 +693,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -684,6 +715,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -718,6 +750,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -757,6 +790,7 @@ export const toolMetadata = {
       "title"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -776,6 +810,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -797,6 +832,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -824,6 +860,7 @@ export const toolMetadata = {
       "title"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -845,6 +882,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -866,6 +904,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -889,6 +928,7 @@ export const toolMetadata = {
       "send_at"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -912,6 +952,7 @@ export const toolMetadata = {
       "send_at"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -933,6 +974,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -956,6 +998,7 @@ export const toolMetadata = {
       "to"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -977,6 +1020,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1005,6 +1049,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1039,6 +1084,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1075,6 +1121,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1103,6 +1150,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1133,6 +1181,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1155,6 +1204,7 @@ export const toolMetadata = {
       "type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1174,6 +1224,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1195,6 +1246,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1216,6 +1268,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1235,6 +1288,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1256,6 +1310,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1275,6 +1330,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1301,6 +1357,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1329,6 +1386,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1355,6 +1413,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1385,6 +1444,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1406,6 +1466,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1435,6 +1496,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1457,6 +1519,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1476,6 +1539,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1502,6 +1566,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1521,6 +1586,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1540,6 +1606,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1559,6 +1626,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1578,6 +1646,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1602,6 +1671,7 @@ export const toolMetadata = {
       "list_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/contactdb/recipients/search",
@@ -1619,6 +1689,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1640,6 +1711,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1661,6 +1733,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1682,6 +1755,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1701,6 +1775,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1725,6 +1800,7 @@ export const toolMetadata = {
       "recipient_count"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1744,6 +1820,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1770,6 +1847,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1800,6 +1878,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1826,6 +1905,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1850,6 +1930,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -1869,6 +1950,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/designs",
@@ -1903,6 +1985,7 @@ export const toolMetadata = {
       "plain_content"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/designs",
@@ -1920,6 +2003,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/designs/pre-builts",
@@ -1946,6 +2030,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/designs/pre-builts/{id}",
@@ -1968,6 +2053,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/designs/pre-builts/{id}",
@@ -1987,6 +2073,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/designs/{id}",
@@ -2006,6 +2093,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/designs/{id}",
@@ -2032,6 +2120,7 @@ export const toolMetadata = {
       "subject"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/designs/{id}",
@@ -2054,6 +2143,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/designs/{id}",
@@ -2073,6 +2163,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2105,6 +2196,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2139,6 +2231,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/ips",
@@ -2175,6 +2268,7 @@ export const toolMetadata = {
       "warmup"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/ips",
@@ -2192,6 +2286,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/ips/assigned",
@@ -2209,6 +2304,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/ips/pools",
@@ -2228,6 +2324,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/ips/pools",
@@ -2245,6 +2342,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/ips/pools/{pool_name}",
@@ -2264,6 +2362,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/ips/pools/{pool_name}",
@@ -2285,6 +2384,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v3/ips/pools/{pool_name}",
@@ -2306,6 +2406,7 @@ export const toolMetadata = {
       "ip"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/ips/pools/{pool_name}/ips",
@@ -2325,6 +2426,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/ips/pools/{pool_name}/ips/{ip}",
@@ -2345,6 +2447,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/ips/remaining",
@@ -2362,6 +2465,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/ips/warmup",
@@ -2381,6 +2485,7 @@ export const toolMetadata = {
       "ip"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/ips/warmup",
@@ -2398,6 +2503,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/ips/warmup/{ip_address}",
@@ -2417,6 +2523,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/ips/warmup/{ip_address}",
@@ -2436,6 +2543,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/ips/{ip_address}",
@@ -2455,6 +2563,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2474,6 +2583,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2513,6 +2623,7 @@ export const toolMetadata = {
       "tracking_settings"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/mail/send",
@@ -2530,6 +2641,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2556,6 +2668,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2578,6 +2691,7 @@ export const toolMetadata = {
       "list"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2597,6 +2711,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2620,6 +2735,7 @@ export const toolMetadata = {
       "soft_bounces"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2639,6 +2755,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2662,6 +2779,7 @@ export const toolMetadata = {
       "plain_content"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2681,6 +2799,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2703,6 +2822,7 @@ export const toolMetadata = {
       "enabled"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2722,6 +2842,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2744,6 +2865,7 @@ export const toolMetadata = {
       "enabled"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2763,6 +2885,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2785,6 +2908,7 @@ export const toolMetadata = {
       "html_content"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2804,6 +2928,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -2838,6 +2963,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/marketing/contacts",
@@ -2862,6 +2988,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/contacts",
@@ -2882,6 +3009,7 @@ export const toolMetadata = {
       "list_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v3/marketing/contacts",
@@ -2901,6 +3029,7 @@ export const toolMetadata = {
       "ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/contacts/batch",
@@ -2918,6 +3047,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/contacts/count",
@@ -2935,6 +3065,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/contacts/exports",
@@ -2958,6 +3089,7 @@ export const toolMetadata = {
       "segment_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/contacts/exports",
@@ -2975,6 +3107,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/contacts/exports/{id}",
@@ -2998,6 +3131,7 @@ export const toolMetadata = {
       "list_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v3/marketing/contacts/imports",
@@ -3015,6 +3149,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/contacts/imports/{id}",
@@ -3036,6 +3171,7 @@ export const toolMetadata = {
       "query"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/contacts/search",
@@ -3055,6 +3191,7 @@ export const toolMetadata = {
       "emails"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/contacts/search/emails",
@@ -3072,6 +3209,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/contacts/{id}",
@@ -3091,6 +3229,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/field_definitions",
@@ -3111,6 +3250,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/field_definitions",
@@ -3128,6 +3268,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/marketing/field_definitions/{custom_field_id}",
@@ -3149,6 +3290,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/marketing/field_definitions/{custom_field_id}",
@@ -3168,6 +3310,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/lists",
@@ -3193,6 +3336,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/lists",
@@ -3210,6 +3354,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/marketing/lists/{id}",
@@ -3234,6 +3379,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/lists/{id}",
@@ -3260,6 +3406,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/marketing/lists/{id}",
@@ -3279,6 +3426,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/marketing/lists/{id}/contacts",
@@ -3303,6 +3451,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/lists/{id}/contacts/count",
@@ -3322,6 +3471,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/segments",
@@ -3351,6 +3501,7 @@ export const toolMetadata = {
       "parent_list_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/segments",
@@ -3368,6 +3519,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/segments/2.0",
@@ -3396,6 +3548,7 @@ export const toolMetadata = {
       "query_dsl"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/segments/2.0",
@@ -3413,6 +3566,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/marketing/segments/2.0/{segment_id}",
@@ -3432,6 +3586,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/segments/2.0/{segment_id}",
@@ -3459,6 +3614,7 @@ export const toolMetadata = {
       "query_dsl"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/marketing/segments/2.0/{segment_id}",
@@ -3480,6 +3636,7 @@ export const toolMetadata = {
       "ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/segments/delete",
@@ -3497,6 +3654,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/marketing/segments/{segment_id}",
@@ -3516,6 +3674,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/segments/{segment_id}",
@@ -3544,6 +3703,7 @@ export const toolMetadata = {
       "query_dsl"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/marketing/segments/{segment_id}",
@@ -3573,6 +3733,7 @@ export const toolMetadata = {
       "zip"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -3592,6 +3753,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/marketing/singlesends",
@@ -3614,6 +3776,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/singlesends",
@@ -3640,6 +3803,7 @@ export const toolMetadata = {
       "send_to"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/singlesends",
@@ -3657,6 +3821,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/singlesends/categories",
@@ -3678,6 +3843,7 @@ export const toolMetadata = {
       "status"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/singlesends/search",
@@ -3698,6 +3864,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/marketing/singlesends/{id}",
@@ -3717,6 +3884,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/singlesends/{id}",
@@ -3742,6 +3910,7 @@ export const toolMetadata = {
       "send_to"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/marketing/singlesends/{id}",
@@ -3763,6 +3932,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/singlesends/{id}",
@@ -3782,6 +3952,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/marketing/singlesends/{id}/schedule",
@@ -3803,6 +3974,7 @@ export const toolMetadata = {
       "send_at"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v3/marketing/singlesends/{id}/schedule",
@@ -3822,6 +3994,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/stats/automations",
@@ -3848,6 +4021,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/stats/automations/export",
@@ -3872,6 +4046,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/stats/automations/{id}",
@@ -3910,6 +4085,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/stats/automations/{id}/links",
@@ -3940,6 +4116,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/stats/singlesends",
@@ -3966,6 +4143,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/stats/singlesends/export",
@@ -3990,6 +4168,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/stats/singlesends/{id}",
@@ -4026,6 +4205,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/marketing/stats/singlesends/{id}/links",
@@ -4064,6 +4244,7 @@ export const toolMetadata = {
       "version_id_override"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/marketing/test/send_email",
@@ -4081,6 +4262,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "X-Query-Id",
       "X-Cursor",
@@ -4109,6 +4291,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Authorization"
     ],
@@ -4133,6 +4316,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Authorization"
     ],
@@ -4154,6 +4338,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Authorization"
     ],
@@ -4175,6 +4360,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4201,6 +4387,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4224,6 +4411,7 @@ export const toolMetadata = {
       "license_key"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4243,6 +4431,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4262,6 +4451,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/scopes/requests",
@@ -4286,6 +4476,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/scopes/requests/{request_id}",
@@ -4305,6 +4496,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/scopes/requests/{request_id}/approve",
@@ -4324,6 +4516,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4353,6 +4546,7 @@ export const toolMetadata = {
       "zip"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4372,6 +4566,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4393,6 +4588,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4424,6 +4620,7 @@ export const toolMetadata = {
       "zip"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4445,6 +4642,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4470,6 +4668,7 @@ export const toolMetadata = {
       "public_certificate"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/sso/certificates",
@@ -4487,6 +4686,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/sso/certificates/{cert_id}",
@@ -4506,6 +4706,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/sso/certificates/{cert_id}",
@@ -4529,6 +4730,7 @@ export const toolMetadata = {
       "public_certificate"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/sso/certificates/{cert_id}",
@@ -4548,6 +4750,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/sso/integrations",
@@ -4577,6 +4780,7 @@ export const toolMetadata = {
       "signout_url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/sso/integrations",
@@ -4594,6 +4798,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/sso/integrations/{id}",
@@ -4613,6 +4818,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/sso/integrations/{id}",
@@ -4644,6 +4850,7 @@ export const toolMetadata = {
       "signout_url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/sso/integrations/{id}",
@@ -4668,6 +4875,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/sso/integrations/{integration_id}/certificates",
@@ -4694,6 +4902,7 @@ export const toolMetadata = {
       "scopes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/sso/teammates",
@@ -4716,6 +4925,7 @@ export const toolMetadata = {
       "scopes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/sso/teammates/{username}",
@@ -4735,6 +4945,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -4767,6 +4978,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/subusers",
@@ -4798,6 +5010,7 @@ export const toolMetadata = {
       "username"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/subusers",
@@ -4815,6 +5028,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/subusers/reputations",
@@ -4834,6 +5048,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/subusers/stats",
@@ -4866,6 +5081,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/subusers/stats/monthly",
@@ -4898,6 +5114,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/subusers/stats/sums",
@@ -4932,6 +5149,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/subusers/{subuser_name}",
@@ -4953,6 +5171,7 @@ export const toolMetadata = {
       "disabled"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/subusers/{subuser_name}",
@@ -4972,6 +5191,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v3/subusers/{subuser_name}/ips",
@@ -4991,6 +5211,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/subusers/{subuser_name}/monitor",
@@ -5010,6 +5231,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/subusers/{subuser_name}/monitor",
@@ -5032,6 +5254,7 @@ export const toolMetadata = {
       "frequency"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/subusers/{subuser_name}/monitor",
@@ -5054,6 +5277,7 @@ export const toolMetadata = {
       "frequency"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v3/subusers/{subuser_name}/monitor",
@@ -5073,6 +5297,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/subusers/{subuser_name}/stats/monthly",
@@ -5108,6 +5333,7 @@ export const toolMetadata = {
       "emails"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5127,6 +5353,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5157,6 +5384,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5178,6 +5406,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5202,6 +5431,7 @@ export const toolMetadata = {
       "emails"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5221,6 +5451,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "Accept",
       "on-behalf-of"
@@ -5248,6 +5479,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5274,6 +5506,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5298,6 +5531,7 @@ export const toolMetadata = {
       "emails"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5317,6 +5551,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5347,6 +5582,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5368,6 +5604,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5392,6 +5629,7 @@ export const toolMetadata = {
       "emails"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5411,6 +5649,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5441,6 +5680,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5462,6 +5702,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5483,6 +5724,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5513,6 +5755,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5543,6 +5786,7 @@ export const toolMetadata = {
       "scopes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5562,6 +5806,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5581,6 +5826,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5602,6 +5848,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5623,6 +5870,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5644,6 +5892,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5668,6 +5917,7 @@ export const toolMetadata = {
       "scopes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5689,6 +5939,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5720,6 +5971,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5739,6 +5991,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5760,6 +6013,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5783,6 +6037,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5806,6 +6061,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5836,6 +6092,7 @@ export const toolMetadata = {
       "test_data"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5857,6 +6114,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5879,6 +6137,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5910,6 +6169,7 @@ export const toolMetadata = {
       "test_data"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5932,6 +6192,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5954,6 +6215,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5973,6 +6235,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -5994,6 +6257,7 @@ export const toolMetadata = {
       "enabled"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6013,6 +6277,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6039,6 +6304,7 @@ export const toolMetadata = {
       "utm_term"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6058,6 +6324,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6079,6 +6346,7 @@ export const toolMetadata = {
       "enabled"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6098,6 +6366,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6124,6 +6393,7 @@ export const toolMetadata = {
       "url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6143,6 +6413,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6162,6 +6433,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6181,6 +6453,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6202,6 +6475,7 @@ export const toolMetadata = {
       "email"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6224,6 +6498,7 @@ export const toolMetadata = {
       "old_password"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6243,6 +6518,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6274,6 +6550,7 @@ export const toolMetadata = {
       "zip"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6293,6 +6570,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6315,6 +6593,7 @@ export const toolMetadata = {
       "status"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6334,6 +6613,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6355,6 +6635,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6378,6 +6659,7 @@ export const toolMetadata = {
       "status"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6399,6 +6681,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6421,6 +6704,7 @@ export const toolMetadata = {
       "require_valid_cert"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6440,6 +6724,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6461,6 +6746,7 @@ export const toolMetadata = {
       "username"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6480,6 +6766,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6516,6 +6803,7 @@ export const toolMetadata = {
       "url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6535,6 +6823,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6556,6 +6845,7 @@ export const toolMetadata = {
       "enabled"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6580,6 +6870,7 @@ export const toolMetadata = {
       "url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6599,6 +6890,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6623,6 +6915,7 @@ export const toolMetadata = {
       "url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6642,6 +6935,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6663,6 +6957,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6689,6 +6984,7 @@ export const toolMetadata = {
       "url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6712,6 +7008,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6747,6 +7044,7 @@ export const toolMetadata = {
       "source"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/validations/email",
@@ -6764,6 +7062,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/verified_senders",
@@ -6797,6 +7096,7 @@ export const toolMetadata = {
       "zip"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/verified_senders",
@@ -6814,6 +7114,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/verified_senders/domains",
@@ -6831,6 +7132,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/verified_senders/resend/{id}",
@@ -6850,6 +7152,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/verified_senders/steps_completed",
@@ -6867,6 +7170,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/verified_senders/verify/{token}",
@@ -6886,6 +7190,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/verified_senders/{id}",
@@ -6917,6 +7222,7 @@ export const toolMetadata = {
       "zip"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/v3/verified_senders/{id}",
@@ -6941,6 +7247,7 @@ export const toolMetadata = {
       "message"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/whitelabel/dns/email",
@@ -6958,6 +7265,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -6999,6 +7307,7 @@ export const toolMetadata = {
       "username"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7018,6 +7327,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7042,6 +7352,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/whitelabel/domains/subuser",
@@ -7064,6 +7375,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/whitelabel/domains/subuser",
@@ -7086,6 +7398,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7107,6 +7420,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7131,6 +7445,7 @@ export const toolMetadata = {
       "default"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7154,6 +7469,7 @@ export const toolMetadata = {
       "username"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/whitelabel/domains/{domain_id}/subuser",
@@ -7175,6 +7491,7 @@ export const toolMetadata = {
       "ip"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7196,6 +7513,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7218,6 +7536,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7239,6 +7558,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7271,6 +7591,7 @@ export const toolMetadata = {
       "subdomain"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7290,6 +7611,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7311,6 +7633,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7332,6 +7655,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7353,6 +7677,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7381,6 +7706,7 @@ export const toolMetadata = {
       "subdomain"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7400,6 +7726,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7424,6 +7751,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v3/whitelabel/links/subuser",
@@ -7446,6 +7774,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v3/whitelabel/links/subuser",
@@ -7468,6 +7797,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7489,6 +7819,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7512,6 +7843,7 @@ export const toolMetadata = {
       "default"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7533,6 +7865,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "on-behalf-of"
     ],
@@ -7556,6 +7889,7 @@ export const toolMetadata = {
       "username"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v3/whitelabel/links/{link_id}/subuser",

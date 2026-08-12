@@ -1,9 +1,9 @@
 {
   "name": "@utdk/anthropic",
-  "version": "0.0.1-20260718.2",
+  "version": "0.0.1-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Anthropic API. Claude models via the Anthropic Messages API: message creation, token counting, and model discovery. Chat surfaces may instead use the OpenAI-compatible endpoint at /v1 (Authorization: Bearer <api key>).",
-  "homepage": "https://platform.claude.com/docs",
+  "homepage": "https://platform.claude.com",
   "keywords": [
     "anthropic",
     "generated",
@@ -12,8 +12,8 @@
   ],
   "utdk": {
     "provider": "anthropic",
-    "generation": 2,
-    "generatedAt": "2026-07-18T05:49:25.164Z",
+    "generation": 1,
+    "generatedAt": "2026-08-12T13:38:24.265Z",
     "auth": {
       "schemes": [
         {
@@ -38,14 +38,12 @@
       "version": "2023-06-01",
       "termsOfService": "https://www.anthropic.com/legal/consumer-terms"
     },
-    "docs": {
-      "manifestPath": ".registry/anthropic/manifest.json",
-      "indexPath": ".registry/anthropic/index.md",
-      "docsPath": "packages/utdk/anthropic/docs",
-      "generatedAt": "2026-07-18T05:49:25.163Z",
-      "sourceCount": 0,
-      "openApiHash": null,
-      "promptHash": "8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8"
+    "provenance": {
+      "source": "manual",
+      "originDomain": "platform.claude.com"
+    },
+    "branding": {
+      "site": "https://platform.claude.com"
     }
   }
 }

@@ -9,6 +9,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/albums/{id}",
@@ -19,7 +20,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "market"
-    ]
+    ],
+    "description": "Get Album\n"
   },
   "get-multiple-albums": {
     "accessPath": [
@@ -29,6 +31,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/albums",
@@ -38,7 +41,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "ids",
       "market"
-    ]
+    ],
+    "description": "Get Several Albums\n"
   },
   "get-an-albums-tracks": {
     "accessPath": [
@@ -48,6 +52,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/albums/{id}/tracks",
@@ -60,7 +65,8 @@ export const toolMetadata = {
       "market",
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get Album Tracks\n"
   },
   "get-an-artist": {
     "accessPath": [
@@ -70,6 +76,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/artists/{id}",
@@ -78,7 +85,8 @@ export const toolMetadata = {
       "id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Artist\n"
   },
   "get-multiple-artists": {
     "accessPath": [
@@ -88,6 +96,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/artists",
@@ -96,7 +105,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Get Several Artists\n"
   },
   "get-an-artists-albums": {
     "accessPath": [
@@ -106,6 +116,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/artists/{id}/albums",
@@ -119,7 +130,8 @@ export const toolMetadata = {
       "market",
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get Artist's Albums\n"
   },
   "get-an-artists-top-tracks": {
     "accessPath": [
@@ -129,6 +141,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/artists/{id}/top-tracks",
@@ -139,7 +152,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "market"
-    ]
+    ],
+    "description": "Get Artist's Top Tracks\n"
   },
   "get-an-artists-related-artists": {
     "accessPath": [
@@ -149,6 +163,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/artists/{id}/related-artists",
@@ -157,7 +172,8 @@ export const toolMetadata = {
       "id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Artist's Related Artists\n"
   },
   "get-a-show": {
     "accessPath": [
@@ -167,6 +183,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/shows/{id}",
@@ -177,7 +194,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "market"
-    ]
+    ],
+    "description": "Get Show\n"
   },
   "get-multiple-shows": {
     "accessPath": [
@@ -187,6 +205,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/shows",
@@ -196,7 +215,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "market",
       "ids"
-    ]
+    ],
+    "description": "Get Several Shows\n"
   },
   "get-a-shows-episodes": {
     "accessPath": [
@@ -206,6 +226,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/shows/{id}/episodes",
@@ -218,7 +239,8 @@ export const toolMetadata = {
       "market",
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get Show Episodes\n"
   },
   "get-an-episode": {
     "accessPath": [
@@ -228,6 +250,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/episodes/{id}",
@@ -238,7 +261,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "market"
-    ]
+    ],
+    "description": "Get Episode\n"
   },
   "get-multiple-episodes": {
     "accessPath": [
@@ -248,6 +272,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/episodes",
@@ -257,7 +282,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "ids",
       "market"
-    ]
+    ],
+    "description": "Get Several Episodes\n"
   },
   "get-an-audiobook": {
     "accessPath": [
@@ -267,6 +293,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/audiobooks/{id}",
@@ -277,7 +304,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "market"
-    ]
+    ],
+    "description": "Get an Audiobook\n"
   },
   "get-multiple-audiobooks": {
     "accessPath": [
@@ -287,6 +315,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/audiobooks",
@@ -296,7 +325,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "ids",
       "market"
-    ]
+    ],
+    "description": "Get Several Audiobooks\n"
   },
   "get-audiobook-chapters": {
     "accessPath": [
@@ -306,6 +336,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/audiobooks/{id}/chapters",
@@ -318,7 +349,8 @@ export const toolMetadata = {
       "market",
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get Audiobook Chapters\n"
   },
   "get-users-saved-audiobooks": {
     "accessPath": [
@@ -328,6 +360,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/audiobooks",
@@ -337,7 +370,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get User's Saved Audiobooks\n"
   },
   "save-audiobooks-user": {
     "accessPath": [
@@ -347,6 +381,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/audiobooks",
@@ -355,7 +390,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Save Audiobooks for Current User\n"
   },
   "remove-audiobooks-user": {
     "accessPath": [
@@ -365,6 +401,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/me/audiobooks",
@@ -373,7 +410,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Remove User's Saved Audiobooks\n"
   },
   "check-users-saved-audiobooks": {
     "accessPath": [
@@ -383,6 +421,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/audiobooks/contains",
@@ -391,7 +430,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Check User's Saved Audiobooks\n"
   },
   "get-a-chapter": {
     "accessPath": [
@@ -401,6 +441,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/chapters/{id}",
@@ -411,7 +452,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "market"
-    ]
+    ],
+    "description": "Get a Chapter\n"
   },
   "get-several-chapters": {
     "accessPath": [
@@ -421,6 +463,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/chapters",
@@ -430,7 +473,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "ids",
       "market"
-    ]
+    ],
+    "description": "Get Several Chapters\n"
   },
   "get-track": {
     "accessPath": [
@@ -440,6 +484,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/tracks/{id}",
@@ -450,7 +495,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "market"
-    ]
+    ],
+    "description": "Get Track\n"
   },
   "get-several-tracks": {
     "accessPath": [
@@ -460,6 +506,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/tracks",
@@ -469,7 +516,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "market",
       "ids"
-    ]
+    ],
+    "description": "Get Several Tracks\n"
   },
   "search": {
     "accessPath": [
@@ -479,6 +527,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/search",
@@ -492,7 +541,8 @@ export const toolMetadata = {
       "limit",
       "offset",
       "include_external"
-    ]
+    ],
+    "description": "Search for Item\n"
   },
   "get-current-users-profile": {
     "accessPath": [
@@ -502,13 +552,15 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Current User's Profile\n"
   },
   "get-playlist": {
     "accessPath": [
@@ -518,6 +570,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/playlists/{playlist_id}",
@@ -530,7 +583,8 @@ export const toolMetadata = {
       "market",
       "fields",
       "additional_types"
-    ]
+    ],
+    "description": "Get Playlist\n"
   },
   "change-playlist-details": {
     "accessPath": [
@@ -545,6 +599,7 @@ export const toolMetadata = {
       "description"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/playlists/{playlist_id}",
@@ -553,7 +608,8 @@ export const toolMetadata = {
       "playlist_id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Change Playlist Details\n"
   },
   "get-playlists-tracks": {
     "accessPath": [
@@ -563,6 +619,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/playlists/{playlist_id}/tracks",
@@ -577,7 +634,8 @@ export const toolMetadata = {
       "limit",
       "offset",
       "additional_types"
-    ]
+    ],
+    "description": "Get Playlist Items [DEPRECATED]\n"
   },
   "add-tracks-to-playlist": {
     "accessPath": [
@@ -590,6 +648,7 @@ export const toolMetadata = {
       "position"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/playlists/{playlist_id}/tracks",
@@ -604,7 +663,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "position",
       "uris"
-    ]
+    ],
+    "description": "Add Items to Playlist [DEPRECATED]\n"
   },
   "reorder-or-replace-playlists-tracks": {
     "accessPath": [
@@ -620,6 +680,7 @@ export const toolMetadata = {
       "snapshot_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/playlists/{playlist_id}/tracks",
@@ -632,7 +693,8 @@ export const toolMetadata = {
     ],
     "queryParameterKeys": [
       "uris"
-    ]
+    ],
+    "description": "Update Playlist Items [DEPRECATED]\n"
   },
   "remove-tracks-playlist": {
     "accessPath": [
@@ -645,6 +707,7 @@ export const toolMetadata = {
       "snapshot_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/playlists/{playlist_id}/tracks",
@@ -653,7 +716,8 @@ export const toolMetadata = {
       "playlist_id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Remove Playlist Items [DEPRECATED]\n"
   },
   "get-playlists-items": {
     "accessPath": [
@@ -663,6 +727,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/playlists/{playlist_id}/items",
@@ -677,7 +742,8 @@ export const toolMetadata = {
       "limit",
       "offset",
       "additional_types"
-    ]
+    ],
+    "description": "Get Playlist Items\n"
   },
   "add-items-to-playlist": {
     "accessPath": [
@@ -690,6 +756,7 @@ export const toolMetadata = {
       "position"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/playlists/{playlist_id}/items",
@@ -704,7 +771,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "position",
       "uris"
-    ]
+    ],
+    "description": "Add Items to Playlist\n"
   },
   "reorder-or-replace-playlists-items": {
     "accessPath": [
@@ -720,6 +788,7 @@ export const toolMetadata = {
       "snapshot_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/playlists/{playlist_id}/items",
@@ -732,7 +801,8 @@ export const toolMetadata = {
     ],
     "queryParameterKeys": [
       "uris"
-    ]
+    ],
+    "description": "Update Playlist Items\n"
   },
   "remove-items-playlist": {
     "accessPath": [
@@ -745,6 +815,7 @@ export const toolMetadata = {
       "snapshot_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/playlists/{playlist_id}/items",
@@ -753,7 +824,8 @@ export const toolMetadata = {
       "playlist_id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Remove Playlist Items\n"
   },
   "get-a-list-of-current-users-playlists": {
     "accessPath": [
@@ -763,6 +835,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/playlists",
@@ -772,7 +845,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get Current User's Playlists\n"
   },
   "create-playlist": {
     "accessPath": [
@@ -787,13 +861,15 @@ export const toolMetadata = {
       "description"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/me/playlists",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Playlist\n"
   },
   "save-library-items": {
     "accessPath": [
@@ -803,6 +879,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/library",
@@ -811,7 +888,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "uris"
-    ]
+    ],
+    "description": "Save Items to Library\n"
   },
   "remove-library-items": {
     "accessPath": [
@@ -821,6 +899,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/me/library",
@@ -829,7 +908,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "uris"
-    ]
+    ],
+    "description": "Remove Items from Library\n"
   },
   "check-library-contains": {
     "accessPath": [
@@ -839,6 +919,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/library/contains",
@@ -847,7 +928,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "uris"
-    ]
+    ],
+    "description": "Check User's Saved Items\n"
   },
   "get-users-saved-albums": {
     "accessPath": [
@@ -857,6 +939,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/albums",
@@ -867,7 +950,8 @@ export const toolMetadata = {
       "limit",
       "offset",
       "market"
-    ]
+    ],
+    "description": "Get User's Saved Albums\n"
   },
   "save-albums-user": {
     "accessPath": [
@@ -879,6 +963,7 @@ export const toolMetadata = {
       "ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/albums",
@@ -889,7 +974,8 @@ export const toolMetadata = {
     ],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Save Albums for Current User\n"
   },
   "remove-albums-user": {
     "accessPath": [
@@ -901,6 +987,7 @@ export const toolMetadata = {
       "ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/me/albums",
@@ -911,7 +998,8 @@ export const toolMetadata = {
     ],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Remove Users' Saved Albums\n"
   },
   "check-users-saved-albums": {
     "accessPath": [
@@ -921,6 +1009,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/albums/contains",
@@ -929,7 +1018,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Check User's Saved Albums\n"
   },
   "get-users-saved-tracks": {
     "accessPath": [
@@ -939,6 +1029,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/tracks",
@@ -949,7 +1040,8 @@ export const toolMetadata = {
       "market",
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get User's Saved Tracks\n"
   },
   "save-tracks-user": {
     "accessPath": [
@@ -962,13 +1054,15 @@ export const toolMetadata = {
       "timestamped_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/tracks",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Save Tracks for Current User\n"
   },
   "remove-tracks-user": {
     "accessPath": [
@@ -980,6 +1074,7 @@ export const toolMetadata = {
       "ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/me/tracks",
@@ -990,7 +1085,8 @@ export const toolMetadata = {
     ],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Remove User's Saved Tracks\n"
   },
   "check-users-saved-tracks": {
     "accessPath": [
@@ -1000,6 +1096,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/tracks/contains",
@@ -1008,7 +1105,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Check User's Saved Tracks\n"
   },
   "get-users-saved-episodes": {
     "accessPath": [
@@ -1018,6 +1116,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/episodes",
@@ -1028,7 +1127,8 @@ export const toolMetadata = {
       "market",
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get User's Saved Episodes\n"
   },
   "save-episodes-user": {
     "accessPath": [
@@ -1040,6 +1140,7 @@ export const toolMetadata = {
       "ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/episodes",
@@ -1050,7 +1151,8 @@ export const toolMetadata = {
     ],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Save Episodes for Current User\n"
   },
   "remove-episodes-user": {
     "accessPath": [
@@ -1062,6 +1164,7 @@ export const toolMetadata = {
       "ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/me/episodes",
@@ -1072,7 +1175,8 @@ export const toolMetadata = {
     ],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Remove User's Saved Episodes\n"
   },
   "check-users-saved-episodes": {
     "accessPath": [
@@ -1082,6 +1186,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/episodes/contains",
@@ -1090,7 +1195,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Check User's Saved Episodes\n"
   },
   "get-users-saved-shows": {
     "accessPath": [
@@ -1100,6 +1206,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/shows",
@@ -1109,7 +1216,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get User's Saved Shows\n"
   },
   "save-shows-user": {
     "accessPath": [
@@ -1119,6 +1227,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/shows",
@@ -1127,7 +1236,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Save Shows for Current User\n"
   },
   "remove-shows-user": {
     "accessPath": [
@@ -1137,6 +1247,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/me/shows",
@@ -1146,7 +1257,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "ids",
       "market"
-    ]
+    ],
+    "description": "Remove User's Saved Shows\n"
   },
   "check-users-saved-shows": {
     "accessPath": [
@@ -1156,6 +1268,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/shows/contains",
@@ -1164,7 +1277,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Check User's Saved Shows\n"
   },
   "get-users-top-artists-and-tracks": {
     "accessPath": [
@@ -1174,6 +1288,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/top/{type}",
@@ -1186,7 +1301,8 @@ export const toolMetadata = {
       "time_range",
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get User's Top Items\n"
   },
   "get-users-profile": {
     "accessPath": [
@@ -1196,6 +1312,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/users/{user_id}",
@@ -1204,7 +1321,8 @@ export const toolMetadata = {
       "user_id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get User's Profile\n"
   },
   "get-list-users-playlists": {
     "accessPath": [
@@ -1214,6 +1332,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/users/{user_id}/playlists",
@@ -1225,7 +1344,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get User's Playlists\n"
   },
   "create-playlist-for-user": {
     "accessPath": [
@@ -1240,6 +1360,7 @@ export const toolMetadata = {
       "description"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/users/{user_id}/playlists",
@@ -1248,7 +1369,8 @@ export const toolMetadata = {
       "user_id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Create Playlist for user\n"
   },
   "follow-playlist": {
     "accessPath": [
@@ -1260,6 +1382,7 @@ export const toolMetadata = {
       "public"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/playlists/{playlist_id}/followers",
@@ -1268,7 +1391,8 @@ export const toolMetadata = {
       "playlist_id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Follow Playlist\n"
   },
   "unfollow-playlist": {
     "accessPath": [
@@ -1278,6 +1402,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/playlists/{playlist_id}/followers",
@@ -1286,7 +1411,8 @@ export const toolMetadata = {
       "playlist_id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Unfollow Playlist\n"
   },
   "get-featured-playlists": {
     "accessPath": [
@@ -1296,6 +1422,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/browse/featured-playlists",
@@ -1306,7 +1433,8 @@ export const toolMetadata = {
       "locale",
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get Featured Playlists\n"
   },
   "get-categories": {
     "accessPath": [
@@ -1316,6 +1444,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/browse/categories",
@@ -1326,7 +1455,8 @@ export const toolMetadata = {
       "locale",
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get Several Browse Categories\n"
   },
   "get-a-category": {
     "accessPath": [
@@ -1336,6 +1466,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/browse/categories/{category_id}",
@@ -1346,7 +1477,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "locale"
-    ]
+    ],
+    "description": "Get Single Browse Category\n"
   },
   "get-a-categories-playlists": {
     "accessPath": [
@@ -1356,6 +1488,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/browse/categories/{category_id}/playlists",
@@ -1367,7 +1500,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get Category's Playlists\n"
   },
   "get-playlist-cover": {
     "accessPath": [
@@ -1377,6 +1511,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/playlists/{playlist_id}/images",
@@ -1385,7 +1520,8 @@ export const toolMetadata = {
       "playlist_id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Playlist Cover Image\n"
   },
   "upload-custom-playlist-cover": {
     "accessPath": [
@@ -1395,6 +1531,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/playlists/{playlist_id}/images",
@@ -1403,7 +1540,8 @@ export const toolMetadata = {
       "playlist_id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Add Custom Playlist Cover Image\n"
   },
   "get-new-releases": {
     "accessPath": [
@@ -1413,6 +1551,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/browse/new-releases",
@@ -1422,7 +1561,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "limit",
       "offset"
-    ]
+    ],
+    "description": "Get New Releases\n"
   },
   "get-followed": {
     "accessPath": [
@@ -1432,6 +1572,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/following",
@@ -1442,7 +1583,8 @@ export const toolMetadata = {
       "type",
       "after",
       "limit"
-    ]
+    ],
+    "description": "Get Followed Artists\n"
   },
   "follow-artists-users": {
     "accessPath": [
@@ -1454,6 +1596,7 @@ export const toolMetadata = {
       "ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/following",
@@ -1465,7 +1608,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "type",
       "ids"
-    ]
+    ],
+    "description": "Follow Artists or Users\n"
   },
   "unfollow-artists-users": {
     "accessPath": [
@@ -1477,6 +1621,7 @@ export const toolMetadata = {
       "ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/v1/me/following",
@@ -1488,7 +1633,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "type",
       "ids"
-    ]
+    ],
+    "description": "Unfollow Artists or Users\n"
   },
   "check-current-user-follows": {
     "accessPath": [
@@ -1498,6 +1644,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/following/contains",
@@ -1507,7 +1654,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "type",
       "ids"
-    ]
+    ],
+    "description": "Check If User Follows Artists or Users\n"
   },
   "check-if-user-follows-playlist": {
     "accessPath": [
@@ -1517,6 +1665,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/playlists/{playlist_id}/followers/contains",
@@ -1527,7 +1676,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Check if Current User Follows Playlist\n"
   },
   "get-several-audio-features": {
     "accessPath": [
@@ -1537,6 +1687,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/audio-features",
@@ -1545,7 +1696,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "ids"
-    ]
+    ],
+    "description": "Get Several Tracks' Audio Features\n"
   },
   "get-audio-features": {
     "accessPath": [
@@ -1555,6 +1707,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/audio-features/{id}",
@@ -1563,7 +1716,8 @@ export const toolMetadata = {
       "id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Track's Audio Features\n"
   },
   "get-audio-analysis": {
     "accessPath": [
@@ -1573,6 +1727,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/audio-analysis/{id}",
@@ -1581,7 +1736,8 @@ export const toolMetadata = {
       "id"
     ],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Track's Audio Analysis\n"
   },
   "get-recommendations": {
     "accessPath": [
@@ -1591,6 +1747,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/recommendations",
@@ -1645,7 +1802,8 @@ export const toolMetadata = {
       "min_valence",
       "max_valence",
       "target_valence"
-    ]
+    ],
+    "description": "Get Recommendations\n"
   },
   "get-recommendation-genres": {
     "accessPath": [
@@ -1655,13 +1813,15 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/recommendations/available-genre-seeds",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Available Genre Seeds\n"
   },
   "get-information-about-the-users-current-playback": {
     "accessPath": [
@@ -1671,6 +1831,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/player",
@@ -1680,7 +1841,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "market",
       "additional_types"
-    ]
+    ],
+    "description": "Get Playback State\n"
   },
   "transfer-a-users-playback": {
     "accessPath": [
@@ -1693,13 +1855,15 @@ export const toolMetadata = {
       "play"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/player",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Transfer Playback\n"
   },
   "get-a-users-available-devices": {
     "accessPath": [
@@ -1709,13 +1873,15 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/player/devices",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Available Devices\n"
   },
   "get-the-users-currently-playing-track": {
     "accessPath": [
@@ -1725,6 +1891,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/player/currently-playing",
@@ -1734,7 +1901,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "market",
       "additional_types"
-    ]
+    ],
+    "description": "Get Currently Playing Track\n"
   },
   "start-a-users-playback": {
     "accessPath": [
@@ -1749,6 +1917,7 @@ export const toolMetadata = {
       "position_ms"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/player/play",
@@ -1757,7 +1926,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "device_id"
-    ]
+    ],
+    "description": "Start/Resume Playback\n"
   },
   "pause-a-users-playback": {
     "accessPath": [
@@ -1767,6 +1937,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/player/pause",
@@ -1775,7 +1946,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "device_id"
-    ]
+    ],
+    "description": "Pause Playback\n"
   },
   "skip-users-playback-to-next-track": {
     "accessPath": [
@@ -1785,6 +1957,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/me/player/next",
@@ -1793,7 +1966,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "device_id"
-    ]
+    ],
+    "description": "Skip To Next\n"
   },
   "skip-users-playback-to-previous-track": {
     "accessPath": [
@@ -1803,6 +1977,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/me/player/previous",
@@ -1811,7 +1986,8 @@ export const toolMetadata = {
     "queryConflictKeys": [],
     "queryParameterKeys": [
       "device_id"
-    ]
+    ],
+    "description": "Skip To Previous\n"
   },
   "seek-to-position-in-currently-playing-track": {
     "accessPath": [
@@ -1821,6 +1997,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/player/seek",
@@ -1830,7 +2007,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "position_ms",
       "device_id"
-    ]
+    ],
+    "description": "Seek To Position\n"
   },
   "set-repeat-mode-on-users-playback": {
     "accessPath": [
@@ -1840,6 +2018,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/player/repeat",
@@ -1849,7 +2028,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "state",
       "device_id"
-    ]
+    ],
+    "description": "Set Repeat Mode\n"
   },
   "set-volume-for-users-playback": {
     "accessPath": [
@@ -1859,6 +2039,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/player/volume",
@@ -1868,7 +2049,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "volume_percent",
       "device_id"
-    ]
+    ],
+    "description": "Set Playback Volume\n"
   },
   "toggle-shuffle-for-users-playback": {
     "accessPath": [
@@ -1878,6 +2060,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PUT",
     "routeTemplate": "/v1/me/player/shuffle",
@@ -1887,7 +2070,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "state",
       "device_id"
-    ]
+    ],
+    "description": "Toggle Playback Shuffle\n"
   },
   "get-recently-played": {
     "accessPath": [
@@ -1897,6 +2081,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/player/recently-played",
@@ -1907,7 +2092,8 @@ export const toolMetadata = {
       "limit",
       "after",
       "before"
-    ]
+    ],
+    "description": "Get Recently Played Tracks\n"
   },
   "get-queue": {
     "accessPath": [
@@ -1917,13 +2103,15 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/me/player/queue",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get the User's Queue\n"
   },
   "add-to-queue": {
     "accessPath": [
@@ -1933,6 +2121,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/v1/me/player/queue",
@@ -1942,7 +2131,8 @@ export const toolMetadata = {
     "queryParameterKeys": [
       "uri",
       "device_id"
-    ]
+    ],
+    "description": "Add Item to Playback Queue\n"
   },
   "get-available-markets": {
     "accessPath": [
@@ -1952,12 +2142,14 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/v1/markets",
     "pathConflictKeys": [],
     "pathParameterKeys": [],
     "queryConflictKeys": [],
-    "queryParameterKeys": []
+    "queryParameterKeys": [],
+    "description": "Get Available Markets\n"
   }
 } satisfies ToolRuntimeMetadataMap;

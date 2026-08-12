@@ -1,9 +1,9 @@
 {
   "name": "@utdk/postman-explore",
-  "version": "1.0.0-20260530.2",
+  "version": "1.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Postman Explore API. Undocumented internal API powering the Postman API Network explore site (postman.com/explore).\nAll requests go through a proxy endpoint as POST requests with a JSON body containing\n{service, method, path, body?}. This spec models the logical endpoints directly.\n\nNo authentication required for public browsing and search.",
-  "homepage": "https://raw.githubusercontent.com/mvanhorn/cli-printing-press/main/catalog/specs/postman-explore-spec.yaml",
+  "homepage": "repo://packages/utdk/postman-explore/openapi.json",
   "keywords": [
     "postman-explore",
     "generated",
@@ -12,15 +12,15 @@
   ],
   "utdk": {
     "provider": "postman-explore",
-    "generation": 2,
-    "generatedAt": "2026-05-30T18:16:15.342Z",
+    "generation": 1,
+    "generatedAt": "2026-08-12T13:39:50.298Z",
     "auth": {
       "schemes": [],
       "operationOverrides": {}
     },
     "openapi": {
       "title": "Postman Explore API",
-      "url": "https://raw.githubusercontent.com/mvanhorn/cli-printing-press/main/catalog/specs/postman-explore-spec.yaml",
+      "url": "repo://packages/utdk/postman-explore/openapi.json",
       "version": "1.0.0",
       "termsOfService": null
     }

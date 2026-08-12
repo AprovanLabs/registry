@@ -1,9 +1,9 @@
 {
   "name": "@utdk/gemini",
-  "version": "0.0.1-20260718.2",
+  "version": "0.0.1-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Google Gemini API. Google's Gemini models via the Generative Language API: content generation, token counting, and model discovery. Chat surfaces may instead use the OpenAI-compatible endpoint at /v1beta/openai (Authorization: Bearer <api key>).",
-  "homepage": "https://ai.google.dev/gemini-api/docs",
+  "homepage": "https://ai.google.dev",
   "keywords": [
     "gemini",
     "generated",
@@ -12,8 +12,8 @@
   ],
   "utdk": {
     "provider": "gemini",
-    "generation": 2,
-    "generatedAt": "2026-07-18T05:49:49.165Z",
+    "generation": 1,
+    "generatedAt": "2026-08-12T13:38:31.253Z",
     "auth": {
       "schemes": [
         {
@@ -38,14 +38,12 @@
       "version": "v1beta",
       "termsOfService": "https://ai.google.dev/gemini-api/terms"
     },
-    "docs": {
-      "manifestPath": ".registry/gemini/manifest.json",
-      "indexPath": ".registry/gemini/index.md",
-      "docsPath": "packages/utdk/gemini/docs",
-      "generatedAt": "2026-07-18T05:49:49.163Z",
-      "sourceCount": 0,
-      "openApiHash": null,
-      "promptHash": "8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8"
+    "provenance": {
+      "source": "manual",
+      "originDomain": "ai.google.dev"
+    },
+    "branding": {
+      "site": "https://ai.google.dev"
     }
   }
 }

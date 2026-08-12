@@ -1,6 +1,6 @@
 {
   "name": "@utdk/linear",
-  "version": "1.0.0-20260727.1",
+  "version": "1.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Linear API. Linear is a modern project management tool for high-performance software teams. This API provides REST endpoints for webhooks, OAuth, and attachment management alongside the primary GraphQL API.",
   "homepage": "https://developers.linear.app",
@@ -14,7 +14,7 @@
   "utdk": {
     "provider": "linear",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:30.510Z",
+    "generatedAt": "2026-08-12T13:38:42.068Z",
     "auth": {
       "schemes": [
         {

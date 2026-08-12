@@ -13,6 +13,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -35,6 +36,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/admin.apps.approved.list",
@@ -63,6 +65,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/admin.apps.requests.list",
@@ -94,6 +97,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -116,6 +120,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/admin.apps.restricted.list",
@@ -146,6 +151,7 @@ export const toolMetadata = {
       "channel_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -170,6 +176,7 @@ export const toolMetadata = {
       "channel_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -198,6 +205,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -222,6 +230,7 @@ export const toolMetadata = {
       "channel_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -247,6 +256,7 @@ export const toolMetadata = {
       "leaving_team_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -269,6 +279,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/admin.conversations.ekm.listOriginalConnectedChannelInfo",
@@ -299,6 +310,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -324,6 +336,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -356,6 +369,7 @@ export const toolMetadata = {
       "user_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -381,6 +395,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -408,6 +423,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/admin.conversations.restrictAccess.addGroup",
@@ -425,6 +441,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/admin.conversations.restrictAccess.listGroups",
@@ -455,6 +472,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/admin.conversations.restrictAccess.removeGroup",
@@ -472,6 +490,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -512,6 +531,7 @@ export const toolMetadata = {
       "prefs"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -539,6 +559,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -563,6 +584,7 @@ export const toolMetadata = {
       "channel_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -589,6 +611,7 @@ export const toolMetadata = {
       "url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/admin.emoji.add",
@@ -610,6 +633,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/admin.emoji.addAlias",
@@ -627,6 +651,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/admin.emoji.list",
@@ -656,6 +681,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/admin.emoji.remove",
@@ -677,6 +703,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/admin.emoji.rename",
@@ -697,6 +724,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -719,6 +747,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -748,6 +777,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -780,6 +810,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -802,6 +833,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -831,6 +863,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/admin.teams.admins.list",
@@ -863,6 +896,7 @@ export const toolMetadata = {
       "team_name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -885,6 +919,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -912,6 +947,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/admin.teams.owners.list",
@@ -939,6 +975,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -967,6 +1004,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/admin.teams.settings.setDefaultChannels",
@@ -987,6 +1025,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1012,6 +1051,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1038,6 +1078,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/admin.teams.settings.setIcon",
@@ -1058,6 +1099,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1084,6 +1126,7 @@ export const toolMetadata = {
       "usergroup_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1110,6 +1153,7 @@ export const toolMetadata = {
       "usergroup_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1132,6 +1176,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -1164,6 +1209,7 @@ export const toolMetadata = {
       "usergroup_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1192,6 +1238,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1224,6 +1271,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1246,6 +1294,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -1278,6 +1327,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1303,6 +1353,7 @@ export const toolMetadata = {
       "team_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1329,6 +1380,7 @@ export const toolMetadata = {
       "web_only"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1354,6 +1406,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1380,6 +1433,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1405,6 +1459,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1430,6 +1485,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1452,6 +1508,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/api.test",
@@ -1476,6 +1533,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -1502,6 +1560,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/apps.permissions.info",
@@ -1524,6 +1583,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/apps.permissions.request",
@@ -1550,6 +1610,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/apps.permissions.resources.list",
@@ -1576,6 +1637,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/apps.permissions.scopes.list",
@@ -1598,6 +1660,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/apps.permissions.users.list",
@@ -1624,6 +1687,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/apps.permissions.users.request",
@@ -1652,6 +1716,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/apps.uninstall",
@@ -1678,6 +1743,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/auth.revoke",
@@ -1702,6 +1768,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -1724,6 +1791,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/bots.info",
@@ -1757,6 +1825,7 @@ export const toolMetadata = {
       "users"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1782,6 +1851,7 @@ export const toolMetadata = {
       "id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1804,6 +1874,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -1832,6 +1903,7 @@ export const toolMetadata = {
       "users"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1857,6 +1929,7 @@ export const toolMetadata = {
       "users"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1884,6 +1957,7 @@ export const toolMetadata = {
       "title"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1910,6 +1984,7 @@ export const toolMetadata = {
       "ts"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1936,6 +2011,7 @@ export const toolMetadata = {
       "scheduled_message_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -1958,6 +2034,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/chat.getPermalink",
@@ -1987,6 +2064,7 @@ export const toolMetadata = {
       "text"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2022,6 +2100,7 @@ export const toolMetadata = {
       "username"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2060,6 +2139,7 @@ export const toolMetadata = {
       "username"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2095,6 +2175,7 @@ export const toolMetadata = {
       "unfurl_media"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2117,6 +2198,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -2157,6 +2239,7 @@ export const toolMetadata = {
       "user_auth_url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2188,6 +2271,7 @@ export const toolMetadata = {
       "ts"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2212,6 +2296,7 @@ export const toolMetadata = {
       "channel"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2236,6 +2321,7 @@ export const toolMetadata = {
       "channel"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2261,6 +2347,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2283,6 +2370,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/conversations.history",
@@ -2317,6 +2405,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/conversations.info",
@@ -2348,6 +2437,7 @@ export const toolMetadata = {
       "users"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2372,6 +2462,7 @@ export const toolMetadata = {
       "channel"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2397,6 +2488,7 @@ export const toolMetadata = {
       "user"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2421,6 +2513,7 @@ export const toolMetadata = {
       "channel"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2443,6 +2536,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/conversations.list",
@@ -2476,6 +2570,7 @@ export const toolMetadata = {
       "ts"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2498,6 +2593,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/conversations.members",
@@ -2530,6 +2626,7 @@ export const toolMetadata = {
       "users"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2555,6 +2652,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2577,6 +2675,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/conversations.replies",
@@ -2616,6 +2715,7 @@ export const toolMetadata = {
       "purpose"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2641,6 +2741,7 @@ export const toolMetadata = {
       "topic"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2665,6 +2766,7 @@ export const toolMetadata = {
       "channel"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2687,6 +2789,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -2714,6 +2817,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2736,6 +2840,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2758,6 +2863,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/dnd.info",
@@ -2785,6 +2891,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/dnd.setSnooze",
@@ -2802,6 +2909,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/dnd.teamInfo",
@@ -2826,6 +2934,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/emoji.list",
@@ -2851,6 +2960,7 @@ export const toolMetadata = {
       "id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2875,6 +2985,7 @@ export const toolMetadata = {
       "file"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -2897,6 +3008,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/files.info",
@@ -2927,6 +3039,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/files.list",
@@ -2971,6 +3084,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/files.remote.add",
@@ -2988,6 +3102,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/files.remote.info",
@@ -3014,6 +3129,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/files.remote.list",
@@ -3050,6 +3166,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/files.remote.remove",
@@ -3067,6 +3184,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/files.remote.share",
@@ -3104,6 +3222,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/files.remote.update",
@@ -3123,6 +3242,7 @@ export const toolMetadata = {
       "file"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3147,6 +3267,7 @@ export const toolMetadata = {
       "file"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3179,6 +3300,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/files.upload",
@@ -3196,6 +3318,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/migration.exchange",
@@ -3224,6 +3347,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/oauth.access",
@@ -3254,6 +3378,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/oauth.token",
@@ -3284,6 +3409,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/oauth.v2.access",
@@ -3315,6 +3441,7 @@ export const toolMetadata = {
       "timestamp"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3337,6 +3464,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/pins.list",
@@ -3364,6 +3492,7 @@ export const toolMetadata = {
       "timestamp"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3390,6 +3519,7 @@ export const toolMetadata = {
       "timestamp"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3412,6 +3542,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/reactions.get",
@@ -3444,6 +3575,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/reactions.list",
@@ -3482,6 +3614,7 @@ export const toolMetadata = {
       "timestamp"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3508,6 +3641,7 @@ export const toolMetadata = {
       "user"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3532,6 +3666,7 @@ export const toolMetadata = {
       "reminder"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3556,6 +3691,7 @@ export const toolMetadata = {
       "reminder"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3578,6 +3714,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/reminders.info",
@@ -3602,6 +3739,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/reminders.list",
@@ -3624,6 +3762,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/rtm.connect",
@@ -3650,6 +3789,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/search.messages",
@@ -3688,6 +3828,7 @@ export const toolMetadata = {
       "timestamp"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3710,6 +3851,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/stars.list",
@@ -3743,6 +3885,7 @@ export const toolMetadata = {
       "timestamp"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3765,6 +3908,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/team.accessLogs",
@@ -3791,6 +3935,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/team.billableInfo",
@@ -3815,6 +3960,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/team.info",
@@ -3839,6 +3985,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/team.integrationLogs",
@@ -3871,6 +4018,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/team.profile.get",
@@ -3901,6 +4049,7 @@ export const toolMetadata = {
       "name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3926,6 +4075,7 @@ export const toolMetadata = {
       "usergroup"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3951,6 +4101,7 @@ export const toolMetadata = {
       "usergroup"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -3973,6 +4124,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/usergroups.list",
@@ -4008,6 +4160,7 @@ export const toolMetadata = {
       "usergroup"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -4030,6 +4183,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/usergroups.users.list",
@@ -4060,6 +4214,7 @@ export const toolMetadata = {
       "users"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -4082,6 +4237,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/users.conversations",
@@ -4116,6 +4272,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/users.deletePhoto",
@@ -4133,6 +4290,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/users.getPresence",
@@ -4157,6 +4315,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/users.identity",
@@ -4179,6 +4338,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/users.info",
@@ -4205,6 +4365,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/users.list",
@@ -4233,6 +4394,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/users.lookupByEmail",
@@ -4257,6 +4419,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/api/users.profile.get",
@@ -4288,6 +4451,7 @@ export const toolMetadata = {
       "value"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -4310,6 +4474,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -4338,6 +4503,7 @@ export const toolMetadata = {
       "token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/api/users.setPhoto",
@@ -4357,6 +4523,7 @@ export const toolMetadata = {
       "presence"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "token"
     ],
@@ -4379,6 +4546,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -4406,6 +4574,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -4435,6 +4604,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -4462,6 +4632,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -4493,6 +4664,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -4520,6 +4692,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],
@@ -4547,6 +4720,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "token"
     ],

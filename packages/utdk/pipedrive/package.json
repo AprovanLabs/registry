@@ -1,6 +1,6 @@
 {
   "name": "@utdk/pipedrive",
-  "version": "1.0.0-20260727.1",
+  "version": "1.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Pipedrive API v1. Generated UTDK provider types and OpenAPI-backed client for https://developers.pipedrive.com/docs/api/v1/openapi.yaml.",
   "homepage": "https://developers.pipedrive.com",
@@ -13,7 +13,7 @@
   "utdk": {
     "provider": "pipedrive",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:30.994Z",
+    "generatedAt": "2026-08-12T13:38:42.892Z",
     "auth": {
       "schemes": [
         {

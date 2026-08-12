@@ -1,6 +1,6 @@
 {
   "name": "@utdk/airtable",
-  "version": "0.1.0-20260727.1",
+  "version": "0.1.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Airtable REST API. Airtable is a low-code platform for building collaborative apps. The REST API allows you to create, read, update, and delete records in Airtable bases, manage tables and fields, and automate workflows. Each Airtable base has a unique API that mirrors its structure.",
   "homepage": "https://airtable.com",
@@ -14,7 +14,7 @@
   "utdk": {
     "provider": "airtable",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:24.002Z",
+    "generatedAt": "2026-08-12T13:38:24.234Z",
     "auth": {
       "schemes": [
         {

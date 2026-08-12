@@ -1,6 +1,6 @@
 {
   "name": "@utdk/asana",
-  "version": "1.0.0-20260727.1",
+  "version": "1.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Asana. This is the interface for interacting with the [Asana Platform](https://developers.asana.com). Our API reference is generated from our [OpenAPI spec] (https://raw.githubusercontent.com/Asana/openapi/master/defs/asana_oas.yaml).",
   "homepage": "https://developers.asana.com",
@@ -14,7 +14,7 @@
   "utdk": {
     "provider": "asana",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:24.535Z",
+    "generatedAt": "2026-08-12T13:38:24.633Z",
     "auth": {
       "schemes": [
         {

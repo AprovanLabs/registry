@@ -13,6 +13,7 @@ export const toolMetadata = {
       "operationName"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/graphql",
@@ -36,6 +37,7 @@ export const toolMetadata = {
       "grant_type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/oauth/token",
@@ -55,6 +57,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/oauth/revoke",
@@ -72,6 +75,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/webhooks",
@@ -102,6 +106,7 @@ export const toolMetadata = {
       "teamId"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/webhooks",
@@ -119,6 +124,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/webhooks/{webhookId}",
@@ -146,6 +152,7 @@ export const toolMetadata = {
       "resourceTypes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "PATCH",
     "routeTemplate": "/webhooks/{webhookId}",
@@ -168,6 +175,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "DELETE",
     "routeTemplate": "/webhooks/{webhookId}",
@@ -197,6 +205,7 @@ export const toolMetadata = {
       "metadata"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/attachment",

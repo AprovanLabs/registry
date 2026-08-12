@@ -15,6 +15,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/asset_report/create",
@@ -40,6 +41,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/asset_report/get",
@@ -62,6 +64,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/asset_report/pdf/get",
@@ -85,6 +88,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/asset_report/refresh",
@@ -107,6 +111,7 @@ export const toolMetadata = {
       "account_ids_to_exclude"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/asset_report/filter",
@@ -128,6 +133,7 @@ export const toolMetadata = {
       "asset_report_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/asset_report/remove",
@@ -150,6 +156,7 @@ export const toolMetadata = {
       "auditor_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/asset_report/audit_copy/create",
@@ -171,6 +178,7 @@ export const toolMetadata = {
       "audit_copy_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/asset_report/audit_copy/get",
@@ -193,6 +201,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/asset_report/audit_copy/pdf/get",
@@ -214,6 +223,7 @@ export const toolMetadata = {
       "audit_copy_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/asset_report/audit_copy/remove",
@@ -239,6 +249,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/monitoring_insights/subscribe",
@@ -260,6 +271,7 @@ export const toolMetadata = {
       "subscription_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/monitoring_insights/unsubscribe",
@@ -283,6 +295,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/monitoring_insights/get",
@@ -305,6 +318,7 @@ export const toolMetadata = {
       "report_tokens"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/audit_copy_token/update",
@@ -327,6 +341,7 @@ export const toolMetadata = {
       "user_tier"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/partner_insights/get",
@@ -351,6 +366,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/check_report/income_insights/get",
@@ -376,6 +392,7 @@ export const toolMetadata = {
       "user_tier"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/check_report/base_report/get",
@@ -400,6 +417,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/check_report/pdf/get",
@@ -435,6 +453,7 @@ export const toolMetadata = {
       "consumer_report_permissible_purpose"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/check_report/create",
@@ -461,6 +480,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/check_report/partner_insights/get",
@@ -485,6 +505,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/check_report/cashflow_insights/get",
@@ -509,6 +530,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/check_report/lend_score/get",
@@ -533,6 +555,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/check_report/network_insights/get",
@@ -557,6 +580,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/check_report/verification/get",
@@ -581,6 +605,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/check_report/verification/pdf/get",
@@ -602,6 +627,7 @@ export const toolMetadata = {
       "applications"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/loans/applications/register",
@@ -623,6 +649,7 @@ export const toolMetadata = {
       "loans"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/loans/register",
@@ -644,6 +671,7 @@ export const toolMetadata = {
       "loans"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/loans/update",
@@ -665,6 +693,7 @@ export const toolMetadata = {
       "loans"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/loans/unregister",
@@ -691,6 +720,7 @@ export const toolMetadata = {
       "version"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cra/credit_profile/report/get",
@@ -712,6 +742,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/consumer_report/pdf/get",
@@ -740,6 +771,7 @@ export const toolMetadata = {
       "subject_token_type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/oauth/token",
@@ -762,6 +794,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/oauth/introspect",
@@ -784,6 +817,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/oauth/revoke",
@@ -805,6 +839,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/statements/list",
@@ -827,6 +862,7 @@ export const toolMetadata = {
       "statement_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/statements/download",
@@ -850,6 +886,7 @@ export const toolMetadata = {
       "end_date"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/statements/refresh",
@@ -871,6 +908,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/consent/events/get",
@@ -894,6 +932,7 @@ export const toolMetadata = {
       "count"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/activity/list",
@@ -915,6 +954,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/application/list",
@@ -937,6 +977,7 @@ export const toolMetadata = {
       "application_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/application/unlink",
@@ -962,6 +1003,7 @@ export const toolMetadata = {
       "context"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/application/scopes/update",
@@ -983,6 +1025,7 @@ export const toolMetadata = {
       "application_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/application/get",
@@ -1004,6 +1047,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/get",
@@ -1025,6 +1069,7 @@ export const toolMetadata = {
       "public_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/user_account/session/get",
@@ -1048,6 +1093,7 @@ export const toolMetadata = {
       "event"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/user_account/session/event/send",
@@ -1069,6 +1115,7 @@ export const toolMetadata = {
       "user"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/profile/network_status/get",
@@ -1091,6 +1138,7 @@ export const toolMetadata = {
       "template_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/network/status/get",
@@ -1113,6 +1161,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/auth/get",
@@ -1135,6 +1184,7 @@ export const toolMetadata = {
       "numbers"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/auth/verify",
@@ -1159,6 +1209,7 @@ export const toolMetadata = {
       "end_date"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transactions/get",
@@ -1180,6 +1231,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transactions/refresh",
@@ -1202,6 +1254,7 @@ export const toolMetadata = {
       "transactions"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transactions/create",
@@ -1224,6 +1277,7 @@ export const toolMetadata = {
       "days_requested"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cashflow_report/refresh",
@@ -1249,6 +1303,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cashflow_report/get",
@@ -1273,6 +1328,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cashflow_report/transactions/get",
@@ -1294,6 +1350,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/cashflow_report/insights/get",
@@ -1317,6 +1374,7 @@ export const toolMetadata = {
       "account_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transactions/recurring/get",
@@ -1341,6 +1399,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transactions/sync",
@@ -1364,6 +1423,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transactions/enrich",
@@ -1385,6 +1445,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/user/transactions/refresh",
@@ -1406,6 +1467,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/user/financial_data/refresh",
@@ -1430,6 +1492,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/institutions/get",
@@ -1454,6 +1517,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/institutions/search",
@@ -1477,6 +1541,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/institutions/get_by_id",
@@ -1500,6 +1565,7 @@ export const toolMetadata = {
       "reason_note"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/remove",
@@ -1523,6 +1589,7 @@ export const toolMetadata = {
       "reason_note"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/products/terminate",
@@ -1552,6 +1619,7 @@ export const toolMetadata = {
       "notes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/handle_fraud_report",
@@ -1574,6 +1642,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/accounts/get",
@@ -1591,6 +1660,7 @@ export const toolMetadata = {
     "bodyKind": "raw",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/categories/get",
@@ -1613,6 +1683,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/processor_token/create",
@@ -1638,6 +1709,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/public_token/create",
@@ -1661,6 +1733,7 @@ export const toolMetadata = {
       "webhook_code"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/item/fire_webhook",
@@ -1683,6 +1756,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/accounts/balance/get",
@@ -1705,6 +1779,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/identity/get",
@@ -1727,6 +1802,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/identity/documents/uploads/get",
@@ -1750,6 +1826,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/identity/match",
@@ -1771,6 +1848,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/identity/refresh",
@@ -1792,6 +1870,7 @@ export const toolMetadata = {
       "client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/dashboard_user/get",
@@ -1813,6 +1892,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/dashboard_user/list",
@@ -1840,6 +1920,7 @@ export const toolMetadata = {
       "is_idempotent"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/identity_verification/create",
@@ -1861,6 +1942,7 @@ export const toolMetadata = {
       "client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/identity_verification/get",
@@ -1885,6 +1967,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/identity_verification/list",
@@ -1911,6 +1994,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/identity_verification/retry",
@@ -1933,6 +2017,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/entity/create",
@@ -1954,6 +2039,7 @@ export const toolMetadata = {
       "client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/entity/get",
@@ -1976,6 +2062,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/entity/history/list",
@@ -1998,6 +2085,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/entity/hit/list",
@@ -2023,6 +2111,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/entity/list",
@@ -2044,6 +2133,7 @@ export const toolMetadata = {
       "client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/entity/program/get",
@@ -2065,6 +2155,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/entity/program/list",
@@ -2089,6 +2180,7 @@ export const toolMetadata = {
       "entity_watchlist_screening_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/entity/review/create",
@@ -2111,6 +2203,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/entity/review/list",
@@ -2137,6 +2230,7 @@ export const toolMetadata = {
       "reset_fields"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/entity/update",
@@ -2159,6 +2253,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/individual/create",
@@ -2180,6 +2275,7 @@ export const toolMetadata = {
       "client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/individual/get",
@@ -2202,6 +2298,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/individual/history/list",
@@ -2224,6 +2321,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/individual/hit/list",
@@ -2249,6 +2347,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/individual/list",
@@ -2270,6 +2369,7 @@ export const toolMetadata = {
       "client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/individual/program/get",
@@ -2291,6 +2391,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/individual/program/list",
@@ -2315,6 +2416,7 @@ export const toolMetadata = {
       "watchlist_screening_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/individual/review/create",
@@ -2337,6 +2439,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/individual/review/list",
@@ -2363,6 +2466,7 @@ export const toolMetadata = {
       "reset_fields"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/watchlist_screening/individual/update",
@@ -2390,6 +2494,7 @@ export const toolMetadata = {
       "evaluate_time"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/account_risk/v1/evaluate",
@@ -2414,6 +2519,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/user/create",
@@ -2435,6 +2541,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/user/get",
@@ -2457,6 +2564,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/user/review",
@@ -2481,6 +2589,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/report/create",
@@ -2503,6 +2612,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/report/list",
@@ -2525,6 +2635,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/report_syndication/list",
@@ -2546,6 +2657,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/report/get",
@@ -2567,6 +2679,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/report_syndication/get",
@@ -2590,6 +2703,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/user/update",
@@ -2611,6 +2725,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/duplicate/get",
@@ -2632,6 +2747,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/identity_verification/autofill/create",
@@ -2654,6 +2770,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/user/history/list",
@@ -2676,6 +2793,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beacon/user/account_insights/get",
@@ -2698,6 +2816,7 @@ export const toolMetadata = {
       "client_user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/protect/user/insights/get",
@@ -2726,6 +2845,7 @@ export const toolMetadata = {
       "notes"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/protect/report/create",
@@ -2749,6 +2869,7 @@ export const toolMetadata = {
       "model_inputs"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/protect/compute",
@@ -2773,6 +2894,7 @@ export const toolMetadata = {
       "request_trust_index"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/protect/event/send",
@@ -2794,6 +2916,7 @@ export const toolMetadata = {
       "event_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/protect/event/get",
@@ -2815,6 +2938,7 @@ export const toolMetadata = {
       "client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/business_verification/get",
@@ -2837,6 +2961,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/business_verification/create",
@@ -2858,6 +2983,7 @@ export const toolMetadata = {
       "processor_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/auth/get",
@@ -2879,6 +3005,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/account/get",
@@ -2900,6 +3027,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/investments/holdings/get",
@@ -2921,6 +3049,7 @@ export const toolMetadata = {
       "processor_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/investments/auth/get",
@@ -2945,6 +3074,7 @@ export const toolMetadata = {
       "end_date"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/investments/transactions/get",
@@ -2969,6 +3099,7 @@ export const toolMetadata = {
       "end_date"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/transactions/get",
@@ -2993,6 +3124,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/transactions/sync",
@@ -3014,6 +3146,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/transactions/refresh",
@@ -3036,6 +3169,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/transactions/recurring/get",
@@ -3066,6 +3200,7 @@ export const toolMetadata = {
       "ruleset_key"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/signal/evaluate",
@@ -3093,6 +3228,7 @@ export const toolMetadata = {
       "amount_instantly_available"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/signal/decision/report",
@@ -3117,6 +3253,7 @@ export const toolMetadata = {
       "returned_at"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/signal/return/report",
@@ -3138,6 +3275,7 @@ export const toolMetadata = {
       "processor_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/signal/prepare",
@@ -3170,6 +3308,7 @@ export const toolMetadata = {
       "origination_account_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/bank_transfer/create",
@@ -3191,6 +3330,7 @@ export const toolMetadata = {
       "processor_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/liabilities/get",
@@ -3212,6 +3352,7 @@ export const toolMetadata = {
       "processor_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/identity/get",
@@ -3234,6 +3375,7 @@ export const toolMetadata = {
       "user"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/identity/match",
@@ -3256,6 +3398,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/balance/get",
@@ -3278,6 +3421,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/webhook/update",
@@ -3299,6 +3443,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/access_token/invalidate",
@@ -3320,6 +3465,7 @@ export const toolMetadata = {
       "key_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/webhook_verification_key/get",
@@ -3342,6 +3488,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/liabilities/get",
@@ -3366,6 +3513,7 @@ export const toolMetadata = {
       "address"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/recipient/create",
@@ -3392,6 +3540,7 @@ export const toolMetadata = {
       "counterparty_address"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/payment/reverse",
@@ -3413,6 +3562,7 @@ export const toolMetadata = {
       "recipient_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/recipient/get",
@@ -3435,6 +3585,7 @@ export const toolMetadata = {
       "cursor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/recipient/list",
@@ -3460,6 +3611,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/payment/create",
@@ -3481,6 +3633,7 @@ export const toolMetadata = {
       "payment_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/payment/token/create",
@@ -3508,6 +3661,7 @@ export const toolMetadata = {
       "payer_details"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/consent/create",
@@ -3529,6 +3683,7 @@ export const toolMetadata = {
       "consent_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/consent/get",
@@ -3550,6 +3705,7 @@ export const toolMetadata = {
       "consent_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/consent/revoke",
@@ -3576,6 +3732,7 @@ export const toolMetadata = {
       "processing_mode"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/consent/payment/execute",
@@ -3597,6 +3754,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/item/reset_login",
@@ -3619,6 +3777,7 @@ export const toolMetadata = {
       "application_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/item/application/seed",
@@ -3642,6 +3801,7 @@ export const toolMetadata = {
       "verification_status"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/item/set_verification_status",
@@ -3665,6 +3825,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/user/reset_login",
@@ -3686,6 +3847,7 @@ export const toolMetadata = {
       "public_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/public_token/exchange",
@@ -3707,6 +3869,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/public_token/create",
@@ -3732,6 +3895,7 @@ export const toolMetadata = {
       "with_upgraded_user"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Plaid-New-User-API-Enabled"
     ],
@@ -3758,6 +3922,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Plaid-New-User-API-Enabled"
     ],
@@ -3784,6 +3949,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Plaid-New-User-API-Enabled"
     ],
@@ -3813,6 +3979,7 @@ export const toolMetadata = {
       "consumer_report_user_identity"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Plaid-New-User-API-Enabled"
     ],
@@ -3840,6 +4007,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [
       "Plaid-New-User-API-Enabled"
     ],
@@ -3867,6 +4035,7 @@ export const toolMetadata = {
       "products"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/user/products/terminate",
@@ -3889,6 +4058,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/user/items/get",
@@ -3911,6 +4081,7 @@ export const toolMetadata = {
       "item_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/user/items/associate",
@@ -3934,6 +4105,7 @@ export const toolMetadata = {
       "item_ids"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/user/items/remove",
@@ -3958,6 +4130,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/user/third_party_token/create",
@@ -3979,6 +4152,7 @@ export const toolMetadata = {
       "third_party_user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/user/third_party_token/remove",
@@ -4000,6 +4174,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/sessions/get",
@@ -4021,6 +4196,7 @@ export const toolMetadata = {
       "payment_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/payment/get",
@@ -4044,6 +4220,7 @@ export const toolMetadata = {
       "consent_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_initiation/payment/list",
@@ -4066,6 +4243,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/investments/holdings/get",
@@ -4090,6 +4268,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/investments/transactions/get",
@@ -4111,6 +4290,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/investments/refresh",
@@ -4133,6 +4313,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/investments/auth/get",
@@ -4156,6 +4337,7 @@ export const toolMetadata = {
       "processor"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/token/create",
@@ -4178,6 +4360,7 @@ export const toolMetadata = {
       "products"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/token/permissions/set",
@@ -4199,6 +4382,7 @@ export const toolMetadata = {
       "processor_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/token/permissions/get",
@@ -4221,6 +4405,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/token/webhook/update",
@@ -4243,6 +4428,7 @@ export const toolMetadata = {
       "account_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/stripe/bank_account_token/create",
@@ -4265,6 +4451,7 @@ export const toolMetadata = {
       "account_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/processor/apex/processor_token/create",
@@ -4289,6 +4476,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/item/import",
@@ -4354,6 +4542,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/link/token/create",
@@ -4375,6 +4564,7 @@ export const toolMetadata = {
       "link_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/link/token/get",
@@ -4396,6 +4586,7 @@ export const toolMetadata = {
       "link_correlation_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/link/oauth/correlation_id/exchange",
@@ -4422,6 +4613,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/session/token/create",
@@ -4445,6 +4637,7 @@ export const toolMetadata = {
       "originator_client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/get",
@@ -4466,6 +4659,7 @@ export const toolMetadata = {
       "recurring_transfer_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/recurring/get",
@@ -4487,6 +4681,7 @@ export const toolMetadata = {
       "bank_transfer_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/bank_transfer/get",
@@ -4530,6 +4725,7 @@ export const toolMetadata = {
       "ruleset_key"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/authorization/create",
@@ -4551,6 +4747,7 @@ export const toolMetadata = {
       "authorization_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/authorization/cancel",
@@ -4573,6 +4770,7 @@ export const toolMetadata = {
       "type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/balance/get",
@@ -4596,6 +4794,7 @@ export const toolMetadata = {
       "payment_profile_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/capabilities/get",
@@ -4617,6 +4816,7 @@ export const toolMetadata = {
       "originator_client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/configuration/get",
@@ -4639,6 +4839,7 @@ export const toolMetadata = {
       "originator_client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/ledger/get",
@@ -4664,6 +4865,7 @@ export const toolMetadata = {
       "description"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/ledger/distribute",
@@ -4691,6 +4893,7 @@ export const toolMetadata = {
       "network"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/ledger/deposit",
@@ -4718,6 +4921,7 @@ export const toolMetadata = {
       "network"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/ledger/withdraw",
@@ -4740,6 +4944,7 @@ export const toolMetadata = {
       "funding_account"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/originator/funding_account/update",
@@ -4762,6 +4967,7 @@ export const toolMetadata = {
       "funding_account"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/originator/funding_account/create",
@@ -4783,6 +4989,7 @@ export const toolMetadata = {
       "originator_client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/metrics/get",
@@ -4818,6 +5025,7 @@ export const toolMetadata = {
       "facilitator_fee"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/create",
@@ -4853,6 +5061,7 @@ export const toolMetadata = {
       "device"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/recurring/create",
@@ -4886,6 +5095,7 @@ export const toolMetadata = {
       "origination_account_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/bank_transfer/create",
@@ -4913,6 +5123,7 @@ export const toolMetadata = {
       "funding_account_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/list",
@@ -4938,6 +5149,7 @@ export const toolMetadata = {
       "funding_account_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/recurring/list",
@@ -4964,6 +5176,7 @@ export const toolMetadata = {
       "direction"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/bank_transfer/list",
@@ -4987,6 +5200,7 @@ export const toolMetadata = {
       "reason_code"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/cancel",
@@ -5008,6 +5222,7 @@ export const toolMetadata = {
       "recurring_transfer_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/recurring/cancel",
@@ -5029,6 +5244,7 @@ export const toolMetadata = {
       "bank_transfer_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/bank_transfer/cancel",
@@ -5061,6 +5277,7 @@ export const toolMetadata = {
       "funding_account_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/event/list",
@@ -5090,6 +5307,7 @@ export const toolMetadata = {
       "offset"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/ledger/event/list",
@@ -5120,6 +5338,7 @@ export const toolMetadata = {
       "direction"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/bank_transfer/event/list",
@@ -5142,6 +5361,7 @@ export const toolMetadata = {
       "count"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/event/sync",
@@ -5164,6 +5384,7 @@ export const toolMetadata = {
       "count"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/bank_transfer/event/sync",
@@ -5185,6 +5406,7 @@ export const toolMetadata = {
       "sweep_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/sweep/get",
@@ -5206,6 +5428,7 @@ export const toolMetadata = {
       "sweep_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/bank_transfer/sweep/get",
@@ -5236,6 +5459,7 @@ export const toolMetadata = {
       "trigger"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/sweep/list",
@@ -5260,6 +5484,7 @@ export const toolMetadata = {
       "count"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/bank_transfer/sweep/list",
@@ -5281,6 +5506,7 @@ export const toolMetadata = {
       "origination_account_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/bank_transfer/balance/get",
@@ -5305,6 +5531,7 @@ export const toolMetadata = {
       "account_type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/bank_transfer/migrate_account",
@@ -5329,6 +5556,7 @@ export const toolMetadata = {
       "account_type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/migrate_account",
@@ -5361,6 +5589,7 @@ export const toolMetadata = {
       "require_guarantee"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/intent/create",
@@ -5382,6 +5611,7 @@ export const toolMetadata = {
       "transfer_intent_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/intent/get",
@@ -5406,6 +5636,7 @@ export const toolMetadata = {
       "offset"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/repayment/list",
@@ -5429,6 +5660,7 @@ export const toolMetadata = {
       "offset"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/repayment/return/list",
@@ -5451,6 +5683,7 @@ export const toolMetadata = {
       "requirement_submissions"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/platform/requirement/submit",
@@ -5472,6 +5705,7 @@ export const toolMetadata = {
       "company_name"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/originator/create",
@@ -5494,6 +5728,7 @@ export const toolMetadata = {
       "redirect_uri"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/questionnaire/create",
@@ -5516,6 +5751,7 @@ export const toolMetadata = {
       "originator_diligence"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/diligence/submit",
@@ -5537,6 +5773,7 @@ export const toolMetadata = {
       "purpose"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/diligence/document/upload",
@@ -5558,6 +5795,7 @@ export const toolMetadata = {
       "originator_client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/originator/get",
@@ -5580,6 +5818,7 @@ export const toolMetadata = {
       "offset"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/originator/list",
@@ -5603,6 +5842,7 @@ export const toolMetadata = {
       "idempotency_key"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/refund/create",
@@ -5624,6 +5864,7 @@ export const toolMetadata = {
       "refund_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/refund/get",
@@ -5645,6 +5886,7 @@ export const toolMetadata = {
       "refund_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/refund/cancel",
@@ -5669,6 +5911,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/platform/originator/create",
@@ -5699,6 +5942,7 @@ export const toolMetadata = {
       "title"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/transfer/platform/person/create",
@@ -5722,6 +5966,7 @@ export const toolMetadata = {
       "failure_reason"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/bank_transfer/simulate",
@@ -5744,6 +5989,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/sweep/simulate",
@@ -5769,6 +6015,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/simulate",
@@ -5794,6 +6041,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/refund/simulate",
@@ -5818,6 +6066,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/ledger/simulate_available",
@@ -5841,6 +6090,7 @@ export const toolMetadata = {
       "failure_reason"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/ledger/deposit/simulate",
@@ -5864,6 +6114,7 @@ export const toolMetadata = {
       "failure_reason"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/ledger/withdraw/simulate",
@@ -5884,6 +6135,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/repayment/simulate",
@@ -5905,6 +6157,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/fire_webhook",
@@ -5926,6 +6179,7 @@ export const toolMetadata = {
       "virtual_time"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/test_clock/create",
@@ -5948,6 +6202,7 @@ export const toolMetadata = {
       "new_virtual_time"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/test_clock/advance",
@@ -5969,6 +6224,7 @@ export const toolMetadata = {
       "test_clock_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/test_clock/get",
@@ -5993,6 +6249,7 @@ export const toolMetadata = {
       "offset"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/transfer/test_clock/list",
@@ -6014,6 +6271,7 @@ export const toolMetadata = {
       "payment_profile_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/payment_profile/reset_login",
@@ -6037,6 +6295,7 @@ export const toolMetadata = {
       "status"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/payment/simulate",
@@ -6059,6 +6318,7 @@ export const toolMetadata = {
       "products"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/employers/search",
@@ -6082,6 +6342,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/income/verification/create",
@@ -6104,6 +6365,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/income/verification/paystubs/get",
@@ -6127,6 +6389,7 @@ export const toolMetadata = {
       "document_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/income/verification/documents/download",
@@ -6149,6 +6412,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/income/verification/taxforms/get",
@@ -6175,6 +6439,7 @@ export const toolMetadata = {
       "us_military_info"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/income/verification/precheck",
@@ -6196,6 +6461,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/employment/verification/get",
@@ -6217,6 +6483,7 @@ export const toolMetadata = {
       "report_tokens"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/audit_copy_token/create",
@@ -6238,6 +6505,7 @@ export const toolMetadata = {
       "audit_copy_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/audit_copy_token/remove",
@@ -6259,6 +6527,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/asset_report/freddie_mac/get",
@@ -6280,6 +6549,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/freddie_mac/reports/get",
@@ -6301,6 +6571,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/credit/v1/bank_employment/get",
@@ -6324,6 +6595,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/bank_income/get",
@@ -6346,6 +6618,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/bank_income/pdf/get",
@@ -6369,6 +6642,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/bank_income/refresh",
@@ -6392,6 +6666,7 @@ export const toolMetadata = {
       "enable_webhooks"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/bank_income/webhook/update",
@@ -6416,6 +6691,7 @@ export const toolMetadata = {
       "parsing_config"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/payroll_income/parsing_config/update",
@@ -6438,6 +6714,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/bank_statements/uploads/get",
@@ -6461,6 +6738,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/payroll_income/get",
@@ -6483,6 +6761,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/payroll_income/risk_signals/get",
@@ -6509,6 +6788,7 @@ export const toolMetadata = {
       "payroll_institution"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/payroll_income/precheck",
@@ -6530,6 +6810,7 @@ export const toolMetadata = {
       "user_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/employment/get",
@@ -6553,6 +6834,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/payroll_income/refresh",
@@ -6576,6 +6858,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/relay/create",
@@ -6599,6 +6882,7 @@ export const toolMetadata = {
       "include_insights"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/relay/get",
@@ -6621,6 +6905,7 @@ export const toolMetadata = {
       "report_type"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/relay/pdf/get",
@@ -6644,6 +6929,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/relay/refresh",
@@ -6665,6 +6951,7 @@ export const toolMetadata = {
       "relay_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/credit/relay/remove",
@@ -6686,6 +6973,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/bank_transfer/fire_webhook",
@@ -6711,6 +6999,7 @@ export const toolMetadata = {
       "webhook_code"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/income/fire_webhook",
@@ -6734,6 +7023,7 @@ export const toolMetadata = {
       "webhook_fields"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/bank_income/fire_webhook",
@@ -6757,6 +7047,7 @@ export const toolMetadata = {
       "user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/cra/cashflow_updates/update",
@@ -6777,6 +7068,7 @@ export const toolMetadata = {
       "accounts"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/sandbox/oauth/select_accounts",
@@ -6809,6 +7101,7 @@ export const toolMetadata = {
       "ruleset_key"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/signal/evaluate",
@@ -6834,6 +7127,7 @@ export const toolMetadata = {
       "default_payment_method"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/signal/schedule",
@@ -6861,6 +7155,7 @@ export const toolMetadata = {
       "submitted_at"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/signal/decision/report",
@@ -6884,6 +7179,7 @@ export const toolMetadata = {
       "returned_at"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/signal/return/report",
@@ -6905,6 +7201,7 @@ export const toolMetadata = {
       "access_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/signal/prepare",
@@ -6926,6 +7223,7 @@ export const toolMetadata = {
       "iso_currency_code"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/wallet/create",
@@ -6947,6 +7245,7 @@ export const toolMetadata = {
       "wallet_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/wallet/get",
@@ -6970,6 +7269,7 @@ export const toolMetadata = {
       "count"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/wallet/list",
@@ -6996,6 +7296,7 @@ export const toolMetadata = {
       "originating_fund_source"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/wallet/transaction/execute",
@@ -7017,6 +7318,7 @@ export const toolMetadata = {
       "transaction_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/wallet/transaction/get",
@@ -7041,6 +7343,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/wallet/transaction/list",
@@ -7063,6 +7366,7 @@ export const toolMetadata = {
       "transactions"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/transactions/v1/enhance",
@@ -7087,6 +7391,7 @@ export const toolMetadata = {
       "rule_details"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/transactions/rules/v1/create",
@@ -7108,6 +7413,7 @@ export const toolMetadata = {
       "client_user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/transactions/rules/v1/list",
@@ -7130,6 +7436,7 @@ export const toolMetadata = {
       "rule_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/transactions/rules/v1/remove",
@@ -7151,6 +7458,7 @@ export const toolMetadata = {
       "client_user_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/transactions/user_insights/v1/get",
@@ -7172,6 +7480,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/ewa_report/v1/get",
@@ -7195,6 +7504,7 @@ export const toolMetadata = {
       "link_session_request_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/issues/search",
@@ -7216,6 +7526,7 @@ export const toolMetadata = {
       "issue_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/issues/get",
@@ -7238,6 +7549,7 @@ export const toolMetadata = {
       "webhook"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/issues/subscribe",
@@ -7258,6 +7570,7 @@ export const toolMetadata = {
       "secret"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_profile/create",
@@ -7279,6 +7592,7 @@ export const toolMetadata = {
       "payment_profile_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_profile/get",
@@ -7300,6 +7614,7 @@ export const toolMetadata = {
       "payment_profile_token"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/payment_profile/remove",
@@ -7336,6 +7651,7 @@ export const toolMetadata = {
       "registration_number"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/partner/customer/create",
@@ -7357,6 +7673,7 @@ export const toolMetadata = {
       "end_customer_client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/partner/customer/get",
@@ -7378,6 +7695,7 @@ export const toolMetadata = {
       "end_customer_client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/partner/customer/enable",
@@ -7399,6 +7717,7 @@ export const toolMetadata = {
       "end_customer_client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/partner/customer/remove",
@@ -7420,6 +7739,7 @@ export const toolMetadata = {
       "end_customer_client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/partner/customer/oauth_institutions/get",
@@ -7455,6 +7775,7 @@ export const toolMetadata = {
       "questionnaires"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/partner/customer/v1/create",
@@ -7476,6 +7797,7 @@ export const toolMetadata = {
       "end_customer_client_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/partner/customer/v1/get",
@@ -7501,6 +7823,7 @@ export const toolMetadata = {
       "questionnaires"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/partner/customer/v1/update",
@@ -7523,6 +7846,7 @@ export const toolMetadata = {
       "products"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/beta/partner/customer/v1/enable",
@@ -7545,6 +7869,7 @@ export const toolMetadata = {
       "options"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/link_delivery/create",
@@ -7566,6 +7891,7 @@ export const toolMetadata = {
       "link_delivery_session_id"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/link_delivery/get",
@@ -7595,6 +7921,7 @@ export const toolMetadata = {
       "url"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/fdx/notifications",
@@ -7612,6 +7939,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [],
     "method": "GET",
     "routeTemplate": "/fdx/recipients",
@@ -7629,6 +7957,7 @@ export const toolMetadata = {
     "bodyKind": "none",
     "bodyPropertyKeys": [],
     "contentType": "application/json",
+    "effect": "observation",
     "headerParameterKeys": [
       "OAUTH-STATE-ID"
     ],
@@ -7658,6 +7987,7 @@ export const toolMetadata = {
       "access_tokens"
     ],
     "contentType": "application/json",
+    "effect": "action",
     "headerParameterKeys": [],
     "method": "POST",
     "routeTemplate": "/network_insights/report/get",

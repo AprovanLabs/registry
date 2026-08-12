@@ -1,6 +1,6 @@
 {
   "name": "@utdk/sentry",
-  "version": "0.0.0-20260727.1",
+  "version": "0.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for API Reference. Sentry Public API",
   "homepage": "https://docs.sentry.io",
@@ -14,7 +14,7 @@
   "utdk": {
     "provider": "sentry",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:33.220Z",
+    "generatedAt": "2026-08-12T13:38:49.987Z",
     "auth": {
       "schemes": [
         {

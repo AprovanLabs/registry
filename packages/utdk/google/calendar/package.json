@@ -1,6 +1,6 @@
 {
   "private": true,
-  "version": "3.0.0-20260719.2",
+  "version": "3.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for Calendar API. Manipulates events and other calendar data.",
   "homepage": "https://developers.google.com/google-apps/calendar/firstapp",
@@ -13,8 +13,8 @@
   "license": "Creative Commons Attribution 3.0",
   "utdk": {
     "provider": "google/calendar",
-    "generation": 2,
-    "generatedAt": "2026-07-19T23:50:27.592Z",
+    "generation": 1,
+    "generatedAt": "2026-08-12T13:38:36.228Z",
     "auth": {
       "schemes": [
         {
@@ -72,15 +72,6 @@
     "branding": {
       "logo": "https://api.apis.guru/v2/cache/logo/https_www.google.com_images_branding_googlelogo_2x_googlelogo_color_272x92dp.png",
       "site": "https://developers.google.com/google-apps/calendar/firstapp"
-    },
-    "docs": {
-      "manifestPath": ".registry/google/calendar/manifest.json",
-      "indexPath": ".registry/google/calendar/index.md",
-      "docsPath": "packages/utdk/google/calendar/docs",
-      "generatedAt": "2026-07-19T23:50:27.590Z",
-      "sourceCount": 0,
-      "openApiHash": null,
-      "promptHash": "8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8"
     }
   }
 }

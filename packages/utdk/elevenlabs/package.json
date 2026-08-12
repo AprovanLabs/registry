@@ -1,6 +1,6 @@
 {
   "name": "@utdk/elevenlabs",
-  "version": "1.0.0-20260727.1",
+  "version": "1.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for ElevenLabs API Documentation. This is the documentation for the ElevenLabs API. You can use this API to use our service programmatically, this is done by using your API key. You can find your API key in the dashboard at https://elevenlabs.io/app/settings/api-keys.",
   "homepage": "https://elevenlabs.io",
@@ -13,7 +13,7 @@
   "utdk": {
     "provider": "elevenlabs",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:26.651Z",
+    "generatedAt": "2026-08-12T13:38:30.696Z",
     "auth": {
       "schemes": [],
       "operationOverrides": {}

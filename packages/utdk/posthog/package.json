@@ -1,9 +1,9 @@
 {
   "name": "@utdk/posthog",
-  "version": "1.0.0-20260712.5",
+  "version": "1.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for PostHog API. Generated UTDK provider types and OpenAPI-backed client for https://us.posthog.com/api/schema/.",
-  "homepage": "https://us.posthog.com/api/schema/",
+  "homepage": "https://posthog.com",
   "keywords": [
     "posthog",
     "generated",
@@ -12,8 +12,8 @@
   ],
   "utdk": {
     "provider": "posthog",
-    "generation": 5,
-    "generatedAt": "2026-07-12T21:26:44.549Z",
+    "generation": 1,
+    "generatedAt": "2026-08-12T13:38:48.933Z",
     "auth": {
       "schemes": [
         {
@@ -30,14 +30,13 @@
       "version": "1.0.0",
       "termsOfService": null
     },
-    "docs": {
-      "manifestPath": ".registry/posthog/manifest.json",
-      "indexPath": ".registry/posthog/index.md",
-      "docsPath": "packages/utdk/posthog/docs",
-      "generatedAt": "2026-07-12T21:26:44.534Z",
-      "sourceCount": 1,
-      "openApiHash": "07bcb085c8cc4650bbb32f753e534b111653f19687be6df2642bda5c1ec899c7",
-      "promptHash": "8c3694991a4c289225f05a4e8f1e098cc74d085a088d7dffd82f00d93797b7f8"
+    "provenance": {
+      "source": "manual",
+      "originDomain": "posthog.com",
+      "originSpecUrl": "https://us.posthog.com/api/schema/"
+    },
+    "branding": {
+      "site": "https://posthog.com"
     }
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@utdk/openrouteservice",
-  "version": "2.0.0-20260727.1",
+  "version": "2.0.0-20260812.1",
   "type": "module",
   "description": "Generated UTDK provider client for OpenRouteService API. Open-source routing, geocoding, isochrone, distance-matrix, and VRP optimization API\nbuilt on OpenStreetMap. Pelias powers geocoding; Vroom powers optimization.\n\nThis spec covers the endpoints commonly used for back-end agent workflows\n(geocoding, matrices for VRP solvers, route ETAs, isochrones, full VRP solve).\nThe full ORS surface (POIs, snap-to-road, elevation, optimization advanced\nconstraints) can be added incrementally — see notes in the catalog entry.\n\nThe hosted free API (`https://api.openrouteservice.org`) exposes routing,\nmatrix, isochrones, optimization, and geocoding. Self-hosted ORS Docker\ncovers the ORS backend endpoints (routing, matrix, isochrones, optimization);\ngeocoding is hosted-public-API only.\n\nAuth: pass the API key in the `Authorization` header. Sign up free at\nhttps://openrouteservice.org/dev/#/signup.\n\nRate limits (free plan, hosted): 2,000 directions/day, 500 matrix/day,\n500 optimization/day, 500 isochrones/day, 1,000 geocode/day, 40/min on\nmost endpoints. Self-hosted backend endpoints: no hosted request caps.",
   "homepage": "https://openrouteservice.org",
@@ -13,7 +13,7 @@
   "utdk": {
     "provider": "openrouteservice",
     "generation": 1,
-    "generatedAt": "2026-07-27T03:15:30.756Z",
+    "generatedAt": "2026-08-12T13:38:42.653Z",
     "auth": {
       "schemes": [
         {
