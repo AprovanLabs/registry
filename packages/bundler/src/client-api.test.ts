@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildClientToolMap } from "./client-api.js";
+import { buildClientToolMap, effectFromHttpMethod } from "./client-api.js";
 import type { Tool } from "@utcp/sdk";
 import type { OpenAPIV3 } from "openapi-types";
 
@@ -26,7 +26,119 @@ function createTool(name: string, httpMethod: string, url: string, contentType =
   } as unknown as Tool;
 }
 
+function createToolWithoutHttpMethod(name: string, url: string): Tool {
+  return {
+    name,
+    description: name,
+    tags: [],
+    tool_call_template: {
+      call_template_type: "http",
+      url,
+      content_type: "application/json",
+    },
+    inputs: {
+      type: "object",
+      properties: {},
+    },
+    outputs: {
+      type: "object",
+      properties: {},
+    },
+  } as unknown as Tool;
+}
+
+describe("effectFromHttpMethod", () => {
+  it("maps GET and HEAD to observation", () => {
+    expect(effectFromHttpMethod("GET")).toBe("observation");
+    expect(effectFromHttpMethod("get")).toBe("observation");
+    expect(effectFromHttpMethod("HEAD")).toBe("observation");
+    expect(effectFromHttpMethod(" head ")).toBe("observation");
+  });
+
+  it("maps POST/PUT/PATCH/DELETE and unrecognized methods to action", () => {
+    expect(effectFromHttpMethod("POST")).toBe("action");
+    expect(effectFromHttpMethod("PUT")).toBe("action");
+    expect(effectFromHttpMethod("PATCH")).toBe("action");
+    expect(effectFromHttpMethod("DELETE")).toBe("action");
+    expect(effectFromHttpMethod("OPTIONS")).toBe("action");
+    expect(effectFromHttpMethod("TRACE")).toBe("action");
+    expect(effectFromHttpMethod("FOO")).toBe("action");
+  });
+
+  it("fails closed to action when method is missing", () => {
+    expect(effectFromHttpMethod(undefined)).toBe("action");
+  });
+});
+
 describe("buildClientToolMap", () => {
+  it("stamps effect observation for GET tools", () => {
+    const tool = createTool("example.list", "GET", "https://api.example.com/v1/items");
+    const openApiDocument = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/items": {
+          get: {
+            responses: { "200": { description: "ok" } },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    const metadata = buildClientToolMap(openApiDocument, [tool], { name: "example" }).get(tool.name);
+
+    expect(metadata?.runtimeMetadata.method).toBe("GET");
+    expect(metadata?.runtimeMetadata.effect).toBe("observation");
+  });
+
+  it("stamps effect action for POST/PUT/PATCH/DELETE tools", () => {
+    const cases = [
+      { method: "POST", pathKey: "post" },
+      { method: "PUT", pathKey: "put" },
+      { method: "PATCH", pathKey: "patch" },
+      { method: "DELETE", pathKey: "delete" },
+    ] as const;
+
+    for (const { method, pathKey } of cases) {
+      const tool = createTool(`example.${method.toLowerCase()}`, method, "https://api.example.com/v1/items");
+      const openApiDocument = {
+        openapi: "3.0.0",
+        info: { title: "Example", version: "1.0.0" },
+        paths: {
+          "/v1/items": {
+            [pathKey]: {
+              responses: { "200": { description: "ok" } },
+            },
+          },
+        },
+      } as unknown as OpenAPIV3.Document;
+
+      const metadata = buildClientToolMap(openApiDocument, [tool], { name: "example" }).get(tool.name);
+
+      expect(metadata?.runtimeMetadata.method).toBe(method);
+      expect(metadata?.runtimeMetadata.effect).toBe("action");
+    }
+  });
+
+  it("stamps effect action when http_method is missing (fail closed)", () => {
+    const tool = createToolWithoutHttpMethod("example.mystery", "https://api.example.com/v1/items");
+    const openApiDocument = {
+      openapi: "3.0.0",
+      info: { title: "Example", version: "1.0.0" },
+      paths: {
+        "/v1/items": {
+          get: {
+            responses: { "200": { description: "ok" } },
+          },
+        },
+      },
+    } as OpenAPIV3.Document;
+
+    const metadata = buildClientToolMap(openApiDocument, [tool], { name: "example" }).get(tool.name);
+
+    expect(metadata?.runtimeMetadata.effect).toBe("action");
+  });
+
   it("renames duplicate nested method leaves to call", () => {
     const tool = createTool("example.CreateLogsMetric/CreateLogsMetric", "POST", "https://api.example.com/v1/logs/metrics");
     const openApiDocument = {
