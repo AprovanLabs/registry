@@ -411,7 +411,14 @@ export function withAttribution(
  */
 export function telemetryToolEntries(
   provider: string,
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
+): Array<{
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+  outputSchema?: unknown;
+  streaming?: boolean;
+  effect: "observation" | "action";
+}> {
   return [
     {
       name: `${provider}.export`,
@@ -437,6 +444,7 @@ export function telemetryToolEntries(
           },
         },
       },
+      effect: "action",
     },
   ];
 }

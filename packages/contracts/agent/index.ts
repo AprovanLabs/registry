@@ -655,6 +655,15 @@ const RUN_ID = { type: "string", description: "Run id returned by run" } as cons
  * grants, instruction layers, mounts, entrypoints — belongs to the `agents`
  * core service and is advertised there.
  */
+type AgentToolEntry = {
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+  outputSchema?: unknown;
+  streaming?: boolean;
+  effect: "observation" | "action";
+};
+
 export function agentToolEntries(
   provider: string,
   details: {
@@ -669,7 +678,7 @@ export function agentToolEntries(
      */
     interfaceNamespace?: boolean;
   } = {},
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
+): AgentToolEntry[] {
   const interfaceNs =
     details.interfaceNamespace === true || provider === "agent" || provider.startsWith("agent:");
   // "on the workspace's bound runtime" reads correctly wherever the binding
@@ -678,7 +687,7 @@ export function agentToolEntries(
   const capabilities = details.capabilities;
   const efforts = capabilities?.effortLevels ?? AGENT_EFFORTS;
 
-  const entries: Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> = [
+  const entries: AgentToolEntry[] = [
     {
       name: `${provider}.run`,
       description:
@@ -752,17 +761,20 @@ export function agentToolEntries(
         },
         required: ["input"],
       },
+      effect: "action",
     },
     {
       name: `${provider}.get`,
       description:
         `Read one run on ${label}: status, turns so far, usage, and — once it has stopped — its output and stopReason.`,
       inputSchema: { type: "object", properties: { id: RUN_ID }, required: ["id"] },
+      effect: "observation",
     },
     {
       name: `${provider}.cancel`,
       description: `Stop a running agent loop on ${label}. Work already committed by its tool calls stands.`,
       inputSchema: { type: "object", properties: { id: RUN_ID }, required: ["id"] },
+      effect: "action",
     },
   ];
 
@@ -790,6 +802,7 @@ export function agentToolEntries(
         },
         required: ["id", "results"],
       },
+      effect: "action",
     });
   }
 
@@ -803,6 +816,7 @@ export function agentToolEntries(
           properties: { id: RUN_ID, path: { type: "string" } },
           required: ["id", "path"],
         },
+        effect: "observation",
       },
       {
         name: `${provider}.writeFile`,
@@ -817,6 +831,7 @@ export function agentToolEntries(
           },
           required: ["id", "path", "content"],
         },
+        effect: "action",
       },
       {
         name: `${provider}.listFiles`,
@@ -828,6 +843,7 @@ export function agentToolEntries(
           properties: { id: RUN_ID, path: { type: "string" } },
           required: ["id"],
         },
+        effect: "observation",
       },
     );
   }

@@ -196,7 +196,14 @@ export function ttlUnsupported(provider: string): KeyValueError {
  */
 export function keyvalueToolEntries(
   provider: string,
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
+): Array<{
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+  outputSchema?: unknown;
+  streaming?: boolean;
+  effect: "observation" | "action";
+}> {
   const key = { type: "string", description: "Key to address (flat string; host scopes tenancy)" };
   return [
     {
@@ -204,6 +211,7 @@ export function keyvalueToolEntries(
       description:
         "Read one key. Returns { key, value, found, updatedAt?, expiresAt? }; a missing key is found:false, not an error.",
       inputSchema: { type: "object", properties: { key }, required: ["key"] },
+      effect: "observation",
     },
     {
       name: `${provider}.set`,
@@ -219,11 +227,13 @@ export function keyvalueToolEntries(
         },
         required: ["key", "value"],
       },
+      effect: "action",
     },
     {
       name: `${provider}.delete`,
       description: "Delete one key. Idempotent: returns { key, deleted } with deleted:false for an absent key.",
       inputSchema: { type: "object", properties: { key }, required: ["key"] },
+      effect: "action",
     },
     {
       name: `${provider}.list`,
@@ -238,6 +248,7 @@ export function keyvalueToolEntries(
           limit: { type: "number", description: `Page size (default ${DEFAULT_LIST_LIMIT})` },
         },
       },
+      effect: "observation",
     },
   ];
 }

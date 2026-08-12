@@ -231,7 +231,14 @@ function chatCompletionSchema(modelDescription: string) {
 export function llmToolEntries(
   provider: string,
   details: { label?: string; defaultModel?: string; interfaceNamespace?: boolean } = {},
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
+): Array<{
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+  outputSchema?: unknown;
+  streaming?: boolean;
+  effect: "observation" | "action";
+}> {
   const interfaceNs = details.interfaceNamespace === true || provider === "llm";
   const label = details.label ?? provider;
   const defaultModel = details.defaultModel ?? "provider default";
@@ -250,11 +257,13 @@ export function llmToolEntries(
       name: `${provider}.createChatCompletion`,
       description: completionDescription,
       inputSchema: chatCompletionSchema(modelDescription),
+      effect: "action",
     },
     {
       name: `${provider}.listModels`,
       description: listDescription,
       inputSchema: { type: "object", properties: {} },
+      effect: "observation",
     },
   ];
 }
