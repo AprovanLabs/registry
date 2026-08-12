@@ -57,3 +57,12 @@ repeated here.
 - A workspace-glob directory with zero git-tracked files
   (`git ls-files <dir> | wc -l` = 0) is build residue, not a package — delete
   it outright instead of deprecating it.
+
+### Capability + resource dispatch (one predicate)
+- MCP/sandbox tool dispatch authorizes through the shared Dispatcher only —
+  profile grants plus resource-pattern checks (`assertResourceAccess` /
+  `matchesResourcePattern` on `resourceGrants`). Extend that single path;
+  do not add a parallel bypass (`legacyDispatch`, `bypassResourceCheck`, or
+  a second resource gate).
+- Aprovan's gateway counterpart is `evaluateDispatch` — same rule: one
+  predicate for capability ∩ resource ∩ credential, never a fifth gate.
