@@ -175,7 +175,14 @@ export {
   type DispatchOptions,
   type CompatDispatch,
 } from "./dispatch/index.js";
-export { finalizeCallContext, type NarrowingDeps } from "./dispatch/call-context.js";
+export {
+  finalizeCallContext,
+  assertResourceAccess,
+  resourceGrantSubjects,
+  type NarrowingDeps,
+  type ResourceAccessDeps,
+} from "./dispatch/call-context.js";
+export { matchesResourcePattern } from "./dispatch/resource-pattern.js";
 export {
   RateLimiter,
   RateLimitExceededError,

@@ -31,6 +31,10 @@ import type {
   ProfileTargetKind,
   ProvisionedCredential,
   RegistryStorage,
+  ResourceGrantCreateInput,
+  ResourceGrantRow,
+  ResourceGrantStore,
+  ResourceGrantSubject,
   TenantRow,
   TenantStore,
 } from "./types.js";
@@ -475,6 +479,129 @@ class SqlGrantStore implements GrantStore {
 
 // ---------------------------------------------------------------------------
 
+const RESOURCE_GRANT_COLS =
+  "id, tenant_id, subject_kind, subject_id, capability, resource_pattern, credential_level, granted_by, created_at, revoked_at";
+
+function toResourceGrantRow(row: Row): ResourceGrantRow {
+  return {
+    id: str(row["id"]),
+    tenantId: str(row["tenant_id"]),
+    subject: {
+      kind: str(row["subject_kind"]) as ResourceGrantSubject["kind"],
+      id: str(row["subject_id"]),
+    },
+    capability: str(row["capability"]),
+    resourcePattern: row["resource_pattern"] === null || row["resource_pattern"] === undefined
+      ? null
+      : str(row["resource_pattern"]),
+    credentialLevel: str(row["credential_level"]) as ResourceGrantRow["credentialLevel"],
+    grantedBy: str(row["granted_by"]),
+    createdAt: str(row["created_at"]),
+    ...(optStr(row["revoked_at"]) !== undefined ? { revokedAt: optStr(row["revoked_at"]) } : {}),
+  };
+}
+
+class SqlResourceGrantStore implements ResourceGrantStore {
+  constructor(private readonly db: SqlClient) {}
+
+  async create(tenantId: string, input: ResourceGrantCreateInput): Promise<ResourceGrantRow> {
+    const id = input.id ?? newId();
+    const ts = now();
+    await this.db.run(
+      `INSERT INTO resource_grants
+         (id, tenant_id, subject_kind, subject_id, capability, resource_pattern,
+          credential_level, granted_by, created_at, revoked_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NULL)`,
+      [
+        id,
+        tenantId,
+        input.subject.kind,
+        input.subject.id,
+        input.capability,
+        input.resourcePattern,
+        input.credentialLevel,
+        input.grantedBy,
+        ts,
+      ],
+    );
+    return {
+      id,
+      tenantId,
+      subject: { kind: input.subject.kind, id: input.subject.id },
+      capability: input.capability,
+      resourcePattern: input.resourcePattern,
+      credentialLevel: input.credentialLevel,
+      grantedBy: input.grantedBy,
+      createdAt: ts,
+    };
+  }
+
+  async get(tenantId: string, id: string): Promise<ResourceGrantRow | undefined> {
+    const rows = await this.db.all<Row>(
+      `SELECT ${RESOURCE_GRANT_COLS} FROM resource_grants WHERE tenant_id = ? AND id = ?`,
+      [tenantId, id],
+    );
+    return rows[0] ? toResourceGrantRow(rows[0]) : undefined;
+  }
+
+  async revoke(tenantId: string, id: string): Promise<boolean> {
+    const result = await this.db.run(
+      `UPDATE resource_grants SET revoked_at = ?
+       WHERE tenant_id = ? AND id = ? AND revoked_at IS NULL`,
+      [now(), tenantId, id],
+    );
+    return result.changes > 0;
+  }
+
+  async list(
+    tenantId: string,
+    filter?: {
+      subject?: ResourceGrantSubject;
+      capability?: string;
+      includeRevoked?: boolean;
+    },
+  ): Promise<ResourceGrantRow[]> {
+    const clauses = ["tenant_id = ?"];
+    const params: unknown[] = [tenantId];
+    if (filter?.subject) {
+      clauses.push("subject_kind = ?", "subject_id = ?");
+      params.push(filter.subject.kind, filter.subject.id);
+    }
+    if (filter?.capability !== undefined) {
+      clauses.push("capability = ?");
+      params.push(filter.capability);
+    }
+    if (!filter?.includeRevoked) {
+      clauses.push("revoked_at IS NULL");
+    }
+    const rows = await this.db.all<Row>(
+      `SELECT ${RESOURCE_GRANT_COLS} FROM resource_grants
+       WHERE ${clauses.join(" AND ")} ORDER BY created_at`,
+      params,
+    );
+    return rows.map(toResourceGrantRow);
+  }
+
+  async listForSubjects(
+    tenantId: string,
+    subjects: ResourceGrantSubject[],
+  ): Promise<ResourceGrantRow[]> {
+    if (subjects.length === 0) return [];
+    const clause = subjects.map(() => "(subject_kind = ? AND subject_id = ?)").join(" OR ");
+    const params: unknown[] = [tenantId];
+    for (const subject of subjects) params.push(subject.kind, subject.id);
+    const rows = await this.db.all<Row>(
+      `SELECT ${RESOURCE_GRANT_COLS} FROM resource_grants
+       WHERE tenant_id = ? AND revoked_at IS NULL AND (${clause})
+       ORDER BY created_at`,
+      params,
+    );
+    return rows.map(toResourceGrantRow);
+  }
+}
+
+// ---------------------------------------------------------------------------
+
 function toApiKeyRow(row: Row): ApiKeyRow {
   return {
     id: str(row["id"]),
@@ -666,6 +793,7 @@ export async function createSqlStorage(db: SqlClient): Promise<RegistryStorage> 
     credentials: new SqlCredentialStore(db),
     profiles: new SqlProfileStore(db),
     grants: new SqlGrantStore(db),
+    resourceGrants: new SqlResourceGrantStore(db),
     apiKeys: new SqlApiKeyStore(db),
     audit: new SqlAuditStore(db),
     provisionCredential: (tenantId, input) => provisionCredential(db, tenantId, input),
