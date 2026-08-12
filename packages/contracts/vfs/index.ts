@@ -228,7 +228,14 @@ export function validateListArgs(args: VfsListArgs = {}): void {
  */
 export function vfsToolEntries(
   provider: string,
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
+): Array<{
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+  outputSchema?: unknown;
+  streaming?: boolean;
+  effect: "observation" | "action";
+}> {
   const path = {
     type: "string",
     description: 'Relative /-separated path, no leading "/" and no "." or ".." segments',
@@ -239,6 +246,7 @@ export function vfsToolEntries(
       description:
         "Read one file. Returns { path, encoding, content, size, etag? }; binary content arrives base64. 404 when absent.",
       inputSchema: { type: "object", properties: { path }, required: ["path"] },
+      effect: "observation",
     },
     {
       name: `${provider}.write`,
@@ -256,11 +264,13 @@ export function vfsToolEntries(
         },
         required: ["path", "content"],
       },
+      effect: "action",
     },
     {
       name: `${provider}.delete`,
       description: "Delete one file. Idempotent: returns { path, deleted } with deleted:false when absent. Files only.",
       inputSchema: { type: "object", properties: { path }, required: ["path"] },
+      effect: "action",
     },
     {
       name: `${provider}.list`,
@@ -276,12 +286,14 @@ export function vfsToolEntries(
           limit: { type: "number", description: `Page size (default ${DEFAULT_LIST_LIMIT})` },
         },
       },
+      effect: "observation",
     },
     {
       name: `${provider}.stat`,
       description:
         "Stat one path. Returns { path, kind, size?, etag?, modifiedAt? }; 404 when absent.",
       inputSchema: { type: "object", properties: { path }, required: ["path"] },
+      effect: "observation",
     },
   ];
 }

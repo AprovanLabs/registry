@@ -457,12 +457,21 @@ const ID = { type: "string", description: "Sandbox id returned by create" } as c
  * there; a caller reaching a provider directly is doing the equivalent of
  * `sql.query` against one warehouse.
  */
+type SandboxToolEntry = {
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+  outputSchema?: unknown;
+  streaming?: boolean;
+  effect: "observation" | "action";
+};
+
 export function sandboxToolEntries(
   provider: string,
   details: { label?: string; capabilities: SandboxCapabilities; defaultImage?: string },
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
+): SandboxToolEntry[] {
   const label = details.label ?? provider;
-  const entries: Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> = [
+  const entries: SandboxToolEntry[] = [
     {
       name: `${provider}.create`,
       description:
@@ -482,21 +491,25 @@ export function sandboxToolEntries(
           },
         },
       },
+      effect: "action",
     },
     {
       name: `${provider}.get`,
       description: `Fetch one ${label} sandbox's status.`,
       inputSchema: { type: "object", properties: { id: ID }, required: ["id"] },
+      effect: "observation",
     },
     {
       name: `${provider}.list`,
       description: `List ${label} sandboxes reachable with this credential.`,
       inputSchema: { type: "object", properties: {} },
+      effect: "observation",
     },
     {
       name: `${provider}.destroy`,
       description: `Destroy a ${label} sandbox and release its resources.`,
       inputSchema: { type: "object", properties: { id: ID }, required: ["id"] },
+      effect: "action",
     },
     {
       name: `${provider}.exec`,
@@ -515,6 +528,7 @@ export function sandboxToolEntries(
         },
         required: ["id", "command"],
       },
+      effect: "action",
     },
     {
       name: `${provider}.readFile`,
@@ -524,6 +538,7 @@ export function sandboxToolEntries(
         properties: { id: ID, path: { type: "string" } },
         required: ["id", "path"],
       },
+      effect: "observation",
     },
     {
       name: `${provider}.writeFile`,
@@ -538,6 +553,7 @@ export function sandboxToolEntries(
         },
         required: ["id", "path", "content"],
       },
+      effect: "action",
     },
     {
       name: `${provider}.deleteFile`,
@@ -547,6 +563,7 @@ export function sandboxToolEntries(
         properties: { id: ID, path: { type: "string" }, recursive: { type: "boolean" } },
         required: ["id", "path"],
       },
+      effect: "action",
     },
     {
       name: `${provider}.listFiles`,
@@ -558,6 +575,7 @@ export function sandboxToolEntries(
         properties: { id: ID, path: { type: "string" } },
         required: ["id"],
       },
+      effect: "observation",
     },
   ];
 
@@ -570,6 +588,7 @@ export function sandboxToolEntries(
         properties: { id: ID, port: { type: "number" } },
         required: ["id", "port"],
       },
+      effect: "action",
     });
   }
 

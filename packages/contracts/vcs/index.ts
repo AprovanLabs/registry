@@ -262,7 +262,14 @@ const PR_NUMBER = { type: "number", description: "Pull request number" } as cons
  */
 export function vcsToolEntries(
   provider: string,
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
+): Array<{
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+  outputSchema?: unknown;
+  streaming?: boolean;
+  effect: "observation" | "action";
+}> {
   const repoArgs = (extra: Record<string, unknown> = {}, required: string[] = []) => ({
     type: "object",
     properties: { ...REPO_REF_PROPERTIES, ...extra },
@@ -274,12 +281,14 @@ export function vcsToolEntries(
       description:
         "Read one repository: { owner, name, fullName, defaultBranch, private, url }.",
       inputSchema: repoArgs(),
+      effect: "observation",
     },
     {
       name: `${provider}.pullRequests.get`,
       description:
         "Read one pull request: { number, title, state (open|closed|merged), author, sourceBranch, targetBranch, draft, url }.",
       inputSchema: repoArgs({ number: PR_NUMBER }, ["number"]),
+      effect: "observation",
     },
     {
       name: `${provider}.pullRequests.list`,
@@ -287,12 +296,14 @@ export function vcsToolEntries(
       inputSchema: repoArgs({
         state: { type: "string", enum: ["open", "closed", "all"], description: "Filter (default open)" },
       }),
+      effect: "observation",
     },
     {
       name: `${provider}.pullRequests.diff`,
       description:
         `Read one pull request's unified diff as text (cut at ${MAX_DIFF_BYTES} bytes with an explicit marker).`,
       inputSchema: repoArgs({ number: PR_NUMBER }, ["number"]),
+      effect: "observation",
     },
     {
       name: `${provider}.pullRequests.create`,
@@ -308,6 +319,7 @@ export function vcsToolEntries(
         },
         ["title", "sourceBranch", "targetBranch"],
       ),
+      effect: "action",
     },
     {
       name: `${provider}.pullRequests.comment`,
@@ -316,6 +328,7 @@ export function vcsToolEntries(
         { number: PR_NUMBER, body: { type: "string", description: "Comment body (markdown)" } },
         ["number", "body"],
       ),
+      effect: "action",
     },
     {
       name: `${provider}.pullRequests.review`,
@@ -333,11 +346,13 @@ export function vcsToolEntries(
         },
         ["number", "event"],
       ),
+      effect: "action",
     },
     {
       name: `${provider}.branches.get`,
       description: "Read one branch: { name, sha, protected }.",
       inputSchema: repoArgs({ branch: { type: "string", description: "Branch name" } }, ["branch"]),
+      effect: "observation",
     },
     {
       name: `${provider}.files.get`,
@@ -350,6 +365,7 @@ export function vcsToolEntries(
         },
         ["path"],
       ),
+      effect: "observation",
     },
   ];
 }

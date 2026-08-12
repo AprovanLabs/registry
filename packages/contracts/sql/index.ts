@@ -160,7 +160,14 @@ export async function pollWait(deadline: number, timeoutMs: number, what: string
 export function sqlToolEntries(
   provider: string,
   details: { placeholder: string; params: "positional" | "named"; connectionOptions: string[] },
-): Array<{ name: string; description: string; inputSchema: Record<string, unknown>; outputSchema?: unknown; streaming?: boolean }> {
+): Array<{
+  name: string;
+  description: string;
+  inputSchema: Record<string, unknown>;
+  outputSchema?: unknown;
+  streaming?: boolean;
+  effect: "observation" | "action";
+}> {
   const paramsDescription =
     details.params === "positional"
       ? `Positional params bound to ${details.placeholder} placeholders`
@@ -187,6 +194,8 @@ export function sqlToolEntries(
         paramsDescription +
         ".",
       inputSchema: { type: "object", properties, required: ["sql"] },
+      // Fail closed: SQL may mutate; callers cannot promise SELECT-only.
+      effect: "action",
     },
   ];
 }

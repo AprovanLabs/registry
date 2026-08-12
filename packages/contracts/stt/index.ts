@@ -259,6 +259,7 @@ export type SttToolEntry = {
   inputSchema: Record<string, unknown>;
   outputSchema?: unknown;
   streaming?: StreamingMode;
+  effect: "observation" | "action";
 };
 
 /**
@@ -319,6 +320,7 @@ export function sttToolEntries(
         },
       },
       streaming: "session",
+      effect: "action",
     },
   ];
 }
