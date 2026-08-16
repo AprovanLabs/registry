@@ -1,3 +1,4 @@
+import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
   getPrimaryProviderAuthOption,
@@ -100,14 +101,29 @@ describe("provider naming helpers", () => {
 });
 
 describe("registry.json apiVersions consistency (loadRegistryProviders lint)", () => {
+  const FAKE_ROOT = "/no-such-output-root";
+
+  /**
+   * Loads with a fake registry JSON and no filesystem presence (no schemas/
+   * directories, no schema files). Tests in this block focus on the in-registry
+   * data consistency rules; filesystem rules are covered separately below.
+   */
   async function loadWith(providers: unknown[]): Promise<unknown> {
     vi.resetModules();
     vi.doMock("node:fs/promises", async () => {
       const actual = await vi.importActual<typeof import("node:fs/promises")>("node:fs/promises");
-      return { ...actual, readFile: vi.fn().mockResolvedValue(JSON.stringify(providers)) };
+      const notFound = () => {
+        throw Object.assign(new Error("ENOENT"), { code: "ENOENT" });
+      };
+      return {
+        ...actual,
+        readFile: vi.fn().mockResolvedValue(JSON.stringify(providers)),
+        access: vi.fn().mockImplementation(notFound),
+        stat: vi.fn().mockImplementation(notFound),
+      };
     });
     const mod = await import("./provider.js");
-    return mod.loadRegistryProviders();
+    return mod.loadRegistryProviders(FAKE_ROOT);
   }
 
   afterEach(() => {
@@ -115,7 +131,10 @@ describe("registry.json apiVersions consistency (loadRegistryProviders lint)", (
     vi.resetModules();
   });
 
-  it("accepts a provider declaring a consistent apiVersions/defaultVersion pair", async () => {
+  it("accepts a provider declaring a consistent apiVersions/defaultVersion pair (no schemas/ on disk yet)", async () => {
+    // When no schemas/ directory exists the filesystem lint is a no-op —
+    // only the in-registry data rules apply. A future generate run ships the
+    // directory; the lint then enforces the file-level rules in the block below.
     await expect(
       loadWith([
         {
@@ -164,5 +183,122 @@ describe("registry.json apiVersions consistency (loadRegistryProviders lint)", (
         },
       ]),
     ).rejects.toThrow(/shopify.*without apiVersions/su);
+  });
+});
+
+describe("schemas/ filesystem lint (loadRegistryProviders)", () => {
+  const OUTPUT_ROOT = "/fake/utdk";
+
+  /**
+   * Loads a registry with the given provider list and a controlled filesystem:
+   * `dirs` is the set of paths that exist as directories; `files` is the set
+   * of paths that exist as regular files.
+   */
+  async function loadWithFs(
+    providers: unknown[],
+    { dirs = new Set<string>(), files = new Set<string>() }: { dirs?: Set<string>; files?: Set<string> } = {},
+  ): Promise<unknown> {
+    vi.resetModules();
+    vi.doMock("node:fs/promises", async () => {
+      const actual = await vi.importActual<typeof import("node:fs/promises")>("node:fs/promises");
+      return {
+        ...actual,
+        readFile: vi.fn().mockResolvedValue(JSON.stringify(providers)),
+        access: vi.fn().mockImplementation(async (p: string) => {
+          if (files.has(p) || dirs.has(p)) return;
+          throw Object.assign(new Error(`ENOENT: ${p}`), { code: "ENOENT" });
+        }),
+        stat: vi.fn().mockImplementation(async (p: string) => {
+          if (dirs.has(p)) return { isDirectory: () => true };
+          if (files.has(p)) return { isDirectory: () => false };
+          throw Object.assign(new Error(`ENOENT: ${p}`), { code: "ENOENT" });
+        }),
+      };
+    });
+    const mod = await import("./provider.js");
+    return mod.loadRegistryProviders(OUTPUT_ROOT);
+  }
+
+  afterEach(() => {
+    vi.doUnmock("node:fs/promises");
+    vi.resetModules();
+  });
+
+  it("passes when no schemas/ directory and no apiVersions (typical unversioned provider)", async () => {
+    await expect(
+      loadWithFs([{ name: "github", url: "https://example.com/github.json" }]),
+    ).resolves.toBeDefined();
+  });
+
+  it("fails when schemas/ directory exists but defaultVersion is absent", async () => {
+    const schemasDir = path.join(OUTPUT_ROOT, "shopify", "schemas");
+    await expect(
+      loadWithFs(
+        [
+          {
+            name: "shopify",
+            url: "https://example.com/shopify.json",
+            apiVersions: ["2025-01"],
+            defaultVersion: "2025-01",
+          },
+        ],
+        {
+          dirs: new Set([schemasDir]),
+          files: new Set([path.join(schemasDir, "2025-01.graphql")]),
+        },
+      ),
+    ).resolves.toBeDefined();
+
+    // Now the same provider WITHOUT defaultVersion declared in registry — must fail.
+    await expect(
+      loadWithFs(
+        [{ name: "shopify", url: "https://example.com/shopify.json" }],
+        { dirs: new Set([schemasDir]) },
+      ),
+    ).rejects.toThrow(/shopify.*no defaultVersion/su);
+  });
+
+  it("fails when a declared apiVersion has no matching schema file", async () => {
+    const schemasDir = path.join(OUTPUT_ROOT, "shopify", "schemas");
+    // 2025-01 exists on disk but 2024-10 does not.
+    await expect(
+      loadWithFs(
+        [
+          {
+            name: "shopify",
+            url: "https://example.com/shopify.json",
+            apiVersions: ["2024-10", "2025-01"],
+            defaultVersion: "2025-01",
+          },
+        ],
+        {
+          dirs: new Set([schemasDir]),
+          files: new Set([path.join(schemasDir, "2025-01.graphql")]),
+        },
+      ),
+    ).rejects.toThrow(/shopify.*"2024-10".*no schema file/su);
+  });
+
+  it("passes when every declared apiVersion has its schema file", async () => {
+    const schemasDir = path.join(OUTPUT_ROOT, "shopify", "schemas");
+    await expect(
+      loadWithFs(
+        [
+          {
+            name: "shopify",
+            url: "https://example.com/shopify.json",
+            apiVersions: ["2024-10", "2025-01"],
+            defaultVersion: "2025-01",
+          },
+        ],
+        {
+          dirs: new Set([schemasDir]),
+          files: new Set([
+            path.join(schemasDir, "2024-10.graphql"),
+            path.join(schemasDir, "2025-01.graphql"),
+          ]),
+        },
+      ),
+    ).resolves.toBeDefined();
   });
 });

@@ -1,4 +1,4 @@
-import { readFile } from "node:fs/promises";
+import { access, readFile, stat } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -254,7 +254,85 @@ function assertValidApiVersioning(provider: RegistryProvider): void {
   }
 }
 
-export async function loadRegistryProviders(): Promise<RegistryProvider[]> {
+/**
+ * Returns true if the path exists on disk (file or directory).
+ * Uses `access` so the check is mockable via `node:fs/promises`.
+ */
+async function pathExists(p: string): Promise<boolean> {
+  try {
+    await access(p);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Returns true if `p` is a directory that exists on disk.
+ * Uses `stat` so the check is mockable via `node:fs/promises`.
+ */
+async function isDirectory(p: string): Promise<boolean> {
+  try {
+    return (await stat(p)).isDirectory();
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Filesystem half of 5.4 (graphql-schema-surface tasks.md): validates that
+ * the shipped `packages/utdk/<provider>/schemas/` layout is coherent with
+ * the registry entry.
+ *
+ * Rule 1 — schemas/ without defaultVersion: if the provider directory
+ * contains a `schemas/` subdirectory, the registry entry must declare
+ * `defaultVersion` (because there is no unambiguous schema to fall back to).
+ *
+ * Rule 2 — declared version without schema file: every version in
+ * `apiVersions` must have a corresponding `schemas/<version>.graphql` file,
+ * so a profile pinning any supported version is guaranteed to resolve a
+ * schema.
+ *
+ * Both checks are skipped for providers whose directory does not exist yet
+ * (not yet generated) — this lint applies only to what is actually shipped.
+ */
+async function assertValidSchemaFiles(
+  provider: RegistryProvider,
+  outputRoot: string,
+): Promise<void> {
+  const providerDir = resolveProviderOutputDir(provider.name, outputRoot);
+  const schemasDir = path.join(providerDir, "schemas");
+
+  const hasSchemasDir = await isDirectory(schemasDir);
+
+  // Rule 1: schemas/ directory without defaultVersion is incoherent — there
+  // is no unambiguous schema to resolve for unversioned callers.
+  if (hasSchemasDir && provider.defaultVersion === undefined) {
+    throw new Error(
+      `Provider "${provider.name}" has a schemas/ directory but declares no defaultVersion in ` +
+        `${REGISTRY_PATH} — add defaultVersion to name the schema that unversioned callers resolve to.`,
+    );
+  }
+
+  // Rule 2: once schemas/ is present every declared apiVersion must have its
+  // file — a version without a schema file is unresolvable at dispatch time.
+  // Skipped when schemas/ does not exist yet (provider declared apiVersions
+  // but has not run generate; the directory-existence check above gates this).
+  if (hasSchemasDir && provider.apiVersions && provider.apiVersions.length > 0) {
+    for (const version of provider.apiVersions) {
+      const schemaFile = path.join(schemasDir, `${version}.graphql`);
+      const exists = await pathExists(schemaFile);
+      if (!exists) {
+        throw new Error(
+          `Provider "${provider.name}" declares apiVersion "${version}" but has no schema file ` +
+            `at schemas/${version}.graphql — add the file or remove the version from apiVersions.`,
+        );
+      }
+    }
+  }
+}
+
+export async function loadRegistryProviders(outputRoot = DEFAULT_OUTPUT_ROOT): Promise<RegistryProvider[]> {
   const rawRegistry = await readFile(REGISTRY_PATH, "utf8");
   const providers = JSON.parse(rawRegistry) as RegistryProvider[];
   // A hand-edited dotted (or otherwise malformed) name must fail here, at
@@ -263,6 +341,7 @@ export async function loadRegistryProviders(): Promise<RegistryProvider[]> {
     assertValidProviderName(provider.name);
     assertValidPlatformApp(provider);
     assertValidApiVersioning(provider);
+    await assertValidSchemaFiles(provider, outputRoot);
   }
   assertUniqueGlobalAliases(providers.map((provider) => provider.name));
   return providers;
