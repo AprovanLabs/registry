@@ -144,9 +144,20 @@ export {
 export {
   CredentialService,
   CredentialResolutionError,
+  CredentialNotConnectedError,
   type CredentialInput,
+  type CredentialInvoker,
+  type CredentialResolutionRequest,
+  type ResolvedCredential,
 } from "./credentials/service.js";
+export {
+  effectiveLevel,
+  defaultLevelForType,
+  isCredentialLevel,
+  credentialLevelValues,
+} from "./credentials/types.js";
 export type {
+  CredentialLevel,
   CredentialPayload,
   InjectableCredential,
   BearerTokenPayload,

@@ -27,11 +27,16 @@ import {
   assertProbeAvailable,
   type AvailabilityProbeRunner,
 } from "../catalog/availability-probe.js";
-import { CredentialResolutionError, type CredentialService } from "../credentials/service.js";
+import {
+  CredentialNotConnectedError,
+  CredentialResolutionError,
+  type CredentialInvoker,
+  type CredentialService,
+  type ResolvedCredential,
+} from "../credentials/service.js";
 import { ProfileService } from "./service.js";
 import { resolveProviderVersion, type GetProviderVersioning } from "./versioning.js";
 import type { CallContext } from "../config/types.js";
-import type { CredentialPayload } from "../credentials/types.js";
 import type { ProfileLimits, ProfileStore } from "../storage/types.js";
 
 export interface ResolveDeps {
@@ -68,7 +73,7 @@ export interface ResolvedProfile {
   baseUrl?: string;
   /** Resolved API version (graphql-schema-surface D4); same field `baseUrl` was derived from. */
   version?: string;
-  credential?: { id: string; payload: CredentialPayload };
+  credential?: ResolvedCredential;
   options: Record<string, unknown>;
   limits?: ProfileLimits;
   profileId?: string;
@@ -83,6 +88,11 @@ export interface ResolvedProfile {
 }
 
 const targetLabel = (target: ResolvedTarget): string => target.id;
+
+/** The invoker for credential selection — ctx.principal plus any via-path actor (D4a). */
+function invokerFromContext(ctx: CallContext): CredentialInvoker {
+  return { sub: ctx.principal, ...(ctx.actor ? { actor: ctx.actor } : {}) };
+}
 
 /** Executing provider for a stored profile row (canonical credential key). */
 function executingProviderForRow(target: ResolvedTarget, row: { provider?: string }): string {
@@ -239,15 +249,15 @@ export async function resolveProfile(
     );
 
     // 4c. Credential — pinned id resolves loudly; never falls back.
-    let credential: { id: string; payload: CredentialPayload } | undefined;
+    let credential: ResolvedCredential | undefined;
     if (row.credentialId) {
+      let resolved: ResolvedCredential;
       try {
-        const resolved = await deps.credentials.resolveById(
+        resolved = await deps.credentials.resolveById(
           ctx.tenantId,
           row.credentialId,
           executingProvider,
         );
-        credential = { id: resolved.id, payload: resolved.payload };
       } catch (err) {
         const detail =
           err instanceof CredentialResolutionError ? err.message : String(err);
@@ -257,10 +267,25 @@ export async function resolveProfile(
           400,
         );
       }
+      // A pinned user-oauth row resolves ONLY for its owner — never another
+      // user's payload, never a silent workspace downgrade (D4/D5).
+      if (resolved.level === "user-oauth" && resolved.owner !== ctx.principal) {
+        throw new CredentialNotConnectedError(executingProvider);
+      }
+      credential = {
+        id: resolved.id,
+        level: resolved.level,
+        ...(resolved.owner !== undefined ? { owner: resolved.owner } : {}),
+        payload: resolved.payload,
+      };
     } else if (compat?.credentialless) {
       credential = undefined;
     } else {
-      credential = await deps.credentials.firstForProvider(ctx.tenantId, executingProvider);
+      credential = await deps.credentials.resolveForInvoker(
+        ctx.tenantId,
+        executingProvider,
+        invokerFromContext(ctx),
+      );
     }
 
     // 4d. options = compat.defaults ⊕ row.options (row wins); baseUrl split out.
@@ -317,7 +342,7 @@ export async function resolveProfile(
   if (target.kind === "interface") {
     const def = interfaceDef!;
     let compat = def.compat.find((entry) => entry.credentialless);
-    let credential: { id: string; payload: CredentialPayload } | undefined;
+    let credential: ResolvedCredential | undefined;
     if (!compat) {
       // First compat entry with a tenant credential, in catalog order.
       const credentials = await deps.credentials.list(ctx.tenantId);
@@ -347,7 +372,11 @@ export async function resolveProfile(
     }
     assertWithinNarrowedTo(ctx, compat.provider);
     if (!compat.credentialless) {
-      credential = await deps.credentials.firstForProvider(ctx.tenantId, compat.provider);
+      credential = await deps.credentials.resolveForInvoker(
+        ctx.tenantId,
+        compat.provider,
+        invokerFromContext(ctx),
+      );
     }
     const { options, baseUrl } = splitOptions({ ...(compat.defaults ?? {}) }, compat.baseUrl);
     return {
@@ -375,7 +404,11 @@ export async function resolveProfile(
     );
   }
   assertWithinNarrowedTo(ctx, target.id);
-  const credential = await deps.credentials.firstForProvider(ctx.tenantId, target.id);
+  const credential = await deps.credentials.resolveForInvoker(
+    ctx.tenantId,
+    target.id,
+    invokerFromContext(ctx),
+  );
   const versionResolution = resolveProviderVersion(
     target.id,
     deps.getProviderVersioning(target.id),
