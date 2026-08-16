@@ -16,6 +16,7 @@ import {
 import {
   credentialLevelValues,
   defaultLevelForType,
+  effectiveLevel,
   isCredentialLevel,
   type CredentialLevel,
   type CredentialPayload,
@@ -45,6 +46,81 @@ export type ProvisionCredentialFn = (
 
 export class CredentialResolutionError extends Error {
   readonly status = 400;
+}
+
+// ---------------------------------------------------------------------------
+// Resolution contract (IW-9 F3 tech-plan "Interfaces & Data", D4/D4a/D5) —
+// published from the package root so consumers (workspace dispatch, iw9-c
+// approval routing) type against it without reading resolution internals.
+// ---------------------------------------------------------------------------
+
+/**
+ * The invoker's identity for credential selection — `CallContext.principal`
+ * plus any non-user via-path (`CallContext.actor`), named for the published
+ * contract. Resolution that can reach a `user-oauth` row always receives one.
+ */
+export interface CredentialInvoker {
+  /** Authenticated user sub. */
+  sub: string;
+  /** Via-path, when dispatch originates from a granted non-user subject. */
+  actor?: { kind: "app" | "workflow" | "agent"; id: string };
+}
+
+/** The inputs of one resolution, as consumers state them (tech-plan D5). */
+export interface CredentialResolutionRequest {
+  tenantId: string;
+  provider: string;
+  invoker: CredentialInvoker;
+  /** Explicit pin (profile/interface); loud on mismatch, never a fallback. */
+  credentialId?: string;
+  /** Display/audit only at this layer. */
+  profileName?: string;
+}
+
+/**
+ * Resolution output — id + level (+ owner for user-level) so dispatch/audit
+ * callers read the level without a second fetch (spec "Resolved output names
+ * the level").
+ */
+export interface ResolvedCredential {
+  id: string;
+  level: CredentialLevel;
+  /** Present iff level === "user-oauth". */
+  owner?: string;
+  payload: CredentialPayload;
+}
+
+/**
+ * Fail-closed "not connected" (tech-plan D5) — machine-distinguishable from
+ * `CredentialResolutionError` (400, config bug) so iw9-c can react with a
+ * per-user connect prompt. Thrown when selection lands on user level and the
+ * invoker holds no connection; never a silent fallback to another user's
+ * credential, never a silent workspace downgrade.
+ */
+export class CredentialNotConnectedError extends Error {
+  readonly code = "credential_not_connected" as const;
+  readonly status = 403 as const;
+  readonly requiredLevel = "user-oauth" as const;
+
+  constructor(readonly provider: string) {
+    super(
+      `${provider} resolves at user level here and this user has no ${provider} connection — connect your own ${provider} account.`,
+    );
+  }
+}
+
+/** ResolvedCredential shape from a row + its decrypted payload. */
+function toResolvedCredential(
+  row: CredentialRow,
+  payload: CredentialPayload,
+): ResolvedCredential {
+  const level = effectiveLevel(row.type, row.level);
+  return {
+    id: row.id,
+    level,
+    ...(level === "user-oauth" && row.createdBy !== undefined ? { owner: row.createdBy } : {}),
+    payload,
+  };
 }
 
 function assertLevelCompatible(level: CredentialLevel, type: CredentialType): void {
@@ -180,13 +256,14 @@ export class CredentialService {
   /**
    * Resolve one specific credential by id — loud on a miss and on a provider
    * mismatch (a pinned credential that cannot be honoured is a configuration
-   * bug, never a silent fallback).
+   * bug, never a silent fallback). Returns `ResolvedCredential` (+ provider)
+   * so callers read level/owner without a second fetch.
    */
   async resolveById(
     tenantId: string,
     credentialId: string,
     expectedProvider?: string,
-  ): Promise<{ id: string; provider: string; payload: CredentialPayload }> {
+  ): Promise<ResolvedCredential & { provider: string }> {
     const row = await this.store.getWithPayload(tenantId, credentialId);
     if (!row) {
       throw new CredentialResolutionError(
@@ -199,13 +276,53 @@ export class CredentialService {
       );
     }
     return {
-      id: row.id,
-      provider: row.provider,
-      payload: redactTenantCredentialPayload(
-        row.provider,
-        JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload,
+      ...toResolvedCredential(
+        row,
+        redactTenantCredentialPayload(
+          row.provider,
+          JSON.parse(await getCredentialCipher().decrypt(row.payload)) as CredentialPayload,
+        ),
       ),
+      provider: row.provider,
     };
+  }
+
+  /**
+   * Invoker-aware un-pinned selection (tech-plan D4/D4a) — the additive
+   * sibling of `firstForProvider`, and the only selection primitive
+   * `resolveProfile` calls after IW-9 F3. Order: the invoker's own
+   * `user-oauth` row for the provider first, else the first workspace-level
+   * row in creation order. Other users' `user-oauth` rows are invisible; when
+   * they are ALL that exists for the provider, fail closed with
+   * `CredentialNotConnectedError` (never another user's payload, never a
+   * silent downgrade). No rows at all → undefined (nothing connected — the
+   * pre-existing legal outcome).
+   */
+  async resolveForInvoker(
+    tenantId: string,
+    provider: string,
+    invoker: CredentialInvoker,
+  ): Promise<ResolvedCredential | undefined> {
+    const rows = (await this.store.list(tenantId)).filter((row) => row.provider === provider);
+    const own = rows.find(
+      (row) =>
+        effectiveLevel(row.type, row.level) === "user-oauth" && row.createdBy === invoker.sub,
+    );
+    const chosen = own ?? rows.find((row) => effectiveLevel(row.type, row.level) !== "user-oauth");
+    if (!chosen) {
+      // Rows exist but every one is another user's connection — fail closed.
+      if (rows.length > 0) throw new CredentialNotConnectedError(provider);
+      return undefined;
+    }
+    const withPayload = await this.store.getWithPayload(tenantId, chosen.id);
+    if (!withPayload) return undefined; // deleted between list and read
+    return toResolvedCredential(
+      withPayload,
+      redactTenantCredentialPayload(
+        provider,
+        JSON.parse(await getCredentialCipher().decrypt(withPayload.payload)) as CredentialPayload,
+      ),
+    );
   }
 
   /** First credential for the provider, creation order — the zero-config pick. */
